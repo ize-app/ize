@@ -1,0 +1,36 @@
+Arguments: 
+  /Users/davidfeinerman/.nvm/versions/node/v16.13.0/bin/node /Users/davidfeinerman/.nvm/versions/node/v16.13.0/bin/yarn add express
+
+PATH: 
+  /Users/davidfeinerman/Library/pnpm:/Users/davidfeinerman/.rbenv/shims:/Users/davidfeinerman/.nvm/versions/node/v16.13.0/bin:/Users/davidfeinerman/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/davidfeinerman/Library/pnpm:/Users/davidfeinerman/.rbenv/shims:/Users/davidfeinerman/.nvm/versions/node/v16.13.0/bin:/Users/davidfeinerman/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/davidfeinerman/.fig/bin:/Users/davidfeinerman/.local/bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  16.13.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  SyntaxError: /Users/davidfeinerman/git/cults-2/package.json: Unexpected token ] in JSON at position 146
+      at JSON.parse (<anonymous>)
+      at /Users/davidfeinerman/.nvm/versions/node/v16.13.0/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/Users/davidfeinerman/.nvm/versions/node/v16.13.0/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /Users/davidfeinerman/.nvm/versions/node/v16.13.0/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
