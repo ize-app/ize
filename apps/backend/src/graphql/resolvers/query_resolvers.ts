@@ -1,7 +1,7 @@
-import { helloQueries } from "./hello_resolvers";
+import { userQueries } from "./user_resolvers";
 
 export const resolvers = {
   Query: {
-    ...helloQueries,
+    ...userQueries,
   },
 };
