@@ -7,12 +7,16 @@ import { resolvers } from "./graphql/resolvers/query_resolvers";
 import { loadFilesSync } from "@graphql-tools/load-files";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { mergeTypeDefs } from "@graphql-tools/merge";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
+import cookieParser from 'cookie-parser';
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 const app = express();
+
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send({ message: "Hello API" });
@@ -20,15 +24,24 @@ app.get("/", (req, res) => {
 
 // Redirects to Discord OAuth, if user accepts goes to callback URL
 app.get("/auth/discord/login", (req, res) => {
-  const url =
-    "https://discord.com/api/oauth2/authorize?client_id=1129641431057825844&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify";
+  const state = nanoid();
+
+  const url = `https://discord.com/api/oauth2/authorize?client_id=1129641431057825844&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify&state=${state}`;
+
+  res.cookie("oauth_state", state);
 
   res.redirect(url);
 });
 
 // Discord Callback Route
 app.get("/auth/discord/callback", async (req, res) => {
-  const { code } = req.query;
+  const { code, state } = req.query;
+
+  console.log(req.cookies);
+
+  if (state !== req.cookies.oauth_state) {
+    // throw error
+  }
 
   if (!code) {
     // throw error
@@ -43,6 +56,7 @@ app.get("/auth/discord/callback", async (req, res) => {
       grant_type: "authorization_code",
       redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI,
       code: code as string,
+      state: state as string,
     }),
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -50,7 +64,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     },
   });
 
-  const { access_token }= await discordResponse.json();
+  const { access_token } = await discordResponse.json();
 
   // Start making requests to discord API using OAuth access token
   const userResponse = await fetch("https://discord.com/api/users/@me", {
@@ -66,7 +80,7 @@ app.get("/auth/discord/callback", async (req, res) => {
   // Creating a JWT
   const token = jwt.sign({ sub: id }, process.env.JWT_SECRET);
 
-  res.cookie('token', token);
+  res.cookie("token", token);
 
   res.redirect(process.env.CLIENT_REDIRECT_URL);
 });
