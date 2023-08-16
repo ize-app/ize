@@ -9,10 +9,14 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import * as jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
+import { prisma } from "./prisma/client";
+import bcrypt from "bcrypt";
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+const BCRYPT_SALT_ROUNDS = 12;
 
 const app = express();
 
@@ -64,7 +68,8 @@ app.get("/auth/discord/callback", async (req, res) => {
     },
   });
 
-  const { access_token } = await discordResponse.json();
+  const { access_token, refresh_token, token_type, expires_in, scope } =
+    await discordResponse.json();
 
   // Start making requests to discord API using OAuth access token
   const userResponse = await fetch("https://discord.com/api/users/@me", {
@@ -73,9 +78,82 @@ app.get("/auth/discord/callback", async (req, res) => {
     },
   });
 
-  const { id, username, avatar } = await userResponse.json();
+  const { id, username, avatar, discriminator, email } =
+    await userResponse.json();
 
   // TODO: Save user to database
+  const user = await prisma.user.findFirst({
+    where: { DiscordData: { discordId: id } },
+  });
+
+  const encryptedAccessToken = await bcrypt.hash(
+    access_token,
+    BCRYPT_SALT_ROUNDS
+  );
+  const encryptedRefreshToken = await bcrypt.hash(
+    refresh_token,
+    BCRYPT_SALT_ROUNDS
+  );
+
+  if (user == null) {
+    await prisma.user.create({
+      data: {
+        DiscordData: {
+          create: {
+            discordId: id,
+            username,
+            avatar,
+            discriminator,
+            email,
+          },
+        },
+        DiscordOauth: {
+          create: {
+            accessToken: encryptedAccessToken,
+            refreshToken: encryptedRefreshToken,
+            tokenType: token_type,
+            expiresIn: expires_in,
+            scope,
+          },
+        },
+      },
+    });
+  } else {
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        DiscordData: {
+          update: {
+            discordId: id,
+            username,
+            avatar,
+            discriminator,
+            email,
+          },
+        },
+        DiscordOauth: {
+          upsert: {
+            update: {
+              accessToken: encryptedAccessToken,
+              refreshToken: encryptedRefreshToken,
+              tokenType: token_type,
+              expiresIn: expires_in,
+              scope,
+            },
+            create: {
+              accessToken: encryptedAccessToken,
+              refreshToken: encryptedRefreshToken,
+              tokenType: token_type,
+              expiresIn: expires_in,
+              scope,
+            }
+          },
+        },
+      }
+    })
+  }
 
   // Creating a JWT
   const token = jwt.sign({ sub: id }, process.env.JWT_SECRET);
