@@ -15,8 +15,8 @@ model User {
   name         String?
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
-  DiscordOauth DiscordOauth?
-  DiscordData  DiscordData?
+  discordOauth DiscordOauth?
+  discordData  DiscordData?
 
   @@map("users")
 }

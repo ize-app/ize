@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 import cookieParser from "cookie-parser";
 import { prisma } from "./prisma/client";
 import bcrypt from "bcrypt";
+import { authenticate } from "./authentication";
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -21,10 +22,7 @@ const BCRYPT_SALT_ROUNDS = 12;
 const app = express();
 
 app.use(cookieParser());
-
-app.get("/", (req, res) => {
-  res.send({ message: "Hello API" });
-});
+app.use(authenticate);
 
 // Redirects to Discord OAuth, if user accepts goes to callback URL
 app.get("/auth/discord/login", (req, res) => {
@@ -81,7 +79,7 @@ app.get("/auth/discord/callback", async (req, res) => {
 
   // TODO: Save user to database
   const user = await prisma.user.findFirst({
-    where: { DiscordData: { discordId: id } },
+    where: { discordData: { discordId: id } },
   });
 
   const encryptedAccessToken = await bcrypt.hash(
@@ -96,7 +94,7 @@ app.get("/auth/discord/callback", async (req, res) => {
   if (user == null) {
     await prisma.user.create({
       data: {
-        DiscordData: {
+        discordData: {
           create: {
             discordId: id,
             username,
@@ -105,7 +103,7 @@ app.get("/auth/discord/callback", async (req, res) => {
             email,
           },
         },
-        DiscordOauth: {
+        discordOauth: {
           create: {
             accessToken: encryptedAccessToken,
             refreshToken: encryptedRefreshToken,
@@ -122,7 +120,7 @@ app.get("/auth/discord/callback", async (req, res) => {
         id: user.id,
       },
       data: {
-        DiscordData: {
+        discordData: {
           update: {
             discordId: id,
             username,
@@ -131,7 +129,7 @@ app.get("/auth/discord/callback", async (req, res) => {
             email,
           },
         },
-        DiscordOauth: {
+        discordOauth: {
           upsert: {
             update: {
               accessToken: encryptedAccessToken,
@@ -146,11 +144,11 @@ app.get("/auth/discord/callback", async (req, res) => {
               tokenType: token_type,
               expiresIn: expires_in,
               scope,
-            }
+            },
           },
         },
-      }
-    })
+      },
+    });
   }
 
   // Creating a JWT
@@ -175,11 +173,17 @@ const server = new ApolloServer({
 });
 
 server.start().then(() => {
+  app.use(authenticate);
   app.use(
     "/graphql",
-    cors<cors.CorsRequest>(),
+    cors<cors.CorsRequest>({
+      origin: process.env.CLIENT_REDIRECT_URL,
+      credentials: true,
+    }),
     json(),
-    expressMiddleware(server)
+    expressMiddleware(server, {
+      context: async ({ res }) => ({ currentUser: res.locals.user }),
+    })
   );
 
   app.listen(port, host, () => {

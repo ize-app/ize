@@ -1,8 +1,10 @@
 type Query {
   users: [User]
+  me: User
 }
 
 type User {
   id: String!
   name: String
+  discordData: DiscordData
 }

@@ -3,6 +3,7 @@ import './App.css'
 import { Users } from './components/Users'
 import { apolloClient } from './apollo'
 import { ConnectToDiscord } from './components/ConnectToDiscord'
+import { LoggedInUser } from './components/LoggedInUser'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <h1>Cults</h1>
       <Users />
       <ConnectToDiscord />
+      <LoggedInUser />
     </ApolloProvider>
   )
 }

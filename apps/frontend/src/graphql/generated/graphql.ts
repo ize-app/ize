@@ -16,13 +16,23 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type DiscordData = {
+  __typename?: 'DiscordData';
+  avatar?: Maybe<Scalars['String']['output']>;
+  discriminator?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
+  me?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
 export type User = {
   __typename?: 'User';
+  discordData?: Maybe<DiscordData>;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
 };
@@ -32,8 +42,14 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UsersQuery = { __typename?: 'Query', users?: Array<{ __typename?: 'User', id: string, name?: string | null } | null> | null };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id?: string | null, username?: string | null, discriminator?: string | null, avatar?: string | null } | null } | null };
+
 
 export const UsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UsersQuery, UsersQueryVariables>;
+export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
 
       export interface PossibleTypesResultData {
         possibleTypes: {
@@ -54,13 +70,23 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type DiscordData = {
+  __typename?: 'DiscordData';
+  avatar?: Maybe<Scalars['String']['output']>;
+  discriminator?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
+  me?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
 export type User = {
   __typename?: 'User';
+  discordData?: Maybe<DiscordData>;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
 };

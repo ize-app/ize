@@ -4,3 +4,16 @@ query Users {
     name
   }
 }
+
+query Me {
+  me {
+    id
+    name
+    discordData {
+      id
+      username
+      discriminator
+      avatar
+    }
+  }
+}
