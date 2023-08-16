@@ -41,8 +41,6 @@ app.get("/auth/discord/login", (req, res) => {
 app.get("/auth/discord/callback", async (req, res) => {
   const { code, state } = req.query;
 
-  console.log(req.cookies);
-
   if (state !== req.cookies.oauth_state) {
     // throw error
   }
