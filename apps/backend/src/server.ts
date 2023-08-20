@@ -13,6 +13,7 @@ import cookieParser from "cookie-parser";
 import { prisma } from "./prisma/client";
 import bcrypt from "bcrypt";
 import { authenticate } from "./authentication";
+import { APIUser } from 'discord-api-types/v10';
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -75,7 +76,7 @@ app.get("/auth/discord/callback", async (req, res) => {
   });
 
   const { id, username, avatar, discriminator, email } =
-    await userResponse.json();
+    await userResponse.json() as APIUser;
 
   // TODO: Save user to database
   const user = await prisma.user.findFirst({
