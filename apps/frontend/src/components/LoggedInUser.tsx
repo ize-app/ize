@@ -1,8 +1,15 @@
-import { useQuery } from "@apollo/client";
-import { MeDocument } from "../graphql/generated/graphql";
+import { useContext } from "react";
+import { CurrentUserContext } from "../contexts/current_user_context";
+import { FragmentType, useFragment } from "../graphql/generated";
+import { DiscordDataPartsFragmentDoc } from "../graphql/generated/graphql";
 
 export const LoggedInUser: React.FC = () => {
-  const { data } = useQuery(MeDocument);
+  const { user } = useContext(CurrentUserContext);
+  if (user == null) return null;
 
-  return <div>{data?.me?.discordData?.username}</div>
+  const discordDataData = user?.discordData as FragmentType<typeof DiscordDataPartsFragmentDoc>;
+  // eslint-disable-next-line react-hooks/rules-of-hooks -- not actually a hook
+  const discordData = useFragment(DiscordDataPartsFragmentDoc, discordDataData);
+
+  return <div>{discordData.username}</div>;
 };
