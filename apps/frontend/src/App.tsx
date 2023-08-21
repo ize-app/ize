@@ -4,6 +4,7 @@ import { Users } from './components/Users'
 import { apolloClient } from './apollo'
 import { ConnectToDiscord } from './components/ConnectToDiscord'
 import { LoggedInUser } from './components/LoggedInUser'
+import { AddToServer } from './components/AddToServer'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Users />
       <ConnectToDiscord />
       <LoggedInUser />
+      <AddToServer />
     </ApolloProvider>
   )
 }
