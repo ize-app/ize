@@ -14,6 +14,8 @@ import { prisma } from "./prisma/client";
 import bcrypt from "bcrypt";
 import { authenticate } from "./authentication";
 import { APIUser } from "discord-api-types/v10";
+import { USER_SCOPES } from "./discord/oauth";
+import { URLSearchParams } from "url";
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -28,12 +30,22 @@ app.use(authenticate);
 // Redirects to Discord OAuth, if user accepts goes to callback URL
 app.get("/auth/discord/login", (req, res) => {
   const state = nanoid();
+  const discord_base_url = "https://discord.com/api/oauth2";
+  const params = new URLSearchParams({
+    state,
+    client_id: process.env.DISCORD_OAUTH_CLIENT_ID,
+    redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI,
+    response_type: "code",
+    scope: USER_SCOPES.join(" "),
+  });
 
-  const url = `https://discord.com/api/oauth2/authorize?client_id=1129641431057825844&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify&state=${state}`;
+  const query = params.toString();
+
+  const url = new URL(`/api/oauth2/authorize?${query}`, discord_base_url);
 
   res.cookie("oauth_state", state);
 
-  res.redirect(url);
+  res.redirect(url.toString());
 });
 
 // Discord Callback Route
