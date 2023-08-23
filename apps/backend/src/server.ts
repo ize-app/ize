@@ -13,9 +13,12 @@ import cookieParser from "cookie-parser";
 import { prisma } from "./prisma/client";
 import bcrypt from "bcrypt";
 import { authenticate } from "./authentication";
-import { APIUser } from "discord-api-types/v10";
 import { USER_SCOPES } from "./discord/oauth";
 import { URLSearchParams } from "url";
+import { APIUser } from "discord.js";
+import { GraphqlRequestContext } from "./graphql/context";
+import { DiscordApi } from "./discord/api";
+import session from "express-session";
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -26,6 +29,18 @@ const app = express();
 
 app.use(cookieParser());
 app.use(authenticate);
+
+const sessionValue = {
+  secret: process.env.SESSION_SECRET,
+  cookie: { secure: false },
+};
+
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  sessionValue.cookie.secure = true; // serve secure cookies
+}
+
+app.use(session(sessionValue));
 
 // Redirects to Discord OAuth, if user accepts goes to callback URL
 app.get("/auth/discord/login", (req, res) => {
@@ -110,15 +125,17 @@ app.get("/auth/discord/callback", async (req, res) => {
     where: { discordData: { discordId: id } },
   });
 
-  const encryptedAccessToken = await bcrypt.hash(
-    access_token,
-    BCRYPT_SALT_ROUNDS
-  );
-  const encryptedRefreshToken = await bcrypt.hash(
-    refresh_token,
-    BCRYPT_SALT_ROUNDS
-  );
+  // TODO: Encrypy using AES - NOT hashing
+  // const encryptedAccessToken = await bcrypt.hash(
+  //   access_token,
+  //   BCRYPT_SALT_ROUNDS
+  // );
+  // const encryptedRefreshToken = await bcrypt.hash(
+  //   refresh_token,
+  //   BCRYPT_SALT_ROUNDS
+  // );
 
+  // TODO: Move this out of router into own service
   if (user == null) {
     await prisma.user.create({
       data: {
@@ -133,8 +150,8 @@ app.get("/auth/discord/callback", async (req, res) => {
         },
         discordOauth: {
           create: {
-            accessToken: encryptedAccessToken,
-            refreshToken: encryptedRefreshToken,
+            accessToken: access_token,
+            refreshToken: refresh_token,
             tokenType: token_type,
             expiresIn: expires_in,
             scope,
@@ -160,15 +177,15 @@ app.get("/auth/discord/callback", async (req, res) => {
         discordOauth: {
           upsert: {
             update: {
-              accessToken: encryptedAccessToken,
-              refreshToken: encryptedRefreshToken,
+              accessToken: access_token,
+              refreshToken: refresh_token,
               tokenType: token_type,
               expiresIn: expires_in,
               scope,
             },
             create: {
-              accessToken: encryptedAccessToken,
-              refreshToken: encryptedRefreshToken,
+              accessToken: access_token,
+              refreshToken: refresh_token,
               tokenType: token_type,
               expiresIn: expires_in,
               scope,
@@ -196,7 +213,7 @@ const schema = makeExecutableSchema({
   resolvers,
 });
 
-const server = new ApolloServer({
+const server = new ApolloServer<GraphqlRequestContext>({
   schema,
 });
 
@@ -210,7 +227,10 @@ server.start().then(() => {
     }),
     json(),
     expressMiddleware(server, {
-      context: async ({ res }) => ({ currentUser: res.locals.user }),
+      context: async ({ res }) => ({
+        currentUser: res.locals.user,
+        discordApi: new DiscordApi(res.locals.user),
+      }),
     })
   );
 

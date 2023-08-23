@@ -11,5 +11,7 @@ export const LoggedInUser: React.FC = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks -- not actually a hook
   const discordData = useFragment(DiscordDataPartsFragmentDoc, discordDataData);
 
-  return <div>{discordData.username}</div>;
+  if (discordData == null) return null;
+
+  return <div>Logged in as: {discordData.username}</div>;
 };

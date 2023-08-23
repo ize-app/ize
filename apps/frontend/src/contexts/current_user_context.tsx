@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import { MeDocument, UserPartsFragment, UserPartsFragmentDoc } from "../graphql/generated/graphql";
 import React from "react";
 import { FragmentType, useFragment } from "../graphql/generated";
+import { LoggedInUser } from "../components/LoggedInUser";
 
 interface CurrentUserContextValue {
   user: UserPartsFragment | undefined | null;
@@ -19,6 +20,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
   return (
     <CurrentUserContext.Provider value={{ user }}>
       {children}
+      <LoggedInUser />
     </CurrentUserContext.Provider>
   );
 }

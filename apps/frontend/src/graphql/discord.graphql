@@ -1,0 +1,6 @@
+query DiscordServers {
+  discordServers {
+    id
+    name
+  }
+}

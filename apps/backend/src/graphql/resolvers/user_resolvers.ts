@@ -12,7 +12,6 @@ const me = async (
   args: {},
   contextValue: GraphqlRequestContext
 ): Promise<User> => {
-  console.log(contextValue);
   return contextValue.currentUser;
 };
 

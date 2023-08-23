@@ -1,6 +1,15 @@
+type Query {
+  discordServers: [DiscordServer!]!
+}
+
 type DiscordData {
   id: String
   username: String
   discriminator: String
   avatar: String
+}
+
+type DiscordServer {
+  id: String
+  name: String
 }
