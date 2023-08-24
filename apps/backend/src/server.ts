@@ -11,7 +11,6 @@ import * as jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import cookieParser from "cookie-parser";
 import { prisma } from "./prisma/client";
-import bcrypt from "bcrypt";
 import { authenticate } from "./authentication";
 import { USER_SCOPES } from "./discord/oauth";
 import { URLSearchParams } from "url";
@@ -229,7 +228,7 @@ server.start().then(() => {
     expressMiddleware(server, {
       context: async ({ res }) => ({
         currentUser: res.locals.user,
-        discordApi: new DiscordApi(res.locals.user),
+        discordApi: DiscordApi.forUser(res.locals.user),
       }),
     })
   );

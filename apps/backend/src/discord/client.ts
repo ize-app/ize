@@ -8,4 +8,4 @@ discordBotClient.once(Events.ClientReady, (c) => {
 
 discordBotClient.login(process.env.DISCORD_CULTS_BOT_API_TOKEN);
 
-export default discordBotClient;
+export { discordBotClient };
