@@ -11,6 +11,7 @@ const discordServers = async (
   const botApi = DiscordApi.forBotUser();
   const botGuilds = await botApi.getDiscordServers();
   const userGuilds = await context.discordApi.getDiscordServers();
+
   const guilds = userGuilds.filter((guild: Guild) => {
     return botGuilds.some((botGuild: Guild) => botGuild.id === guild.id);
   });

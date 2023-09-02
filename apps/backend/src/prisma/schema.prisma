@@ -11,10 +11,10 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid()) @db.Uuid
+  id           String        @id @default(uuid()) @db.Uuid
   name         String?
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @updatedAt @map("updated_at")
   discordOauth DiscordOauth?
   discordData  DiscordData?
 
@@ -22,27 +22,31 @@ model User {
 }
 
 model DiscordData {
-  id            String  @id @default(uuid()) @db.Uuid
-  user          User    @relation(fields: [userId], references: [id])
-  userId        String  @map("user_id") @unique @db.Uuid
-  discordId     String  @map("discord_id")
+  id            String   @id @default(uuid()) @db.Uuid
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String   @unique @map("user_id") @db.Uuid
+  discordId     String   @map("discord_id")
   username      String
   discriminator String
   avatar        String
   email         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("discord_data")
 }
 
 model DiscordOauth {
-  id           String @id @default(uuid()) @db.Uuid
-  user         User   @relation(fields: [userId], references: [id])
-  userId       String @map("user_id") @unique @db.Uuid
-  accessToken  String @map("access_token")
-  refreshToken String @map("refresh_token")
-  expiresIn    Int    @map("expires_in")
+  id           String   @id @default(uuid()) @db.Uuid
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique @map("user_id") @db.Uuid
+  accessToken  String   @map("access_token")
+  refreshToken String   @map("refresh_token")
+  expiresIn    Int      @map("expires_in")
   scope        String
-  tokenType    String @map("token_type")
+  tokenType    String   @map("token_type")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("discord_oauths")
 }
