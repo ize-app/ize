@@ -1,5 +1,4 @@
 import { ApolloProvider } from '@apollo/client'
-import './App.css'
 import { apolloClient } from './apollo'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './routers/router'

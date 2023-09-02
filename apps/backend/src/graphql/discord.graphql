@@ -3,13 +3,13 @@ type Query {
 }
 
 type DiscordData {
-  id: String
-  username: String
+  id: String!
+  username: String!
   discriminator: String
   avatar: String
 }
 
 type DiscordServer {
-  id: String
-  name: String
+  id: String!
+  name: String!
 }

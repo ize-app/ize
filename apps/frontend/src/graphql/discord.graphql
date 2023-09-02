@@ -1,6 +1,10 @@
 query DiscordServers {
   discordServers {
-    id
-    name
+    ...DiscordServerParts
   }
+}
+
+fragment DiscordServerParts on DiscordServer {
+  id
+  name
 }
