@@ -1,36 +1,33 @@
 import { useLocation } from "react-router-dom";
-import { SetupServerGroupRoute, setUpServerRoute } from "../routers/routes";
+import { useState } from "react";
 
-export const SETUP_SERVER_WIZARD: Wizard = {
-  steps: [
-    setUpServerRoute(SetupServerGroupRoute.Intro),
-    setUpServerRoute(SetupServerGroupRoute.SelectServer),
-    setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),
-    setUpServerRoute(SetupServerGroupRoute.DefineProcess),
-    setUpServerRoute(SetupServerGroupRoute.Finish),
-  ],
-  stepLookup: {
-    [setUpServerRoute(SetupServerGroupRoute.Intro)]: 0,
-    [setUpServerRoute(SetupServerGroupRoute.SelectServer)]: 1,
-    [setUpServerRoute(SetupServerGroupRoute.HowCultsWorks)]: 2,
-    [setUpServerRoute(SetupServerGroupRoute.DefineProcess)]: 3,
-    [setUpServerRoute(SetupServerGroupRoute.Finish)]: 4,
-  },
-};
-
-export interface Wizard {
-  steps: string[];
-  stepLookup: {
-    [key: string]: number;
-  };
+type WizardSteps<FormState> = WizardStep<FormState>[];
+export interface WizardStep<FormState> {
+  title: string;
+  path: string;
+  canNext: (formState: FormState) => boolean;
 }
 
-export function useWizard(wizard: Wizard) {
+export interface Wizard<FormState> {
+  steps: WizardSteps<FormState>;
+  formState: FormState;
+}
+
+export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
-  const currentStep = wizard.stepLookup[location.pathname] ?? 0;
+  const [formState, setFormState] = useState<FormState>(wizard.formState);
+  const currentStepIndex =
+    wizard.steps.findIndex((step) => step.path === location.pathname) ?? 0;
 
-  const prev = wizard.steps.at(currentStep - 1);
-  const next = wizard.steps.at(currentStep + 1);
+  let prev, next;
+  if (currentStepIndex - 1 >= 0) {
+    prev = wizard.steps.at(currentStepIndex - 1)?.path;
+  }
+  if (currentStepIndex + 1 < wizard.steps.length) {
+    next = wizard.steps.at(currentStepIndex + 1)?.path;
+  }
+  const canNext = wizard.steps.at(currentStepIndex)?.canNext ?? (() => true);
+  const title = wizard.steps.at(currentStepIndex)!.title;
 
-  return { prev, next };
+  return { prev, next, formState, setFormState, title, canNext };
 }

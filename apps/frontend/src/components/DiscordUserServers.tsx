@@ -8,7 +8,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { useFormState } from "./SetupServerGroup";
+import { useFormState } from "./SetupServerGroup/SetupServerGroup";
 
 export const DiscordUserServers = () => {
   const { formState, setFormState } = useFormState();
