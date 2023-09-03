@@ -1,8 +1,14 @@
+import { ProcessConfigurationOption } from "../../graphql/generated/graphql";
 import { SetupServerGroupRoute, setUpServerRoute } from "../../routers/routes";
-import { Wizard } from "../../utils/wizard";
+import { Wizard, useWizardFormState } from "../../utils/wizard";
 
-interface SetupServerState {
+export interface SetupServerState {
   serverId?: string;
+  processConfigurationOption: ProcessConfigurationOption;
+}
+
+export function useSetupServerGroupWizardState() {
+  return useWizardFormState<SetupServerState>();
 }
 
 export const SETUP_SERVER_WIZARD: Wizard<SetupServerState> = {
@@ -33,5 +39,8 @@ export const SETUP_SERVER_WIZARD: Wizard<SetupServerState> = {
       canNext: () => true,
     },
   ],
-  formState: {},
+  formState: {
+    // Default to benevolent dictator
+    processConfigurationOption: ProcessConfigurationOption.BenevolentDictator,
+  },
 };

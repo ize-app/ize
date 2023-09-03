@@ -3,15 +3,16 @@ import { DiscordServersDocument } from "../graphql/generated/graphql";
 import {
   Box,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
   Typography,
 } from "@mui/material";
-import { useFormState } from "./SetupServerGroup/SetupServerGroup";
+import { useSetupServerGroupWizardState } from "./SetupServerGroup/setup_server_wizard";
 
 export const DiscordUserServers = () => {
-  const { formState, setFormState } = useFormState();
+  const { formState, setFormState } = useSetupServerGroupWizardState();
 
   const { data } = useQuery(DiscordServersDocument);
 
@@ -28,10 +29,6 @@ export const DiscordUserServers = () => {
 
   return (
     <Box>
-      <Typography variant="h4">Create a group for a discord server</Typography>
-      <Typography variant="body1">
-        Choose which server you want to create a group for.
-      </Typography>
       <FormControl>
         <InputLabel id="select-server-label">Server</InputLabel>
         <Select
@@ -51,6 +48,7 @@ export const DiscordUserServers = () => {
             </MenuItem>
           ))}
         </Select>
+        <FormHelperText>Choose which server you want to create a group for.</FormHelperText>
       </FormControl>
     </Box>
   );

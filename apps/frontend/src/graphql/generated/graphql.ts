@@ -30,6 +30,29 @@ export type DiscordServer = {
   name: Scalars['String']['output'];
 };
 
+export type Group = {
+  __typename?: 'Group';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createDiscordServerGroup: Group;
+};
+
+
+export type MutationCreateDiscordServerGroupArgs = {
+  processConfigurationOption: ProcessConfigurationOption;
+  serverId: Scalars['String']['input'];
+};
+
+export enum ProcessConfigurationOption {
+  BenevolentDictator = 'BenevolentDictator',
+  FullDecentralization = 'FullDecentralization',
+  TrustedAdvisors = 'TrustedAdvisors'
+}
+
 export type Query = {
   __typename?: 'Query';
   discordServers: Array<DiscordServer>;
@@ -104,6 +127,29 @@ export type DiscordServer = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
 };
+
+export type Group = {
+  __typename?: 'Group';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createDiscordServerGroup: Group;
+};
+
+
+export type MutationCreateDiscordServerGroupArgs = {
+  processConfigurationOption: ProcessConfigurationOption;
+  serverId: Scalars['String']['input'];
+};
+
+export enum ProcessConfigurationOption {
+  BenevolentDictator = 'BenevolentDictator',
+  FullDecentralization = 'FullDecentralization',
+  TrustedAdvisors = 'TrustedAdvisors'
+}
 
 export type Query = {
   __typename?: 'Query';

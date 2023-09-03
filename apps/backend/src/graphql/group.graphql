@@ -1,0 +1,17 @@
+enum ProcessConfigurationOption {
+  BenevolentDictator
+  TrustedAdvisors
+  FullDecentralization
+}
+
+type Mutation {
+  createDiscordServerGroup(
+    serverId: String!
+    processConfigurationOption: ProcessConfigurationOption!
+  ): Group!
+}
+
+type Group {
+  id: String!
+  name: String!
+}

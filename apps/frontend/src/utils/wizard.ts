@@ -1,5 +1,5 @@
-import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useOutletContext } from "react-router-dom";
+import { Dispatch, SetStateAction, useState } from "react";
 
 type WizardSteps<FormState> = WizardStep<FormState>[];
 export interface WizardStep<FormState> {
@@ -11,6 +11,15 @@ export interface WizardStep<FormState> {
 export interface Wizard<FormState> {
   steps: WizardSteps<FormState>;
   formState: FormState;
+}
+
+type ContextType<FormState> = {
+  formState: FormState;
+  setFormState: Dispatch<SetStateAction<FormState>>;
+};
+
+export function useWizardFormState<FormState>() {
+  return useOutletContext<ContextType<FormState>>();
 }
 
 export function useWizard<FormState>(wizard: Wizard<FormState>) {
