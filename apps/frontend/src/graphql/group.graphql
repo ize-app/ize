@@ -1,0 +1,6 @@
+mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {
+  createDiscordServerGroup(input: $input) {
+    id
+    name
+  }
+}

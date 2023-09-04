@@ -4,11 +4,15 @@ enum ProcessConfigurationOption {
   FullDecentralization
 }
 
+input CreateDiscordServerGroupInput {
+  serverId: String!
+  processConfigurationOption: ProcessConfigurationOption!
+  roleId: String
+  numberOfResponses: Int
+}
+
 type Mutation {
-  createDiscordServerGroup(
-    serverId: String!
-    processConfigurationOption: ProcessConfigurationOption!
-  ): Group!
+  createDiscordServerGroup(input: CreateDiscordServerGroupInput!): Group!
 }
 
 type Group {

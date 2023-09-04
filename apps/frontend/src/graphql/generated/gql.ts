@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "query DiscordServers {\n  discordServers {\n    ...DiscordServerParts\n  }\n}\n\nquery DiscordServerRoles($serverId: String!) {\n  discordServerRoles(serverId: $serverId) {\n    ...DiscordServerRoleParts\n  }\n}\n\nfragment DiscordServerParts on DiscordServer {\n  id\n  name\n}\n\nfragment DiscordServerRoleParts on DiscordServerRole {\n  id\n  name\n}": types.DiscordServersDocument,
+    "mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {\n  createDiscordServerGroup(input: $input) {\n    id\n    name\n  }\n}": types.CreateDiscordServerGroupDocument,
     "query Users {\n  users {\n    ...UserParts\n  }\n}\n\nquery Me {\n  me {\n    ...UserParts\n  }\n}\n\nfragment UserParts on User {\n  id\n  name\n  discordData {\n    ...DiscordDataParts\n  }\n}\n\nfragment DiscordDataParts on DiscordData {\n  id\n  username\n  discriminator\n  avatar\n}": types.UsersDocument,
 };
 
@@ -35,6 +36,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query DiscordServers {\n  discordServers {\n    ...DiscordServerParts\n  }\n}\n\nquery DiscordServerRoles($serverId: String!) {\n  discordServerRoles(serverId: $serverId) {\n    ...DiscordServerRoleParts\n  }\n}\n\nfragment DiscordServerParts on DiscordServer {\n  id\n  name\n}\n\nfragment DiscordServerRoleParts on DiscordServerRole {\n  id\n  name\n}"): (typeof documents)["query DiscordServers {\n  discordServers {\n    ...DiscordServerParts\n  }\n}\n\nquery DiscordServerRoles($serverId: String!) {\n  discordServerRoles(serverId: $serverId) {\n    ...DiscordServerRoleParts\n  }\n}\n\nfragment DiscordServerParts on DiscordServer {\n  id\n  name\n}\n\nfragment DiscordServerRoleParts on DiscordServerRole {\n  id\n  name\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {\n  createDiscordServerGroup(input: $input) {\n    id\n    name\n  }\n}"): (typeof documents)["mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {\n  createDiscordServerGroup(input: $input) {\n    id\n    name\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

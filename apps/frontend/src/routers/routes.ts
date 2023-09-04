@@ -1,6 +1,8 @@
 export enum Route {
   Home = "/",
   SetupServerGroup = "/setup-server-group",
+  Groups = "/groups",
+  Group = "/groups/:groupId",
 }
 
 export enum SetupServerGroupRoute {
