@@ -24,6 +24,18 @@ const discordServers = async (
   return servers;
 };
 
+const discordServerRoles = async (
+  root: unknown,
+  args: { serverId: string },
+  context: GraphqlRequestContext
+) => {
+  const botApi = DiscordApi.forBotUser();
+  const serverRoles = await botApi.getDiscordServerRoles(args.serverId);
+
+  return serverRoles;
+};
+
 export const discordQueries = {
   discordServers,
+  discordServerRoles,
 };

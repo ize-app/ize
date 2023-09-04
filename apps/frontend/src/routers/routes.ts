@@ -5,12 +5,12 @@ export enum Route {
 
 export enum SetupServerGroupRoute {
   Intro = "",
-  SelectServer = "servers",
-  HowCultsWorks = "how-cults-works",
-  DefineProcess = "define-process",
-  Finish = "finish",
+  SelectServer = "/servers",
+  HowCultsWorks = "/how-cults-works",
+  DefineProcess = "/define-process",
+  Finish = "/finish",
 }
 
 export const setUpServerRoute = (route: SetupServerGroupRoute) => {
-  return `${Route.SetupServerGroup}/${route}`;
+  return `${Route.SetupServerGroup}${route}`;
 };

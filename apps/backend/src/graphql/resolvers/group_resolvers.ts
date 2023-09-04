@@ -1,7 +1,5 @@
 import { IDiscordServer } from "@discord/server_types";
 import { GraphqlRequestContext } from "../context";
-import { Guild } from "discord.js";
-import { DiscordApi } from "@discord/api";
 
 const createDiscordServerGroup = async (
   root: unknown,

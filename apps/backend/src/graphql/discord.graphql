@@ -1,5 +1,6 @@
 type Query {
   discordServers: [DiscordServer!]!
+  discordServerRoles(serverId: String!): [DiscordServerRole!]!
 }
 
 type DiscordData {
@@ -10,6 +11,11 @@ type DiscordData {
 }
 
 type DiscordServer {
+  id: String!
+  name: String!
+}
+
+type DiscordServerRole {
   id: String!
   name: String!
 }

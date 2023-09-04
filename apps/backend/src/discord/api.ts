@@ -1,5 +1,5 @@
 import { Prisma, User } from "@prisma/client";
-import { Guild } from "discord.js";
+import { Guild, Role } from "discord.js";
 
 export class DiscordApi {
   constructor(
@@ -28,6 +28,21 @@ export class DiscordApi {
     );
 
     return guildsResponse.json();
+  }
+
+  async getDiscordServerRoles(serverId: string): Promise<Role[]> {
+    if (!this.isBot) {
+      throw new Error("Only bot users can get server roles");
+    }
+
+    const rolesResponse = await fetch(
+      `https://discord.com/api/guilds/${serverId}/roles`,
+      {
+        headers: this.headers,
+      }
+    );
+
+    return rolesResponse.json();
   }
 
   private get headers() {

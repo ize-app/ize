@@ -1,4 +1,9 @@
-import { useLocation, useOutletContext } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useMatches,
+  useOutletContext,
+} from "react-router-dom";
 import { Dispatch, SetStateAction, useState } from "react";
 
 type WizardSteps<FormState> = WizardStep<FormState>[];
@@ -25,8 +30,15 @@ export function useWizardFormState<FormState>() {
 export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const [formState, setFormState] = useState<FormState>(wizard.formState);
-  const currentStepIndex =
-    wizard.steps.findIndex((step) => step.path === location.pathname) ?? 0;
+  const currentStepIndex = wizard.steps.findIndex(
+    (step) => step.path === location.pathname
+  );
+
+  if (currentStepIndex === -1) {
+    throw new Error(
+      `Could not find step for path ${location.pathname} in wizard`
+    );
+  }
 
   let prev, next;
   if (currentStepIndex - 1 >= 0) {

@@ -7,7 +7,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
 } from "@mui/material";
 import { useSetupServerGroupWizardState } from "./SetupServerGroup/setup_server_wizard";
 

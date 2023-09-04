@@ -5,6 +5,8 @@ import { Wizard, useWizardFormState } from "../../utils/wizard";
 export interface SetupServerState {
   serverId?: string;
   processConfigurationOption: ProcessConfigurationOption;
+  roleId?: string;
+  numberOfResponses?: number;
 }
 
 export function useSetupServerGroupWizardState() {
@@ -21,7 +23,7 @@ export const SETUP_SERVER_WIZARD: Wizard<SetupServerState> = {
     {
       path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
       title: "Select Server",
-      canNext: () => true,
+      canNext: (formState: SetupServerState) => formState.serverId != null,
     },
     {
       path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),
@@ -31,12 +33,16 @@ export const SETUP_SERVER_WIZARD: Wizard<SetupServerState> = {
     {
       path: setUpServerRoute(SetupServerGroupRoute.DefineProcess),
       title: "Define Process",
-      canNext: () => true,
+      canNext: (formState: SetupServerState) =>
+        // The user must either be a benevolent dictator or have selected a role
+        formState.processConfigurationOption ===
+          ProcessConfigurationOption.BenevolentDictator ||
+        (formState.roleId != null && formState.numberOfResponses != null),
     },
     {
       path: setUpServerRoute(SetupServerGroupRoute.Finish),
       title: "Finish",
-      canNext: () => true,
+      canNext: () => false,
     },
   ],
   formState: {
