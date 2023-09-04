@@ -18,6 +18,7 @@ import { APIUser } from "discord.js";
 import { GraphqlRequestContext } from "./graphql/context";
 import { DiscordApi } from "./discord/api";
 import session from "express-session";
+import { User } from "@prisma/client";
 
 const host = process.env.HOST ?? "127.0.0.1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -149,6 +150,7 @@ app.get("/auth/discord/callback", async (req, res) => {
         },
         discordOauth: {
           create: {
+            discordId: id,
             accessToken: access_token,
             refreshToken: refresh_token,
             tokenType: token_type,
@@ -183,6 +185,7 @@ app.get("/auth/discord/callback", async (req, res) => {
               scope,
             },
             create: {
+              discordId: id,
               accessToken: access_token,
               refreshToken: refresh_token,
               tokenType: token_type,
@@ -231,10 +234,15 @@ server.start().then(() => {
     }),
     json(),
     expressMiddleware(server, {
-      context: async ({ res }) => ({
-        currentUser: res.locals.user,
-        discordApi: DiscordApi.forUser(res.locals.user),
-      }),
+      context: async ({ res }) => {
+        const user: User | undefined = res.locals.user;
+
+        return {
+          currentUser: user,
+          discordApi: user ? DiscordApi.forUser(res.locals.user) : undefined,
+          clearCookie: (name: string) => res.clearCookie(name),
+        };
+      },
     })
   );
 

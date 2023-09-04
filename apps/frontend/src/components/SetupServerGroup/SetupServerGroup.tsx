@@ -1,4 +1,3 @@
-import { CurrentUserProvider } from "../../contexts/current_user_context";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
@@ -46,7 +45,7 @@ export const SetupServerGroup = () => {
     useWizard(setupServerWizard);
 
   return (
-    <CurrentUserProvider>
+    <>
       <Typography variant="h1">{title}</Typography>
       <Box minHeight="500px">
         <Outlet context={{ formState, setFormState }} />
@@ -75,6 +74,6 @@ export const SetupServerGroup = () => {
           </div>
         )}
       </Stack>
-    </CurrentUserProvider>
+    </>
   );
 };

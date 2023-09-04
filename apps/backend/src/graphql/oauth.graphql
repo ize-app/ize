@@ -1,0 +1,8 @@
+type Mutation {
+  logOut: LogOutResponse
+}
+
+type LogOutResponse {
+  ok: Boolean!
+  error: String
+}

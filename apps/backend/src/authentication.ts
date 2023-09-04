@@ -14,7 +14,9 @@ export const authenticate = async (
       sub: string;
     };
     const user = await prisma.user.findFirst({
-      where: { discordData: { discordId: sub } },
+      where: {
+        discordOauth: { discordId: sub },
+      },
       include: { discordData: true, discordOauth: true },
     });
     res.locals.user = user;
