@@ -15,6 +15,10 @@ type Mutation {
   createDiscordServerGroup(input: CreateDiscordServerGroupInput!): Group!
 }
 
+type Query {
+  group(id: String!): Group
+}
+
 type Group {
   id: String!
   name: String!

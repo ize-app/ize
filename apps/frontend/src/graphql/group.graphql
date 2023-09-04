@@ -4,3 +4,10 @@ mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {
     name
   }
 }
+
+query Group($id: String!) {
+  group(id: $id) {
+    id
+    name
+  }
+}
