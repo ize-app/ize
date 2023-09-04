@@ -11,7 +11,8 @@
     "paths": {
       "*": ["node_modules/*"],
       "@graphql/*": ["src/graphql/*"],
-      "@discord/*": ["src/discord/*"]
+      "@discord/*": ["src/discord/*"],
+      "@services/*": ["src/services/*"],
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

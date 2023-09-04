@@ -25,7 +25,7 @@ model User {
 
 model DiscordData {
   id            String   @id @default(uuid()) @db.Uuid
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String   @unique @map("user_id") @db.Uuid
   discordId     String   @map("discord_id")
   username      String
@@ -40,7 +40,7 @@ model DiscordData {
 
 model DiscordOauth {
   id           String   @id @default(uuid()) @db.Uuid
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String   @unique @map("user_id") @db.Uuid
   accessToken  String   @map("access_token")
   refreshToken String   @map("refresh_token")
@@ -54,24 +54,45 @@ model DiscordOauth {
 }
 
 model Group {
-  id         String @id @default(uuid()) @db.Uuid
-  name       String
-  creator    User   @relation(fields: [createorId], references: [id])
-  createorId String @map("creator_id") @db.Uuid
+  id        String @id @default(uuid()) @db.Uuid
+  name      String
+  creator   User   @relation(fields: [creatorId], references: [id])
+  creatorId String @map("creator_id") @db.Uuid
 
-  createdAt    DateTime             @default(now()) @map("created_at")
-  updatedAt    DateTime             @default(now()) @updatedAt @map("updated_at")
-  ServerGroup  DiscordServerGroup[]
-  ProcessGroup ProcessGroup[]
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  activeAt           DateTime?
+  deactivatedat      DateTime?
+  DiscordServerGroup DiscordServerGroup[]
+  ProcessGroup       ProcessGroup[]
+  DiscordRoleGroup   DiscordRoleGroup[]
+
+  @@map("groups")
 }
 
 model DiscordServerGroup {
-  id              String   @id @default(uuid()) @db.Uuid
-  discordServerId String   @map("discord_server_id")
-  group           Group    @relation(fields: [groupId], references: [id])
-  groupId         String   @map("group_id") @db.Uuid
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+  id               String             @id @default(uuid()) @db.Uuid
+  discordServerId  String             @map("discord_server_id")
+  group            Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId          String             @map("group_id") @db.Uuid
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  DiscordRoleGroup DiscordRoleGroup[]
+
+  @@map("discord_server_groups")
+}
+
+model DiscordRoleGroup {
+  id                   String             @id @default(uuid()) @db.Uuid
+  discordRoleId        String             @map("discord_role_id")
+  group                Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  discordServerGroup   DiscordServerGroup @relation(fields: [discordServerGroupId], references: [id], onDelete: Cascade)
+  discordServerGroupId String             @map("discord_server_group_id") @db.Uuid
+  groupId              String             @map("group_id") @db.Uuid
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  @@map("discord_role_groups")
 }
 
 model Process {
@@ -85,27 +106,33 @@ model Process {
   updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at")
   ProcessGroup    ProcessGroup[]
   ProcessUser     ProcessUser[]
+
+  @@map("processes")
 }
 
 model ProcessGroup {
   id          String   @id @default(uuid()) @db.Uuid
-  group       Group    @relation(fields: [groupId], references: [id])
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId     String   @map("group_id") @db.Uuid
-  process     Process  @relation(fields: [processId], references: [id])
+  process     Process  @relation(fields: [processId], references: [id], onDelete: Cascade)
   processId   String   @map("process_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
   isDefault   Boolean  @default(false) @map("is_default")
   permissions String[] @default([])
+
+  @@map("process_groups")
 }
 
 model ProcessUser {
   id          String   @id @default(uuid()) @db.Uuid
-  process     Process  @relation(fields: [processId], references: [id])
+  process     Process  @relation(fields: [processId], references: [id], onDelete: Cascade)
   processId   String   @map("process_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String   @map("user_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
   permissions String[] @default([])
+
+  @@map("process_users")
 }

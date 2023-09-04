@@ -1,5 +1,5 @@
 import { CurrentUserProvider } from "../../contexts/current_user_context";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
   SETUP_SERVER_WIZARD_STEPS,

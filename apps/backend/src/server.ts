@@ -214,6 +214,11 @@ const schema = makeExecutableSchema({
 
 const server = new ApolloServer<GraphqlRequestContext>({
   schema,
+  formatError: (formattedError, error) => {
+    console.log(error);
+
+    return formattedError;
+  },
 });
 
 server.start().then(() => {

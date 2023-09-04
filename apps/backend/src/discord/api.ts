@@ -30,6 +30,17 @@ export class DiscordApi {
     return guildsResponse.json();
   }
 
+  async getDiscordServer(serverId: string): Promise<Guild> {
+    const guildResponse = await fetch(
+      `https://discord.com/api/guilds/${serverId}`,
+      {
+        headers: this.headers,
+      }
+    );
+
+    return guildResponse.json();
+  }
+
   async getDiscordServerRoles(serverId: string): Promise<Role[]> {
     if (!this.isBot) {
       throw new Error("Only bot users can get server roles");
