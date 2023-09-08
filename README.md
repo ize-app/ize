@@ -1,24 +1,30 @@
-# cults
+# Cults
 
-install homebrew
+## Running Cults for the first time
+
+Install Homebrew
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
-install postgres
+Install Postgres
 
 `brew install postgresql`
 
-Run postgres
+Run Postgres
 
 `brew services start postgresql`
 
-install nvm
+Install nvm
 
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash`
 
-create a backend .env file
+Install packages
 
-Add a DB URL to your backend .env (may actually be able to do `prisma init`)
+`npm i`
+
+Create a .env file in /backend
+
+Add a DB URL to /backend/.env (may actually be able to do `prisma init`)
 
 ```
 DATABASE_URL="postgresql://<username>@localhost:5432/cults_development"
@@ -26,19 +32,19 @@ DATABASE_URL="postgresql://<username>@localhost:5432/cults_development"
 
 Ask David Or Tyler for Sample .env to fill in discord details (put in shared 1password).
 
-Run frontend
+Run the frontend
 
 `cd apps/frontend && npm run dev`
 
-Run backend
+Build the database and run the backend
 
-`cd apps/backend && npm run start:dev`
+`cd apps/backend && npx prisma db push && npm run start:dev`
 
-Deleting Groups or Processes
+## Deleting Groups or Processes
 
 The easiest way to delete groups and processes is to use your Postgresql GUI and delete the records manually. All the associated records will be deleted due to `CASCADE DELETE` foreign keys
 
-Building a fullstack feature:
+## Building a fullstack feature:
 
 Make DB updates...
 Update the `apps/backend/src/prisma/schema.prisma` with whatever schema updates you want.
