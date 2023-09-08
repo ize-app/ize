@@ -8,6 +8,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [react()],
     server: {
+      port: 5173,
       proxy: {
         "/api": {
           target: env.VITE_CULTS_API_BASE_URL,
