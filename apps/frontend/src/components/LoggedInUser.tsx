@@ -1,29 +1,156 @@
+// import { useContext } from "react";
+// import { CurrentUserContext } from "../contexts/current_user_context";
+// import "./LoggedInUser.css";
+// import { ConnectToDiscord } from "./ConnectToDiscord";
+// import { LogOut } from "./LogOut";
+
+// export const LoggedInUser: React.FC = () => {
+//   const { user } = useContext(CurrentUserContext);
+//   if (user == null)
+//     return (
+//       <div className="logged-in-as">
+//         <ConnectToDiscord />
+//       </div>
+//     );
+
+//   if (user.discordData == null)
+//     return (
+//       <div className="logged-in-as">
+//         <ConnectToDiscord />
+//       </div>
+//     );
+
+//   return (
+//     <div className="logged-in-as">
+//       <p>Logged in as: {user.discordData.username}</p>
+//       <LogOut />
+//     </div>
+//   );
+// };
+
 import { useContext } from "react";
+import styled from '@emotion/styled';
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
+
+
 import { CurrentUserContext } from "../contexts/current_user_context";
-import "./LoggedInUser.css";
 import { ConnectToDiscord } from "./ConnectToDiscord";
 import { LogOut } from "./LogOut";
 
+
+const NavContainer = styled.div`
+  display: flex;
+  height: 60px; 
+  padding: 0px 8px;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+`
+
+const NavControlContainer = styled.div `
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  align-self: stretch;
+`
+
+const Logo = styled.div`
+  color: var(--m-3-sys-light-primary, #6750A4);
+  font-family: Roboto;
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 36px; /* 128.571% */
+  width: 259px;
+  height: 38px;
+`
+
+interface NavLinkProps {
+  title: string;
+  url: string;
+}
+
+const NavLinkContainer = styled.div`
+  display: flex;
+  width: 137px;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+`
+
+const NavLinkLink = styled.a`
+  color: #6750A4;
+  text-align: center;
+  /* M3/label/medium */
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 114.286% */
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  
+`
+
+
+const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
+  return <NavLinkContainer>
+    <NavLinkLink href={url}>{title}</NavLinkLink>
+    </NavLinkContainer>
+}
+
+// const LoggedInAvatar = (picture):JSX.Element => {
+
+// }
+
+const NavAvatarContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`
+
+const NavAvatar = styled.img`
+    height: 30px; 
+    width: auto;
+    border-radius: 100px;
+  `
+
+const NavAvatarUsername = styled.p`
+  color: #000;
+  /* M3/minimal/small */
+  font-family: Roboto;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px; /* 100% */
+  letter-spacing: 0.1px;
+`
+
 export const LoggedInUser: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
-  if (user == null)
-    return (
-      <div className="logged-in-as">
-        <ConnectToDiscord />
-      </div>
-    );
-
-  if (user.discordData == null)
-    return (
-      <div className="logged-in-as">
-        <ConnectToDiscord />
-      </div>
-    );
-
+  console.log('user is',user)
   return (
-    <div className="logged-in-as">
-      <p>Logged in as: {user.discordData.username}</p>
+  <NavContainer>
+    <Logo>Cults </Logo>
+    <NavControlContainer>
+      {(user == null || user.discordData == null) ?
+          <ConnectToDiscord /> :
+      
+      <>
+      <NavLink title='Dashboard' url='/test'/>
+      <NavAvatarContainer>
+      <NavAvatar src="https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png"/>
+      <NavAvatarUsername>{user.discordData.username}</NavAvatarUsername>
+      <ArrowDropDown/>
       <LogOut />
-    </div>
-  );
+      </NavAvatarContainer>
+      </>}
+    </NavControlContainer>
+  </NavContainer>)
+
 };
+      // {/* 
+      // TODO: make the avatar dynamic + user the nickname, not the canonical name
+      // <a href={"https://cdn.discordapp.com/avatars/"+ user.discordData.id + "/" + user.discordData.avatar}>Link</a> 
+      // */}
