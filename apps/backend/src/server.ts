@@ -20,7 +20,7 @@ import { DiscordApi } from "./discord/api";
 import session from "express-session";
 import { User } from "@prisma/client";
 
-const host = process.env.HOST ?? "127.0.0.1";
+const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 const BCRYPT_SALT_ROUNDS = 12;
