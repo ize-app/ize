@@ -102,6 +102,7 @@ const UserDropDown = ({username, avatarURL}: UserDropDownProps):JSX.Element => {
         open={open}
         onClose={handleClose}
         onClick={handleClose}
+        autoFocus={false}
         PaperProps={{
           elevation: 0,
           sx: {
