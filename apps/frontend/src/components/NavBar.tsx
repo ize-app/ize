@@ -1,33 +1,3 @@
-// import { useContext } from "react";
-// import { CurrentUserContext } from "../contexts/current_user_context";
-// import "./LoggedInUser.css";
-// import { ConnectToDiscord } from "./ConnectToDiscord";
-// import { LogOut } from "./LogOut";
-
-// export const LoggedInUser: React.FC = () => {
-//   const { user } = useContext(CurrentUserContext);
-//   if (user == null)
-//     return (
-//       <div className="logged-in-as">
-//         <ConnectToDiscord />
-//       </div>
-//     );
-
-//   if (user.discordData == null)
-//     return (
-//       <div className="logged-in-as">
-//         <ConnectToDiscord />
-//       </div>
-//     );
-
-//   return (
-//     <div className="logged-in-as">
-//       <p>Logged in as: {user.discordData.username}</p>
-//       <LogOut />
-//     </div>
-//   );
-// };
-
 import { useContext } from "react";
 import styled from '@emotion/styled';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
@@ -99,9 +69,6 @@ const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
     </NavLinkContainer>
 }
 
-// const LoggedInAvatar = (picture):JSX.Element => {
-
-// }
 
 const NavAvatarContainer = styled.div`
   display: flex;
@@ -127,7 +94,7 @@ const NavAvatarUsername = styled.p`
   letter-spacing: 0.1px;
 `
 
-export const LoggedInUser: React.FC = () => {
+export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
   console.log('user is',user)
   return (
@@ -150,7 +117,3 @@ export const LoggedInUser: React.FC = () => {
   </NavContainer>)
 
 };
-      // {/* 
-      // TODO: make the avatar dynamic + user the nickname, not the canonical name
-      // <a href={"https://cdn.discordapp.com/avatars/"+ user.discordData.id + "/" + user.discordData.avatar}>Link</a> 
-      // */}
