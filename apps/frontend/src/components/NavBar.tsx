@@ -1,13 +1,18 @@
-import { useContext } from "react";
+import { useMutation } from "@apollo/client";
 import styled from '@emotion/styled';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Logout from '@mui/icons-material/Logout';
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { CurrentUserContext } from "../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
-import { LogOut } from "./LogOut";
+import { LogOutDocument } from "../graphql/generated/graphql";
 import { Logo } from "./Logo";
-
+import { Route } from "../routers/routes";
 
 const NavContainer = styled.div`
   display: flex;
@@ -58,7 +63,6 @@ const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
     </NavLinkContainer>
 }
 
-
 const NavAvatarContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -83,9 +87,90 @@ const NavAvatarUsername = styled.p`
   letter-spacing: 0.1px;
 `
 
+interface NavMenuProps {
+  username: string;
+  avatarURL: string;
+}
+
+const NavMenu = ({username, avatarURL}: NavMenuProps):JSX.Element => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+  const [logOut] = useMutation(LogOutDocument, {
+    onCompleted: () => navigate(Route.Home), update: (cache) => cache.evict({
+      id: "ROOT_QUERY",
+      fieldName: "me",
+    })
+  });
+  
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleLogout = () => {
+    logOut();
+    handleClose();
+  }
+
+  return (
+    <>
+      <NavAvatarContainer onClick={handleClick}>
+        <NavAvatar src={avatarURL}/>
+          <NavAvatarUsername>{username}</NavAvatarUsername>
+        <ArrowDropDown/>
+      </NavAvatarContainer>
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+    </>
+  );
+}
+
 export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
-  console.log('user is',user)
+  
   return (
   <NavContainer>
     <Logo fontSize={28}>Cults </Logo>
@@ -95,12 +180,7 @@ export const NavBar: React.FC = () => {
       
       <>
       <NavLink title='Dashboard' url='/test'/>
-      <NavAvatarContainer>
-      <NavAvatar src="https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png"/>
-      <NavAvatarUsername>{user.discordData.username}</NavAvatarUsername>
-      <ArrowDropDown/>
-      <LogOut />
-      </NavAvatarContainer>
+      <NavMenu username={user.discordData.username} avatarURL="https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png" /> 
       </>}
     </NavControlContainer>
   </NavContainer>)
