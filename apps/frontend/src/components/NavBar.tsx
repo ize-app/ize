@@ -6,6 +6,7 @@ import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { CurrentUserContext } from "../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
 import { LogOut } from "./LogOut";
+import { Logo } from "./Logo";
 
 
 const NavContainer = styled.div`
@@ -22,17 +23,6 @@ const NavControlContainer = styled.div `
   align-items: center;
   gap: 30px;
   align-self: stretch;
-`
-
-const Logo = styled.div`
-  color: var(--m-3-sys-light-primary, #6750A4);
-  font-family: Roboto;
-  font-size: 28px;
-  font-style: italic;
-  font-weight: 700;
-  line-height: 36px; /* 128.571% */
-  width: 259px;
-  height: 38px;
 `
 
 interface NavLinkProps {
@@ -61,7 +51,6 @@ const NavLinkLink = styled.a`
   text-decoration: none;
   
 `
-
 
 const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
   return <NavLinkContainer>
@@ -99,7 +88,7 @@ export const NavBar: React.FC = () => {
   console.log('user is',user)
   return (
   <NavContainer>
-    <Logo>Cults </Logo>
+    <Logo fontSize={28}>Cults </Logo>
     <NavControlContainer>
       {(user == null || user.discordData == null) ?
           <ConnectToDiscord /> :

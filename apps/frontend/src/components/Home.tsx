@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
 
 import { ConnectToDiscord } from "./ConnectToDiscord";
+import { Logo } from "./Logo";
 
 const PageContainer = styled.div`
     display: flex;
@@ -25,16 +26,6 @@ font-weight: 400;
 line-height: 28px; /* 127.273% */
 `
 
-const Logo = styled.div`
-    color: var(--m-3-sys-light-primary, #6750A4);
-    text-align: center;
-    font-family: Roboto;
-    font-size: 120px;
-    font-style: italic;
-    font-weight: 700;
-    line-height: 120px; /* 100% */
-`
-
 const ButtonsContainer = styled.div`
     display: flex;
     justify-content: center;
@@ -44,7 +35,7 @@ const ButtonsContainer = styled.div`
 
 
 export const Home = () => <PageContainer>
-    <Logo>Cults</Logo>
+    <Logo fontSize={120}>Cults</Logo>
     <Subtitle>Process is king</Subtitle>
     <ButtonsContainer>
         <Button variant='contained' color="primary" href="/api/auth/discord/login">Join Alpha Waitlist</Button>
