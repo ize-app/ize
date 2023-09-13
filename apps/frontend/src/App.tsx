@@ -1,25 +1,23 @@
 import { ApolloProvider } from '@apollo/client'
 import { Global, css } from "@emotion/react";
+import { ThemeProvider } from '@mui/material/styles';
+import muiTheme from './style/muiTheme';
 import { apolloClient } from './apollo'
+import GlobalStyles from './style/global';
 import { RouterProvider } from 'react-router-dom'
 import { router } from './routers/router'
 import { CurrentUserProvider } from './contexts/current_user_context'
 
-const GlobalStyles = css`
-    html, body, #root, .MuiContainer-root {
-         height: 100%;
-         margin: 0;
-         padding: 0;
-    }
-`
 
 function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <Global styles={GlobalStyles} />
+      <ThemeProvider theme={muiTheme}>
       <CurrentUserProvider>
         <RouterProvider router={router} />
       </CurrentUserProvider>
+      </ThemeProvider>
     </ApolloProvider>
   )
 }
