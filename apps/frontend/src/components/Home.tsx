@@ -24,8 +24,8 @@ const ButtonsContainer = styled.div`
 `
 
 export const Home = () => <PageContainer>
-    <Logo fontSize={200}>Cults</Logo>
-    <Typography variant='h3'>Process is King</Typography>
+    <Logo fontSize={'8rem'}>Cults</Logo>
+    <Typography variant='h4' align='center'>Process is King</Typography>
     <ButtonsContainer>
         <Button variant='contained' color="primary" href="/api/auth/discord/login">Join Alpha Waitlist</Button>
         <ConnectToDiscord/>

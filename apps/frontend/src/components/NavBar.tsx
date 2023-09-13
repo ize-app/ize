@@ -1,9 +1,9 @@
 import { useMutation } from "@apollo/client";
 import styled from '@emotion/styled';
-import {ArrowDropDown, Logout } from '@mui/icons-material';
+import {ArrowDropDown, Logout, Home } from '@mui/icons-material';
 import {ListItemIcon, Menu, MenuItem, Typography} from '@mui/material'
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { CurrentUserContext } from "../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
@@ -29,14 +29,13 @@ const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
   const NavLinkLink = styled.a`
     color: #6750A4;
     text-align: center;
-    /* M3/label/medium */
-    font-family: Roboto;
-    font-size: 14px;
-    font-style: normal;
+    font-size: 1rem;
     font-weight: 500;
-    line-height: 16px; /* 114.286% */
     letter-spacing: 0.5px;
     text-decoration: none;
+    @media (max-width: 600px) {
+      visibility: hidden;
+    }
   `   
   
   return <NavLinkContainer>
@@ -132,7 +131,12 @@ const UserDropDown = ({username, avatarURL}: UserDropDownProps):JSX.Element => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-
+        <MenuItem>
+          <ListItemIcon>
+            <Home fontSize="small" />
+          </ListItemIcon>
+          <Link to={'/'} >Dashboard</Link>
+        </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
@@ -165,7 +169,7 @@ export const NavBar: React.FC = () => {
   
   return (
   <NavContainer>
-    <Logo fontSize={28}>Cults </Logo>
+    <Logo fontSize={'1.75rem'}>Cults </Logo>
     <NavControlContainer>
       {(user == null || user.discordData == null) ?
           <ConnectToDiscord /> :
