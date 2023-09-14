@@ -1,11 +1,11 @@
 import { Container } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import { LoggedInUser } from "../components/LoggedInUser";
+import { NavBar } from "../components/NavBar";
 
 export const DefaultLayout = () => {
   return (
     <Container>
-      <LoggedInUser />
+      <NavBar />
       <Outlet />
     </Container>
   );
