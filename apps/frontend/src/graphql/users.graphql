@@ -21,6 +21,7 @@ fragment UserParts on User {
 fragment DiscordDataParts on DiscordData {
   id
   username
+  discordId
   discriminator
   avatar
 }

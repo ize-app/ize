@@ -10,6 +10,8 @@ import { ConnectToDiscord } from "./ConnectToDiscord";
 import { LogOutDocument } from "../graphql/generated/graphql";
 import { Logo } from "./Logo";
 import { Route } from "../routers/routes";
+import {colors} from "../style/style"
+import {createDiscordAvatarURL} from "../utils/discord"
 
 
 interface NavLinkProps {
@@ -20,14 +22,14 @@ interface NavLinkProps {
 const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
   const NavLinkContainer = styled.li`
     display: flex;
-    width: 137px;
+    width: 120px;
     flex-direction: column;
     justify-content: center;
     align-self: stretch;
   `
 
   const NavLinkLink = styled.a`
-    color: #6750A4;
+    color: ${colors.primary};
     text-align: center;
     font-size: 1rem;
     font-weight: 500;
@@ -42,7 +44,6 @@ const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
     <NavLinkLink href={url}>{title}</NavLinkLink>
     </NavLinkContainer>
 }
-
 
 interface UserDropDownProps {
   username: string;
@@ -76,7 +77,6 @@ const UserDropDown = ({username, avatarURL}: UserDropDownProps):JSX.Element => {
   });
   
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -166,17 +166,15 @@ align-self: stretch;
 
 export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
-  
   return (
   <NavContainer>
     <Logo fontSize={'1.75rem'}>Cults </Logo>
     <NavControlContainer>
       {(user == null || user.discordData == null) ?
           <ConnectToDiscord /> :
-      
       <>
       <NavLink title='Dashboard' url='/test'/>
-      <UserDropDown username={user.discordData.username} avatarURL="https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png" /> 
+      <UserDropDown username={user.discordData.username} avatarURL={createDiscordAvatarURL(user.discordData.discordId, user.discordData.avatar,128)} /> 
       </>}
     </NavControlContainer>
   </NavContainer>)

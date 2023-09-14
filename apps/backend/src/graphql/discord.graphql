@@ -6,8 +6,9 @@ type Query {
 type DiscordData {
   id: String!
   username: String!
+  discordId: String!
   discriminator: String
-  avatar: String
+  avatar: String!
 }
 
 type DiscordServer {
