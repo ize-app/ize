@@ -26,22 +26,23 @@ const NavLink = ({title,url}:NavLinkProps):JSX.Element => {
     flex-direction: column;
     justify-content: center;
     align-self: stretch;
-  `
 
-  const NavLinkLink = styled.a`
-    color: ${colors.primary};
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-decoration: none;
-    @media (max-width: 600px) {
-      visibility: hidden;
+    a {
+      color: ${colors.primary};
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      @media (max-width: 600px) {
+        visibility: hidden;
+      }
     }
-  `   
+  `
   
   return <NavLinkContainer>
-    <NavLinkLink href={url}>{title}</NavLinkLink>
+    {/* <NavLinkLink href={url}>{title}</NavLinkLink> */}
+      <Link to={url} >{title}</Link>
     </NavLinkContainer>
 }
 
@@ -173,7 +174,7 @@ export const NavBar: React.FC = () => {
       {(user == null || user.discordData == null) ?
           <ConnectToDiscord /> :
       <>
-      <NavLink title='Dashboard' url='/test'/>
+      <NavLink title='Dashboard' url='/'/>
       <UserDropDown username={user.discordData.username} avatarURL={createDiscordAvatarURL(user.discordData.discordId, user.discordData.avatar,128)} /> 
       </>}
     </NavControlContainer>
