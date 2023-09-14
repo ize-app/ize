@@ -3,8 +3,8 @@ import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 
 import { CurrentUserContext } from "../contexts/current_user_context";
-import { ConnectToDiscord } from "./Shared/ConnectToDiscord";
-import { Logo } from "./Shared/Logo";
+import { ConnectToDiscord } from "./shared/ConnectToDiscord";
+import { Logo } from "./shared/Logo";
 
 const PageContainer = styled.div`
   display: flex;

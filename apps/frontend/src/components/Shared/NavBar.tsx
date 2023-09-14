@@ -5,13 +5,13 @@ import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-import { CurrentUserContext } from "../contexts/current_user_context";
+import { CurrentUserContext } from "../../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
-import { LogOutDocument } from "../graphql/generated/graphql";
+import { LogOutDocument } from "../../graphql/generated/graphql";
 import { Logo } from "./Logo";
-import { Route } from "../routers/routes";
-import { colors } from "../style/style";
-import { createDiscordAvatarURL } from "../utils/discord";
+import { Route } from "../../routers/routes";
+import { colors } from "../../style/style";
+import { createDiscordAvatarURL } from "../../utils/discord";
 
 interface NavLinkProps {
   title: string;
