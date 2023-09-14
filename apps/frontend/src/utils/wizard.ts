@@ -27,15 +27,15 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const navigate = useNavigate();
   const [formState, setFormState] = useState<FormState>(
-    wizard.initialFormState
+    wizard.initialFormState,
   );
   const currentStepIndex = wizard.steps.findIndex(
-    (step) => step.path === location.pathname
+    (step) => step.path === location.pathname,
   );
 
   if (currentStepIndex === -1) {
     throw new Error(
-      `Could not find step for path ${location.pathname} in wizard`
+      `Could not find step for path ${location.pathname} in wizard`,
     );
   }
 

@@ -10,7 +10,9 @@ export const CurrentUserContext = React.createContext<CurrentUserContextValue>({
   user: undefined,
 });
 
-export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { data } = useQuery(MeDocument);
   const user = data?.me;
 
@@ -19,4 +21,4 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
       {children}
     </CurrentUserContext.Provider>
   );
-}
+};
