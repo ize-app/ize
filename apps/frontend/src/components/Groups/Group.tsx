@@ -11,9 +11,5 @@ export const Group = () => {
     },
   });
 
-  return (
-    <div>
-      Group {data?.group?.name}
-    </div>
-  );
+  return <div>Group {data?.group?.name}</div>;
 };

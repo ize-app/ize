@@ -37,7 +37,10 @@ export const DiscordUserServers = () => {
           value={formState.serverId ?? ""}
           label="Server"
           onChange={(event) => {
-            setFormState((prev) => ({ ...prev, serverId: event.target.value ?? "" }));
+            setFormState((prev) => ({
+              ...prev,
+              serverId: event.target.value ?? "",
+            }));
           }}
           autoWidth
         >
@@ -47,7 +50,9 @@ export const DiscordUserServers = () => {
             </MenuItem>
           ))}
         </Select>
-        <FormHelperText>Choose which server you want to create a group for.</FormHelperText>
+        <FormHelperText>
+          Choose which server you want to create a group for.
+        </FormHelperText>
       </FormControl>
     </Box>
   );

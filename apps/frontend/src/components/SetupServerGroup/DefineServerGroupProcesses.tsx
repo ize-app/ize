@@ -44,7 +44,7 @@ const INITIAL_PROCESS_CONFIGURATION_OPTIONS = [
 export const DefineServerGroupProcesses = () => {
   const { formState, setFormState } = useSetupServerGroupWizardState();
   const configurationOption = INITIAL_PROCESS_CONFIGURATION_OPTIONS.find(
-    (option) => option.value === formState.processConfigurationOption
+    (option) => option.value === formState.processConfigurationOption,
   );
 
   const { data } = useQuery(DiscordServerRolesDocument, {

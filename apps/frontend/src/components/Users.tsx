@@ -5,4 +5,4 @@ export const Users: React.FC = () => {
   const { data } = useQuery(UsersDocument);
 
   return data?.users?.map((user) => <div>{user?.name}</div>);
-}
+};

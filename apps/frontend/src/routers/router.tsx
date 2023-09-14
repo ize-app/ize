@@ -23,16 +23,28 @@ export const router = createBrowserRouter([
         path: Route.SetupServerGroup,
         children: [
           { element: <Intro />, index: true },
-          { path: setUpServerRoute(SetupServerGroupRoute.SelectServer), element: <DiscordUserServers /> },
-          { path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks), element: <HowCultsWorks /> },
-          { path: setUpServerRoute(SetupServerGroupRoute.DefineProcess), element: <DefineServerGroupProcesses /> },
-          { path: setUpServerRoute(SetupServerGroupRoute.Finish), element: <Finish /> },
-        ]
+          {
+            path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
+            element: <DiscordUserServers />,
+          },
+          {
+            path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),
+            element: <HowCultsWorks />,
+          },
+          {
+            path: setUpServerRoute(SetupServerGroupRoute.DefineProcess),
+            element: <DefineServerGroupProcesses />,
+          },
+          {
+            path: setUpServerRoute(SetupServerGroupRoute.Finish),
+            element: <Finish />,
+          },
+        ],
       },
       {
         path: Route.Group,
-        element: <Group />
-      }
+        element: <Group />,
+      },
     ],
   },
 ]);
