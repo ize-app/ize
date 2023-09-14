@@ -1,5 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
-import { Global, css } from "@emotion/react";
+import { Global } from "@emotion/react";
 import { ThemeProvider } from '@mui/material/styles';
 import muiTheme from './style/muiTheme';
 import { apolloClient } from './apollo'
