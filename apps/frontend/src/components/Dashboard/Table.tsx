@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { SxProps } from "@mui/material";
+import { SxProps, TableCellProps, styled } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -16,7 +16,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { AvatarGroup, AvatarProps, AvatarsProps } from "../shared/Avatar";
+import { AvatarGroup, AvatarProps } from "../shared/Avatar";
 import { mockData } from "./mockData";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
@@ -31,11 +31,19 @@ export interface RequestProps {
   userVote: string;
 }
 
-interface TwoTierCellProps {
+interface TwoTierCellProps extends TableCellHideableProps {
   topText: string;
   bottomText: string;
   topStyleOverrides?: SxProps;
   bottomStyleOverrides?: SxProps;
+}
+
+interface StatusCellProps extends TableCellHideableProps {
+  expirationDateString: string;
+}
+
+interface AvatarsCellProps extends TableCellHideableProps {
+  avatars: AvatarProps[];
 }
 
 const TwoTierCell = ({
@@ -43,41 +51,90 @@ const TwoTierCell = ({
   bottomText,
   topStyleOverrides,
   bottomStyleOverrides,
+  ...props
 }: TwoTierCellProps) => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "6px",
-      }}
-    >
-      <Typography variant="label" sx={topStyleOverrides}>
-        {topText}
-      </Typography>
-      <Typography sx={bottomStyleOverrides}>{bottomText}</Typography>
-    </Box>
+    <TableCellHideable {...props}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "6px",
+        }}
+      >
+        <Typography
+          variant="label"
+          sx={{
+            ...topStyleOverrides,
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            maxHeight: "2.4rem",
+            lineHeight: "1.2rem",
+            "-webkit-line-clamp": 2,
+          }}
+        >
+          {topText}
+        </Typography>
+        <Typography
+          sx={{
+            ...bottomStyleOverrides,
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            maxHeight: "2.4rem",
+            lineHeight: "1.2rem",
+            "-webkit-line-clamp": 2,
+          }}
+        >
+          {bottomText}
+        </Typography>
+      </Box>
+    </TableCellHideable>
   );
 };
 
-const AvatarsCell = ({ avatars }: AvatarsProps): JSX.Element => {
+const AvatarsCell = ({ avatars, ...props }: AvatarsCellProps): JSX.Element => {
+  console.log("avatars are ", avatars);
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <AvatarGroup avatars={avatars} />
-    </Box>
+    <TableCellHideable {...props}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <AvatarGroup avatars={avatars} />
+      </Box>
+    </TableCellHideable>
+  );
+};
+
+const HiddenCell = styled(TableCell)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  },
+}));
+
+interface TableCellHideableProps extends TableCellProps {
+  hideOnSmallScreen?: boolean;
+}
+
+const TableCellHideable = ({
+  hideOnSmallScreen,
+  ...props
+}: TableCellHideableProps): JSX.Element => {
+  return hideOnSmallScreen ? (
+    <HiddenCell {...props}>{props.children}</HiddenCell>
+  ) : (
+    <TableCell sx={{}} {...props}>
+      {props.children}
+    </TableCell>
   );
 };
 
 const StatusCell = ({
   expirationDateString,
-}: {
-  expirationDateString: string;
-}): JSX.Element => {
+  ...props
+}: StatusCellProps): JSX.Element => {
   const now = new Date();
   const expirationDate = new Date(expirationDateString);
   const remainingMinutes =
@@ -93,7 +150,8 @@ const StatusCell = ({
           year: "numeric",
           month: "short",
         })}
-      ></TwoTierCell>
+        {...props}
+      />
     );
   } else if (remainingMinutes < 60)
     return (
@@ -103,7 +161,8 @@ const StatusCell = ({
           Math.ceil(remainingMinutes) > 1 ? "s" : ""
         } left`}
         bottomStyleOverrides={{ color: "red" }}
-      ></TwoTierCell>
+        {...props}
+      />
     );
   else if (remainingMinutes < 60 * 24)
     return (
@@ -113,7 +172,8 @@ const StatusCell = ({
           Math.floor(remainingMinutes / 60) > 1 ? "s" : ""
         } left`}
         bottomStyleOverrides={{ color: "red" }}
-      ></TwoTierCell>
+        {...props}
+      />
     );
   else
     return (
@@ -122,7 +182,8 @@ const StatusCell = ({
         bottomText={`${Math.floor(remainingMinutes / (60 * 24))} day${
           Math.floor((remainingMinutes / 60) * 24) > 1 ? "s" : ""
         } left`}
-      ></TwoTierCell>
+        {...props}
+      />
     );
 };
 
@@ -142,22 +203,24 @@ function ProposalRow(props: { request: RequestProps }) {
         onClick={handleTableRowOnClick}
         sx={{ "& > *": { borderBottom: "unset" } }}
       >
-        <TableCell component="th" scope="row">
-          <TwoTierCell topText={request.process} bottomText={request.request} />
-        </TableCell>
-        <TableCell>{<AvatarsCell avatars={request.creator} />}</TableCell>
-        <TableCell align="center">
-          <StatusCell
-            expirationDateString={request.expirationDate}
-          ></StatusCell>
-        </TableCell>
-        <TableCell align="center">
-          <TwoTierCell
-            topText={request.decisionType}
-            bottomText={"6 hours left"}
-          />
-        </TableCell>
-        <TableCell align={"right"}>
+        <TwoTierCell
+          topText={request.process}
+          bottomText={request.request}
+          component="th"
+          scope="row"
+        />
+        <AvatarsCell avatars={request.creator} hideOnSmallScreen={true} />
+        <StatusCell
+          align="center"
+          expirationDateString={request.expirationDate}
+        ></StatusCell>
+        <TwoTierCell
+          topText={request.decisionType}
+          bottomText={"6 hours left"}
+          hideOnSmallScreen={true}
+          align="center"
+        />
+        <TableCellHideable align={"right"}>
           Vote
           <IconButton
             aria-label="expand row"
@@ -166,11 +229,10 @@ function ProposalRow(props: { request: RequestProps }) {
               e.stopPropagation();
               setOpen(!open);
             }}
-            // onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell>
+        </TableCellHideable>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -189,14 +251,20 @@ function ProposalRow(props: { request: RequestProps }) {
 
 export default function CollapsibleTable() {
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
+    <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
+      <Table aria-label="collapsible table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCell>Request</TableCell>
-            <TableCell align="center">Creator</TableCell>
-            <TableCell align="center">Status</TableCell>
-            <TableCell align="center">Decision</TableCell>
+            <TableCellHideable sx={{ maxWidth: "50%" }}>
+              Request
+            </TableCellHideable>
+            <TableCellHideable align="center" hideOnSmallScreen={true}>
+              Creator
+            </TableCellHideable>
+            <TableCellHideable align="center">Status</TableCellHideable>
+            <TableCellHideable hideOnSmallScreen={true} align="center">
+              Decision
+            </TableCellHideable>
             <TableCell align="right">Your vote</TableCell>
           </TableRow>
         </TableHead>
