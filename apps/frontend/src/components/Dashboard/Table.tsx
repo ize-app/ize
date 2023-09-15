@@ -5,6 +5,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { SxProps, TableCellProps, styled } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -28,7 +29,7 @@ export interface RequestProps {
   respond: AvatarProps[];
   expirationDate: string;
   decisionType: string;
-  userVote: string;
+  userVote: string | null;
 }
 
 interface TwoTierCellProps extends TableCellHideableProps {
@@ -66,11 +67,15 @@ const TwoTierCell = ({
           variant="label"
           sx={{
             ...topStyleOverrides,
-            textOverflow: "ellipsis",
+            // textOverflow: "ellipsis",
+            // overflow: "hidden",
+            // maxHeight: "2.4rem",
+            // lineHeight: "1.2rem",
+            display: "-webkit-box",
+            "-webkit-box-orient": "vertical",
+            "-webkit-line-clamp": "2",
             overflow: "hidden",
-            maxHeight: "2.4rem",
-            lineHeight: "1.2rem",
-            "-webkit-line-clamp": 2,
+            textOverflow: "ellipsis",
           }}
         >
           {topText}
@@ -78,11 +83,11 @@ const TwoTierCell = ({
         <Typography
           sx={{
             ...bottomStyleOverrides,
-            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            "-webkit-box-orient": "vertical",
+            "-webkit-line-clamp": "2",
             overflow: "hidden",
-            maxHeight: "2.4rem",
-            lineHeight: "1.2rem",
-            "-webkit-line-clamp": 2,
+            textOverflow: "ellipsis",
           }}
         >
           {bottomText}
@@ -147,7 +152,6 @@ const StatusCell = ({
         topText="Closed"
         bottomText={expirationDate.toLocaleString("en-US", {
           day: "numeric",
-          year: "numeric",
           month: "short",
         })}
         {...props}
@@ -197,6 +201,8 @@ function ProposalRow(props: { request: RequestProps }) {
     navigate(`/request/${request.requestId}`);
   };
 
+  const alreadyVoted = typeof request.userVote === "string";
+
   return (
     <React.Fragment>
       <TableRow
@@ -212,6 +218,7 @@ function ProposalRow(props: { request: RequestProps }) {
         <AvatarsCell avatars={request.creator} hideOnSmallScreen={true} />
         <StatusCell
           align="center"
+          hideOnSmallScreen={true}
           expirationDateString={request.expirationDate}
         ></StatusCell>
         <TwoTierCell
@@ -220,31 +227,53 @@ function ProposalRow(props: { request: RequestProps }) {
           hideOnSmallScreen={true}
           align="center"
         />
-        <TableCellHideable align={"right"}>
-          Vote
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open);
-            }}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCellHideable>
+        <TableCellHideable align={"center"}>
+          {!alreadyVoted ? (
+            <>
+              {/* Vote
+              <IconButton
+                aria-label="expand row"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(!open);
+                }}
+              >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton> */}
+              <Button
+                variant="outlined"
+                endIcon={
+                  open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+                }
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(!open);
+                }}
+                aria-label="expand row"
+              >
+                Vote
+              </Button>
+            </>
+          ) : (
+            <Typography>{request.userVote}</Typography>
+          )}
+        </TableCellHideable>{" "}
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                To be created....
-              </Typography>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+      {!alreadyVoted && (
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  To be created....
+                </Typography>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
     </React.Fragment>
   );
 }
@@ -258,14 +287,30 @@ export default function CollapsibleTable() {
             <TableCellHideable sx={{ maxWidth: "50%" }}>
               Request
             </TableCellHideable>
-            <TableCellHideable align="center" hideOnSmallScreen={true}>
+            <TableCellHideable
+              align="center"
+              sx={{ minWidth: "100px" }}
+              hideOnSmallScreen={true}
+            >
               Creator
             </TableCellHideable>
-            <TableCellHideable align="center">Status</TableCellHideable>
-            <TableCellHideable hideOnSmallScreen={true} align="center">
+            <TableCellHideable
+              hideOnSmallScreen={true}
+              sx={{ minWidth: "100px" }}
+              align="center"
+            >
+              Status
+            </TableCellHideable>
+            <TableCellHideable
+              sx={{ minWidth: "100px" }}
+              hideOnSmallScreen={true}
+              align="center"
+            >
               Decision
             </TableCellHideable>
-            <TableCell align="right">Your vote</TableCell>
+            <TableCell align="center" width={"70px"}>
+              Your vote
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
