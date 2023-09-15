@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { Tabs, TabProps } from "./Tabs";
+import Table from "./Table";
 import TabPanel from "./TabPanel";
 
+const RequestTab = () => {
+  return (
+    <>
+      <Table />
+    </>
+  );
+};
+
 const tabs = [
-  { title: "Requests", content: <div>Requests</div> },
+  { title: "Requests", content: <RequestTab /> },
   { title: "Process", content: <div>Process</div> },
   { title: "Groups", content: <div>Groups</div> },
 ];

@@ -2,8 +2,14 @@
 
 export const fontFamily = "Roboto";
 
-export const colors = {
+interface ColorProps {
+  [key: string]: string;
+}
+
+export const colors: ColorProps = {
   primary: "#6750A4",
+  primaryContainer: "#EADDFF",
+  onPrimaryContainer: "#21005D",
   secondary: "#625B71",
   error: "#B3261E",
 };

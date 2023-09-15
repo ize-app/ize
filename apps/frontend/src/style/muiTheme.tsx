@@ -4,20 +4,19 @@ import * as style from "./style";
 
 declare module "@mui/material/styles" {
   interface TypographyVariants {
-    navBarLink: React.CSSProperties;
+    label: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions {
-    navBarLink?: React.CSSProperties;
+    label?: React.CSSProperties;
   }
 }
 
 // Update the Typography's variant prop options
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
-    navBarLink: true;
-    h3: false;
+    label: true;
   }
 }
 
@@ -37,8 +36,11 @@ const muiTheme = createTheme({
     button: {
       textTransform: "none",
     },
-    navBarLink: {
-      fontSize: "1rem",
+    label: {
+      fontSize: ".875rem",
+      color: style.colors.primary,
+      fontWeight: 500,
+      letterSpacing: ".05rem",
     },
   },
   components: {
@@ -55,6 +57,15 @@ const muiTheme = createTheme({
           "& a": {
             textDecoration: "none",
             color: "black",
+          },
+        },
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "& .MuiTableCell-root": {
+            color: style.colors.primary,
           },
         },
       },
