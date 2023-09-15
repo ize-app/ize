@@ -32,7 +32,7 @@ const Dashboard = () => {
         handleChange={handleChange}
       />
       {tabs.map((tab: TabProps, index) => (
-        <TabPanel value={currentTabIndex} index={index}>
+        <TabPanel value={currentTabIndex} index={index} key={index}>
           {tab.content}
         </TabPanel>
       ))}

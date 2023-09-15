@@ -9,6 +9,7 @@ import { HowCultsWorks } from "../components/SetupServerGroup/HowCultsWorks";
 import { Intro } from "../components/SetupServerGroup/Intro";
 import { Finish } from "../components/SetupServerGroup/Finish";
 import { Group } from "../components/Groups/Group";
+import { Request } from "../components/Request/Request";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: Route.Group,
         element: <Group />,
+      },
+      {
+        path: Route.Request,
+        element: <Request />,
       },
     ],
   },

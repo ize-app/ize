@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -19,6 +20,7 @@ import { mockData } from "./mockData";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {
+  requestId: string;
   process: string;
   request: string;
   creator: AvatarProps[];
@@ -65,9 +67,20 @@ function ProposalRow(props: { request: RequestProps }) {
   const { request } = props;
   const [open, setOpen] = React.useState(false);
 
+  const navigate = useNavigate();
+
+  const handleTableRowOnClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log("target is ", event);
+
+    navigate(`/request/${request.requestId}`);
+  };
+
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        onClick={handleTableRowOnClick}
+        sx={{ "& > *": { borderBottom: "unset" } }}
+      >
         <TableCell component="th" scope="row">
           <TwoTierCell topText={request.process} bottomText={request.request} />
         </TableCell>
@@ -79,7 +92,11 @@ function ProposalRow(props: { request: RequestProps }) {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(!open);
+            }}
+            // onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -116,7 +133,7 @@ export default function CollapsibleTable() {
         </TableHead>
         <TableBody>
           {mockData.map((request) => (
-            <ProposalRow key={request.request} request={request} />
+            <ProposalRow key={request.requestId} request={request} />
           ))}
         </TableBody>
       </Table>

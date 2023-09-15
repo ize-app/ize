@@ -33,7 +33,7 @@ export const Tabs = ({
           aria-label="tabs"
         >
           {tabs.map((tab: TabProps, index) => {
-            return <Tab label={tab.title} {...a11yProps(index)} />;
+            return <Tab label={tab.title} key={index} {...a11yProps(index)} />;
           })}
         </MuiTabs>
       </Box>

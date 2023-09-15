@@ -67,7 +67,7 @@ export const AvatarGroup = ({ avatars }: AvatarsProps): JSX.Element => {
         }}
       >
         {avatars.map((avatar) => (
-          <Avatar url={avatar.url} name={avatar.name} />
+          <Avatar key={avatar.name} url={avatar.url} name={avatar.name} />
         ))}
       </MuiAvatarGroup>
     );

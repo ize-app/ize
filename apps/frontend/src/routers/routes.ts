@@ -3,6 +3,7 @@ export enum Route {
   SetupServerGroup = "/setup-server-group",
   Groups = "/groups",
   Group = "/groups/:groupId",
+  Request = "/request/:requestId",
 }
 
 export enum SetupServerGroupRoute {
