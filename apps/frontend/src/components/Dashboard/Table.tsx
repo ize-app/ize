@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -33,9 +34,16 @@ export interface RequestProps {
 interface TwoTierCellProps {
   topText: string;
   bottomText: string;
+  topStyleOverrides?: SxProps;
+  bottomStyleOverrides?: SxProps;
 }
 
-const TwoTierCell = ({ topText, bottomText }: TwoTierCellProps) => {
+const TwoTierCell = ({
+  topText,
+  bottomText,
+  topStyleOverrides,
+  bottomStyleOverrides,
+}: TwoTierCellProps) => {
   return (
     <Box
       sx={{
@@ -44,8 +52,10 @@ const TwoTierCell = ({ topText, bottomText }: TwoTierCellProps) => {
         gap: "6px",
       }}
     >
-      <Typography variant="label">{topText}</Typography>
-      <Typography>{bottomText}</Typography>
+      <Typography variant="label" sx={topStyleOverrides}>
+        {topText}
+      </Typography>
+      <Typography sx={bottomStyleOverrides}>{bottomText}</Typography>
     </Box>
   );
 };
@@ -63,15 +73,66 @@ const AvatarsCell = ({ avatars }: AvatarsProps): JSX.Element => {
   );
 };
 
+const StatusCell = ({
+  expirationDateString,
+}: {
+  expirationDateString: string;
+}): JSX.Element => {
+  const now = new Date();
+  const expirationDate = new Date(expirationDateString);
+  const remainingMinutes =
+    (expirationDate.getTime() - now.getTime()) / (1000 * 60);
+
+  // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
+  if (remainingMinutes < 0) {
+    return (
+      <TwoTierCell
+        topText="Closed"
+        bottomText={expirationDate.toLocaleString("en-US", {
+          day: "numeric",
+          year: "numeric",
+          month: "short",
+        })}
+      ></TwoTierCell>
+    );
+  } else if (remainingMinutes < 60)
+    return (
+      <TwoTierCell
+        topText="Open"
+        bottomText={`${Math.ceil(remainingMinutes)} minute${
+          Math.ceil(remainingMinutes) > 1 ? "s" : ""
+        } left`}
+        bottomStyleOverrides={{ color: "red" }}
+      ></TwoTierCell>
+    );
+  else if (remainingMinutes < 60 * 24)
+    return (
+      <TwoTierCell
+        topText="Open"
+        bottomText={`${Math.floor(remainingMinutes / 60)} hour${
+          Math.floor(remainingMinutes / 60) > 1 ? "s" : ""
+        } left`}
+        bottomStyleOverrides={{ color: "red" }}
+      ></TwoTierCell>
+    );
+  else
+    return (
+      <TwoTierCell
+        topText="Open"
+        bottomText={`${Math.floor(remainingMinutes / (60 * 24))} day${
+          Math.floor((remainingMinutes / 60) * 24) > 1 ? "s" : ""
+        } left`}
+      ></TwoTierCell>
+    );
+};
+
 function ProposalRow(props: { request: RequestProps }) {
   const { request } = props;
   const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
 
-  const handleTableRowOnClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log("target is ", event);
-
+  const handleTableRowOnClick = () => {
     navigate(`/request/${request.requestId}`);
   };
 
@@ -85,10 +146,19 @@ function ProposalRow(props: { request: RequestProps }) {
           <TwoTierCell topText={request.process} bottomText={request.request} />
         </TableCell>
         <TableCell>{<AvatarsCell avatars={request.creator} />}</TableCell>
-        <TableCell>{<AvatarsCell avatars={request.respond} />}</TableCell>
-        <TableCell align="center">{request.expirationDate}</TableCell>
-        <TableCell align="center">{request.decisionType}</TableCell>
+        <TableCell align="center">
+          <StatusCell
+            expirationDateString={request.expirationDate}
+          ></StatusCell>
+        </TableCell>
+        <TableCell align="center">
+          <TwoTierCell
+            topText={request.decisionType}
+            bottomText={"6 hours left"}
+          />
+        </TableCell>
         <TableCell align={"right"}>
+          Vote
           <IconButton
             aria-label="expand row"
             size="small"
@@ -125,10 +195,9 @@ export default function CollapsibleTable() {
           <TableRow>
             <TableCell>Request</TableCell>
             <TableCell align="center">Creator</TableCell>
-            <TableCell align="center">Respond</TableCell>
-            <TableCell align="center">Closes</TableCell>
+            <TableCell align="center">Status</TableCell>
             <TableCell align="center">Decision</TableCell>
-            <TableCell />
+            <TableCell align="right">Your vote</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
