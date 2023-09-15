@@ -5,6 +5,7 @@ import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+import { Avatar } from "./Avatar";
 import { CurrentUserContext } from "../../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
 import { LogOutDocument } from "../../graphql/generated/graphql";
@@ -41,7 +42,6 @@ const NavLink = ({ title, url }: NavLinkProps): JSX.Element => {
 
   return (
     <NavLinkContainer>
-      {/* <NavLinkLink href={url}>{title}</NavLinkLink> */}
       <Link to={url}>{title}</Link>
     </NavLinkContainer>
   );
@@ -57,13 +57,6 @@ const UserDropDownContainer = styled.li`
   justify-content: center;
   align-items: center;
   gap: 8px;
-`;
-
-const Avatar = styled.img`
-  height: 30px;
-  width: auto;
-  border-radius: 100px;
-  border: 1px;
 `;
 
 const UserDropDown = ({
@@ -96,8 +89,7 @@ const UserDropDown = ({
   return (
     <>
       <UserDropDownContainer onClick={handleClick}>
-        <Avatar src={avatarURL} />
-
+        <Avatar url={avatarURL} name={username} />
         <Typography variant="body1">{username}</Typography>
         <ArrowDropDown />
       </UserDropDownContainer>
