@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabProps } from "./Tabs";
-import Table from "./Table";
+import Table from "./RequestTable";
 import TabPanel from "./TabPanel";
 
 const RequestTab = () => {

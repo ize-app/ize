@@ -1,4 +1,4 @@
-import { RequestProps } from "./Table";
+import { RequestProps } from "./RequestTable";
 
 export const mockData: RequestProps[] = [
   {
@@ -33,7 +33,7 @@ export const mockData: RequestProps[] = [
     ],
     expirationDate: "2023-09-15T11:30:00",
     decisionType: "Threshold",
-    userVote: "Yes",
+    userResponse: "✅ Yes",
   },
   {
     requestId: "4567",
@@ -65,7 +65,7 @@ export const mockData: RequestProps[] = [
     ],
     expirationDate: "2023-09-14T19:00:00",
     decisionType: "Threshold",
-    userVote: null,
+    userResponse: null,
   },
   {
     requestId: "4567",
@@ -97,7 +97,7 @@ export const mockData: RequestProps[] = [
     ],
     expirationDate: "2023-09-30T19:00:00",
     decisionType: "Threshold",
-    userVote: "Yes",
+    userResponse: "✅ Yes",
   },
   {
     requestId: "4567",
@@ -129,38 +129,6 @@ export const mockData: RequestProps[] = [
     ],
     expirationDate: "2023-09-30T19:00:00",
     decisionType: "Threshold",
-    userVote: null,
-  },
-  {
-    requestId: "4567",
-    request: "Send award to TEC hackathon winner",
-    process: "Send ETH from TEC treasury",
-    creator: [
-      {
-        name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
-    respond: [
-      {
-        name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "t sully",
-        url: "",
-      },
-      {
-        name: "t sully",
-        url: "",
-      },
-      {
-        name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
-    expirationDate: "2023-09-30T19:00:00",
-    decisionType: "Threshold",
-    userVote: "string",
+    userResponse: null,
   },
 ];
