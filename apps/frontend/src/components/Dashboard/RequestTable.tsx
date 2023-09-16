@@ -107,7 +107,7 @@ function RequestRow(props: { request: RequestProps }) {
   );
 }
 
-export default function CollapsibleTable() {
+export default function RequestTable() {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
       <Table aria-label="collapsible table" stickyHeader={true}>

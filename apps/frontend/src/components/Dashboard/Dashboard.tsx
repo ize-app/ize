@@ -1,20 +1,14 @@
 import { useState } from "react";
 import { Tabs, TabProps } from "./Tabs";
-import Table from "./RequestTable";
+import GroupTab from "./GroupTab";
+import ProcessTab from "./ProcessTab";
+import RequestTab from "./RequestTab";
 import TabPanel from "./TabPanel";
-
-const RequestTab = () => {
-  return (
-    <>
-      <Table />
-    </>
-  );
-};
 
 const tabs = [
   { title: "Requests", content: <RequestTab /> },
-  { title: "Process", content: <div>Process</div> },
-  { title: "Groups", content: <div>Groups</div> },
+  { title: "Process", content: <ProcessTab /> },
+  { title: "Groups", content: <GroupTab /> },
 ];
 
 const Dashboard = () => {

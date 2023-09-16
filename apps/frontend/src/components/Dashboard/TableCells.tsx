@@ -64,8 +64,8 @@ export const TwoTierCell = ({
           sx={{
             ...topStyleOverrides,
             display: "-webkit-box",
-            "-webkit-box-orient": "vertical",
-            "-webkit-line-clamp": "2",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: "1",
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
@@ -76,8 +76,8 @@ export const TwoTierCell = ({
           sx={{
             ...bottomStyleOverrides,
             display: "-webkit-box",
-            "-webkit-box-orient": "vertical",
-            "-webkit-line-clamp": "2",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: "1",
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
@@ -93,7 +93,6 @@ export const AvatarsCell = ({
   avatars,
   ...props
 }: AvatarsCellProps): JSX.Element => {
-  console.log("avatars are ", avatars);
   return (
     <TableCellHideable {...props}>
       <Box
