@@ -70,6 +70,15 @@ const muiTheme = createTheme({
         },
       },
     },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          width: "30px",
+          height: "30px",
+          fontSize: ".875rem",
+        },
+      },
+    },
   },
 });
 

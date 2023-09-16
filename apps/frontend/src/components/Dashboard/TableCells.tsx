@@ -17,7 +17,8 @@ interface TwoTierCellProps extends TableCellHideableProps {
 }
 
 interface StatusCellProps extends TableCellHideableProps {
-  expirationDateString: string;
+  expirationDate: Date;
+  alreadyResponded: boolean;
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
@@ -108,11 +109,11 @@ export const AvatarsCell = ({
 };
 
 export const StatusCell = ({
-  expirationDateString,
+  expirationDate,
+  alreadyResponded,
   ...props
 }: StatusCellProps): JSX.Element => {
   const now = new Date();
-  const expirationDate = new Date(expirationDateString);
   const remainingMinutes =
     (expirationDate.getTime() - now.getTime()) / (1000 * 60);
 
@@ -135,7 +136,7 @@ export const StatusCell = ({
         bottomText={`${Math.ceil(remainingMinutes)} minute${
           Math.ceil(remainingMinutes) > 1 ? "s" : ""
         } left`}
-        bottomStyleOverrides={{ color: "red" }}
+        bottomStyleOverrides={{ color: alreadyResponded ? "" : "red" }}
         {...props}
       />
     );
@@ -146,7 +147,7 @@ export const StatusCell = ({
         bottomText={`${Math.floor(remainingMinutes / 60)} hour${
           Math.floor(remainingMinutes / 60) > 1 ? "s" : ""
         } left`}
-        bottomStyleOverrides={{ color: "red" }}
+        bottomStyleOverrides={{ color: alreadyResponded ? "" : "red" }}
         {...props}
       />
     );

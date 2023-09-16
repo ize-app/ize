@@ -35,8 +35,6 @@ function stringAvatar(name: string) {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      width: "30px",
-      height: "30px",
     },
     children: `${name.split(" ")[0][0]}${
       name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
@@ -45,7 +43,7 @@ function stringAvatar(name: string) {
 }
 
 export const Avatar = ({ url, name }: AvatarProps): JSX.Element => {
-  return <MuiAvatar src={url} {...stringAvatar(name)} />;
+  return <MuiAvatar src={url} {...stringAvatar(name.toUpperCase())} />;
 };
 
 export const AvatarGroup = ({ avatars }: AvatarsProps): JSX.Element => {
@@ -58,9 +56,6 @@ export const AvatarGroup = ({ avatars }: AvatarsProps): JSX.Element => {
         total={avatars.length}
         sx={{
           "& .MuiAvatarGroup-avatar": {
-            width: "30px",
-            height: "30px",
-            fontSize: "1rem",
             backgroundColor: colors.primaryContainer,
             color: colors.onPrimaryContainer,
           },
