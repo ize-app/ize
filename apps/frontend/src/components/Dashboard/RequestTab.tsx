@@ -8,21 +8,21 @@ import RequestTable from "./RequestTable";
 import Search from "./Search";
 import Select from "./Select";
 
-import { AvatarProps } from "../shared/Avatar";
+import { UserDataProps } from "../shared/Avatar";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {
   requestId: string;
   process: string;
   request: string;
-  creator: AvatarProps[];
-  respond: AvatarProps[];
+  creator: UserDataProps[];
+  respond: UserDataProps[];
   expirationDate: Date;
   decisionType: string;
   userResponse: string | null;
 }
 
-const searchForUser = (regExSearchQuery: RegExp, users: AvatarProps[]) => {
+const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {

@@ -11,18 +11,6 @@ export const requestMockData: RequestProps[] = [
         name: "popp",
         url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
       },
-      {
-        name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
     ],
     respond: [
       {

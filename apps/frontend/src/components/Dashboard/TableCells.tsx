@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { SxProps, TableCellProps, styled } from "@mui/material";
-import { AvatarGroup, AvatarProps } from "../shared/Avatar";
+import { AvatarGroup, UserDataProps } from "../shared/Avatar";
 import TableCell from "@mui/material/TableCell";
 
 interface TableCellHideableProps extends TableCellProps {
@@ -22,7 +22,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: AvatarProps[];
+  avatars: UserDataProps[];
 }
 
 export const HiddenCell = styled(TableCell)(({ theme }) => ({
@@ -102,7 +102,7 @@ export const AvatarsCell = ({
           justifyContent: "center",
         }}
       >
-        <AvatarGroup avatars={avatars} />
+        <AvatarGroup users={avatars} />
       </Box>
     </TableCellHideable>
   );
