@@ -1,26 +1,14 @@
+import React, { useState } from "react";
+
 import Box from "@mui/material/Box";
 import { SelectChangeEvent } from "@mui/material/Select";
-import React, { useState } from "react";
 
 import CreateButton from "./CreateButton";
 import { requestMockData } from "./mockData";
 import RequestTable from "./RequestTable";
 import Search from "./Search";
 import Select from "./Select";
-
 import { UserDataProps } from "../shared/Avatar";
-
-// TODO: this is just the shape of the mock data - will change when we hydrate with real data
-export interface RequestProps {
-  requestId: string;
-  process: string;
-  request: string;
-  creator: UserDataProps[];
-  respond: UserDataProps[];
-  expirationDate: Date;
-  decisionType: string;
-  userResponse: string | null;
-}
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;
@@ -102,15 +90,16 @@ const RequestTab = () => {
             flexDirection: "row",
             gap: "16px",
             width: "100%",
-            maxWidth: "500px",
           }}
         >
-          <Search
-            searchQuery={searchQuery}
-            changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchQuery(event.target.value);
-            }}
-          />
+          <Box sx={{ maxWidth: "250px", width: "100%" }}>
+            <Search
+              searchQuery={searchQuery}
+              changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchQuery(event.target.value);
+              }}
+            />
+          </Box>
           <Select
             changeHandler={(event: SelectChangeEvent) => {
               setSelectOption(event.target.value);

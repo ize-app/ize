@@ -7,8 +7,6 @@ import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { colors } from "../../style/style";
-
 export interface UserDataProps {
   url: string;
   name: string;
@@ -106,10 +104,7 @@ export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
           max={3}
           total={users.length}
           sx={{
-            "& .MuiAvatarGroup-avatar": {
-              backgroundColor: colors.primaryContainer,
-              color: colors.onPrimaryContainer,
-            },
+            "& .MuiAvatarGroup-avatar": {},
           }}
           aria-haspopup="true"
           onMouseEnter={handlePopperOpen}

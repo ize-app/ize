@@ -1,5 +1,36 @@
-import { RequestProps } from "./RequestTab";
 import { addMinutes } from "../../utils/inputs";
+import { UserDataProps } from "../shared/Avatar";
+
+// TODO: this is just the shape of the mock data - will change when we hydrate with real data
+export interface RequestProps {
+  requestId: string;
+  process: string;
+  request: string;
+  creator: UserDataProps[];
+  respond: UserDataProps[];
+  expirationDate: Date;
+  decisionType: string;
+  userResponse: string | null;
+}
+
+interface RightsProps {
+  request: UserDataProps[];
+  respond: UserDataProps[];
+  edit: UserDataProps[];
+}
+
+interface UserRightsProps {
+  request: boolean;
+  respond: boolean;
+  edit: boolean;
+}
+
+export interface ProcessProps {
+  processId: string;
+  name: string;
+  rights: RightsProps;
+  userRights: UserRightsProps;
+}
 
 export const requestMockData: RequestProps[] = [
   {
@@ -169,5 +200,63 @@ export const requestMockData: RequestProps[] = [
     expirationDate: addMinutes(new Date(), -60 * 6),
     decisionType: "Threshold",
     userResponse: null,
+  },
+];
+
+export const processMockData: ProcessProps[] = [
+  {
+    processId: "1",
+    name: "Manage @moderator role [Token Engineering Commons]",
+    rights: {
+      request: [
+        { name: "@core-team", url: "" },
+        { name: "@admin", url: "" },
+      ],
+      respond: [
+        { name: "@core-team", url: "" },
+        {
+          name: "tsully",
+          url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        },
+        {
+          name: "popp",
+          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        },
+        {
+          name: "David Feinerman",
+          url: "",
+        },
+      ],
+      edit: [
+        {
+          name: "popp",
+          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        },
+      ],
+    },
+    userRights: {
+      request: true,
+      respond: true,
+      edit: true,
+    },
+  },
+  {
+    processId: "1",
+    name: "Manage @admin role [Token Engineering Commons]",
+    rights: {
+      request: [{ name: "@admin", url: "" }],
+      respond: [{ name: "@admin", url: "" }],
+      edit: [
+        {
+          name: "popp",
+          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        },
+      ],
+    },
+    userRights: {
+      request: false,
+      respond: false,
+      edit: false,
+    },
   },
 ];
