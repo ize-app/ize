@@ -144,8 +144,8 @@ export const StatusCell = ({
     return (
       <TwoTierCell
         topText="Open"
-        bottomText={`${Math.floor(remainingMinutes / 60)} hour${
-          Math.floor(remainingMinutes / 60) > 1 ? "s" : ""
+        bottomText={`${Math.round(remainingMinutes / 60)} hour${
+          Math.round(remainingMinutes / 60) > 1 ? "s" : ""
         } left`}
         bottomStyleOverrides={{ color: alreadyResponded ? "" : "red" }}
         {...props}

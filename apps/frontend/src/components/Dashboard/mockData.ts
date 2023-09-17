@@ -32,6 +32,14 @@ export interface ProcessProps {
   userRights: UserRightsProps;
 }
 
+export interface GroupProps {
+  groupId: string;
+  name: string;
+  type: "Discord server" | "Discord role";
+  memberCount: number;
+  parentGroup?: GroupProps;
+}
+
 export const requestMockData: RequestProps[] = [
   {
     requestId: "1",
@@ -257,6 +265,39 @@ export const processMockData: ProcessProps[] = [
       request: false,
       respond: false,
       edit: false,
+    },
+  },
+];
+
+export const groupMockData: GroupProps[] = [
+  {
+    groupId: "1",
+    name: "Token Engineering Commons",
+    type: "Discord server",
+    memberCount: 120,
+  },
+  {
+    groupId: "2",
+    name: "@core-team",
+    type: "Discord role",
+    memberCount: 23,
+    parentGroup: {
+      groupId: "1",
+      name: "Token Engineering Commons",
+      type: "Discord server",
+      memberCount: 120,
+    },
+  },
+  {
+    groupId: "3",
+    name: "@test-team",
+    type: "Discord role",
+    memberCount: 23,
+    parentGroup: {
+      groupId: "1",
+      name: "Token Engineering Commons",
+      type: "Discord server",
+      memberCount: 120,
     },
   },
 ];

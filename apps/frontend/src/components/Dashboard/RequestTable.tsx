@@ -15,7 +15,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { RequestProps } from "./RequestTab";
+import { RequestProps } from "./mockData";
 import {
   TwoTierCell,
   AvatarsCell,

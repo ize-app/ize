@@ -27,7 +27,7 @@ function ProcessRow(props: { process: ProcessProps }) {
           "& > *": { borderBottom: "unset" },
         }}
       >
-        <TableCellHideable component="th" scope="row">
+        <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
               display: "flex",
@@ -47,16 +47,22 @@ function ProcessRow(props: { process: ProcessProps }) {
               {process.name}
             </Typography>
           </Box>
-        </TableCellHideable>
+        </TableCell>
         <AvatarsCell
+          align="right"
           avatars={process.rights.request}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
+          align="right"
           avatars={process.rights.respond}
           hideOnSmallScreen={true}
         />
-        <AvatarsCell avatars={process.rights.edit} hideOnSmallScreen={true} />
+        <AvatarsCell
+          avatars={process.rights.edit}
+          align="right"
+          hideOnSmallScreen={true}
+        />
         <TableCellHideable align={"right"}>
           <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
             <Tooltip title="Edit">
@@ -97,20 +103,20 @@ export default function ProcessTable({
       <Table aria-label="table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCellHideable sx={{ minWidth: "40%" }}>
+            <TableCellHideable
+            // sx={{ minWidth: "40%" }}
+            >
               Process
             </TableCellHideable>
             <TableCellHideable
               align="center"
-              // sx={{ minWidth: "100px" }}
-              width="130px"
+              // width="130px"
               hideOnSmallScreen={true}
             >
               Request
             </TableCellHideable>
             <TableCellHideable
               hideOnSmallScreen={true}
-              // sx={{ minWidth: "100px" }}
               width="100px"
               align="center"
             >
