@@ -89,7 +89,7 @@ const UserDropDown = ({
   return (
     <>
       <UserDropDownContainer onClick={handleClick}>
-        <Avatar url={avatarURL} name={username} />
+        <Avatar avatarUrl={avatarURL} name={username} />
         <Typography variant="body1">{username}</Typography>
         <ArrowDropDown />
       </UserDropDownContainer>

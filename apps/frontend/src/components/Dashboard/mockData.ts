@@ -35,6 +35,7 @@ export interface ProcessProps {
 export interface GroupProps {
   groupId: string;
   name: string;
+  avatarURL: string;
   type: "Discord server" | "Discord role";
   memberCount: number;
   parentGroup?: GroupProps;
@@ -48,13 +49,19 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        parent: {
+          name: "Token Engineering Commons",
+          avatarUrl:
+            "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+        },
       },
     ],
     respond: [
       {
         name: "@core-team",
-        url: "",
+        avatarUrl: "",
       },
     ],
     expirationDate: addMinutes(new Date(), 30),
@@ -68,13 +75,14 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
       },
     ],
     respond: [
       {
         name: "@core-team",
-        url: "",
+        avatarUrl: "",
       },
     ],
     expirationDate: addMinutes(new Date(), 180),
@@ -88,25 +96,27 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "fake user",
-        url: "",
+        avatarUrl: "",
       },
     ],
     respond: [
       {
         name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
       },
     ],
     expirationDate: addMinutes(new Date(), 60 * 48),
@@ -120,25 +130,27 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "Trey Anastasio",
-        url: "",
+        avatarUrl: "",
       },
     ],
     respond: [
       {
         name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
       },
     ],
     expirationDate: addMinutes(new Date(), -60 * 72),
@@ -152,25 +164,27 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "Trey Anastasio",
-        url: "",
+        avatarUrl: "",
       },
     ],
     respond: [
       {
         name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
       },
     ],
     expirationDate: addMinutes(new Date(), 60 * 6),
@@ -184,25 +198,27 @@ export const requestMockData: RequestProps[] = [
     creator: [
       {
         name: "Trey Anastasio",
-        url: "",
+        avatarUrl: "",
       },
     ],
     respond: [
       {
         name: "popp",
-        url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "t sully",
-        url: "",
+        avatarUrl: "",
       },
       {
         name: "tsully",
-        url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
       },
     ],
     expirationDate: addMinutes(new Date(), -60 * 6),
@@ -217,28 +233,64 @@ export const processMockData: ProcessProps[] = [
     name: "Manage @moderator role [Token Engineering Commons]",
     rights: {
       request: [
-        { name: "@core-team", url: "" },
-        { name: "@admin", url: "" },
+        {
+          name: "@core-team",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
+          name: "@admin",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
+          name: "@dev",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
       ],
       respond: [
-        { name: "@core-team", url: "" },
+        {
+          name: "@core-team",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
         {
           name: "tsully",
-          url: "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
         },
         {
           name: "popp",
-          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
         },
         {
           name: "David Feinerman",
-          url: "",
+          avatarUrl: "",
         },
       ],
       edit: [
         {
           name: "popp",
-          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
         },
       ],
     },
@@ -252,12 +304,33 @@ export const processMockData: ProcessProps[] = [
     processId: "1",
     name: "Manage @admin role [Token Engineering Commons]",
     rights: {
-      request: [{ name: "@admin", url: "" }],
-      respond: [{ name: "@admin", url: "" }],
+      request: [
+        {
+          name: "@admin",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+      ],
+      respond: [
+        {
+          name: "@admin",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+      ],
       edit: [
         {
           name: "popp",
-          url: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
         },
       ],
     },
@@ -273,6 +346,8 @@ export const groupMockData: GroupProps[] = [
   {
     groupId: "1",
     name: "Token Engineering Commons",
+    avatarURL:
+      "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
     type: "Discord server",
     memberCount: 120,
   },
@@ -280,10 +355,13 @@ export const groupMockData: GroupProps[] = [
     groupId: "2",
     name: "@core-team",
     type: "Discord role",
+    avatarURL: "",
     memberCount: 23,
     parentGroup: {
       groupId: "1",
       name: "Token Engineering Commons",
+      avatarURL:
+        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
       type: "Discord server",
       memberCount: 120,
     },
@@ -292,10 +370,13 @@ export const groupMockData: GroupProps[] = [
     groupId: "3",
     name: "@test-team",
     type: "Discord role",
+    avatarURL: "",
     memberCount: 23,
     parentGroup: {
       groupId: "1",
       name: "Token Engineering Commons",
+      avatarURL:
+        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
       type: "Discord server",
       memberCount: 120,
     },

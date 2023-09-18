@@ -79,6 +79,13 @@ const muiTheme = createTheme({
         },
       },
     },
+    MuiBadge: {
+      styleOverrides: {
+        root: {
+          zIndex: 0,
+        },
+      },
+    },
   },
 });
 

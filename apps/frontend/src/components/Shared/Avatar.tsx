@@ -1,15 +1,19 @@
 import Box from "@mui/material/Box";
+import Badge from "@mui/material/Badge";
 import MuiAvatar, { AvatarProps as MuiAvatarProps } from "@mui/material/Avatar";
 import MuiAvatarGroup from "@mui/material/AvatarGroup";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
+import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+
 import { useState } from "react";
 
 export interface UserDataProps {
-  url: string;
+  avatarUrl: string;
   name: string;
+  parent?: UserDataProps;
 }
 
 export interface UsersDataProps {
@@ -17,8 +21,9 @@ export interface UsersDataProps {
 }
 
 export interface AvatarProps extends MuiAvatarProps {
-  url: string;
+  avatarUrl: string;
   name: string;
+  parent?: UserDataProps;
 }
 
 function stringToColor(string: string) {
@@ -52,13 +57,46 @@ function stringAvatar(name: string) {
   };
 }
 
-export const Avatar = ({ url, name, ...props }: AvatarProps): JSX.Element => {
-  return (
-    <MuiAvatar src={url} {...stringAvatar(name.toUpperCase())} {...props} />
+export const Avatar = ({
+  avatarUrl,
+  name,
+  parent,
+  ...props
+}: AvatarProps): JSX.Element => {
+  return parent ? (
+    <Badge
+      overlap="circular"
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      badgeContent={
+        <SmallAvatar name={parent.name} avatarUrl={parent.avatarUrl} />
+      }
+    >
+      <MuiAvatar
+        src={avatarUrl}
+        {...stringAvatar(name.toUpperCase())}
+        {...props}
+      />
+    </Badge>
+  ) : (
+    <MuiAvatar
+      src={avatarUrl}
+      {...stringAvatar(name.toUpperCase())}
+      {...props}
+    />
   );
 };
 
-export const AvatarWithName = ({ name, url }: UserDataProps): JSX.Element => {
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 16,
+  height: 16,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
+
+export const AvatarWithName = ({
+  name,
+  avatarUrl: url,
+  parent,
+}: UserDataProps): JSX.Element => {
   return (
     <Box
       sx={{
@@ -70,7 +108,15 @@ export const AvatarWithName = ({ name, url }: UserDataProps): JSX.Element => {
         verticalAlign: "middle",
       }}
     >
-      <Avatar url={url} name={name} />
+      <Avatar
+        avatarUrl={url}
+        name={name}
+        parent={
+          parent
+            ? { name: parent.name, avatarUrl: parent.avatarUrl }
+            : undefined
+        }
+      />
       <Typography
         variant="body1"
         sx={{
@@ -111,13 +157,19 @@ export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
           onMouseLeave={handlePopperClose}
         >
           {users.map((user) => (
-            <Avatar key={user.name} url={user.url} name={user.name} />
+            <Avatar
+              key={user.name}
+              avatarUrl={user.avatarUrl}
+              parent={user.parent}
+              name={user.name}
+            />
           ))}
         </MuiAvatarGroup>
       ) : (
         <Avatar
-          url={users[0].url}
+          avatarUrl={users[0].avatarUrl}
           name={users[0].name}
+          parent={users[0].parent}
           aria-haspopup="true"
           onMouseEnter={handlePopperOpen}
           onMouseLeave={handlePopperClose}
@@ -146,7 +198,11 @@ export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
               elevation={4}
             >
               {users.map((user) => (
-                <AvatarWithName name={user.name} url={user.url} />
+                <AvatarWithName
+                  name={user.name}
+                  avatarUrl={user.avatarUrl}
+                  parent={user.parent}
+                />
               ))}
             </Paper>
           </Fade>

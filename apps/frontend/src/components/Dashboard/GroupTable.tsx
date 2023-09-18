@@ -9,6 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
+import { AvatarWithName } from "../shared/Avatar";
 import { GroupProps } from "./mockData";
 import { TableCellHideable } from "./TableCells";
 
@@ -25,18 +26,18 @@ function GroupRow(props: { group: GroupProps }) {
               alignItems: "center",
             }}
           >
-            <Typography
-              variant={"body1"}
-              sx={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: "2",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {group.name}
-            </Typography>
+            <AvatarWithName
+              name={group.name}
+              avatarUrl={group.avatarURL}
+              parent={
+                group.parentGroup
+                  ? {
+                      name: group.parentGroup?.name,
+                      avatarUrl: group.parentGroup?.avatarURL,
+                    }
+                  : undefined
+              }
+            />
           </Box>
         </TableCellHideable>
 
