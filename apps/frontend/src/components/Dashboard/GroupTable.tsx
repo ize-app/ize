@@ -41,13 +41,36 @@ function GroupRow(props: { group: GroupProps }) {
           </Box>
         </TableCellHideable>
 
-        <TableCellHideable align={"right"}>
-          <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-            <Typography>{group.type}</Typography>
+        <TableCellHideable align={"left"}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "8px",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              sx={{
+                height: "1rem",
+                width: "auto",
+              }}
+              component="img"
+              src="/discord-logo.png"
+            />
+            <Typography>
+              {group.type === "Discord server" ? "Server" : "Role"}
+            </Typography>
           </Box>
         </TableCellHideable>
         <TableCellHideable align={"right"}>
-          <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "8px",
+              justifyContent: "flex-end",
+            }}
+          >
             <Typography>{group.memberCount}</Typography>
           </Box>
         </TableCellHideable>
@@ -66,7 +89,7 @@ export default function GroupTable({ groups }: { groups: GroupProps[] }) {
               Group
             </TableCellHideable>
             <TableCellHideable
-              align="right"
+              align="left"
               sx={{ minWidth: "100px" }}
               hideOnSmallScreen={true}
             >
