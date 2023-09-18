@@ -17,11 +17,7 @@ function GroupRow(props: { group: GroupProps }) {
 
   return (
     <React.Fragment>
-      <TableRow
-        sx={{
-          "& > *": { borderBottom: "unset" },
-        }}
-      >
+      <TableRow>
         <TableCellHideable component="th" scope="row" align="left">
           <Box
             sx={{

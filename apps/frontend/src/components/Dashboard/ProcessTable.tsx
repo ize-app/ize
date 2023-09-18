@@ -22,11 +22,7 @@ function ProcessRow(props: { process: ProcessProps }) {
 
   return (
     <React.Fragment>
-      <TableRow
-        sx={{
-          "& > *": { borderBottom: "unset" },
-        }}
-      >
+      <TableRow>
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
