@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -15,10 +16,15 @@ import { TableCellHideable } from "./TableCells";
 
 function GroupRow(props: { group: GroupProps }) {
   const { group } = props;
+  const navigate = useNavigate();
+
+  const handleTableRowOnClick = () => {
+    navigate(`/groups/${group.groupId}`);
+  };
 
   return (
     <React.Fragment>
-      <TableRow>
+      <TableRow onClick={handleTableRowOnClick}>
         <TableCellHideable component="th" scope="row" align="left">
           <Box
             sx={{

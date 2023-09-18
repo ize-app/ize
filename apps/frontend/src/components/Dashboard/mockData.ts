@@ -51,11 +51,6 @@ export const requestMockData: RequestProps[] = [
         name: "popp",
         avatarUrl:
           "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-        parent: {
-          name: "Token Engineering Commons",
-          avatarUrl:
-            "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-        },
       },
     ],
     respond: [
