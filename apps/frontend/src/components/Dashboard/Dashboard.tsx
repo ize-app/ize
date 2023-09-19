@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Tabs, TabProps } from "./Tabs";
-import GroupTab from "./GroupTab";
-import ProcessTab from "./ProcessTab";
-import RequestTab from "./RequestTab";
-import TabPanel from "./TabPanel";
+import { Tabs, TabProps } from "../shared/Tables/Tabs";
+import TabPanel from "../shared/Tables/TabPanel";
+import GroupTab from "../shared/Tables/GroupsTable/GroupTab";
+import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
+import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 
 const tabs = [
   { title: "Requests", content: <RequestTab /> },

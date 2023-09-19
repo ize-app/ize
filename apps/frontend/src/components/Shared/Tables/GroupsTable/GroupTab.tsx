@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
 
-import CreateButton from "./CreateButton";
-import { groupMockData } from "./mockData";
+import CreateButton from "../CreateButton";
+import { groupMockData } from "../mockData";
 import GroupTable from "./GroupTable";
-import Search from "./Search";
+import Search from "../Search";
 
 const GroupTab = () => {
   const [searchQuery, setSearchQuery] = useState("");

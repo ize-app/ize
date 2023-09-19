@@ -10,9 +10,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { AvatarWithName } from "../shared/Avatar";
-import { GroupProps } from "./mockData";
-import { TableCellHideable } from "./TableCells";
+import { AvatarWithName } from "../../Avatar";
+import { GroupProps } from "../mockData";
+import { TableCellHideable } from "../TableCells";
 
 function GroupRow(props: { group: GroupProps }) {
   const { group } = props;

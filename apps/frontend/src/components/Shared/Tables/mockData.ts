@@ -1,5 +1,5 @@
-import { addMinutes } from "../../utils/inputs";
-import { UserDataProps } from "../shared/Avatar";
+import { addMinutes } from "../../../utils/inputs";
+import { UserDataProps } from "../Avatar";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {

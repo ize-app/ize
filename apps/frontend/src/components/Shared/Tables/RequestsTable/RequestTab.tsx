@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { SelectChangeEvent } from "@mui/material/Select";
 
-import CreateButton from "./CreateButton";
-import { requestMockData } from "./mockData";
+import CreateButton from "../CreateButton";
+import { requestMockData } from "../mockData";
 import RequestTable from "./RequestTable";
-import Search from "./Search";
-import Select from "./Select";
-import { UserDataProps } from "../shared/Avatar";
+import Search from "../Search";
+import Select from "../Select";
+import { UserDataProps } from "../../Avatar";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;

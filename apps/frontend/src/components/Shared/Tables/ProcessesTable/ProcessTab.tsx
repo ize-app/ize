@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
 
-import CreateButton from "./CreateButton";
-import { processMockData } from "./mockData";
+import CreateButton from "../CreateButton";
+import { processMockData } from "../mockData";
 import ProcessTable from "./ProcessTable";
-import Search from "./Search";
+import Search from "../Search";
 
-import { UserDataProps } from "../shared/Avatar";
+import { UserDataProps } from "../../Avatar";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;

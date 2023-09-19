@@ -15,13 +15,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { RequestProps } from "./mockData";
+import { RequestProps } from "../mockData";
 import {
   TwoTierCell,
   AvatarsCell,
   StatusCell,
   TableCellHideable,
-} from "./TableCells";
+} from "../TableCells";
 
 function RequestRow(props: { request: RequestProps }) {
   const { request } = props;

@@ -14,8 +14,8 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
-import { ProcessProps } from "./mockData";
-import { AvatarsCell, TableCellHideable } from "./TableCells";
+import { ProcessProps } from "../mockData";
+import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: ProcessProps }) {
   const { process } = props;

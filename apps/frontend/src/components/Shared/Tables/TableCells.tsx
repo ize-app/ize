@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { SxProps, TableCellProps, styled } from "@mui/material";
-import { AvatarGroup, UserDataProps } from "../shared/Avatar";
+import { AvatarGroup, UserDataProps } from "../Avatar";
 import TableCell from "@mui/material/TableCell";
 
 interface TableCellHideableProps extends TableCellProps {
