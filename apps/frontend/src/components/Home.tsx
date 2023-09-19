@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 
+import Dashboard from "./Dashboard/Dashboard";
 import { CurrentUserContext } from "../contexts/current_user_context";
-import { ConnectToDiscord } from "./ConnectToDiscord";
-import { Logo } from "./Logo";
+import { ConnectToDiscord } from "./shared/ConnectToDiscord";
+import { Logo } from "./shared/Logo";
 
 const PageContainer = styled.div`
   display: flex;
@@ -25,7 +26,7 @@ const ButtonsContainer = styled.div`
   gap: 20px;
 `;
 
-export const UnauthenticatedHome = () => (
+const UnauthenticatedHome = () => (
   <PageContainer>
     <Logo fontSize={"8rem"}>Cults</Logo>
     <Typography variant="h4" align="center">
@@ -49,6 +50,6 @@ export const Home = () => {
   return user == null || user.discordData == null ? (
     <UnauthenticatedHome />
   ) : (
-    <div>Authenticated dashboard</div>
+    <Dashboard />
   );
 };

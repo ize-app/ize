@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CurrentUserContext } from "../contexts/current_user_context";
+import { CurrentUserContext } from "../../contexts/current_user_context";
 import Button from "@mui/material/Button";
 
 export const ConnectToDiscord: React.FC = () => {
