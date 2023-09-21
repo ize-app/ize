@@ -34,12 +34,12 @@ function GroupRow(props: { group: GroupProps }) {
           >
             <AvatarWithName
               name={group.name}
-              avatarUrl={group.avatarURL}
+              avatarUrl={group.avatarUrl}
               parent={
                 group.parentGroup
                   ? {
                       name: group.parentGroup?.name,
-                      avatarUrl: group.parentGroup?.avatarURL,
+                      avatarUrl: group.parentGroup?.avatarUrl,
                     }
                   : undefined
               }
