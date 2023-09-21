@@ -5,8 +5,8 @@ import MuiAvatarGroup from "@mui/material/AvatarGroup";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import { SxProps } from "@mui/material";
 
 import { useState } from "react";
 
@@ -26,7 +26,7 @@ export interface AvatarProps extends MuiAvatarProps {
   parent?: UserDataProps;
 }
 
-function stringToColor(string: string) {
+export const stringToColor = (string: string) => {
   let hash = 0;
   let i;
 
@@ -44,18 +44,12 @@ function stringToColor(string: string) {
   /* eslint-enable no-bitwise */
 
   return color;
-}
+};
 
-function stringAvatar(name: string) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: `${name.split(" ")[0][0]}${
-      name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
-    }`,
-  };
-}
+export const avatarString = (name: string) =>
+  `${name.split(" ")[0][0]}${
+    name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
+  }`;
 
 export const Avatar = ({
   avatarUrl,
@@ -63,34 +57,44 @@ export const Avatar = ({
   parent,
   ...props
 }: AvatarProps): JSX.Element => {
+  const { sx } = props;
+  const defaultStyles: SxProps = { bgcolor: stringToColor(name) };
+  const styles = { ...sx, ...defaultStyles } as SxProps;
+
   return parent ? (
     <Badge
       overlap="circular"
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       badgeContent={
-        <SmallAvatar name={parent.name} avatarUrl={parent.avatarUrl} />
+        <Avatar
+          name={parent.name}
+          avatarUrl={parent.avatarUrl}
+          className={"avatarBadge"}
+          sx={{
+            width: "1rem",
+            height: "1rem",
+          }}
+        />
       }
     >
       <MuiAvatar
         src={avatarUrl}
-        {...stringAvatar(name.toUpperCase())}
+        children={avatarString(name.toUpperCase())}
+        alt={name}
         {...props}
+        sx={styles}
       />
     </Badge>
   ) : (
     <MuiAvatar
       src={avatarUrl}
-      {...stringAvatar(name.toUpperCase())}
+      alt={name}
+      children={avatarString(name.toUpperCase())}
       {...props}
+      sx={styles}
     />
   );
 };
-
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  width: 16,
-  height: 16,
-  border: `2px solid ${theme.palette.background.paper}`,
-}));
 
 export const AvatarWithName = ({
   name,
