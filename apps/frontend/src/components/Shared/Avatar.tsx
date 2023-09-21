@@ -10,6 +10,8 @@ import { SxProps } from "@mui/material";
 
 import { useState } from "react";
 
+import { stringToColor, avatarString } from "../../utils/inputs";
+
 export interface UserDataProps {
   avatarUrl: string;
   name: string;
@@ -25,31 +27,6 @@ export interface AvatarProps extends MuiAvatarProps {
   name: string;
   parent?: UserDataProps;
 }
-
-export const stringToColor = (string: string) => {
-  let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = "#";
-
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  return color;
-};
-
-export const avatarString = (name: string) =>
-  `${name.split(" ")[0][0]}${
-    name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
-  }`;
 
 export const Avatar = ({
   avatarUrl,
