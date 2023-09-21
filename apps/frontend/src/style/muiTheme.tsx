@@ -36,6 +36,14 @@ const muiTheme = createTheme({
     button: {
       textTransform: "none",
     },
+    h1: {
+      fontSize: "3rem",
+      fontWeight: "400",
+      margin: "1rem 0rem",
+    },
+    h2: {
+      fontSize: "2rem",
+    },
     label: {
       fontSize: ".875rem",
       color: style.colors.secondary,

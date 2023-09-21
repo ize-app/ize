@@ -1,8 +1,10 @@
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
-import { UserDataProps, avatarString, stringToColor } from "../shared/Avatar";
 import MuiAvatar from "@mui/material/Avatar";
 import { SxProps, Theme } from "@mui/material";
+
+import { UserDataProps } from "../shared/Avatar";
+import { stringToColor, avatarString } from "../../utils/inputs";
 
 interface BannerWithIconProps {
   bannerUrl: string;
