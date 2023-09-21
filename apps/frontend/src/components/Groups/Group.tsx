@@ -41,14 +41,14 @@ export const Group = () => {
     <>
       <Box>
         <BannerWithAvatar
-          bannerUrl="/test-banner.webp"
-          avatarUrl=""
+          bannerUrl={groupData.bannerUrl}
+          avatarUrl={groupData.avatarUrl}
           name={data?.group?.name ? data?.group?.name : ""}
           parent={
             groupData.parentGroup
               ? {
                   name: groupData.parentGroup.name,
-                  avatarUrl: groupData.parentGroup.avatarURL,
+                  avatarUrl: groupData.parentGroup.avatarUrl,
                 }
               : undefined
           }

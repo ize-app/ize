@@ -35,7 +35,8 @@ export interface ProcessProps {
 export interface GroupProps {
   groupId: string;
   name: string;
-  avatarURL: string;
+  avatarUrl: string;
+  bannerUrl: string;
   type: "Discord server" | "Discord role";
   memberCount: number;
   parentGroup?: GroupProps;
@@ -341,7 +342,8 @@ export const groupMockData: GroupProps[] = [
   {
     groupId: "1",
     name: "Token Engineering Commons",
-    avatarURL:
+    bannerUrl: "/test-banner.webp",
+    avatarUrl:
       "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
     type: "Discord server",
     memberCount: 120,
@@ -350,12 +352,14 @@ export const groupMockData: GroupProps[] = [
     groupId: "2",
     name: "@core-team",
     type: "Discord role",
-    avatarURL: "",
+    avatarUrl: "",
+    bannerUrl: "/test-banner.webp",
     memberCount: 23,
     parentGroup: {
       groupId: "1",
       name: "Token Engineering Commons",
-      avatarURL:
+      bannerUrl: "/test-banner.webp",
+      avatarUrl:
         "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
       type: "Discord server",
       memberCount: 120,
@@ -365,12 +369,14 @@ export const groupMockData: GroupProps[] = [
     groupId: "3",
     name: "@test-team",
     type: "Discord role",
-    avatarURL: "",
+    bannerUrl: "/test-banner.webp",
+    avatarUrl: "",
     memberCount: 23,
     parentGroup: {
       groupId: "1",
       name: "Token Engineering Commons",
-      avatarURL:
+      bannerUrl: "/test-banner.webp",
+      avatarUrl:
         "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
       type: "Discord server",
       memberCount: 120,
