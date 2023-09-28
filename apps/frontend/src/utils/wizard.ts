@@ -5,6 +5,7 @@ export type WizardSteps<FormState> = WizardStep<FormState>[];
 export interface WizardStep<FormState> {
   title: string;
   path: string;
+  progressBarStep: number;
   canNext: (formState: FormState) => boolean;
 }
 
@@ -41,7 +42,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   // Get current step and associated attributes
   const currentStep = wizard.steps.at(currentStepIndex)!;
-  const { title, canNext } = currentStep;
+  const { title, canNext, progressBarStep } = currentStep;
   const isFinalStep = currentStepIndex === wizard.steps.length - 1;
 
   // Get the previous and next steps if they exist
@@ -71,5 +72,14 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
       }
     : undefined;
 
-  return { onPrev, onNext, nextLabel, formState, setFormState, title, canNext };
+  return {
+    onPrev,
+    onNext,
+    progressBarStep,
+    nextLabel,
+    formState,
+    setFormState,
+    title,
+    canNext,
+  };
 }
