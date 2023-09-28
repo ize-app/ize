@@ -62,44 +62,61 @@ export const SetupServerGroup = () => {
   } = useWizard(setupServerWizard);
 
   return (
-    <>
-      <Box sx={{ width: "100%" }}>
-        <Stepper activeStep={progressBarStep} alternativeLabel>
-          {SETUP_SERVER_PROGRESS_BAR_STEPS.map((title) => (
-            <Step key={title}>
-              <StepLabel>{title}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        maxWidth: "100%",
+        marginTop: "16px",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          maxWidth: "1000px",
+        }}
+      >
+        <Box sx={{ width: "100%" }}>
+          <Stepper activeStep={progressBarStep}>
+            {SETUP_SERVER_PROGRESS_BAR_STEPS.map((title) => (
+              <Step key={title}>
+                <StepLabel>{title}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
+        <Typography variant="h1">{title}</Typography>
+        <Box minHeight="500px">
+          <Outlet context={{ formState, setFormState }} />
+        </Box>
+        <Stack direction="row" justifyContent="space-between">
+          {onPrev ? (
+            <div>
+              {" "}
+              <Button variant="contained" onClick={onPrev}>
+                Previous
+              </Button>
+            </div>
+          ) : (
+            /** To keep next on the right when there is no prev we render an empty div */ <div />
+          )}
+          {onNext && (
+            <div>
+              {" "}
+              <Button
+                disabled={!canNext(formState)}
+                variant="contained"
+                onClick={onNext}
+              >
+                {nextLabel}
+              </Button>
+            </div>
+          )}
+        </Stack>
       </Box>
-      <Typography variant="h1">{title}</Typography>
-      <Box minHeight="500px">
-        <Outlet context={{ formState, setFormState }} />
-      </Box>
-      <Stack direction="row" justifyContent="space-between">
-        {onPrev ? (
-          <div>
-            {" "}
-            <Button variant="contained" onClick={onPrev}>
-              Previous
-            </Button>
-          </div>
-        ) : (
-          /** To keep next on the right when there is no prev we render an empty div */ <div />
-        )}
-        {onNext && (
-          <div>
-            {" "}
-            <Button
-              disabled={!canNext(formState)}
-              variant="contained"
-              onClick={onNext}
-            >
-              {nextLabel}
-            </Button>
-          </div>
-        )}
-      </Stack>
-    </>
+    </Box>
   );
 };
