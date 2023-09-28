@@ -23,10 +23,10 @@ export const router = createBrowserRouter([
         element: <SetupServerGroup />,
         path: Route.SetupServerGroup,
         children: [
-          { element: <Intro />, index: true },
           {
             path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
             element: <DiscordUserServers />,
+            index: true,
           },
           {
             path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),

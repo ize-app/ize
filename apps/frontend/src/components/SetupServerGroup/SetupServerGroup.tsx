@@ -69,6 +69,7 @@ export const SetupServerGroup = () => {
         alignItems: "center",
         maxWidth: "100%",
         marginTop: "16px",
+        padding: "16px",
       }}
     >
       <Box
