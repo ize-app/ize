@@ -7,8 +7,7 @@ export enum Route {
 }
 
 export enum SetupServerGroupRoute {
-  Intro = "",
-  SelectServer = "/servers",
+  SelectServer = "",
   HowCultsWorks = "/how-cults-works",
   DefineProcess = "/define-process",
   Finish = "/finish",

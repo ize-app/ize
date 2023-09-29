@@ -2,11 +2,10 @@ import { createBrowserRouter } from "react-router-dom";
 import { Home } from "../components/Home";
 import { SetupServerGroup } from "../components/SetupServerGroup/SetupServerGroup";
 import { DefaultLayout } from "../layout/default";
-import { DiscordUserServers } from "../components/DiscordUserServers";
+import { DiscordUserServers } from "../components/SetupServerGroup/DiscordUserServers";
 import { Route, SetupServerGroupRoute, setUpServerRoute } from "./routes";
 import { DefineServerGroupProcesses } from "../components/SetupServerGroup/DefineServerGroupProcesses";
 import { HowCultsWorks } from "../components/SetupServerGroup/HowCultsWorks";
-import { Intro } from "../components/SetupServerGroup/Intro";
 import { Finish } from "../components/SetupServerGroup/Finish";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
@@ -23,10 +22,10 @@ export const router = createBrowserRouter([
         element: <SetupServerGroup />,
         path: Route.SetupServerGroup,
         children: [
-          { element: <Intro />, index: true },
           {
             path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
             element: <DiscordUserServers />,
+            index: true,
           },
           {
             path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),

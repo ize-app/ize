@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { DiscordServersDocument } from "../graphql/generated/graphql";
+import { DiscordServersDocument } from "../../graphql/generated/graphql";
 import {
   Box,
   FormControl,
@@ -7,8 +7,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
-import { useSetupServerGroupWizardState } from "./SetupServerGroup/setup_server_wizard";
+import { useSetupServerGroupWizardState } from "./setup_server_wizard";
+
+interface DiscordServerProps {
+  name: string;
+  id: string;
+}
 
 export const DiscordUserServers = () => {
   const { formState, setFormState } = useSetupServerGroupWizardState();
@@ -27,32 +33,50 @@ export const DiscordUserServers = () => {
   }
 
   return (
-    <Box>
-      <FormControl>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "24px",
+        alignItems: "flex-start",
+      }}
+    >
+      <Typography variant="body1">
+        Welcome! <br />
+        <br />
+        Select the server you want to create Cults groups for.
+      </Typography>
+
+      <FormControl sx={{ minWidth: "300px" }}>
         <InputLabel id="select-server-label">Server</InputLabel>
         <Select
-          sx={{ minWidth: 160 }}
           labelId="select-server-label"
           id="select-server"
           value={formState.serverId ?? ""}
           label="Server"
           onChange={(event) => {
+            const serverId = event.target.value;
+            const serverName =
+              servers.find(
+                (server: DiscordServerProps) => server.id === serverId,
+              )?.name ?? "";
             setFormState((prev) => ({
               ...prev,
-              serverId: event.target.value ?? "",
+              serverId: serverId ?? "",
+
+              serverName: serverName,
             }));
           }}
-          autoWidth
         >
           {servers.map((server) => (
-            <MenuItem key={server.id} value={server.id}>
+            <MenuItem key={server.id} value={server.id} sx={{ width: "100%" }}>
               {server.name}
             </MenuItem>
           ))}
         </Select>
-        <FormHelperText>
+        {/* <FormHelperText>
           Choose which server you want to create a group for.
-        </FormHelperText>
+        </FormHelperText> */}
       </FormControl>
     </Box>
   );

@@ -37,7 +37,7 @@ const muiTheme = createTheme({
       textTransform: "none",
     },
     h1: {
-      fontSize: "3rem",
+      fontSize: "2.5rem",
       fontWeight: "400",
       margin: "1rem 0rem",
     },

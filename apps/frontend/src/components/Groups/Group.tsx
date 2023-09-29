@@ -43,7 +43,7 @@ export const Group = () => {
         <BannerWithAvatar
           bannerUrl={groupData.bannerUrl}
           avatarUrl={groupData.avatarUrl}
-          name={data?.group?.name ? data?.group?.name : ""}
+          name={groupData.name ? groupData.name : ""}
           parent={
             groupData.parentGroup
               ? {
@@ -58,7 +58,7 @@ export const Group = () => {
             paddingLeft: "1.2rem",
           }}
         >
-          <Typography variant="h1">{data?.group?.name}</Typography>
+          <Typography variant="h1">{groupData.name}</Typography>
           <Box
             sx={{
               display: "flex",
