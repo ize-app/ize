@@ -4,6 +4,7 @@ import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface SetupServerState {
   serverId?: string;
+  serverName?: string;
   processConfigurationOption: ProcessConfigurationOption;
   roleId?: string;
   numberOfResponses?: number;

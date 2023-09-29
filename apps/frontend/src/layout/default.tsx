@@ -4,7 +4,7 @@ import { NavBar } from "../components/shared/NavBar";
 
 export const DefaultLayout = () => {
   return (
-    <Container>
+    <Container sx={{ display: "flex", flexDirection: "column" }}>
       <NavBar />
       <Outlet />
     </Container>
