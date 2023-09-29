@@ -76,7 +76,6 @@ export const SetupServerGroup = () => {
           flexDirection: "column",
           flexGrow: 1,
           marginTop: "16px",
-          marginBottom: "16px",
         }}
       >
         <Stepper activeStep={progressBarStep}>
@@ -86,7 +85,9 @@ export const SetupServerGroup = () => {
             </Step>
           ))}
         </Stepper>
-        <Typography variant="h1">{title}</Typography>
+        <Typography variant="h1" sx={{ marginTop: "32px" }}>
+          {title}
+        </Typography>
         <Box sx={{ flexGrow: 1 }}>
           <Outlet context={{ formState, setFormState }} />
         </Box>

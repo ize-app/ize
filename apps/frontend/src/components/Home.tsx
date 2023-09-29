@@ -29,7 +29,7 @@ const ButtonsContainer = styled.div`
 const UnauthenticatedHome = () => (
   <PageContainer>
     <Logo fontSize={"8rem"}>Cults</Logo>
-    <Typography variant="h4" align="center">
+    <Typography variant="h1" align="center">
       Process is King
     </Typography>
     <ButtonsContainer>
