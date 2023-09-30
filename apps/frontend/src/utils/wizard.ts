@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
 
 export type WizardSteps<FormState> = WizardStep<FormState>[];
 export interface WizardStep<FormState> {
@@ -27,6 +27,20 @@ export function useWizardFormState<FormState>() {
 export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const navigate = useNavigate();
+
+  // navigate back to start of flow if someone tries to navigate dire
+  useEffect(() => {
+    if (
+      currentStepIndex !== 0 &&
+      wizard.steps[currentStepIndex - 1].path !==
+        // TODO: figure out how to type location state
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        location.state.previousPath
+    ) {
+      navigate(wizard.steps[0].path);
+    }
+  });
+
   const [formState, setFormState] = useState<FormState>(
     wizard.initialFormState,
   );
@@ -39,7 +53,6 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
       `Could not find step for path ${location.pathname} in wizard`,
     );
   }
-
   // Get current step and associated attributes
   const currentStep = wizard.steps.at(currentStepIndex)!;
   const { title, canNext, progressBarStep } = currentStep;
@@ -60,7 +73,9 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     ? wizard.onComplete
     : nextStep
     ? () => {
-        navigate(nextStep!.path);
+        navigate(nextStep!.path, {
+          state: { previousPath: location.pathname },
+        });
       }
     : undefined;
 
@@ -68,7 +83,11 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   const onPrev = prevStep
     ? () => {
-        navigate(prevStep!.path);
+        navigate(prevStep!.path, {
+          state: {
+            previousPath: wizard.steps[Math.max(currentStepIndex - 2, 0)].path,
+          },
+        });
       }
     : undefined;
 
