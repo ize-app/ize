@@ -8,9 +8,14 @@ import {
   ProcessFinish,
   SetupProcess,
 } from "../components/SetupProcess";
-import { SetupServerGroup } from "../components/SetupServerGroup/SetupServerGroup";
+import {
+  DefineServerGroupProcesses,
+  DiscordUserServers,
+  Finish,
+  HowCultsWorks,
+  SetupServerGroup,
+} from "../components/SetupServerGroup";
 import { DefaultLayout } from "../layout/default";
-import { DiscordUserServers } from "../components/SetupServerGroup/DiscordUserServers";
 import {
   Route,
   SetupServerGroupRoute,
@@ -18,9 +23,6 @@ import {
   setUpServerRoute,
   setUpProcessRoute,
 } from "./routes";
-import { DefineServerGroupProcesses } from "../components/SetupServerGroup/DefineServerGroupProcesses";
-import { HowCultsWorks } from "../components/SetupServerGroup/HowCultsWorks";
-import { Finish } from "../components/SetupServerGroup/Finish";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
 
