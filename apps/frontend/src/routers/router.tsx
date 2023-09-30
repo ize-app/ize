@@ -1,9 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Home } from "../components/Home";
+import {
+  ProcessIntro,
+  ProcessInputs,
+  ProcessOptions,
+  ProcessRights,
+  ProcessFinish,
+  SetupProcess,
+} from "../components/SetupProcess";
 import { SetupServerGroup } from "../components/SetupServerGroup/SetupServerGroup";
 import { DefaultLayout } from "../layout/default";
 import { DiscordUserServers } from "../components/SetupServerGroup/DiscordUserServers";
-import { Route, SetupServerGroupRoute, setUpServerRoute } from "./routes";
+import {
+  Route,
+  SetupServerGroupRoute,
+  SetupProcessRoute,
+  setUpServerRoute,
+  setUpProcessRoute,
+} from "./routes";
 import { DefineServerGroupProcesses } from "../components/SetupServerGroup/DefineServerGroupProcesses";
 import { HowCultsWorks } from "../components/SetupServerGroup/HowCultsWorks";
 import { Finish } from "../components/SetupServerGroup/Finish";
@@ -38,6 +52,33 @@ export const router = createBrowserRouter([
           {
             path: setUpServerRoute(SetupServerGroupRoute.Finish),
             element: <Finish />,
+          },
+        ],
+      },
+      {
+        element: <SetupProcess />,
+        path: Route.SetupProcessGroup,
+        children: [
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Intro),
+            element: <ProcessIntro />,
+            index: true,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Inputs),
+            element: <ProcessInputs />,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Options),
+            element: <ProcessOptions />,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Rights),
+            element: <ProcessRights />,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Finish),
+            element: <ProcessFinish />,
           },
         ],
       },
