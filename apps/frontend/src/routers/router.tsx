@@ -1,4 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
+
+import { AuthRoute } from "./AuthRoute";
 import { Home } from "../components/Home";
 import {
   ProcessIntro,
@@ -29,13 +31,18 @@ import { Request } from "../components/Request/Request";
 export const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
+
     children: [
       {
         path: Route.Home,
         element: <Home />,
       },
       {
-        element: <SetupServerGroup />,
+        element: (
+          <AuthRoute>
+            <SetupServerGroup />
+          </AuthRoute>
+        ),
         path: Route.SetupServerGroup,
         children: [
           {
@@ -58,7 +65,11 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        element: <SetupProcess />,
+        element: (
+          <AuthRoute>
+            <SetupProcess />
+          </AuthRoute>
+        ),
         path: Route.SetupProcessGroup,
         children: [
           {
