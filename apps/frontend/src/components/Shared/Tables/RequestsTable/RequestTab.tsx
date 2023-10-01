@@ -7,7 +7,7 @@ import CreateButton from "../CreateButton";
 import { requestMockData } from "../mockData";
 import RequestTable from "./RequestTable";
 import Search from "../Search";
-import Select from "../Select";
+import Select from "../../Inputs/Select";
 import { UserDataProps } from "../../Avatar";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
