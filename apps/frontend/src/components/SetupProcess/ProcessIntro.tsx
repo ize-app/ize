@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import zod from "zod";
 
 export const ProcessIntro = () => {
-  const { setFormState } = useSetupProcessWizardState();
+  const { formState, setFormState } = useSetupProcessWizardState();
 
   const formSchema = zod.object({
     title: zod.string().nonempty(),
@@ -29,11 +29,11 @@ export const ProcessIntro = () => {
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      title: "",
-      description: "",
-      customIntegration: "no",
-      webhookUri: "",
-      options: "Yes/no emojiis",
+      title: formState.processName ?? "",
+      description: formState.description ?? "",
+      customIntegration: formState.customIntegration ?? "no",
+      webhookUri: formState.webhookUri ?? "",
+      options: formState.options ?? "Yes/no emojiis",
     },
     mode: "onBlur",
     reValidateMode: "onBlur",
