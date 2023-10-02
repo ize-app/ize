@@ -4,7 +4,9 @@ import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 export interface SetupProcessState {
   processName?: string;
   description?: string;
+  customIntegration?: string;
   webhookUri?: string;
+  options?: string;
 }
 
 export function useSetupProcessWizardState() {
