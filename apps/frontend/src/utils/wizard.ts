@@ -18,6 +18,9 @@ export interface Wizard<FormState> {
 type ContextType<FormState> = {
   formState: FormState;
   setFormState: Dispatch<SetStateAction<FormState>>;
+  onNext: () => void;
+  onPrev: () => void;
+  nextLabel: string;
 };
 
 export function useWizardFormState<FormState>() {
