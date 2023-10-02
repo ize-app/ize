@@ -7,6 +7,7 @@ export interface SetupProcessState {
   customIntegration?: string;
   webhookUri?: string;
   options?: string;
+  customOptions?: string[];
 }
 
 export function useSetupProcessWizardState() {

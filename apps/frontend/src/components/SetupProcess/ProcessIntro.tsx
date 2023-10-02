@@ -1,4 +1,6 @@
+import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -7,53 +9,77 @@ import FormLabel from "@mui/material/FormLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 
-import { useSetupProcessWizardState } from "./setupProcessWizard";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import zod from "zod";
+import z from "zod";
 
+import { useSetupProcessWizardState } from "./setupProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 
 export const ProcessIntro = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useSetupProcessWizardState();
 
-  const formSchema = zod.object({
-    title: zod.string().nonempty(),
-    description: zod.string().nonempty(),
-    customIntegration: zod.string().nonempty(),
-    // TODO: make the webhook URI required if customIntegration === "yes"
-    webhookUri: zod.string().url().optional(),
-    options: zod.string(),
-  });
+  const formSchema = z
+    .object({
+      name: z
+        .string()
+        .nonempty()
+        .trim()
+        .max(140, "Please keep the name under 140 characters"),
+      description: z.string().nonempty().trim(),
+      customIntegration: z.string().nonempty(),
+      webhookUri: z.string().url().optional(),
+      options: z.string(),
+      customOptions: z
+        .array(z.string({ invalid_type_error: "Only errors" }).trim())
+        .min(1, "Add at least 1 option")
+        .optional(),
+    })
+    .refine(
+      (data) => {
+        if (data.customIntegration === "yes" && data.webhookUri === "")
+          return false;
+        return true;
+      },
+      { path: ["webookUri"] },
+    )
+    .refine(
+      (data) => {
+        if (data.options === "custom" && data?.customOptions?.length === 0)
+          return false;
+        return true;
+      },
+      { path: ["customOptions"] },
+    );
 
-  type FormFields = zod.infer<typeof formSchema>;
+  type FormFields = z.infer<typeof formSchema>;
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      title: formState.processName ?? "",
+      name: formState.processName ?? "",
       description: formState.description ?? "",
       customIntegration: formState.customIntegration ?? "no",
       webhookUri: formState.webhookUri ?? "",
       options: formState.options ?? "Yes/no emojiis",
+      customOptions: formState.customOptions ?? [],
     },
-    mode: "onBlur",
-    reValidateMode: "onBlur",
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
   });
 
   const isCustomIntegration = watch("customIntegration") === "yes";
+  const isCustomOptions = watch("options") === "custom";
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
-      processName: data.title,
+      processName: data.name,
       description: data.description,
       customIntegration: data.customIntegration,
       webhookUri: data.webhookUri,
       options: data.options,
+      customOptions: data.customOptions,
     }));
     onNext();
   };
@@ -64,13 +90,13 @@ export const ProcessIntro = () => {
         <form>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <Controller
-              name={"title"}
+              name={"name"}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <FormControl>
                   <TextField
                     {...field}
-                    label={"Title"}
+                    label={"Process name"}
                     required
                     error={Boolean(error)}
                   />
@@ -112,15 +138,18 @@ export const ProcessIntro = () => {
               control={control}
               render={({ field }) => (
                 <FormControl component="fieldset" required>
-                  <FormLabel component="legend" id="radio-buttons-group-label">
+                  <FormLabel
+                    component="legend"
+                    id="radio-buttons-group-custom-integration"
+                  >
                     Do you want a custom integration to execute everytime this
                     process is triggered?{" "}
                   </FormLabel>
                   <RadioGroup
                     {...field}
                     row
-                    aria-labelledby="radio-buttons-group"
-                    name="row-radio-buttons-group"
+                    aria-labelledby="radio-buttons-group-custom-integration"
+                    name="row-radio-buttons-group-custom-integration"
                   >
                     <FormControlLabel
                       value={"no"}
@@ -167,15 +196,17 @@ export const ProcessIntro = () => {
               control={control}
               render={({ field }) => (
                 <FormControl component="fieldset" required>
-                  <FormLabel component="legend" id="radio-buttons-group-label">
-                    Do you want a custom integration to execute everytime this
-                    process is triggered?
+                  <FormLabel
+                    component="legend"
+                    id="radio-buttons-group-options"
+                  >
+                    What options will users choose between?
                   </FormLabel>
                   <RadioGroup
                     {...field}
                     row
-                    aria-labelledby="radio-buttons-group"
-                    name="row-radio-buttons-group"
+                    aria-labelledby="radio-buttons-group-options"
+                    name="row-radio-buttons-group-options"
                   >
                     <FormControlLabel
                       value={"Yes/no emojiis"}
@@ -188,7 +219,7 @@ export const ProcessIntro = () => {
                       label="😃 😐 😭"
                     />
                     <FormControlLabel
-                      value={"Custom"}
+                      value="custom"
                       control={<Radio />}
                       label="Custom"
                     />
@@ -196,6 +227,51 @@ export const ProcessIntro = () => {
                 </FormControl>
               )}
             />
+            {isCustomOptions && (
+              <Controller
+                name="customOptions"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <FormControl required sx={{ width: "100%" }}>
+                    <Autocomplete
+                      {...field}
+                      freeSolo
+                      multiple
+                      autoComplete={false}
+                      id="tags-filled"
+                      options={[]}
+                      getOptionLabel={(option: string) => option}
+                      onChange={(_event, data) => field.onChange(data)}
+                      renderTags={(value: readonly string[], getTagProps) =>
+                        value.map((option: string, index: number) => (
+                          <Chip
+                            variant="filled"
+                            label={option}
+                            color="primary"
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          placeholder="Add custom options here..."
+                          error={Boolean(error)}
+                        />
+                      )}
+                    />
+                    <FormHelperText
+                      sx={{
+                        color: "error.main",
+                      }}
+                    >
+                      {error?.message ?? ""}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
+            )}
           </Box>
         </form>
       </WizardBody>
