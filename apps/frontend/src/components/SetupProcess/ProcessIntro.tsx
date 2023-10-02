@@ -16,44 +16,44 @@ import z from "zod";
 import { useSetupProcessWizardState } from "./setupProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 
+const formSchema = z
+  .object({
+    name: z
+      .string()
+      .nonempty()
+      .trim()
+      .max(140, "Please keep the name under 140 characters"),
+    description: z.string().nonempty().trim(),
+    customIntegration: z.string().nonempty(),
+    webhookUri: z.string().url().optional(),
+    options: z.string(),
+    customOptions: z
+      .array(z.string({ invalid_type_error: "Only errors" }).trim())
+      .min(1, "Add at least 1 option")
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.customIntegration === "yes" && data.webhookUri === "")
+        return false;
+      return true;
+    },
+    { path: ["webookUri"] },
+  )
+  .refine(
+    (data) => {
+      if (data.options === "custom" && data?.customOptions?.length === 0)
+        return false;
+      return true;
+    },
+    { path: ["customOptions"] },
+  );
+
+type FormFields = z.infer<typeof formSchema>;
+
 export const ProcessIntro = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useSetupProcessWizardState();
-
-  const formSchema = z
-    .object({
-      name: z
-        .string()
-        .nonempty()
-        .trim()
-        .max(140, "Please keep the name under 140 characters"),
-      description: z.string().nonempty().trim(),
-      customIntegration: z.string().nonempty(),
-      webhookUri: z.string().url().optional(),
-      options: z.string(),
-      customOptions: z
-        .array(z.string({ invalid_type_error: "Only errors" }).trim())
-        .min(1, "Add at least 1 option")
-        .optional(),
-    })
-    .refine(
-      (data) => {
-        if (data.customIntegration === "yes" && data.webhookUri === "")
-          return false;
-        return true;
-      },
-      { path: ["webookUri"] },
-    )
-    .refine(
-      (data) => {
-        if (data.options === "custom" && data?.customOptions?.length === 0)
-          return false;
-        return true;
-      },
-      { path: ["customOptions"] },
-    );
-
-  type FormFields = z.infer<typeof formSchema>;
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
