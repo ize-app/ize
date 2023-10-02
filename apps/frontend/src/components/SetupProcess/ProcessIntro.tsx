@@ -140,7 +140,6 @@ export const ProcessIntro = () => {
             control={control}
             shouldUnregister
             render={({ field, fieldState: { error } }) => {
-              console.log("webook error", error);
               return (
                 <FormControl>
                   <TextField
@@ -164,11 +163,11 @@ export const ProcessIntro = () => {
         <Controller
           name={"options"}
           control={control}
-          render={(field) => (
+          render={({ field }) => (
             <FormControl component="fieldset" required>
               <FormLabel component="legend" id="radio-buttons-group-label">
                 Do you want a custom integration to execute everytime this
-                process is triggered?{" "}
+                process is triggered?
               </FormLabel>
               <RadioGroup
                 {...field}
