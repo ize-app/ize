@@ -16,9 +16,14 @@ export const CheckboxControlled = ({
   <Controller
     name={name}
     control={control}
-    render={({ field, fieldState: { error } }) => (
-      <FormControl sx={{ width: "100px" }}>
-        <Checkbox {...props} {...field} id={`checkbox-${name}`} />
+    render={({ field }) => (
+      <FormControl>
+        <Checkbox
+          {...props}
+          {...field}
+          id={`checkbox-${name}`}
+          checked={field.value as boolean}
+        />
       </FormControl>
     )}
   />

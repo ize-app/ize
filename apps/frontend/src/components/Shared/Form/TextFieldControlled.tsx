@@ -22,7 +22,7 @@ export const TextFieldControl = ({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl fullWidth error={Boolean(error)} required={required}>
+        <FormControl fullWidth error={Boolean(error)} required={required} >
           <InputLabel htmlFor="component-outlined">{label}</InputLabel>
           <OutlinedInput
             id="component-outlined"

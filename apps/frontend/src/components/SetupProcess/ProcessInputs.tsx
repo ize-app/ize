@@ -66,7 +66,6 @@ export const ProcessInputs = () => {
   });
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       inputs: [...data.processInputs],
@@ -79,10 +78,11 @@ export const ProcessInputs = () => {
       <WizardBody>
         <Typography variant="body1">
           This process is triggered by creating a{" "}
-          <span style={{ fontWeight: "bold" }}>request</span>
-          . You can define whether this process needs certain information to be triggered via <span style={{ fontWeight: "bold" }}>input fields</span>. Input fields help keep proposals
-          consistent and make it easier to build integrations with other tools.{" "}
-          <br />
+          <span style={{ fontWeight: "bold" }}>request</span>. You can define
+          whether this process needs certain information to be triggered via{" "}
+          <span style={{ fontWeight: "bold" }}>input fields</span>. Input fields
+          help keep proposals consistent and make it easier to build
+          integrations with other tools. <br />
           <br />
           For example, a “Reimburse expense” process might have a required
           “Amount” field on each proposal. <br />
@@ -102,6 +102,8 @@ export const ProcessInputs = () => {
               <TableBody>
                 {fields.map((item, index) => {
                   const fieldName = `${fieldArrayName}[${index}]`;
+                  const noEdit =
+                    item.fieldName === "Request title" ? true : false;
                   return (
                     <TableRow key={item.id}>
                       <TableCell sx={{ minWidth: "150px" }}>
@@ -109,6 +111,7 @@ export const ProcessInputs = () => {
                           name={`${fieldName}.fieldName`}
                           key={"fieldName" + index.toString()}
                           fullWidth
+                          disabled={noEdit}
                           control={control}
                         />
                       </TableCell>
@@ -118,13 +121,15 @@ export const ProcessInputs = () => {
                           selectOptions={Object.values(ProcessInputType)}
                           key={"type" + index.toString()}
                           sx={{ width: "120px" }}
+                          disabled={noEdit}
                           control={control}
                         />
                       </TableCell>
-                      <TableCell sx={{ minWidth: "100px" }} align="center">
+                      <TableCell align="center">
                         <CheckboxControlled
                           name={`${fieldName}.required`}
                           key={"required" + index.toString()}
+                          disabled={noEdit}
                           control={control}
                         />
                       </TableCell>
@@ -133,17 +138,20 @@ export const ProcessInputs = () => {
                           name={`${fieldName}.description`}
                           key={"description" + index.toString()}
                           fullWidth
+                          disabled={noEdit}
                           control={control}
                         />
                       </TableCell>
                       <TableCell>
-                        <IconButton
-                          color="primary"
-                          aria-label="Remove input option"
-                          onClick={() => remove(index)}
-                        >
-                          <HighlightOffOutlined />
-                        </IconButton>
+                        {noEdit ? null : (
+                          <IconButton
+                            color="primary"
+                            aria-label="Remove input option"
+                            onClick={() => remove(index)}
+                          >
+                            <HighlightOffOutlined />
+                          </IconButton>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
