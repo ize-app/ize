@@ -1,4 +1,13 @@
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+
+import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -14,6 +23,7 @@ import {
   ProcessInputType,
 } from "./setupProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
+import { Typography } from "@mui/material";
 
 const fieldArrayName = "processInputs";
 
@@ -67,53 +77,82 @@ export const ProcessInputs = () => {
   return (
     <>
       <WizardBody>
+        <Typography variant="body1">
+          You can require input fields for each request made by this process.
+          Input fields help keep proposals consistent and make it easier to
+          build integrations with other tools. <br />
+          <br />
+          For example, a “Reimburse expense” process might have a required
+          “Amount” field on each proposal. <br />
+        </Typography>
         <form>
-          {fields.map((item, index) => {
-            const fieldName = `${fieldArrayName}[${index}]`;
-            return (
-              <fieldset key={item.id}>
-                <TextFieldControl
-                  name={`${fieldName}.fieldName`}
-                  key={"fieldName" + index.toString()}
-                  // defaultValue={`${item.fieldName}`}
-                  label={"fieldName"}
-                  control={control}
-                />
-                <TextFieldControl
-                  name={`${fieldName}.description`}
-                  key={"description" + index.toString()}
-                  // defaultValue={`${item.description}`}
-                  label={"description"}
-                  control={control}
-                />
-                <CheckboxControlled
-                  name={`${fieldName}.required`}
-                  key={"required" + index.toString()}
-                  // defaultValue={`${item.required.toString()}`}
-                  label={"required"}
-                  control={control}
-                />
-                <SelectControlled
-                  name={`${fieldName}.type`}
-                  selectOptions={Object.values(ProcessInputType)}
-                  key={"type" + index.toString()}
-                  // defaultValue={`${item.type.toString()}`}
-                  label={"type"}
-                  sx={{ width: "120px" }}
-                  control={control}
-                />
-                <button
-                  className="remove"
-                  type="button"
-                  onClick={() => remove(index)}
-                >
-                  Remove
-                </button>
-              </fieldset>
-            );
-          })}
+          <TableContainer sx={{ overflowX: "auto" }}>
+            <Table aria-label="input table" stickyHeader={true}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Input name</TableCell>
+                  <TableCell align="center">Input type</TableCell>
+                  <TableCell align="center">Required?</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {fields.map((item, index) => {
+                  const fieldName = `${fieldArrayName}[${index}]`;
+                  return (
+                    <TableRow key={item.id}>
+                      <TableCell sx={{ minWidth: "150px" }}>
+                        <TextFieldControl
+                          name={`${fieldName}.fieldName`}
+                          key={"fieldName" + index.toString()}
+                          fullWidth
+                          control={control}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ width: "120px" }}>
+                        <SelectControlled
+                          name={`${fieldName}.type`}
+                          selectOptions={Object.values(ProcessInputType)}
+                          key={"type" + index.toString()}
+                          sx={{ width: "120px" }}
+                          control={control}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ minWidth: "100px" }} align="center">
+                        <CheckboxControlled
+                          name={`${fieldName}.required`}
+                          key={"required" + index.toString()}
+                          control={control}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ minWidth: "200px" }}>
+                        <TextFieldControl
+                          name={`${fieldName}.description`}
+                          key={"description" + index.toString()}
+                          fullWidth
+                          control={control}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="primary"
+                          aria-label="Remove input option"
+                          onClick={() => remove(index)}
+                        >
+                          <HighlightOffOutlined />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <Button
+            sx={{ marginTop: "16px", marginLeft: "16px" }}
+            variant="outlined"
             onClick={() => {
               append({
                 fieldName: "",
@@ -123,7 +162,7 @@ export const ProcessInputs = () => {
               });
             }}
           >
-            Add
+            Add input
           </Button>
         </form>
       </WizardBody>
