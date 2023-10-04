@@ -30,7 +30,6 @@ export function useSetupProcessWizardState() {
 export const SETUP_PROCESS_PROGRESS_BAR_STEPS = [
   "Process type",
   "Inputs",
-  "Options",
   "Rights",
   "Finish",
 ];
@@ -49,21 +48,15 @@ export const SETUP_PROCESS_WIZARD_STEPS: WizardSteps<SetupProcessState> = [
     canNext: () => true,
   },
   {
-    path: setUpProcessRoute(SetupProcessRoute.Options),
-    title: "What options do respondants choose between?",
-    progressBarStep: 2,
-    canNext: () => true,
-  },
-  {
     path: setUpProcessRoute(SetupProcessRoute.Rights),
     title: "How can this process be used and editted?",
-    progressBarStep: 3,
+    progressBarStep: 2,
     canNext: () => true,
   },
   {
     path: setUpProcessRoute(SetupProcessRoute.Finish),
     title: "Finish",
-    progressBarStep: 4,
+    progressBarStep: 3,
     canNext: () => true,
   },
 ];
