@@ -8,6 +8,19 @@ export interface SetupProcessState {
   webhookUri?: string;
   options?: string;
   customOptions?: string[];
+  inputs?: ProcessInput[];
+}
+
+export interface ProcessInput {
+  fieldName: string;
+  description: string;
+  required: boolean;
+  type: ProcessInputType;
+}
+
+export enum ProcessInputType {
+  Text,
+  Number,
 }
 
 export function useSetupProcessWizardState() {
