@@ -29,7 +29,7 @@ export function useSetupProcessWizardState() {
 
 export const SETUP_PROCESS_PROGRESS_BAR_STEPS = [
   "Process type",
-  "Inputs",
+  "Input fields",
   "Rights",
   "Finish",
 ];
@@ -43,13 +43,13 @@ export const SETUP_PROCESS_WIZARD_STEPS: WizardSteps<SetupProcessState> = [
   },
   {
     path: setUpProcessRoute(SetupProcessRoute.Inputs),
-    title: "What inputs does a requestor need to enter?",
+    title: "Inputs fields on each request",
     progressBarStep: 1,
     canNext: () => true,
   },
   {
     path: setUpProcessRoute(SetupProcessRoute.Rights),
-    title: "How can this process be used and editted?",
+    title: "Who can use this process?",
     progressBarStep: 2,
     canNext: () => true,
   },

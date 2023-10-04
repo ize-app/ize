@@ -78,9 +78,11 @@ export const ProcessInputs = () => {
     <>
       <WizardBody>
         <Typography variant="body1">
-          You can require input fields for each request made by this process.
-          Input fields help keep proposals consistent and make it easier to
-          build integrations with other tools. <br />
+          This process is triggered by creating a{" "}
+          <span style={{ fontWeight: "bold" }}>request</span>
+          . You can define whether this process needs certain information to be triggered via <span style={{ fontWeight: "bold" }}>input fields</span>. Input fields help keep proposals
+          consistent and make it easier to build integrations with other tools.{" "}
+          <br />
           <br />
           For example, a “Reimburse expense” process might have a required
           “Amount” field on each proposal. <br />
@@ -157,7 +159,7 @@ export const ProcessInputs = () => {
               append({
                 fieldName: "",
                 description: "",
-                required: false,
+                required: true,
                 type: ProcessInputType.Text,
               });
             }}
