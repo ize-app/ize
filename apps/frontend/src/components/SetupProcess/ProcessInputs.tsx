@@ -1,68 +1,32 @@
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import { OutlinedInputProps } from "@mui/material/OutlinedInput";
 
-import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
-
-import { useForm, useFieldArray, Controller, Control } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFieldArray } from "react-hook-form";
 import z from "zod";
 
 import {
+  CheckboxControlled,
+  TextFieldControl,
+  SelectControlled,
+} from "../Shared/Form";
+import {
   useSetupProcessWizardState,
-  ProcessInput,
   ProcessInputType,
 } from "./setupProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 
-const formSchema = z.object({});
+const fieldArrayName = "processInputs";
+
+const rowSchema = z.object({
+  fieldName: z.string().nonempty(),
+  description: z.string().nonempty(),
+  required: z.boolean(),
+  type: z.nativeEnum(ProcessInputType),
+});
+
+const formSchema = z.object({ [fieldArrayName]: z.array(rowSchema) });
 
 type FormFields = z.infer<typeof formSchema>;
-
-interface TextFieldControlProps extends OutlinedInputProps {
-  name: string;
-  control: Control;
-}
-
-const TextFieldControl = ({
-  name,
-  label,
-  control,
-  required,
-  ...props
-}: TextFieldControlProps) => {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState: { error } }) => (
-        <FormControl error={Boolean(error)} required={required}>
-          <InputLabel htmlFor="component-outlined">{label}</InputLabel>
-          <OutlinedInput
-            id="component-outlined"
-            {...props}
-            {...field}
-            label={label}
-          />
-          <FormHelperText
-            sx={{
-              color: "error.main",
-            }}
-          >
-            {error?.message ?? ""}
-          </FormHelperText>
-        </FormControl>
-      )}
-    />
-  );
-};
-
-interface InputRowProps {
-  update: () => void;
-  index: number;
-  value: ProcessInput;
-}
 
 export const ProcessInputs = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
@@ -70,12 +34,19 @@ export const ProcessInputs = () => {
 
   const { inputs } = formState;
 
-  const fieldArrayName = "processInputs";
+  const intitialFormState = inputs ? [...inputs] : [];
+  if (intitialFormState.length === 0)
+    intitialFormState.push({
+      fieldName: "Request title",
+      description: "Brief summary of request",
+      required: true,
+      type: ProcessInputType.Text,
+    });
 
-  const { control, handleSubmit } = useForm({
-    // resolver: zodResolver(formSchema),
+  const { control, handleSubmit } = useForm<FormFields>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      [fieldArrayName]: inputs,
+      [fieldArrayName]: intitialFormState,
     },
   });
 
@@ -84,7 +55,8 @@ export const ProcessInputs = () => {
     name: fieldArrayName,
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: FormFields) => {
+    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       inputs: [...data.processInputs],
@@ -97,7 +69,6 @@ export const ProcessInputs = () => {
       <WizardBody>
         <form>
           {fields.map((item, index) => {
-            console.log("field is ", item);
             const fieldName = `${fieldArrayName}[${index}]`;
             return (
               <fieldset key={item.id}>
@@ -115,18 +86,20 @@ export const ProcessInputs = () => {
                   label={"description"}
                   control={control}
                 />
-                <TextFieldControl
+                <CheckboxControlled
                   name={`${fieldName}.required`}
                   key={"required" + index.toString()}
                   // defaultValue={`${item.required.toString()}`}
                   label={"required"}
                   control={control}
                 />
-                <TextFieldControl
+                <SelectControlled
                   name={`${fieldName}.type`}
+                  selectOptions={Object.values(ProcessInputType)}
                   key={"type" + index.toString()}
                   // defaultValue={`${item.type.toString()}`}
                   label={"type"}
+                  sx={{ width: "120px" }}
                   control={control}
                 />
                 <button

@@ -2,30 +2,30 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect, { SelectChangeEvent } from "@mui/material/Select";
 
-interface FilterProps {
+export interface SelectProps {
   selectOptions: string[];
   selectOption: string;
-  changeHandler: (event: SelectChangeEvent) => void;
+  onChange: (event: SelectChangeEvent) => void;
 }
 
-const Select = ({
+export const Select = ({
   selectOptions,
   selectOption,
-  changeHandler,
-}: FilterProps): JSX.Element => (
+  onChange,
+}: SelectProps): JSX.Element => (
   <FormControl sx={{ width: "200px" }}>
     <MuiSelect
       labelId="select-filter"
       id="select-filter"
       value={selectOption}
       size="small"
-      onChange={changeHandler}
+      onChange={onChange}
     >
-      {selectOptions.map((option) => (
-        <MenuItem value={option}>{option}</MenuItem>
+      {selectOptions.map((option, index) => (
+        <MenuItem key={`${option + index.toString()}`} value={option}>
+          {option}
+        </MenuItem>
       ))}
     </MuiSelect>
   </FormControl>
 );
-
-export default Select;

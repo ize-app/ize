@@ -19,8 +19,8 @@ export interface ProcessInput {
 }
 
 export enum ProcessInputType {
-  Text,
-  Number,
+  Text = "Text",
+  Number = "Number",
 }
 
 export function useSetupProcessWizardState() {
