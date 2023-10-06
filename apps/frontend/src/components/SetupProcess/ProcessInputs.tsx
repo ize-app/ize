@@ -16,7 +16,7 @@ import z from "zod";
 import {
   CheckboxControlled,
   TextFieldControl,
-  SelectControlled,
+  SelectControl,
 } from "../Shared/Form";
 import {
   useSetupProcessWizardState,
@@ -116,9 +116,12 @@ export const ProcessInputs = () => {
                         />
                       </TableCell>
                       <TableCell sx={{ width: "120px" }}>
-                        <SelectControlled
+                        <SelectControl
                           name={`${fieldName}.type`}
-                          selectOptions={Object.values(ProcessInputType)}
+                          selectOptions={[
+                            { name: "Number", value: ProcessInputType.Number },
+                            { name: "Text", value: ProcessInputType.Text },
+                          ]}
                           key={"type" + index.toString()}
                           sx={{ width: "120px" }}
                           disabled={noEdit}

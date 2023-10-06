@@ -6,21 +6,26 @@ import MuiSelect, { SelectProps } from "@mui/material/Select";
 
 import { Controller, Control } from "react-hook-form";
 
-export interface SelectControlledProps extends SelectProps {
+export interface SelectOption {
+  name: string;
+  value: number | string;
+}
+
+export interface SelectControlProps extends SelectProps {
   name: string;
   control: Control;
   label: string;
-  selectOptions: string[];
-  selectOption: string;
+  selectOptions: SelectOption[];
+  selectOption: SelectOption;
 }
 
-export const SelectControlled = ({
+export const SelectControl = ({
   name,
   control,
   label,
   selectOptions,
   ...props
-}: SelectControlledProps): JSX.Element => (
+}: SelectControlProps): JSX.Element => (
   <Controller
     name={name}
     control={control}
@@ -35,8 +40,11 @@ export const SelectControlled = ({
           label={label}
         >
           {selectOptions.map((option, index) => (
-            <MenuItem key={`${option + index.toString()}`} value={option}>
-              {option}
+            <MenuItem
+              key={`${option.name + index.toString()}`}
+              value={option.value}
+            >
+              {option.name}
             </MenuItem>
           ))}
         </MuiSelect>

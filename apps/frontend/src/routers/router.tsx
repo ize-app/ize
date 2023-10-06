@@ -5,7 +5,6 @@ import { Home } from "../components/Home";
 import {
   ProcessIntro,
   ProcessInputs,
-  ProcessOptions,
   ProcessRights,
   ProcessFinish,
   SetupProcess,

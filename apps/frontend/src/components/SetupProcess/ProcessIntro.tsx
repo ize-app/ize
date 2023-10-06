@@ -13,6 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 
+import { RadioControl } from "../Shared/Form";
 import { useSetupProcessWizardState } from "./setupProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 
@@ -191,42 +192,17 @@ export const ProcessIntro = () => {
                 }}
               />
             )}
-            <Controller
-              name={"options"}
+            <RadioControl
               control={control}
-              render={({ field }) => (
-                <FormControl component="fieldset" required>
-                  <FormLabel
-                    component="legend"
-                    id="radio-buttons-group-options"
-                  >
-                    What options will users choose between?
-                  </FormLabel>
-                  <RadioGroup
-                    {...field}
-                    row
-                    aria-labelledby="radio-buttons-group-options"
-                    name="row-radio-buttons-group-options"
-                  >
-                    <FormControlLabel
-                      value={"Yes/no emojiis"}
-                      control={<Radio />}
-                      label="✅ ❌"
-                    />
-                    <FormControlLabel
-                      value={"Face emojiis"}
-                      control={<Radio />}
-                      label="😃 😐 😭"
-                    />
-                    <FormControlLabel
-                      value="custom"
-                      control={<Radio />}
-                      label="Custom"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              )}
+              name="options"
+              label="What options will users choose between?"
+              options={[
+                { value: "Yes/no emojiis", label: "✅ ❌" },
+                { value: "Face emojiis", label: "😃 😐 😭" },
+                { value: "custom", label: "Custom" },
+              ]}
             />
+
             {isCustomOptions && (
               <Controller
                 name="customOptions"

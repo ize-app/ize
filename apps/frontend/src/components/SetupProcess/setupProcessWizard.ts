@@ -1,5 +1,6 @@
 import { SetupProcessRoute, setUpProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+import { UserDataProps } from "../shared/Avatar";
 
 export interface SetupProcessState {
   processName?: string;
@@ -9,6 +10,25 @@ export interface SetupProcessState {
   options?: string;
   customOptions?: string[];
   inputs?: ProcessInput[];
+  rights?: ProcessRights;
+  decision?: ProcessDecision;
+}
+
+export interface ProcessDecision {
+  decisionThresholdType?: ThresholdTypes;
+  requestExpirationSeconds?: number;
+  decisionThreshold?: number;
+  quorum?: ProcessQuorum;
+}
+
+export interface ProcessQuorum {
+  quorumType?: ThresholdTypes;
+  quorumThreshold?: number;
+}
+
+export enum ThresholdTypes {
+  Absolute = "Absolute",
+  Percentage = "Percentage",
 }
 
 export interface ProcessInput {
@@ -16,6 +36,12 @@ export interface ProcessInput {
   description: string;
   required: boolean;
   type: ProcessInputType;
+}
+
+export interface ProcessRights {
+  request: UserDataProps[];
+  response: UserDataProps[];
+  edit: UserDataProps[];
 }
 
 export enum ProcessInputType {

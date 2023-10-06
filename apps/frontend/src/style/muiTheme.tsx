@@ -44,6 +44,9 @@ const muiTheme = createTheme({
     h2: {
       fontSize: "2rem",
     },
+    h3: {
+      fontSize: "1.5rem",
+    },
     label: {
       fontSize: ".875rem",
       color: style.colors.secondary,
