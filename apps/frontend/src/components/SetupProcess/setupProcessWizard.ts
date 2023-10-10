@@ -41,7 +41,7 @@ export interface ProcessInput {
 export interface ProcessRights {
   request: UserDataProps[];
   response: UserDataProps[];
-  edit: UserDataProps[];
+  edit: UserDataProps;
 }
 
 export enum ProcessInputType {

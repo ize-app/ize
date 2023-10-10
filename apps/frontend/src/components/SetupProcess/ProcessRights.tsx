@@ -10,13 +10,12 @@ import {
 } from "../Shared/Form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
 import Groups from "@mui/icons-material/Groups";
 
 import {
   useSetupProcessWizardState,
   ThresholdTypes,
-  ProcessInputType,
+
 } from "./setupProcessWizard";
 
 import { WizardBody, WizardNav } from "../Shared/Wizard";
@@ -28,7 +27,7 @@ const formSchema = z
     rights: z.object({
       request: z.array(userGroupSchema),
       response: z.array(userGroupSchema),
-      edit: z.array(userGroupSchema),
+      edit: userGroupSchema,
     }),
     decision: z.object({
       decisionThreshold: z.number(),
@@ -62,7 +61,7 @@ export const ProcessRights = () => {
       rights: {
         request: formState.rights?.request ?? [],
         response: formState.rights?.response ?? [],
-        edit: formState.rights?.edit ?? [],
+        edit: formState.rights?.edit,
       },
       decision: {
         decisionThresholdType:
@@ -88,8 +87,11 @@ export const ProcessRights = () => {
     setFormState((prev) => ({
       ...prev,
       ...data,
-      // TODO translate between select and state
-      decision: { ...data.decision, requestExpirationSeconds: 0 },
+      decision: {
+        ...data.decision,
+        requestExpirationSeconds:
+          data.decision.requestExpirationSeconds ?? 3600,
+      },
     }));
 
     onNext();
@@ -160,6 +162,7 @@ export const ProcessRights = () => {
                   control={control}
                   max={100}
                   min={isPercentageThreshold ? 50 : 1}
+                  valueLabelDisplay="on"
                 />
                 <Box
                   sx={{
@@ -189,6 +192,7 @@ export const ProcessRights = () => {
                 <Box sx={{ width: "100%", display: "flex" }}>
                   <SliderControl
                     name="decision.quorum.quorumThreshold"
+                    valueLabelDisplay="on"
                     control={control}
                     max={100}
                     min={1}
@@ -212,6 +216,7 @@ export const ProcessRights = () => {
           <div>
             <Typography>Edit</Typography>
             <GroupUserSearchControlled
+              multiple={false}
               control={control}
               name={"rights.edit"}
               label={"Edit privleges"}

@@ -21,17 +21,17 @@ export const SliderControl = ({
     <Controller
       name={name}
       control={control}
-      defaultValue={[0, 10]}
       render={({ field, fieldState: { error } }) => (
         <>
           <Slider
-            {...props}
             onChange={(_, value) => {
               field.onChange(value);
             }}
             valueLabelDisplay="auto"
+            value={field.value as number}
             max={max}
             step={1}
+            {...props}
           />
           <FormHelperText
             sx={{

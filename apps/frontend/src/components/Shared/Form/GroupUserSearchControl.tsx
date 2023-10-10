@@ -41,6 +41,7 @@ export const GroupUserSearchControl = ({
   control,
   name,
   label,
+  ...props
 }: GroupUserSearchControlProps) => {
   return (
     <Controller
@@ -49,13 +50,18 @@ export const GroupUserSearchControl = ({
       render={({ field, fieldState: { error } }) => (
         <FormControl fullWidth required>
           <Autocomplete
-            {...field}
             fullWidth
             multiple
             id="tags-filled"
+            {...field}
+            {...props}
             options={options}
             getOptionLabel={(option: UserDataProps) => option.name}
             onChange={(_event, data) => field.onChange(data)}
+            isOptionEqualToValue={(
+              option: UserDataProps,
+              value: UserDataProps,
+            ) => option.name === value.name}
             renderTags={(value: readonly UserDataProps[], getTagProps) =>
               value.map((option: UserDataProps, index: number) => (
                 <Chip
