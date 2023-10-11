@@ -79,7 +79,7 @@ function RequestRow(props: { request: RequestProps }) {
               {request.userResponse ? request.userResponse : "-"}
             </Typography>
           )}
-        </TableCellHideable>{" "}
+        </TableCellHideable>
       </TableRow>
       {!alreadyResponded && requestOpen && (
         <TableRow>
