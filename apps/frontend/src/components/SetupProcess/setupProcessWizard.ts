@@ -54,16 +54,16 @@ export function useSetupProcessWizardState() {
 }
 
 export const SETUP_PROCESS_PROGRESS_BAR_STEPS = [
-  "Process type",
-  "Input fields",
-  "Rights",
+  "Purpose",
+  "Inputs",
+  "Decisions",
   "Finish",
 ];
 
 export const SETUP_PROCESS_WIZARD_STEPS: WizardSteps<SetupProcessState> = [
   {
     path: setUpProcessRoute(SetupProcessRoute.Intro),
-    title: "Create a New Process",
+    title: "Purpose of this process",
     progressBarStep: 0,
     canNext: () => true,
   },
@@ -74,8 +74,8 @@ export const SETUP_PROCESS_WIZARD_STEPS: WizardSteps<SetupProcessState> = [
     canNext: () => true,
   },
   {
-    path: setUpProcessRoute(SetupProcessRoute.Rights),
-    title: "Who can use this process?",
+    path: setUpProcessRoute(SetupProcessRoute.Decisions),
+    title: "How decisions are made",
     progressBarStep: 2,
     canNext: () => true,
   },

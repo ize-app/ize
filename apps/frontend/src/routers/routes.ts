@@ -10,7 +10,7 @@ export enum Route {
 export enum SetupProcessRoute {
   Intro = "",
   Inputs = "/inputs",
-  Rights = "/rights",
+  Decisions = "/decisions",
   Finish = "/finish",
 }
 

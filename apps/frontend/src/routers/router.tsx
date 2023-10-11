@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
             element: <ProcessInputs />,
           },
           {
-            path: setUpProcessRoute(SetupProcessRoute.Rights),
+            path: setUpProcessRoute(SetupProcessRoute.Decisions),
             element: <ProcessRights />,
           },
           {
