@@ -28,8 +28,8 @@ import { Typography } from "@mui/material";
 const fieldArrayName = "processInputs";
 
 const rowSchema = z.object({
-  fieldName: z.string().nonempty(),
-  description: z.string().nonempty(),
+  fieldName: z.string().trim().nonempty("Required"),
+  description: z.string().trim().nonempty("Required"),
   required: z.boolean(),
   type: z.nativeEnum(ProcessInputType),
 });

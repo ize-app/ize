@@ -21,15 +21,20 @@ const formSchema = z
   .object({
     name: z
       .string()
-      .nonempty()
       .trim()
+      .nonempty("Please add a valid title")
       .max(140, "Please keep the name under 140 characters"),
-    description: z.string().nonempty().trim(),
+    description: z.string().trim().nonempty("Please add a valid description"),
     customIntegration: z.string().nonempty(),
-    webhookUri: z.string().url().optional(),
+    webhookUri: z.string().url("Please add a valid URL").optional(),
     options: z.string(),
     customOptions: z
-      .array(z.string({ invalid_type_error: "Only errors" }).trim())
+      .array(
+        z
+          .string({ invalid_type_error: "Please only include text options" })
+          .trim()
+          .nonempty("Please only include text options"),
+      )
       .min(1, "Add at least 1 option")
       .optional(),
   })
@@ -207,45 +212,48 @@ export const ProcessIntro = () => {
               <Controller
                 name="customOptions"
                 control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <FormControl required sx={{ width: "100%" }}>
-                    <Autocomplete
-                      {...field}
-                      freeSolo
-                      multiple
-                      autoComplete={false}
-                      id="tags-filled"
-                      options={[]}
-                      getOptionLabel={(option: string) => option}
-                      onChange={(_event, data) => field.onChange(data)}
-                      renderTags={(value: readonly string[], getTagProps) =>
-                        value.map((option: string, index: number) => (
-                          <Chip
-                            variant="filled"
-                            label={option}
-                            color="primary"
-                            {...getTagProps({ index })}
+                render={({ field, fieldState: { error } }) => {
+                  console.log("error is ", error);
+                  return (
+                    <FormControl required sx={{ width: "100%" }}>
+                      <Autocomplete
+                        {...field}
+                        freeSolo
+                        multiple
+                        autoComplete={false}
+                        id="tags-filled"
+                        options={[]}
+                        getOptionLabel={(option: string) => option}
+                        onChange={(_event, data) => field.onChange(data)}
+                        renderTags={(value: readonly string[], getTagProps) =>
+                          value.map((option: string, index: number) => (
+                            <Chip
+                              variant="filled"
+                              label={option}
+                              color="primary"
+                              {...getTagProps({ index })}
+                            />
+                          ))
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            placeholder="Add custom options here..."
+                            error={Boolean(error)}
                           />
-                        ))
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          placeholder="Add custom options here..."
-                          error={Boolean(error)}
-                        />
-                      )}
-                    />
-                    <FormHelperText
-                      sx={{
-                        color: "error.main",
-                      }}
-                    >
-                      {error?.message ?? ""}
-                    </FormHelperText>
-                  </FormControl>
-                )}
+                        )}
+                      />
+                      <FormHelperText
+                        sx={{
+                          color: "error.main",
+                        }}
+                      >
+                        {error?.message}
+                      </FormHelperText>
+                    </FormControl>
+                  );
+                }}
               />
             )}
           </Box>

@@ -25,8 +25,12 @@ const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
 const formSchema = z
   .object({
     rights: z.object({
-      request: z.array(userGroupSchema),
-      response: z.array(userGroupSchema),
+      request: z
+        .array(userGroupSchema)
+        .min(1, "Please select at least one group or individual."),
+      response: z
+        .array(userGroupSchema)
+        .min(1, "Please select at least one group or individual."),
       edit: userGroupSchema,
     }),
     decision: z.object({
