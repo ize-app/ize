@@ -297,7 +297,7 @@ export const processMockData: ProcessProps[] = [
     },
   },
   {
-    processId: "1",
+    processId: "2",
     name: "Manage @admin role [Token Engineering Commons]",
     rights: {
       request: [

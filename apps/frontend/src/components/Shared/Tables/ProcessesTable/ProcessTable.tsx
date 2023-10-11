@@ -62,28 +62,32 @@ function ProcessRow(props: { process: ProcessProps }) {
         <TableCellHideable align={"right"}>
           <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
             <Tooltip title="Edit">
-              <IconButton
-                children={<Edit />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                color={"primary"}
-                disabled={!process.userRights.edit}
-                edge={"start"}
-              />
+              <span>
+                <IconButton
+                  children={<Edit />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  color={"primary"}
+                  disabled={!process.userRights.edit}
+                  edge={"start"}
+                />
+              </span>
             </Tooltip>
             <Tooltip title="Request">
-              <IconButton
-                children={<Add />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                color={"primary"}
-                disabled={!process.userRights.request}
-              />
+              <span>
+                <IconButton
+                  children={<Add />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  color={"primary"}
+                  disabled={!process.userRights.request}
+                />
+              </span>
             </Tooltip>
           </Box>
-        </TableCellHideable>{" "}
+        </TableCellHideable>
       </TableRow>
     </React.Fragment>
   );
