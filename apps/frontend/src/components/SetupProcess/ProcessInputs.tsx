@@ -14,7 +14,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import z from "zod";
 
 import {
-  CheckboxControlled,
+  CheckboxControl,
   TextFieldControl,
   SelectControl,
 } from "../Shared/Form";
@@ -129,7 +129,7 @@ export const ProcessInputs = () => {
                         />
                       </TableCell>
                       <TableCell align="center">
-                        <CheckboxControlled
+                        <CheckboxControl
                           name={`${fieldName}.required`}
                           key={"required" + index.toString()}
                           disabled={noEdit}

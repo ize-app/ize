@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 
 import { useForm } from "react-hook-form";
 import {
-  GroupUserSearchControlled,
+  GroupUserSearchControl,
   RadioControl,
   SelectControl,
   SliderControl,
@@ -15,10 +15,10 @@ import Groups from "@mui/icons-material/Groups";
 import {
   useSetupProcessWizardState,
   ThresholdTypes,
-
 } from "./setupProcessWizard";
 
 import { WizardBody, WizardNav } from "../Shared/Wizard";
+import React from "react";
 
 const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
 
@@ -49,6 +49,67 @@ const formSchema = z
   );
 
 type FormFields = z.infer<typeof formSchema>;
+
+const RightsContainer = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "8px",
+    }}
+  >
+    <Typography variant={"h3"}>{title}</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        border: "solid 1px #EADDFF",
+        borderRadius: "6px",
+        padding: "12px",
+      }}
+    >
+      {children}
+    </Box>
+  </Box>
+);
+
+const SliderContainer = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: "24px",
+      minHeight: "50px",
+    }}
+  >
+    <Box sx={{ width: "300px", flexBasis: "auto", flexGrow: "1" }}>
+      <Typography>{label}</Typography>
+    </Box>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        maxWidth: "50%",
+      }}
+    >
+      {children}
+    </Box>
+  </Box>
+);
 
 export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
@@ -96,6 +157,7 @@ export const ProcessRights = () => {
 
     onNext();
   };
+  // start at size and grow regardless of
 
   return (
     <>
@@ -105,15 +167,14 @@ export const ProcessRights = () => {
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: "24px",
+            gap: "20px",
           }}
         >
-          <div>
-            <Typography>Requests</Typography>
-            <GroupUserSearchControlled
+          <RightsContainer title={"How is this process triggered?"}>
+            <GroupUserSearchControl
               control={control}
               name={"rights.request"}
-              label={"Request privleges"}
+              label={"Who can create requests to trigger this process?"}
             />
             <SelectControl
               control={control}
@@ -129,40 +190,70 @@ export const ProcessRights = () => {
               ]}
               label="Days until request expires"
             />
-          </div>
-          <div>
-            <Typography>Response</Typography>
-            <GroupUserSearchControlled
+          </RightsContainer>
+          <RightsContainer title={"How is a final decision reached?"}>
+            <GroupUserSearchControl
               control={control}
               name={"rights.response"}
-              label={"Response privleges"}
+              label={"Who can respond to requests?"}
             />
             <RadioControl
               control={control}
               name="decision.decisionThresholdType"
-              label="What options will users choose between?"
+              label="At what point is a final decision reached?"
               options={[
-                { value: ThresholdTypes.Absolute, label: "# of responses" },
-                { value: ThresholdTypes.Percentage, label: "% of responses" },
+                {
+                  value: ThresholdTypes.Absolute,
+                  label: "An option receives a certain # of votes",
+                },
+                {
+                  value: ThresholdTypes.Percentage,
+                  label: "An option receives a certain % of votes",
+                },
               ]}
             />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
+            <SliderContainer
+              label={
+                isPercentageThreshold
+                  ? "What percentage of votes?"
+                  : "How many votes?"
+              }
             >
-              <Typography maxWidth={"300px"}>
-                How many votes does an option need for a decision to be made?
-              </Typography>
-              <Box sx={{ width: "100%", display: "flex" }}>
+              <SliderControl
+                name="decision.decisionThreshold"
+                control={control}
+                max={100}
+                valueLabelFormat={(value: number) =>
+                  isPercentageThreshold ? value.toString() + "%" : value
+                }
+                min={isPercentageThreshold ? 50 : 1}
+                valueLabelDisplay="on"
+              />
+              <Box
+                sx={{
+                  width: "100px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "4px",
+                }}
+              >
+                {isPercentageThreshold ? "100%" : totalGroupMembers}
+                {isPercentageThreshold ? null : <Groups color="primary" />}
+              </Box>
+            </SliderContainer>
+            {isPercentageThreshold ? (
+              <SliderContainer
+                label={
+                  "What's the minimum # of people that need to vote to reach a decision (the quorum)?"
+                }
+              >
                 <SliderControl
-                  name="decision.decisionThreshold"
+                  name="decision.quorum.quorumThreshold"
+                  valueLabelDisplay="on"
                   control={control}
                   max={100}
-                  min={isPercentageThreshold ? 50 : 1}
-                  valueLabelDisplay="on"
+                  min={1}
                 />
                 <Box
                   sx={{
@@ -173,55 +264,21 @@ export const ProcessRights = () => {
                     gap: "4px",
                   }}
                 >
-                  {isPercentageThreshold ? "100%" : totalGroupMembers}
-                  {isPercentageThreshold ? null : <Groups color="primary" />}
+                  {totalGroupMembers}
+                  <Groups color="primary" />
                 </Box>
-              </Box>
-            </Box>
-            {isPercentageThreshold ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Typography maxWidth={"300px"}>
-                  How many total responses do there need be to pick the winner?
-                </Typography>
-                <Box sx={{ width: "100%", display: "flex" }}>
-                  <SliderControl
-                    name="decision.quorum.quorumThreshold"
-                    valueLabelDisplay="on"
-                    control={control}
-                    max={100}
-                    min={1}
-                  />
-                  <Box
-                    sx={{
-                      width: "100px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    {totalGroupMembers}
-                    <Groups color="primary" />
-                  </Box>
-                </Box>
-              </Box>
+              </SliderContainer>
             ) : null}
-          </div>
-          <div>
-            <Typography>Edit</Typography>
-            <GroupUserSearchControlled
+          </RightsContainer>
+          <RightsContainer title={"How can this process evolve?"}>
+            {/* <Typography>Edit</Typography> */}
+            <GroupUserSearchControl
               multiple={false}
               control={control}
               name={"rights.edit"}
-              label={"Edit privleges"}
+              label={"Who is responsible for how this process evolves?"}
             />
-          </div>
+          </RightsContainer>
         </form>
       </WizardBody>
       <WizardNav

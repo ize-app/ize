@@ -48,9 +48,8 @@ export const GroupUserSearchControl = ({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl fullWidth required>
+        <FormControl required>
           <Autocomplete
-            fullWidth
             multiple
             id="tags-filled"
             {...field}

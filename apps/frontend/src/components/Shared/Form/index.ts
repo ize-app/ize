@@ -1,6 +1,6 @@
 export { Select } from "./Select";
-export { CheckboxControl as CheckboxControlled } from "./CheckboxControlled";
-export { GroupUserSearchControl as GroupUserSearchControlled } from "./GroupUserSearchControl";
+export { CheckboxControl } from "./CheckboxControl";
+export { GroupUserSearchControl } from "./GroupUserSearchControl";
 export { SelectControl } from "./SelectControl";
 export { SliderControl } from "./SliderControl";
 export { RadioControl } from "./RadioControl";
