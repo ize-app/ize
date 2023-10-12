@@ -3,7 +3,6 @@ import { DiscordServersDocument } from "../../graphql/generated/graphql";
 import {
   Box,
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -74,9 +73,6 @@ export const DiscordUserServers = () => {
             </MenuItem>
           ))}
         </Select>
-        {/* <FormHelperText>
-          Choose which server you want to create a group for.
-        </FormHelperText> */}
       </FormControl>
     </Box>
   );

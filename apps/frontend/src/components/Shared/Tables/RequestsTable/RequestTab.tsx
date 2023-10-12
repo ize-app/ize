@@ -7,7 +7,7 @@ import CreateButton from "../CreateButton";
 import { requestMockData } from "../mockData";
 import RequestTable from "./RequestTable";
 import Search from "../Search";
-import Select from "../Select";
+import { Select } from "../../Form/Select";
 import { UserDataProps } from "../../Avatar";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
@@ -101,7 +101,7 @@ const RequestTab = () => {
             />
           </Box>
           <Select
-            changeHandler={(event: SelectChangeEvent) => {
+            onChange={(event: SelectChangeEvent) => {
               setSelectOption(event.target.value);
             }}
             selectOptions={["Open", "Closed", "All"]}

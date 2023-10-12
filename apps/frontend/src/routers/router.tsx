@@ -1,25 +1,47 @@
 import { createBrowserRouter } from "react-router-dom";
+
+import { AuthRoute } from "./AuthRoute";
 import { Home } from "../components/Home";
-import { SetupServerGroup } from "../components/SetupServerGroup/SetupServerGroup";
+import {
+  ProcessIntro,
+  ProcessInputs,
+  ProcessRights,
+  ProcessFinish,
+  SetupProcess,
+} from "../components/SetupProcess";
+import {
+  DefineServerGroupProcesses,
+  DiscordUserServers,
+  Finish,
+  HowCultsWorks,
+  SetupServerGroup,
+} from "../components/SetupServerGroup";
 import { DefaultLayout } from "../layout/default";
-import { DiscordUserServers } from "../components/SetupServerGroup/DiscordUserServers";
-import { Route, SetupServerGroupRoute, setUpServerRoute } from "./routes";
-import { DefineServerGroupProcesses } from "../components/SetupServerGroup/DefineServerGroupProcesses";
-import { HowCultsWorks } from "../components/SetupServerGroup/HowCultsWorks";
-import { Finish } from "../components/SetupServerGroup/Finish";
+import {
+  Route,
+  SetupServerGroupRoute,
+  SetupProcessRoute,
+  setUpServerRoute,
+  setUpProcessRoute,
+} from "./routes";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
 
 export const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
+
     children: [
       {
         path: Route.Home,
         element: <Home />,
       },
       {
-        element: <SetupServerGroup />,
+        element: (
+          <AuthRoute>
+            <SetupServerGroup />
+          </AuthRoute>
+        ),
         path: Route.SetupServerGroup,
         children: [
           {
@@ -38,6 +60,33 @@ export const router = createBrowserRouter([
           {
             path: setUpServerRoute(SetupServerGroupRoute.Finish),
             element: <Finish />,
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthRoute>
+            <SetupProcess />
+          </AuthRoute>
+        ),
+        path: Route.SetupProcessGroup,
+        children: [
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Intro),
+            element: <ProcessIntro />,
+            index: true,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Inputs),
+            element: <ProcessInputs />,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Decisions),
+            element: <ProcessRights />,
+          },
+          {
+            path: setUpProcessRoute(SetupProcessRoute.Finish),
+            element: <ProcessFinish />,
           },
         ],
       },
