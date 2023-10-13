@@ -32,9 +32,6 @@ export const RequestInputTable = ({ inputs }: { inputs: RequestInput[] }) => {
     >
       <Table aria-label="collapsible table" size="small">
         <TableBody>
-          {/* {inputs.map((request) => (
-            <RequestRow key={request.requestId} request={request} />
-          ))} */}
           {inputs.map((input, index) => (
             <RequestInputRow
               input={input}

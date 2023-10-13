@@ -22,6 +22,7 @@ export const RequestOptions = ({
         aria-labelledby="radio-buttons-group-options"
         name="row-radio-buttons-group-options"
         onChange={handleChange}
+        sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
       >
         {options.map((option, index) => (
           <FormControlLabel

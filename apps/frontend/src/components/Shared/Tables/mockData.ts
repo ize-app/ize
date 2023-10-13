@@ -266,6 +266,8 @@ export const requestMockData: RequestProps[] = [
     options: [
       "This is a long option. Trying to see how what long text looks like. Gonna keep typing until there are an adequate number of words.",
       "Yet again trying to fill space. This one can be a little bit shorter though.",
+      "✅",
+      "❌",
     ],
   },
   {
