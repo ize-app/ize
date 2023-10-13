@@ -5,6 +5,7 @@ export enum Route {
   Groups = "/groups",
   Group = "/groups/:groupId",
   Request = "/request/:requestId",
+  Process = "process/:processId",
 }
 
 export enum SetupProcessRoute {

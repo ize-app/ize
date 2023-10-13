@@ -1,15 +1,19 @@
-import Launch from "@mui/icons-material/Launch";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
+import Launch from "@mui/icons-material/Launch";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+
 import { RequestInputTable, RequestOptions } from "../../Request";
 import { RequestProps } from "../mockData";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import { useState } from "react";
 
 export const ExpandedRequest = ({ request }: { request: RequestProps }) => {
   //   const [response, setResponse] = useState(null);
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={(theme) => ({
@@ -60,6 +64,9 @@ export const ExpandedRequest = ({ request }: { request: RequestProps }) => {
               size="small"
               startIcon={<Launch />}
               sx={{ width: "100px" }}
+              onClick={() => {
+                navigate(`/request/${request.requestId}`);
+              }}
             >
               Request
             </Button>
@@ -68,6 +75,9 @@ export const ExpandedRequest = ({ request }: { request: RequestProps }) => {
               size="small"
               startIcon={<Launch />}
               sx={{ width: "100px" }}
+              onClick={() => {
+                navigate(`/process/${request.process.processId}`);
+              }}
             >
               Process
             </Button>
