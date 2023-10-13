@@ -87,7 +87,10 @@ function RequestRow(props: { request: RequestProps }) {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <ExpandedRequest request={request} />
+              <ExpandedRequest
+                request={request}
+                collapseRow={() => setOpen(false)}
+              />
             </Collapse>
           </TableCell>
         </TableRow>

@@ -10,8 +10,13 @@ import Typography from "@mui/material/Typography";
 import { RequestInputTable, RequestOptions } from "../../Request";
 import { RequestProps } from "../mockData";
 
-export const ExpandedRequest = ({ request }: { request: RequestProps }) => {
-  //   const [response, setResponse] = useState(null);
+export const ExpandedRequest = ({
+  request,
+  collapseRow,
+}: {
+  request: RequestProps;
+  collapseRow: () => void;
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -97,35 +102,11 @@ export const ExpandedRequest = ({ request }: { request: RequestProps }) => {
           <RequestInputTable inputs={request.inputs} />
         </Box>
       </Box>
-      <Paper
-        elevation={2}
-        sx={(theme) => ({
-          display: "flex",
-          padding: "16px",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          alignSelf: "stretch",
-          [theme.breakpoints.down("sm")]: {
-            flexDirection: "column",
-          },
-        })}
-      >
-        <Box sx={{ width: "100%", height: "100%" }}>
-          <RequestOptions options={request.options} />
-        </Box>
-
-        <Box
-          sx={{
-            minWidth: "120px",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Button variant="contained">Submit</Button>
-        </Box>
+      <Paper elevation={2}>
+        <RequestOptions
+          options={request.options}
+          onSubmit={() => collapseRow()}
+        />
       </Paper>
     </Box>
   );

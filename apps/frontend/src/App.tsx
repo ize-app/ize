@@ -1,12 +1,13 @@
 import { ApolloProvider } from "@apollo/client";
 import { Global } from "@emotion/react";
 import { ThemeProvider } from "@mui/material/styles";
-import muiTheme from "./style/muiTheme";
-import { apolloClient } from "./apollo";
-import GlobalStyles from "./style/global";
 import { RouterProvider } from "react-router-dom";
-import { router } from "./routers/router";
+import { apolloClient } from "./apollo";
 import { CurrentUserProvider } from "./contexts/current_user_context";
+import { SnackbarProvider } from "./contexts/SnackbarContext";
+import { router } from "./routers/router";
+import muiTheme from "./style/muiTheme";
+import GlobalStyles from "./style/global";
 
 function App() {
   return (
@@ -14,7 +15,9 @@ function App() {
       <Global styles={GlobalStyles} />
       <ThemeProvider theme={muiTheme}>
         <CurrentUserProvider>
-          <RouterProvider router={router} />
+          <SnackbarProvider>
+            <RouterProvider router={router} />
+          </SnackbarProvider>
         </CurrentUserProvider>
       </ThemeProvider>
     </ApolloProvider>
