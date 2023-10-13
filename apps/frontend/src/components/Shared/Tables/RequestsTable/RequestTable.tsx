@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import Paper from "@mui/material/Paper";
@@ -22,6 +21,7 @@ import {
   StatusCell,
   TableCellHideable,
 } from "../TableCells";
+import { ExpandedRequest } from "./ExpandedRequest";
 
 function RequestRow(props: { request: RequestProps }) {
   const { request } = props;
@@ -46,8 +46,8 @@ function RequestRow(props: { request: RequestProps }) {
         }}
       >
         <TwoTierCell
-          topText={request.process}
-          bottomText={request.request}
+          topText={request.process.name}
+          bottomText={request.name}
           component="th"
           scope="row"
         />
@@ -85,11 +85,7 @@ function RequestRow(props: { request: RequestProps }) {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Typography variant="h6" gutterBottom component="div">
-                  To be created....
-                </Typography>
-              </Box>
+              <ExpandedRequest request={request} />
             </Collapse>
           </TableCell>
         </TableRow>
