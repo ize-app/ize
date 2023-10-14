@@ -9,7 +9,7 @@ import { RadioControl } from "../Form";
 import z from "zod";
 
 const formSchema = z.object({
-  option: z.string({ required_error: "Please select an option" }).nonempty(),
+  option: z.string().trim().nonempty("Please select an option"),
 });
 
 type FormFields = z.infer<typeof formSchema>;
@@ -24,21 +24,18 @@ export const SubmitResponse = ({
   const { setSnackbarOpen, setSnackbarData } = useContext(SnackbarContext);
 
   const submitSideEffects = (data: FormFields) => {
-    console.log(data);
     setSnackbarData({ message: "Response submitted!" });
     setSnackbarOpen(true);
     onSubmit();
   };
 
-  const { control, handleSubmit, watch } = useForm<FormFields>({
+  const { control, handleSubmit } = useForm<FormFields>({
     defaultValues: {
-      option: undefined,
+      option: "",
     },
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
   });
-
-  const selectedOption = watch("option");
 
   return (
     <Box
@@ -68,6 +65,7 @@ export const SubmitResponse = ({
         sx={{
           minWidth: "120px",
           height: "100%",
+          padding: "8px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
