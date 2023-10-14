@@ -3,13 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -22,6 +21,7 @@ import {
   StatusCell,
   TableCellHideable,
 } from "../TableCells";
+import { ExpandedRequest } from "./ExpandedRequest";
 
 function RequestRow(props: { request: RequestProps }) {
   const { request } = props;
@@ -41,13 +41,15 @@ function RequestRow(props: { request: RequestProps }) {
       <TableRow
         onClick={handleTableRowOnClick}
         sx={{
-          "& > *": { borderBottom: "unset" },
+          [`& .${tableCellClasses.root}`]: {
+            borderBottom: "none",
+          },
           backgroundColor: requestOpen ? "" : "#F7F2FA",
         }}
       >
         <TwoTierCell
-          topText={request.process}
-          bottomText={request.request}
+          topText={request.process.name}
+          bottomText={request.name}
           component="th"
           scope="row"
         />
@@ -85,11 +87,10 @@ function RequestRow(props: { request: RequestProps }) {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Typography variant="h6" gutterBottom component="div">
-                  To be created....
-                </Typography>
-              </Box>
+              <ExpandedRequest
+                request={request}
+                collapseRow={() => setOpen(false)}
+              />
             </Collapse>
           </TableCell>
         </TableRow>

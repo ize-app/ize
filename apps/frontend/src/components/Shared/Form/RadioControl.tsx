@@ -10,7 +10,7 @@ import { Controller, Control } from "react-hook-form";
 export interface RadioControlProps extends RadioGroupProps {
   name: string;
   control: Control;
-  label: string;
+  label?: string;
   options: { value: string; label: string }[];
 }
 
@@ -26,9 +26,11 @@ export const RadioControl = ({
     control={control}
     render={({ field, fieldState: { error } }) => (
       <FormControl component="fieldset" required>
-        <FormLabel component="legend" id="radio-buttons-group-options">
-          {label}
-        </FormLabel>
+        {label ? (
+          <FormLabel component="legend" id="radio-buttons-group-options">
+            {label}
+          </FormLabel>
+        ) : null}
         <RadioGroup
           {...field}
           {...props}

@@ -42,8 +42,8 @@ const RequestTab = () => {
       else if (selectOption === "Open" && expirationDate > now)
         selectMatch = true;
 
-      if (request.request.search(regExSearchQuery) !== -1) searchMatch = true;
-      else if (request.process.search(regExSearchQuery) !== -1)
+      if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
+      else if (request.process.name.search(regExSearchQuery) !== -1)
         searchMatch = true;
       else if (searchForUser(regExSearchQuery, request.creator))
         searchMatch = true;

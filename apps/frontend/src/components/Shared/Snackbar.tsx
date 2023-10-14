@@ -1,0 +1,41 @@
+import { default as MuiSnackbar } from "@mui/material/Snackbar";
+import { default as MuiAlert, AlertProps } from "@mui/material/Alert";
+
+import { useContext, forwardRef } from "react";
+
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  },
+);
+
+const Snackbar = () => {
+  const { snackbarOpen, setSnackbarOpen } = useContext(SnackbarContext);
+
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
+
+  return (
+    <MuiSnackbar
+      open={snackbarOpen}
+      autoHideDuration={7000}
+      onClose={handleClose}
+    >
+      <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+        Response submitted!
+      </Alert>
+    </MuiSnackbar>
+  );
+};
+
+export default Snackbar;

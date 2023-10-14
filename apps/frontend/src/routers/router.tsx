@@ -26,6 +26,7 @@ import {
 } from "./routes";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
+import { Process } from "../components/Process/Process";
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +98,10 @@ export const router = createBrowserRouter([
       {
         path: Route.Request,
         element: <Request />,
+      },
+      {
+        path: Route.Process,
+        element: <Process />,
       },
     ],
   },
