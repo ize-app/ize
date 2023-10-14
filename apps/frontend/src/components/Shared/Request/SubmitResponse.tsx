@@ -14,7 +14,7 @@ const formSchema = z.object({
 
 type FormFields = z.infer<typeof formSchema>;
 
-export const RequestOptions = ({
+export const SubmitResponse = ({
   options,
   onSubmit,
 }: {

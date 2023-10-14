@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 import Launch from "@mui/icons-material/Launch";
 import Box from "@mui/material/Box";
@@ -7,7 +6,7 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-import { RequestInputTable, RequestOptions } from "../../Request";
+import { RequestInputTable, SubmitResponse } from "../../Request";
 import { RequestProps } from "../mockData";
 
 export const ExpandedRequest = ({
@@ -103,7 +102,7 @@ export const ExpandedRequest = ({
         </Box>
       </Box>
       <Paper elevation={2}>
-        <RequestOptions
+        <SubmitResponse
           options={request.options}
           onSubmit={() => collapseRow()}
         />
