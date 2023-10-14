@@ -1,16 +1,18 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-// import FormHelperText from "@mui/material/FormHelperText";
-// import FormLabel from "@mui/material/FormLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-// import { RadioControl } from "../Form";
-// import { Control } from "react-hook-form";
-import { useContext} from "react";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import { RadioControl } from "../Form";
+import z from "zod";
+
+const formSchema = z.object({
+  option: z.string({ required_error: "Please select an option" }).nonempty(),
+});
+
+type FormFields = z.infer<typeof formSchema>;
 
 export const RequestOptions = ({
   options,
@@ -21,68 +23,60 @@ export const RequestOptions = ({
 }) => {
   const { setSnackbarOpen, setSnackbarData } = useContext(SnackbarContext);
 
+  const submitSideEffects = (data: FormFields) => {
+    console.log(data);
+    setSnackbarData({ message: "Response submitted!" });
+    setSnackbarOpen(true);
+    onSubmit();
+  };
+
+  const { control, handleSubmit, watch } = useForm<FormFields>({
+    defaultValues: {
+      option: undefined,
+    },
+    resolver: zodResolver(formSchema),
+    shouldUnregister: true,
+  });
+
+  const selectedOption = watch("option");
+
   return (
-    <>
+    <Box
+      component={"form"}
+      sx={(theme) => ({
+        display: "flex",
+        padding: "16px",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        alignSelf: "stretch",
+        [theme.breakpoints.down("sm")]: {
+          flexDirection: "column",
+        },
+      })}
+    >
+      <Box sx={{ width: "100%", height: "100%" }}>
+        <RadioControl
+          name="option"
+          control={control}
+          sx={{ flexDirection: "column", gap: "4px" }}
+          options={options.map((option) => ({ label: option, value: option }))}
+        />
+      </Box>
+
       <Box
-        sx={(theme) => ({
-          display: "flex",
-          padding: "16px",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          alignSelf: "stretch",
-          [theme.breakpoints.down("sm")]: {
-            flexDirection: "column",
-          },
-        })}
-      >
-        <Box sx={{ width: "100%", height: "100%" }}>
-          <FormControl component="fieldset" required>
-            <RadioGroup
-              aria-labelledby="radio-buttons-group-options"
-              name="row-radio-buttons-group-options"
-              sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              {options.map((option, index) => (
-                <FormControlLabel
-                  value={option}
-                  key={"option" + index.toString()}
-                  control={<Radio />}
-                  label={option}
-                />
-              ))}
-            </RadioGroup>
-            {/* <FormHelperText
         sx={{
-          color: "error.main",
+          minWidth: "120px",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {error?.message ?? ""}
-      </FormHelperText> */}
-          </FormControl>
-        </Box>
-
-        <Box
-          sx={{
-            minWidth: "120px",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={() => {
-              setSnackbarData({ message: "Response submitted!" });
-              setSnackbarOpen(true);
-              onSubmit();
-            }}
-          >
-            Submit
-          </Button>
-        </Box>
+        <Button variant="contained" onClick={handleSubmit(submitSideEffects)}>
+          Submit
+        </Button>
       </Box>
-    </>
+    </Box>
   );
 };
