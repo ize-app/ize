@@ -175,7 +175,7 @@ export const processMockData: Process.default[] = [
     processId: "2",
     name: "Remove event from shared TEC calendar",
     description:
-      "This process removes event from the hello@TEC shared Google Calendar.",
+      "This process removes event from the hello@tecommons.org shared Google Calendar.",
     webhookUri: "www.zapier.com",
     inputs: [
       {

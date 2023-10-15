@@ -123,7 +123,7 @@ export const Request = () => {
   const isUnderMdScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box>
         <Typography variant={"h1"}>{request.name}</Typography>
         <Box

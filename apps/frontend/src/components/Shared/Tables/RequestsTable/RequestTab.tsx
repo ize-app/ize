@@ -9,6 +9,7 @@ import RequestTable from "./RequestTable";
 import Search from "../Search";
 import { Select } from "../../Form/Select";
 import { UserDataProps } from "../../Avatar";
+import { Filter } from "@mui/icons-material";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;
@@ -21,11 +22,27 @@ const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   return foundMatch;
 };
 
-const RequestTab = () => {
-  const selectOptions = ["Open", "Closed", "All"];
+export enum FilterOptions {
+  Open = "Open",
+  Closed = "Closed",
+  All = "All",
+}
+
+interface RequestTabProps {
+  defaultFilterOption?: FilterOptions;
+  hideCreateButton?: boolean;
+  processId?: string;
+}
+
+const RequestTab = ({
+  defaultFilterOption = FilterOptions.Open,
+  hideCreateButton = false,
+  processId,
+}: RequestTabProps) => {
+  const selectOptions = Object.values(FilterOptions);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectOption, setSelectOption] = useState(selectOptions[0]);
+  const [selectOption, setSelectOption] = useState(defaultFilterOption);
 
   const filteredRequestData = requestMockData
     .filter((request) => {
@@ -36,6 +53,10 @@ const RequestTab = () => {
       let selectMatch = false;
       let searchMatch = false;
 
+      if (processId && request.process.processId !== processId) {
+        return false;
+      }
+
       if (selectOption === "All") selectMatch = true;
       else if (selectOption === "Closed" && expirationDate < now)
         selectMatch = true;
@@ -45,7 +66,7 @@ const RequestTab = () => {
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
       else if (request.process.name.search(regExSearchQuery) !== -1)
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, request.creator))
+      else if (searchForUser(regExSearchQuery, [request.creator]))
         searchMatch = true;
 
       return selectMatch && searchMatch;
@@ -104,11 +125,11 @@ const RequestTab = () => {
             onChange={(event: SelectChangeEvent) => {
               setSelectOption(event.target.value);
             }}
-            selectOptions={["Open", "Closed", "All"]}
+            selectOptions={selectOptions}
             selectOption={selectOption}
           />
         </Box>
-        <CreateButton />
+        {hideCreateButton ? null : <CreateButton />}
       </Box>
       <RequestTable requests={filteredRequestData} />
     </Box>
