@@ -1,3 +1,4 @@
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import { useTheme } from "@mui/material/styles";
@@ -53,6 +54,67 @@ export default function HorizontalBars({
   );
 }
 
+export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
+  const now = new Date();
+  const remainingMinutes =
+    (expirationDate.getTime() - now.getTime()) / (1000 * 60);
+  if (remainingMinutes < 0) {
+    return (
+      <>
+        <Chip label={"Closed"} color="secondary" size="small" />
+        <Typography>
+          Expired on{" "}
+          {expirationDate.toLocaleString("en-US", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
+        </Typography>
+      </>
+    );
+  } else if (remainingMinutes < 60) {
+    return (
+      <>
+        <Chip label="Open" color="primary" size="small" />
+        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <AccessAlarmIcon color="error" fontSize="small" />
+          <Typography color="error">
+            {Math.ceil(remainingMinutes)} minute
+            {Math.ceil(remainingMinutes) > 1 ? "s" : ""} left to respond
+          </Typography>
+        </Box>
+      </>
+    );
+  } else if (remainingMinutes < 60 * 24) {
+    return (
+      <>
+        <Chip label="Open" color="primary" size="small" />
+        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <AccessAlarmIcon color="error" fontSize="small" />
+          <Typography color="error">
+            {Math.round(remainingMinutes / 60)} hour
+            {Math.round(remainingMinutes / 60) > 1 ? "s" : ""} left to respond
+          </Typography>
+        </Box>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Chip label="Open" color="primary" size="small" />
+        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <AccessAlarmIcon fontSize="small" />
+          <Typography>
+            {Math.floor(remainingMinutes / (60 * 24))} day
+            {Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""} left to
+            respond
+          </Typography>
+        </Box>
+      </>
+    );
+  }
+};
+
 export const Request = () => {
   const { requestId } = useParams();
   const request = requestMockData[+(requestId as string) ?? 0];
@@ -78,17 +140,7 @@ export const Request = () => {
           })}
         >
           <Box sx={{ display: "flex", flexDirection: "row", gap: "12px" }}>
-            <Chip label="Expires soon" color="warning" size="small" />
-            <Typography>
-              Expires on{" "}
-              {request.expirationDate.toLocaleString("en-US", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              })}
-            </Typography>
+            <RemainingTime expirationDate={request.expirationDate} />
           </Box>
           <Box sx={{ display: "flex", gap: ".3rem" }}>
             <Typography variant="body1"> Requested by </Typography>{" "}
@@ -140,7 +192,6 @@ export const Request = () => {
         </Box>
         <Box
           sx={{
-            // width: "100%"
             [theme.breakpoints.up("md")]: {
               flex: "2 300px",
             },

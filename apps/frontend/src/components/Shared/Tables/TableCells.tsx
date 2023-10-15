@@ -158,7 +158,7 @@ export const StatusCell = ({
       <TwoTierCell
         topText="Open"
         bottomText={`${Math.floor(remainingMinutes / (60 * 24))} day${
-          Math.floor((remainingMinutes / 60) * 24) > 1 ? "s" : ""
+          Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""
         } left`}
         {...props}
       />
