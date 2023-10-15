@@ -22,7 +22,7 @@ const RequestInputRow = ({
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography variant="body2">{input.value}</Typography>
+        <Typography variant={fontSize}>{input.value}</Typography>
       </TableCell>
     </TableRow>
   );

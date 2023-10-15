@@ -30,7 +30,9 @@ export const ProcessSummaryTable = ({ process }: { process: ProcessProps }) => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Link to={`/process/${process.processId}`}>{process.name}</Link>
+              <Typography variant="body1">
+                <Link to={`/process/${process.processId}`}>{process.name}</Link>
+              </Typography>
             </TableCell>
           </TableRow>
           <TableRow>
@@ -39,7 +41,9 @@ export const ProcessSummaryTable = ({ process }: { process: ProcessProps }) => {
                 Description
               </Typography>
             </TableCell>
-            <TableCell>{process.description}</TableCell>
+            <TableCell>
+              <Typography variant="body1">{process.description}</Typography>
+            </TableCell>
           </TableRow>
         </TableBody>
         <TableRow>
