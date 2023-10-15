@@ -5,11 +5,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
 
-import { ProcessProps } from "../Tables/mockData";
+import { Process } from "../../../types";
 import { Typography } from "@mui/material";
 import { AvatarsCell } from "../Tables/TableCells";
 
-export const ProcessSummaryTable = ({ process }: { process: ProcessProps }) => {
+export const ProcessSummaryTable = ({
+  process,
+}: {
+  process: Process.default;
+}) => {
   return (
     <TableContainer
       sx={{
@@ -52,7 +56,7 @@ export const ProcessSummaryTable = ({ process }: { process: ProcessProps }) => {
               Who can respond
             </Typography>
           </TableCell>
-          <AvatarsCell align="left" avatars={process.rights.respond} />
+          <AvatarsCell align="left" avatars={process.roles.respond} />
         </TableRow>
       </Table>
     </TableContainer>

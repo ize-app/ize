@@ -28,11 +28,11 @@ const ProcessTab = () => {
       let searchMatch = false;
 
       if (process.name.search(regExSearchQuery) !== -1) searchMatch = true;
-      else if (searchForUser(regExSearchQuery, process.rights.request))
+      else if (searchForUser(regExSearchQuery, process.roles.request))
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, process.rights.respond))
+      else if (searchForUser(regExSearchQuery, process.roles.respond))
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, process.rights.edit))
+      else if (searchForUser(regExSearchQuery, [process.roles.edit]))
         searchMatch = true;
 
       return searchMatch;

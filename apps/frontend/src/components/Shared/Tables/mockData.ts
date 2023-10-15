@@ -1,11 +1,12 @@
 import { addMinutes } from "../../../utils/inputs";
 import { UserDataProps } from "../Avatar";
+import { Process } from "../../../types";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {
   requestId: string;
   name: string;
-  process: ProcessProps;
+  process: Process.default;
   creator: UserDataProps;
   respond: UserDataProps[];
   expirationDate: Date;
@@ -74,13 +75,36 @@ export interface GroupProps {
   parentGroup?: GroupProps;
 }
 
-export const processMockData: ProcessProps[] = [
+export const processMockData: Process.default[] = [
   {
     processId: "1",
     name: "Manage @moderator role [Token Engineering Commons]",
     description:
       "This is a description of how ths process works. After a decision is completed in Cults, it triggers a custom action.",
-    rights: {
+    webhookUri: "www.zapier.com",
+    inputs: [
+      {
+        name: "Discord username",
+        description:
+          "Discord handle of the individual you want to give permissions to",
+        required: true,
+        type: Process.ProcessInputType.Text,
+      },
+      {
+        name: "Description",
+        description: "Any rationale you want to add for this request",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+    ],
+    options: ["✅", "❌"],
+    decision: {
+      threshold: 5,
+      thresholdType: Process.ThresholdTypes.Absolute,
+      requestExpirationSeconds: 86400,
+      quorum: null,
+    },
+    roles: {
       request: [
         {
           name: "@core-team",
@@ -135,15 +159,13 @@ export const processMockData: ProcessProps[] = [
           avatarUrl: "",
         },
       ],
-      edit: [
-        {
-          name: "popp",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-        },
-      ],
+      edit: {
+        name: "popp",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+      },
     },
-    userRights: {
+    userRoles: {
       request: true,
       respond: true,
       edit: true,
@@ -151,13 +173,54 @@ export const processMockData: ProcessProps[] = [
   },
   {
     processId: "2",
-    name: "Manage @admin role [Token Engineering Commons]",
+    name: "Remove event from shared TEC calendar",
     description:
-      "This is a description of how ths process works. After a decision is completed in Cults, it triggers a custom action.",
-    rights: {
+      "This process removes event from the hello@TEC shared Google Calendar.",
+    webhookUri: "www.zapier.com",
+    inputs: [
+      {
+        name: "gCal event ID",
+        description:
+          "You can find the event ID in the google calendar URL. Copy and paste everthing after '../eventId/''",
+        required: true,
+        type: Process.ProcessInputType.Text,
+      },
+      {
+        name: "Description",
+        description: "Any rationale you want to add for this request",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+    ],
+    options: ["✅", "❌"],
+    decision: {
+      threshold: 0.5,
+      thresholdType: Process.ThresholdTypes.Percentage,
+      requestExpirationSeconds: 259200,
+      quorum: { thresholdType: Process.ThresholdTypes.Absolute, threshold: 10 },
+    },
+    roles: {
       request: [
         {
+          name: "@core-team",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
           name: "@admin",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
+          name: "@dev",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -168,7 +231,7 @@ export const processMockData: ProcessProps[] = [
       ],
       respond: [
         {
-          name: "@admin",
+          name: "@core-team",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -176,19 +239,31 @@ export const processMockData: ProcessProps[] = [
               "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
           },
         },
-      ],
-      edit: [
+        {
+          name: "tsully",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        },
         {
           name: "popp",
           avatarUrl:
             "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
         },
+        {
+          name: "David Feinerman",
+          avatarUrl: "",
+        },
       ],
+      edit: {
+        name: "popp",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+      },
     },
-    userRights: {
-      request: false,
-      respond: false,
-      edit: false,
+    userRoles: {
+      request: true,
+      respond: true,
+      edit: true,
     },
   },
 ];
