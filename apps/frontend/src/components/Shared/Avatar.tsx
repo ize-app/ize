@@ -112,6 +112,50 @@ export const AvatarWithName = ({
   );
 };
 
+const AvatarPopper = ({
+  users,
+  anchorEl,
+  open,
+}: {
+  users: UserDataProps[];
+  anchorEl: HTMLElement | null;
+  open: boolean;
+}) => (
+  <Popper
+    id={"mouse-over-popove-userlist"}
+    open={open}
+    anchorEl={anchorEl}
+    sx={{
+      pointerEvents: "none",
+    }}
+    transition
+  >
+    {({ TransitionProps }) => (
+      <Fade {...TransitionProps} timeout={350}>
+        <Paper
+          sx={{
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left",
+            gap: "8px",
+            maxWidth: "200px",
+          }}
+          elevation={4}
+        >
+          {users.map((user) => (
+            <AvatarWithName
+              name={user.name}
+              avatarUrl={user.avatarUrl}
+              parent={user.parent}
+            />
+          ))}
+        </Paper>
+      </Fade>
+    )}
+  </Popper>
+);
+
 export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -156,39 +200,41 @@ export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
           onMouseLeave={handlePopperClose}
         />
       )}
-      <Popper
-        id={"mouse-over-popove-userlist"}
-        open={open}
-        anchorEl={anchorEl}
-        sx={{
-          pointerEvents: "none",
-        }}
-        transition
+      <AvatarPopper users={users} anchorEl={anchorEl} open={open} />
+    </>
+  );
+};
+
+export const NameWithPopper = ({
+  name,
+  users,
+}: {
+  name: string;
+  users: UserDataProps[];
+}) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handlePopperOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopperClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <Typography
+        variant={"body1"}
+        fontWeight={"600"}
+        color={"primary"}
+        onMouseEnter={handlePopperOpen}
+        onMouseLeave={handlePopperClose}
       >
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper
-              sx={{
-                padding: "16px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "left",
-                gap: "8px",
-                maxWidth: "200px",
-              }}
-              elevation={4}
-            >
-              {users.map((user) => (
-                <AvatarWithName
-                  name={user.name}
-                  avatarUrl={user.avatarUrl}
-                  parent={user.parent}
-                />
-              ))}
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
+        {name}
+      </Typography>
+      <AvatarPopper users={users} anchorEl={anchorEl} open={open} />
     </>
   );
 };

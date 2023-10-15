@@ -98,7 +98,7 @@ export const ExpandedRequest = ({
             background: "var(--m-3-white, #FFF)",
           }}
         >
-          <RequestInputTable inputs={request.inputs} />
+          <RequestInputTable inputs={request.inputs} rowSize="small" />
         </Box>
       </Box>
       <Paper elevation={2}>

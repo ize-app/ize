@@ -23,6 +23,7 @@ interface StatusCellProps extends TableCellHideableProps {
 
 interface AvatarsCellProps extends TableCellHideableProps {
   avatars: UserDataProps[];
+  align: "center" | "left";
 }
 
 export const HiddenCell = styled(TableCell)(({ theme }) => ({
@@ -92,6 +93,7 @@ export const TwoTierCell = ({
 
 export const AvatarsCell = ({
   avatars,
+  align = "center",
   ...props
 }: AvatarsCellProps): JSX.Element => {
   return (
@@ -99,7 +101,7 @@ export const AvatarsCell = ({
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: align === "center" ? "center" : "flex-start",
         }}
       >
         <AvatarGroup users={avatars} />
