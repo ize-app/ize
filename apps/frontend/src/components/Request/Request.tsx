@@ -1,10 +1,5 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import Paper from "@mui/material/Paper";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -12,6 +7,7 @@ import { BarChart } from "@mui/x-charts";
 
 import { useParams } from "react-router-dom";
 
+import { Accordion } from "../Shared/Accordion";
 import { requestMockData, ResponseCount } from "../Shared/Tables/mockData";
 import { NameWithPopper } from "../Shared/Avatar";
 import { RequestInputTable } from "../Shared/Request";
@@ -77,7 +73,7 @@ export const Request = () => {
             flexWrap: "wrap",
             [theme.breakpoints.down("md")]: {
               flexDirection: "column",
-              gap: "4px",
+              gap: "8px",
             },
           })}
         >
@@ -95,7 +91,7 @@ export const Request = () => {
             </Typography>
           </Box>
           <Box sx={{ display: "flex", gap: ".3rem" }}>
-            <Typography variant="body1"> Created by </Typography>{" "}
+            <Typography variant="body1"> Requested by </Typography>{" "}
             <NameWithPopper
               users={[request.creator]}
               name={request.creator.name}
@@ -117,11 +113,16 @@ export const Request = () => {
         <Box
           sx={(theme) => ({
             [theme.breakpoints.up("md")]: {
-              width: "400px",
+              flex: "1 400px",
             },
           })}
         >
-          <Paper sx={{ marginBottom: "20px" }} elevation={4}>
+          <Accordion
+            id="submit-response-panel"
+            defaultExpanded={true}
+            label="Submit your response"
+            elevation={6}
+          >
             <SubmitResponse
               options={request.options}
               displayAsColumn={true}
@@ -129,43 +130,35 @@ export const Request = () => {
                 return;
               }}
             />
-          </Paper>
-          <Accordion id="request-details-panel">
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              Results
-            </AccordionSummary>
-            <AccordionDetails>
-              <HorizontalBars responseCounts={request.result.responseCount} />
-            </AccordionDetails>
           </Accordion>
-          <Accordion id="request-details-panel">
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              Responses
-            </AccordionSummary>
-            <AccordionDetails>
-              <ResponseList responses={request.responses} />
-            </AccordionDetails>
+          <Accordion label="Results" id="response-count-panel">
+            <HorizontalBars responseCounts={request.result.responseCount} />
+          </Accordion>
+          <Accordion label="Responses" id="response-list-panel">
+            <ResponseList responses={request.responses} />
           </Accordion>
         </Box>
-        <Box sx={{ width: "100%" }}>
-          <Accordion defaultExpanded={true} id="request-details-panel">
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              Request details
-            </AccordionSummary>
-            <AccordionDetails>
-              <RequestInputTable rowSize="medium" inputs={request.inputs} />
-            </AccordionDetails>
+        <Box
+          sx={{
+            // width: "100%"
+            [theme.breakpoints.up("md")]: {
+              flex: "2 300px",
+            },
+          }}
+        >
+          <Accordion
+            label="Request details"
+            id="request-details-panel"
+            defaultExpanded={true}
+          >
+            <RequestInputTable rowSize="medium" inputs={request.inputs} />
           </Accordion>
           <Accordion
-            defaultExpanded={isUnderMdScreen}
+            label="Process details"
             id="process-details-panel"
+            defaultExpanded={isUnderMdScreen}
           >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              Process details
-            </AccordionSummary>
-            <AccordionDetails>
-              <ProcessSummaryTable process={request.process} />
-            </AccordionDetails>
+            <ProcessSummaryTable process={request.process} />
           </Accordion>
         </Box>
       </Box>

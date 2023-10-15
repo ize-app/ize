@@ -45,18 +45,18 @@ function ProcessRow(props: { process: ProcessProps }) {
           </Box>
         </TableCell>
         <AvatarsCell
-          align="right"
+          align="center"
           avatars={process.rights.request}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
-          align="right"
+          align="center"
           avatars={process.rights.respond}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
           avatars={process.rights.edit}
-          align="right"
+          align="center"
           hideOnSmallScreen={true}
         />
         <TableCellHideable align={"right"}>

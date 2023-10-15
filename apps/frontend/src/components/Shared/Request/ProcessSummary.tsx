@@ -45,7 +45,7 @@ export const ProcessSummaryTable = ({ process }: { process: ProcessProps }) => {
         <TableRow>
           <TableCell>
             <Typography variant="body1" fontWeight={500}>
-              Who can responsd
+              Who can respond
             </Typography>
           </TableCell>
           <AvatarsCell align="left" avatars={process.rights.respond} />
