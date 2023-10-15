@@ -53,7 +53,11 @@ function RequestRow(props: { request: RequestProps }) {
           component="th"
           scope="row"
         />
-        <AvatarsCell avatars={request.creator} hideOnSmallScreen={true} />
+        <AvatarsCell
+          align="center"
+          avatars={[request.creator]}
+          hideOnSmallScreen={true}
+        />
         <StatusCell
           align="center"
           hideOnSmallScreen={true}

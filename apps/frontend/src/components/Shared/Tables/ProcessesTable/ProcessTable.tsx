@@ -14,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
-import { ProcessProps } from "../mockData";
+import { Process } from "../../../../types";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
-function ProcessRow(props: { process: ProcessProps }) {
+function ProcessRow(props: { process: Process.default }) {
   const { process } = props;
 
   return (
@@ -45,18 +45,18 @@ function ProcessRow(props: { process: ProcessProps }) {
           </Box>
         </TableCell>
         <AvatarsCell
-          align="right"
-          avatars={process.rights.request}
+          align="center"
+          avatars={process.roles.request}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
-          align="right"
-          avatars={process.rights.respond}
+          align="center"
+          avatars={process.roles.respond}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
-          avatars={process.rights.edit}
-          align="right"
+          avatars={[process.roles.edit]}
+          align="center"
           hideOnSmallScreen={true}
         />
         <TableCellHideable align={"right"}>
@@ -69,7 +69,7 @@ function ProcessRow(props: { process: ProcessProps }) {
                     e.stopPropagation();
                   }}
                   color={"primary"}
-                  disabled={!process.userRights.edit}
+                  disabled={!process.userRoles.edit}
                   edge={"start"}
                 />
               </span>
@@ -82,7 +82,7 @@ function ProcessRow(props: { process: ProcessProps }) {
                     e.stopPropagation();
                   }}
                   color={"primary"}
-                  disabled={!process.userRights.request}
+                  disabled={!process.userRoles.request}
                 />
               </span>
             </Tooltip>
@@ -96,7 +96,7 @@ function ProcessRow(props: { process: ProcessProps }) {
 export default function ProcessTable({
   processes,
 }: {
-  processes: ProcessProps[];
+  processes: Process.default[];
 }) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>

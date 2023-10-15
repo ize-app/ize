@@ -1,18 +1,43 @@
 import { addMinutes } from "../../../utils/inputs";
 import { UserDataProps } from "../Avatar";
+import { Process } from "../../../types";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {
   requestId: string;
   name: string;
-  process: ProcessProps;
-  creator: UserDataProps[];
+  process: Process.default;
+  creator: UserDataProps;
   respond: UserDataProps[];
   expirationDate: Date;
   decisionType: string;
   userResponse: string | null;
   inputs: RequestInput[];
   options: string[];
+  responses: Response[];
+  result: Result;
+}
+
+export interface Response {
+  user: UserDataProps;
+  selection: Selection;
+}
+
+export interface ResponseCount {
+  optionId: string;
+  label: string;
+  count: number;
+}
+
+export interface Selection {
+  optionId: string;
+  optionLabel: string;
+  respondedAt: Date;
+}
+
+export interface Result {
+  selection: Selection | null;
+  responseCount: ResponseCount[];
 }
 
 export interface RequestInput {
@@ -35,6 +60,7 @@ interface UserRightsProps {
 export interface ProcessProps {
   processId: string;
   name: string;
+  description: string;
   rights: RightsProps;
   userRights: UserRightsProps;
 }
@@ -49,11 +75,36 @@ export interface GroupProps {
   parentGroup?: GroupProps;
 }
 
-export const processMockData: ProcessProps[] = [
+export const processMockData: Process.default[] = [
   {
     processId: "1",
     name: "Manage @moderator role [Token Engineering Commons]",
-    rights: {
+    description:
+      "This is a description of how ths process works. After a decision is completed in Cults, it triggers a custom action.",
+    webhookUri: "www.zapier.com",
+    inputs: [
+      {
+        name: "Discord username",
+        description:
+          "Discord handle of the individual you want to give permissions to",
+        required: true,
+        type: Process.ProcessInputType.Text,
+      },
+      {
+        name: "Description",
+        description: "Any rationale you want to add for this request",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+    ],
+    options: ["✅", "❌"],
+    decision: {
+      threshold: 5,
+      thresholdType: Process.ThresholdTypes.Absolute,
+      requestExpirationSeconds: 86400,
+      quorum: null,
+    },
+    roles: {
       request: [
         {
           name: "@core-team",
@@ -108,15 +159,13 @@ export const processMockData: ProcessProps[] = [
           avatarUrl: "",
         },
       ],
-      edit: [
-        {
-          name: "popp",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-        },
-      ],
+      edit: {
+        name: "popp",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+      },
     },
-    userRights: {
+    userRoles: {
       request: true,
       respond: true,
       edit: true,
@@ -124,11 +173,54 @@ export const processMockData: ProcessProps[] = [
   },
   {
     processId: "2",
-    name: "Manage @admin role [Token Engineering Commons]",
-    rights: {
+    name: "Remove event from shared TEC calendar",
+    description:
+      "This process removes event from the hello@TEC shared Google Calendar.",
+    webhookUri: "www.zapier.com",
+    inputs: [
+      {
+        name: "gCal event ID",
+        description:
+          "You can find the event ID in the google calendar URL. Copy and paste everthing after '../eventId/''",
+        required: true,
+        type: Process.ProcessInputType.Text,
+      },
+      {
+        name: "Description",
+        description: "Any rationale you want to add for this request",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+    ],
+    options: ["✅", "❌"],
+    decision: {
+      threshold: 0.5,
+      thresholdType: Process.ThresholdTypes.Percentage,
+      requestExpirationSeconds: 259200,
+      quorum: { thresholdType: Process.ThresholdTypes.Absolute, threshold: 10 },
+    },
+    roles: {
       request: [
         {
+          name: "@core-team",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
           name: "@admin",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
+          name: "@dev",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -139,7 +231,7 @@ export const processMockData: ProcessProps[] = [
       ],
       respond: [
         {
-          name: "@admin",
+          name: "@core-team",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -147,19 +239,31 @@ export const processMockData: ProcessProps[] = [
               "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
           },
         },
-      ],
-      edit: [
+        {
+          name: "tsully",
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+        },
         {
           name: "popp",
           avatarUrl:
             "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
         },
+        {
+          name: "David Feinerman",
+          avatarUrl: "",
+        },
       ],
+      edit: {
+        name: "popp",
+        avatarUrl:
+          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+      },
     },
-    userRights: {
-      request: false,
-      respond: false,
-      edit: false,
+    userRoles: {
+      request: true,
+      respond: true,
+      edit: true,
     },
   },
 ];
@@ -215,13 +319,11 @@ export const requestMockData: RequestProps[] = [
     requestId: "1",
     name: "Send award to winner of the 9/12 annual TEC Hackathon in Miami",
     process: processMockData[0],
-    creator: [
-      {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-    ],
+    creator: {
+      name: "popp",
+      avatarUrl:
+        "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+    },
     respond: [
       {
         name: "@core-team",
@@ -237,18 +339,53 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth amount", value: 4 },
     ],
     options: ["✅", "❌"],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
   {
     requestId: "2",
     name: "Give @tsully the @moderator role",
     process: processMockData[0],
-    creator: [
-      {
-        name: "tsully",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
+    creator: {
+      name: "tsully",
+      avatarUrl:
+        "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
+    },
     respond: [
       {
         name: "@core-team",
@@ -269,17 +406,53 @@ export const requestMockData: RequestProps[] = [
       "✅",
       "❌",
     ],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
   {
     requestId: "3",
     name: "Cancel next week's team stand-up meeting for more focus time",
     process: processMockData[1],
-    creator: [
-      {
-        name: "fake user",
-        avatarUrl: "",
-      },
-    ],
+    creator: {
+      name: "fake user",
+      avatarUrl: "",
+    },
+
     respond: [
       {
         name: "popp",
@@ -312,17 +485,53 @@ export const requestMockData: RequestProps[] = [
       "This is a long option. Trying to see how what long text looks like. Gonna keep typing until there are an adequate number of words.",
       "Yet again trying to fill space. This one can be a little bit shorter though.",
     ],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
   {
     requestId: "4",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[1],
-    creator: [
-      {
-        name: "Trey Anastasio",
-        avatarUrl: "",
-      },
-    ],
+    creator: {
+      name: "Trey Anastasio",
+      avatarUrl: "",
+    },
+
     respond: [
       {
         name: "popp",
@@ -352,17 +561,52 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth amount", value: 4 },
     ],
     options: ["✅", "❌"],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
   {
     requestId: "5",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[1],
-    creator: [
-      {
-        name: "Trey Anastasio",
-        avatarUrl: "",
-      },
-    ],
+    creator: {
+      name: "Trey Anastasio",
+      avatarUrl: "",
+    },
     respond: [
       {
         name: "popp",
@@ -392,17 +636,52 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth amount", value: 4 },
     ],
     options: ["✅", "❌"],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
   {
     requestId: "6",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[0],
-    creator: [
-      {
-        name: "Trey Anastasio",
-        avatarUrl: "",
-      },
-    ],
+    creator: {
+      name: "Trey Anastasio",
+      avatarUrl: "",
+    },
     respond: [
       {
         name: "popp",
@@ -432,5 +711,42 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth amount", value: 4 },
     ],
     options: ["✅", "❌"],
+    responses: [
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "abc",
+          optionLabel: "✅",
+          respondedAt: new Date(),
+        },
+      },
+      {
+        user: {
+          avatarUrl:
+            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+          name: "popp",
+        },
+        selection: {
+          optionId: "def",
+          optionLabel: "❌",
+          respondedAt: new Date(),
+        },
+      },
+    ],
+    result: {
+      selection: {
+        optionId: "abc",
+        optionLabel: "✅",
+        respondedAt: new Date(),
+      },
+      responseCount: [
+        { optionId: "abc", label: "✅", count: 5 },
+        { optionId: "def", label: "❌", count: 2 },
+      ],
+    },
   },
 ];

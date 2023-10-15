@@ -17,13 +17,15 @@ type FormFields = z.infer<typeof formSchema>;
 export const SubmitResponse = ({
   options,
   onSubmit,
+  displayAsColumn,
 }: {
   options: string[];
   onSubmit: () => void;
+  displayAsColumn: boolean;
 }) => {
   const { setSnackbarOpen, setSnackbarData } = useContext(SnackbarContext);
 
-  const submitSideEffects = (data: FormFields) => {
+  const submitSideEffects = () => {
     setSnackbarData({ message: "Response submitted!" });
     setSnackbarOpen(true);
     onSubmit();
@@ -43,7 +45,7 @@ export const SubmitResponse = ({
       sx={(theme) => ({
         display: "flex",
         padding: "16px",
-        flexDirection: "row",
+        flexDirection: displayAsColumn ? "column" : "row",
         justifyContent: "space-between",
         alignItems: "center",
         alignSelf: "stretch",
