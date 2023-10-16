@@ -2,6 +2,7 @@ export enum Route {
   Home = "/",
   SetupProcessGroup = "/setup/process",
   SetupServerGroup = "/setup/group",
+  NewRequest = "/request/new",
   Groups = "/groups",
   Group = "/groups/:groupId",
   Request = "/request/:requestId",
@@ -22,10 +23,20 @@ export enum SetupServerGroupRoute {
   Finish = "/finish",
 }
 
+export enum NewRequestRoute {
+  SelectProcess = "",
+  CreateRequest = "/create/:processId",
+  Confirm = "/confirm",
+}
+
 export const setUpServerRoute = (route: SetupServerGroupRoute) => {
   return `${Route.SetupServerGroup}${route}`;
 };
 
 export const setUpProcessRoute = (route: SetupProcessRoute) => {
   return `${Route.SetupProcessGroup}${route}`;
+};
+
+export const newRequestRoute = (route: NewRequestRoute) => {
+  return `${Route.NewRequest}${route}`;
 };

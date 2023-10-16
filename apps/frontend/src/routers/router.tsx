@@ -19,14 +19,17 @@ import {
 import { DefaultLayout } from "../layout/default";
 import {
   Route,
+  NewRequestRoute,
   SetupServerGroupRoute,
   SetupProcessRoute,
   setUpServerRoute,
   setUpProcessRoute,
+  newRequestRoute,
 } from "./routes";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
 import { Process } from "../components/Process/Process";
+import * as NewRequest from "../components/NewRequest";
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +91,31 @@ export const router = createBrowserRouter([
           {
             path: setUpProcessRoute(SetupProcessRoute.Finish),
             element: <ProcessFinish />,
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthRoute>
+            <NewRequest.default />
+          </AuthRoute>
+        ),
+        path: Route.NewRequest,
+        children: [
+          {
+            path: newRequestRoute(NewRequestRoute.SelectProcess),
+            element: <NewRequest.SelectProcess />,
+            index: true,
+          },
+          {
+            path: newRequestRoute(NewRequestRoute.CreateRequest),
+            element: <NewRequest.CreateRequest />,
+            index: true,
+          },
+          {
+            path: newRequestRoute(NewRequestRoute.Confirm),
+            element: <NewRequest.Confirm />,
+            index: true,
           },
         ],
       },
