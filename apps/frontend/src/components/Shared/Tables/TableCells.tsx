@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-
 import { SxProps, TableCellProps, styled } from "@mui/material";
-import { AvatarGroup, UserDataProps } from "../Avatar";
 import TableCell from "@mui/material/TableCell";
+
+import { AvatarGroup, UserDataProps } from "../Avatar";
+import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;
@@ -116,11 +117,11 @@ export const StatusCell = ({
   ...props
 }: StatusCellProps): JSX.Element => {
   const now = new Date();
-  const remainingMinutes =
-    (expirationDate.getTime() - now.getTime()) / (1000 * 60);
+  const timeLeft = expirationDate.getTime() - now.getTime();
+  const timeLeftStr = intervalToIntuitiveTimeString(timeLeft);
 
   // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
-  if (remainingMinutes < 0) {
+  if (timeLeft < 0) {
     return (
       <TwoTierCell
         topText="Closed"
@@ -131,36 +132,17 @@ export const StatusCell = ({
         {...props}
       />
     );
-  } else if (remainingMinutes < 60)
+  } else {
     return (
       <TwoTierCell
         topText="Open"
-        bottomText={`${Math.ceil(remainingMinutes)} minute${
-          Math.ceil(remainingMinutes) > 1 ? "s" : ""
-        } left`}
-        bottomStyleOverrides={{ color: alreadyResponded ? "" : "red" }}
+        bottomText={timeLeftStr}
+        bottomStyleOverrides={{
+          color:
+            alreadyResponded || timeLeft > 1000 * 60 * 60 * 24 ? "" : "red",
+        }}
         {...props}
       />
     );
-  else if (remainingMinutes < 60 * 24)
-    return (
-      <TwoTierCell
-        topText="Open"
-        bottomText={`${Math.round(remainingMinutes / 60)} hour${
-          Math.round(remainingMinutes / 60) > 1 ? "s" : ""
-        } left`}
-        bottomStyleOverrides={{ color: alreadyResponded ? "" : "red" }}
-        {...props}
-      />
-    );
-  else
-    return (
-      <TwoTierCell
-        topText="Open"
-        bottomText={`${Math.floor(remainingMinutes / (60 * 24))} day${
-          Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""
-        } left`}
-        {...props}
-      />
-    );
+  }
 };

@@ -143,8 +143,9 @@ const AvatarPopper = ({
           }}
           elevation={4}
         >
-          {users.map((user) => (
+          {users.map((user, index) => (
             <AvatarWithName
+              key={user.name + index.toString()}
               name={user.name}
               avatarUrl={user.avatarUrl}
               parent={user.parent}

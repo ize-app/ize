@@ -1,6 +1,6 @@
 import { UserDataProps } from "./User";
 
-interface Role {
+export interface Roles {
   request: UserDataProps[];
   respond: UserDataProps[];
   edit: UserDataProps;
@@ -28,16 +28,16 @@ export enum ProcessInputType {
   Number = "Number",
 }
 
-interface ProcessQuorum {
-  threshold: ThresholdTypes;
-  thresholdType: number;
+interface Quorum {
+  threshold: number;
+  thresholdType: ThresholdTypes;
 }
 
-interface Decision {
+export interface Decision {
   threshold: number;
   thresholdType: ThresholdTypes;
   requestExpirationSeconds: number;
-  quorum: ProcessQuorum | null;
+  quorum: Quorum;
 }
 
 export default interface Process {
@@ -47,7 +47,7 @@ export default interface Process {
   inputs: ProcessInput[];
   options: string[];
   webhookUri: string;
-  roles: Role;
+  roles: Roles;
   userRoles: UserRole;
   decision: Decision;
 }

@@ -15,6 +15,7 @@ import { RequestInputTable } from "../Shared/Request";
 import { ResponseList } from "../Shared/Request/ResponseList";
 import { SubmitResponse } from "../Shared/Request";
 import { ProcessSummaryTable } from "../Shared/Request/ProcessSummary";
+import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 
 export default function HorizontalBars({
   responseCounts,
@@ -56,14 +57,15 @@ export default function HorizontalBars({
 
 export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
   const now = new Date();
-  const remainingMinutes =
-    (expirationDate.getTime() - now.getTime()) / (1000 * 60);
-  if (remainingMinutes < 0) {
+  const timeLeft = expirationDate.getTime() - now.getTime();
+  const timeLeftStr = intervalToIntuitiveTimeString(timeLeft);
+  const displayRed = timeLeft < 1000 * 60 * 60 * 24;
+
+  if (timeLeft < 0) {
     return (
       <>
         <Chip label={"Closed"} color="secondary" size="small" />
         <Typography>
-          Expired on{" "}
           {expirationDate.toLocaleString("en-US", {
             day: "numeric",
             month: "short",
@@ -72,47 +74,64 @@ export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
         </Typography>
       </>
     );
-  } else if (remainingMinutes < 60) {
-    return (
-      <>
-        <Chip label="Open" color="primary" size="small" />
-        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <AccessAlarmIcon color="error" fontSize="small" />
-          <Typography color="error">
-            {Math.ceil(remainingMinutes)} minute
-            {Math.ceil(remainingMinutes) > 1 ? "s" : ""} left to respond
-          </Typography>
-        </Box>
-      </>
-    );
-  } else if (remainingMinutes < 60 * 24) {
-    return (
-      <>
-        <Chip label="Open" color="primary" size="small" />
-        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <AccessAlarmIcon color="error" fontSize="small" />
-          <Typography color="error">
-            {Math.round(remainingMinutes / 60)} hour
-            {Math.round(remainingMinutes / 60) > 1 ? "s" : ""} left to respond
-          </Typography>
-        </Box>
-      </>
-    );
   } else {
     return (
       <>
         <Chip label="Open" color="primary" size="small" />
         <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <AccessAlarmIcon fontSize="small" />
-          <Typography>
-            {Math.floor(remainingMinutes / (60 * 24))} day
-            {Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""} left to
-            respond
+          <AccessAlarmIcon
+            fontSize="small"
+            color={displayRed ? "error" : "primary"}
+          />
+          <Typography color={displayRed ? "error" : "primary"}>
+            {timeLeftStr} left to respond
           </Typography>
         </Box>
       </>
     );
   }
+
+  // if (remainingMinutes < 60) {
+  //   return (
+  //     <>
+  //       <Chip label="Open" color="primary" size="small" />
+  //       <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+  //         <AccessAlarmIcon color="error" fontSize="small" />
+  //         <Typography color="error">
+  //           {Math.ceil(remainingMinutes)} minute
+  //           {Math.ceil(remainingMinutes) > 1 ? "s" : ""} left to respond
+  //         </Typography>
+  //       </Box>
+  //     </>
+  //   );
+  // } else if (remainingMinutes < 60 * 24) {
+  //   return (
+  //     <>
+  //       <Chip label="Open" color="primary" size="small" />
+  //       <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+  //         <AccessAlarmIcon color="error" fontSize="small" />
+  //         <Typography color="error">
+  //           {Math.round(remainingMinutes / 60)} hour
+  //           {Math.round(remainingMinutes / 60) > 1 ? "s" : ""} left to respond
+  //         </Typography>
+  //       </Box>
+  //     </>
+  //   );
+  // } else {
+  //   return (
+  //     <>
+  //       <Chip label="Open" color="primary" size="small" />
+  //       <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+  //         <AccessAlarmIcon fontSize="small" />
+  //         <Typography>
+  //           {Math.floor(remainingMinutes / (60 * 24))} day
+  //           {Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""} left to
+  //           respond
+  //         </Typography>
+  //       </Box>
+  //     </>
+  //   );
+  // }
 };
 
 export const Request = () => {
@@ -120,7 +139,7 @@ export const Request = () => {
   const request = requestMockData[+(requestId as string) ?? 0];
 
   const theme = useTheme();
-  const isUnderMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
@@ -207,7 +226,7 @@ export const Request = () => {
           <Accordion
             label="Process details"
             id="process-details-panel"
-            defaultExpanded={isUnderMdScreen}
+            defaultExpanded={isOverMdScreen}
           >
             <ProcessSummaryTable process={request.process} />
           </Accordion>
