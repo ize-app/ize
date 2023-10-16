@@ -25,7 +25,7 @@ export enum NewServerGroupRoute {
 
 export enum NewRequestRoute {
   SelectProcess = "",
-  CreateRequest = "/create/:processId",
+  CreateRequest = "/:processId",
   Confirm = "/confirm",
 }
 

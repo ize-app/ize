@@ -98,12 +98,10 @@ export const router = createBrowserRouter([
           {
             path: newRequestRoute(NewRequestRoute.CreateRequest),
             element: <NewRequest.CreateRequest />,
-            index: true,
           },
           {
             path: newRequestRoute(NewRequestRoute.Confirm),
             element: <NewRequest.Confirm />,
-            index: true,
           },
         ],
       },
