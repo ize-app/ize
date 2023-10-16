@@ -12,10 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import Groups from "@mui/icons-material/Groups";
 
-import {
-  useSetupProcessWizardState,
-  ThresholdTypes,
-} from "./setupProcessWizard";
+import { useNewProcessWizardState, ThresholdTypes } from "./newProcessWizard";
 
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 import React from "react";
@@ -117,7 +114,7 @@ const SliderContainer = ({
 
 export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useSetupProcessWizardState();
+    useNewProcessWizardState();
 
   const totalGroupMembers = 128;
 

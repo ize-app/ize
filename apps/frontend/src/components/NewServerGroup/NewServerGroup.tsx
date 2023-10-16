@@ -11,17 +11,17 @@ import StepLabel from "@mui/material/StepLabel";
 
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  SETUP_SERVER_WIZARD_STEPS,
-  SETUP_SERVER_PROGRESS_BAR_STEPS,
-  SetupServerState,
-} from "./setup_server_wizard";
+  NEW_SERVER_WIZARD_STEPS,
+  NEW_SERVER_PROGRESS_BAR_STEPS,
+  NewServerState,
+} from "./newServerWizard";
 import {
   CreateDiscordServerGroupDocument,
   CreateDiscordServerGroupInput,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
 
-export const SetupServerGroup = () => {
+export const NewServerGroup = () => {
   const navigate = useNavigate();
   const [mutate] = useMutation(CreateDiscordServerGroupDocument, {
     onCompleted: (data) => {
@@ -42,8 +42,8 @@ export const SetupServerGroup = () => {
     });
   };
 
-  const setupServerWizard: Wizard<SetupServerState> = {
-    steps: SETUP_SERVER_WIZARD_STEPS,
+  const newServerWizard: Wizard<NewServerState> = {
+    steps: NEW_SERVER_WIZARD_STEPS,
     onComplete,
     initialFormState: {
       processConfigurationOption: ProcessConfigurationOption.BenevolentDictator,
@@ -59,7 +59,7 @@ export const SetupServerGroup = () => {
     formState,
     setFormState,
     nextLabel,
-  } = useWizard(setupServerWizard);
+  } = useWizard(newServerWizard);
 
   return (
     <Box
@@ -79,7 +79,7 @@ export const SetupServerGroup = () => {
         }}
       >
         <Stepper activeStep={progressBarStep}>
-          {SETUP_SERVER_PROGRESS_BAR_STEPS.map((title) => (
+          {NEW_SERVER_PROGRESS_BAR_STEPS.map((title) => (
             <Step key={title}>
               <StepLabel>{title}</StepLabel>
             </Step>

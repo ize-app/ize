@@ -8,7 +8,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { useSetupServerGroupWizardState } from "./setup_server_wizard";
+import { useNewServerGroupWizardState } from "./newServerWizard";
 
 interface DiscordServerProps {
   name: string;
@@ -16,7 +16,7 @@ interface DiscordServerProps {
 }
 
 export const DiscordUserServers = () => {
-  const { formState, setFormState } = useSetupServerGroupWizardState();
+  const { formState, setFormState } = useNewServerGroupWizardState();
 
   const { data } = useQuery(DiscordServersDocument);
 

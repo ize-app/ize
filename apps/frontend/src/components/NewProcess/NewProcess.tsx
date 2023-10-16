@@ -7,10 +7,10 @@ import StepLabel from "@mui/material/StepLabel";
 
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  SETUP_PROCESS_WIZARD_STEPS,
-  SETUP_PROCESS_PROGRESS_BAR_STEPS,
-  SetupProcessState,
-} from "./setupProcessWizard";
+  NEW_PROCESS_PROGRESS_BAR_STEPS,
+  NEW_PROCESS_WIZARD_STEPS,
+  NewProcessState,
+} from "./newProcessWizard";
 
 export const SetupProcess = () => {
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ export const SetupProcess = () => {
     navigate("/");
   };
 
-  const setupProcessWizard: Wizard<SetupProcessState> = {
-    steps: SETUP_PROCESS_WIZARD_STEPS,
+  const newProcessWizard: Wizard<NewProcessState> = {
+    steps: NEW_PROCESS_WIZARD_STEPS,
     onComplete,
     initialFormState: {},
   };
@@ -35,7 +35,7 @@ export const SetupProcess = () => {
     formState,
     setFormState,
     nextLabel,
-  } = useWizard(setupProcessWizard);
+  } = useWizard(newProcessWizard);
 
   return (
     <Box
@@ -47,7 +47,7 @@ export const SetupProcess = () => {
       }}
     >
       <Stepper activeStep={progressBarStep}>
-        {SETUP_PROCESS_PROGRESS_BAR_STEPS.map((title) => (
+        {NEW_PROCESS_PROGRESS_BAR_STEPS.map((title) => (
           <Step key={title}>
             <StepLabel>{title}</StepLabel>
           </Step>

@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
-import { useSetupProcessWizardState } from "./setupProcessWizard";
+import { useNewProcessWizardState } from "./newProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 import { Typography } from "@mui/material";
 
 export const ProcessFinish = () => {
-  const { formState, onPrev, nextLabel } = useSetupProcessWizardState();
+  const { formState, onPrev, nextLabel } = useNewProcessWizardState();
 
   const navigate = useNavigate();
 

@@ -9,14 +9,14 @@ export enum Route {
   Process = "process/:processId",
 }
 
-export enum SetupProcessRoute {
+export enum NewProcessRoute {
   Intro = "",
   Inputs = "/inputs",
   Decisions = "/decisions",
   Finish = "/finish",
 }
 
-export enum SetupServerGroupRoute {
+export enum NewServerGroupRoute {
   SelectServer = "",
   HowCultsWorks = "/how-cults-works",
   DefineProcess = "/define-process",
@@ -29,11 +29,11 @@ export enum NewRequestRoute {
   Confirm = "/confirm",
 }
 
-export const setUpServerRoute = (route: SetupServerGroupRoute) => {
+export const newServerRoute = (route: NewServerGroupRoute) => {
   return `${Route.SetupServerGroup}${route}`;
 };
 
-export const setUpProcessRoute = (route: SetupProcessRoute) => {
+export const newProcessRoute = (route: NewProcessRoute) => {
   return `${Route.SetupProcessGroup}${route}`;
 };
 

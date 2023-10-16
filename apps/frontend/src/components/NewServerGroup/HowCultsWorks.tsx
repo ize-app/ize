@@ -6,7 +6,7 @@ import TaskAltOutlined from "@mui/icons-material/TaskAltOutlined";
 
 import * as React from "react";
 
-import { useSetupServerGroupWizardState } from "./setup_server_wizard";
+import { useNewServerGroupWizardState } from "./newServerWizard";
 
 interface ExplainerProps {
   icon: JSX.Element;
@@ -44,7 +44,7 @@ const ExplainerBox = ({ icon, iconSide, children }: ExplainerProps) => {
 };
 
 export const HowCultsWorks = () => {
-  const { formState } = useSetupServerGroupWizardState();
+  const { formState } = useNewServerGroupWizardState();
 
   const serverName = formState.serverName ?? "your server";
 

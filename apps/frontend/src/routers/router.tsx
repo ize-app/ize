@@ -2,28 +2,16 @@ import { createBrowserRouter } from "react-router-dom";
 
 import { AuthRoute } from "./AuthRoute";
 import { Home } from "../components/Home";
-import {
-  ProcessIntro,
-  ProcessInputs,
-  ProcessRights,
-  ProcessFinish,
-  SetupProcess,
-} from "../components/SetupProcess";
-import {
-  DefineServerGroupProcesses,
-  DiscordUserServers,
-  Finish,
-  HowCultsWorks,
-  SetupServerGroup,
-} from "../components/SetupServerGroup";
+import * as NewProcess from "../components/NewProcess";
+import * as NewServerGroup from "../components/NewServerGroup";
 import { DefaultLayout } from "../layout/default";
 import {
   Route,
   NewRequestRoute,
-  SetupServerGroupRoute,
-  SetupProcessRoute,
-  setUpServerRoute,
-  setUpProcessRoute,
+  NewServerGroupRoute,
+  NewProcessRoute,
+  newServerRoute,
+  newProcessRoute,
   newRequestRoute,
 } from "./routes";
 import { Group } from "../components/Groups/Group";
@@ -43,54 +31,54 @@ export const router = createBrowserRouter([
       {
         element: (
           <AuthRoute>
-            <SetupServerGroup />
+            <NewServerGroup.default />
           </AuthRoute>
         ),
         path: Route.SetupServerGroup,
         children: [
           {
-            path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
-            element: <DiscordUserServers />,
+            path: newServerRoute(NewServerGroupRoute.SelectServer),
+            element: <NewServerGroup.DiscordUserServers />,
             index: true,
           },
           {
-            path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),
-            element: <HowCultsWorks />,
+            path: newServerRoute(NewServerGroupRoute.HowCultsWorks),
+            element: <NewServerGroup.HowCultsWorks />,
           },
           {
-            path: setUpServerRoute(SetupServerGroupRoute.DefineProcess),
-            element: <DefineServerGroupProcesses />,
+            path: newServerRoute(NewServerGroupRoute.DefineProcess),
+            element: <NewServerGroup.DefineServerGroupProcesses />,
           },
           {
-            path: setUpServerRoute(SetupServerGroupRoute.Finish),
-            element: <Finish />,
+            path: newServerRoute(NewServerGroupRoute.Finish),
+            element: <NewServerGroup.Finish />,
           },
         ],
       },
       {
         element: (
           <AuthRoute>
-            <SetupProcess />
+            <NewProcess.default />
           </AuthRoute>
         ),
         path: Route.SetupProcessGroup,
         children: [
           {
-            path: setUpProcessRoute(SetupProcessRoute.Intro),
-            element: <ProcessIntro />,
+            path: newProcessRoute(NewProcessRoute.Intro),
+            element: <NewProcess.ProcessIntro />,
             index: true,
           },
           {
-            path: setUpProcessRoute(SetupProcessRoute.Inputs),
-            element: <ProcessInputs />,
+            path: newProcessRoute(NewProcessRoute.Inputs),
+            element: <NewProcess.ProcessInputs />,
           },
           {
-            path: setUpProcessRoute(SetupProcessRoute.Decisions),
-            element: <ProcessRights />,
+            path: newProcessRoute(NewProcessRoute.Decisions),
+            element: <NewProcess.ProcessRights />,
           },
           {
-            path: setUpProcessRoute(SetupProcessRoute.Finish),
-            element: <ProcessFinish />,
+            path: newProcessRoute(NewProcessRoute.Finish),
+            element: <NewProcess.ProcessFinish />,
           },
         ],
       },
