@@ -102,7 +102,7 @@ export const processMockData: Process.default[] = [
       threshold: 5,
       thresholdType: Process.ThresholdTypes.Absolute,
       requestExpirationSeconds: 86400,
-      quorum: null,
+      quorum: { threshold: 0, thresholdType: Process.ThresholdTypes.Absolute },
     },
     roles: {
       request: [
@@ -175,7 +175,7 @@ export const processMockData: Process.default[] = [
     processId: "2",
     name: "Remove event from shared TEC calendar",
     description:
-      "This process removes event from the hello@TEC shared Google Calendar.",
+      "This process removes event from the hello@tecommons.org shared Google Calendar.",
     webhookUri: "www.zapier.com",
     inputs: [
       {
@@ -316,7 +316,7 @@ export const groupMockData: GroupProps[] = [
 
 export const requestMockData: RequestProps[] = [
   {
-    requestId: "1",
+    requestId: "0",
     name: "Send award to winner of the 9/12 annual TEC Hackathon in Miami",
     process: processMockData[0],
     creator: {
@@ -378,7 +378,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "2",
+    requestId: "1",
     name: "Give @tsully the @moderator role",
     process: processMockData[0],
     creator: {
@@ -445,7 +445,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "3",
+    requestId: "2",
     name: "Cancel next week's team stand-up meeting for more focus time",
     process: processMockData[1],
     creator: {
@@ -524,7 +524,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "4",
+    requestId: "3",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[1],
     creator: {
@@ -600,7 +600,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "5",
+    requestId: "4",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[1],
     creator: {
@@ -675,7 +675,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "6",
+    requestId: "5",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[0],
     creator: {

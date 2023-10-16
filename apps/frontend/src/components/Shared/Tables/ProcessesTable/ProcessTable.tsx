@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
@@ -19,10 +20,11 @@ import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: Process.default }) {
   const { process } = props;
+  const navigate = useNavigate();
 
   return (
     <React.Fragment>
-      <TableRow>
+      <TableRow onClick={() => navigate(`/process/${process.processId}`)}>
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{

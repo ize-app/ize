@@ -31,3 +31,22 @@ export const avatarString = (name: string) =>
   `${name.split(" ")[0][0]}${
     name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
   }`;
+
+//using milliseconds because that's how native JS expresses time intervals
+export const intervalToIntuitiveTimeString = (milliseconds: number): string => {
+  const remainingMinutes = milliseconds / (1000 * 60);
+  let unit: string;
+
+  const unitToMinutesMap: { [key: string]: number } = {
+    minute: 1,
+    hour: 60,
+    day: 60 * 24,
+  };
+
+  if (remainingMinutes < 60) unit = "minute";
+  else if (remainingMinutes < 60 * 24) unit = "hour";
+  else unit = "day";
+
+  const interval = Math.ceil(remainingMinutes / unitToMinutesMap[unit]);
+  return `${interval.toString()} ${unit}${interval > 1 ? "s" : ""}`;
+};

@@ -29,17 +29,13 @@ function RequestRow(props: { request: RequestProps }) {
 
   const navigate = useNavigate();
 
-  const handleTableRowOnClick = () => {
-    navigate(`/request/${request.requestId}`);
-  };
-
   const alreadyResponded = typeof request.userResponse === "string";
   const requestOpen = request.expirationDate >= new Date();
 
   return (
     <React.Fragment>
       <TableRow
-        onClick={handleTableRowOnClick}
+        onClick={() => navigate(`/request/${request.requestId}`)}
         sx={{
           [`& .${tableCellClasses.root}`]: {
             borderBottom: "none",
