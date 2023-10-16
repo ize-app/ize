@@ -1,3 +1,3 @@
 export const Confirm = () => {
-  return <div>Select Process</div>;
+  return <div>Confirm</div>;
 };

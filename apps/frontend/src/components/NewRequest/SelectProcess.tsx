@@ -1,28 +1,61 @@
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-
-import { processMockData } from "../shared/Tables/mockData";
 import { Typography } from "@mui/material";
 
+import Search from "../shared/Tables/Search";
+import { processMockData } from "../shared/Tables/mockData";
+import { useNewRequestWizardState } from "./newRequestWizard";
+import { WizardBody } from "../Shared/Wizard";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const SelectProcess = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const processes = processMockData.filter(
     (process) => process.userRoles.request,
   );
   return (
-    <>
-      <div>Select Process</div>
+    <WizardBody>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "16px",
+          width: "100%",
+          maxWidth: "500px",
+          marginBottom: "16px",
+        }}
+      >
+        <Search
+          searchQuery={searchQuery}
+          changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchQuery(event.target.value);
+          }}
+        />
+      </Box>
       <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
-        <Table aria-label="table" stickyHeader={true}>
+        <Table
+          aria-label="table"
+          stickyHeader={true}
+          sx={{
+            "& .MuiTableRow-root:hover": {
+              backgroundColor: "primary.light",
+            },
+            "& .MuiTableCell-root:hover": {
+              color: "white",
+            },
+          }}
+        >
           <TableBody>
             {processes.map((process) => (
               <TableRow
@@ -37,6 +70,6 @@ export const SelectProcess = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </WizardBody>
   );
 };

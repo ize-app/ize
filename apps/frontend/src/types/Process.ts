@@ -17,6 +17,7 @@ export enum ThresholdTypes {
 }
 
 interface ProcessInput {
+  inputId: string;
   name: string;
   description: string;
   required: boolean;

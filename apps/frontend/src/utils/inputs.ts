@@ -1,3 +1,5 @@
+import z, { ZodTypeAny } from "zod";
+
 export const validatePositiveIntegerInput = (value: string) => {
   const onlyDigits = value.replace(/[^0-9]/g, "");
   const noLeadingZeroes = onlyDigits.replace(/^0+/, "");
@@ -50,3 +52,19 @@ export const intervalToIntuitiveTimeString = (milliseconds: number): string => {
   const interval = Math.ceil(remainingMinutes / unitToMinutesMap[unit]);
   return `${interval.toString()} ${unit}${interval > 1 ? "s" : ""}`;
 };
+
+//  JS coerces empty to strings to a zero value so we're changing empty strings to zero to remove this ambiguity
+export const zodCleanNumber = (zodPipe: ZodTypeAny) =>
+  z
+    .string()
+    .trim()
+    .transform((value) => (value === "" ? undefined : Number(value)))
+    .pipe(zodPipe);
+
+// making empty strings undefined so that "no selection" is defined consistently
+export const zodCleanString = (zodPipe: ZodTypeAny) =>
+  z
+    .string()
+    .trim()
+    .transform((value) => (value === "" ? undefined : value))
+    .pipe(zodPipe);
