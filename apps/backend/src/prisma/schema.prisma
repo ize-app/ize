@@ -60,13 +60,13 @@ model Group {
   creator   User   @relation(fields: [creatorId], references: [id])
   creatorId String @map("creator_id") @db.Uuid
 
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
   activeAt           DateTime?
   deactivatedat      DateTime?
-  DiscordServerGroup DiscordServerGroup[]
+  discordServerGroup DiscordServerGroup?
   ProcessGroup       ProcessGroup[]
-  DiscordRoleGroup   DiscordRoleGroup[]
+  discordRoleGroup   DiscordRoleGroup?
 
   @@map("groups")
 }
@@ -75,7 +75,7 @@ model DiscordServerGroup {
   id               String             @id @default(uuid()) @db.Uuid
   discordServerId  String             @map("discord_server_id")
   group            Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId          String             @map("group_id") @db.Uuid
+  groupId          String             @unique @map("group_id") @db.Uuid
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
   DiscordRoleGroup DiscordRoleGroup[]
@@ -89,7 +89,7 @@ model DiscordRoleGroup {
   group                Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
   discordServerGroup   DiscordServerGroup @relation(fields: [discordServerGroupId], references: [id], onDelete: Cascade)
   discordServerGroupId String             @map("discord_server_group_id") @db.Uuid
-  groupId              String             @map("group_id") @db.Uuid
+  groupId              String             @unique @map("group_id") @db.Uuid
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at")
 

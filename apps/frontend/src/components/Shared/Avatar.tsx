@@ -13,7 +13,7 @@ import { useState } from "react";
 import { stringToColor, avatarString } from "../../utils/inputs";
 
 export interface UserDataProps {
-  avatarUrl: string;
+  avatarUrl?: string;
   name: string;
   parent?: UserDataProps;
 }
@@ -23,7 +23,7 @@ export interface UsersDataProps {
 }
 
 export interface AvatarProps extends MuiAvatarProps {
-  avatarUrl: string;
+  avatarUrl?: string;
   name: string;
   parent?: UserDataProps;
 }

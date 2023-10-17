@@ -1,6 +1,6 @@
 import { IDiscordServer } from "@discord/server_types";
 import { GraphqlRequestContext } from "../context";
-import { Guild } from "discord.js";
+import { APIGuild, Guild } from "discord.js";
 import { DiscordApi } from "@discord/api";
 
 const discordServers = async (
@@ -12,11 +12,11 @@ const discordServers = async (
   const botGuilds = await botApi.getDiscordServers();
   const userGuilds = await context.discordApi.getDiscordServers();
 
-  const guilds = userGuilds.filter((guild: Guild) => {
-    return botGuilds.some((botGuild: Guild) => botGuild.id === guild.id);
+  const guilds = userGuilds.filter((guild: APIGuild) => {
+    return botGuilds.some((botGuild: APIGuild) => botGuild.id === guild.id);
   });
 
-  const servers = guilds.map((guild: Guild) => ({
+  const servers = guilds.map((guild: APIGuild) => ({
     id: guild.id,
     name: guild.name,
   }));

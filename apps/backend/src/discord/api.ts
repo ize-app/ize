@@ -1,5 +1,12 @@
-import { Prisma, User } from "@prisma/client";
-import { Guild, Role } from "discord.js";
+import { Prisma } from "@prisma/client";
+import {
+  Guild,
+  Role,
+  GuildMember,
+  APIGuildMember,
+  APIRole,
+  APIGuild,
+} from "discord.js";
 
 export class DiscordApi {
   constructor(
@@ -19,7 +26,7 @@ export class DiscordApi {
     return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
   }
 
-  async getDiscordServers(): Promise<Array<Guild>> {
+  async getDiscordServers(): Promise<Array<APIGuild>> {
     const guildsResponse = await fetch(
       "https://discord.com/api/users/@me/guilds",
       {
@@ -30,7 +37,7 @@ export class DiscordApi {
     return guildsResponse.json();
   }
 
-  async getDiscordServer(serverId: string): Promise<Guild> {
+  async getDiscordServer(serverId: string): Promise<APIGuild> {
     const guildResponse = await fetch(
       `https://discord.com/api/guilds/${serverId}`,
       {
@@ -41,13 +48,34 @@ export class DiscordApi {
     return guildResponse.json();
   }
 
-  async getDiscordServerRoles(serverId: string): Promise<Role[]> {
+  async getDiscordServerRoles(serverId: string): Promise<APIRole[]> {
     if (!this.isBot) {
       throw new Error("Only bot users can get server roles");
     }
 
     const rolesResponse = await fetch(
       `https://discord.com/api/guilds/${serverId}/roles`,
+      {
+        headers: this.headers,
+      }
+    );
+
+    return rolesResponse.json();
+  }
+
+  async getDiscordGuildMember({
+    serverId,
+    memberId,
+  }: {
+    serverId: string;
+    memberId: string;
+  }): Promise<APIGuildMember> {
+    if (!this.isBot) {
+      throw new Error("Only bot users can get member info");
+    }
+
+    const rolesResponse = await fetch(
+      `https://discord.com/api/guilds/${serverId}/members/${memberId}`,
       {
         headers: this.headers,
       }

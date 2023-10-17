@@ -47,9 +47,9 @@ export const Group = () => {
           parent={
             groupData.parentGroup
               ? {
-                  name: groupData.parentGroup.name,
-                  avatarUrl: groupData.parentGroup.avatarUrl,
-                }
+                name: groupData.parentGroup.name,
+                avatarUrl: groupData.parentGroup.avatarUrl,
+              }
               : undefined
           }
         />
