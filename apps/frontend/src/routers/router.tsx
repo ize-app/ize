@@ -5,18 +5,11 @@ import { Home } from "../components/Home";
 import * as NewProcess from "../components/NewProcess";
 import * as NewServerGroup from "../components/NewServerGroup";
 import { DefaultLayout } from "../layout/default";
-import {
-  Route,
-  NewRequestRoute,
-  NewServerGroupRoute,
-  NewProcessRoute,
-  newServerRoute,
-  newProcessRoute,
-  newRequestRoute,
-} from "./routes";
+import * as Routes from "./routes";
 import { Group } from "../components/Groups/Group";
 import { Request } from "../components/Request/Request";
 import { Process } from "../components/Process/Process";
+import * as EditProcess from "../components/EditProcess";
 import * as NewRequest from "../components/NewRequest";
 
 export const router = createBrowserRouter([
@@ -25,7 +18,7 @@ export const router = createBrowserRouter([
 
     children: [
       {
-        path: Route.Home,
+        path: Routes.Route.Home,
         element: <Home />,
       },
       {
@@ -34,23 +27,29 @@ export const router = createBrowserRouter([
             <NewServerGroup.default />
           </AuthRoute>
         ),
-        path: Route.SetupServerGroup,
+        path: Routes.Route.SetupServerGroup,
         children: [
           {
-            path: newServerRoute(NewServerGroupRoute.SelectServer),
+            path: Routes.newServerRoute(
+              Routes.NewServerGroupRoute.SelectServer,
+            ),
             element: <NewServerGroup.DiscordUserServers />,
             index: true,
           },
           {
-            path: newServerRoute(NewServerGroupRoute.HowCultsWorks),
+            path: Routes.newServerRoute(
+              Routes.NewServerGroupRoute.HowCultsWorks,
+            ),
             element: <NewServerGroup.HowCultsWorks />,
           },
           {
-            path: newServerRoute(NewServerGroupRoute.DefineProcess),
+            path: Routes.newServerRoute(
+              Routes.NewServerGroupRoute.DefineProcess,
+            ),
             element: <NewServerGroup.DefineServerGroupProcesses />,
           },
           {
-            path: newServerRoute(NewServerGroupRoute.Finish),
+            path: Routes.newServerRoute(Routes.NewServerGroupRoute.Finish),
             element: <NewServerGroup.Finish />,
           },
         ],
@@ -61,23 +60,23 @@ export const router = createBrowserRouter([
             <NewProcess.default />
           </AuthRoute>
         ),
-        path: Route.SetupProcessGroup,
+        path: Routes.Route.SetupProcessGroup,
         children: [
           {
-            path: newProcessRoute(NewProcessRoute.Intro),
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
             element: <NewProcess.ProcessIntro />,
             index: true,
           },
           {
-            path: newProcessRoute(NewProcessRoute.Inputs),
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Inputs),
             element: <NewProcess.ProcessInputs />,
           },
           {
-            path: newProcessRoute(NewProcessRoute.Decisions),
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Decisions),
             element: <NewProcess.ProcessRights />,
           },
           {
-            path: newProcessRoute(NewProcessRoute.Finish),
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Finish),
             element: <NewProcess.ProcessFinish />,
           },
         ],
@@ -88,33 +87,63 @@ export const router = createBrowserRouter([
             <NewRequest.default />
           </AuthRoute>
         ),
-        path: Route.NewRequest,
+        path: Routes.Route.NewRequest,
         children: [
           {
-            path: newRequestRoute(NewRequestRoute.SelectProcess),
+            path: Routes.newRequestRoute(Routes.NewRequestRoute.SelectProcess),
             element: <NewRequest.SelectProcess />,
             index: true,
           },
           {
-            path: newRequestRoute(NewRequestRoute.CreateRequest),
+            path: Routes.newRequestRoute(Routes.NewRequestRoute.CreateRequest),
             element: <NewRequest.CreateRequest />,
           },
           {
-            path: newRequestRoute(NewRequestRoute.Confirm),
+            path: Routes.newRequestRoute(Routes.NewRequestRoute.Confirm),
             element: <NewRequest.Confirm />,
           },
         ],
       },
       {
-        path: Route.Group,
+        element: (
+          <AuthRoute>
+            <EditProcess.default />
+          </AuthRoute>
+        ),
+        path: Routes.Route.EditProcess,
+        children: [
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
+            element: <EditProcess.Intro />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.BasicInfo),
+            element: <NewProcess.ProcessIntro />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Inputs),
+            element: <NewProcess.ProcessInputs />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Decisions),
+            element: <NewProcess.ProcessRights />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Confirm),
+            element: <EditProcess.DiffConfirmation />,
+          },
+        ],
+      },
+      {
+        path: Routes.Route.Group,
         element: <Group />,
       },
       {
-        path: Route.Request,
+        path: Routes.Route.Request,
         element: <Request />,
       },
       {
-        path: Route.Process,
+        path: Routes.Route.Process,
         element: <Process />,
       },
     ],

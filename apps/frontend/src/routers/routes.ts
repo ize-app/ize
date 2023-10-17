@@ -6,7 +6,8 @@ export enum Route {
   Groups = "/groups",
   Group = "/groups/:groupId",
   Request = "/request/:requestId",
-  Process = "process/:processId",
+  Process = "/process/:processId",
+  EditProcess = "/edit/:processId",
 }
 
 export enum NewProcessRoute {
@@ -29,6 +30,14 @@ export enum NewRequestRoute {
   Confirm = "/:processId/confirm",
 }
 
+export enum EditProcessRoute {
+  Intro = "",
+  BasicInfo = "/info",
+  Inputs = "/inputs",
+  Decisions = "/decisions",
+  Confirm = "/confirm",
+}
+
 export const newServerRoute = (route: NewServerGroupRoute) => {
   return `${Route.SetupServerGroup}${route}`;
 };
@@ -39,4 +48,8 @@ export const newProcessRoute = (route: NewProcessRoute) => {
 
 export const newRequestRoute = (route: NewRequestRoute) => {
   return `${Route.NewRequest}${route}`;
+};
+
+export const editProcessRoute = (route: EditProcessRoute) => {
+  return `${Route.EditProcess}${route}`;
 };
