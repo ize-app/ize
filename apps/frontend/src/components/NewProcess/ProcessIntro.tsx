@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 
 import { RadioControl } from "../Shared/Form";
-import { useSetupProcessWizardState } from "./setupProcessWizard";
+import { useNewProcessWizardState } from "./newProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 
 const formSchema = z
@@ -59,7 +59,7 @@ type FormFields = z.infer<typeof formSchema>;
 
 export const ProcessIntro = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useSetupProcessWizardState();
+    useNewProcessWizardState();
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {

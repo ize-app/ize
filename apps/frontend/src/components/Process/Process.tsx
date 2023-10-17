@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useParams } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 
 import { processMockData } from "../shared/Tables/mockData";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
@@ -13,11 +14,13 @@ import { FilterOptions } from "../shared/Tables/RequestsTable/RequestTab";
 import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
+import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 
 export const Process = () => {
   const { processId } = useParams();
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const process = processMockData[+(processId as string) ?? 0];
 
@@ -40,6 +43,13 @@ export const Process = () => {
               width: "140px",
               display: process.userRoles.request ? "flex" : "none",
             }}
+            onClick={() =>
+              navigate(
+                generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                  processId: processId,
+                }),
+              )
+            }
           >
             Create request
           </Button>

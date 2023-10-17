@@ -1,8 +1,8 @@
-import { SetupProcessRoute, setUpProcessRoute } from "../../routers/routes";
+import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import { UserDataProps } from "../shared/Avatar";
 
-export interface SetupProcessState {
+export interface NewProcessState {
   processName?: string;
   description?: string;
   customIntegration?: string;
@@ -49,38 +49,38 @@ export enum ProcessInputType {
   Number = "Number",
 }
 
-export function useSetupProcessWizardState() {
-  return useWizardFormState<SetupProcessState>();
+export function useNewProcessWizardState() {
+  return useWizardFormState<NewProcessState>();
 }
 
-export const SETUP_PROCESS_PROGRESS_BAR_STEPS = [
+export const NEW_PROCESS_PROGRESS_BAR_STEPS = [
   "Purpose",
   "Inputs",
   "Decisions",
   "Finish",
 ];
 
-export const SETUP_PROCESS_WIZARD_STEPS: WizardSteps<SetupProcessState> = [
+export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<NewProcessState> = [
   {
-    path: setUpProcessRoute(SetupProcessRoute.Intro),
+    path: newProcessRoute(NewProcessRoute.Intro),
     title: "Purpose of this process",
     progressBarStep: 0,
     canNext: () => true,
   },
   {
-    path: setUpProcessRoute(SetupProcessRoute.Inputs),
+    path: newProcessRoute(NewProcessRoute.Inputs),
     title: "Inputs fields on each request",
     progressBarStep: 1,
     canNext: () => true,
   },
   {
-    path: setUpProcessRoute(SetupProcessRoute.Decisions),
+    path: newProcessRoute(NewProcessRoute.Decisions),
     title: "How decisions are made",
     progressBarStep: 2,
     canNext: () => true,
   },
   {
-    path: setUpProcessRoute(SetupProcessRoute.Finish),
+    path: newProcessRoute(NewProcessRoute.Finish),
     title: "Finish",
     progressBarStep: 3,
     canNext: () => true,

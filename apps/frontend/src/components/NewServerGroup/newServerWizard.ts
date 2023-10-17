@@ -1,8 +1,8 @@
 import { ProcessConfigurationOption } from "../../graphql/generated/graphql";
-import { SetupServerGroupRoute, setUpServerRoute } from "../../routers/routes";
+import { NewServerGroupRoute, newServerRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
-export interface SetupServerState {
+export interface NewServerState {
   serverId?: string;
   serverName?: string;
   processConfigurationOption: ProcessConfigurationOption;
@@ -10,42 +10,42 @@ export interface SetupServerState {
   numberOfResponses?: number;
 }
 
-export function useSetupServerGroupWizardState() {
-  return useWizardFormState<SetupServerState>();
+export function useNewServerGroupWizardState() {
+  return useWizardFormState<NewServerState>();
 }
 
-export const SETUP_SERVER_PROGRESS_BAR_STEPS = [
+export const NEW_SERVER_PROGRESS_BAR_STEPS = [
   "Select Server",
   "How Cults Works",
   "Define Process",
   "Finish",
 ];
 
-export const SETUP_SERVER_WIZARD_STEPS: WizardSteps<SetupServerState> = [
+export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
   {
-    path: setUpServerRoute(SetupServerGroupRoute.SelectServer),
+    path: newServerRoute(NewServerGroupRoute.SelectServer),
     title: "Select Server",
     progressBarStep: 0,
-    canNext: (formState: SetupServerState) => formState.serverId != null,
+    canNext: (formState: NewServerState) => formState.serverId != null,
   },
   {
-    path: setUpServerRoute(SetupServerGroupRoute.HowCultsWorks),
+    path: newServerRoute(NewServerGroupRoute.HowCultsWorks),
     title: "How Cults Works",
     progressBarStep: 1,
     canNext: () => true,
   },
   {
-    path: setUpServerRoute(SetupServerGroupRoute.DefineProcess),
+    path: newServerRoute(NewServerGroupRoute.DefineProcess),
     title: "Define Process",
     progressBarStep: 2,
-    canNext: (formState: SetupServerState) =>
+    canNext: (formState: NewServerState) =>
       // The user must either be a benevolent dictator or have selected a role
       formState.processConfigurationOption ===
         ProcessConfigurationOption.BenevolentDictator ||
       (formState.roleId != null && formState.numberOfResponses != null),
   },
   {
-    path: setUpServerRoute(SetupServerGroupRoute.Finish),
+    path: newServerRoute(NewServerGroupRoute.Finish),
     title: "Finish",
     progressBarStep: 3,
     canNext: () => true,

@@ -14,7 +14,7 @@ import {
   DiscordServerRolesDocument,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
-import { useSetupServerGroupWizardState } from "./setup_server_wizard";
+import { useNewServerGroupWizardState } from "./newServerWizard";
 import { useQuery } from "@apollo/client";
 import { validatePositiveIntegerInput } from "../../utils/inputs";
 
@@ -42,7 +42,7 @@ const INITIAL_PROCESS_CONFIGURATION_OPTIONS = [
 ];
 
 export const DefineServerGroupProcesses = () => {
-  const { formState, setFormState } = useSetupServerGroupWizardState();
+  const { formState, setFormState } = useNewServerGroupWizardState();
   const configurationOption = INITIAL_PROCESS_CONFIGURATION_OPTIONS.find(
     (option) => option.value === formState.processConfigurationOption,
   );

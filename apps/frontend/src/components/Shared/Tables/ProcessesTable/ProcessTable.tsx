@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
@@ -16,6 +16,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
 import { Process } from "../../../../types";
+import { NewRequestRoute, newRequestRoute } from "../../../../routers/routes";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: Process.default }) {
@@ -82,6 +83,14 @@ function ProcessRow(props: { process: Process.default }) {
                   children={<Add />}
                   onClick={(e) => {
                     e.stopPropagation();
+                    navigate(
+                      generatePath(
+                        newRequestRoute(NewRequestRoute.CreateRequest),
+                        {
+                          processId: process.processId,
+                        },
+                      ),
+                    );
                   }}
                   color={"primary"}
                   disabled={!process.userRoles.request}

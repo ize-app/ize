@@ -18,10 +18,7 @@ import {
   TextFieldControl,
   SelectControl,
 } from "../Shared/Form";
-import {
-  useSetupProcessWizardState,
-  ProcessInputType,
-} from "./setupProcessWizard";
+import { useNewProcessWizardState, ProcessInputType } from "./newProcessWizard";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 import { Typography } from "@mui/material";
 
@@ -40,7 +37,7 @@ type FormFields = z.infer<typeof formSchema>;
 
 export const ProcessInputs = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useSetupProcessWizardState();
+    useNewProcessWizardState();
 
   const { inputs } = formState;
 

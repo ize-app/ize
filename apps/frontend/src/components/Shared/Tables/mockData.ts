@@ -84,6 +84,7 @@ export const processMockData: Process.default[] = [
     webhookUri: "www.zapier.com",
     inputs: [
       {
+        inputId: "1a",
         name: "Discord username",
         description:
           "Discord handle of the individual you want to give permissions to",
@@ -91,10 +92,18 @@ export const processMockData: Process.default[] = [
         type: Process.ProcessInputType.Text,
       },
       {
+        inputId: "1b",
         name: "Description",
         description: "Any rationale you want to add for this request",
-        required: false,
+        required: true,
         type: Process.ProcessInputType.Text,
+      },
+      {
+        inputId: "1c",
+        name: "Number field (test)",
+        description: "number field for testing",
+        required: true,
+        type: Process.ProcessInputType.Number,
       },
     ],
     options: ["✅", "❌"],
@@ -179,6 +188,7 @@ export const processMockData: Process.default[] = [
     webhookUri: "www.zapier.com",
     inputs: [
       {
+        inputId: "2a",
         name: "gCal event ID",
         description:
           "You can find the event ID in the google calendar URL. Copy and paste everthing after '../eventId/''",
@@ -186,6 +196,7 @@ export const processMockData: Process.default[] = [
         type: Process.ProcessInputType.Text,
       },
       {
+        inputId: "2b",
         name: "Description",
         description: "Any rationale you want to add for this request",
         required: false,
@@ -675,7 +686,7 @@ export const requestMockData: RequestProps[] = [
     },
   },
   {
-    requestId: "5",
+    requestId: "",
     name: "Add Delphi veToken article to curated resources",
     process: processMockData[0],
     creator: {

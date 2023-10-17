@@ -2,15 +2,21 @@ import Add from "@mui/icons-material/Add";
 import { Home } from "@mui/icons-material";
 
 import Button from "@mui/material/Button";
-import { ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+import {
+  NewRequestRoute,
+  NewProcessRoute,
+  newProcessRoute,
+  newRequestRoute,
+} from "../../../routers/routes";
 
 const CreateButton = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -52,10 +58,12 @@ const CreateButton = (): JSX.Element => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem>
-          <Link to={"/"}>New request</Link>
+          <Link to={newRequestRoute(NewRequestRoute.SelectProcess)}>
+            New request
+          </Link>
         </MenuItem>
         <MenuItem>
-          <Link to={"/setup/process"}>New process</Link>
+          <Link to={newProcessRoute(NewProcessRoute.Intro)}>New process</Link>
         </MenuItem>
       </Menu>
     </>

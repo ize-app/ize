@@ -5,24 +5,30 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
+import { useContext } from "react";
+
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  SETUP_PROCESS_WIZARD_STEPS,
-  SETUP_PROCESS_PROGRESS_BAR_STEPS,
-  SetupProcessState,
-} from "./setupProcessWizard";
+  NEW_REQUEST_WIZARD_STEPS,
+  NEW_REQUEST_PROGRESS_BAR_STEPS,
+  NewRequestState,
+} from "./newRequestWizard";
 
-export const SetupProcess = () => {
+export const NewRequest = () => {
   const navigate = useNavigate();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
   // TODO: Will remove this disable once we put the actual mutation in this function
   // eslint-disable-next-line @typescript-eslint/require-await
   const onComplete = async () => {
+    setSnackbarData({ message: "Request created!" });
+    setSnackbarOpen(true);
     navigate("/");
   };
 
-  const setupProcessWizard: Wizard<SetupProcessState> = {
-    steps: SETUP_PROCESS_WIZARD_STEPS,
+  const newRequestWizard: Wizard<NewRequestState> = {
+    steps: NEW_REQUEST_WIZARD_STEPS,
     onComplete,
     initialFormState: {},
   };
@@ -35,7 +41,7 @@ export const SetupProcess = () => {
     formState,
     setFormState,
     nextLabel,
-  } = useWizard(setupProcessWizard);
+  } = useWizard(newRequestWizard);
 
   return (
     <Box
@@ -47,7 +53,7 @@ export const SetupProcess = () => {
       }}
     >
       <Stepper activeStep={progressBarStep}>
-        {SETUP_PROCESS_PROGRESS_BAR_STEPS.map((title) => (
+        {NEW_REQUEST_PROGRESS_BAR_STEPS.map((title) => (
           <Step key={title}>
             <StepLabel>{title}</StepLabel>
           </Step>

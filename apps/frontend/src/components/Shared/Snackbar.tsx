@@ -12,7 +12,8 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
 );
 
 const Snackbar = () => {
-  const { snackbarOpen, setSnackbarOpen } = useContext(SnackbarContext);
+  const { snackbarOpen, setSnackbarOpen, snackbarData } =
+    useContext(SnackbarContext);
 
   const handleClose = (
     _event?: React.SyntheticEvent | Event,
@@ -32,7 +33,7 @@ const Snackbar = () => {
       onClose={handleClose}
     >
       <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-        Response submitted!
+        {snackbarData.message ?? "Success!"}
       </Alert>
     </MuiSnackbar>
   );

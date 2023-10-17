@@ -90,48 +90,6 @@ export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
       </>
     );
   }
-
-  // if (remainingMinutes < 60) {
-  //   return (
-  //     <>
-  //       <Chip label="Open" color="primary" size="small" />
-  //       <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-  //         <AccessAlarmIcon color="error" fontSize="small" />
-  //         <Typography color="error">
-  //           {Math.ceil(remainingMinutes)} minute
-  //           {Math.ceil(remainingMinutes) > 1 ? "s" : ""} left to respond
-  //         </Typography>
-  //       </Box>
-  //     </>
-  //   );
-  // } else if (remainingMinutes < 60 * 24) {
-  //   return (
-  //     <>
-  //       <Chip label="Open" color="primary" size="small" />
-  //       <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-  //         <AccessAlarmIcon color="error" fontSize="small" />
-  //         <Typography color="error">
-  //           {Math.round(remainingMinutes / 60)} hour
-  //           {Math.round(remainingMinutes / 60) > 1 ? "s" : ""} left to respond
-  //         </Typography>
-  //       </Box>
-  //     </>
-  //   );
-  // } else {
-  //   return (
-  //     <>
-  //       <Chip label="Open" color="primary" size="small" />
-  //       <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-  //         <AccessAlarmIcon fontSize="small" />
-  //         <Typography>
-  //           {Math.floor(remainingMinutes / (60 * 24))} day
-  //           {Math.floor(remainingMinutes / (60 * 24)) > 1 ? "s" : ""} left to
-  //           respond
-  //         </Typography>
-  //       </Box>
-  //     </>
-  //   );
-  // }
 };
 
 export const Request = () => {
