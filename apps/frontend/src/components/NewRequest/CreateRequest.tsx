@@ -12,6 +12,7 @@ import { WizardBody, WizardNav } from "../Shared/Wizard";
 import { processMockData } from "../shared/Tables/mockData";
 import { useNewRequestWizardState } from "./newRequestWizard";
 import { TextFieldControl } from "../shared/Form";
+import { useNavigate } from "react-router-dom";
 
 const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
   let val: ZodTypeAny;
@@ -35,9 +36,10 @@ const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
 };
 
 export const CreateRequest = () => {
-  const { formState, setFormState, onNext, onPrev, nextLabel } =
+  const { formState, setFormState, onPrev, nextLabel } =
     useNewRequestWizardState();
   const { processId } = useParams();
+  const navigate = useNavigate();
 
   const formSchema = z.object(
     formState.process
@@ -69,11 +71,11 @@ export const CreateRequest = () => {
     // setFormState((prev) => ({
     //   ...prev,
     // }));
-    onNext();
+    // onNext({ processId });
+    navigate("confirm");
   };
 
   useEffect(() => {
-    console.log("running use Effect");
     const process = processMockData.find(
       (process) => process.processId === processId,
     );

@@ -1,17 +1,14 @@
-import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
-
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableRow, { tableRowClasses } from "@mui/material/TableRow";
+import TableRow from "@mui/material/TableRow";
 import { Typography } from "@mui/material";
 
 import Search from "../shared/Tables/Search";
 import { processMockData } from "../shared/Tables/mockData";
-import { useNewRequestWizardState } from "./newRequestWizard";
 import { WizardBody } from "../Shared/Wizard";
 
 import { useState } from "react";

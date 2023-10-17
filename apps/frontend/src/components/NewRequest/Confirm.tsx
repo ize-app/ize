@@ -1,3 +1,13 @@
+import { WizardBody, WizardNav } from "../Shared/Wizard";
+import { useNewRequestWizardState } from "./newRequestWizard";
+
 export const Confirm = () => {
-  return <div>Confirm</div>;
+  const { onNext, onPrev, nextLabel } = useNewRequestWizardState();
+
+  return (
+    <>
+      <WizardBody>Confirm</WizardBody>
+      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />
+    </>
+  );
 };
