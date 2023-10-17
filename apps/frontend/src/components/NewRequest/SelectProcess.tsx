@@ -40,7 +40,10 @@ export const SelectProcess = () => {
           }}
         />
       </Box>
-      <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
+      <TableContainer
+        component={Paper}
+        sx={{ overflowX: "initial", maxWidth: "800px" }}
+      >
         <Table
           aria-label="table"
           stickyHeader={true}

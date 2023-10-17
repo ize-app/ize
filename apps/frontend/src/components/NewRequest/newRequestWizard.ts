@@ -5,6 +5,11 @@ import { Process } from "../../types";
 
 export interface NewRequestState {
   process?: Process.default;
+  userInputs?: UserInputs;
+}
+
+export interface UserInputs {
+  [inputId: string]: string | number;
 }
 
 export function useNewRequestWizardState() {

@@ -1,18 +1,19 @@
-import { Box } from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Typography } from "@mui/material";
 
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 import z, { ZodTypeAny } from "zod";
 
 import { zodCleanNumber, zodCleanString } from "../../utils/inputs";
 import { ProcessInputType } from "../NewProcess/newProcessWizard";
+import { ProcessOptions } from "../Shared/Process/ProcessOptions";
 import { WizardBody, WizardNav } from "../Shared/Wizard";
 import { processMockData } from "../shared/Tables/mockData";
 import { useNewRequestWizardState } from "./newRequestWizard";
 import { TextFieldControl } from "../shared/Form";
-import { useNavigate } from "react-router-dom";
 
 const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
   let val: ZodTypeAny;
@@ -68,9 +69,10 @@ export const CreateRequest = () => {
 
   const onSubmit = (data: FormFields) => {
     console.log("data is ", data);
-    // setFormState((prev) => ({
-    //   ...prev,
-    // }));
+    setFormState((prev) => ({
+      ...prev,
+      userInputs: data,
+    }));
     // onNext({ processId });
     navigate("confirm");
   };
@@ -86,7 +88,29 @@ export const CreateRequest = () => {
     <>
       <WizardBody>
         {/* <div>Create a new request for {formState.process?.name}</div> */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            marginBottom: "24px",
+          }}
+        >
+          <Typography variant="body1">
+            Your request will have the following options:
+          </Typography>
+          <ProcessOptions
+            options={formState.process ? formState.process?.options : []}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            maxWidth: "800px",
+          }}
+        >
           {control
             ? formState.process?.inputs.map((input) => (
                 <TextFieldControl

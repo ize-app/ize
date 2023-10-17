@@ -1,5 +1,3 @@
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -7,6 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
 import { Process } from "../../types";
+import { ProcessOptions } from "../Shared/Process/ProcessOptions";
 import { Typography } from "@mui/material";
 
 export const RequestTemplateTable = ({
@@ -40,15 +39,7 @@ export const RequestTemplateTable = ({
               </Typography>
             </TableCell>
             <TableCell>
-              <Box sx={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                {process.options.map((option, index) => (
-                  <Chip
-                    label={option}
-                    key={option + index.toString()}
-                    sx={{ minWidth: "50px" }}
-                  />
-                ))}
-              </Box>
+              <ProcessOptions options={process.options} />
             </TableCell>
           </TableRow>
           <TableRow id={"request-template-row-2"}>
