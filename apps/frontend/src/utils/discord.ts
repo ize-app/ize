@@ -4,7 +4,20 @@ export const createDiscordAvatarURL = (
   discordId: string,
   avatarHash: string,
   size: DiscordImageSize,
+): string => createDiscordImageUrl(discordId, avatarHash, size, "avatars");
+
+export const createDiscordIconURL = (
+  discordId: string,
+  avatarHash: string,
+  size: DiscordImageSize,
+): string => createDiscordImageUrl(discordId, avatarHash, size, "icons");
+
+const createDiscordImageUrl = (
+  discordId: string,
+  avatarHash: string,
+  size: DiscordImageSize,
+  type: "avatars" | "icons",
 ): string =>
-  `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png${
+  `https://cdn.discordapp.com/${type}/${discordId}/${avatarHash}.png${
     size ? `?size=${size}` : ""
   }`;

@@ -1,3 +1,4 @@
+import { GroupType } from "../../../graphql/generated/graphql";
 import { addMinutes } from "../../../utils/inputs";
 import { UserDataProps } from "../Avatar";
 import { Process } from "../../../types";
@@ -66,13 +67,12 @@ export interface ProcessProps {
 }
 
 export interface GroupProps {
-  groupId: string;
+  id: string;
   name: string;
   avatarUrl: string;
   bannerUrl: string;
-  type: "Discord server" | "Discord role";
+  type: GroupType;
   memberCount: number;
-  parentGroup?: GroupProps;
 }
 
 export const processMockData: Process.default[] = [

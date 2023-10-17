@@ -88,7 +88,7 @@ export async function setUpDiscordServerGroup(
       const roleGroup = await createDiscordRoleGroup({
         roleId: roleId,
         name: role.name,
-        discordServerGroupId: serverGroup.DiscordServerGroup.at(0)?.id,
+        discordServerGroupId: serverGroup.discordServerGroup.id,
         creatorId: context.currentUser.id,
         transaction,
       });
@@ -152,7 +152,7 @@ export async function setUpDiscordServerGroup(
       const roleGroup = await createDiscordRoleGroup({
         roleId: roleId,
         name: role.name,
-        discordServerGroupId: serverGroup.DiscordServerGroup.at(0)?.id,
+        discordServerGroupId: serverGroup.discordServerGroup.id,
         creatorId: context.currentUser.id,
         transaction,
       });
@@ -208,7 +208,7 @@ async function createDiscordServerGroup({
 }) {
   const existingGroup = await transaction.group.findFirst({
     include: {
-      DiscordServerGroup: {
+      discordServerGroup: {
         where: {
           discordServerId: serverId,
         },
@@ -223,18 +223,18 @@ async function createDiscordServerGroup({
   const discordServerGroupId = randomUUID();
 
   return await transaction.group.create({
-    include: { DiscordServerGroup: true },
+    include: { discordServerGroup: true },
     data: {
       name,
       creatorId,
       activeAt: new Date(),
-      DiscordServerGroup: {
+      discordServerGroup: {
         create: {
           id: discordServerGroupId,
           discordServerId: serverId,
         },
       },
-      DiscordRoleGroup: {
+      discordRoleGroup: {
         create: {
           discordServerGroupId,
           discordRoleId: everyoneRoleId,
@@ -262,7 +262,7 @@ async function createDiscordRoleGroup({
       name: name,
       creatorId,
       activeAt: new Date(),
-      DiscordRoleGroup: {
+      discordRoleGroup: {
         create: {
           discordRoleId: roleId,
           discordServerGroupId: discordServerGroupId,

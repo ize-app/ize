@@ -11,3 +11,32 @@ query Group($id: String!) {
     name
   }
 }
+
+fragment GroupSummaryParts on Group {
+  id
+  name
+  type
+  memberCount
+  icon
+  creator {
+    ...UserParts
+  }
+  discordServerGroup {
+    id
+    discordServerId
+  }
+  discordRoleGroup {
+    id
+    discordRoleId
+    discordServerGroup {
+      id
+      discordServerId
+    }
+  }
+}
+
+query Groups {
+  groupsForCurrentUser {
+    ...GroupSummaryParts
+  }
+}
