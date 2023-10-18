@@ -20,3 +20,14 @@ type DiscordServerRole {
   id: String!
   name: String!
 }
+
+type DiscordServerGroup {
+  id: String!
+  discordServerId: String!
+}
+
+type DiscordRoleGroup {
+  id: String!
+  discordRoleId: String!
+  discordServerGroup: DiscordServerGroup!
+}
