@@ -9,7 +9,6 @@
     "apps/backend"
   ],
   "dependencies": {
-    "@mui/x-charts": "^6.0.0-alpha.15",
     "bcrypt": "^5.1.0"
   },
   "devDependencies": {
