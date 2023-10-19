@@ -68,7 +68,6 @@ export const CreateRequest = () => {
   });
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       userInputs: data,

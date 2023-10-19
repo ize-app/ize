@@ -53,7 +53,6 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   // if state is invlaid (i.e. user navigates directly to middle of the flow), then navigate back to start of wizard
   useEffect(() => {
-    console.log("running use effect");
     if (!validWizardState(formState)) navigate(wizard.steps[0].path);
   }, [navigate, validWizardState, formState, wizard.steps]);
 

@@ -213,7 +213,6 @@ export const ProcessIntro = () => {
                 name="customOptions"
                 control={control}
                 render={({ field, fieldState: { error } }) => {
-                  console.log("error is ", error);
                   return (
                     <FormControl required sx={{ width: "100%" }}>
                       <Autocomplete

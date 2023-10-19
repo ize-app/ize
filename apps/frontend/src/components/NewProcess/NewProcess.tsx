@@ -5,6 +5,9 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
+import { useContext } from "react";
+
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Wizard, useWizard } from "../../utils/wizard";
 import {
   NEW_PROCESS_PROGRESS_BAR_STEPS,
@@ -14,12 +17,16 @@ import {
 
 export const SetupProcess = () => {
   const navigate = useNavigate();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
   // TODO: Will remove this disable once we put the actual mutation in this function
   // eslint-disable-next-line @typescript-eslint/require-await
   const onComplete = async () => {
+    setSnackbarData({ message: "Process created!" });
+    setSnackbarOpen(true);
     navigate("/");
   };
+
 
   const newProcessWizard: Wizard<NewProcessState> = {
     steps: NEW_PROCESS_WIZARD_STEPS,

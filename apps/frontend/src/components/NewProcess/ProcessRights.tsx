@@ -115,8 +115,6 @@ const SliderContainer = ({
 export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
-  console.log("formState is ", formState);
-
   const totalGroupMembers = 128;
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
@@ -145,7 +143,6 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
 
     setFormState((prev) => ({
       ...prev,

@@ -5,7 +5,7 @@ import { WizardBody, WizardNav } from "../Shared/Wizard";
 import { Typography } from "@mui/material";
 
 export const ProcessFinish = () => {
-  const { formState, onPrev, nextLabel } = useNewProcessWizardState();
+  const { formState, onPrev, onNext, nextLabel } = useNewProcessWizardState();
 
   const navigate = useNavigate();
 
@@ -20,11 +20,7 @@ export const ProcessFinish = () => {
           works. Click "Finish" to create the process.
         </Typography>
       </WizardBody>
-      <WizardNav
-        onNext={() => navigate("/")}
-        onPrev={onPrev}
-        nextLabel={nextLabel}
-      />
+      <WizardNav onNext={onNext} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );
 };
