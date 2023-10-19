@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import { _404 } from "../components/404";
 import { AuthRoute } from "./AuthRoute";
 import { Home } from "../components/Home";
 import * as NewProcess from "../components/NewProcess";
@@ -145,6 +146,10 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.Process,
         element: <Process />,
+      },
+      {
+        path: "*",
+        element: <_404 />,
       },
     ],
   },
