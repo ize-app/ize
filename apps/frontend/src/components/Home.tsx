@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Button, Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 
 import Dashboard from "./Dashboard/Dashboard";

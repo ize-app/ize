@@ -4,7 +4,7 @@ import Chip from "@mui/material/Chip";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { BarChart } from "@mui/x-charts";
+import { BarChart } from "@mui/x-charts/BarChart";
 import { useParams } from "react-router-dom";
 
 import { intervalToIntuitiveTimeString } from "../../utils/inputs";

@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 import { useNewProcessWizardState } from "./newProcessWizard";
 import { WizardBody, WizardNav } from "../shared/Wizard";

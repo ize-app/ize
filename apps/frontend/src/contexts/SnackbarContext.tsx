@@ -1,4 +1,4 @@
-import { createContext, useState, Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, createContext, useState } from "react";
 
 export interface SnackbarDataProps {
   message: string;

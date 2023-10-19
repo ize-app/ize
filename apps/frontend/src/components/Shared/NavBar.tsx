@@ -1,7 +1,12 @@
 import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
-import { ArrowDropDown, Home, Logout } from "@mui/icons-material";
-import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import Home from "@mui/icons-material/Home";
+import Logout from "@mui/icons-material/Logout";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 

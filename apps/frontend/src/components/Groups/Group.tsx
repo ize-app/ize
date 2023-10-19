@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { Groups } from "@mui/icons-material";
+import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
