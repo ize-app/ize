@@ -22,9 +22,11 @@ export const Process = () => {
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
-  const process = processMockData[+(processId as string) ?? 0];
+  const process = processMockData.find(
+    (process) => process.processId === processId,
+  );
 
-  return (
+  return process ? (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography variant={"h1"}>{process.name}</Typography>
@@ -87,5 +89,7 @@ export const Process = () => {
         />
       </Box>
     </Box>
+  ) : (
+    <div>Hmmmmm.... can't find that process</div>
   );
 };
