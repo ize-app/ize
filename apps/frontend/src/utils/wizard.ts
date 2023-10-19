@@ -8,6 +8,7 @@ export interface WizardStep<FormState> {
   path: string;
   progressBarStep: number;
   canNext: (formState: FormState) => boolean;
+  validWizardState: (formState: FormState) => boolean;
 }
 
 export interface Wizard<FormState> {
@@ -21,6 +22,7 @@ type ContextType<FormState> = {
   setFormState: Dispatch<SetStateAction<FormState>>;
   onNext: () => void;
   onPrev: () => void;
+  validWizardState: (formState: FormState) => boolean;
   nextLabel: string;
 };
 
@@ -31,19 +33,6 @@ export function useWizardFormState<FormState>() {
 export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // navigate back to start of flow if someone tries to navigate dire
-  // useEffect(() => {
-  //   if (
-  //     currentStepIndex !== 0 &&
-  //     wizard.steps[currentStepIndex - 1].path !==
-  //       // TODO: figure out how to type location state
-  //       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  //       location.state.previousPath
-  //   ) {
-  //     navigate(wizard.steps[0].path);
-  //   }
-  // });
 
   const [formState, setFormState] = useState<FormState>(
     wizard.initialFormState,
@@ -59,8 +48,14 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   }
   // Get current step and associated attributes
   const currentStep = wizard.steps.at(currentStepIndex)!;
-  const { title, canNext, progressBarStep } = currentStep;
+  const { title, canNext, progressBarStep, validWizardState } = currentStep;
   const isFinalStep = currentStepIndex === wizard.steps.length - 1;
+
+  // if state is invlaid (i.e. user navigates directly to middle of the flow), then navigate back to start of wizard
+  useEffect(() => {
+    console.log("running use effect");
+    if (!validWizardState(formState)) navigate(wizard.steps[0].path);
+  }, [navigate, validWizardState, formState, wizard.steps]);
 
   // Get the previous and next steps if they exist
   let prevStep: WizardStep<FormState> | undefined;
@@ -77,9 +72,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     ? wizard.onComplete
     : nextStep
     ? () => {
-        navigate(nextStep!.path, {
-          // state: { previousPath: location.pathname },
-        });
+        navigate(nextStep!.path);
       }
     : undefined;
 
@@ -87,11 +80,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   const onPrev = prevStep
     ? () => {
-        navigate(prevStep!.path, {
-          state: {
-            // previousPath: wizard.steps[Math.max(currentStepIndex - 2, 0)].path,
-          },
-        });
+        navigate(prevStep!.path);
       }
     : undefined;
 

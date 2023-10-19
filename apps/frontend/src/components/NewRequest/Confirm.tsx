@@ -8,12 +8,11 @@ import { useNewRequestWizardState } from "./newRequestWizard";
 import { ProcessSummaryTable } from "../Shared/Request/ProcessSummary";
 import { Accordion } from "../Shared/Accordion";
 
-import { Process } from "../../types";
-
 export const Confirm = () => {
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const { onNext, formState, onPrev, nextLabel } = useNewRequestWizardState();
+
   const inputs =
     formState.process && formState.userInputs
       ? formState.process.inputs.map((inputMetadata) => ({
@@ -23,7 +22,7 @@ export const Confirm = () => {
             : "-",
         }))
       : [];
-  return (
+  return formState.process && formState.userInputs ? (
     <>
       <WizardBody>
         <Box sx={{ maxWidth: "800px" }}>
@@ -39,14 +38,12 @@ export const Confirm = () => {
             label="Process summary"
             defaultExpanded={isOverSmScreen}
           >
-            <ProcessSummaryTable
-              process={formState.process as Process.default}
-            />
+            <ProcessSummaryTable process={formState.process} />
           </Accordion>
         </Box>
       </WizardBody>
 
       <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />
     </>
-  );
+  ) : null;
 };

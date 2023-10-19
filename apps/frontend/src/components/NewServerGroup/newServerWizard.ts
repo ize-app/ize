@@ -27,12 +27,14 @@ export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
     title: "Select Server",
     progressBarStep: 0,
     canNext: (formState: NewServerState) => formState.serverId != null,
+    validWizardState: () => true,
   },
   {
     path: newServerRoute(NewServerGroupRoute.HowCultsWorks),
     title: "How Cults Works",
     progressBarStep: 1,
     canNext: () => true,
+    validWizardState: () => true,
   },
   {
     path: newServerRoute(NewServerGroupRoute.DefineProcess),
@@ -43,11 +45,14 @@ export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
       formState.processConfigurationOption ===
         ProcessConfigurationOption.BenevolentDictator ||
       (formState.roleId != null && formState.numberOfResponses != null),
+    validWizardState: (formState: NewServerState) => !!formState.serverId,
   },
   {
     path: newServerRoute(NewServerGroupRoute.Finish),
     title: "Finish",
     progressBarStep: 3,
     canNext: () => true,
+    validWizardState: (formState: NewServerState) =>
+      !!formState.processConfigurationOption && !!formState.serverId,
   },
 ];
