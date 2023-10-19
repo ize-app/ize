@@ -116,6 +116,7 @@ export const router = createBrowserRouter([
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
             element: <EditProcess.Intro />,
+            index: true,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.BasicInfo),
