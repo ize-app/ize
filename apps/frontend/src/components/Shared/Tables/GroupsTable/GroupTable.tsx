@@ -53,7 +53,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
           </Box>
         </TableCellHideable>
 
-        <TableCellHideable align={"left"}>
+        <TableCellHideable align={"left"} hideOnSmallScreen={true}>
           <Box
             sx={{
               display: "flex",
@@ -75,7 +75,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             </Typography>
           </Box>
         </TableCellHideable>
-        <TableCellHideable align={"right"}>
+        <TableCellHideable align={"right"} hideOnSmallScreen={true}>
           <Box
             sx={{
               display: "flex",
@@ -124,7 +124,6 @@ export default function GroupTable({
           {groups.map((group) => (
             <GroupRow key={group.id} group={group} />
           ))}
-          
         </TableBody>
       </Table>
     </TableContainer>
