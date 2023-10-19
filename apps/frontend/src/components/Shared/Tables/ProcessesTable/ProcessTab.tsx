@@ -1,12 +1,11 @@
 import Box from "@mui/material/Box";
-import React, { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
+import ProcessTable from "./ProcessTable";
+import { UserDataProps } from "../../Avatar";
 import CreateButton from "../CreateButton";
 import { processMockData } from "../mockData";
-import ProcessTable from "./ProcessTable";
 import Search from "../Search";
-
-import { UserDataProps } from "../../Avatar";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;
@@ -67,7 +66,7 @@ const ProcessTab = () => {
         >
           <Search
             searchQuery={searchQuery}
-            changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />

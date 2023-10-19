@@ -3,9 +3,9 @@ import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 
 import Dashboard from "./Dashboard/Dashboard";
-import { CurrentUserContext } from "../contexts/current_user_context";
 import { ConnectToDiscord } from "./shared/ConnectToDiscord";
 import { Logo } from "./shared/Logo";
+import { CurrentUserContext } from "../contexts/current_user_context";
 
 const PageContainer = styled.div`
   display: flex;

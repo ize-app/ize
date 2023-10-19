@@ -1,15 +1,14 @@
 import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
-import { ArrowDropDown, Logout, Home } from "@mui/icons-material";
+import { ArrowDropDown, Home, Logout } from "@mui/icons-material";
 import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
 import { useContext, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Avatar } from "./Avatar";
-import { CurrentUserContext } from "../../contexts/current_user_context";
 import { ConnectToDiscord } from "./ConnectToDiscord";
+import { CurrentUserContext } from "../../contexts/current_user_context";
 import { LogOutDocument } from "../../graphql/generated/graphql";
-import { Logo } from "./Logo";
 import { Route } from "../../routers/routes";
 import { colors } from "../../style/style";
 import { createDiscordAvatarURL } from "../../utils/discord";

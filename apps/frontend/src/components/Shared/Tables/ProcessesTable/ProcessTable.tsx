@@ -1,6 +1,3 @@
-import * as React from "react";
-import { generatePath, useNavigate } from "react-router-dom";
-
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
@@ -14,9 +11,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
-import { Process } from "../../../../types";
 import { NewRequestRoute, newRequestRoute } from "../../../../routers/routes";
+import { Process } from "../../../../types";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: Process.default }) {

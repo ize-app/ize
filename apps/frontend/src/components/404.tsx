@@ -1,5 +1,5 @@
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 export const _404 = () => (
   <Box
@@ -23,7 +23,7 @@ export const _404 = () => (
         😭 404 😭
       </Typography>
       <Typography variant="body1">
-        This isn't a real page. Check your URL and try again :) 
+        This isn't a real page. Check your URL and try again :)
       </Typography>
     </Box>
   </Box>

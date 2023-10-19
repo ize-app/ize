@@ -1,16 +1,16 @@
-import { Outlet, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import { Wizard, useWizard } from "../../utils/wizard";
 import {
   EDIT_PROCESS_PROGRESS_BAR_STEPS,
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
 } from "./editProcessWizard";
+import { Wizard, useWizard } from "../../utils/wizard";
 
 export const EditProcess = () => {
   const navigate = useNavigate();

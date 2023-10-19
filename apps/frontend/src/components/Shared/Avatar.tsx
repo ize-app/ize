@@ -1,16 +1,15 @@
-import Box from "@mui/material/Box";
-import Badge from "@mui/material/Badge";
+import { SxProps } from "@mui/material";
 import MuiAvatar, { AvatarProps as MuiAvatarProps } from "@mui/material/Avatar";
 import MuiAvatarGroup from "@mui/material/AvatarGroup";
+import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
-import { SxProps } from "@mui/material";
-
 import { useState } from "react";
 
-import { stringToColor, avatarString } from "../../utils/inputs";
+import { avatarString, stringToColor } from "../../utils/inputs";
 
 export interface UserDataProps {
   avatarUrl?: string;

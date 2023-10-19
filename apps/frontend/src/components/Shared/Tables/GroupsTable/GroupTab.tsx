@@ -1,14 +1,13 @@
+import { useQuery } from "@apollo/client";
+import { LinearProgress } from "@mui/material";
 import Box from "@mui/material/Box";
 import React, { useState } from "react";
 
-import CreateButton from "../CreateButton";
 import GroupTable from "./GroupTable";
-import Search from "../Search";
-import { useQuery } from "@apollo/client";
 import { GroupsDocument } from "../../../../graphql/generated/graphql";
-import { LinearProgress } from "@mui/material";
-
+import CreateButton from "../CreateButton";
 import { groupMockData } from "../mockData";
+import Search from "../Search";
 
 const GroupTab = () => {
   const { data, loading } = useQuery(GroupsDocument);

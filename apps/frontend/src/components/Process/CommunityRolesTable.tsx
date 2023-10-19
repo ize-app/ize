@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -5,7 +6,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
 import { Process } from "../../types";
-import { Typography } from "@mui/material";
 import { AvatarsCell } from "../shared/Tables/TableCells";
 
 export const CommunityRolesTable = ({

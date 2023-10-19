@@ -1,19 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Typography } from "@mui/material";
-
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import z, { ZodTypeAny } from "zod";
 
+import { useNewRequestWizardState } from "./newRequestWizard";
 import { zodCleanNumber, zodCleanString } from "../../utils/inputs";
 import { ProcessInputType } from "../NewProcess/newProcessWizard";
-import { ProcessOptions } from "../Shared/Process/ProcessOptions";
-import { WizardBody, WizardNav } from "../Shared/Wizard";
-import { processMockData } from "../shared/Tables/mockData";
-import { useNewRequestWizardState } from "./newRequestWizard";
 import { TextFieldControl } from "../shared/Form";
+import { ProcessOptions } from "../shared/Process/ProcessOptions";
+import { processMockData } from "../shared/Tables/mockData";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
   let val: ZodTypeAny;

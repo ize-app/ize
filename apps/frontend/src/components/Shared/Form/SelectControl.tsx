@@ -3,8 +3,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect, { SelectProps } from "@mui/material/Select";
-
-import { Controller, Control } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 
 export interface SelectOption {
   name: string;

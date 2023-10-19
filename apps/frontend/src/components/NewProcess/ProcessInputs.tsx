@@ -1,3 +1,6 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
+import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
@@ -6,21 +9,16 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useFieldArray, useForm } from "react-hook-form";
+import * as z from "zod";
 
-import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
-import z from "zod";
-
+import { ProcessInputType, useNewProcessWizardState } from "./newProcessWizard";
 import {
   CheckboxControl,
-  TextFieldControl,
   SelectControl,
-} from "../Shared/Form";
-import { useNewProcessWizardState, ProcessInputType } from "./newProcessWizard";
-import { WizardBody, WizardNav } from "../Shared/Wizard";
-import { Typography } from "@mui/material";
+  TextFieldControl,
+} from "../shared/Form";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const fieldArrayName = "processInputs";
 

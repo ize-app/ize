@@ -5,9 +5,9 @@ import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-
-import { UserDataProps, Avatar } from "../Avatar";
 import { Control, Controller } from "react-hook-form";
+
+import { Avatar, UserDataProps } from "../Avatar";
 
 const options: UserDataProps[] = [
   {

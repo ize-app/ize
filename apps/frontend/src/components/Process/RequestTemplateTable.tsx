@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -5,8 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
 import { Process } from "../../types";
-import { ProcessOptions } from "../Shared/Process/ProcessOptions";
-import { Typography } from "@mui/material";
+import { ProcessOptions } from "../shared/Process/ProcessOptions";
 
 export const RequestTemplateTable = ({
   process,

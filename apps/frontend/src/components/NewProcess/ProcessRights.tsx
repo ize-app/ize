@@ -1,21 +1,19 @@
-import Typography from "@mui/material/Typography";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
-
+import Typography from "@mui/material/Typography";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { ThresholdTypes, useNewProcessWizardState } from "./newProcessWizard";
 import {
   GroupUserSearchControl,
   RadioControl,
   SelectControl,
   SliderControl,
-} from "../Shared/Form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import Groups from "@mui/icons-material/Groups";
-
-import { useNewProcessWizardState, ThresholdTypes } from "./newProcessWizard";
-
-import { WizardBody, WizardNav } from "../Shared/Wizard";
-import React from "react";
+} from "../shared/Form";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
 
@@ -143,7 +141,6 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
-
     setFormState((prev) => ({
       ...prev,
       ...data,

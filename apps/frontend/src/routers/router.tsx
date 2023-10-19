@@ -1,17 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { _404 } from "../components/404";
 import { AuthRoute } from "./AuthRoute";
+import * as Routes from "./routes";
+import { _404 } from "../components/404";
+import * as EditProcess from "../components/EditProcess";
+import { Group } from "../components/Groups/Group";
 import { Home } from "../components/Home";
 import * as NewProcess from "../components/NewProcess";
-import * as NewServerGroup from "../components/NewServerGroup";
-import { DefaultLayout } from "../layout/default";
-import * as Routes from "./routes";
-import { Group } from "../components/Groups/Group";
-import { Request } from "../components/Request/Request";
-import { Process } from "../components/Process/Process";
-import * as EditProcess from "../components/EditProcess";
 import * as NewRequest from "../components/NewRequest";
+import * as NewServerGroup from "../components/NewServerGroup";
+import { Process } from "../components/Process/Process";
+import { Request } from "../components/Request/Request";
+import { DefaultLayout } from "../layout/default";
 
 export const router = createBrowserRouter([
   {

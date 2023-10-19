@@ -1,7 +1,6 @@
+import { AlertProps, default as MuiAlert } from "@mui/material/Alert";
 import { default as MuiSnackbar } from "@mui/material/Snackbar";
-import { default as MuiAlert, AlertProps } from "@mui/material/Alert";
-
-import { useContext, forwardRef } from "react";
+import { forwardRef, useContext } from "react";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 

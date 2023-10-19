@@ -1,7 +1,8 @@
 import { useEditProcessWizardState } from "./editProcessWizard";
-import { WizardBody, WizardNav } from "../Shared/Wizard";
+import { WizardBody, WizardNav } from "../shared/Wizard";
+
 export const DiffConfirmation = () => {
-  const { formState, onNext, nextLabel, onPrev } = useEditProcessWizardState();
+  const { onNext, nextLabel, onPrev } = useEditProcessWizardState();
   return (
     <>
       <WizardBody>Diff confirmation</WizardBody>

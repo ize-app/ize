@@ -4,8 +4,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup, { RadioGroupProps } from "@mui/material/RadioGroup";
-
-import { Controller, Control } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 
 export interface RadioControlProps extends RadioGroupProps {
   name: string;

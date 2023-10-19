@@ -3,18 +3,17 @@ import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { useParams } from "react-router-dom";
-import { generatePath, useNavigate } from "react-router-dom";
-
-import { processMockData } from "../shared/Tables/mockData";
-import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
-import { Accordion } from "../Shared/Accordion";
-import { FilterOptions } from "../shared/Tables/RequestsTable/RequestTab";
 import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
+import { Accordion } from "../shared/Accordion";
+import { processMockData } from "../shared/Tables/mockData";
+import RequestTab, {
+  FilterOptions,
+} from "../shared/Tables/RequestsTable/RequestTab";
 
 const truncatedUri = (uri: string) =>
   uri.substring(0, 15) + "..." + uri.substring(uri.length - 5, uri.length - 1);

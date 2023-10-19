@@ -1,18 +1,16 @@
-import { Outlet, useNavigate } from "react-router-dom";
-
 import { useMutation } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  NEW_SERVER_WIZARD_STEPS,
   NEW_SERVER_PROGRESS_BAR_STEPS,
+  NEW_SERVER_WIZARD_STEPS,
   NewServerState,
 } from "./newServerWizard";
 import {
@@ -20,6 +18,7 @@ import {
   CreateDiscordServerGroupInput,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
+import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
   const navigate = useNavigate();

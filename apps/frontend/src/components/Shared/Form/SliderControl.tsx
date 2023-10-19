@@ -1,9 +1,6 @@
-import Slider, { SliderProps } from "@mui/material/Slider";
-import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import InputLabel from "@mui/material/InputLabel";
-
-import { Controller, Control } from "react-hook-form";
+import Slider, { SliderProps } from "@mui/material/Slider";
+import { Control, Controller } from "react-hook-form";
 
 interface SliderControlProps extends SliderProps {
   control: Control;

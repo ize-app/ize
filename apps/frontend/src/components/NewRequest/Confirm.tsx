@@ -2,11 +2,11 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { WizardBody, WizardNav } from "../Shared/Wizard";
-import { RequestInputTable } from "../shared/Request";
 import { useNewRequestWizardState } from "./newRequestWizard";
-import { ProcessSummaryTable } from "../Shared/Request/ProcessSummary";
-import { Accordion } from "../Shared/Accordion";
+import { Accordion } from "../shared/Accordion";
+import { RequestInputTable } from "../shared/Request";
+import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 
 export const Confirm = () => {
   const theme = useTheme();

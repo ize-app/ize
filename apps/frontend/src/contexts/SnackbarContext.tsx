@@ -29,7 +29,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [snackbarData, setSnackbarData] = useState({
     message: "Success!",
   });
-  
+
   return (
     <SnackbarContext.Provider
       value={{ snackbarOpen, setSnackbarOpen, snackbarData, setSnackbarData }}

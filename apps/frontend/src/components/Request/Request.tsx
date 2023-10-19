@@ -5,17 +5,15 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { BarChart } from "@mui/x-charts";
-
 import { useParams } from "react-router-dom";
 
-import { Accordion } from "../Shared/Accordion";
-import { requestMockData, ResponseCount } from "../Shared/Tables/mockData";
-import { NameWithPopper } from "../Shared/Avatar";
-import { RequestInputTable } from "../Shared/Request";
-import { ResponseList } from "../Shared/Request/ResponseList";
-import { SubmitResponse } from "../Shared/Request";
-import { ProcessSummaryTable } from "../Shared/Request/ProcessSummary";
 import { intervalToIntuitiveTimeString } from "../../utils/inputs";
+import { Accordion } from "../shared/Accordion";
+import { NameWithPopper } from "../shared/Avatar";
+import { RequestInputTable, SubmitResponse } from "../shared/Request";
+import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
+import { ResponseList } from "../shared/Request/ResponseList";
+import { ResponseCount, requestMockData } from "../shared/Tables/mockData";
 
 export default function HorizontalBars({
   responseCounts,
@@ -105,11 +103,7 @@ export const Request = () => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box>
         <Box>
-          <Typography
-            variant={"body1"}
-            fontWeight={600}
-            color="primary"
-          >
+          <Typography variant={"body1"} fontWeight={600} color="primary">
             Request
           </Typography>
           <Typography variant={"h1"} marginTop="8px">

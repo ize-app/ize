@@ -1,19 +1,17 @@
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-
 import { useQuery } from "@apollo/client";
 import { Groups } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
 import { GroupDocument } from "../../graphql/generated/graphql";
-import { Tabs, TabProps } from "../shared/Tables/Tabs";
-import TabPanel from "../shared/Tables/TabPanel";
+import { groupMockData } from "../shared/Tables/mockData";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
-
-import { groupMockData } from "../shared/Tables/mockData";
+import TabPanel from "../shared/Tables/TabPanel";
+import { TabProps, Tabs } from "../shared/Tables/Tabs";
 
 const tabs = [
   { title: "Requests", content: <RequestTab /> },
@@ -47,9 +45,9 @@ export const Group = () => {
           parent={
             groupData.parentGroup
               ? {
-                name: groupData.parentGroup.name,
-                avatarUrl: groupData.parentGroup.avatarUrl,
-              }
+                  name: groupData.parentGroup.name,
+                  avatarUrl: groupData.parentGroup.avatarUrl,
+                }
               : undefined
           }
         />

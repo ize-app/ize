@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-
 import Box from "@mui/material/Box";
 import { SelectChangeEvent } from "@mui/material/Select";
+import { ChangeEvent, useState } from "react";
 
+import RequestTable from "./RequestTable";
+import { UserDataProps } from "../../Avatar";
+import { Select } from "../../Form/Select";
 import CreateButton from "../CreateButton";
 import { requestMockData } from "../mockData";
-import RequestTable from "./RequestTable";
 import Search from "../Search";
-import { Select } from "../../Form/Select";
-import { UserDataProps } from "../../Avatar";
-import { Filter } from "@mui/icons-material";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   let foundMatch = false;
@@ -116,7 +114,7 @@ const RequestTab = ({
           <Box sx={{ maxWidth: "250px", width: "100%" }}>
             <Search
               searchQuery={searchQuery}
-              changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+              changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
                 setSearchQuery(event.target.value);
               }}
             />

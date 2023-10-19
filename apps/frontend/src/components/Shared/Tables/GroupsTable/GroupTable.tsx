@@ -1,6 +1,3 @@
-import * as React from "react";
-import { useNavigate } from "react-router-dom";
-
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -9,14 +6,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
-import { AvatarWithName } from "../../Avatar";
-import { TableCellHideable } from "../TableCells";
 import {
   GroupSummaryPartsFragment,
   GroupType,
 } from "../../../../graphql/generated/graphql";
 import { createDiscordIconURL } from "../../../../utils/discord";
+import { AvatarWithName } from "../../Avatar";
+import { TableCellHideable } from "../TableCells";
 
 function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   const { group } = props;

@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import { RadioControl } from "../Form";
-import z from "zod";
 
 const formSchema = z.object({
   option: z.string().trim().nonempty("Please select an option"),

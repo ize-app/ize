@@ -1,7 +1,7 @@
 import { GroupType } from "../../../graphql/generated/graphql";
+import { Process } from "../../../types";
 import { addMinutes } from "../../../utils/inputs";
 import { UserDataProps } from "../Avatar";
-import { Process } from "../../../types";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {

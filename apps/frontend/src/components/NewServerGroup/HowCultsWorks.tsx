@@ -1,9 +1,8 @@
+import AccountTreeOutlined from "@mui/icons-material/AccountTreeOutlined";
+import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
+import TaskAltOutlined from "@mui/icons-material/TaskAltOutlined";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
-import AccountTreeOutlined from "@mui/icons-material/AccountTreeOutlined";
-import TaskAltOutlined from "@mui/icons-material/TaskAltOutlined";
-
 import * as React from "react";
 
 import { useNewServerGroupWizardState } from "./newServerWizard";

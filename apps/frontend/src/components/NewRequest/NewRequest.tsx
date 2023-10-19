@@ -1,19 +1,18 @@
-import { Outlet, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
 import { useContext } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  NEW_REQUEST_WIZARD_STEPS,
   NEW_REQUEST_PROGRESS_BAR_STEPS,
+  NEW_REQUEST_WIZARD_STEPS,
   NewRequestState,
 } from "./newRequestWizard";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
