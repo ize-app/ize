@@ -32,7 +32,14 @@ export const Process = () => {
   return process ? (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography variant={"h1"}>{process.name}</Typography>
+        <Box>
+          <Typography variant={"body1"} fontWeight={600} color="primary">
+            Process
+          </Typography>
+          <Typography variant={"h1"} marginTop="8px">
+            {process.name}
+          </Typography>
+        </Box>
         <Typography>{process.description}</Typography>
         {process.webhookUri ? (
           <>

@@ -104,7 +104,18 @@ export const Request = () => {
   return request ? (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box>
-        <Typography variant={"h1"}>{request.name}</Typography>
+        <Box>
+          <Typography
+            variant={"body1"}
+            fontWeight={600}
+            color="primary"
+          >
+            Request
+          </Typography>
+          <Typography variant={"h1"} marginTop="8px">
+            {request.name}
+          </Typography>
+        </Box>
         <Box
           sx={(theme) => ({
             display: "flex",
