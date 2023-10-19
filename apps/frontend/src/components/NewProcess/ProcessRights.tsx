@@ -115,6 +115,7 @@ const SliderContainer = ({
 export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
+  console.log("formState is ", formState);
 
   const totalGroupMembers = 128;
 
