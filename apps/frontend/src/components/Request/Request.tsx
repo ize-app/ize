@@ -94,12 +94,14 @@ export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
 
 export const Request = () => {
   const { requestId } = useParams();
-  const request = requestMockData[+(requestId as string) ?? 0];
+  const request = requestMockData.find(
+    (request) => request.requestId === requestId,
+  );
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
 
-  return (
+  return request ? (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
       <Box>
         <Typography variant={"h1"}>{request.name}</Typography>
@@ -153,7 +155,7 @@ export const Request = () => {
             elevation={6}
           >
             <SubmitResponse
-              options={request.options}
+              options={request.process.options}
               displayAsColumn={true}
               onSubmit={() => {
                 return;
@@ -191,5 +193,7 @@ export const Request = () => {
         </Box>
       </Box>
     </Box>
+  ) : (
+    <div>Cannot find request</div>
   );
 };

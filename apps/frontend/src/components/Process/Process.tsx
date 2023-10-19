@@ -16,6 +16,9 @@ import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 
+const truncatedUri = (uri: string) =>
+  uri.substring(0, 15) + "..." + uri.substring(uri.length - 5, uri.length - 1);
+
 export const Process = () => {
   const { processId } = useParams();
   const theme = useTheme();
@@ -31,6 +34,17 @@ export const Process = () => {
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography variant={"h1"}>{process.name}</Typography>
         <Typography>{process.description}</Typography>
+        {process.webhookUri ? (
+          <>
+            <br />
+            <Typography>
+              After each decision, action run automatically via{" "}
+              <a href={process.webhookUri}>
+                {truncatedUri(process.webhookUri)}
+              </a>
+            </Typography>
+          </>
+        ) : null}
         <Box
           sx={{
             display: "flex",
