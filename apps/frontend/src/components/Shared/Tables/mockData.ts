@@ -281,7 +281,7 @@ export const processMockData: Process.default[] = [
 
 export const groupMockData: GroupProps[] = [
   {
-    groupId: "1",
+    id: "1",
     name: "Token Engineering Commons",
     bannerUrl: "/test-banner.webp",
     avatarUrl:
@@ -290,7 +290,7 @@ export const groupMockData: GroupProps[] = [
     memberCount: 120,
   },
   {
-    groupId: "2",
+    id: "2",
     name: "@core-team",
     type: "Discord role",
     avatarUrl: "",
@@ -307,7 +307,7 @@ export const groupMockData: GroupProps[] = [
     },
   },
   {
-    groupId: "3",
+    id: "3",
     name: "@test-team",
     type: "Discord role",
     bannerUrl: "/test-banner.webp",

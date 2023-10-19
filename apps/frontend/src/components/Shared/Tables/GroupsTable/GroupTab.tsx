@@ -8,6 +8,8 @@ import { useQuery } from "@apollo/client";
 import { GroupsDocument } from "../../../../graphql/generated/graphql";
 import { LinearProgress } from "@mui/material";
 
+import { groupMockData } from "../mockData";
+
 const GroupTab = () => {
   const { data, loading } = useQuery(GroupsDocument);
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +23,8 @@ const GroupTab = () => {
         return group.name.search(regExSearchQuery) !== -1;
       })
       .sort() ?? [];
+
+  const filteredWithMockData = filteredGroupData.concat(groupMockData);
 
   return (
     <Box
@@ -57,7 +61,11 @@ const GroupTab = () => {
         </Box>
         <CreateButton />
       </Box>
-      {loading ? <LinearProgress /> : <GroupTable groups={filteredGroupData} />}
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        <GroupTable groups={filteredWithMockData} />
+      )}
     </Box>
   );
 };

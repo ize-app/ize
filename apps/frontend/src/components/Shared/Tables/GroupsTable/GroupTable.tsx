@@ -12,7 +12,10 @@ import Typography from "@mui/material/Typography";
 
 import { AvatarWithName } from "../../Avatar";
 import { TableCellHideable } from "../TableCells";
-import { GroupSummaryPartsFragment, GroupType } from "../../../../graphql/generated/graphql";
+import {
+  GroupSummaryPartsFragment,
+  GroupType,
+} from "../../../../graphql/generated/graphql";
 import { createDiscordIconURL } from "../../../../utils/discord";
 
 function GroupRow(props: { group: GroupSummaryPartsFragment }) {
@@ -23,7 +26,14 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
     navigate(`/groups/${group.id}`);
   };
 
-  const avatarUrl = group.discordServerGroup && group.icon ? createDiscordIconURL(group.discordServerGroup.discordServerId, group.icon, 16) : undefined;
+  const avatarUrl =
+    group.discordServerGroup && group.icon
+      ? createDiscordIconURL(
+          group.discordServerGroup.discordServerId,
+          group.icon,
+          16,
+        )
+      : undefined;
 
   return (
     <React.Fragment>
@@ -38,7 +48,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             <AvatarWithName
               name={group.name}
               avatarUrl={avatarUrl}
-            // TODO figure out parent
+              // TODO figure out parent
             />
           </Box>
         </TableCellHideable>
@@ -73,7 +83,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
               justifyContent: "flex-end",
             }}
           >
-            <Typography>{group.memberCount}</Typography>
+            <Typography>{group.memberCount ?? 34}</Typography>
           </Box>
         </TableCellHideable>
       </TableRow>
@@ -81,7 +91,11 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   );
 }
 
-export default function GroupTable({ groups }: { groups: GroupSummaryPartsFragment[] }) {
+export default function GroupTable({
+  groups,
+}: {
+  groups: GroupSummaryPartsFragment[];
+}) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
       <Table aria-label="collapsible table" stickyHeader={true}>
@@ -110,6 +124,7 @@ export default function GroupTable({ groups }: { groups: GroupSummaryPartsFragme
           {groups.map((group) => (
             <GroupRow key={group.id} group={group} />
           ))}
+          
         </TableBody>
       </Table>
     </TableContainer>
