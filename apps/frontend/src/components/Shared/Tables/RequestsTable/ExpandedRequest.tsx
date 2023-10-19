@@ -103,7 +103,7 @@ export const ExpandedRequest = ({
       </Box>
       <Paper elevation={2}>
         <SubmitResponse
-          options={request.options}
+          options={request.process.options}
           onSubmit={() => collapseRow()}
         />
       </Paper>
