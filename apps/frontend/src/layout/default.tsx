@@ -6,10 +6,12 @@ import Snackbar from "../components/Shared/Snackbar";
 
 export const DefaultLayout = () => {
   return (
-    <Container sx={{ display: "flex", flexDirection: "column" }}>
+    <>
       <NavBar />
-      <Outlet />
-      <Snackbar />
-    </Container>
+      <Container sx={{ display: "flex", flexDirection: "column" }}>
+        <Outlet />
+        <Snackbar />
+      </Container>
+    </>
   );
 };
