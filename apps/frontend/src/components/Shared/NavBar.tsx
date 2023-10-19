@@ -140,7 +140,8 @@ export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
   return (
     <NavContainer>
-      <Logo fontSize={"1.75rem"}>Cults </Logo>
+      {/* <Logo fontSize={"1.75rem"}>Cults </Logo> */}
+      <div></div>
       <NavControlContainer>
         {user == null || user.discordData == null ? (
           <ConnectToDiscord />
