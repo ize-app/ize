@@ -13,6 +13,12 @@ const GlobalStyles = css`
     font-family: ${style.fontFamily};
     background-color: #fffbff;
   }
+  #root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export default GlobalStyles;
