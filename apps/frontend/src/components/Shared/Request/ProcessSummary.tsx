@@ -4,8 +4,9 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
+import { Link, generatePath } from "react-router-dom";
 
+import { Route } from "../../../routers/routes";
 import { Process } from "../../../types";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
@@ -37,7 +38,13 @@ export const ProcessSummaryTable = ({
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                <Link to={`/process/${process.processId}`}>{process.name}</Link>
+                <Link
+                  to={generatePath(Route.Process, {
+                    processId: process.processId,
+                  })}
+                >
+                  {process.name}
+                </Link>
               </Typography>
             </TableCell>
           </TableRow>

@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
             <NewServerGroup.default />
           </AuthRoute>
         ),
-        path: Routes.Route.SetupServerGroup,
+        path: Routes.Route.NewServerGroup,
         children: [
           {
             path: Routes.newServerRoute(
@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
             <NewProcess.default />
           </AuthRoute>
         ),
-        path: Routes.Route.SetupProcessGroup,
+        path: Routes.Route.NewProcess,
         children: [
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),

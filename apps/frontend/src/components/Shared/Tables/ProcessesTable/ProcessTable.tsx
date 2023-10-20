@@ -14,7 +14,11 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { NewRequestRoute, newRequestRoute } from "../../../../routers/routes";
+import {
+  NewRequestRoute,
+  Route,
+  newRequestRoute,
+} from "../../../../routers/routes";
 import { Process } from "../../../../types";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
@@ -24,7 +28,13 @@ function ProcessRow(props: { process: Process.default }) {
 
   return (
     <React.Fragment>
-      <TableRow onClick={() => navigate(`/process/${process.processId}`)}>
+      <TableRow
+        onClick={() =>
+          navigate(
+            generatePath(Route.Process, { processId: process.processId }),
+          )
+        }
+      >
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{

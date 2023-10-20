@@ -1,12 +1,12 @@
 export enum Route {
   Home = "/",
-  SetupProcessGroup = "/setup/process",
-  SetupServerGroup = "/setup/group",
-  NewRequest = "/request/new",
+  NewProcess = "/create/process",
+  NewServerGroup = "/create/group",
+  NewRequest = "/create/request",
   Groups = "/groups",
   Group = "/groups/:groupId",
-  Request = "/request/:requestId",
-  Process = "/process/:processId",
+  Request = "/requests/:requestId",
+  Process = "/processes/:processId",
   EditProcess = "/edit/:processId",
 }
 
@@ -39,11 +39,11 @@ export enum EditProcessRoute {
 }
 
 export const newServerRoute = (route: NewServerGroupRoute) => {
-  return `${Route.SetupServerGroup}${route}`;
+  return `${Route.NewServerGroup}${route}`;
 };
 
 export const newProcessRoute = (route: NewProcessRoute) => {
-  return `${Route.SetupProcessGroup}${route}`;
+  return `${Route.NewProcess}${route}`;
 };
 
 export const newRequestRoute = (route: NewRequestRoute) => {
