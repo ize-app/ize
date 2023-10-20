@@ -37,6 +37,7 @@ module.exports = {
     ],
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "sort-imports": [
       "error",
       {

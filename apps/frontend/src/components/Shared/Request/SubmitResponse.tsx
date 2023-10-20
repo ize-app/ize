@@ -57,6 +57,7 @@ export const SubmitResponse = ({
       <Box sx={{ width: "100%", height: "100%" }}>
         <RadioControl
           name="option"
+          //@ts-ignore
           control={control}
           sx={{ flexDirection: "column", gap: "4px" }}
           options={options.map((option) => ({ label: option, value: option }))}

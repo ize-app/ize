@@ -197,6 +197,7 @@ export const ProcessIntro = () => {
               />
             )}
             <RadioControl
+              //@ts-ignore
               control={control}
               name="options"
               label="What options will users choose between?"

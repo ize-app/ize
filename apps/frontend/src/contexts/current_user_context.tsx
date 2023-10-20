@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import React from "react";
+import { createContext } from "react";
 
 import { MeDocument, UserPartsFragment } from "../graphql/generated/graphql";
 
@@ -7,7 +7,7 @@ interface CurrentUserContextValue {
   user: UserPartsFragment | undefined | null;
 }
 
-export const CurrentUserContext = React.createContext<CurrentUserContextValue>({
+export const CurrentUserContext = createContext<CurrentUserContextValue>({
   user: undefined,
 });
 

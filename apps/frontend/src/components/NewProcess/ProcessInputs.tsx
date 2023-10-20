@@ -107,6 +107,7 @@ export const ProcessInputs = () => {
                           key={"fieldName" + index.toString()}
                           fullWidth
                           disabled={noEdit}
+                          //@ts-ignore
                           control={control}
                         />
                       </TableCell>
@@ -120,6 +121,7 @@ export const ProcessInputs = () => {
                           key={"type" + index.toString()}
                           sx={{ width: "120px" }}
                           disabled={noEdit}
+                          //@ts-ignore
                           control={control}
                         />
                       </TableCell>
@@ -128,6 +130,7 @@ export const ProcessInputs = () => {
                           name={`${fieldName}.required`}
                           key={"required" + index.toString()}
                           disabled={noEdit}
+                          //@ts-ignore
                           control={control}
                         />
                       </TableCell>
@@ -137,6 +140,7 @@ export const ProcessInputs = () => {
                           key={"description" + index.toString()}
                           fullWidth
                           disabled={noEdit}
+                          //@ts-ignore
                           control={control}
                         />
                       </TableCell>

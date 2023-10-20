@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
-import { GroupDocument } from "../../graphql/generated/graphql";
+// import { GroupDocument } from "../../graphql/generated/graphql";
 import { groupMockData } from "../shared/Tables/mockData";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
@@ -19,13 +19,13 @@ const tabs = [
 ];
 
 export const Group = () => {
-  const { groupId } = useParams();
+  // const { groupId } = useParams();
 
-  const { data } = useQuery(GroupDocument, {
-    variables: {
-      id: groupId ?? "",
-    },
-  });
+  // const { data } = useQuery(GroupDocument, {
+  //   variables: {
+  //     id: groupId ?? "",
+  //   },
+  // });
 
   const groupData = groupMockData[1];
 

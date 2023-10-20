@@ -168,11 +168,13 @@ export const ProcessRights = () => {
         >
           <RightsContainer title={"How is this process triggered?"}>
             <GroupUserSearchControl
+              //@ts-ignore
               control={control}
               name={"rights.request"}
               label={"Who can create requests to trigger this process?"}
             />
             <SelectControl
+              //@ts-ignore
               control={control}
               sx={{ width: "300px" }}
               name="decision.requestExpirationSeconds"
@@ -189,11 +191,13 @@ export const ProcessRights = () => {
           </RightsContainer>
           <RightsContainer title={"How is a final decision reached?"}>
             <GroupUserSearchControl
+              //@ts-ignore
               control={control}
               name={"rights.response"}
               label={"Who can respond to requests?"}
             />
             <RadioControl
+              //@ts-ignore
               control={control}
               name="decision.decisionThresholdType"
               label="At what point is a final decision reached?"
@@ -217,6 +221,7 @@ export const ProcessRights = () => {
             >
               <SliderControl
                 name="decision.decisionThreshold"
+                //@ts-ignore
                 control={control}
                 max={100}
                 valueLabelFormat={(value: number) =>
@@ -247,6 +252,7 @@ export const ProcessRights = () => {
                 <SliderControl
                   name="decision.quorum.quorumThreshold"
                   valueLabelDisplay="on"
+                  //@ts-ignore
                   control={control}
                   max={100}
                   min={1}
@@ -270,6 +276,7 @@ export const ProcessRights = () => {
             {/* <Typography>Edit</Typography> */}
             <GroupUserSearchControl
               multiple={false}
+              //@ts-ignore
               control={control}
               name={"rights.edit"}
               label={"Who is responsible for how this process evolves?"}

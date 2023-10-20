@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import React, { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import GroupTable from "./GroupTable";
 import { GroupsDocument } from "../../../../graphql/generated/graphql";
@@ -53,7 +53,7 @@ const GroupTab = () => {
         >
           <Search
             searchQuery={searchQuery}
-            changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />

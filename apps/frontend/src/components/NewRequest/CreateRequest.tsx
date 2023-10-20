@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import z, { ZodTypeAny } from "zod";
+import * as z from "zod";
 
 import { useNewRequestWizardState } from "./newRequestWizard";
 import { zodCleanNumber, zodCleanString } from "../../utils/inputs";
@@ -15,7 +15,7 @@ import { processMockData } from "../shared/Tables/mockData";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
-  let val: ZodTypeAny;
+  let val: z.ZodTypeAny;
   switch (type) {
     case ProcessInputType.Number:
       val = zodCleanNumber(
