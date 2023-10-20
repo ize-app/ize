@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import Head from "../../layout/Head";
 // import { GroupDocument } from "../../graphql/generated/graphql";
 import { groupMockData } from "../shared/Tables/mockData";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
@@ -37,6 +38,10 @@ export const Group = () => {
 
   return (
     <>
+      <Head
+        title={groupData.name}
+        description={`Where ${groupData.name} makes decisions and evolves their process`}
+      />
       <Box>
         <BannerWithAvatar
           bannerUrl={groupData.bannerUrl}

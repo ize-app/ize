@@ -18,6 +18,7 @@ import {
   CreateDiscordServerGroupInput,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
+import Head from "../../layout/Head";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
@@ -61,64 +62,72 @@ export const NewServerGroup = () => {
   } = useWizard(newServerWizard);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        flexGrow: 1,
-      }}
-    >
+    <>
+      <Head
+        title={"Create a group"}
+        description={
+          "Create a Cults group to collaboratively create and evolve your communal decision-making processes"
+        }
+      />
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
+          justifyContent: "space-between",
           flexGrow: 1,
-          marginTop: "16px",
         }}
       >
-        <Stepper activeStep={progressBarStep}>
-          {NEW_SERVER_PROGRESS_BAR_STEPS.map((title) => (
-            <Step key={title}>
-              <StepLabel>{title}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Typography variant="h1" sx={{ marginTop: "32px" }}>
-          {title}
-        </Typography>
-        <Box sx={{ flexGrow: 1 }}>
-          <Outlet context={{ formState, setFormState }} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            marginTop: "16px",
+          }}
+        >
+          <Stepper activeStep={progressBarStep}>
+            {NEW_SERVER_PROGRESS_BAR_STEPS.map((title) => (
+              <Step key={title}>
+                <StepLabel>{title}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Typography variant="h1" sx={{ marginTop: "32px" }}>
+            {title}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }}>
+            <Outlet context={{ formState, setFormState }} />
+          </Box>
         </Box>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          marginTop="16px"
+          height="80px"
+        >
+          {onPrev ? (
+            <div>
+              <Button variant="outlined" onClick={onPrev}>
+                Previous
+              </Button>
+            </div>
+          ) : (
+            /** To keep next on the right when there is no prev we render an empty div */ <div />
+          )}
+          {onNext && (
+            <div>
+              <Button
+                disabled={!canNext(formState)}
+                variant="contained"
+                onClick={onNext}
+              >
+                {nextLabel}
+              </Button>
+            </div>
+          )}
+        </Stack>
       </Box>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        marginTop="16px"
-        height="80px"
-      >
-        {onPrev ? (
-          <div>
-            <Button variant="outlined" onClick={onPrev}>
-              Previous
-            </Button>
-          </div>
-        ) : (
-          /** To keep next on the right when there is no prev we render an empty div */ <div />
-        )}
-        {onNext && (
-          <div>
-            <Button
-              disabled={!canNext(formState)}
-              variant="contained"
-              onClick={onNext}
-            >
-              {nextLabel}
-            </Button>
-          </div>
-        )}
-      </Stack>
-    </Box>
+    </>
   );
 };

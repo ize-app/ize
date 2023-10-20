@@ -8,6 +8,7 @@ import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
+import Head from "../../layout/Head";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 import { Accordion } from "../shared/Accordion";
 import { processMockData } from "../shared/Tables/mockData";
@@ -29,86 +30,89 @@ export const Process = () => {
   );
 
   return process ? (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Box>
-          <Typography variant={"body1"} fontWeight={600} color="primary">
-            Process
-          </Typography>
-          <Typography variant={"h1"} marginTop="8px">
-            {process.name}
-          </Typography>
-        </Box>
-        <Typography>{process.description}</Typography>
-        {process.webhookUri ? (
-          <>
-            <br />
-            <Typography>
-              After each decision, action run automatically via{" "}
-              <a href={process.webhookUri}>
-                {truncatedUri(process.webhookUri)}
-              </a>
+    <>
+      <Head title={process.name} description={process.description} />
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box>
+            <Typography variant={"body1"} fontWeight={600} color="primary">
+              Process
             </Typography>
-          </>
-        ) : null}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "16px",
-            gap: "16px",
-          }}
-        >
-          <Button
-            variant="contained"
+            <Typography variant={"h1"} marginTop="8px">
+              {process.name}
+            </Typography>
+          </Box>
+          <Typography>{process.description}</Typography>
+          {process.webhookUri ? (
+            <>
+              <br />
+              <Typography>
+                After each decision, action run automatically via{" "}
+                <a href={process.webhookUri}>
+                  {truncatedUri(process.webhookUri)}
+                </a>
+              </Typography>
+            </>
+          ) : null}
+          <Box
             sx={{
-              width: "140px",
-              display: process.userRoles.request ? "flex" : "none",
-            }}
-            onClick={() =>
-              navigate(
-                generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                  processId: processId,
-                }),
-              )
-            }
-          >
-            Create request
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              width: "140px",
-              display: process.userRoles.edit ? "flex" : "none",
+              display: "flex",
+              alignItems: "center",
+              marginTop: "16px",
+              gap: "16px",
             }}
           >
-            Edit process
-          </Button>
+            <Button
+              variant="contained"
+              sx={{
+                width: "140px",
+                display: process.userRoles.request ? "flex" : "none",
+              }}
+              onClick={() =>
+                navigate(
+                  generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                    processId: processId,
+                  }),
+                )
+              }
+            >
+              Create request
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                width: "140px",
+                display: process.userRoles.edit ? "flex" : "none",
+              }}
+            >
+              Edit process
+            </Button>
+          </Box>
+        </Box>
+        <Box sx={{ maxWidth: "800px" }}>
+          <Accordion
+            label="How decisions are made"
+            id="decision-panel"
+            defaultExpanded={isOverSmScreen}
+          >
+            <DecisionSystemSummaryTable process={process} />
+          </Accordion>
+          <Accordion label="Community roles" id="community-role-panel">
+            <CommunityRolesTable process={process} />
+          </Accordion>
+          <Accordion label="Request format" id="request-format-panel">
+            <RequestTemplateTable process={process} />
+          </Accordion>
+        </Box>
+        <Box>
+          <RequestTab
+            defaultFilterOption={FilterOptions.All}
+            hideCreateButton
+            processId={process.processId}
+          />
         </Box>
       </Box>
-      <Box sx={{ maxWidth: "800px" }}>
-        <Accordion
-          label="How decisions are made"
-          id="decision-panel"
-          defaultExpanded={isOverSmScreen}
-        >
-          <DecisionSystemSummaryTable process={process} />
-        </Accordion>
-        <Accordion label="Community roles" id="community-role-panel">
-          <CommunityRolesTable process={process} />
-        </Accordion>
-        <Accordion label="Request format" id="request-format-panel">
-          <RequestTemplateTable process={process} />
-        </Accordion>
-      </Box>
-      <Box>
-        <RequestTab
-          defaultFilterOption={FilterOptions.All}
-          hideCreateButton
-          processId={process.processId}
-        />
-      </Box>
-    </Box>
+    </>
   ) : (
     <div>Hmmmmm.... can't find that process</div>
   );
