@@ -20,7 +20,7 @@ const UnauthenticatedHome = () => {
     >
       {/* <PageContainer> */}
       <img
-        src="./logo-yellow.png"
+        src="./logo-yellow@2x.png"
         style={{
           width: "90%",
           height: "auto",
