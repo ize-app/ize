@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+
 import { UsersDocument } from "../graphql/generated/graphql";
 
 export const Users: React.FC = () => {

@@ -1,7 +1,7 @@
 import { GroupType } from "../../../graphql/generated/graphql";
+import { Process } from "../../../types";
 import { addMinutes } from "../../../utils/inputs";
 import { UserDataProps } from "../Avatar";
-import { Process } from "../../../types";
 
 // TODO: this is just the shape of the mock data - will change when we hydrate with real data
 export interface RequestProps {
@@ -9,12 +9,10 @@ export interface RequestProps {
   name: string;
   process: Process.default;
   creator: UserDataProps;
-  respond: UserDataProps[];
   expirationDate: Date;
   decisionType: string;
   userResponse: string | null;
   inputs: RequestInput[];
-  options: string[];
   responses: Response[];
   result: Result;
 }
@@ -81,7 +79,7 @@ export const processMockData: Process.default[] = [
     name: "Manage @moderator role [Token Engineering Commons]",
     description:
       "This is a description of how ths process works. After a decision is completed in Cults, it triggers a custom action.",
-    webhookUri: "www.zapier.com",
+    webhookUri: "www.zapier.com/1xh833hdfj0134fndkhj41ccdf",
     inputs: [
       {
         inputId: "1a",
@@ -98,23 +96,27 @@ export const processMockData: Process.default[] = [
         required: true,
         type: Process.ProcessInputType.Text,
       },
-      {
-        inputId: "1c",
-        name: "Number field (test)",
-        description: "number field for testing",
-        required: true,
-        type: Process.ProcessInputType.Number,
-      },
     ],
     options: ["✅", "❌"],
     decision: {
-      threshold: 5,
-      thresholdType: Process.ThresholdTypes.Absolute,
+      threshold: 0.5,
+      thresholdType: Process.ThresholdTypes.Percentage,
       requestExpirationSeconds: 86400,
-      quorum: { threshold: 0, thresholdType: Process.ThresholdTypes.Absolute },
+      quorum: { threshold: 10, thresholdType: Process.ThresholdTypes.Absolute },
     },
     roles: {
       request: [
+        {
+          name: "@",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+      ],
+      respond: [
         {
           name: "@core-team",
           avatarUrl: "",
@@ -143,35 +145,14 @@ export const processMockData: Process.default[] = [
           },
         },
       ],
-      respond: [
-        {
-          name: "@core-team",
-          avatarUrl: "",
-          parent: {
-            name: "Token Engineering Commons",
-            avatarUrl:
-              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-          },
-        },
-        {
-          name: "tsully",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-        },
-        {
-          name: "popp",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-        },
-        {
-          name: "David Feinerman",
-          avatarUrl: "",
-        },
-      ],
       edit: {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+        name: "@core-team",
+        avatarUrl: "",
+        parent: {
+          name: "Token Engineering Commons",
+          avatarUrl:
+            "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+        },
       },
     },
     userRoles: {
@@ -185,7 +166,7 @@ export const processMockData: Process.default[] = [
     name: "Remove event from shared TEC calendar",
     description:
       "This process removes event from the hello@tecommons.org shared Google Calendar.",
-    webhookUri: "www.zapier.com",
+    webhookUri: "www.zapier.com/1xh833hdfj0134fndkhj41ccdf",
     inputs: [
       {
         inputId: "2a",
@@ -205,33 +186,24 @@ export const processMockData: Process.default[] = [
     ],
     options: ["✅", "❌"],
     decision: {
-      threshold: 0.5,
-      thresholdType: Process.ThresholdTypes.Percentage,
+      threshold: 3,
+      thresholdType: Process.ThresholdTypes.Absolute,
       requestExpirationSeconds: 259200,
-      quorum: { thresholdType: Process.ThresholdTypes.Absolute, threshold: 10 },
+      quorum: { thresholdType: Process.ThresholdTypes.Absolute, threshold: 0 },
     },
     roles: {
       request: [
         {
+          name: "@contributor",
+          avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
+        },
+        {
           name: "@core-team",
-          avatarUrl: "",
-          parent: {
-            name: "Token Engineering Commons",
-            avatarUrl:
-              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-          },
-        },
-        {
-          name: "@admin",
-          avatarUrl: "",
-          parent: {
-            name: "Token Engineering Commons",
-            avatarUrl:
-              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-          },
-        },
-        {
-          name: "@dev",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -242,7 +214,7 @@ export const processMockData: Process.default[] = [
       ],
       respond: [
         {
-          name: "@core-team",
+          name: "@contributor",
           avatarUrl: "",
           parent: {
             name: "Token Engineering Commons",
@@ -251,18 +223,13 @@ export const processMockData: Process.default[] = [
           },
         },
         {
-          name: "tsully",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-        },
-        {
-          name: "popp",
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-        },
-        {
-          name: "David Feinerman",
+          name: "@core-team",
           avatarUrl: "",
+          parent: {
+            name: "Token Engineering Commons",
+            avatarUrl:
+              "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+          },
         },
       ],
       edit: {
@@ -274,14 +241,81 @@ export const processMockData: Process.default[] = [
     userRoles: {
       request: true,
       respond: true,
-      edit: true,
+      edit: false,
+    },
+  },
+  {
+    processId: "3",
+    name: "TEC x Metalabel collab decisions",
+    description: "Shared decision record for collab between TEC and metalabel",
+    webhookUri: "",
+    inputs: [
+      {
+        inputId: "3a",
+        name: "Description",
+        description: "Any rationale you want to add for this request",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+
+      {
+        inputId: "3b",
+        name: "Meeting doc / thread url",
+        description:
+          "Link to thread / meeting doc that provides context on this decision",
+        required: false,
+        type: Process.ProcessInputType.Text,
+      },
+    ],
+    options: ["✅", "❌"],
+    decision: {
+      threshold: 0.67,
+      thresholdType: Process.ThresholdTypes.Percentage,
+      requestExpirationSeconds: 259200,
+      quorum: { thresholdType: Process.ThresholdTypes.Absolute, threshold: 5 },
+    },
+    roles: {
+      request: [
+        {
+          name: "Metalabel",
+          avatarUrl:
+            "https://pbs.twimg.com/profile_images/1696146888955691008/xl444AnN_400x400.jpg",
+        },
+        {
+          name: "Token Engineering Commons",
+          avatarUrl:
+            "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+        },
+      ],
+      respond: [
+        {
+          name: "Metalabel",
+          avatarUrl:
+            "https://pbs.twimg.com/profile_images/1696146888955691008/xl444AnN_400x400.jpg",
+        },
+        {
+          name: "Token Engineering Commons",
+          avatarUrl:
+            "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+        },
+      ],
+      edit: {
+        name: "Metalabel",
+        avatarUrl:
+          "https://pbs.twimg.com/profile_images/1696146888955691008/xl444AnN_400x400.jpg",
+      },
+    },
+    userRoles: {
+      request: true,
+      respond: true,
+      edit: false,
     },
   },
 ];
 
 export const groupMockData: GroupProps[] = [
   {
-    groupId: "1",
+    id: "1",
     name: "Token Engineering Commons",
     bannerUrl: "/test-banner.webp",
     avatarUrl:
@@ -290,7 +324,7 @@ export const groupMockData: GroupProps[] = [
     memberCount: 120,
   },
   {
-    groupId: "2",
+    id: "2",
     name: "@core-team",
     type: "Discord role",
     avatarUrl: "",
@@ -307,7 +341,7 @@ export const groupMockData: GroupProps[] = [
     },
   },
   {
-    groupId: "3",
+    id: "3",
     name: "@test-team",
     type: "Discord role",
     bannerUrl: "/test-banner.webp",
@@ -327,68 +361,6 @@ export const groupMockData: GroupProps[] = [
 
 export const requestMockData: RequestProps[] = [
   {
-    requestId: "0",
-    name: "Send award to winner of the 9/12 annual TEC Hackathon in Miami",
-    process: processMockData[0],
-    creator: {
-      name: "popp",
-      avatarUrl:
-        "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-    },
-    respond: [
-      {
-        name: "@core-team",
-        avatarUrl: "",
-      },
-    ],
-    expirationDate: addMinutes(new Date(), 30),
-    decisionType: "Threshold",
-    userResponse: null,
-    inputs: [
-      { property: "Eth address", value: "0x..123abc123def" },
-      { property: "Email", value: "tyler@cults.app" },
-      { property: "Eth amount", value: 4 },
-    ],
-    options: ["✅", "❌"],
-    responses: [
-      {
-        user: {
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-          name: "popp",
-        },
-        selection: {
-          optionId: "abc",
-          optionLabel: "✅",
-          respondedAt: new Date(),
-        },
-      },
-      {
-        user: {
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-          name: "popp",
-        },
-        selection: {
-          optionId: "def",
-          optionLabel: "❌",
-          respondedAt: new Date(),
-        },
-      },
-    ],
-    result: {
-      selection: {
-        optionId: "abc",
-        optionLabel: "✅",
-        respondedAt: new Date(),
-      },
-      responseCount: [
-        { optionId: "abc", label: "✅", count: 5 },
-        { optionId: "def", label: "❌", count: 2 },
-      ],
-    },
-  },
-  {
     requestId: "1",
     name: "Give @tsully the @moderator role",
     process: processMockData[0],
@@ -397,12 +369,6 @@ export const requestMockData: RequestProps[] = [
       avatarUrl:
         "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
     },
-    respond: [
-      {
-        name: "@core-team",
-        avatarUrl: "",
-      },
-    ],
     expirationDate: addMinutes(new Date(), 180),
     decisionType: "Threshold",
     userResponse: null,
@@ -410,12 +376,6 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth address", value: "0x..123abc123def" },
       { property: "Email", value: "tyler@cults.app" },
       { property: "Eth amount", value: 4 },
-    ],
-    options: [
-      "This is a long option. Trying to see how what long text looks like. Gonna keep typing until there are an adequate number of words.",
-      "Yet again trying to fill space. This one can be a little bit shorter though.",
-      "✅",
-      "❌",
     ],
     responses: [
       {
@@ -460,30 +420,9 @@ export const requestMockData: RequestProps[] = [
     name: "Cancel next week's team stand-up meeting for more focus time",
     process: processMockData[1],
     creator: {
-      name: "fake user",
+      name: "david_feinerman",
       avatarUrl: "",
     },
-
-    respond: [
-      {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "tsully",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
     expirationDate: addMinutes(new Date(), 60 * 48),
     decisionType: "Threshold",
     userResponse: null,
@@ -491,10 +430,6 @@ export const requestMockData: RequestProps[] = [
       { property: "Eth address", value: "0x..123abc123def" },
       { property: "Email", value: "tyler@cults.app" },
       { property: "Eth amount", value: 4 },
-    ],
-    options: [
-      "This is a long option. Trying to see how what long text looks like. Gonna keep typing until there are an adequate number of words.",
-      "Yet again trying to fill space. This one can be a little bit shorter though.",
     ],
     responses: [
       {
@@ -537,32 +472,11 @@ export const requestMockData: RequestProps[] = [
   {
     requestId: "3",
     name: "Add Delphi veToken article to curated resources",
-    process: processMockData[1],
+    process: processMockData[2],
     creator: {
       name: "Trey Anastasio",
       avatarUrl: "",
     },
-
-    respond: [
-      {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "tsully",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
     expirationDate: addMinutes(new Date(), -60 * 72),
     decisionType: "Threshold",
     userResponse: "✅ Yes",
@@ -571,7 +485,6 @@ export const requestMockData: RequestProps[] = [
       { property: "Email", value: "tyler@cults.app" },
       { property: "Eth amount", value: 4 },
     ],
-    options: ["✅", "❌"],
     responses: [
       {
         user: {
@@ -612,108 +525,13 @@ export const requestMockData: RequestProps[] = [
   },
   {
     requestId: "4",
-    name: "Add Delphi veToken article to curated resources",
-    process: processMockData[1],
+    name: "Collab launch date of 1/14",
+    process: processMockData[2],
     creator: {
       name: "Trey Anastasio",
       avatarUrl: "",
     },
-    respond: [
-      {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "tsully",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
     expirationDate: addMinutes(new Date(), 60 * 6),
-    decisionType: "Threshold",
-    userResponse: "✅ Yes",
-    inputs: [
-      { property: "Eth address", value: "0x..123abc123def" },
-      { property: "Email", value: "tyler@cults.app" },
-      { property: "Eth amount", value: 4 },
-    ],
-    options: ["✅", "❌"],
-    responses: [
-      {
-        user: {
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-          name: "popp",
-        },
-        selection: {
-          optionId: "abc",
-          optionLabel: "✅",
-          respondedAt: new Date(),
-        },
-      },
-      {
-        user: {
-          avatarUrl:
-            "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-          name: "popp",
-        },
-        selection: {
-          optionId: "def",
-          optionLabel: "❌",
-          respondedAt: new Date(),
-        },
-      },
-    ],
-    result: {
-      selection: {
-        optionId: "abc",
-        optionLabel: "✅",
-        respondedAt: new Date(),
-      },
-      responseCount: [
-        { optionId: "abc", label: "✅", count: 5 },
-        { optionId: "def", label: "❌", count: 2 },
-      ],
-    },
-  },
-  {
-    requestId: "",
-    name: "Add Delphi veToken article to curated resources",
-    process: processMockData[0],
-    creator: {
-      name: "Trey Anastasio",
-      avatarUrl: "",
-    },
-    respond: [
-      {
-        name: "popp",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "t sully",
-        avatarUrl: "",
-      },
-      {
-        name: "tsully",
-        avatarUrl:
-          "https://cdn.discordapp.com/avatars/698194276101914774/487b3c7e19c14f456d12d5aea5cf3c71.png?size=128",
-      },
-    ],
-    expirationDate: addMinutes(new Date(), -60 * 6),
     decisionType: "Threshold",
     userResponse: null,
     inputs: [
@@ -721,7 +539,6 @@ export const requestMockData: RequestProps[] = [
       { property: "Email", value: "tyler@cults.app" },
       { property: "Eth amount", value: 4 },
     ],
-    options: ["✅", "❌"],
     responses: [
       {
         user: {

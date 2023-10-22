@@ -1,21 +1,19 @@
-import Typography from "@mui/material/Typography";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
-
+import Typography from "@mui/material/Typography";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { ThresholdTypes, useNewProcessWizardState } from "./newProcessWizard";
 import {
   GroupUserSearchControl,
   RadioControl,
   SelectControl,
   SliderControl,
-} from "../Shared/Form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import Groups from "@mui/icons-material/Groups";
-
-import { useNewProcessWizardState, ThresholdTypes } from "./newProcessWizard";
-
-import { WizardBody, WizardNav } from "../Shared/Wizard";
-import React from "react";
+} from "../shared/Form";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
 
@@ -115,8 +113,6 @@ const SliderContainer = ({
 export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
-  console.log("formState is ", formState);
-
   const totalGroupMembers = 128;
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
@@ -145,8 +141,6 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
-
     setFormState((prev) => ({
       ...prev,
       ...data,
@@ -174,11 +168,13 @@ export const ProcessRights = () => {
         >
           <RightsContainer title={"How is this process triggered?"}>
             <GroupUserSearchControl
+              //@ts-ignore
               control={control}
               name={"rights.request"}
               label={"Who can create requests to trigger this process?"}
             />
             <SelectControl
+              //@ts-ignore
               control={control}
               sx={{ width: "300px" }}
               name="decision.requestExpirationSeconds"
@@ -195,11 +191,13 @@ export const ProcessRights = () => {
           </RightsContainer>
           <RightsContainer title={"How is a final decision reached?"}>
             <GroupUserSearchControl
+              //@ts-ignore
               control={control}
               name={"rights.response"}
               label={"Who can respond to requests?"}
             />
             <RadioControl
+              //@ts-ignore
               control={control}
               name="decision.decisionThresholdType"
               label="At what point is a final decision reached?"
@@ -223,6 +221,7 @@ export const ProcessRights = () => {
             >
               <SliderControl
                 name="decision.decisionThreshold"
+                //@ts-ignore
                 control={control}
                 max={100}
                 valueLabelFormat={(value: number) =>
@@ -253,6 +252,7 @@ export const ProcessRights = () => {
                 <SliderControl
                   name="decision.quorum.quorumThreshold"
                   valueLabelDisplay="on"
+                  //@ts-ignore
                   control={control}
                   max={100}
                   min={1}
@@ -276,6 +276,7 @@ export const ProcessRights = () => {
             {/* <Typography>Edit</Typography> */}
             <GroupUserSearchControl
               multiple={false}
+              //@ts-ignore
               control={control}
               name={"rights.edit"}
               label={"Who is responsible for how this process evolves?"}

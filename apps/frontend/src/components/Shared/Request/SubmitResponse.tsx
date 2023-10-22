@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import { RadioControl } from "../Form";
-import z from "zod";
 
 const formSchema = z.object({
   option: z.string().trim().nonempty("Please select an option"),
@@ -57,6 +57,7 @@ export const SubmitResponse = ({
       <Box sx={{ width: "100%", height: "100%" }}>
         <RadioControl
           name="option"
+          //@ts-ignore
           control={control}
           sx={{ flexDirection: "column", gap: "4px" }}
           options={options.map((option) => ({ label: option, value: option }))}

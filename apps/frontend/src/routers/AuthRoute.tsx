@@ -1,4 +1,4 @@
-import { useContext, ReactNode, useEffect } from "react";
+import { ReactNode, useContext } from "react";
 
 import { CurrentUserContext } from "../contexts/current_user_context";
 

@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import {
   FormControl,
   FormControlLabel,
@@ -10,12 +11,12 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+
+import { useNewServerGroupWizardState } from "./newServerWizard";
 import {
   DiscordServerRolesDocument,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
-import { useNewServerGroupWizardState } from "./newServerWizard";
-import { useQuery } from "@apollo/client";
 import { validatePositiveIntegerInput } from "../../utils/inputs";
 
 const INITIAL_PROCESS_CONFIGURATION_OPTIONS = [

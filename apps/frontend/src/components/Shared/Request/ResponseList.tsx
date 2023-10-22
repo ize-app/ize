@@ -4,8 +4,8 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { Response } from "../Tables/mockData";
 import { AvatarWithName } from "../Avatar";
+import { Response } from "../Tables/mockData";
 
 const ResponseListRow = ({ response }: { response: Response }) => {
   return (

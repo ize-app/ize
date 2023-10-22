@@ -1,6 +1,3 @@
-import * as React from "react";
-import { useNavigate } from "react-router-dom";
-
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -9,11 +6,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
+import {
+  GroupSummaryPartsFragment,
+  GroupType,
+} from "../../../../graphql/generated/graphql";
+import { createDiscordIconURL } from "../../../../utils/discord";
 import { AvatarWithName } from "../../Avatar";
 import { TableCellHideable } from "../TableCells";
-import { GroupSummaryPartsFragment, GroupType } from "../../../../graphql/generated/graphql";
-import { createDiscordIconURL } from "../../../../utils/discord";
 
 function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   const { group } = props;
@@ -23,7 +25,14 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
     navigate(`/groups/${group.id}`);
   };
 
-  const avatarUrl = group.discordServerGroup && group.icon ? createDiscordIconURL(group.discordServerGroup.discordServerId, group.icon, 16) : undefined;
+  const avatarUrl =
+    group.discordServerGroup && group.icon
+      ? createDiscordIconURL(
+          group.discordServerGroup.discordServerId,
+          group.icon,
+          16,
+        )
+      : undefined;
 
   return (
     <React.Fragment>
@@ -38,12 +47,12 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             <AvatarWithName
               name={group.name}
               avatarUrl={avatarUrl}
-            // TODO figure out parent
+              // TODO figure out parent
             />
           </Box>
         </TableCellHideable>
 
-        <TableCellHideable align={"left"}>
+        <TableCellHideable align={"left"} hideOnSmallScreen={true}>
           <Box
             sx={{
               display: "flex",
@@ -65,7 +74,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             </Typography>
           </Box>
         </TableCellHideable>
-        <TableCellHideable align={"right"}>
+        <TableCellHideable align={"right"} hideOnSmallScreen={true}>
           <Box
             sx={{
               display: "flex",
@@ -73,7 +82,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
               justifyContent: "flex-end",
             }}
           >
-            <Typography>{group.memberCount}</Typography>
+            <Typography>{group.memberCount ?? 34}</Typography>
           </Box>
         </TableCellHideable>
       </TableRow>
@@ -81,7 +90,11 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   );
 }
 
-export default function GroupTable({ groups }: { groups: GroupSummaryPartsFragment[] }) {
+export default function GroupTable({
+  groups,
+}: {
+  groups: GroupSummaryPartsFragment[];
+}) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
       <Table aria-label="collapsible table" stickyHeader={true}>

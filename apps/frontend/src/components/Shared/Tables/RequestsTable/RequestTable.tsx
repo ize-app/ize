@@ -1,6 +1,3 @@
-import * as React from "react";
-import { useNavigate } from "react-router-dom";
-
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Button from "@mui/material/Button";
@@ -13,15 +10,18 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
+import { ExpandedRequest } from "./ExpandedRequest";
+import { Route } from "../../../../routers/routes";
 import { RequestProps } from "../mockData";
 import {
-  TwoTierCell,
   AvatarsCell,
   StatusCell,
   TableCellHideable,
+  TwoTierCell,
 } from "../TableCells";
-import { ExpandedRequest } from "./ExpandedRequest";
 
 function RequestRow(props: { request: RequestProps }) {
   const { request } = props;
@@ -35,7 +35,11 @@ function RequestRow(props: { request: RequestProps }) {
   return (
     <React.Fragment>
       <TableRow
-        onClick={() => navigate(`/request/${request.requestId}`)}
+        onClick={() =>
+          navigate(
+            generatePath(Route.Request, { requestId: request.requestId }),
+          )
+        }
         sx={{
           [`& .${tableCellClasses.root}`]: {
             borderBottom: "none",

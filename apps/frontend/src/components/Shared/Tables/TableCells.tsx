@@ -1,10 +1,10 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { SxProps, TableCellProps, styled } from "@mui/material";
+import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
+import Typography from "@mui/material/Typography";
 
-import { AvatarGroup, UserDataProps } from "../Avatar";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
+import { AvatarGroup, UserDataProps } from "../Avatar";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;

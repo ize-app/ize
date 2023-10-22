@@ -1,6 +1,3 @@
-import * as React from "react";
-import { generatePath, useNavigate } from "react-router-dom";
-
 import Add from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
@@ -14,9 +11,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
+import {
+  NewRequestRoute,
+  Route,
+  newRequestRoute,
+} from "../../../../routers/routes";
 import { Process } from "../../../../types";
-import { NewRequestRoute, newRequestRoute } from "../../../../routers/routes";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: Process.default }) {
@@ -25,7 +28,13 @@ function ProcessRow(props: { process: Process.default }) {
 
   return (
     <React.Fragment>
-      <TableRow onClick={() => navigate(`/process/${process.processId}`)}>
+      <TableRow
+        onClick={() =>
+          navigate(
+            generatePath(Route.Process, { processId: process.processId }),
+          )
+        }
+      >
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{

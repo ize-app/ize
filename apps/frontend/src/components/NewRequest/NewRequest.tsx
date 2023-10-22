@@ -1,19 +1,19 @@
-import { Outlet, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
 import { useContext } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  NEW_REQUEST_WIZARD_STEPS,
   NEW_REQUEST_PROGRESS_BAR_STEPS,
+  NEW_REQUEST_WIZARD_STEPS,
   NewRequestState,
 } from "./newRequestWizard";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import Head from "../../layout/Head";
+import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
@@ -44,29 +44,35 @@ export const NewRequest = () => {
   } = useWizard(newRequestWizard);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-        marginTop: "16px",
-      }}
-    >
-      <Stepper activeStep={progressBarStep}>
-        {NEW_REQUEST_PROGRESS_BAR_STEPS.map((title) => (
-          <Step key={title}>
-            <StepLabel>{title}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Typography variant="h1" sx={{ marginTop: "32px" }}>
-        {title}
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <Outlet
-          context={{ formState, setFormState, onNext, onPrev, nextLabel }}
-        />
+    <>
+      <Head
+        title={"Create a request"}
+        description={"Propose a new decision by creating a request."}
+      />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          marginTop: "16px",
+        }}
+      >
+        <Stepper activeStep={progressBarStep}>
+          {NEW_REQUEST_PROGRESS_BAR_STEPS.map((title) => (
+            <Step key={title}>
+              <StepLabel>{title}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Typography variant="h1" sx={{ marginTop: "32px" }}>
+          {title}
+        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+          <Outlet
+            context={{ formState, setFormState, onNext, onPrev, nextLabel }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };

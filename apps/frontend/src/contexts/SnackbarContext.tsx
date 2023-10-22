@@ -1,4 +1,4 @@
-import { createContext, useState, Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, createContext, useState } from "react";
 
 export interface SnackbarDataProps {
   message: string;
@@ -29,7 +29,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [snackbarData, setSnackbarData] = useState({
     message: "Success!",
   });
-  
+
   return (
     <SnackbarContext.Provider
       value={{ snackbarOpen, setSnackbarOpen, snackbarData, setSnackbarData }}

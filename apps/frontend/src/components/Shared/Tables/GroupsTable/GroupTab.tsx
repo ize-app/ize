@@ -1,12 +1,13 @@
-import Box from "@mui/material/Box";
-import React, { useState } from "react";
-
-import CreateButton from "../CreateButton";
-import GroupTable from "./GroupTable";
-import Search from "../Search";
 import { useQuery } from "@apollo/client";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+import { ChangeEvent, useState } from "react";
+
+import GroupTable from "./GroupTable";
 import { GroupsDocument } from "../../../../graphql/generated/graphql";
-import { LinearProgress } from "@mui/material";
+import CreateButton from "../CreateButton";
+import { groupMockData } from "../mockData";
+import Search from "../Search";
 
 const GroupTab = () => {
   const { data, loading } = useQuery(GroupsDocument);
@@ -21,6 +22,8 @@ const GroupTab = () => {
         return group.name.search(regExSearchQuery) !== -1;
       })
       .sort() ?? [];
+
+  const filteredWithMockData = filteredGroupData.concat(groupMockData);
 
   return (
     <Box
@@ -50,14 +53,18 @@ const GroupTab = () => {
         >
           <Search
             searchQuery={searchQuery}
-            changeHandler={(event: React.ChangeEvent<HTMLInputElement>) => {
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />
         </Box>
         <CreateButton />
       </Box>
-      {loading ? <LinearProgress /> : <GroupTable groups={filteredGroupData} />}
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        <GroupTable groups={filteredWithMockData} />
+      )}
     </Box>
   );
 };

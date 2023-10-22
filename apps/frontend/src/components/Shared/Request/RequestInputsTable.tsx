@@ -3,9 +3,9 @@ import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 
 import { RequestInput } from "../Tables/mockData";
-import { Typography } from "@mui/material";
 
 const RequestInputRow = ({
   input,

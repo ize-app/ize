@@ -1,5 +1,5 @@
 import { useEditProcessWizardState } from "./editProcessWizard";
-import { WizardBody, WizardNav } from "../Shared/Wizard";
+import { WizardBody, WizardNav } from "../shared/Wizard";
 export const Intro = () => {
   const { onNext, nextLabel, onPrev } = useEditProcessWizardState();
   return (

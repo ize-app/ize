@@ -1,16 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import { AuthRoute } from "./AuthRoute";
+import * as Routes from "./routes";
+import { _404 } from "../components/404";
+import * as EditProcess from "../components/EditProcess";
+import { Group } from "../components/Groups/Group";
 import { Home } from "../components/Home";
 import * as NewProcess from "../components/NewProcess";
-import * as NewServerGroup from "../components/NewServerGroup";
-import { DefaultLayout } from "../layout/default";
-import * as Routes from "./routes";
-import { Group } from "../components/Groups/Group";
-import { Request } from "../components/Request/Request";
-import { Process } from "../components/Process/Process";
-import * as EditProcess from "../components/EditProcess";
 import * as NewRequest from "../components/NewRequest";
+import * as NewServerGroup from "../components/NewServerGroup";
+import { Process } from "../components/Process/Process";
+import { Request } from "../components/Request/Request";
+import { DefaultLayout } from "../layout/default";
 
 export const router = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
             <NewServerGroup.default />
           </AuthRoute>
         ),
-        path: Routes.Route.SetupServerGroup,
+        path: Routes.Route.NewServerGroup,
         children: [
           {
             path: Routes.newServerRoute(
@@ -60,7 +61,7 @@ export const router = createBrowserRouter([
             <NewProcess.default />
           </AuthRoute>
         ),
-        path: Routes.Route.SetupProcessGroup,
+        path: Routes.Route.NewProcess,
         children: [
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
@@ -115,6 +116,7 @@ export const router = createBrowserRouter([
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
             element: <EditProcess.Intro />,
+            index: true,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.BasicInfo),
@@ -145,6 +147,10 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.Process,
         element: <Process />,
+      },
+      {
+        path: "*",
+        element: <_404 />,
       },
     ],
   },

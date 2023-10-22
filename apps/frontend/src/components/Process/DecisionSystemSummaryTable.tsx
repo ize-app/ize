@@ -1,13 +1,13 @@
+import { Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { intervalToIntuitiveTimeString } from "../../utils/inputs";
-import { summarizeDecisionSystem } from "../Shared/Process/summarizeDecisionSystem";
 import { Process } from "../../types";
-import { Typography } from "@mui/material";
+import { intervalToIntuitiveTimeString } from "../../utils/inputs";
+import { summarizeDecisionSystem } from "../shared/Process/summarizeDecisionSystem";
 
 export const DecisionSystemSummaryTable = ({
   process,

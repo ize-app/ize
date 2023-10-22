@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client";
-import { DiscordServersDocument } from "../../graphql/generated/graphql";
 import {
   Box,
   FormControl,
@@ -8,7 +7,9 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+
 import { useNewServerGroupWizardState } from "./newServerWizard";
+import { DiscordServersDocument } from "../../graphql/generated/graphql";
 
 interface DiscordServerProps {
   name: string;

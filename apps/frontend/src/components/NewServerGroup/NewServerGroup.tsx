@@ -1,18 +1,16 @@
-import { Outlet, useNavigate } from "react-router-dom";
-
 import { useMutation } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import Typography from "@mui/material/Typography";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import { Wizard, useWizard } from "../../utils/wizard";
 import {
-  NEW_SERVER_WIZARD_STEPS,
   NEW_SERVER_PROGRESS_BAR_STEPS,
+  NEW_SERVER_WIZARD_STEPS,
   NewServerState,
 } from "./newServerWizard";
 import {
@@ -20,6 +18,8 @@ import {
   CreateDiscordServerGroupInput,
   ProcessConfigurationOption,
 } from "../../graphql/generated/graphql";
+import Head from "../../layout/Head";
+import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
   const navigate = useNavigate();
@@ -62,64 +62,72 @@ export const NewServerGroup = () => {
   } = useWizard(newServerWizard);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        flexGrow: 1,
-      }}
-    >
+    <>
+      <Head
+        title={"Create a group"}
+        description={
+          "Create a Cults group to collaboratively create and evolve your communal decision-making processes"
+        }
+      />
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
+          justifyContent: "space-between",
           flexGrow: 1,
-          marginTop: "16px",
         }}
       >
-        <Stepper activeStep={progressBarStep}>
-          {NEW_SERVER_PROGRESS_BAR_STEPS.map((title) => (
-            <Step key={title}>
-              <StepLabel>{title}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Typography variant="h1" sx={{ marginTop: "32px" }}>
-          {title}
-        </Typography>
-        <Box sx={{ flexGrow: 1 }}>
-          <Outlet context={{ formState, setFormState }} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            marginTop: "16px",
+          }}
+        >
+          <Stepper activeStep={progressBarStep}>
+            {NEW_SERVER_PROGRESS_BAR_STEPS.map((title) => (
+              <Step key={title}>
+                <StepLabel>{title}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Typography variant="h1" sx={{ marginTop: "32px" }}>
+            {title}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }}>
+            <Outlet context={{ formState, setFormState }} />
+          </Box>
         </Box>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          marginTop="16px"
+          height="80px"
+        >
+          {onPrev ? (
+            <div>
+              <Button variant="outlined" onClick={onPrev}>
+                Previous
+              </Button>
+            </div>
+          ) : (
+            /** To keep next on the right when there is no prev we render an empty div */ <div />
+          )}
+          {onNext && (
+            <div>
+              <Button
+                disabled={!canNext(formState)}
+                variant="contained"
+                onClick={onNext}
+              >
+                {nextLabel}
+              </Button>
+            </div>
+          )}
+        </Stack>
       </Box>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        marginTop="16px"
-        height="80px"
-      >
-        {onPrev ? (
-          <div>
-            <Button variant="outlined" onClick={onPrev}>
-              Previous
-            </Button>
-          </div>
-        ) : (
-          /** To keep next on the right when there is no prev we render an empty div */ <div />
-        )}
-        {onNext && (
-          <div>
-            <Button
-              disabled={!canNext(formState)}
-              variant="contained"
-              onClick={onNext}
-            >
-              {nextLabel}
-            </Button>
-          </div>
-        )}
-      </Stack>
-    </Box>
+    </>
   );
 };

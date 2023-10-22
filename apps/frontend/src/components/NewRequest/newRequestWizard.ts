@@ -1,7 +1,6 @@
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
-import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-
 import { Process } from "../../types";
+import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface NewRequestState {
   process?: Process.default;
@@ -28,17 +27,22 @@ export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestState> = [
     title: "Select process",
     progressBarStep: 0,
     canNext: () => true,
+    validWizardState: () => true,
   },
   {
     path: newRequestRoute(NewRequestRoute.CreateRequest),
     title: "Create request",
     progressBarStep: 1,
     canNext: () => true,
+    validWizardState: () => true,
   },
   {
     path: newRequestRoute(NewRequestRoute.Confirm),
     title: "Confirm",
     progressBarStep: 2,
     canNext: () => true,
+    validWizardState: (formState: NewRequestState) => {
+      return !!formState.userInputs;
+    },
   },
 ];
