@@ -1,50 +1,55 @@
-import styled from "@emotion/styled";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 
 import Dashboard from "./Dashboard/Dashboard";
 import { ConnectToDiscord } from "./shared/ConnectToDiscord";
-import { Logo } from "./shared/Logo";
 import { CurrentUserContext } from "../contexts/current_user_context";
 
-const PageContainer = styled.div`
-  display: flex;
-  padding: 0px 16px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  flex: 1 0 0;
-  align-self: stretch;
-  height: 100%;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-`;
-
-const UnauthenticatedHome = () => (
-  <PageContainer>
-    <Logo fontSize={"8rem"}>Cults</Logo>
-    <Typography variant="h1" align="center">
-      Process is King
-    </Typography>
-    <ButtonsContainer>
-      <Button
-        variant="contained"
-        color="primary"
-        href="/api/auth/discord/login"
+const UnauthenticatedHome = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {/* <PageContainer> */}
+      <img
+        src="./logo-yellow.png"
+        style={{
+          width: "90%",
+          height: "auto",
+          marginBottom: "50px",
+        }}
+      />
+      <Box
+        sx={(theme) => ({
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+          [theme.breakpoints.down("sm")]: {
+            flexDirection: "column",
+          },
+        })}
       >
-        Join Alpha Waitlist
-      </Button>
-      <ConnectToDiscord />
-    </ButtonsContainer>
-  </PageContainer>
-);
+        <Button
+          variant="contained"
+          color="primary"
+          href="/api/auth/discord/login"
+        >
+          Join Alpha Waitlist
+        </Button>
+        <ConnectToDiscord />
+      </Box>
+    </Box>
+  );
+};
 
 export const Home = () => {
   const { user } = useContext(CurrentUserContext);

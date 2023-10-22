@@ -3,12 +3,15 @@ import styled from "@emotion/styled";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Home from "@mui/icons-material/Home";
 import Logout from "@mui/icons-material/Logout";
+import Box from "@mui/material/Box";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Avatar } from "./Avatar";
 import { ConnectToDiscord } from "./ConnectToDiscord";
@@ -38,9 +41,6 @@ const NavLink = ({ title, url }: NavLinkProps): JSX.Element => {
       font-weight: 500;
       letter-spacing: 0.5px;
       text-decoration: none;
-      @media (max-width: 600px) {
-        visibility: hidden;
-      }
     }
   `;
 
@@ -142,16 +142,29 @@ const NavControlContainer = styled.ol`
 
 export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
+  const location = useLocation();
+  const isHomePage = (location.pathname = "/");
+
+  const theme = useTheme();
+  const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
+
   return (
     <NavContainer>
-      {/* <Logo fontSize={"1.75rem"}>Cults </Logo> */}
-      <div></div>
+      {isHomePage && (user == null || user.discordData == null) ? (
+        <Box></Box>
+      ) : (
+        <img
+          src="./logo-yellow.png"
+          style={{ height: "24px", marginLeft: "12px" }}
+        />
+      )}
+
       <NavControlContainer>
         {user == null || user.discordData == null ? (
           <ConnectToDiscord />
         ) : (
           <>
-            <NavLink title="Dashboard" url="/" />
+            {isOverSmScreen ? <NavLink title="Dashboard" url="/" /> : null}
             <UserDropDown
               username={user.discordData.username}
               avatarURL={createDiscordAvatarURL(
