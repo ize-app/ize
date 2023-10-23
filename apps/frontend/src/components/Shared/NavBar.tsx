@@ -143,7 +143,7 @@ const NavControlContainer = styled.ol`
 export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
   const location = useLocation();
-  const isHomePage = (location.pathname = "/");
+  const isHomePage = location.pathname === "/";
 
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
