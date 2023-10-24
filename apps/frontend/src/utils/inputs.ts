@@ -1,3 +1,4 @@
+import short from "short-uuid";
 import z, { ZodTypeAny } from "zod";
 
 export const validatePositiveIntegerInput = (value: string) => {
@@ -68,3 +69,13 @@ export const zodCleanString = (zodPipe: ZodTypeAny) =>
     .trim()
     .transform((value) => (value === "" ? undefined : value))
     .pipe(zodPipe);
+
+export const fullUUIDToShort = (uuid: string): string => {
+  const translator = short();
+  return translator.fromUUID(uuid);
+};
+
+export const shortUUIDToFull = (shortenedUUID: string): string => {
+  const translator = short();
+  return translator.toUUID(shortenedUUID);
+};

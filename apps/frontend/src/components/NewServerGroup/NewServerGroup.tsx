@@ -18,6 +18,7 @@ import {
   SetUpDiscordServerInput,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
@@ -25,7 +26,7 @@ export const NewServerGroup = () => {
   const [mutate] = useMutation(SetUpDiscordServerGroupDocument, {
     onCompleted: (data) => {
       const newGroupId = data.setUpDiscordServer.id;
-      navigate(`/groups/${newGroupId}`);
+      navigate(`/groups/${fullUUIDToShort(newGroupId)}`);
     },
   });
 

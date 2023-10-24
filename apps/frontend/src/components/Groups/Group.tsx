@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import BannerWithAvatar from "./BannerWithAvatar";
 import Head from "../../layout/Head";
 // import { GroupDocument } from "../../graphql/generated/graphql";
+import { shortUUIDToFull } from "../../utils/inputs";
 import { groupMockData } from "../shared/Tables/mockData";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
@@ -18,15 +19,20 @@ const tabs = [
   { title: "Requests", content: <RequestTab /> },
   { title: "Process", content: <ProcessTab /> },
 ];
-
 export const Group = () => {
-  // const { groupId } = useParams();
 
   // const { data } = useQuery(GroupDocument, {
   //   variables: {
   //     id: groupId ?? "",
   //   },
   // });
+  const { groupId: groupIdShort } = useParams();
+  const groupId = shortUUIDToFull(groupIdShort as string);
+
+  console.log("group id is ", groupId);
+
+  // example: "718f609e-e6fc-4468-88f3-58b9c6af094f"
+  // should become "f2jYqyy5bh35kThA4kkF6H"
 
   const groupData = groupMockData[1];
 
