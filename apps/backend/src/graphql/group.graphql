@@ -1,24 +1,14 @@
-enum ProcessConfigurationOption {
-  BenevolentDictator
-  TrustedAdvisors
-  FullDecentralization
-}
-
 enum GroupType {
   Standard
-  DiscordServer
   DiscordRole
 }
 
-input CreateDiscordServerGroupInput {
+input setUpDiscordServerInput {
   serverId: String!
-  processConfigurationOption: ProcessConfigurationOption!
-  roleId: String
-  numberOfResponses: Int
 }
 
 type Mutation {
-  createDiscordServerGroup(input: CreateDiscordServerGroupInput!): Group!
+  setUpDiscordServer(input: setUpDiscordServerInput!): Group!
 }
 
 type Query {
@@ -34,6 +24,18 @@ type Group {
   icon: String
   memberCount: Int
   type: GroupType
-  discordServerGroup: DiscordServerGroup
   discordRoleGroup: DiscordRoleGroup
+}
+
+
+type DiscordRoleGroup {
+  id: String!
+  name: String!
+  discordRoleId: String!
+  discordServer: OnboardedDiscordServer!
+}
+
+type OnboardedDiscordServer {
+  id: String!
+  discordServerId: String!
 }

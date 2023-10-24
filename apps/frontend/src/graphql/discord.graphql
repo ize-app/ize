@@ -10,12 +10,12 @@ query DiscordServerRoles($serverId: String!) {
   }
 }
 
-fragment DiscordServerParts on DiscordServer {
+fragment DiscordServerParts on DiscordAPIServer {
   id
   name
 }
 
-fragment DiscordServerRoleParts on DiscordServerRole {
+fragment DiscordServerRoleParts on DiscordAPIServerRole {
   id
   name
 }

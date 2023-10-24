@@ -14,30 +14,29 @@ import {
   NewServerState,
 } from "./newServerWizard";
 import {
-  CreateDiscordServerGroupDocument,
-  CreateDiscordServerGroupInput,
-  ProcessConfigurationOption,
+  SetUpDiscordServerGroupDocument,
+  SetUpDiscordServerInput,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
   const navigate = useNavigate();
-  const [mutate] = useMutation(CreateDiscordServerGroupDocument, {
+  const [mutate] = useMutation(SetUpDiscordServerGroupDocument, {
     onCompleted: (data) => {
-      const newGroupId = data.createDiscordServerGroup.id;
+      const newGroupId = data.setUpDiscordServer.id;
       navigate(`/groups/${newGroupId}`);
     },
   });
 
   const onComplete = async () => {
-    if (formState.serverId == null) {
+    if ((formState as SetUpDiscordServerInput).serverId == null) {
       throw new Error("No server selected.");
     }
 
     await mutate({
       variables: {
-        input: { ...(formState as CreateDiscordServerGroupInput) },
+        input: { ...(formState as SetUpDiscordServerInput) },
       },
     });
   };
@@ -45,9 +44,7 @@ export const NewServerGroup = () => {
   const newServerWizard: Wizard<NewServerState> = {
     steps: NEW_SERVER_WIZARD_STEPS,
     onComplete,
-    initialFormState: {
-      processConfigurationOption: ProcessConfigurationOption.BenevolentDictator,
-    },
+    initialFormState: {},
   };
 
   const {

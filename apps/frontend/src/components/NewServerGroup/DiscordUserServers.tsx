@@ -11,11 +11,6 @@ import {
 import { useNewServerGroupWizardState } from "./newServerWizard";
 import { DiscordServersDocument } from "../../graphql/generated/graphql";
 
-interface DiscordServerProps {
-  name: string;
-  id: string;
-}
-
 export const DiscordUserServers = () => {
   const { formState, setFormState } = useNewServerGroupWizardState();
 
@@ -56,15 +51,9 @@ export const DiscordUserServers = () => {
           label="Server"
           onChange={(event) => {
             const serverId = event.target.value;
-            const serverName =
-              servers.find(
-                (server: DiscordServerProps) => server.id === serverId,
-              )?.name ?? "";
             setFormState((prev) => ({
               ...prev,
               serverId: serverId ?? "",
-
-              serverName: serverName,
             }));
           }}
         >

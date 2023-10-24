@@ -1,14 +1,12 @@
-mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {
-  createDiscordServerGroup(input: $input) {
+mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
+   setUpDiscordServer(input: $input) {
     id
-    name
   }
 }
 
 query Group($id: String!) {
   group(id: $id) {
     id
-    name
   }
 }
 
@@ -21,14 +19,11 @@ fragment GroupSummaryParts on Group {
   creator {
     ...UserParts
   }
-  discordServerGroup {
-    id
-    discordServerId
-  }
   discordRoleGroup {
     id
+    name
     discordRoleId
-    discordServerGroup {
+    discordServer {
       id
       discordServerId
     }

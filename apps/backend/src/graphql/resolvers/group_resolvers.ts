@@ -1,6 +1,5 @@
 import {
-  ProcessConfigurationOption,
-  setUpDiscordServerGroup as createDiscordServerGroupService,
+  setUpDiscordServerService,
 } from "@services/groups/discord_server_group";
 import { GraphqlRequestContext } from "../context";
 import { prisma } from "../../prisma/client";
@@ -13,19 +12,16 @@ interface GQLGroup {
   banner?: string;
 }
 
-const createDiscordServerGroup = async (
+const setUpDiscordServer = async (
   root: unknown,
   args: {
     input: {
       serverId: string;
-      processConfigurationOption: ProcessConfigurationOption;
-      roleId?: string;
-      numberOfResponses?: number;
     };
   },
   context: GraphqlRequestContext
 ) => {
-  return await createDiscordServerGroupService(args.input, context);
+  return await setUpDiscordServerService(args.input, context);
 };
 
 const group = async (
@@ -68,9 +64,6 @@ const groupsForCurrentUser = async (
   const groups = await prisma.group.findMany({
     where: {
       OR: [
-        {
-          discordServerGroup: { discordServerId: { in: serverIds } },
-        },
         { discordRoleGroup: { discordRoleId: { in: roleIds } } },
         { creatorId: context.currentUser.id },
       ],
@@ -81,10 +74,9 @@ const groupsForCurrentUser = async (
           discordData: true,
         },
       },
-      discordServerGroup: true,
       discordRoleGroup: {
         include: {
-          discordServerGroup: true,
+          discordServer: true,
         },
       },
     },
@@ -93,7 +85,7 @@ const groupsForCurrentUser = async (
   const roleGroups = groups.filter((group) => group.discordRoleGroup);
   const serversForRoleGroups = new Set(
     roleGroups.map(
-      (group) => group.discordRoleGroup.discordServerGroup.discordServerId
+      (group) => group.discordRoleGroup.discordServer.discordServerId
     )
   );
 
@@ -109,19 +101,7 @@ const groupsForCurrentUser = async (
   );
 
   return groups.map((group) => {
-    if (group.discordServerGroup?.discordServerId) {
-      const serverData = serverMap.get(
-        group.discordServerGroup?.discordServerId
-      );
-
-      return {
-        ...group,
-        banner: serverData.banner,
-        icon: serverData.icon,
-        memberCount: serverData.approximate_member_count,
-        type: GroupType.DiscordServer,
-      };
-    } else if (group.discordRoleGroup?.discordRoleId) {
+    if (group.discordRoleGroup?.discordRoleId) {
       const roleData = roleMap.get(group.discordRoleGroup?.discordRoleId);
       if (roleData == null) {
         // TODO: Get the role data because this user created the role
@@ -141,12 +121,11 @@ const groupsForCurrentUser = async (
 };
 
 export const groupMutations = {
-  createDiscordServerGroup,
+  setUpDiscordServer,
 };
 
 export enum GroupType {
   Standard = "Standard",
-  DiscordServer = "DiscordServer",
   DiscordRole = "DiscordRole",
 }
 
