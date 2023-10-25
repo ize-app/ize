@@ -18,4 +18,5 @@ fragment DiscordServerParts on DiscordAPIServer {
 fragment DiscordServerRoleParts on DiscordAPIServerRole {
   id
   name
+  botRole
 }

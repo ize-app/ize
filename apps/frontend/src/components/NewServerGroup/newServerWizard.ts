@@ -3,6 +3,7 @@ import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface NewServerState {
   serverId?: string;
+  roleId?: string;
   serverName?: string;
 }
 
@@ -32,17 +33,13 @@ export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
     canNext: () => true,
     validWizardState: () => true,
   },
-  // {
-  //   path: newServerRoute(NewServerGroupRoute.DefineProcess),
-  //   title: "Define Process",
-  //   progressBarStep: 2,
-  //   canNext: (formState: NewServerState) =>
-  //     // The user must either be a benevolent dictator or have selected a role
-  //     formState.processConfigurationOption ===
-  //       ProcessConfigurationOption.BenevolentDictator ||
-  //     (formState.roleId != null && formState.numberOfResponses != null),
-  //   validWizardState: (formState: NewServerState) => !!formState.serverId,
-  // },
+  {
+    path: newServerRoute(NewServerGroupRoute.DefineProcess),
+    title: "Define Process",
+    progressBarStep: 2,
+    canNext: (formState: NewServerState) => formState.roleId != null,
+    validWizardState: (formState: NewServerState) => !!formState.serverId,
+  },
   {
     path: newServerRoute(NewServerGroupRoute.Finish),
     title: "Finish",

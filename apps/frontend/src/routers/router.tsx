@@ -44,6 +44,12 @@ export const router = createBrowserRouter([
             element: <NewServerGroup.HowCultsWorks />,
           },
           {
+            path: Routes.newServerRoute(
+              Routes.NewServerGroupRoute.DefineProcess,
+            ),
+            element: <NewServerGroup.DefineServerGroupProcesses />,
+          },
+          {
             path: Routes.newServerRoute(Routes.NewServerGroupRoute.Finish),
             element: <NewServerGroup.Finish />,
           },
