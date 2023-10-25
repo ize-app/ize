@@ -82,9 +82,8 @@ const groupsForCurrentUser = async (
     },
   });
 
-  const roleGroups = groups.filter((group) => group.discordRoleGroup);
   const serversForRoleGroups = new Set(
-    roleGroups.map(
+    groups.map(
       (group) => group.discordRoleGroup.discordServer.discordServerId
     )
   );

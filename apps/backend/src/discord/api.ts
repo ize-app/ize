@@ -84,6 +84,30 @@ export class DiscordApi {
     return rolesResponse.json();
   }
 
+  async getDiscordGuildMembers({
+    serverId,
+  }: {
+    serverId: string;
+  }): Promise<APIGuildMember[]> {
+    if (!this.isBot) {
+      throw new Error("Only bot users can get member info");
+    }
+
+    // limit of 1000 members in response
+    const rolesResponse = await fetch(
+      `https://discord.com/api/guilds/${serverId}/members?limit=1000`,
+      {
+        headers: this.headers,
+      }
+    );
+
+    return rolesResponse.json();
+  }
+
+  countMembers(members: APIGuildMember[]) :number {
+    return members.filter((member)=> !member.user.bot).length
+  }
+
   private get headers() {
     if (this.isBot) {
       return {

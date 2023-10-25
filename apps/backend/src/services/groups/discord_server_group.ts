@@ -15,10 +15,7 @@ export async function setUpDiscordServerService(
   const botApi = DiscordApi.forBotUser();
   const server = await botApi.getDiscordServer(serverId);
   const serverRoles = await botApi.getDiscordServerRoles(serverId);
-
   const everyoneRole = serverRoles.find((role) => role.name === "@everyone");
-
-  
 
   return await prisma.$transaction(async (transaction) => {
     if (!server) {
@@ -29,92 +26,51 @@ export async function setUpDiscordServerService(
       throw new Error("Cannot find @everyone role");
     }
 
-    const roleGroup = await createInitialRoleGroups({
-      serverId,
-      name: everyoneRole.name,
-      creatorId: context.currentUser.id,
-      everyoneRoleId: everyoneRole.id,
-      transaction,
-    });
-
-    return roleGroup;
-  });
-}
-
-async function createInitialRoleGroups({
-  serverId,
-  creatorId,
-  everyoneRoleId,
-  name,
-  transaction = prisma,
-}: {
-  serverId: string;
-  creatorId: string;
-  everyoneRoleId: string;
-  name: string;
-  transaction?: Prisma.TransactionClient;
-}) {
-  const existingGroup = await transaction.group.findFirst({
-    where: {
-      discordRoleGroup: {
-        discordServer: {
-          discordServerId: serverId
+    const existingGroup = await transaction.group.findFirst({
+      where: {
+        discordRoleGroup: {
+          discordServer: {
+            discordServerId: serverId
+          }
         }
       }
+    });
+  
+    if (existingGroup) {
+      throw new Error("Server has already been set-up");
     }
-  });
 
-  if (existingGroup) {
-    throw new Error("Group already exists");
-  }
+    const members = await botApi.getDiscordGuildMembers({serverId: server.id})
+    const memberCount = botApi.countMembers(members)
 
-  const discordRoleGroupId = randomUUID();
+    const discordRoleGroupId = randomUUID();
 
-  return await transaction.group.create({
-    include: { discordRoleGroup: true },
-    data: {
-      name,
-      creatorId,
-      activeAt: new Date(),
-      discordRoleGroup: {
-        create: {
-          id: discordRoleGroupId,
-          discordRoleId: everyoneRoleId,
-          discordServer: {
-            create: {
-              discordServerId: serverId
+    return await transaction.group.create({
+      include: { discordRoleGroup: true },
+      data: {
+        creatorId: context.currentUser.id,
+        activeAt: new Date(),
+        discordRoleGroup: {
+          create: {
+            id: discordRoleGroupId,
+            discordRoleId: everyoneRole.id,
+            color: everyoneRole.color,
+            name: everyoneRole.name,
+            icon: everyoneRole.icon,
+            unicodeEmoji: everyoneRole.unicode_emoji,
+            memberCount: memberCount,
+            discordServer: {
+              create: {
+                discordServerId: serverId,
+                icon: server.icon,
+                banner: server.banner,
+                name: server.name,
+              }
             }
-          }
+          },
         },
       },
-    },
+    });
+
   });
 }
-
-// async function createDiscordRoleGroup({
-//   roleId,
-//   name,
-//   discordServerGroupId,
-//   creatorId,
-//   transaction = prisma,
-// }: {
-//   roleId: string;
-//   name: string;
-//   discordServerGroupId: string;
-//   creatorId: string;
-//   transaction?: Prisma.TransactionClient;
-// }) {
-//   return await transaction.group.create({
-//     data: {
-//       name: name,
-//       creatorId,
-//       activeAt: new Date(),
-//       discordRoleGroup: {
-//         create: {
-//           discordRoleId: roleId,
-//           discordServerGroupId: discordServerGroupId,
-//         },
-//       },
-//     },
-//   });
-// }

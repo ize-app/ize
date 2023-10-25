@@ -54,16 +54,14 @@ model DiscordOauth {
 }
 
 model Group {
-  id        String @id @default(uuid()) @db.Uuid
-  name      String
-  creator   User   @relation(fields: [creatorId], references: [id])
-  creatorId String @map("creator_id") @db.Uuid
-
-  createdAt          DateTime            @default(now()) @map("created_at")
-  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
-  activeAt           DateTime?
-  deactivatedat      DateTime?
-  discordRoleGroup   DiscordRoleGroup?
+  id                  String            @id @default(uuid()) @db.Uuid
+  creator             User              @relation(fields: [creatorId], references: [id])
+  creatorId           String            @map("creator_id") @db.Uuid
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @default(now()) @updatedAt @map("updated_at")
+  activeAt            DateTime?
+  deactivatedat       DateTime?
+  discordRoleGroup    DiscordRoleGroup?
 
   @@map("groups")
 }
@@ -76,6 +74,11 @@ model DiscordRoleGroup {
   groupId                     String             @unique @map("group_id") @db.Uuid
   discordServer               DiscordServer      @relation(fields: [discordServerId], references: [id], onDelete: Cascade)
   discordServerId             String             @map("discord_server_id") @db.Uuid
+  color                       Int
+  name                        String
+  icon                        String?
+  unicodeEmoji                String?            @map("unicode_emoji")
+  memberCount                 Int                @map("member_count")
   createdAt                   DateTime           @default(now()) @map("created_at")
   updatedAt                   DateTime           @default(now()) @updatedAt @map("updated_at")
   @@map("discord_role_groups")
@@ -84,6 +87,9 @@ model DiscordRoleGroup {
 model DiscordServer {
   id                        String              @id @default(uuid()) @db.Uuid
   discordServerId           String              @map("discord_server_id") @unique
+  name                      String
+  icon                      String?
+  banner                    String?
   createdAt                 DateTime            @default(now()) @map("created_at")
   updatedAt                 DateTime            @default(now()) @updatedAt @map("updated_at")
   DiscordRoleGroup          DiscordRoleGroup[]
