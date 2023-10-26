@@ -1,7 +1,9 @@
+import { AlertColor } from "@mui/material/Alert";
 import { Dispatch, SetStateAction, createContext, useState } from "react";
 
 export interface SnackbarDataProps {
   message: string;
+  type: AlertColor;
 }
 
 interface SnackbarContextValue {
@@ -16,7 +18,7 @@ export const SnackbarContext = createContext<SnackbarContextValue>({
   setSnackbarOpen: () => {
     return;
   },
-  snackbarData: { message: "Success!" },
+  snackbarData: { message: "Success!", type: "success" },
   setSnackbarData: () => {
     return;
   },
@@ -28,6 +30,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarData, setSnackbarData] = useState({
     message: "Success!",
+    type: "success" as AlertColor,
   });
 
   return (

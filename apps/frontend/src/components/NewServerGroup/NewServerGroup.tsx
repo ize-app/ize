@@ -6,6 +6,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
+import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import {
@@ -13,6 +14,7 @@ import {
   NEW_SERVER_WIZARD_STEPS,
   NewServerState,
 } from "./newServerWizard";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
   SetUpDiscordServerGroupDocument,
   SetUpDiscordServerInput,
@@ -23,6 +25,8 @@ import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
   const navigate = useNavigate();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+
   const [mutate] = useMutation(SetUpDiscordServerGroupDocument, {
     onCompleted: (data) => {
       const newGroupId = data.setUpDiscordServer.id;
@@ -31,15 +35,20 @@ export const NewServerGroup = () => {
   });
 
   const onComplete = async () => {
-    if ((formState as SetUpDiscordServerInput).serverId == null) {
-      throw new Error("No server selected.");
+    try {
+      if ((formState as SetUpDiscordServerInput).serverId == null) {
+        throw new Error("No server selected.");
+      }
+      await mutate({
+        variables: {
+          input: { ...(formState as SetUpDiscordServerInput) },
+        },
+      });
+    } catch {
+      navigate("/");
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Group setup failed", type: "error" });
     }
-
-    await mutate({
-      variables: {
-        input: { ...(formState as SetUpDiscordServerInput) },
-      },
-    });
   };
 
   const newServerWizard: Wizard<NewServerState> = {
