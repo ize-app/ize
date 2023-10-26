@@ -30,9 +30,13 @@ const discordServerRoles = async (
   context: GraphqlRequestContext
 ) => {
   const botApi = DiscordApi.forBotUser();
-  const serverRoles = await botApi.getDiscordServerRoles(args.serverId);
-
-  return serverRoles;
+  const roles = await botApi.getDiscordServerRoles(args.serverId);
+ const cleanedRoles = roles.map((role) => ({
+  ...role,
+  unicodeEmoji: role.unicode_emoji, 
+  botRole: !!role.tags?.bot_id 
+}))
+  return cleanedRoles
 };
 
 export const discordQueries = {

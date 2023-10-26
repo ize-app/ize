@@ -17,6 +17,7 @@ const setUpDiscordServer = async (
   args: {
     input: {
       serverId: string;
+      roleId?: string;
     };
   },
   context: GraphqlRequestContext

@@ -5,6 +5,7 @@ enum GroupType {
 
 input setUpDiscordServerInput {
   serverId: String!
+  roleId: String
 }
 
 type Mutation {

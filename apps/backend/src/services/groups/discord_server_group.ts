@@ -7,8 +7,10 @@ import { Prisma, PrismaClient } from "@prisma/client";
 export async function setUpDiscordServerService(
   {
     serverId,
+    roleId
   }: {
     serverId: string;
+    roleId?: string;
   },
   context: GraphqlRequestContext
 ) {
@@ -41,24 +43,26 @@ export async function setUpDiscordServerService(
     }
 
     const members = await botApi.getDiscordGuildMembers({serverId: server.id})
-    const memberCount = botApi.countMembers(members)
 
-    const discordRoleGroupId = randomUUID();
+    const memberCount = botApi.countRoleMembers(members, serverRoles)
 
-    return await transaction.group.create({
-      include: { discordRoleGroup: true },
+    const everyoneGroup = await transaction.group.create({
+      include: { discordRoleGroup: {
+        include: {
+          discordServer: true,
+        },
+      }},
       data: {
         creatorId: context.currentUser.id,
         activeAt: new Date(),
         discordRoleGroup: {
           create: {
-            id: discordRoleGroupId,
             discordRoleId: everyoneRole.id,
             color: everyoneRole.color,
             name: everyoneRole.name,
             icon: everyoneRole.icon,
             unicodeEmoji: everyoneRole.unicode_emoji,
-            memberCount: memberCount,
+            memberCount: memberCount[everyoneRole.id],
             discordServer: {
               create: {
                 discordServerId: serverId,
@@ -71,6 +75,32 @@ export async function setUpDiscordServerService(
         },
       },
     });
+
+    if (roleId){
+      const newRole = serverRoles.find((role) => role.id === roleId);
+
+      await transaction.group.create({
+        include: { discordRoleGroup: true },
+        data: {
+          creatorId: context.currentUser.id,
+          activeAt: new Date(),
+          discordRoleGroup: {
+            create: {
+              discordRoleId: newRole.id,
+              color: newRole.color,
+              name: newRole.name,
+              icon: newRole.icon,
+              unicodeEmoji: newRole.unicode_emoji,
+              memberCount: memberCount[newRole.id],
+              discordServerId: everyoneGroup.discordRoleGroup.discordServer.id
+            },
+          },
+        },
+      });
+    }
+
+    
+    return everyoneGroup
 
   });
 }

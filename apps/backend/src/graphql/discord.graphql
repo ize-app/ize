@@ -19,5 +19,9 @@ type DiscordAPIServer {
 type DiscordAPIServerRole {
   id: String!
   name: String!
+  color: Int!
+  icon: String
+  unicodeEmoji: String
+  botRole: Boolean!
 }
 

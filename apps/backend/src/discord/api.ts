@@ -104,9 +104,23 @@ export class DiscordApi {
     return rolesResponse.json();
   }
 
-  countMembers(members: APIGuildMember[]) :number {
-    return members.filter((member)=> !member.user.bot).length
+  countRoleMembers(members: APIGuildMember[], roles: APIRole[]) :{[roleId:string]:number} {
+    const nonbotMembers = members.filter((member)=> !member.user.bot)
+
+    const everyoneRoleId = roles.find((role) => role.name === "@everyone").id
+
+    const roleCounts = nonbotMembers.reduce((acc:{[roleId:string]:number} , curr) => {
+      curr.roles.forEach((roleId)=> {
+        if(acc.hasOwnProperty(roleId))  acc[roleId] = acc[roleId]++
+        else acc[roleId] = 1
+      })
+    return acc 
+    }, {})
+    roleCounts[everyoneRoleId] = nonbotMembers.length
+
+    return roleCounts
   }
+
 
   private get headers() {
     if (this.isBot) {
