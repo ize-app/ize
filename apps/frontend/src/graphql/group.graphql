@@ -16,6 +16,7 @@ fragment GroupSummaryParts on Group {
   icon
   memberCount
   type
+  color
   createdAt
   creator {
     ...UserParts

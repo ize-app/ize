@@ -150,7 +150,7 @@ export const NavBar: React.FC = () => {
 
   return (
     <NavContainer>
-      {isHomePage && (user == null || user.discordData == null) ? (
+      {isHomePage && user == null ? (
         <Box></Box>
       ) : (
         <img

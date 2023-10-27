@@ -6,5 +6,5 @@ type Query {
 type User {
   id: String!
   name: String
-  discordData: DiscordData
+  discordData: DiscordData!
 }

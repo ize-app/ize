@@ -10,7 +10,8 @@ interface BannerWithIconProps {
   bannerUrl: string;
   avatarUrl: string;
   name: string;
-  parent?: UserDataProps;
+  parent: UserDataProps | undefined;
+  color: string | null | undefined;
 }
 
 const BannerWithAvatar = ({
@@ -18,9 +19,10 @@ const BannerWithAvatar = ({
   avatarUrl,
   name,
   parent,
+  color,
 }: BannerWithIconProps): JSX.Element => {
   const avatarStyles = (theme: Theme): SxProps => ({
-    bgcolor: stringToColor(name),
+    bgcolor: color ? color : stringToColor(name),
     borderRadius: "20px",
     fontWeight: "600",
     letterSpacing: ".2rem",

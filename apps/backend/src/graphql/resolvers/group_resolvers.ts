@@ -4,6 +4,36 @@ import {
 import { GraphqlRequestContext } from "../context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
+import { Prisma } from "@prisma/client";
+
+const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
+  creator: {
+    include: {
+      discordData: true
+    }
+  },
+  discordRoleGroup: {
+    include: {
+      discordServer: true
+    }
+  }
+});
+
+type GroupPrismaType = Prisma.GroupGetPayload<{
+  include: typeof groupInclude;
+}>;
+
+
+const formatGroupData = (group: GroupPrismaType) => ({...group, 
+  name: group.discordRoleGroup.name, 
+  type: GroupType.DiscordRole,
+  icon: group.discordRoleGroup.icon ? 
+    DiscordApi.createRoleIconURL(group.discordRoleGroup.discordRoleId, group.discordRoleGroup.icon) 
+    : group.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon) : null,
+  color: DiscordApi.colorIntToHex(group.discordRoleGroup.color),
+  memberCount: group.discordRoleGroup.memberCount,
+  organization: {name: group.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon)}
+})
 
 
 const setUpDiscordServer = async (
@@ -25,31 +55,11 @@ const group = async (
     id: string;
   }
 ) => {
-  const rawGroupData = await prisma.group.findFirst({ 
-    include: {
-      creator: true,
-      discordRoleGroup: {
-        include: {
-          discordServer: true
-        }
-      }
-    },
+  const group = await prisma.group.findFirst({ 
+    include: groupInclude,
     where: { id: args.id } });
 
-    //DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon)
-
-    const group = {...rawGroupData, 
-      name: rawGroupData.discordRoleGroup.name, 
-      type: GroupType.DiscordRole,
-      icon: rawGroupData.discordRoleGroup.icon ? 
-        DiscordApi.createRoleIconURL(rawGroupData.discordRoleGroup.discordRoleId, rawGroupData.discordRoleGroup.icon) 
-        : rawGroupData.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon) : null,
-      color: DiscordApi.colorIntToHex(rawGroupData.discordRoleGroup.color),
-      memberCount: rawGroupData.discordRoleGroup.memberCount,
-      organization: {name: rawGroupData.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon)}
-    }
-
-    return group
+  return formatGroupData(group);
 
 };
 
@@ -65,10 +75,12 @@ const groupsForCurrentUser = async (
 
   // Get the servers for the user using the users' API token
   const userGuilds = await context.discordApi.getDiscordServers();
-  const serverMap = new Map(userGuilds.map((guild) => [guild.id, guild]));
-  const serverIds = userGuilds.map((guild) => guild.id);
+
+  // const serverMap = new Map(userGuilds.map((guild) => [guild.id, guild]));
+  // const serverIds = userGuilds.map((guild) => guild.id);
 
   // Get the roles for the user in those servers
+  // Only pulls roles that discord bot has access to (i.e. roles of servers that have bot installed)
   const userGuildMembers = await Promise.all(
     userGuilds.map(async (guild) => {
       return botApi.getDiscordGuildMember({
@@ -78,65 +90,24 @@ const groupsForCurrentUser = async (
     })
   );
 
-  const roleIds = userGuildMembers.map((member) => member.roles).flat();
+  // converting to Set to remove many duplicate "undefined" roleIds
+  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())];
 
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({
     where: {
       OR: [
         { discordRoleGroup: { discordRoleId: { in: roleIds } } },
+        // @everyone isn't part of roleIds returned from discord API
+        { discordRoleGroup: { name: "@everyone" }},
         { creatorId: context.currentUser.id },
       ],
     },
-    include: {
-      creator: {
-        include: {
-          discordData: true,
-        },
-      },
-      discordRoleGroup: {
-        include: {
-          discordServer: true,
-        },
-      },
-    },
+    include: groupInclude,
   });
 
-  const serversForRoleGroups = new Set(
-    groups.map(
-      (group) => group.discordRoleGroup.discordServer.discordServerId
-    )
-  );
-
-  const discordRoles = await Promise.all(
-    [...serversForRoleGroups].map(async (serverId) => {
-      const roles = await botApi.getDiscordServerRoles(serverId);
-      return roles.filter((role) => roleIds.includes(role.id));
-    })
-  );
-
-  const roleMap = new Map(
-    discordRoles.flat().map((roles) => [roles.id, roles])
-  );
-
-  return groups.map((group) => {
-    if (group.discordRoleGroup?.discordRoleId) {
-      const roleData = roleMap.get(group.discordRoleGroup?.discordRoleId);
-      if (roleData == null) {
-        // TODO: Get the role data because this user created the role
-      }
-
-      return {
-        ...group,
-        type: GroupType.DiscordRole,
-      };
-    } else {
-      return {
-        ...group,
-        type: GroupType.Standard,
-      };
-    }
-  });
+  const formattedGroups = groups.map((group) => formatGroupData(group))
+  return formattedGroups
 };
 
 export const groupMutations = {
