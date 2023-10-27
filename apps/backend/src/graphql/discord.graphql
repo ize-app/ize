@@ -1,6 +1,6 @@
 type Query {
-  discordServers: [DiscordServer!]!
-  discordServerRoles(serverId: String!): [DiscordServerRole!]!
+  discordServers: [DiscordAPIServer!]!
+  discordServerRoles(serverId: String!): [DiscordAPIServerRole!]!
 }
 
 type DiscordData {
@@ -11,23 +11,17 @@ type DiscordData {
   avatar: String!
 }
 
-type DiscordServer {
+type DiscordAPIServer {
   id: String!
   name: String!
 }
 
-type DiscordServerRole {
+type DiscordAPIServerRole {
   id: String!
   name: String!
+  color: Int!
+  icon: String
+  unicodeEmoji: String
+  botRole: Boolean!
 }
 
-type DiscordServerGroup {
-  id: String!
-  discordServerId: String!
-}
-
-type DiscordRoleGroup {
-  id: String!
-  discordRoleId: String!
-  discordServerGroup: DiscordServerGroup!
-}

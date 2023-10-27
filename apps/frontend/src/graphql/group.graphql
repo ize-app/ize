@@ -1,38 +1,56 @@
-mutation CreateDiscordServerGroup($input: CreateDiscordServerGroupInput!) {
-  createDiscordServerGroup(input: $input) {
+mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
+   setUpDiscordServer(input: $input) {
     id
-    name
   }
 }
 
 query Group($id: String!) {
   group(id: $id) {
-    id
-    name
+    ...GroupSummaryParts
   }
 }
 
 fragment GroupSummaryParts on Group {
   id
   name
-  type
-  memberCount
   icon
+  memberCount
+  type
+  color
+  createdAt
   creator {
     ...UserParts
   }
-  discordServerGroup {
-    id
-    discordServerId
+  organization {
+    ...OrganizationParts
   }
   discordRoleGroup {
+    ...DiscordRoleGroupParts
+  }
+}
+
+
+fragment DiscordRoleGroupParts on DiscordRoleGroup {
     id
+    name
+    color
+    icon
     discordRoleId
-    discordServerGroup {
+    discordServer {
+      ...OnboardedDiscordServerParts
+    }
+}
+
+fragment OrganizationParts on Organization {
+    name
+    icon
+}
+
+fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
       id
       discordServerId
-    }
-  }
+      name
+      icon     
 }
 
 query Groups {

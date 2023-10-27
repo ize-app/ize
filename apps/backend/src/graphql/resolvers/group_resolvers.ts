@@ -1,31 +1,54 @@
 import {
-  ProcessConfigurationOption,
-  setUpDiscordServerGroup as createDiscordServerGroupService,
+  setUpDiscordServerService,
 } from "@services/groups/discord_server_group";
 import { GraphqlRequestContext } from "../context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
+import { Prisma } from "@prisma/client";
 
-interface GQLGroup {
-  id: string;
-  name: string;
-  icon?: string;
-  banner?: string;
-}
+const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
+  creator: {
+    include: {
+      discordData: true
+    }
+  },
+  discordRoleGroup: {
+    include: {
+      discordServer: true
+    }
+  }
+});
 
-const createDiscordServerGroup = async (
+type GroupPrismaType = Prisma.GroupGetPayload<{
+  include: typeof groupInclude;
+}>;
+
+
+const formatGroupData = (group: GroupPrismaType) => ({...group, 
+  // discord only includes the @sign for @everyone
+  name: group.discordRoleGroup.name !== "@everyone" ? "@"+ group.discordRoleGroup.name : group.discordRoleGroup.name, 
+  type: GroupType.DiscordRole,
+  icon: group.discordRoleGroup.icon ? 
+    DiscordApi.createRoleIconURL(group.discordRoleGroup.discordRoleId, group.discordRoleGroup.icon) 
+    : group.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon) : null,
+  // Discord uses 0 to mean "no color", though we want to represent that with null instead
+    color: group.discordRoleGroup.color === 0  ? null : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
+  memberCount: group.discordRoleGroup.memberCount,
+  organization: {name: group.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon)}
+})
+
+
+const setUpDiscordServer = async (
   root: unknown,
   args: {
     input: {
       serverId: string;
-      processConfigurationOption: ProcessConfigurationOption;
       roleId?: string;
-      numberOfResponses?: number;
     };
   },
   context: GraphqlRequestContext
 ) => {
-  return await createDiscordServerGroupService(args.input, context);
+  return await setUpDiscordServerService(args.input, context);
 };
 
 const group = async (
@@ -34,7 +57,12 @@ const group = async (
     id: string;
   }
 ) => {
-  return await prisma.group.findFirst({ where: { id: args.id } });
+  const group = await prisma.group.findFirst({ 
+    include: groupInclude,
+    where: { id: args.id } });
+
+  return formatGroupData(group);
+
 };
 
 const groupsForCurrentUser = async (
@@ -49,10 +77,12 @@ const groupsForCurrentUser = async (
 
   // Get the servers for the user using the users' API token
   const userGuilds = await context.discordApi.getDiscordServers();
-  const serverMap = new Map(userGuilds.map((guild) => [guild.id, guild]));
-  const serverIds = userGuilds.map((guild) => guild.id);
+
+  // const serverMap = new Map(userGuilds.map((guild) => [guild.id, guild]));
+  // const serverIds = userGuilds.map((guild) => guild.id);
 
   // Get the roles for the user in those servers
+  // Only pulls roles that discord bot has access to (i.e. roles of servers that have bot installed)
   const userGuildMembers = await Promise.all(
     userGuilds.map(async (guild) => {
       return botApi.getDiscordGuildMember({
@@ -62,91 +92,32 @@ const groupsForCurrentUser = async (
     })
   );
 
-  const roleIds = userGuildMembers.map((member) => member.roles).flat();
+  // converting to Set to remove many duplicate "undefined" roleIds
+  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())];
 
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({
     where: {
       OR: [
-        {
-          discordServerGroup: { discordServerId: { in: serverIds } },
-        },
         { discordRoleGroup: { discordRoleId: { in: roleIds } } },
+        // @everyone isn't part of roleIds returned from discord API
+        { discordRoleGroup: { name: "@everyone" }},
         { creatorId: context.currentUser.id },
       ],
     },
-    include: {
-      creator: {
-        include: {
-          discordData: true,
-        },
-      },
-      discordServerGroup: true,
-      discordRoleGroup: {
-        include: {
-          discordServerGroup: true,
-        },
-      },
-    },
+    include: groupInclude,
   });
 
-  const roleGroups = groups.filter((group) => group.discordRoleGroup);
-  const serversForRoleGroups = new Set(
-    roleGroups.map(
-      (group) => group.discordRoleGroup.discordServerGroup.discordServerId
-    )
-  );
-
-  const discordRoles = await Promise.all(
-    [...serversForRoleGroups].map(async (serverId) => {
-      const roles = await botApi.getDiscordServerRoles(serverId);
-      return roles.filter((role) => roleIds.includes(role.id));
-    })
-  );
-
-  const roleMap = new Map(
-    discordRoles.flat().map((roles) => [roles.id, roles])
-  );
-
-  return groups.map((group) => {
-    if (group.discordServerGroup?.discordServerId) {
-      const serverData = serverMap.get(
-        group.discordServerGroup?.discordServerId
-      );
-
-      return {
-        ...group,
-        banner: serverData.banner,
-        icon: serverData.icon,
-        memberCount: serverData.approximate_member_count,
-        type: GroupType.DiscordServer,
-      };
-    } else if (group.discordRoleGroup?.discordRoleId) {
-      const roleData = roleMap.get(group.discordRoleGroup?.discordRoleId);
-      if (roleData == null) {
-        // TODO: Get the role data because this user created the role
-      }
-
-      return {
-        ...group,
-        type: GroupType.DiscordRole,
-      };
-    } else {
-      return {
-        ...group,
-        type: GroupType.Standard,
-      };
-    }
-  });
+  const formattedGroups = groups.map((group) => formatGroupData(group))
+  return formattedGroups
 };
 
 export const groupMutations = {
-  createDiscordServerGroup,
+  setUpDiscordServer,
 };
 
 export enum GroupType {
   Standard = "Standard",
-  DiscordServer = "DiscordServer",
   DiscordRole = "DiscordRole",
 }
 

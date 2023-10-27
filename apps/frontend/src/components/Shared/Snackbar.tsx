@@ -31,7 +31,11 @@ const Snackbar = () => {
       autoHideDuration={7000}
       onClose={handleClose}
     >
-      <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+      <Alert
+        onClose={handleClose}
+        severity={snackbarData.type}
+        sx={{ width: "100%" }}
+      >
         {snackbarData.message ?? "Success!"}
       </Alert>
     </MuiSnackbar>

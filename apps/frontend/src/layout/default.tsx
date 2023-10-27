@@ -1,4 +1,3 @@
-import { HeadphonesBatteryOutlined } from "@mui/icons-material";
 import Container from "@mui/material/Container";
 import { Outlet } from "react-router-dom";
 

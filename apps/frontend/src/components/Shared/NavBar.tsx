@@ -143,18 +143,18 @@ const NavControlContainer = styled.ol`
 export const NavBar: React.FC = () => {
   const { user } = useContext(CurrentUserContext);
   const location = useLocation();
-  const isHomePage = (location.pathname = "/");
+  const isHomePage = location.pathname === "/";
 
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <NavContainer>
-      {isHomePage && (user == null || user.discordData == null) ? (
+      {isHomePage && user == null ? (
         <Box></Box>
       ) : (
         <img
-          src="./logo-yellow.png"
+          src="/logo-yellow.png"
           style={{ height: "24px", marginLeft: "12px" }}
         />
       )}

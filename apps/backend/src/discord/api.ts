@@ -8,6 +8,8 @@ import {
   APIGuild,
 } from "discord.js";
 
+type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
+
 export class DiscordApi {
   constructor(
     private readonly token: string,
@@ -25,6 +27,41 @@ export class DiscordApi {
   static forBotUser() {
     return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
   }
+
+  static colorIntToHex(colorInt: number):string {
+    return `#${colorInt.toString(16)}`
+  }
+
+  private static createDiscordImageUrl = (
+    resourceId: string,
+    hash: string,
+    resourceType: "avatars" | "icons" | "role-icons", 
+    size?: DiscordImageSize,
+  ): string =>
+    `https://cdn.discordapp.com/${resourceType}/${resourceId}/${hash}.png${
+      size ? `?size=${size}` : ""
+    }`;
+  
+
+  static createAvatarURL = (
+    userId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(userId, imageHash, "avatars", size);
+  
+  static createServerIconURL = (
+    serverId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(serverId, imageHash, "icons", size);
+
+  static createRoleIconURL = (
+    roleId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(roleId, imageHash, "role-icons", size);
+  
+
 
   async getDiscordServers(): Promise<Array<APIGuild>> {
     const guildsResponse = await fetch(
@@ -83,6 +120,44 @@ export class DiscordApi {
 
     return rolesResponse.json();
   }
+
+  async getDiscordGuildMembers({
+    serverId,
+  }: {
+    serverId: string;
+  }): Promise<APIGuildMember[]> {
+    if (!this.isBot) {
+      throw new Error("Only bot users can get member info");
+    }
+
+    // limit of 1000 members in response
+    const rolesResponse = await fetch(
+      `https://discord.com/api/guilds/${serverId}/members?limit=1000`,
+      {
+        headers: this.headers,
+      }
+    );
+
+    return rolesResponse.json();
+  }
+
+  countRoleMembers(members: APIGuildMember[], roles: APIRole[]) :{[roleId:string]:number} {
+    const nonbotMembers = members.filter((member)=> !member.user.bot)
+
+    const everyoneRoleId = roles.find((role) => role.name === "@everyone").id
+
+    const roleCounts = nonbotMembers.reduce((acc:{[roleId:string]:number} , curr) => {
+      curr.roles.forEach((roleId)=> {
+        if(acc.hasOwnProperty(roleId))  acc[roleId] = acc[roleId]++
+        else acc[roleId] = 1
+      })
+    return acc 
+    }, {})
+    roleCounts[everyoneRoleId] = nonbotMembers.length
+
+    return roleCounts
+  }
+
 
   private get headers() {
     if (this.isBot) {

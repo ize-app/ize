@@ -2,13 +2,19 @@ import { useQuery } from "@apollo/client";
 import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import {
+  GroupDocument,
+  GroupSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
-// import { GroupDocument } from "../../graphql/generated/graphql";
-import { groupMockData } from "../shared/Tables/mockData";
+import { colors } from "../../style/style";
+import { shortUUIDToFull } from "../../utils/inputs";
+import Loading from "../shared/Loading";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 import TabPanel from "../shared/Tables/TabPanel";
@@ -20,48 +26,67 @@ const tabs = [
 ];
 
 export const Group = () => {
-  // const { groupId } = useParams();
+  const { groupId: groupIdShort } = useParams();
+  const groupId = shortUUIDToFull(groupIdShort as string);
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const navigate = useNavigate();
 
-  // const { data } = useQuery(GroupDocument, {
-  //   variables: {
-  //     id: groupId ?? "",
-  //   },
-  // });
+  const { data, loading, error } = useQuery(GroupDocument, {
+    variables: {
+      id: groupId,
+    },
+  });
 
-  const groupData = groupMockData[1];
+  const group = data?.group as GroupSummaryPartsFragment;
 
+  // be8f71a5-4e73-49b6-a6fe-32c6f00b7bb3
+  // pwNXPJX1qV5Z3fBAPQxWrZ
+
+  // 2PSykC1knZWg6Pqtkgia6R
+  // 0ec840c7-f906-4470-8b2b-2af9ca74a4cf
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 
-  return (
+  const onError = () => {
+    navigate("/");
+    setSnackbarOpen(true);
+    setSnackbarData({ message: "Invalid group", type: "error" });
+  };
+
+  return error ? (
+    onError()
+  ) : loading || !group ? (
+    <Loading />
+  ) : (
     <>
       <Head
-        title={groupData.name}
-        description={`Where ${groupData.name} makes decisions and evolves their process`}
+        title={group.name}
+        description={`Where ${group.name} makes decisions and evolves their process`}
       />
       <Box>
         <BannerWithAvatar
-          bannerUrl={groupData.bannerUrl}
-          avatarUrl={groupData.avatarUrl}
-          name={groupData.name ? groupData.name : ""}
+          bannerUrl={""}
+          avatarUrl={group.icon ?? ""}
+          name={group.name}
+          color={group.color}
           parent={
-            groupData.parentGroup
+            group.name !== "@everyone"
               ? {
-                  name: groupData.parentGroup.name,
-                  avatarUrl: groupData.parentGroup.avatarUrl,
+                  name: group?.organization?.name,
+                  avatarUrl: group?.organization?.icon,
                 }
               : undefined
           }
         />
         <Box
           sx={{
-            paddingLeft: "1.2rem",
+            paddingLeft: "1.5rem",
           }}
         >
-          <Typography variant="h1">{groupData.name}</Typography>
+          <Typography variant="h1">{group.name}</Typography>
           <Box
             sx={{
               display: "flex",
@@ -96,23 +121,18 @@ export const Group = () => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {groupData.type === "Discord server" ? (
-                  "Server"
-                ) : groupData.parentGroup ? (
-                  <>
-                    role of{" "}
-                    <Link to={"/groups/" + groupData.parentGroup.groupId}>
-                      {groupData.parentGroup.name}
-                    </Link>
-                  </>
-                ) : (
-                  "Discord role"
-                )}
+                Discord role of{" "}
+                <Box
+                  component="span"
+                  sx={{ fontWeight: "bold", color: colors.primary }}
+                >
+                  {group.discordRoleGroup.discordServer.name}
+                </Box>
               </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: "8px" }}>
               <Groups color={"primary"} />
-              <Typography>{groupData.memberCount}</Typography>
+              <Typography>{group.memberCount}</Typography>
             </Box>
           </Box>
         </Box>

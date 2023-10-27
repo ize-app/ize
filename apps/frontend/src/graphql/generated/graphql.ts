@@ -16,11 +16,20 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type CreateDiscordServerGroupInput = {
-  numberOfResponses?: InputMaybe<Scalars['Int']['input']>;
-  processConfigurationOption: ProcessConfigurationOption;
-  roleId?: InputMaybe<Scalars['String']['input']>;
-  serverId: Scalars['String']['input'];
+export type DiscordApiServer = {
+  __typename?: 'DiscordAPIServer';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type DiscordApiServerRole = {
+  __typename?: 'DiscordAPIServerRole';
+  botRole: Scalars['Boolean']['output'];
+  color: Scalars['Int']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  unicodeEmoji?: Maybe<Scalars['String']['output']>;
 };
 
 export type DiscordData = {
@@ -34,46 +43,32 @@ export type DiscordData = {
 
 export type DiscordRoleGroup = {
   __typename?: 'DiscordRoleGroup';
+  color?: Maybe<Scalars['Int']['output']>;
   discordRoleId: Scalars['String']['output'];
-  discordServerGroup: DiscordServerGroup;
+  discordServer: OnboardedDiscordServer;
+  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-};
-
-export type DiscordServer = {
-  __typename?: 'DiscordServer';
-  id: Scalars['String']['output'];
+  memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
-};
-
-export type DiscordServerGroup = {
-  __typename?: 'DiscordServerGroup';
-  discordServerId: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-};
-
-export type DiscordServerRole = {
-  __typename?: 'DiscordServerRole';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  unicodeEmoji?: Maybe<Scalars['String']['output']>;
 };
 
 export type Group = {
   __typename?: 'Group';
-  banner?: Maybe<Scalars['String']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   creator: User;
-  discordRoleGroup?: Maybe<DiscordRoleGroup>;
-  discordServerGroup?: Maybe<DiscordServerGroup>;
+  discordRoleGroup: DiscordRoleGroup;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  memberCount?: Maybe<Scalars['Int']['output']>;
+  memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  organization: Organization;
   type?: Maybe<GroupType>;
 };
 
 export enum GroupType {
-  DiscordRole = 'DiscordRole',
-  DiscordServer = 'DiscordServer',
-  Standard = 'Standard'
+  DiscordRole = 'DiscordRole'
 }
 
 export type LogOutResponse = {
@@ -84,26 +79,35 @@ export type LogOutResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createDiscordServerGroup: Group;
   logOut?: Maybe<LogOutResponse>;
+  setUpDiscordServer: Group;
 };
 
 
-export type MutationCreateDiscordServerGroupArgs = {
-  input: CreateDiscordServerGroupInput;
+export type MutationSetUpDiscordServerArgs = {
+  input: SetUpDiscordServerInput;
 };
 
-export enum ProcessConfigurationOption {
-  BenevolentDictator = 'BenevolentDictator',
-  FullDecentralization = 'FullDecentralization',
-  TrustedAdvisors = 'TrustedAdvisors'
-}
+export type OnboardedDiscordServer = {
+  __typename?: 'OnboardedDiscordServer';
+  banner?: Maybe<Scalars['String']['output']>;
+  discordServerId: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type Organization = {
+  __typename?: 'Organization';
+  icon: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
 
 export type Query = {
   __typename?: 'Query';
-  discordServerRoles: Array<DiscordServerRole>;
-  discordServers: Array<DiscordServer>;
-  group?: Maybe<Group>;
+  discordServerRoles: Array<DiscordApiServerRole>;
+  discordServers: Array<DiscordApiServer>;
+  group: Group;
   groupsForCurrentUser: Array<Group>;
   me?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
@@ -121,47 +125,58 @@ export type QueryGroupArgs = {
 
 export type User = {
   __typename?: 'User';
-  discordData?: Maybe<DiscordData>;
+  discordData: DiscordData;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
+};
+
+export type SetUpDiscordServerInput = {
+  roleId?: InputMaybe<Scalars['String']['input']>;
+  serverId: Scalars['String']['input'];
 };
 
 export type DiscordServersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DiscordServersQuery = { __typename?: 'Query', discordServers: Array<{ __typename?: 'DiscordServer', id: string, name: string }> };
+export type DiscordServersQuery = { __typename?: 'Query', discordServers: Array<{ __typename?: 'DiscordAPIServer', id: string, name: string }> };
 
 export type DiscordServerRolesQueryVariables = Exact<{
   serverId: Scalars['String']['input'];
 }>;
 
 
-export type DiscordServerRolesQuery = { __typename?: 'Query', discordServerRoles: Array<{ __typename?: 'DiscordServerRole', id: string, name: string }> };
+export type DiscordServerRolesQuery = { __typename?: 'Query', discordServerRoles: Array<{ __typename?: 'DiscordAPIServerRole', id: string, name: string, botRole: boolean }> };
 
-export type DiscordServerPartsFragment = { __typename?: 'DiscordServer', id: string, name: string };
+export type DiscordServerPartsFragment = { __typename?: 'DiscordAPIServer', id: string, name: string };
 
-export type DiscordServerRolePartsFragment = { __typename?: 'DiscordServerRole', id: string, name: string };
+export type DiscordServerRolePartsFragment = { __typename?: 'DiscordAPIServerRole', id: string, name: string, botRole: boolean };
 
-export type CreateDiscordServerGroupMutationVariables = Exact<{
-  input: CreateDiscordServerGroupInput;
+export type SetUpDiscordServerGroupMutationVariables = Exact<{
+  input: SetUpDiscordServerInput;
 }>;
 
 
-export type CreateDiscordServerGroupMutation = { __typename?: 'Mutation', createDiscordServerGroup: { __typename?: 'Group', id: string, name: string } };
+export type SetUpDiscordServerGroupMutation = { __typename?: 'Mutation', setUpDiscordServer: { __typename?: 'Group', id: string } };
 
 export type GroupQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: string, name: string } | null };
+export type GroupQuery = { __typename?: 'Query', group: { __typename?: 'Group', id: string, name: string, icon?: string | null, memberCount: number, type?: GroupType | null, color?: string | null, createdAt: string, creator: { __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } }, organization: { __typename?: 'Organization', name: string, icon: string }, discordRoleGroup: { __typename?: 'DiscordRoleGroup', id: string, name: string, color?: number | null, icon?: string | null, discordRoleId: string, discordServer: { __typename?: 'OnboardedDiscordServer', id: string, discordServerId: string, name: string, icon?: string | null } } } };
 
-export type GroupSummaryPartsFragment = { __typename?: 'Group', id: string, name: string, type?: GroupType | null, memberCount?: number | null, icon?: string | null, creator: { __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } | null }, discordServerGroup?: { __typename?: 'DiscordServerGroup', id: string, discordServerId: string } | null, discordRoleGroup?: { __typename?: 'DiscordRoleGroup', id: string, discordRoleId: string, discordServerGroup: { __typename?: 'DiscordServerGroup', id: string, discordServerId: string } } | null };
+export type GroupSummaryPartsFragment = { __typename?: 'Group', id: string, name: string, icon?: string | null, memberCount: number, type?: GroupType | null, color?: string | null, createdAt: string, creator: { __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } }, organization: { __typename?: 'Organization', name: string, icon: string }, discordRoleGroup: { __typename?: 'DiscordRoleGroup', id: string, name: string, color?: number | null, icon?: string | null, discordRoleId: string, discordServer: { __typename?: 'OnboardedDiscordServer', id: string, discordServerId: string, name: string, icon?: string | null } } };
+
+export type DiscordRoleGroupPartsFragment = { __typename?: 'DiscordRoleGroup', id: string, name: string, color?: number | null, icon?: string | null, discordRoleId: string, discordServer: { __typename?: 'OnboardedDiscordServer', id: string, discordServerId: string, name: string, icon?: string | null } };
+
+export type OrganizationPartsFragment = { __typename?: 'Organization', name: string, icon: string };
+
+export type OnboardedDiscordServerPartsFragment = { __typename?: 'OnboardedDiscordServer', id: string, discordServerId: string, name: string, icon?: string | null };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groupsForCurrentUser: Array<{ __typename?: 'Group', id: string, name: string, type?: GroupType | null, memberCount?: number | null, icon?: string | null, creator: { __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } | null }, discordServerGroup?: { __typename?: 'DiscordServerGroup', id: string, discordServerId: string } | null, discordRoleGroup?: { __typename?: 'DiscordRoleGroup', id: string, discordRoleId: string, discordServerGroup: { __typename?: 'DiscordServerGroup', id: string, discordServerId: string } } | null }> };
+export type GroupsQuery = { __typename?: 'Query', groupsForCurrentUser: Array<{ __typename?: 'Group', id: string, name: string, icon?: string | null, memberCount: number, type?: GroupType | null, color?: string | null, createdAt: string, creator: { __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } }, organization: { __typename?: 'Organization', name: string, icon: string }, discordRoleGroup: { __typename?: 'DiscordRoleGroup', id: string, name: string, color?: number | null, icon?: string | null, discordRoleId: string, discordServer: { __typename?: 'OnboardedDiscordServer', id: string, discordServerId: string, name: string, icon?: string | null } } }> };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -171,27 +186,30 @@ export type LogOutMutation = { __typename?: 'Mutation', logOut?: { __typename?: 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users?: Array<{ __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } | null } | null> | null };
+export type UsersQuery = { __typename?: 'Query', users?: Array<{ __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } } | null> | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } } | null };
 
-export type UserPartsFragment = { __typename?: 'User', id: string, name?: string | null, discordData?: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } | null };
+export type UserPartsFragment = { __typename?: 'User', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } };
 
 export type DiscordDataPartsFragment = { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string };
 
-export const DiscordServerPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServerPartsFragment, unknown>;
-export const DiscordServerRolePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServerRolePartsFragment, unknown>;
+export const DiscordServerPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServerPartsFragment, unknown>;
+export const DiscordServerRolePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"botRole"}}]}}]} as unknown as DocumentNode<DiscordServerRolePartsFragment, unknown>;
 export const DiscordDataPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<DiscordDataPartsFragment, unknown>;
 export const UserPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<UserPartsFragment, unknown>;
-export const GroupSummaryPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordServerGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}}]} as unknown as DocumentNode<GroupSummaryPartsFragment, unknown>;
-export const DiscordServersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DiscordServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discordServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServersQuery, DiscordServersQueryVariables>;
-export const DiscordServerRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DiscordServerRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discordServerRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"serverId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerRoleParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServerRolesQuery, DiscordServerRolesQueryVariables>;
-export const CreateDiscordServerGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDiscordServerGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateDiscordServerGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDiscordServerGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<CreateDiscordServerGroupMutation, CreateDiscordServerGroupMutationVariables>;
-export const GroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Group"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GroupQuery, GroupQueryVariables>;
-export const GroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupsForCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordServerGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}}]}}]}}]}}]} as unknown as DocumentNode<GroupsQuery, GroupsQueryVariables>;
+export const OrganizationPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]} as unknown as DocumentNode<OrganizationPartsFragment, unknown>;
+export const OnboardedDiscordServerPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]} as unknown as DocumentNode<OnboardedDiscordServerPartsFragment, unknown>;
+export const DiscordRoleGroupPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]} as unknown as DocumentNode<DiscordRoleGroupPartsFragment, unknown>;
+export const GroupSummaryPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}}]} as unknown as DocumentNode<GroupSummaryPartsFragment, unknown>;
+export const DiscordServersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DiscordServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discordServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServersQuery, DiscordServersQueryVariables>;
+export const DiscordServerRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DiscordServerRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discordServerRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"serverId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerRoleParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"botRole"}}]}}]} as unknown as DocumentNode<DiscordServerRolesQuery, DiscordServerRolesQueryVariables>;
+export const SetUpDiscordServerGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"setUpDiscordServerGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"setUpDiscordServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setUpDiscordServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SetUpDiscordServerGroupMutation, SetUpDiscordServerGroupMutationVariables>;
+export const GroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Group"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}}]}}]} as unknown as DocumentNode<GroupQuery, GroupQueryVariables>;
+export const GroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupsForCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}}]}}]} as unknown as DocumentNode<GroupsQuery, GroupsQueryVariables>;
 export const LogOutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ok"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<LogOutMutation, LogOutMutationVariables>;
 export const UsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}}]} as unknown as DocumentNode<UsersQuery, UsersQueryVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
@@ -215,11 +233,20 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type CreateDiscordServerGroupInput = {
-  numberOfResponses?: InputMaybe<Scalars['Int']['input']>;
-  processConfigurationOption: ProcessConfigurationOption;
-  roleId?: InputMaybe<Scalars['String']['input']>;
-  serverId: Scalars['String']['input'];
+export type DiscordApiServer = {
+  __typename?: 'DiscordAPIServer';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type DiscordApiServerRole = {
+  __typename?: 'DiscordAPIServerRole';
+  botRole: Scalars['Boolean']['output'];
+  color: Scalars['Int']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  unicodeEmoji?: Maybe<Scalars['String']['output']>;
 };
 
 export type DiscordData = {
@@ -233,46 +260,32 @@ export type DiscordData = {
 
 export type DiscordRoleGroup = {
   __typename?: 'DiscordRoleGroup';
+  color?: Maybe<Scalars['Int']['output']>;
   discordRoleId: Scalars['String']['output'];
-  discordServerGroup: DiscordServerGroup;
+  discordServer: OnboardedDiscordServer;
+  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-};
-
-export type DiscordServer = {
-  __typename?: 'DiscordServer';
-  id: Scalars['String']['output'];
+  memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
-};
-
-export type DiscordServerGroup = {
-  __typename?: 'DiscordServerGroup';
-  discordServerId: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-};
-
-export type DiscordServerRole = {
-  __typename?: 'DiscordServerRole';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  unicodeEmoji?: Maybe<Scalars['String']['output']>;
 };
 
 export type Group = {
   __typename?: 'Group';
-  banner?: Maybe<Scalars['String']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   creator: User;
-  discordRoleGroup?: Maybe<DiscordRoleGroup>;
-  discordServerGroup?: Maybe<DiscordServerGroup>;
+  discordRoleGroup: DiscordRoleGroup;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  memberCount?: Maybe<Scalars['Int']['output']>;
+  memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  organization: Organization;
   type?: Maybe<GroupType>;
 };
 
 export enum GroupType {
-  DiscordRole = 'DiscordRole',
-  DiscordServer = 'DiscordServer',
-  Standard = 'Standard'
+  DiscordRole = 'DiscordRole'
 }
 
 export type LogOutResponse = {
@@ -283,26 +296,35 @@ export type LogOutResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createDiscordServerGroup: Group;
   logOut?: Maybe<LogOutResponse>;
+  setUpDiscordServer: Group;
 };
 
 
-export type MutationCreateDiscordServerGroupArgs = {
-  input: CreateDiscordServerGroupInput;
+export type MutationSetUpDiscordServerArgs = {
+  input: SetUpDiscordServerInput;
 };
 
-export enum ProcessConfigurationOption {
-  BenevolentDictator = 'BenevolentDictator',
-  FullDecentralization = 'FullDecentralization',
-  TrustedAdvisors = 'TrustedAdvisors'
-}
+export type OnboardedDiscordServer = {
+  __typename?: 'OnboardedDiscordServer';
+  banner?: Maybe<Scalars['String']['output']>;
+  discordServerId: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type Organization = {
+  __typename?: 'Organization';
+  icon: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
 
 export type Query = {
   __typename?: 'Query';
-  discordServerRoles: Array<DiscordServerRole>;
-  discordServers: Array<DiscordServer>;
-  group?: Maybe<Group>;
+  discordServerRoles: Array<DiscordApiServerRole>;
+  discordServers: Array<DiscordApiServer>;
+  group: Group;
   groupsForCurrentUser: Array<Group>;
   me?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
@@ -320,7 +342,12 @@ export type QueryGroupArgs = {
 
 export type User = {
   __typename?: 'User';
-  discordData?: Maybe<DiscordData>;
+  discordData: DiscordData;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
+};
+
+export type SetUpDiscordServerInput = {
+  roleId?: InputMaybe<Scalars['String']['input']>;
+  serverId: Scalars['String']['input'];
 };

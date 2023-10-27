@@ -20,7 +20,7 @@ const UnauthenticatedHome = () => {
     >
       {/* <PageContainer> */}
       <img
-        src="./logo-yellow.png"
+        src="./logo-yellow@2x.png"
         style={{
           width: "90%",
           height: "auto",
@@ -53,7 +53,7 @@ const UnauthenticatedHome = () => {
 
 export const Home = () => {
   const { user } = useContext(CurrentUserContext);
-  return user == null || user.discordData == null ? (
+  return user == null || user?.discordData == null ? (
     <UnauthenticatedHome />
   ) : (
     <Dashboard />

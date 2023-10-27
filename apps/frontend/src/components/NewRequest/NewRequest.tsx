@@ -17,12 +17,13 @@ import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
-  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { setSnackbarData, setSnackbarOpen, snackbarData } =
+    useContext(SnackbarContext);
 
   // TODO: Will remove this disable once we put the actual mutation in this function
   // eslint-disable-next-line @typescript-eslint/require-await
   const onComplete = async () => {
-    setSnackbarData({ message: "Request created!" });
+    setSnackbarData({ ...snackbarData, message: "Request created!" });
     setSnackbarOpen(true);
     navigate("/");
   };

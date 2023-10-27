@@ -1,13 +1,10 @@
-import { ProcessConfigurationOption } from "../../graphql/generated/graphql";
 import { NewServerGroupRoute, newServerRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface NewServerState {
   serverId?: string;
-  serverName?: string;
-  processConfigurationOption: ProcessConfigurationOption;
   roleId?: string;
-  numberOfResponses?: number;
+  serverName?: string;
 }
 
 export function useNewServerGroupWizardState() {
@@ -40,11 +37,7 @@ export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
     path: newServerRoute(NewServerGroupRoute.DefineProcess),
     title: "Define Process",
     progressBarStep: 2,
-    canNext: (formState: NewServerState) =>
-      // The user must either be a benevolent dictator or have selected a role
-      formState.processConfigurationOption ===
-        ProcessConfigurationOption.BenevolentDictator ||
-      (formState.roleId != null && formState.numberOfResponses != null),
+    canNext: (formState: NewServerState) => formState.roleId != null,
     validWizardState: (formState: NewServerState) => !!formState.serverId,
   },
   {
@@ -52,7 +45,6 @@ export const NEW_SERVER_WIZARD_STEPS: WizardSteps<NewServerState> = [
     title: "Finish",
     progressBarStep: 3,
     canNext: () => true,
-    validWizardState: (formState: NewServerState) =>
-      !!formState.processConfigurationOption && !!formState.serverId,
+    validWizardState: (formState: NewServerState) => !!formState.serverId,
   },
 ];

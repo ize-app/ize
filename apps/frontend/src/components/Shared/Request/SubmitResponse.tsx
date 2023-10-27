@@ -23,10 +23,11 @@ export const SubmitResponse = ({
   onSubmit: () => void;
   displayAsColumn: boolean;
 }) => {
-  const { setSnackbarOpen, setSnackbarData } = useContext(SnackbarContext);
+  const { setSnackbarOpen, setSnackbarData, snackbarData } =
+    useContext(SnackbarContext);
 
   const submitSideEffects = () => {
-    setSnackbarData({ message: "Response submitted!" });
+    setSnackbarData({ ...snackbarData, message: "Response submitted!" });
     setSnackbarOpen(true);
     onSubmit();
   };

@@ -6,6 +6,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
+import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import {
@@ -13,41 +14,47 @@ import {
   NEW_SERVER_WIZARD_STEPS,
   NewServerState,
 } from "./newServerWizard";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
-  CreateDiscordServerGroupDocument,
-  CreateDiscordServerGroupInput,
-  ProcessConfigurationOption,
+  SetUpDiscordServerGroupDocument,
+  SetUpDiscordServerInput,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const NewServerGroup = () => {
   const navigate = useNavigate();
-  const [mutate] = useMutation(CreateDiscordServerGroupDocument, {
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+
+  const [mutate] = useMutation(SetUpDiscordServerGroupDocument, {
     onCompleted: (data) => {
-      const newGroupId = data.createDiscordServerGroup.id;
-      navigate(`/groups/${newGroupId}`);
+      const newGroupId = data.setUpDiscordServer.id;
+      navigate(`/groups/${fullUUIDToShort(newGroupId)}`);
     },
   });
 
   const onComplete = async () => {
-    if (formState.serverId == null) {
-      throw new Error("No server selected.");
+    try {
+      if ((formState as SetUpDiscordServerInput).serverId == null) {
+        throw new Error("No server selected.");
+      }
+      await mutate({
+        variables: {
+          input: { ...(formState as SetUpDiscordServerInput) },
+        },
+      });
+    } catch {
+      navigate("/");
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Group setup failed", type: "error" });
     }
-
-    await mutate({
-      variables: {
-        input: { ...(formState as CreateDiscordServerGroupInput) },
-      },
-    });
   };
 
   const newServerWizard: Wizard<NewServerState> = {
     steps: NEW_SERVER_WIZARD_STEPS,
     onComplete,
-    initialFormState: {
-      processConfigurationOption: ProcessConfigurationOption.BenevolentDictator,
-    },
+    initialFormState: {},
   };
 
   const {

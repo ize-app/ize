@@ -9,30 +9,18 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  GroupSummaryPartsFragment,
-  GroupType,
-} from "../../../../graphql/generated/graphql";
-import { createDiscordIconURL } from "../../../../utils/discord";
+import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarWithName } from "../../Avatar";
-import { TableCellHideable } from "../TableCells";
+import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   const { group } = props;
   const navigate = useNavigate();
 
   const handleTableRowOnClick = () => {
-    navigate(`/groups/${group.id}`);
+    navigate(`/groups/${fullUUIDToShort(group.id)}`);
   };
-
-  const avatarUrl =
-    group.discordServerGroup && group.icon
-      ? createDiscordIconURL(
-          group.discordServerGroup.discordServerId,
-          group.icon,
-          16,
-        )
-      : undefined;
 
   return (
     <React.Fragment>
@@ -45,35 +33,23 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              color={group.color}
               name={group.name}
-              avatarUrl={avatarUrl}
-              // TODO figure out parent
+              avatarUrl={group.icon}
             />
           </Box>
         </TableCellHideable>
 
-        <TableCellHideable align={"left"} hideOnSmallScreen={true}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "8px",
-              justifyContent: "flex-start",
-              alignItems: "center",
-            }}
-          >
-            <Box
-              sx={{
-                height: "1rem",
-                width: "auto",
-              }}
-              component="img"
-              src="/discord-logo.png"
-            />
-            <Typography>
-              {group.type === GroupType.DiscordServer ? "Server" : "Role"}
-            </Typography>
-          </Box>
-        </TableCellHideable>
+        <AvatarsCell
+          align="center"
+          hideOnSmallScreen={true}
+          avatars={[
+            {
+              name: group.organization.name,
+              avatarUrl: group.organization.icon,
+            },
+          ]}
+        />
         <TableCellHideable align={"right"} hideOnSmallScreen={true}>
           <Box
             sx={{
@@ -100,20 +76,18 @@ export default function GroupTable({
       <Table aria-label="collapsible table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCellHideable sx={{ maxWidth: "50%" }}>
-              Group
-            </TableCellHideable>
+            <TableCellHideable sx={{ width: "1000%" }}>Group</TableCellHideable>
             <TableCellHideable
-              align="left"
+              align="center"
               sx={{ minWidth: "100px" }}
               hideOnSmallScreen={true}
             >
-              Group Type
+              Server
             </TableCellHideable>
             <TableCellHideable
               hideOnSmallScreen={true}
               sx={{ minWidth: "100px" }}
-              align="right"
+              align="center"
             >
               Members
             </TableCellHideable>
