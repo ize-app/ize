@@ -6,7 +6,6 @@ import { ChangeEvent, useState } from "react";
 import GroupTable from "./GroupTable";
 import { GroupsDocument } from "../../../../graphql/generated/graphql";
 import CreateButton from "../CreateButton";
-import { groupMockData } from "../mockData";
 import Search from "../Search";
 
 const GroupTab = () => {
@@ -22,8 +21,6 @@ const GroupTab = () => {
         return group.name.search(regExSearchQuery) !== -1;
       })
       .sort() ?? [];
-
-  const filteredWithMockData = filteredGroupData.concat(groupMockData);
 
   return (
     <Box
@@ -60,11 +57,7 @@ const GroupTab = () => {
         </Box>
         <CreateButton />
       </Box>
-      {loading ? (
-        <LinearProgress />
-      ) : (
-        <GroupTable groups={filteredWithMockData} />
-      )}
+      {loading ? <LinearProgress /> : <GroupTable groups={filteredGroupData} />}
     </Box>
   );
 };

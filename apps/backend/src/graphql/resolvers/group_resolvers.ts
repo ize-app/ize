@@ -5,12 +5,6 @@ import { GraphqlRequestContext } from "../context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
 
-interface GQLGroup {
-  id: string;
-  name: string;
-  icon?: string;
-  banner?: string;
-}
 
 const setUpDiscordServer = async (
   root: unknown,
@@ -31,7 +25,32 @@ const group = async (
     id: string;
   }
 ) => {
-  return await prisma.group.findFirst({ where: { id: args.id } });
+  const rawGroupData = await prisma.group.findFirst({ 
+    include: {
+      creator: true,
+      discordRoleGroup: {
+        include: {
+          discordServer: true
+        }
+      }
+    },
+    where: { id: args.id } });
+
+    //DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon)
+
+    const group = {...rawGroupData, 
+      name: rawGroupData.discordRoleGroup.name, 
+      type: GroupType.DiscordRole,
+      icon: rawGroupData.discordRoleGroup.icon ? 
+        DiscordApi.createRoleIconURL(rawGroupData.discordRoleGroup.discordRoleId, rawGroupData.discordRoleGroup.icon) 
+        : rawGroupData.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon) : null,
+      color: DiscordApi.colorIntToHex(rawGroupData.discordRoleGroup.color),
+      memberCount: rawGroupData.discordRoleGroup.memberCount,
+      organization: {name: rawGroupData.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(rawGroupData.discordRoleGroup.discordServer.discordServerId,rawGroupData.discordRoleGroup.discordServer.icon)}
+    }
+
+    return group
+
 };
 
 const groupsForCurrentUser = async (

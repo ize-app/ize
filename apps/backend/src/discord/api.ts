@@ -8,6 +8,8 @@ import {
   APIGuild,
 } from "discord.js";
 
+type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
+
 export class DiscordApi {
   constructor(
     private readonly token: string,
@@ -25,6 +27,41 @@ export class DiscordApi {
   static forBotUser() {
     return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
   }
+
+  static colorIntToHex(colorInt: number):string {
+    return `#${colorInt.toString(16)}`
+  }
+
+  private static createDiscordImageUrl = (
+    resourceId: string,
+    hash: string,
+    resourceType: "avatars" | "icons" | "role-icons", 
+    size?: DiscordImageSize,
+  ): string =>
+    `https://cdn.discordapp.com/${resourceType}/${resourceId}/${hash}.png${
+      size ? `?size=${size}` : ""
+    }`;
+  
+
+  static createAvatarURL = (
+    userId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(userId, imageHash, "avatars", size);
+  
+  static createServerIconURL = (
+    serverId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(serverId, imageHash, "icons", size);
+
+  static createRoleIconURL = (
+    roleId: string,
+    imageHash: string,
+    size?: DiscordImageSize,
+  ): string => this.createDiscordImageUrl(roleId, imageHash, "role-icons", size);
+  
+
 
   async getDiscordServers(): Promise<Array<APIGuild>> {
     const guildsResponse = await fetch(

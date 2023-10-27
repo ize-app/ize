@@ -154,7 +154,7 @@ export const NavBar: React.FC = () => {
         <Box></Box>
       ) : (
         <img
-          src="./logo-yellow.png"
+          src="/logo-yellow.png"
           style={{ height: "24px", marginLeft: "12px" }}
         />
       )}

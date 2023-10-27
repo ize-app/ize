@@ -3,13 +3,15 @@ import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import {
+  GroupDocument,
+  GroupSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
-// import { GroupDocument } from "../../graphql/generated/graphql";
 import { shortUUIDToFull } from "../../utils/inputs";
-import { groupMockData } from "../shared/Tables/mockData";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 import TabPanel from "../shared/Tables/TabPanel";
@@ -19,55 +21,52 @@ const tabs = [
   { title: "Requests", content: <RequestTab /> },
   { title: "Process", content: <ProcessTab /> },
 ];
-export const Group = () => {
 
-  // const { data } = useQuery(GroupDocument, {
-  //   variables: {
-  //     id: groupId ?? "",
-  //   },
-  // });
+export const Group = () => {
   const { groupId: groupIdShort } = useParams();
   const groupId = shortUUIDToFull(groupIdShort as string);
 
-  console.log("group id is ", groupId);
+  const { data, loading, error } = useQuery(GroupDocument, {
+    variables: {
+      id: groupId,
+    },
+  });
+  
+  const group = data?.group as GroupSummaryPartsFragment;
 
-  // example: "718f609e-e6fc-4468-88f3-58b9c6af094f"
-  // should become "f2jYqyy5bh35kThA4kkF6H"
+  // be8f71a5-4e73-49b6-a6fe-32c6f00b7bb3
+  // pwNXPJX1qV5Z3fBAPQxWrZ
 
-  const groupData = groupMockData[1];
-
+  // 2PSykC1knZWg6Pqtkgia6R
+  // 0ec840c7-f906-4470-8b2b-2af9ca74a4cf
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 
-  return (
+  return group ? (
     <>
       <Head
-        title={groupData.name}
-        description={`Where ${groupData.name} makes decisions and evolves their process`}
+        title={group.name}
+        description={`Where ${group.name} makes decisions and evolves their process`}
       />
       <Box>
         <BannerWithAvatar
-          bannerUrl={groupData.bannerUrl}
-          avatarUrl={groupData.avatarUrl}
-          name={groupData.name ? groupData.name : ""}
-          parent={
-            groupData.parentGroup
-              ? {
-                  name: groupData.parentGroup.name,
-                  avatarUrl: groupData.parentGroup.avatarUrl,
-                }
-              : undefined
-          }
+          bannerUrl={"/test-banner.webp"}
+          avatarUrl={group.icon ?? ""}
+          name={group.name}
+          parent={{
+            name: group?.organization?.name,
+            avatarUrl: group?.organization?.icon,
+          }}
         />
         <Box
           sx={{
             paddingLeft: "1.2rem",
           }}
         >
-          <Typography variant="h1">{groupData.name}</Typography>
+          <Typography variant="h1">{group.name}</Typography>
           <Box
             sx={{
               display: "flex",
@@ -102,23 +101,12 @@ export const Group = () => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {groupData.type === "Discord server" ? (
-                  "Server"
-                ) : groupData.parentGroup ? (
-                  <>
-                    role of{" "}
-                    <Link to={"/groups/" + groupData.parentGroup.groupId}>
-                      {groupData.parentGroup.name}
-                    </Link>
-                  </>
-                ) : (
-                  "Discord role"
-                )}
+                Discord role
               </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: "8px" }}>
               <Groups color={"primary"} />
-              <Typography>{groupData.memberCount}</Typography>
+              <Typography>{group.memberCount}</Typography>
             </Box>
           </Box>
         </Box>
@@ -134,5 +122,7 @@ export const Group = () => {
         </TabPanel>
       ))}
     </>
+  ) : (
+    <div>test</div>
   );
 };

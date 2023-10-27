@@ -6,28 +6,50 @@ mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
 
 query Group($id: String!) {
   group(id: $id) {
-    id
+    ...GroupSummaryParts
   }
 }
 
 fragment GroupSummaryParts on Group {
   id
   name
-  type
-  memberCount
   icon
+  memberCount
+  type
+  createdAt
   creator {
     ...UserParts
   }
+  organization {
+    ...OrganizationParts
+  }
   discordRoleGroup {
+    ...DiscordRoleGroupParts
+  }
+}
+
+
+fragment DiscordRoleGroupParts on DiscordRoleGroup {
     id
     name
+    color
+    icon
     discordRoleId
     discordServer {
+      ...OnboardedDiscordServerParts
+    }
+}
+
+fragment OrganizationParts on Organization {
+    name
+    icon
+}
+
+fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
       id
       discordServerId
-    }
-  }
+      name
+      icon     
 }
 
 query Groups {

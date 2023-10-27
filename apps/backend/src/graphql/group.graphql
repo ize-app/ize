@@ -1,5 +1,4 @@
 enum GroupType {
-  Standard
   DiscordRole
 }
 
@@ -13,7 +12,7 @@ type Mutation {
 }
 
 type Query {
-  group(id: String!): Group
+  group(id: String!): Group!
   groupsForCurrentUser: [Group!]!
 }
 
@@ -21,17 +20,28 @@ type Group {
   id: String!
   name: String!
   creator: User!
-  banner: String
   icon: String
-  memberCount: Int
+  memberCount: Int!
   type: GroupType
-  discordRoleGroup: DiscordRoleGroup
+  organization: Organization!
+  createdAt: String!
+  discordRoleGroup: DiscordRoleGroup!
+
+}
+
+type Organization {
+  name: String!
+  icon: String!
 }
 
 
 type DiscordRoleGroup {
   id: String!
   name: String!
+  color: Int
+  icon: String
+  memberCount: Int!
+  unicodeEmoji: String
   discordRoleId: String!
   discordServer: OnboardedDiscordServer!
 }
@@ -39,4 +49,7 @@ type DiscordRoleGroup {
 type OnboardedDiscordServer {
   id: String!
   discordServerId: String!
+  name: String!
+  icon: String
+  banner: String
 }
