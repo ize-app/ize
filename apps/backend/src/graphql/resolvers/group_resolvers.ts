@@ -25,7 +25,8 @@ type GroupPrismaType = Prisma.GroupGetPayload<{
 
 
 const formatGroupData = (group: GroupPrismaType) => ({...group, 
-  name: group.discordRoleGroup.name, 
+  // discord only includes the @sign for @everyone
+  name: group.discordRoleGroup.name !== "@everyone" ? "@"+ group.discordRoleGroup.name : group.discordRoleGroup.name, 
   type: GroupType.DiscordRole,
   icon: group.discordRoleGroup.icon ? 
     DiscordApi.createRoleIconURL(group.discordRoleGroup.discordRoleId, group.discordRoleGroup.icon) 

@@ -1,5 +1,5 @@
 import short from "short-uuid";
-import z, { ZodTypeAny } from "zod";
+import * as z from "zod";
 
 export const validatePositiveIntegerInput = (value: string) => {
   const onlyDigits = value.replace(/[^0-9]/g, "");
@@ -30,10 +30,19 @@ export const stringToColor = (string: string) => {
   return color;
 };
 
-export const avatarString = (name: string) =>
-  `${name.split(" ")[0][0]}${
-    name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
-  }`;
+const findFirstLetter = (name: string): string => {
+  const firstOccurence = name.search("[a-zA-Z]");
+  if (firstOccurence === -1) return name[0];
+  else return name[firstOccurence];
+};
+
+export const avatarString = (name: string) => {
+  if (name[0] === "@") return findFirstLetter(name);
+  else
+    return `${name.split(" ")[0][0]}${
+      name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
+    }`;
+};
 
 //using milliseconds because that's how native JS expresses time intervals
 export const intervalToIntuitiveTimeString = (milliseconds: number): string => {
@@ -55,7 +64,7 @@ export const intervalToIntuitiveTimeString = (milliseconds: number): string => {
 };
 
 //  JS coerces empty to strings to a zero value so we're changing empty strings to zero to remove this ambiguity
-export const zodCleanNumber = (zodPipe: ZodTypeAny) =>
+export const zodCleanNumber = (zodPipe: z.ZodTypeAny) =>
   z
     .string()
     .trim()
@@ -63,7 +72,7 @@ export const zodCleanNumber = (zodPipe: ZodTypeAny) =>
     .pipe(zodPipe);
 
 // making empty strings undefined so that "no selection" is defined consistently
-export const zodCleanString = (zodPipe: ZodTypeAny) =>
+export const zodCleanString = (zodPipe: z.ZodTypeAny) =>
   z
     .string()
     .trim()

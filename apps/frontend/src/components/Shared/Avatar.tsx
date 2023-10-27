@@ -21,20 +21,31 @@ export interface UsersDataProps {
   users: UserDataProps[];
 }
 
+export interface AvatarWithNameProps {
+  avatarUrl: string | undefined | null;
+  name: string;
+  color?: string | null;
+  parent?: UserDataProps;
+}
+
 export interface AvatarProps extends MuiAvatarProps {
-  avatarUrl?: string;
+  avatarUrl?: string | undefined | null;
   name: string;
   parent?: UserDataProps;
+  backgroundColor?: string | null | undefined;
 }
 
 export const Avatar = ({
   avatarUrl,
   name,
   parent,
+  backgroundColor,
   ...props
 }: AvatarProps): JSX.Element => {
   const { sx } = props;
-  const defaultStyles: SxProps = { bgcolor: stringToColor(name) };
+  const defaultStyles: SxProps = {
+    bgcolor: backgroundColor ? backgroundColor : stringToColor(name),
+  };
   const styles = { ...sx, ...defaultStyles } as SxProps;
 
   return parent ? (
@@ -54,7 +65,7 @@ export const Avatar = ({
       }
     >
       <MuiAvatar
-        src={avatarUrl}
+        src={avatarUrl ?? ""}
         children={avatarString(name.toUpperCase())}
         alt={name}
         {...props}
@@ -63,7 +74,7 @@ export const Avatar = ({
     </Badge>
   ) : (
     <MuiAvatar
-      src={avatarUrl}
+      src={avatarUrl ?? ""}
       alt={name}
       children={avatarString(name.toUpperCase())}
       {...props}
@@ -76,7 +87,8 @@ export const AvatarWithName = ({
   name,
   avatarUrl: url,
   parent,
-}: UserDataProps): JSX.Element => {
+  color,
+}: AvatarWithNameProps): JSX.Element => {
   return (
     <Box
       sx={{
@@ -91,6 +103,7 @@ export const AvatarWithName = ({
       <Avatar
         avatarUrl={url}
         name={name}
+        backgroundColor={color}
         parent={
           parent
             ? { name: parent.name, avatarUrl: parent.avatarUrl }
@@ -155,7 +168,6 @@ const AvatarPopper = ({
     )}
   </Popper>
 );
-
 export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
