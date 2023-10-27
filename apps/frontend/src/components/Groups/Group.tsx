@@ -68,7 +68,7 @@ export const Group = () => {
       />
       <Box>
         <BannerWithAvatar
-          bannerUrl={"/test-banner.webp"}
+          bannerUrl={""}
           avatarUrl={group.icon ?? ""}
           name={group.name}
           color={group.color}

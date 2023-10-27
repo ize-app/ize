@@ -77,6 +77,9 @@ const BannerWithAvatar = ({
               component="img"
               src={bannerUrl}
               sx={{
+                background: `linear-gradient(0deg, ${stringToColor(name)} 0%, ${
+                  color ? color : stringToColor(name.repeat(2))
+                } 100%)`,
                 objectFit: "cover",
                 minWidth: "100%",
                 maxWidth: "100%",

@@ -31,7 +31,8 @@ const formatGroupData = (group: GroupPrismaType) => ({...group,
   icon: group.discordRoleGroup.icon ? 
     DiscordApi.createRoleIconURL(group.discordRoleGroup.discordRoleId, group.discordRoleGroup.icon) 
     : group.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon) : null,
-  color: DiscordApi.colorIntToHex(group.discordRoleGroup.color),
+  // Discord uses 0 to mean "no color", though we want to represent that with null instead
+    color: group.discordRoleGroup.color === 0  ? null : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
   memberCount: group.discordRoleGroup.memberCount,
   organization: {name: group.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon)}
 })
