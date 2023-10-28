@@ -11,13 +11,17 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid()) @db.Uuid
-  name         String?
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @updatedAt @map("updated_at")
-  discordOauth DiscordOauth?
-  discordData  DiscordData?
-  Group        Group[]
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String?
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
+  discordOauth   DiscordOauth?
+  discordData    DiscordData?
+  Group          Group[]
+  createdProcess ProcessVersion[]
+  roleUsers      RoleUser[]
+  requests       Request[]
+  responses      Response[]
 
   @@map("users")
 }
@@ -62,6 +66,8 @@ model Group {
   activeAt         DateTime?
   deactivatedat    DateTime?
   discordRoleGroup DiscordRoleGroup?
+  process          Process[]
+  roleUsers        RoleGroup[]
 
   @@map("groups")
 }
@@ -97,3 +103,268 @@ model DiscordServer {
   @@map("discord_servers")
 }
 
+model Process {
+  id                      String   @id @default(uuid()) @db.Uuid
+  groupId                 String   @map("group_id")
+  currentProcessVersionId String   @unique @map("current_process_version_id")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // TODO figure out how to make relation to just a single processVersion record - the current record
+  processVersion  ProcessVersion[] @relation("Process")
+  edittingProcess ProcessVersion[] @relation("EditProcess")
+  group           Group?           @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("processes")
+}
+
+model ProcessVersion {
+  id                String  @id @default(uuid()) @db.Uuid
+  name              String
+  description       String?
+  expirationSeconds Int     @map("expiration_seconds")
+  processId         String  @map("process_id")
+  creatorId         String  @map("creator_id") @db.Uuid
+  optionSetId       String  @map("option_set_id") @db.Uuid
+  inputSetId        String  @map("input_set_id") @db.Uuid
+  actionId          String  @map("action_id")
+  roleSetId         String  @map("role_set_id")
+  decisionSystemId  String  @map("decision_system_id")
+
+  editProcessId String   @map("edit_process_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  process        Process          @relation("Process", fields: [processId], references: [id])
+  creator        User             @relation(fields: [creatorId], references: [id])
+  optionSet      OptionSet        @relation(fields: [optionSetId], references: [id])
+  inputSet       InputTemplateSet @relation(fields: [inputSetId], references: [id])
+  action         Action           @relation(fields: [actionId], references: [id])
+  roleSet        RoleSet          @relation(fields: [roleSetId], references: [id])
+  decisionSystem DecisionSystem   @relation(fields: [decisionSystemId], references: [id])
+  editProcess    Process          @relation("EditProcess", fields: [editProcessId], references: [id], onDelete: Cascade)
+
+  requests Request[]
+
+  @@map("process_versions")
+}
+
+model OptionSet {
+  id             String           @id @default(uuid()) @db.Uuid
+  type           OptionSetType
+  dataType       OptionDataType   @map("data_type")
+  options        Option[]
+  createdAt      DateTime         @default(now()) @map("created_at")
+  processVersion ProcessVersion[]
+  request        Request?
+
+  @@map("option_sets")
+}
+
+model Option {
+  id          String    @id @default(uuid()) @db.Uuid
+  value       String
+  position    Int
+  optionSetId String    @map("option_set_id")
+  optionSet   OptionSet @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  response Response[]
+  results  Result[]
+
+  @@map("options")
+}
+
+enum OptionSetType {
+  ProcessDefinedStatic
+
+  @@map("option_set_types")
+}
+
+enum OptionDataType {
+  Int
+  Float
+  Text
+  Uri
+
+  @@map("option_data_types")
+}
+
+model InputTemplateSet {
+  id               String           @id @default(uuid()) @db.Uuid
+  createdAt        DateTime         @default(now()) @map("created_at")
+  processVersionId String           @unique @map("process_version_id") @db.Uuid
+  processVersions  ProcessVersion[]
+  inputTemplates   InputTemplate[]
+
+  @@map("input_template_sets")
+}
+
+model InputTemplate {
+  id                 String                @id @default(uuid()) @db.Uuid
+  createdAt          DateTime              @default(now()) @map("created_at")
+  name               String
+  type               InputTemplateDataType
+  description        String
+  required           Boolean
+  inputTemplateSetId String
+
+  inputTemplateSet InputTemplateSet @relation(fields: [inputTemplateSetId], references: [id], onDelete: Cascade)
+  requestInputs    RequestInput[]
+
+  @@map("input_templates")
+}
+
+enum InputTemplateDataType {
+  Int
+  Float
+  Text
+  Uri
+
+  @@map("input_template_data_types")
+}
+
+model Action {
+  id             String           @id @default(uuid()) @db.Uuid
+  type           ActionType
+  config         Json?
+  processVersion ProcessVersion[]
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  @@map("actions")
+}
+
+enum ActionType {
+  customWebhook
+
+  @@map("action_types")
+}
+
+model RoleSet {
+  id             String           @id @default(uuid()) @db.Uuid
+  createdAt      DateTime         @default(now()) @map("created_at")
+  processVersion ProcessVersion[]
+  roleUsers      RoleUser[]
+  roleGroups     RoleGroup[]
+
+  @@map("role_sets")
+}
+
+model RoleUser {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id")
+  roleSetId String   @map("role_set_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id])
+  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+
+  @@map("role_users")
+}
+
+model RoleGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  groupId   String   @map("group_id")
+  roleSetId String   @map("role_set_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group   Group   @relation(fields: [groupId], references: [id])
+  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+
+  @@map("role_groups")
+}
+
+model DecisionSystem {
+  id        String              @id @default(uuid()) @db.Uuid
+  type      DecisionSystemTypes
+  createdAt DateTime            @default(now()) @map("created_at")
+
+  processVersion           ProcessVersion[]
+  absoluteDecisionSystem   AbsoluteDecisionSystem?
+  percentageDecisionSystem PercentageDecisionSystem?
+
+  @@map("decision_systems")
+}
+
+enum DecisionSystemTypes {
+  Absolute
+  Percentage
+}
+
+model AbsoluteDecisionSystem {
+  id               String   @id @default(uuid()) @db.Uuid
+  decisionSystemId String   @unique @map("decision_system_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  decisionSystem DecisionSystem @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)
+
+  @@map("absolute_decision_systems")
+}
+
+model PercentageDecisionSystem {
+  id               String   @id @default(uuid()) @db.Uuid
+  decisionSystemId String   @unique @map("decision_system_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  decisionSystem DecisionSystem @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)
+
+  @@map("percentage_decision_systems")
+}
+
+model Request {
+  id               String   @id @default(uuid()) @db.Uuid
+  processVersionId String   @map("process_version_id")
+  creatorId        String   @map("creator_id")
+  expirationDate   DateTime @map("expiration_date")
+  // refers to options that can be created by the requestor
+  optionSetId      String?  @unique @map("option_set_ids")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  optionSet      OptionSet?     @relation(fields: [optionSetId], references: [id])
+  processVersion ProcessVersion @relation(fields: [processVersionId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  requestInputs RequestInput[]
+  responses     Response[]
+  result        Result?
+
+  @@map("requests")
+}
+
+model RequestInput {
+  id        String   @id @default(uuid()) @db.Uuid
+  requestId String   @map("request_id")
+  inputId   String   @map("input_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request Request       @relation(fields: [requestId], references: [id])
+  input   InputTemplate @relation(fields: [inputId], references: [id])
+
+  @@map("request_inputs")
+}
+
+model Response {
+  id        String   @id @default(uuid()) @db.Uuid
+  requestId String   @map("request_id")
+  creatorId String   @map("creator_id")
+  optionId  String   @map("option_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  option  Option  @relation(fields: [optionId], references: [id])
+  request Request @relation(fields: [requestId], references: [id])
+  creator User    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("responses")
+}
+
+model Result {
+  id        String   @id @default(uuid()) @db.Uuid
+  requestId String   @unique @map("request_id")
+  optionId  String?  @map("option_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  option  Option? @relation(fields: [optionId], references: [id])
+  request Request @relation(fields: [requestId], references: [id])
+
+  @@map("results")
+}
