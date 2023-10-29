@@ -103,81 +103,126 @@ model DiscordServer {
   @@map("discord_servers")
 }
 
+/// All details about how a process actually work are defined in process_versions. 
+/// When process is changed, a new process_version record is changed
 model Process {
-  id                      String   @id @default(uuid()) @db.Uuid
-  groupId                 String   @map("group_id")
-  currentProcessVersionId String   @unique @map("current_process_version_id")
-  createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
+  id                      String      @id @default(uuid()) @db.Uuid
+  /// Group that this process is intrinsically tied to (optional)
+  type                    ProcessType
+  groupId                 String      @map("group_id") @db.Uuid
+  /// Process version record that is currently actice for this process
+  currentProcessVersionId String      @unique @map("current_process_version_id") @db.Uuid
+  createdAt               DateTime    @default(now()) @map("created_at")
+  updatedAt               DateTime    @default(now()) @updatedAt @map("updated_at")
 
-  // TODO figure out how to make relation to just a single processVersion record - the current record
-  processVersion  ProcessVersion[] @relation("Process")
-  edittingProcess ProcessVersion[] @relation("EditProcess")
-  group           Group?           @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  /// All process version records for the process
+  processVersions       ProcessVersion[] @relation("Process")
+  /// Current version of this process 
+  currentProcessVersion ProcessVersion   @relation("CurrentProcess", fields: [currentProcessVersionId], references: [id])
+  /// all of the edit processes that give this process edit rights
+  editProcessRightsFor  ProcessVersion[] @relation("EditProcess")
+  group                 Group?           @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("processes")
 }
 
+enum ProcessType {
+  Custom
+  Edit
+}
+
+/// Process versions describe all details of a how a process (options, inputs, decision systems, etc)
+/// All parts of a process version (and its component tables) are immutable. When a process is changed, a new process version is created
 model ProcessVersion {
-  id                String  @id @default(uuid()) @db.Uuid
-  name              String
-  description       String?
-  expirationSeconds Int     @map("expiration_seconds")
-  processId         String  @map("process_id")
-  creatorId         String  @map("creator_id") @db.Uuid
-  optionSetId       String  @map("option_set_id") @db.Uuid
-  inputSetId        String  @map("input_set_id") @db.Uuid
-  actionId          String  @map("action_id")
-  roleSetId         String  @map("role_set_id")
-  decisionSystemId  String  @map("decision_system_id")
+  id                 String   @id @default(uuid()) @db.Uuid
+  name               String
+  description        String?
+  /// Seconds after creation that request made by this process will expire
+  expirationSeconds  Int      @map("expiration_seconds")
+  /// Parent process for this process version 
+  processId          String   @map("process_id") @db.Uuid
+  creatorId          String   @map("creator_id") @db.Uuid
+  optionSystemId     String   @map("option_system_id") @db.Uuid
+  inputTemplateSetId String   @map("input_set_id") @db.Uuid
+  actionId           String?  @map("action_id") @db.Uuid
+  roleSetId          String   @map("role_set_id") @db.Uuid
+  decisionSystemId   String   @map("decision_system_id") @db.Uuid
+  editProcessId      String   @map("edit_process_id") @db.Uuid
+  createdAt          DateTime @default(now()) @map("created_at")
 
-  editProcessId String   @map("edit_process_id")
-  createdAt     DateTime @default(now()) @map("created_at")
+  /// Parent process for this process version 
+  process                  Process          @relation("Process", fields: [processId], references: [id], onDelete: Cascade)
+  creator                  User             @relation(fields: [creatorId], references: [id])
+  /// Process defined response options that are included on every request created by this process version
+  optionSystem             OptionSystem     @relation(fields: [optionSystemId], references: [id], onDelete: Cascade)
+  /// Template for the inputs that will be required on each new request created by this process version
+  inputTemplateSet         InputTemplateSet @relation(fields: [inputTemplateSetId], references: [id], onDelete: Cascade)
+  /// The action that is automatically run once a decision is reached
+  action                   Action?          @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  /// The set of request/respond permissions for this process
+  roleSet                  RoleSet          @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+  /// System describing how responses to a request arrive at a decision
+  decisionSystem           DecisionSystem   @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)
+  /// The process that the ability to edit this proess
+  editProcess              Process          @relation("EditProcess", fields: [editProcessId], references: [id], onDelete: Cascade)
+  ProcessForCurrentVersion Process?         @relation("CurrentProcess")
 
-  process        Process          @relation("Process", fields: [processId], references: [id])
-  creator        User             @relation(fields: [creatorId], references: [id])
-  optionSet      OptionSet        @relation(fields: [optionSetId], references: [id])
-  inputSet       InputTemplateSet @relation(fields: [inputSetId], references: [id])
-  action         Action           @relation(fields: [actionId], references: [id])
-  roleSet        RoleSet          @relation(fields: [roleSetId], references: [id])
-  decisionSystem DecisionSystem   @relation(fields: [decisionSystemId], references: [id])
-  editProcess    Process          @relation("EditProcess", fields: [editProcessId], references: [id], onDelete: Cascade)
-
+  /// All requests generated by this process version
   requests Request[]
 
   @@map("process_versions")
 }
 
+/// Option system describes how options will ultimately be presented to the respondant
+/// This includes whether request/response can create their own options, data types on options, etc
+model OptionSystem {
+  id                        String         @id @default(uuid()) @db.Uuid
+  /// Data type constraint placed globally across all options in this system
+  dataType                  OptionDataType @map("data_type")
+  defaultProcessOptionSetId String?        @map("default_process_option_set_id") @db.Uuid
+
+  /// Options that will be included for every request generated by this process
+  defaultProcessOptionSet OptionSet?       @relation(fields: [defaultProcessOptionSetId], references: [id], onDelete: Cascade)
+  /// When an option set is created by a process, this lists all the process versions that use this option set
+  processVersions         ProcessVersion[]
+
+   @@map("option_systems")
+}
+
+/// Option sets are used to describe any list of options
+/// Option sets can describe both option sets created in advance via the process and those defined on the request
 model OptionSet {
-  id             String           @id @default(uuid()) @db.Uuid
-  type           OptionSetType
-  dataType       OptionDataType   @map("data_type")
-  options        Option[]
-  createdAt      DateTime         @default(now()) @map("created_at")
-  processVersion ProcessVersion[]
-  request        Request?
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  /// All of the options that are part of this option set
+  options       Option[]
+  /// When a request creates new options on the fly, this points to which request created that option set
+  request       Request?
+  /// Option systems that use this option set
+  optionSystems OptionSystem[]
 
   @@map("option_sets")
 }
 
+/// An individual option that a respoondant will be able to select on a request
 model Option {
-  id          String    @id @default(uuid()) @db.Uuid
+  id          String         @id @default(uuid()) @db.Uuid
   value       String
+  /// Type changes both how a given option is presented in the UI and form validation
+  type        OptionDataType
+  /// Relative order that an option should appear relative to other options
   position    Int
-  optionSetId String    @map("option_set_id")
-  optionSet   OptionSet @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now()) @map("created_at")
+  optionSetId String         @map("option_set_id") @db.Uuid
+  optionSet   OptionSet      @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now()) @map("created_at")
 
+  /// Responses that selected this option
   response Response[]
+  /// Final decisions that selected this option
   results  Result[]
 
   @@map("options")
-}
-
-enum OptionSetType {
-  ProcessDefinedStatic
-
-  @@map("option_set_types")
 }
 
 enum OptionDataType {
@@ -189,26 +234,35 @@ enum OptionDataType {
   @@map("option_data_types")
 }
 
+/// A set of ordered inputs that the process solicits from the creator of a request
 model InputTemplateSet {
   id               String           @id @default(uuid()) @db.Uuid
   createdAt        DateTime         @default(now()) @map("created_at")
   processVersionId String           @unique @map("process_version_id") @db.Uuid
+  /// Processes taht use this input template set
   processVersions  ProcessVersion[]
+  /// All user inputs
   inputTemplates   InputTemplate[]
 
   @@map("input_template_sets")
 }
 
+/// Parameters for a single input that a process solicits from the creator a request
 model InputTemplate {
   id                 String                @id @default(uuid()) @db.Uuid
   createdAt          DateTime              @default(now()) @map("created_at")
   name               String
+  /// Order that input should be displayed relative to other inputs
+  position           Int
   type               InputTemplateDataType
-  description        String
+  /// Descrbes how type of input that process is asking for in the request (e.g. examples, additional explaination, etc) 
+  description        String?
+  /// Whether a user will be required to fill out this input to create a request
   required           Boolean
-  inputTemplateSetId String
+  inputTemplateSetId String                @map("input_template_set_id") @db.Uuid
 
   inputTemplateSet InputTemplateSet @relation(fields: [inputTemplateSetId], references: [id], onDelete: Cascade)
+  /// Requests that used this particular input
   requestInputs    RequestInput[]
 
   @@map("input_templates")
@@ -223,12 +277,14 @@ enum InputTemplateDataType {
   @@map("input_template_data_types")
 }
 
+/// Action that is automatically executed when a request arrives at a decision
 model Action {
-  id             String           @id @default(uuid()) @db.Uuid
-  type           ActionType
-  config         Json?
-  processVersion ProcessVersion[]
-  createdAt      DateTime         @default(now()) @map("created_at")
+  id              String           @id @default(uuid()) @db.Uuid
+  type            ActionType
+  config          Json?
+  /// Process versions that use this action
+  processVersions ProcessVersion[]
+  createdAt       DateTime         @default(now()) @map("created_at")
 
   @@map("actions")
 }
@@ -239,6 +295,8 @@ enum ActionType {
   @@map("action_types")
 }
 
+/// Role sets are a list of users with Request/Repsond privleges for a given process version. 
+/// Both groups and individual users can be given roles. 
 model RoleSet {
   id             String           @id @default(uuid()) @db.Uuid
   createdAt      DateTime         @default(now()) @map("created_at")
@@ -251,8 +309,9 @@ model RoleSet {
 
 model RoleUser {
   id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id")
-  roleSetId String   @map("role_set_id")
+  userId    String   @map("user_id") @db.Uuid
+  roleSetId String   @map("role_set_id") @db.Uuid
+  type      RoleType
   createdAt DateTime @default(now()) @map("created_at")
 
   user    User    @relation(fields: [userId], references: [id])
@@ -263,22 +322,28 @@ model RoleUser {
 
 model RoleGroup {
   id        String   @id @default(uuid()) @db.Uuid
-  groupId   String   @map("group_id")
-  roleSetId String   @map("role_set_id")
+  groupId   String   @map("group_id") @db.Uuid
+  roleSetId String   @map("role_set_id") @db.Uuid
+  type      RoleType
   createdAt DateTime @default(now()) @map("created_at")
 
-  group   Group   @relation(fields: [groupId], references: [id])
+  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
   roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
   @@map("role_groups")
 }
 
-model DecisionSystem {
-  id        String              @id @default(uuid()) @db.Uuid
-  type      DecisionSystemTypes
-  createdAt DateTime            @default(now()) @map("created_at")
+enum RoleType {
+  Request
+  Respond
+}
 
-  processVersion           ProcessVersion[]
+/// Decision systems describe how individual responses are translated into a final decision
+model DecisionSystem {
+  id                       String                    @id @default(uuid()) @db.Uuid
+  type                     DecisionSystemTypes
+  createdAt                DateTime                  @default(now()) @map("created_at")
+  processVersions          ProcessVersion[]
   absoluteDecisionSystem   AbsoluteDecisionSystem?
   percentageDecisionSystem PercentageDecisionSystem?
 
@@ -290,39 +355,47 @@ enum DecisionSystemTypes {
   Percentage
 }
 
+/// Absoluate decision system is when a decision is reached once an option receives an threshold # of responses
 model AbsoluteDecisionSystem {
   id               String   @id @default(uuid()) @db.Uuid
-  decisionSystemId String   @unique @map("decision_system_id")
+  decisionSystemId String   @unique @map("decision_system_id") @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at")
+  threshold        Int
 
   decisionSystem DecisionSystem @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)
 
   @@map("absolute_decision_systems")
 }
 
+/// Percentage decision system chooses a winner once an option acheives a threshold % of total votes and qurorum is acheived
 model PercentageDecisionSystem {
   id               String   @id @default(uuid()) @db.Uuid
-  decisionSystemId String   @unique @map("decision_system_id")
+  decisionSystemId String   @unique @map("decision_system_id") @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at")
+  perentage        Float
+  quorum           Int
 
   decisionSystem DecisionSystem @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)
 
   @@map("percentage_decision_systems")
 }
 
+/// An instance of a process being used
 model Request {
   id               String   @id @default(uuid()) @db.Uuid
-  processVersionId String   @map("process_version_id")
-  creatorId        String   @map("creator_id")
+  processVersionId String   @map("process_version_id") @db.Uuid
+  creatorId        String   @map("creator_id") @db.Uuid
   expirationDate   DateTime @map("expiration_date")
-  // refers to options that can be created by the requestor
-  optionSetId      String?  @unique @map("option_set_ids")
+  optionSetId      String?  @unique @map("option_set_ids") @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
 
-  optionSet      OptionSet?     @relation(fields: [optionSetId], references: [id])
+  /// Refers to options that can be created by the requestor. The process may also have default options
+  optionSet      OptionSet?     @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
+  /// Process version that produced this request
   processVersion ProcessVersion @relation(fields: [processVersionId], references: [id], onDelete: Cascade)
-  user           User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Creator of this request
+  creator        User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   requestInputs RequestInput[]
   responses     Response[]
@@ -331,10 +404,11 @@ model Request {
   @@map("requests")
 }
 
+/// While the Input Template defines the parameters of inputs on each request, the Request Input is the actual input 
 model RequestInput {
   id        String   @id @default(uuid()) @db.Uuid
-  requestId String   @map("request_id")
-  inputId   String   @map("input_id")
+  requestId String   @map("request_id") @db.Uuid
+  inputId   String   @map("input_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
   request Request       @relation(fields: [requestId], references: [id])
@@ -343,28 +417,30 @@ model RequestInput {
   @@map("request_inputs")
 }
 
+/// Response to a request
 model Response {
   id        String   @id @default(uuid()) @db.Uuid
-  requestId String   @map("request_id")
-  creatorId String   @map("creator_id")
-  optionId  String   @map("option_id")
+  requestId String   @map("request_id") @db.Uuid
+  creatorId String   @map("creator_id") @db.Uuid
+  optionId  String   @map("option_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  option  Option  @relation(fields: [optionId], references: [id])
-  request Request @relation(fields: [requestId], references: [id])
-  creator User    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  option  Option  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  creator User    @relation(fields: [creatorId], references: [id])
 
   @@map("responses")
 }
 
+/// Final decision for a request
 model Result {
   id        String   @id @default(uuid()) @db.Uuid
-  requestId String   @unique @map("request_id")
-  optionId  String?  @map("option_id")
+  requestId String   @unique @map("request_id") @db.Uuid
+  optionId  String   @map("option_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  option  Option? @relation(fields: [optionId], references: [id])
-  request Request @relation(fields: [requestId], references: [id])
+  option  Option  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
   @@map("results")
 }
