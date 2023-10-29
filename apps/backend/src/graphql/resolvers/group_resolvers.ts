@@ -1,6 +1,4 @@
-import {
-  setUpDiscordServerService,
-} from "@services/groups/discord_server_group";
+import { setUpDiscordServerService } from "@services/groups/discord_server_group";
 import { GraphqlRequestContext } from "../context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
@@ -9,34 +7,53 @@ import { Prisma } from "@prisma/client";
 const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
     include: {
-      discordData: true
-    }
+      discordData: true,
+    },
   },
   discordRoleGroup: {
     include: {
-      discordServer: true
-    }
-  }
+      discordServer: true,
+    },
+  },
 });
 
 type GroupPrismaType = Prisma.GroupGetPayload<{
   include: typeof groupInclude;
 }>;
 
-
-const formatGroupData = (group: GroupPrismaType) => ({...group, 
+const formatGroupData = (group: GroupPrismaType) => ({
+  ...group,
   // discord only includes the @sign for @everyone
-  name: group.discordRoleGroup.name !== "@everyone" ? "@"+ group.discordRoleGroup.name : group.discordRoleGroup.name, 
+  name:
+    group.discordRoleGroup.name !== "@everyone"
+      ? "@" + group.discordRoleGroup.name
+      : group.discordRoleGroup.name,
   type: GroupType.DiscordRole,
-  icon: group.discordRoleGroup.icon ? 
-    DiscordApi.createRoleIconURL(group.discordRoleGroup.discordRoleId, group.discordRoleGroup.icon) 
-    : group.discordRoleGroup.name === "@everyone" ? DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon) : null,
+  icon: group.discordRoleGroup.icon
+    ? DiscordApi.createRoleIconURL(
+        group.discordRoleGroup.discordRoleId,
+        group.discordRoleGroup.icon,
+      )
+    : group.discordRoleGroup.name === "@everyone"
+    ? DiscordApi.createServerIconURL(
+        group.discordRoleGroup.discordServer.discordServerId,
+        group.discordRoleGroup.discordServer.icon,
+      )
+    : null,
   // Discord uses 0 to mean "no color", though we want to represent that with null instead
-    color: group.discordRoleGroup.color === 0  ? null : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
+  color:
+    group.discordRoleGroup.color === 0
+      ? null
+      : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
   memberCount: group.discordRoleGroup.memberCount,
-  organization: {name: group.discordRoleGroup.discordServer.name, icon: DiscordApi.createServerIconURL(group.discordRoleGroup.discordServer.discordServerId,group.discordRoleGroup.discordServer.icon)}
-})
-
+  organization: {
+    name: group.discordRoleGroup.discordServer.name,
+    icon: DiscordApi.createServerIconURL(
+      group.discordRoleGroup.discordServer.discordServerId,
+      group.discordRoleGroup.discordServer.icon,
+    ),
+  },
+});
 
 const setUpDiscordServer = async (
   root: unknown,
@@ -46,7 +63,7 @@ const setUpDiscordServer = async (
       roleId?: string;
     };
   },
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ) => {
   return await setUpDiscordServerService(args.input, context);
 };
@@ -55,20 +72,20 @@ const group = async (
   root: unknown,
   args: {
     id: string;
-  }
+  },
 ) => {
-  const group = await prisma.group.findFirst({ 
+  const group = await prisma.group.findFirst({
     include: groupInclude,
-    where: { id: args.id } });
+    where: { id: args.id },
+  });
 
   return formatGroupData(group);
-
 };
 
 const groupsForCurrentUser = async (
   root: unknown,
   args: {},
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ) => {
   const userDiscordData = await prisma.discordData.findFirstOrThrow({
     where: { userId: context.currentUser.id },
@@ -89,11 +106,13 @@ const groupsForCurrentUser = async (
         serverId: guild.id,
         memberId: userDiscordData.discordId,
       });
-    })
+    }),
   );
 
   // converting to Set to remove many duplicate "undefined" roleIds
-  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())];
+  const roleIds = [
+    ...new Set(userGuildMembers.map((member) => member.roles).flat()),
+  ];
 
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({
@@ -101,15 +120,15 @@ const groupsForCurrentUser = async (
       OR: [
         { discordRoleGroup: { discordRoleId: { in: roleIds } } },
         // @everyone isn't part of roleIds returned from discord API
-        { discordRoleGroup: { name: "@everyone" }},
+        { discordRoleGroup: { name: "@everyone" } },
         { creatorId: context.currentUser.id },
       ],
     },
     include: groupInclude,
   });
 
-  const formattedGroups = groups.map((group) => formatGroupData(group))
-  return formattedGroups
+  const formattedGroups = groups.map((group) => formatGroupData(group));
+  return formattedGroups;
 };
 
 export const groupMutations = {

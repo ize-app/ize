@@ -27,14 +27,12 @@ type Group {
   organization: Organization!
   createdAt: String!
   discordRoleGroup: DiscordRoleGroup!
-
 }
 
 type Organization {
   name: String!
   icon: String!
 }
-
 
 type DiscordRoleGroup {
   id: String!

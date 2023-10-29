@@ -12,13 +12,13 @@
       "*": ["node_modules/*"],
       "@graphql/*": ["src/graphql/*"],
       "@discord/*": ["src/discord/*"],
-      "@services/*": ["src/services/*"],
+      "@services/*": ["src/services/*"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": ["src/**/*.ts"],
   "ts-node": {
-    "require": ["tsconfig-paths/register"],
+    "require": ["tsconfig-paths/register"]
   }
 }

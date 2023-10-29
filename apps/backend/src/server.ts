@@ -207,7 +207,7 @@ app.get("/auth/discord/callback", async (req, res) => {
 });
 
 const typeDefs = mergeTypeDefs(
-  loadFilesSync("./src/graphql", { recursive: true, extensions: [".graphql"] })
+  loadFilesSync("./src/graphql", { recursive: true, extensions: [".graphql"] }),
 );
 
 const schema = makeExecutableSchema({
@@ -243,7 +243,7 @@ server.start().then(() => {
           clearCookie: (name: string) => res.clearCookie(name),
         };
       },
-    })
+    }),
   );
 
   app.listen(port, host, () => {

@@ -109,7 +109,7 @@ model Process {
   id                      String      @id @default(uuid()) @db.Uuid
   /// Group that this process is intrinsically tied to (optional)
   type                    ProcessType
-  groupId                 String      @map("group_id") @db.Uuid
+  groupId                 String?      @map("group_id") @db.Uuid
   /// Process version record that is currently actice for this process
   currentProcessVersionId String      @unique @map("current_process_version_id") @db.Uuid
   createdAt               DateTime    @default(now()) @map("created_at")
@@ -238,8 +238,8 @@ enum OptionDataType {
 model InputTemplateSet {
   id               String           @id @default(uuid()) @db.Uuid
   createdAt        DateTime         @default(now()) @map("created_at")
-  processVersionId String           @unique @map("process_version_id") @db.Uuid
-  /// Processes taht use this input template set
+
+  /// Processes thatt use this input template set
   processVersions  ProcessVersion[]
   /// All user inputs
   inputTemplates   InputTemplate[]

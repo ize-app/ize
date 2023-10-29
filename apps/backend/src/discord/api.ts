@@ -13,13 +13,13 @@ type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 export class DiscordApi {
   constructor(
     private readonly token: string,
-    private readonly isBot: boolean = false
+    private readonly isBot: boolean = false,
   ) {}
 
   static forUser(
     user: Prisma.UserGetPayload<{
       include: { discordOauth: true; discordData: true };
-    }>
+    }>,
   ) {
     return new DiscordApi(user.discordOauth.accessToken, false);
   }
@@ -28,27 +28,26 @@ export class DiscordApi {
     return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
   }
 
-  static colorIntToHex(colorInt: number):string {
-    return `#${colorInt.toString(16)}`
+  static colorIntToHex(colorInt: number): string {
+    return `#${colorInt.toString(16)}`;
   }
 
   private static createDiscordImageUrl = (
     resourceId: string,
     hash: string,
-    resourceType: "avatars" | "icons" | "role-icons", 
+    resourceType: "avatars" | "icons" | "role-icons",
     size?: DiscordImageSize,
   ): string =>
     `https://cdn.discordapp.com/${resourceType}/${resourceId}/${hash}.png${
       size ? `?size=${size}` : ""
     }`;
-  
 
   static createAvatarURL = (
     userId: string,
     imageHash: string,
     size?: DiscordImageSize,
   ): string => this.createDiscordImageUrl(userId, imageHash, "avatars", size);
-  
+
   static createServerIconURL = (
     serverId: string,
     imageHash: string,
@@ -59,16 +58,15 @@ export class DiscordApi {
     roleId: string,
     imageHash: string,
     size?: DiscordImageSize,
-  ): string => this.createDiscordImageUrl(roleId, imageHash, "role-icons", size);
-  
-
+  ): string =>
+    this.createDiscordImageUrl(roleId, imageHash, "role-icons", size);
 
   async getDiscordServers(): Promise<Array<APIGuild>> {
     const guildsResponse = await fetch(
       "https://discord.com/api/users/@me/guilds",
       {
         headers: this.headers,
-      }
+      },
     );
 
     return guildsResponse.json();
@@ -79,7 +77,7 @@ export class DiscordApi {
       `https://discord.com/api/guilds/${serverId}`,
       {
         headers: this.headers,
-      }
+      },
     );
 
     return guildResponse.json();
@@ -94,7 +92,7 @@ export class DiscordApi {
       `https://discord.com/api/guilds/${serverId}/roles`,
       {
         headers: this.headers,
-      }
+      },
     );
 
     return rolesResponse.json();
@@ -115,7 +113,7 @@ export class DiscordApi {
       `https://discord.com/api/guilds/${serverId}/members/${memberId}`,
       {
         headers: this.headers,
-      }
+      },
     );
 
     return rolesResponse.json();
@@ -135,29 +133,34 @@ export class DiscordApi {
       `https://discord.com/api/guilds/${serverId}/members?limit=1000`,
       {
         headers: this.headers,
-      }
+      },
     );
 
     return rolesResponse.json();
   }
 
-  countRoleMembers(members: APIGuildMember[], roles: APIRole[]) :{[roleId:string]:number} {
-    const nonbotMembers = members.filter((member)=> !member.user.bot)
+  countRoleMembers(
+    members: APIGuildMember[],
+    roles: APIRole[],
+  ): { [roleId: string]: number } {
+    const nonbotMembers = members.filter((member) => !member.user.bot);
 
-    const everyoneRoleId = roles.find((role) => role.name === "@everyone").id
+    const everyoneRoleId = roles.find((role) => role.name === "@everyone").id;
 
-    const roleCounts = nonbotMembers.reduce((acc:{[roleId:string]:number} , curr) => {
-      curr.roles.forEach((roleId)=> {
-        if(acc.hasOwnProperty(roleId))  acc[roleId] = acc[roleId]++
-        else acc[roleId] = 1
-      })
-    return acc 
-    }, {})
-    roleCounts[everyoneRoleId] = nonbotMembers.length
+    const roleCounts = nonbotMembers.reduce(
+      (acc: { [roleId: string]: number }, curr) => {
+        curr.roles.forEach((roleId) => {
+          if (acc.hasOwnProperty(roleId)) acc[roleId] = acc[roleId]++;
+          else acc[roleId] = 1;
+        });
+        return acc;
+      },
+      {},
+    );
+    roleCounts[everyoneRoleId] = nonbotMembers.length;
 
-    return roleCounts
+    return roleCounts;
   }
-
 
   private get headers() {
     if (this.isBot) {
