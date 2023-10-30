@@ -9,6 +9,19 @@ import { Control, Controller } from "react-hook-form";
 
 import { Avatar, UserDataProps } from "../Avatar";
 
+interface Options {
+  id: string;
+  name: string;
+  icon: string;
+  memberCount: number;
+  oragnization: Organization;
+}
+
+interface Organization {
+  name: string;
+  icon: string;
+}
+
 const options: UserDataProps[] = [
   {
     name: "Token Engineering Commons",

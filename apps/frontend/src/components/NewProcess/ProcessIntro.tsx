@@ -62,7 +62,7 @@ export const ProcessIntro = () => {
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      name: formState.processName ?? "",
+      name: formState.name ?? "",
       description: formState.description ?? "",
       customIntegration: formState.customIntegration ?? "no",
       webhookUri: formState.webhookUri ?? "",
@@ -79,7 +79,7 @@ export const ProcessIntro = () => {
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
       ...prev,
-      processName: data.name,
+      name: data.name,
       description: data.description,
       customIntegration: data.customIntegration,
       webhookUri: data.webhookUri,

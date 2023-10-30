@@ -1,15 +1,16 @@
+import { InputTemplateArgs } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import { UserDataProps } from "../shared/Avatar";
 
 export interface NewProcessState {
-  processName?: string;
+  name?: string;
   description?: string;
   customIntegration?: string;
   webhookUri?: string;
   options?: string;
   customOptions?: string[];
-  inputs?: ProcessInput[];
+  inputs?: InputTemplateArgs[];
   rights?: ProcessRights;
   decision?: ProcessDecision;
 }
@@ -32,7 +33,7 @@ export enum ThresholdTypes {
 }
 
 export interface ProcessInput {
-  fieldName: string;
+  name: string;
   description: string;
   required: boolean;
   type: ProcessInputType;
@@ -73,7 +74,7 @@ export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<NewProcessState> = [
     title: "Inputs fields on each request",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: (formState: NewProcessState) => !!formState.processName,
+    validWizardState: (formState: NewProcessState) => !!formState.name,
   },
   {
     path: newProcessRoute(NewProcessRoute.Decisions),

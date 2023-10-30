@@ -313,52 +313,6 @@ export const processMockData: Process.default[] = [
   },
 ];
 
-export const groupMockData: GroupProps[] = [
-  {
-    id: "1",
-    name: "Token Engineering Commons",
-    bannerUrl: "/test-banner.webp",
-    avatarUrl:
-      "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-    type: "Discord server",
-    memberCount: 120,
-  },
-  {
-    id: "2",
-    name: "@core-team",
-    type: "Discord role",
-    avatarUrl: "",
-    bannerUrl: "/test-banner.webp",
-    memberCount: 23,
-    parentGroup: {
-      groupId: "1",
-      name: "Token Engineering Commons",
-      bannerUrl: "/test-banner.webp",
-      avatarUrl:
-        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-      type: "Discord server",
-      memberCount: 120,
-    },
-  },
-  {
-    id: "3",
-    name: "@test-team",
-    type: "Discord role",
-    bannerUrl: "/test-banner.webp",
-    avatarUrl: "",
-    memberCount: 23,
-    parentGroup: {
-      groupId: "1",
-      name: "Token Engineering Commons",
-      bannerUrl: "/test-banner.webp",
-      avatarUrl:
-        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-      type: "Discord server",
-      memberCount: 120,
-    },
-  },
-];
-
 export const requestMockData: RequestProps[] = [
   {
     requestId: "1",

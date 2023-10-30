@@ -1,0 +1,3 @@
+mutation NewProcess($process: newProcessArgs!) {
+  newProcess(process: $process)
+}

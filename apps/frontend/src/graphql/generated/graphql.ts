@@ -16,6 +16,30 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AbsoluteDecision = {
+  __typename?: 'AbsoluteDecision';
+  createdAt: Scalars['String']['output'];
+  decisionSystemId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  threshold: Scalars['Int']['output'];
+  type: DecisionSystemTypes;
+};
+
+export type AbsoluteDecisionArgs = {
+  threshold: Scalars['Int']['input'];
+  type: DecisionSystemTypes;
+};
+
+export enum AgentType {
+  Group = 'Group',
+  User = 'User'
+}
+
+export enum DecisionSystemTypes {
+  Absolute = 'Absolute',
+  Percentage = 'Percentage'
+}
+
 export type DiscordApiServer = {
   __typename?: 'DiscordAPIServer';
   id: Scalars['String']['output'];
@@ -67,9 +91,43 @@ export type Group = {
   type?: Maybe<GroupType>;
 };
 
+export type GroupRole = {
+  __typename?: 'GroupRole';
+  group: Group;
+  id: Scalars['String']['output'];
+  roleSetId: Scalars['String']['output'];
+  type: RoleType;
+};
+
 export enum GroupType {
   DiscordRole = 'DiscordRole'
 }
+
+export enum InputDataType {
+  Float = 'Float',
+  Int = 'Int',
+  Text = 'Text',
+  Uri = 'Uri'
+}
+
+export type InputTemplate = {
+  __typename?: 'InputTemplate';
+  createdAt: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  inputTemplateSetId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  required: Scalars['Boolean']['output'];
+  type: InputDataType;
+};
+
+export type InputTemplateArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  required: Scalars['Boolean']['input'];
+  type: InputDataType;
+};
 
 export type LogOutResponse = {
   __typename?: 'LogOutResponse';
@@ -80,7 +138,13 @@ export type LogOutResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   logOut?: Maybe<LogOutResponse>;
+  newProcess: Scalars['String']['output'];
   setUpDiscordServer: Group;
+};
+
+
+export type MutationNewProcessArgs = {
+  process: NewProcessArgs;
 };
 
 
@@ -97,10 +161,55 @@ export type OnboardedDiscordServer = {
   name: Scalars['String']['output'];
 };
 
+export enum OptionType {
+  Float = 'Float',
+  Int = 'Int',
+  Text = 'Text',
+  Uri = 'Uri'
+}
+
 export type Organization = {
   __typename?: 'Organization';
   icon: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type PercentageDecision = {
+  __typename?: 'PercentageDecision';
+  createdAt: Scalars['String']['output'];
+  decisionSystemId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  percentage: Scalars['Float']['output'];
+  quorum: Scalars['Int']['output'];
+  type: DecisionSystemTypes;
+};
+
+export type PercentageDecisionArgs = {
+  percentage: Scalars['Float']['input'];
+  quorum: Scalars['Int']['input'];
+  type: DecisionSystemTypes;
+};
+
+export type Process = {
+  __typename?: 'Process';
+  description?: Maybe<Scalars['String']['output']>;
+  expirationSeconds: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type ProcessOption = {
+  __typename?: 'ProcessOption';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  optionSetId: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  type: OptionType;
+  value: Scalars['String']['output'];
+};
+
+export type ProcessOptionArgs = {
+  type: Scalars['String']['input'];
+  value: Scalars['String']['input'];
 };
 
 export type Query = {
@@ -123,11 +232,43 @@ export type QueryGroupArgs = {
   id: Scalars['String']['input'];
 };
 
+export type RoleArgs = {
+  agentType: AgentType;
+  id: Scalars['String']['input'];
+  type: RoleType;
+};
+
+export enum RoleType {
+  Request = 'Request',
+  Respond = 'Respond'
+}
+
 export type User = {
   __typename?: 'User';
   discordData: DiscordData;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserRole = {
+  __typename?: 'UserRole';
+  id: Scalars['String']['output'];
+  roleSetId: Scalars['String']['output'];
+  type: RoleType;
+  user: User;
+};
+
+export type NewProcessArgs = {
+  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  editProcessId: Scalars['String']['input'];
+  expirationSeconds: Scalars['Int']['input'];
+  inputs: Array<InputTemplateArgs>;
+  name: Scalars['String']['input'];
+  options: Array<ProcessOptionArgs>;
+  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+  roles: RoleArgs;
+  webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SetUpDiscordServerInput = {
@@ -183,6 +324,13 @@ export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogOutMutation = { __typename?: 'Mutation', logOut?: { __typename?: 'LogOutResponse', ok: boolean, error?: string | null } | null };
 
+export type NewProcessMutationVariables = Exact<{
+  process: NewProcessArgs;
+}>;
+
+
+export type NewProcessMutation = { __typename?: 'Mutation', newProcess: string };
+
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -211,6 +359,7 @@ export const SetUpDiscordServerGroupDocument = {"kind":"Document","definitions":
 export const GroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Group"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}}]}}]} as unknown as DocumentNode<GroupQuery, GroupQueryVariables>;
 export const GroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupsForCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}}]}}]} as unknown as DocumentNode<GroupsQuery, GroupsQueryVariables>;
 export const LogOutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ok"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<LogOutMutation, LogOutMutationVariables>;
+export const NewProcessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NewProcess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"process"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"newProcessArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newProcess"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"process"},"value":{"kind":"Variable","name":{"kind":"Name","value":"process"}}}]}]}}]} as unknown as DocumentNode<NewProcessMutation, NewProcessMutationVariables>;
 export const UsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}}]} as unknown as DocumentNode<UsersQuery, UsersQueryVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordDataParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordData"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordId"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"discordData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordDataParts"}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
 
@@ -232,6 +381,30 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
 };
+
+export type AbsoluteDecision = {
+  __typename?: 'AbsoluteDecision';
+  createdAt: Scalars['String']['output'];
+  decisionSystemId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  threshold: Scalars['Int']['output'];
+  type: DecisionSystemTypes;
+};
+
+export type AbsoluteDecisionArgs = {
+  threshold: Scalars['Int']['input'];
+  type: DecisionSystemTypes;
+};
+
+export enum AgentType {
+  Group = 'Group',
+  User = 'User'
+}
+
+export enum DecisionSystemTypes {
+  Absolute = 'Absolute',
+  Percentage = 'Percentage'
+}
 
 export type DiscordApiServer = {
   __typename?: 'DiscordAPIServer';
@@ -284,9 +457,43 @@ export type Group = {
   type?: Maybe<GroupType>;
 };
 
+export type GroupRole = {
+  __typename?: 'GroupRole';
+  group: Group;
+  id: Scalars['String']['output'];
+  roleSetId: Scalars['String']['output'];
+  type: RoleType;
+};
+
 export enum GroupType {
   DiscordRole = 'DiscordRole'
 }
+
+export enum InputDataType {
+  Float = 'Float',
+  Int = 'Int',
+  Text = 'Text',
+  Uri = 'Uri'
+}
+
+export type InputTemplate = {
+  __typename?: 'InputTemplate';
+  createdAt: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  inputTemplateSetId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  required: Scalars['Boolean']['output'];
+  type: InputDataType;
+};
+
+export type InputTemplateArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  required: Scalars['Boolean']['input'];
+  type: InputDataType;
+};
 
 export type LogOutResponse = {
   __typename?: 'LogOutResponse';
@@ -297,7 +504,13 @@ export type LogOutResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   logOut?: Maybe<LogOutResponse>;
+  newProcess: Scalars['String']['output'];
   setUpDiscordServer: Group;
+};
+
+
+export type MutationNewProcessArgs = {
+  process: NewProcessArgs;
 };
 
 
@@ -314,10 +527,55 @@ export type OnboardedDiscordServer = {
   name: Scalars['String']['output'];
 };
 
+export enum OptionType {
+  Float = 'Float',
+  Int = 'Int',
+  Text = 'Text',
+  Uri = 'Uri'
+}
+
 export type Organization = {
   __typename?: 'Organization';
   icon: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type PercentageDecision = {
+  __typename?: 'PercentageDecision';
+  createdAt: Scalars['String']['output'];
+  decisionSystemId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  percentage: Scalars['Float']['output'];
+  quorum: Scalars['Int']['output'];
+  type: DecisionSystemTypes;
+};
+
+export type PercentageDecisionArgs = {
+  percentage: Scalars['Float']['input'];
+  quorum: Scalars['Int']['input'];
+  type: DecisionSystemTypes;
+};
+
+export type Process = {
+  __typename?: 'Process';
+  description?: Maybe<Scalars['String']['output']>;
+  expirationSeconds: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type ProcessOption = {
+  __typename?: 'ProcessOption';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  optionSetId: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  type: OptionType;
+  value: Scalars['String']['output'];
+};
+
+export type ProcessOptionArgs = {
+  type: Scalars['String']['input'];
+  value: Scalars['String']['input'];
 };
 
 export type Query = {
@@ -340,11 +598,43 @@ export type QueryGroupArgs = {
   id: Scalars['String']['input'];
 };
 
+export type RoleArgs = {
+  agentType: AgentType;
+  id: Scalars['String']['input'];
+  type: RoleType;
+};
+
+export enum RoleType {
+  Request = 'Request',
+  Respond = 'Respond'
+}
+
 export type User = {
   __typename?: 'User';
   discordData: DiscordData;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserRole = {
+  __typename?: 'UserRole';
+  id: Scalars['String']['output'];
+  roleSetId: Scalars['String']['output'];
+  type: RoleType;
+  user: User;
+};
+
+export type NewProcessArgs = {
+  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  editProcessId: Scalars['String']['input'];
+  expirationSeconds: Scalars['Int']['input'];
+  inputs: Array<InputTemplateArgs>;
+  name: Scalars['String']['input'];
+  options: Array<ProcessOptionArgs>;
+  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+  roles: RoleArgs;
+  webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SetUpDiscordServerInput = {

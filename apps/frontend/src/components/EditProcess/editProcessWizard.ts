@@ -2,7 +2,7 @@ import { EditProcessRoute, editProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface EditProcessState {
-  processName?: string;
+  name?: string;
 }
 
 export function useEditProcessWizardState() {
