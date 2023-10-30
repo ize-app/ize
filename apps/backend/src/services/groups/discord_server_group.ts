@@ -28,6 +28,8 @@ export async function setUpDiscordServerService(
       throw new Error("Cannot find @everyone role");
     }
 
+    const dog: string = context.currentUser.id;
+
     const existingGroup = await transaction.group.findFirst({
       where: {
         discordRoleGroup: {

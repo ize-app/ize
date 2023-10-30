@@ -109,16 +109,16 @@ model Process {
   id                      String      @id @default(uuid()) @db.Uuid
   /// Group that this process is intrinsically tied to (optional)
   type                    ProcessType
-  groupId                 String?      @map("group_id") @db.Uuid
+  groupId                 String?     @map("group_id") @db.Uuid
   /// Process version record that is currently actice for this process
-  currentProcessVersionId String      @unique @map("current_process_version_id") @db.Uuid
+  currentProcessVersionId String?     @unique @map("current_process_version_id") @db.Uuid
   createdAt               DateTime    @default(now()) @map("created_at")
   updatedAt               DateTime    @default(now()) @updatedAt @map("updated_at")
 
   /// All process version records for the process
   processVersions       ProcessVersion[] @relation("Process")
   /// Current version of this process 
-  currentProcessVersion ProcessVersion   @relation("CurrentProcess", fields: [currentProcessVersionId], references: [id])
+  currentProcessVersion ProcessVersion?  @relation("CurrentProcess", fields: [currentProcessVersionId], references: [id])
   /// all of the edit processes that give this process edit rights
   editProcessRightsFor  ProcessVersion[] @relation("EditProcess")
   group                 Group?           @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -186,7 +186,7 @@ model OptionSystem {
   /// When an option set is created by a process, this lists all the process versions that use this option set
   processVersions         ProcessVersion[]
 
-   @@map("option_systems")
+  @@map("option_systems")
 }
 
 /// Option sets are used to describe any list of options
@@ -236,13 +236,13 @@ enum OptionDataType {
 
 /// A set of ordered inputs that the process solicits from the creator of a request
 model InputTemplateSet {
-  id               String           @id @default(uuid()) @db.Uuid
-  createdAt        DateTime         @default(now()) @map("created_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
 
   /// Processes thatt use this input template set
-  processVersions  ProcessVersion[]
+  processVersions ProcessVersion[]
   /// All user inputs
-  inputTemplates   InputTemplate[]
+  inputTemplates  InputTemplate[]
 
   @@map("input_template_sets")
 }
@@ -372,7 +372,7 @@ model PercentageDecisionSystem {
   id               String   @id @default(uuid()) @db.Uuid
   decisionSystemId String   @unique @map("decision_system_id") @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at")
-  perentage        Float
+  percentage       Float
   quorum           Int
 
   decisionSystem DecisionSystem @relation(fields: [decisionSystemId], references: [id], onDelete: Cascade)

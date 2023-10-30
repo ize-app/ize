@@ -1,0 +1,131 @@
+input newProcessArgs {
+  name: String!
+  description: String
+  expirationSeconds: Int!
+  options: [ProcessOptionArgs!]!
+  inputs: [InputTemplateArgs!]!
+  webhookUri: String
+  absoluteDecision: AbsoluteDecisionArgs
+  percentageDecision: PercentageDecisionArgs
+  roles: RoleArgs!
+  editProcessId: String!
+}
+
+type Mutation {
+  newProcess(process: newProcessArgs!): String!
+}
+
+type Process {
+  name: String!
+  description: String
+  expirationSeconds: Int!
+}
+
+input ProcessOptionArgs {
+  value: String!
+  type: String!
+}
+
+type ProcessOption {
+  id: String!
+  value: String!
+  type: OptionType!
+  position: Int!
+  optionSetId: String!
+  createdAt: String!
+}
+
+enum OptionType {
+  Int
+  Float
+  Text
+  Uri
+}
+
+input InputTemplateArgs {
+  name: String!
+  type: InputDataType!
+  description: String
+  required: Boolean!
+}
+
+type InputTemplate {
+  id: String!
+  name: String!
+  position: Int!
+  type: InputDataType!
+  description: String
+  required: Boolean!
+  inputTemplateSetId: String!
+  createdAt: String!
+}
+
+enum InputDataType {
+  Int
+  Float
+  Text
+  Uri
+}
+
+input RoleArgs {
+  agentType: AgentType!
+  type: RoleType!
+  id: String!
+}
+
+type UserRole {
+  id: String!
+  type: RoleType!
+  roleSetId: String!
+  user: User!
+}
+
+type GroupRole {
+  id: String!
+  type: RoleType!
+  roleSetId: String!
+  group: Group!
+}
+
+enum RoleType {
+  Request
+  Respond
+}
+
+enum AgentType {
+  User
+  Group
+}
+
+input AbsoluteDecisionArgs {
+  type: DecisionSystemTypes!
+  threshold: Int!
+}
+
+input PercentageDecisionArgs {
+  type: DecisionSystemTypes!
+  percentage: Float!
+  quorum: Int!
+}
+
+type AbsoluteDecision {
+  id: String!
+  decisionSystemId: String!
+  type: DecisionSystemTypes!
+  threshold: Int!
+  createdAt: String!
+}
+
+type PercentageDecision {
+  id: String!
+  decisionSystemId: String!
+  type: DecisionSystemTypes!
+  percentage: Float!
+  quorum: Int!
+  createdAt: String!
+}
+
+enum DecisionSystemTypes {
+  Absolute
+  Percentage
+}
