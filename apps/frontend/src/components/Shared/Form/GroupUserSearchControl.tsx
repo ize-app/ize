@@ -7,40 +7,28 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 
-import { Avatar, UserDataProps } from "../Avatar";
+import { AgentType } from "../../../graphql/generated/graphql";
+import { ProcessOption } from "../../NewProcess/newProcessWizard";
+import { Avatar } from "../Avatar";
 
-interface Options {
-  id: string;
-  name: string;
-  icon: string;
-  memberCount: number;
-  oragnization: Organization;
-}
-
-interface Organization {
-  name: string;
-  icon: string;
-}
-
-const options: UserDataProps[] = [
+const options: ProcessOption[] = [
   {
+    id: "0ec840c7-f906-4470-8b2b-2af9ca74a4cf",
     name: "Token Engineering Commons",
-    avatarUrl:
-      "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
+    type: AgentType.Group,
+    icon: "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
   },
   {
+    id: "4f18f7dd-5111-4288-91fa-7a6fcfe32281",
     name: "poppe",
-    avatarUrl:
-      "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
+    type: AgentType.User,
+    icon: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
   },
   {
+    id: "4f18f7dd-5111-4288-91fa-7a6fcfe32281",
     name: "@core-team",
-    avatarUrl: "",
-    parent: {
-      name: "Token Engineering Common",
-      avatarUrl:
-        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-    },
+    type: AgentType.User,
+    icon: "",
   },
 ];
 
@@ -68,22 +56,22 @@ export const GroupUserSearchControl = ({
             {...field}
             {...props}
             options={options}
-            getOptionLabel={(option: UserDataProps) => option.name}
+            getOptionLabel={(option: ProcessOption) => option.name}
             onChange={(_event, data) => field.onChange(data)}
             isOptionEqualToValue={(
-              option: UserDataProps,
-              value: UserDataProps,
+              option: ProcessOption,
+              value: ProcessOption,
             ) => option.name === value.name}
-            renderTags={(value: readonly UserDataProps[], getTagProps) =>
-              value.map((option: UserDataProps, index: number) => (
+            renderTags={(value: readonly ProcessOption[], getTagProps) =>
+              value.map((option: ProcessOption, index: number) => (
                 <Chip
                   avatar={
                     <Avatar
-                      name={option.parent ? option.parent.name : option.name}
+                      name={option.name}
                       avatarUrl={
-                        option.parent
-                          ? option.parent.avatarUrl
-                          : option.avatarUrl
+                        option.oragnization
+                          ? option.oragnization.icon
+                          : option.icon
                       }
                     />
                   }
@@ -108,13 +96,13 @@ export const GroupUserSearchControl = ({
                 {...props}
               >
                 <Avatar
-                  avatarUrl={option.avatarUrl}
+                  avatarUrl={option.icon}
                   name={option.name}
                   parent={
-                    option.parent
+                    option.oragnization
                       ? {
-                          name: option.parent.name,
-                          avatarUrl: option.parent.avatarUrl,
+                          name: option.oragnization.name,
+                          avatarUrl: option.oragnization.icon,
                         }
                       : undefined
                   }

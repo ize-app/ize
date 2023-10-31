@@ -7,7 +7,7 @@ input newProcessArgs {
   webhookUri: String
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
-  roles: RoleArgs!
+  roles: [RoleArgs!]!
   editProcessId: String!
 }
 
@@ -23,7 +23,7 @@ type Process {
 
 input ProcessOptionArgs {
   value: String!
-  type: String!
+  type: OptionType!
 }
 
 type ProcessOption {
@@ -98,12 +98,10 @@ enum AgentType {
 }
 
 input AbsoluteDecisionArgs {
-  type: DecisionSystemTypes!
   threshold: Int!
 }
 
 input PercentageDecisionArgs {
-  type: DecisionSystemTypes!
   percentage: Float!
   quorum: Int!
 }
@@ -111,7 +109,6 @@ input PercentageDecisionArgs {
 type AbsoluteDecision {
   id: String!
   decisionSystemId: String!
-  type: DecisionSystemTypes!
   threshold: Int!
   createdAt: String!
 }
@@ -119,13 +116,7 @@ type AbsoluteDecision {
 type PercentageDecision {
   id: String!
   decisionSystemId: String!
-  type: DecisionSystemTypes!
   percentage: Float!
   quorum: Int!
   createdAt: String!
-}
-
-enum DecisionSystemTypes {
-  Absolute
-  Percentage
 }

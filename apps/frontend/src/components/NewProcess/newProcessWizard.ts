@@ -1,7 +1,19 @@
-import { InputTemplateArgs } from "../../graphql/generated/graphql";
+import { AgentType, InputTemplateArgs } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-import { UserDataProps } from "../shared/Avatar";
+
+export interface ProcessOption {
+  id: string;
+  name: string;
+  icon: string;
+  type: AgentType;
+  oragnization?: Organization;
+}
+
+interface Organization {
+  name: string;
+  icon: string;
+}
 
 export interface NewProcessState {
   name?: string;
@@ -22,6 +34,12 @@ export interface ProcessDecision {
   quorum?: ProcessQuorum;
 }
 
+export enum FormOptionChoice {
+  Custom = "Custom",
+  Emoji = "Emoji",
+  Checkmark = "Checkmark",
+}
+
 export interface ProcessQuorum {
   quorumType?: ThresholdTypes;
   quorumThreshold?: number;
@@ -40,9 +58,9 @@ export interface ProcessInput {
 }
 
 export interface ProcessRights {
-  request: UserDataProps[];
-  response: UserDataProps[];
-  edit: UserDataProps;
+  request: ProcessOption[];
+  response: ProcessOption[];
+  edit: ProcessOption;
 }
 
 export enum ProcessInputType {

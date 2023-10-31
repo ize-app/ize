@@ -10,11 +10,11 @@ import {
 const newProcess = async (
   root: unknown,
   args: {
-    input: NewCustomProcessInputs;
+    process: NewCustomProcessInputs;
   },
   context: GraphqlRequestContext,
 ) => {
-  return await newCustomProcess(args.input, context);
+  return await newCustomProcess(args.process, context);
 };
 
 export const processQueries = {};

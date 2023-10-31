@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { ThresholdTypes, useNewProcessWizardState } from "./newProcessWizard";
+import { AgentType } from "../../graphql/generated/graphql";
 import {
   GroupUserSearchControl,
   RadioControl,
@@ -15,7 +16,12 @@ import {
 } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
-const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
+const userGroupSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  icon: z.string(),
+  type: z.nativeEnum(AgentType),
+});
 
 const formSchema = z
   .object({

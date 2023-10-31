@@ -22,22 +22,15 @@ export type AbsoluteDecision = {
   decisionSystemId: Scalars['String']['output'];
   id: Scalars['String']['output'];
   threshold: Scalars['Int']['output'];
-  type: DecisionSystemTypes;
 };
 
 export type AbsoluteDecisionArgs = {
   threshold: Scalars['Int']['input'];
-  type: DecisionSystemTypes;
 };
 
 export enum AgentType {
   Group = 'Group',
   User = 'User'
-}
-
-export enum DecisionSystemTypes {
-  Absolute = 'Absolute',
-  Percentage = 'Percentage'
 }
 
 export type DiscordApiServer = {
@@ -181,13 +174,11 @@ export type PercentageDecision = {
   id: Scalars['String']['output'];
   percentage: Scalars['Float']['output'];
   quorum: Scalars['Int']['output'];
-  type: DecisionSystemTypes;
 };
 
 export type PercentageDecisionArgs = {
   percentage: Scalars['Float']['input'];
   quorum: Scalars['Int']['input'];
-  type: DecisionSystemTypes;
 };
 
 export type Process = {
@@ -208,7 +199,7 @@ export type ProcessOption = {
 };
 
 export type ProcessOptionArgs = {
-  type: Scalars['String']['input'];
+  type: OptionType;
   value: Scalars['String']['input'];
 };
 
@@ -267,7 +258,7 @@ export type NewProcessArgs = {
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
-  roles: RoleArgs;
+  roles: Array<RoleArgs>;
   webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -388,22 +379,15 @@ export type AbsoluteDecision = {
   decisionSystemId: Scalars['String']['output'];
   id: Scalars['String']['output'];
   threshold: Scalars['Int']['output'];
-  type: DecisionSystemTypes;
 };
 
 export type AbsoluteDecisionArgs = {
   threshold: Scalars['Int']['input'];
-  type: DecisionSystemTypes;
 };
 
 export enum AgentType {
   Group = 'Group',
   User = 'User'
-}
-
-export enum DecisionSystemTypes {
-  Absolute = 'Absolute',
-  Percentage = 'Percentage'
 }
 
 export type DiscordApiServer = {
@@ -547,13 +531,11 @@ export type PercentageDecision = {
   id: Scalars['String']['output'];
   percentage: Scalars['Float']['output'];
   quorum: Scalars['Int']['output'];
-  type: DecisionSystemTypes;
 };
 
 export type PercentageDecisionArgs = {
   percentage: Scalars['Float']['input'];
   quorum: Scalars['Int']['input'];
-  type: DecisionSystemTypes;
 };
 
 export type Process = {
@@ -574,7 +556,7 @@ export type ProcessOption = {
 };
 
 export type ProcessOptionArgs = {
-  type: Scalars['String']['input'];
+  type: OptionType;
   value: Scalars['String']['input'];
 };
 
@@ -633,7 +615,7 @@ export type NewProcessArgs = {
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
-  roles: RoleArgs;
+  roles: Array<RoleArgs>;
   webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 

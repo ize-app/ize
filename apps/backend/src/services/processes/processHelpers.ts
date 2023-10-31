@@ -15,25 +15,21 @@ export interface CreateInputTemplateArgs
   > {}
 
 export interface CreateAbsoluteDecisionArgs
-  extends Omit<Prisma.AbsoluteDecisionSystemCreateInput, "id" | "created_at"> {
-  type: "Absolute";
-}
+  extends Omit<Prisma.AbsoluteDecisionSystemCreateInput, "id" | "created_at"> {}
 
 export interface CreatePercentageDecisionArgs
   extends Omit<
     Prisma.PercentageDecisionSystemCreateInput,
     "id" | "created_at"
-  > {
-  type: "Percentage";
-}
+  > {}
 
 export interface CreateRoleUserArgs
-  extends Omit<Prisma.RoleUserCreateInput, "id" | "created_at"> {
+  extends Omit<Prisma.RoleUserCreateInput, "created_at"> {
   agentType: "User";
 }
 
 export interface CreateRoleGroupArgs
-  extends Omit<Prisma.RoleGroupCreateInput, "id" | "created_at"> {
+  extends Omit<Prisma.RoleGroupCreateInput, "created_at"> {
   agentType: "Group";
 }
 
@@ -118,7 +114,7 @@ export const createDecisionSystem = async (
   if (absoluteDecision)
     return await transaction.decisionSystem.create({
       data: {
-        type: absoluteDecision.type,
+        type: "Absolute",
         absoluteDecisionSystem: {
           create: absoluteDecision,
         },
@@ -127,7 +123,7 @@ export const createDecisionSystem = async (
   else if (percentageDecision) {
     return await transaction.decisionSystem.create({
       data: {
-        type: percentageDecision.type,
+        type: "Percentage",
         percentageDecisionSystem: {
           create: percentageDecision,
         },
@@ -149,14 +145,14 @@ export const createRoleSet = async (
   return await transaction.roleSet.create({
     data: {
       roleGroups: {
-        create: roles.filter(
-          (roles) => roles.agentType === "Group",
-        ) as CreateRoleGroupArgs[],
+        create: roles
+          .filter((roles) => roles.agentType === "Group")
+          .map((role) => ({ groupId: role.id, type: role.type })),
       },
       roleUsers: {
-        create: roles.filter(
-          (roles) => roles.agentType === "User",
-        ) as CreateRoleUserArgs[],
+        create: roles
+          .filter((roles) => roles.agentType === "User")
+          .map((role) => ({ userId: role.id, type: role.type })),
       },
     },
   });
