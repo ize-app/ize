@@ -1,5 +1,5 @@
 mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
-   setUpDiscordServer(input: $input) {
+  setUpDiscordServer(input: $input) {
     id
   }
 }
@@ -15,11 +15,11 @@ fragment GroupSummaryParts on Group {
   name
   icon
   memberCount
-  type
   color
   createdAt
   creator {
-    ...UserParts
+    id
+    name
   }
   organization {
     ...OrganizationParts
@@ -29,28 +29,27 @@ fragment GroupSummaryParts on Group {
   }
 }
 
-
 fragment DiscordRoleGroupParts on DiscordRoleGroup {
-    id
-    name
-    color
-    icon
-    discordRoleId
-    discordServer {
-      ...OnboardedDiscordServerParts
-    }
+  id
+  name
+  color
+  icon
+  discordRoleId
+  discordServer {
+    ...OnboardedDiscordServerParts
+  }
 }
 
 fragment OrganizationParts on Organization {
-    name
-    icon
+  name
+  icon
 }
 
 fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
-      id
-      discordServerId
-      name
-      icon     
+  id
+  discordServerId
+  name
+  icon
 }
 
 query Groups {

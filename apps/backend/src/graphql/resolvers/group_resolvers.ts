@@ -1,59 +1,9 @@
 import { setUpDiscordServerService } from "@services/groups/discord_server_group";
-import { GraphqlRequestContext } from "../context";
-import { prisma } from "../../prisma/client";
+import { GraphqlRequestContext } from "backend/src/graphql/context";
+import { prisma } from "backend/src/prisma/client";
 import { DiscordApi } from "@discord/api";
-import { Prisma } from "@prisma/client";
 
-const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
-  creator: {
-    include: {
-      discordData: true,
-    },
-  },
-  discordRoleGroup: {
-    include: {
-      discordServer: true,
-    },
-  },
-});
-
-type GroupPrismaType = Prisma.GroupGetPayload<{
-  include: typeof groupInclude;
-}>;
-
-const formatGroupData = (group: GroupPrismaType) => ({
-  ...group,
-  // discord only includes the @sign for @everyone
-  name:
-    group.discordRoleGroup.name !== "@everyone"
-      ? "@" + group.discordRoleGroup.name
-      : group.discordRoleGroup.name,
-  type: GroupType.DiscordRole,
-  icon: group.discordRoleGroup.icon
-    ? DiscordApi.createRoleIconURL(
-        group.discordRoleGroup.discordRoleId,
-        group.discordRoleGroup.icon,
-      )
-    : group.discordRoleGroup.name === "@everyone"
-    ? DiscordApi.createServerIconURL(
-        group.discordRoleGroup.discordServer.discordServerId,
-        group.discordRoleGroup.discordServer.icon,
-      )
-    : null,
-  // Discord uses 0 to mean "no color", though we want to represent that with null instead
-  color:
-    group.discordRoleGroup.color === 0
-      ? null
-      : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
-  memberCount: group.discordRoleGroup.memberCount,
-  organization: {
-    name: group.discordRoleGroup.discordServer.name,
-    icon: DiscordApi.createServerIconURL(
-      group.discordRoleGroup.discordServer.discordServerId,
-      group.discordRoleGroup.discordServer.icon,
-    ),
-  },
-});
+import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 
 const setUpDiscordServer = async (
   root: unknown,
@@ -79,7 +29,7 @@ const group = async (
     where: { id: args.id },
   });
 
-  return formatGroupData(group);
+  return formatGroup(group);
 };
 
 const groupsForCurrentUser = async (
@@ -94,9 +44,6 @@ const groupsForCurrentUser = async (
 
   // Get the servers for the user using the users' API token
   const userGuilds = await context.discordApi.getDiscordServers();
-
-  // const serverMap = new Map(userGuilds.map((guild) => [guild.id, guild]));
-  // const serverIds = userGuilds.map((guild) => guild.id);
 
   // Get the roles for the user in those servers
   // Only pulls roles that discord bot has access to (i.e. roles of servers that have bot installed)
@@ -127,18 +74,13 @@ const groupsForCurrentUser = async (
     include: groupInclude,
   });
 
-  const formattedGroups = groups.map((group) => formatGroupData(group));
+  const formattedGroups = groups.map((group) => formatGroup(group));
   return formattedGroups;
 };
 
 export const groupMutations = {
   setUpDiscordServer,
 };
-
-export enum GroupType {
-  Standard = "Standard",
-  DiscordRole = "DiscordRole",
-}
 
 export const groupQueries = {
   group,

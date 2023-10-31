@@ -1,6 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
+import { Process } from "frontend/src/graphql/generated/graphql";
 
 import {
   newCustomProcess,
@@ -13,10 +14,27 @@ const newProcess = async (
     process: NewCustomProcessInputs;
   },
   context: GraphqlRequestContext,
-) => {
+): Promise<string> => {
   return await newCustomProcess(args.process, context);
 };
 
-export const processQueries = {};
+const process = async (
+  root: unknown,
+  args: {
+    processId: string;
+  },
+  context: GraphqlRequestContext,
+): Promise<Process> => {
+  const processData = await prisma.process.findFirstOrThrow({
+    include: processInclude,
+    where: {
+      id: args.processId,
+    },
+  });
+
+  return formatProcess(processData);
+};
+
+export const processQueries = { process };
 
 export const processMutations = { newProcess };

@@ -1,10 +1,18 @@
 type Query {
   users: [User]
-  me: User
+  me: Me
+}
+
+type Me {
+  id: String!
+  name: String
+  discordData: DiscordData!
 }
 
 type User {
   id: String!
-  name: String
+  name: String!
+  icon: String
+  createdAt: String!
   discordData: DiscordData!
 }

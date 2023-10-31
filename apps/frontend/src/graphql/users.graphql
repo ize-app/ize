@@ -1,21 +1,28 @@
-query Users {
-  users {
-    ...UserParts
-  }
-}
+# query Users {
+#   users {
+#     ...UserParts
+#   }
+# }
 
 query Me {
   me {
-    ...UserParts
+    ...MeParts
+  }
+}
+
+fragment MeParts on Me {
+  id
+  name
+  discordData {
+    ...DiscordDataParts
   }
 }
 
 fragment UserParts on User {
   id
   name
-  discordData {
-    ...DiscordDataParts
-  }
+  icon
+  createdAt
 }
 
 fragment DiscordDataParts on DiscordData {

@@ -8,17 +8,30 @@ input newProcessArgs {
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
   roles: [RoleArgs!]!
-  editProcessId: String!
+  editProcessId: String
 }
 
 type Mutation {
   newProcess(process: newProcessArgs!): String!
 }
 
+type Query {
+  process(processId: String!): Process!
+}
+
 type Process {
+  id: String!
+  currentProcessVersionId: String!
   name: String!
   description: String
   expirationSeconds: Int!
+  creator: User!
+  options: [ProcessOption!]!
+  inputs: [InputTemplate!]!
+  roles: Roles!
+  webhookUri: String
+  decisionSystem: DecisionTypes!
+  createdAt: String!
 }
 
 input ProcessOptionArgs {
@@ -30,9 +43,6 @@ type ProcessOption {
   id: String!
   value: String!
   type: OptionType!
-  position: Int!
-  optionSetId: String!
-  createdAt: String!
 }
 
 enum OptionType {
@@ -52,12 +62,9 @@ input InputTemplateArgs {
 type InputTemplate {
   id: String!
   name: String!
-  position: Int!
   type: InputDataType!
   description: String
   required: Boolean!
-  inputTemplateSetId: String!
-  createdAt: String!
 }
 
 enum InputDataType {
@@ -73,18 +80,12 @@ input RoleArgs {
   id: String!
 }
 
-type UserRole {
-  id: String!
-  type: RoleType!
-  roleSetId: String!
-  user: User!
-}
+union Agent = User | Group
 
-type GroupRole {
-  id: String!
-  type: RoleType!
-  roleSetId: String!
-  group: Group!
+type Roles {
+  request: [Agent!]!
+  respond: [Agent!]!
+  edit: Agent
 }
 
 enum RoleType {
@@ -97,6 +98,17 @@ enum AgentType {
   Group
 }
 
+union DecisionTypes = AbsoluteDecision | PercentageDecision
+
+type AbsoluteDecision {
+  threshold: Int!
+}
+
+type PercentageDecision {
+  percentage: Float!
+  quorum: Int!
+}
+
 input AbsoluteDecisionArgs {
   threshold: Int!
 }
@@ -104,19 +116,4 @@ input AbsoluteDecisionArgs {
 input PercentageDecisionArgs {
   percentage: Float!
   quorum: Int!
-}
-
-type AbsoluteDecision {
-  id: String!
-  decisionSystemId: String!
-  threshold: Int!
-  createdAt: String!
-}
-
-type PercentageDecision {
-  id: String!
-  decisionSystemId: String!
-  percentage: Float!
-  quorum: Int!
-  createdAt: String!
 }

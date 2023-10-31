@@ -1,7 +1,3 @@
-enum GroupType {
-  DiscordRole
-}
-
 input setUpDiscordServerInput {
   serverId: String!
   roleId: String
@@ -23,7 +19,6 @@ type Group {
   color: String
   icon: String
   memberCount: Int!
-  type: GroupType
   organization: Organization!
   createdAt: String!
   discordRoleGroup: DiscordRoleGroup!
