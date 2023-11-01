@@ -32,7 +32,7 @@ const group = async (
   return formatGroup(group);
 };
 
-const groupsForCurrentUser = async (
+export const groupsForCurrentUser = async (
   root: unknown,
   args: {},
   context: GraphqlRequestContext,

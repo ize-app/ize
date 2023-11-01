@@ -17,6 +17,7 @@ type Mutation {
 
 type Query {
   process(processId: String!): Process!
+  processesForCurrentUser: [Process!]!
 }
 
 type Process {

@@ -3,6 +3,8 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
 import { Process } from "frontend/src/graphql/generated/graphql";
 
+import { groupsForCurrentUser } from "./group_resolvers";
+
 import {
   newCustomProcess,
   NewCustomProcessInputs,
@@ -35,6 +37,36 @@ const process = async (
   return formatProcess(processData);
 };
 
-export const processQueries = { process };
+const processesForCurrentUser = async (
+  root: unknown,
+  args: {},
+  context: GraphqlRequestContext,
+): Promise<Process[]> => {
+  const currentGroups = await groupsForCurrentUser(root, {}, context);
+  const groupIds = currentGroups.map((group) => group.id);
+
+  const processes = await prisma.process.findMany({
+    where: {
+      OR: [
+        {
+          currentProcessVersion: {
+            roleSet: {
+              OR: [
+                { roleGroups: { some: { groupId: { in: groupIds } } } },
+                { roleUsers: { some: { userId: context.currentUser.id } } },
+              ],
+            },
+          },
+        },
+      ],
+    },
+    include: processInclude,
+  });
+  const formattedProcesses = processes.map((process) => formatProcess(process));
+
+  return formattedProcesses;
+};
+
+export const processQueries = { process, processesForCurrentUser };
 
 export const processMutations = { newProcess };
