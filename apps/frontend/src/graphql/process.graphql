@@ -8,6 +8,12 @@ query Process($processId: String!) {
   }
 }
 
+query Processes {
+  processesForCurrentUser {
+    ...ProcessSummaryParts
+  }
+}
+
 fragment ProcessSummaryParts on Process {
   id
   currentProcessVersionId

@@ -1,10 +1,15 @@
+import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import { ChangeEvent, useState } from "react";
 
 import ProcessTable from "./ProcessTable";
+import {
+  ProcessSummaryPartsFragment,
+  ProcessesDocument,
+} from "../../../../graphql/generated/graphql";
 import { UserDataProps } from "../../Avatar";
+import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
-import { processMockData } from "../mockData";
 import Search from "../Search";
 
 const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
@@ -21,7 +26,12 @@ const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
 const ProcessTab = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredRequestData = processMockData
+  const { data, loading, error } = useQuery(ProcessesDocument);
+
+  const processes = (data?.processesForCurrentUser ??
+    []) as ProcessSummaryPartsFragment[];
+
+  const filteredRequestData = processes
     .filter((process) => {
       const regExSearchQuery = new RegExp(searchQuery, "i");
       let searchMatch = false;
@@ -31,14 +41,16 @@ const ProcessTab = () => {
         searchMatch = true;
       else if (searchForUser(regExSearchQuery, process.roles.respond))
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, [process.roles.edit]))
-        searchMatch = true;
+      // else if (searchForUser(regExSearchQuery, [process.roles.edit]))
+      //   searchMatch = true;
 
       return searchMatch;
     })
     .sort();
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Box
       sx={{
         display: "flex",

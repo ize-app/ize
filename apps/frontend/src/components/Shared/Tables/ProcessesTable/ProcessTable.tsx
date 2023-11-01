@@ -14,15 +14,17 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
+import { ProcessSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import {
   NewRequestRoute,
   Route,
   newRequestRoute,
 } from "../../../../routers/routes";
 import { Process } from "../../../../types";
+import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
-function ProcessRow(props: { process: Process.default }) {
+function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
   const { process } = props;
   const navigate = useNavigate();
 
@@ -31,7 +33,9 @@ function ProcessRow(props: { process: Process.default }) {
       <TableRow
         onClick={() =>
           navigate(
-            generatePath(Route.Process, { processId: process.processId }),
+            generatePath(Route.Process, {
+              processId: fullUUIDToShort(process.id),
+            }),
           )
         }
       >
@@ -67,7 +71,7 @@ function ProcessRow(props: { process: Process.default }) {
           hideOnSmallScreen={true}
         />
         <AvatarsCell
-          avatars={[process.roles.edit]}
+          avatars={process.roles.respond}
           align="center"
           hideOnSmallScreen={true}
         />
@@ -81,7 +85,8 @@ function ProcessRow(props: { process: Process.default }) {
                     e.stopPropagation();
                   }}
                   color={"primary"}
-                  disabled={!process.userRoles.edit}
+                  // TODO - bring in user roles from db/cache
+                  disabled={false}
                   edge={"start"}
                 />
               </span>
@@ -96,13 +101,14 @@ function ProcessRow(props: { process: Process.default }) {
                       generatePath(
                         newRequestRoute(NewRequestRoute.CreateRequest),
                         {
-                          processId: process.processId,
+                          processId: fullUUIDToShort(process.id),
                         },
                       ),
                     );
                   }}
                   color={"primary"}
-                  disabled={!process.userRoles.request}
+                  // TODO - bring in user roles from db/cache
+                  disabled={false}
                 />
               </span>
             </Tooltip>
@@ -116,7 +122,7 @@ function ProcessRow(props: { process: Process.default }) {
 export default function ProcessTable({
   processes,
 }: {
-  processes: Process.default[];
+  processes: ProcessSummaryPartsFragment[];
 }) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
@@ -158,7 +164,7 @@ export default function ProcessTable({
         </TableHead>
         <TableBody>
           {processes.map((process) => (
-            <ProcessRow key={process.processId} process={process} />
+            <ProcessRow key={process.id} process={process} />
           ))}
         </TableBody>
       </Table>
