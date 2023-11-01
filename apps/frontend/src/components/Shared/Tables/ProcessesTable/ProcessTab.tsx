@@ -3,10 +3,7 @@ import Box from "@mui/material/Box";
 import { ChangeEvent, useState } from "react";
 
 import ProcessTable from "./ProcessTable";
-import {
-  ProcessSummaryPartsFragment,
-  ProcessesDocument,
-} from "../../../../graphql/generated/graphql";
+import { ProcessSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { UserDataProps } from "../../Avatar";
 import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
@@ -23,13 +20,14 @@ const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
   return foundMatch;
 };
 
-const ProcessTab = () => {
+const ProcessTab = ({
+  processes,
+  loading,
+}: {
+  processes: ProcessSummaryPartsFragment[];
+  loading: boolean;
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-
-  const { data, loading, error } = useQuery(ProcessesDocument);
-
-  const processes = (data?.processesForCurrentUser ??
-    []) as ProcessSummaryPartsFragment[];
 
   const filteredRequestData = processes
     .filter((process) => {

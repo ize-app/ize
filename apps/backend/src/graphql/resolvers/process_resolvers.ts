@@ -47,6 +47,7 @@ const processesForCurrentUser = async (
 
   const processes = await prisma.process.findMany({
     where: {
+      // Add editProcess lookup later
       OR: [
         {
           currentProcessVersion: {
@@ -67,6 +68,31 @@ const processesForCurrentUser = async (
   return formattedProcesses;
 };
 
-export const processQueries = { process, processesForCurrentUser };
+const processesForGroup = async (
+  root: unknown,
+  args: { groupId: string },
+  context: GraphqlRequestContext,
+): Promise<Process[]> => {
+  const currentGroups = await groupsForCurrentUser(root, {}, context);
+
+  const processes = await prisma.process.findMany({
+    where: {
+      currentProcessVersion: {
+        roleSet: {
+          roleGroups: { some: { groupId: args.groupId } },
+        },
+      },
+    },
+    include: processInclude,
+  });
+  const formattedProcesses = processes.map((process) => formatProcess(process));
+
+  return formattedProcesses;
+};
+
+export const processQueries = {
+  processesForCurrentUser,
+  processesForGroup,
+};
 
 export const processMutations = { newProcess };

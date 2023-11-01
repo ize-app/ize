@@ -10,6 +10,8 @@ import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
   GroupDocument,
   GroupSummaryPartsFragment,
+  ProcessSummaryPartsFragment,
+  ProcessesForGroupDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { colors } from "../../style/style";
@@ -19,11 +21,6 @@ import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 import TabPanel from "../shared/Tables/TabPanel";
 import { TabProps, Tabs } from "../shared/Tables/Tabs";
-
-const tabs = [
-  { title: "Requests", content: <RequestTab /> },
-  { title: "Process", content: <ProcessTab /> },
-];
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();
@@ -36,6 +33,14 @@ export const Group = () => {
       id: groupId,
     },
   });
+
+  const { data: processData, loading: processLoading } = useQuery(
+    ProcessesForGroupDocument,
+    { variables: { groupId: groupId } },
+  );
+
+  const processes = (processData?.processesForGroup ??
+    []) as ProcessSummaryPartsFragment[];
 
   const group = data?.group as GroupSummaryPartsFragment;
 
@@ -51,10 +56,18 @@ export const Group = () => {
   };
 
   const onError = () => {
-    navigate("/");
+    // navigate("/");
     setSnackbarOpen(true);
     setSnackbarData({ message: "Invalid group", type: "error" });
   };
+
+  const tabs = [
+    { title: "Requests", content: <RequestTab /> },
+    {
+      title: "Process",
+      content: <ProcessTab processes={processes} loading={processLoading} />,
+    },
+  ];
 
   return error ? (
     onError()
@@ -126,7 +139,7 @@ export const Group = () => {
                   component="span"
                   sx={{ fontWeight: "bold", color: colors.primary }}
                 >
-                  {group.discordRoleGroup.discordServer.name}
+                  {group.organization.name}
                 </Box>
               </Typography>
             </Box>
