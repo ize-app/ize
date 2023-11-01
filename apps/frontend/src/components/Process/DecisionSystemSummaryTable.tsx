@@ -5,14 +5,14 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { Process } from "../../types";
+import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 import { summarizeDecisionSystem } from "../shared/Process/summarizeDecisionSystem";
 
 export const DecisionSystemSummaryTable = ({
   process,
 }: {
-  process: Process.default;
+  process: ProcessSummaryPartsFragment;
 }) => {
   return (
     <TableContainer
@@ -41,7 +41,7 @@ export const DecisionSystemSummaryTable = ({
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                {summarizeDecisionSystem(process.decision)}
+                {summarizeDecisionSystem(process.decisionSystem)}
               </Typography>
             </TableCell>
           </TableRow>
@@ -54,7 +54,7 @@ export const DecisionSystemSummaryTable = ({
             <TableCell>
               <Typography variant="body1">
                 {intervalToIntuitiveTimeString(
-                  process.decision.requestExpirationSeconds * 1000,
+                  process.expirationSeconds * 1000,
                 )}
               </Typography>
             </TableCell>

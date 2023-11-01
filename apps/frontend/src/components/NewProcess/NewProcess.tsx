@@ -103,12 +103,10 @@ export const SetupProcess = () => {
   const [mutate] = useMutation(NewProcessDocument, {
     onCompleted: (data) => {
       const { newProcess: newProcessId } = data;
-      navigate(`/groups/${fullUUIDToShort(newProcessId)}`);
+      navigate(`/processes/${fullUUIDToShort(newProcessId)}`);
     },
   });
 
-  // TODO: Will remove this disable once we put the actual mutation in this function
-  // eslint-disable-next-line @typescript-eslint/require-await
   const onComplete = async () => {
     try {
       await mutate({

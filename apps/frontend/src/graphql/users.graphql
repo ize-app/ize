@@ -18,7 +18,7 @@ fragment MeParts on Me {
   }
 }
 
-fragment UserParts on User {
+fragment UserSummaryParts on User {
   id
   name
   icon

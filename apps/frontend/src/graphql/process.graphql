@@ -31,12 +31,12 @@ fragment ProcessSummaryParts on Process {
 }
 
 fragment AgentSummaryParts on Agent {
-  # __typename
+  __typename
   ... on Group {
     ...GroupSummaryParts
   }
   ... on User {
-    ...UserParts
+    ...UserSummaryParts
   }
 }
 
@@ -76,7 +76,7 @@ fragment PercentageDecisionSummaryParts on PercentageDecision {
 }
 
 fragment DecisionTypesSummaryParts on DecisionTypes {
-  # __typename
+  __typename
   ... on AbsoluteDecision {
     # ...AbsoluteDecisionSummaryParts
     threshold
