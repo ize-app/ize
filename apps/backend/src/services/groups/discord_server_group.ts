@@ -7,12 +7,12 @@ import { Prisma, PrismaClient } from "@prisma/client";
 export async function setUpDiscordServerService(
   {
     serverId,
-    roleId
+    roleId,
   }: {
     serverId: string;
     roleId?: string;
   },
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ) {
   const botApi = DiscordApi.forBotUser();
   const server = await botApi.getDiscordServer(serverId);
@@ -28,30 +28,36 @@ export async function setUpDiscordServerService(
       throw new Error("Cannot find @everyone role");
     }
 
+    const dog: string = context.currentUser.id;
+
     const existingGroup = await transaction.group.findFirst({
       where: {
         discordRoleGroup: {
           discordServer: {
-            discordServerId: serverId
-          }
-        }
-      }
+            discordServerId: serverId,
+          },
+        },
+      },
     });
-  
+
     if (existingGroup) {
       throw new Error("Server has already been set-up");
     }
 
-    const members = await botApi.getDiscordGuildMembers({serverId: server.id})
+    const members = await botApi.getDiscordGuildMembers({
+      serverId: server.id,
+    });
 
-    const memberCount = botApi.countRoleMembers(members, serverRoles)
+    const memberCount = botApi.countRoleMembers(members, serverRoles);
 
     const everyoneGroup = await transaction.group.create({
-      include: { discordRoleGroup: {
-        include: {
-          discordServer: true,
+      include: {
+        discordRoleGroup: {
+          include: {
+            discordServer: true,
+          },
         },
-      }},
+      },
       data: {
         creatorId: context.currentUser.id,
         activeAt: new Date(),
@@ -69,14 +75,14 @@ export async function setUpDiscordServerService(
                 icon: server.icon,
                 banner: server.banner,
                 name: server.name,
-              }
-            }
+              },
+            },
           },
         },
       },
     });
 
-    if (roleId){
+    if (roleId) {
       const newRole = serverRoles.find((role) => role.id === roleId);
 
       await transaction.group.create({
@@ -92,15 +98,13 @@ export async function setUpDiscordServerService(
               icon: newRole.icon,
               unicodeEmoji: newRole.unicode_emoji,
               memberCount: memberCount[newRole.id],
-              discordServerId: everyoneGroup.discordRoleGroup.discordServer.id
+              discordServerId: everyoneGroup.discordRoleGroup.discordServer.id,
             },
           },
         },
       });
     }
 
-    
-    return everyoneGroup
-
+    return everyoneGroup;
   });
 }

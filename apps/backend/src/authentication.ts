@@ -5,7 +5,7 @@ import { prisma } from "./prisma/client";
 export const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const token = req.cookies.token;
 

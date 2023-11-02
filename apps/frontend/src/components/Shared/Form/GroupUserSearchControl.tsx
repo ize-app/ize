@@ -7,40 +7,21 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 
-import { Avatar, UserDataProps } from "../Avatar";
-
-const options: UserDataProps[] = [
-  {
-    name: "Token Engineering Commons",
-    avatarUrl:
-      "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-  },
-  {
-    name: "poppe",
-    avatarUrl:
-      "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-  },
-  {
-    name: "@core-team",
-    avatarUrl: "",
-    parent: {
-      name: "Token Engineering Common",
-      avatarUrl:
-        "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-    },
-  },
-];
+import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import { Avatar } from "../Avatar";
 
 interface GroupUserSearchControlProps {
   control: Control;
   name: string;
   label: string;
+  agents: AgentSummaryPartsFragment[];
 }
 
 export const GroupUserSearchControl = ({
   control,
   name,
   label,
+  agents,
   ...props
 }: GroupUserSearchControlProps) => {
   return (
@@ -54,26 +35,20 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={options}
-            getOptionLabel={(option: UserDataProps) => option.name}
+            options={agents}
+            getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
             onChange={(_event, data) => field.onChange(data)}
             isOptionEqualToValue={(
-              option: UserDataProps,
-              value: UserDataProps,
+              option: AgentSummaryPartsFragment,
+              value: AgentSummaryPartsFragment,
             ) => option.name === value.name}
-            renderTags={(value: readonly UserDataProps[], getTagProps) =>
-              value.map((option: UserDataProps, index: number) => (
+            renderTags={(
+              value: readonly AgentSummaryPartsFragment[],
+              getTagProps,
+            ) =>
+              value.map((option: AgentSummaryPartsFragment, index: number) => (
                 <Chip
-                  avatar={
-                    <Avatar
-                      name={option.parent ? option.parent.name : option.name}
-                      avatarUrl={
-                        option.parent
-                          ? option.parent.avatarUrl
-                          : option.avatarUrl
-                      }
-                    />
-                  }
+                  avatar={<Avatar name={option.name} avatarUrl={option.icon} />}
                   variant="filled"
                   label={option.name}
                   color="primary"
@@ -95,13 +70,13 @@ export const GroupUserSearchControl = ({
                 {...props}
               >
                 <Avatar
-                  avatarUrl={option.avatarUrl}
+                  avatarUrl={option.icon}
                   name={option.name}
                   parent={
-                    option.parent
+                    option.oragnization
                       ? {
-                          name: option.parent.name,
-                          avatarUrl: option.parent.avatarUrl,
+                          name: option.oragnization.name,
+                          avatarUrl: option.oragnization.icon,
                         }
                       : undefined
                   }

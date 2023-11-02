@@ -1,15 +1,28 @@
+import { AgentType, InputTemplateArgs } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-import { UserDataProps } from "../shared/Avatar";
+
+export interface ProcessOption {
+  id: string;
+  name: string;
+  icon: string;
+  type: AgentType;
+  oragnization?: Organization;
+}
+
+interface Organization {
+  name: string;
+  icon: string;
+}
 
 export interface NewProcessState {
-  processName?: string;
+  name?: string;
   description?: string;
   customIntegration?: string;
   webhookUri?: string;
   options?: string;
   customOptions?: string[];
-  inputs?: ProcessInput[];
+  inputs?: InputTemplateArgs[];
   rights?: ProcessRights;
   decision?: ProcessDecision;
 }
@@ -19,6 +32,12 @@ export interface ProcessDecision {
   requestExpirationSeconds?: number;
   decisionThreshold?: number;
   quorum?: ProcessQuorum;
+}
+
+export enum FormOptionChoice {
+  Custom = "Custom",
+  Emoji = "Emoji",
+  Checkmark = "Checkmark",
 }
 
 export interface ProcessQuorum {
@@ -32,16 +51,16 @@ export enum ThresholdTypes {
 }
 
 export interface ProcessInput {
-  fieldName: string;
+  name: string;
   description: string;
   required: boolean;
   type: ProcessInputType;
 }
 
 export interface ProcessRights {
-  request: UserDataProps[];
-  response: UserDataProps[];
-  edit: UserDataProps;
+  request: ProcessOption[];
+  response: ProcessOption[];
+  edit: ProcessOption;
 }
 
 export enum ProcessInputType {
@@ -73,7 +92,7 @@ export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<NewProcessState> = [
     title: "Inputs fields on each request",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: (formState: NewProcessState) => !!formState.processName,
+    validWizardState: (formState: NewProcessState) => !!formState.name,
   },
   {
     path: newProcessRoute(NewProcessRoute.Decisions),

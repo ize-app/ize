@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
@@ -8,6 +9,11 @@ import * as z from "zod";
 
 import { ThresholdTypes, useNewProcessWizardState } from "./newProcessWizard";
 import {
+  AgentSummaryPartsFragment,
+  AgentType,
+  GroupsAndUsersEliglbeForRoleDocument,
+} from "../../graphql/generated/graphql";
+import {
   GroupUserSearchControl,
   RadioControl,
   SelectControl,
@@ -15,7 +21,12 @@ import {
 } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
-const userGroupSchema = z.object({ name: z.string(), avatarUrl: z.string() });
+const userGroupSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  icon: z.string(),
+  type: z.nativeEnum(AgentType),
+});
 
 const formSchema = z
   .object({
@@ -109,8 +120,12 @@ const SliderContainer = ({
     </Box>
   </Box>
 );
-
 export const ProcessRights = () => {
+  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
+
+  const agents =
+    data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
+
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
   const totalGroupMembers = 128;
@@ -153,7 +168,6 @@ export const ProcessRights = () => {
 
     onNext();
   };
-  // start at size and grow regardless of
 
   return (
     <>
@@ -172,6 +186,7 @@ export const ProcessRights = () => {
               control={control}
               name={"rights.request"}
               label={"Who can create requests to trigger this process?"}
+              agents={agents}
             />
             <SelectControl
               //@ts-ignore
@@ -195,6 +210,7 @@ export const ProcessRights = () => {
               control={control}
               name={"rights.response"}
               label={"Who can respond to requests?"}
+              agents={agents}
             />
             <RadioControl
               //@ts-ignore
@@ -280,6 +296,7 @@ export const ProcessRights = () => {
               control={control}
               name={"rights.edit"}
               label={"Who is responsible for how this process evolves?"}
+              agents={agents}
             />
           </RightsContainer>
         </form>

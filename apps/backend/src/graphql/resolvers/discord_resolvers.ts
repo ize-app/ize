@@ -3,10 +3,10 @@ import { GraphqlRequestContext } from "../context";
 import { APIGuild, Guild } from "discord.js";
 import { DiscordApi } from "@discord/api";
 
-const discordServers = async (
+export const discordServers = async (
   root: unknown,
   args: {},
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ): Promise<Array<IDiscordServer>> => {
   const botApi = DiscordApi.forBotUser();
   const botGuilds = await botApi.getDiscordServers();
@@ -27,16 +27,16 @@ const discordServers = async (
 const discordServerRoles = async (
   root: unknown,
   args: { serverId: string },
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ) => {
   const botApi = DiscordApi.forBotUser();
   const roles = await botApi.getDiscordServerRoles(args.serverId);
- const cleanedRoles = roles.map((role) => ({
-  ...role,
-  unicodeEmoji: role.unicode_emoji, 
-  botRole: !!role.tags?.bot_id 
-}))
-  return cleanedRoles
+  const cleanedRoles = roles.map((role) => ({
+    ...role,
+    unicodeEmoji: role.unicode_emoji,
+    botRole: !!role.tags?.bot_id,
+  }));
+  return cleanedRoles;
 };
 
 export const discordQueries = {

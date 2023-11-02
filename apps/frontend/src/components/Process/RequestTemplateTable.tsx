@@ -5,13 +5,13 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { Process } from "../../types";
+import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { ProcessOptions } from "../shared/Process/ProcessOptions";
 
 export const RequestTemplateTable = ({
   process,
 }: {
-  process: Process.default;
+  process: ProcessSummaryPartsFragment;
 }) => {
   return (
     <TableContainer

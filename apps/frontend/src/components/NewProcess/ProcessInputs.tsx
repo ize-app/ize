@@ -12,7 +12,11 @@ import Typography from "@mui/material/Typography";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { ProcessInputType, useNewProcessWizardState } from "./newProcessWizard";
+import { useNewProcessWizardState } from "./newProcessWizard";
+import {
+  InputDataType,
+  InputTemplateArgs,
+} from "../../graphql/generated/graphql";
 import {
   CheckboxControl,
   SelectControl,
@@ -23,15 +27,17 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 const fieldArrayName = "processInputs";
 
 const rowSchema = z.object({
-  fieldName: z.string().trim().nonempty("Required"),
-  description: z.string().trim().nonempty("Required"),
+  name: z.string().trim().min(1),
+  description: z.string().trim(),
   required: z.boolean(),
-  type: z.nativeEnum(ProcessInputType),
+  type: z.nativeEnum(InputDataType),
 });
 
 const formSchema = z.object({ [fieldArrayName]: z.array(rowSchema) });
 
-type FormFields = z.infer<typeof formSchema>;
+interface FormFields {
+  processInputs: InputTemplateArgs[];
+}
 
 export const ProcessInputs = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
@@ -42,10 +48,10 @@ export const ProcessInputs = () => {
   const intitialFormState = inputs ? [...inputs] : [];
   if (intitialFormState.length === 0)
     intitialFormState.push({
-      fieldName: "Request title",
+      name: "Request title",
       description: "Brief summary of request",
       required: true,
-      type: ProcessInputType.Text,
+      type: InputDataType.Text,
     });
 
   const { control, handleSubmit } = useForm<FormFields>({
@@ -61,6 +67,7 @@ export const ProcessInputs = () => {
   });
 
   const onSubmit = (data: FormFields) => {
+    console.log("inputs are ", data.processInputs);
     setFormState((prev) => ({
       ...prev,
       inputs: [...data.processInputs],
@@ -96,15 +103,14 @@ export const ProcessInputs = () => {
               </TableHead>
               <TableBody>
                 {fields.map((item, index) => {
-                  const fieldName = `${fieldArrayName}[${index}]`;
-                  const noEdit =
-                    item.fieldName === "Request title" ? true : false;
+                  const name = `${fieldArrayName}[${index}]`;
+                  const noEdit = item.name === "Request title" ? true : false;
                   return (
                     <TableRow key={item.id}>
                       <TableCell sx={{ minWidth: "150px" }}>
                         <TextFieldControl
-                          name={`${fieldName}.fieldName`}
-                          key={"fieldName" + index.toString()}
+                          name={`${name}.name`}
+                          key={"name" + index.toString()}
                           fullWidth
                           disabled={noEdit}
                           //@ts-ignore
@@ -113,10 +119,10 @@ export const ProcessInputs = () => {
                       </TableCell>
                       <TableCell sx={{ width: "120px" }}>
                         <SelectControl
-                          name={`${fieldName}.type`}
+                          name={`${name}.type`}
                           selectOptions={[
-                            { name: "Number", value: ProcessInputType.Number },
-                            { name: "Text", value: ProcessInputType.Text },
+                            { name: "Number", value: InputDataType.Float },
+                            { name: "Text", value: InputDataType.Text },
                           ]}
                           key={"type" + index.toString()}
                           sx={{ width: "120px" }}
@@ -127,7 +133,7 @@ export const ProcessInputs = () => {
                       </TableCell>
                       <TableCell align="center">
                         <CheckboxControl
-                          name={`${fieldName}.required`}
+                          name={`${name}.required`}
                           key={"required" + index.toString()}
                           disabled={noEdit}
                           //@ts-ignore
@@ -136,7 +142,7 @@ export const ProcessInputs = () => {
                       </TableCell>
                       <TableCell sx={{ minWidth: "200px" }}>
                         <TextFieldControl
-                          name={`${fieldName}.description`}
+                          name={`${name}.description`}
                           key={"description" + index.toString()}
                           fullWidth
                           disabled={noEdit}
@@ -167,10 +173,10 @@ export const ProcessInputs = () => {
             variant="outlined"
             onClick={() => {
               append({
-                fieldName: "",
+                name: "",
                 description: "",
                 required: true,
-                type: ProcessInputType.Text,
+                type: InputDataType.Text,
               });
             }}
           >

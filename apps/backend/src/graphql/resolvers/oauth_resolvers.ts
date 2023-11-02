@@ -4,7 +4,7 @@ import { GraphqlRequestContext } from "../context";
 const logOut = async (
   root: unknown,
   args: unknown,
-  context: GraphqlRequestContext
+  context: GraphqlRequestContext,
 ) => {
   try {
     const discordOauth = await prisma.discordOauth.delete({

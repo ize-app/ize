@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { useNewProcessWizardState } from "./newProcessWizard";
+import { FormOptionChoice, useNewProcessWizardState } from "./newProcessWizard";
 import { RadioControl } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
@@ -62,11 +62,11 @@ export const ProcessIntro = () => {
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      name: formState.processName ?? "",
+      name: formState.name ?? "",
       description: formState.description ?? "",
       customIntegration: formState.customIntegration ?? "no",
       webhookUri: formState.webhookUri ?? "",
-      options: formState.options ?? "Yes/no emojiis",
+      options: formState.options ?? FormOptionChoice.Checkmark,
       customOptions: formState.customOptions ?? [],
     },
     resolver: zodResolver(formSchema),
@@ -74,12 +74,12 @@ export const ProcessIntro = () => {
   });
 
   const isCustomIntegration = watch("customIntegration") === "yes";
-  const isCustomOptions = watch("options") === "custom";
+  const isCustomOptions = watch("options") === FormOptionChoice.Custom;
 
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
       ...prev,
-      processName: data.name,
+      name: data.name,
       description: data.description,
       customIntegration: data.customIntegration,
       webhookUri: data.webhookUri,
@@ -202,9 +202,9 @@ export const ProcessIntro = () => {
               name="options"
               label="What options will users choose between?"
               options={[
-                { value: "Yes/no emojiis", label: "✅ ❌" },
-                { value: "Face emojiis", label: "😃 😐 😭" },
-                { value: "custom", label: "Custom" },
+                { value: FormOptionChoice.Checkmark, label: "✅ ❌" },
+                { value: FormOptionChoice.Emoji, label: "😃 😐 😭" },
+                { value: FormOptionChoice.Custom, label: "Custom" },
               ]}
             />
 

@@ -1,0 +1,122 @@
+input newProcessArgs {
+  name: String!
+  description: String
+  expirationSeconds: Int!
+  options: [ProcessOptionArgs!]!
+  inputs: [InputTemplateArgs!]!
+  webhookUri: String
+  absoluteDecision: AbsoluteDecisionArgs
+  percentageDecision: PercentageDecisionArgs
+  roles: [RoleArgs!]!
+  editProcessId: String
+}
+
+type Mutation {
+  newProcess(process: newProcessArgs!): String!
+}
+
+type Query {
+  process(processId: String!): Process!
+  processesForCurrentUser: [Process!]!
+  processesForGroup(groupId: String!): [Process!]!
+  groupsAndUsersEliglbeForRole: [Agent!]!
+}
+
+type Process {
+  id: String!
+  currentProcessVersionId: String!
+  name: String!
+  description: String
+  expirationSeconds: Int!
+  creator: User!
+  options: [ProcessOption!]!
+  inputs: [InputTemplate!]!
+  roles: Roles!
+  webhookUri: String
+  decisionSystem: DecisionTypes!
+  createdAt: String!
+}
+
+input ProcessOptionArgs {
+  value: String!
+  type: OptionType!
+}
+
+type ProcessOption {
+  id: String!
+  value: String!
+  type: OptionType!
+}
+
+enum OptionType {
+  Int
+  Float
+  Text
+  Uri
+}
+
+input InputTemplateArgs {
+  name: String!
+  type: InputDataType!
+  description: String
+  required: Boolean!
+}
+
+type InputTemplate {
+  id: String!
+  name: String!
+  type: InputDataType!
+  description: String
+  required: Boolean!
+}
+
+enum InputDataType {
+  Int
+  Float
+  Text
+  Uri
+}
+
+input RoleArgs {
+  agentType: AgentType!
+  type: RoleType!
+  id: String!
+}
+
+union Agent = User | Group
+
+type Roles {
+  request: [Agent!]!
+  respond: [Agent!]!
+  edit: Agent
+}
+
+enum RoleType {
+  Request
+  Respond
+}
+
+enum AgentType {
+  User
+  Group
+}
+
+union DecisionTypes = AbsoluteDecision | PercentageDecision
+
+type AbsoluteDecision {
+  threshold: Int!
+}
+
+type PercentageDecision {
+  percentage: Float!
+  quorum: Int!
+}
+
+input AbsoluteDecisionArgs {
+  threshold: Int!
+}
+
+input PercentageDecisionArgs {
+  percentage: Float!
+  quorum: Int!
+}

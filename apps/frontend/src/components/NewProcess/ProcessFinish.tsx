@@ -12,7 +12,7 @@ export const ProcessFinish = () => {
         <Typography variant="body1">
           Almost done! Confirm the details for how{" "}
           <span style={{ fontWeight: "bold" }}>
-            {formState.processName ?? "this process"}
+            {formState.name ?? "this process"}
           </span>{" "}
           works. Click "Finish" to create the process.
         </Typography>

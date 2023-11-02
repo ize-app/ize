@@ -6,6 +6,11 @@ const link = createHttpLink({
 });
 
 export const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    possibleTypes: {
+      Agent: ["User", "Group"],
+      DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
+    },
+  }),
   link,
 });

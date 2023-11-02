@@ -1,17 +1,25 @@
+import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useContext } from "react";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import {
+  ProcessDocument,
+  ProcessSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
+import { shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
-import { processMockData } from "../shared/Tables/mockData";
+import Loading from "../shared/Loading";
 import RequestTab, {
   FilterOptions,
 } from "../shared/Tables/RequestsTable/RequestTab";
@@ -20,18 +28,35 @@ const truncatedUri = (uri: string) =>
   uri.substring(0, 15) + "..." + uri.substring(uri.length - 5, uri.length - 1);
 
 export const Process = () => {
-  const { processId } = useParams();
+  const { processId: processIdShort } = useParams();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+
+  const processId: string = shortUUIDToFull(processIdShort as string);
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
-  const process = processMockData.find(
-    (process) => process.processId === processId,
-  );
+  const { data, loading, error } = useQuery(ProcessDocument, {
+    variables: {
+      processId: processId,
+    },
+  });
 
-  return process ? (
+  const onError = () => {
+    navigate("/");
+    setSnackbarOpen(true);
+    setSnackbarData({ message: "Invalid process", type: "error" });
+  };
+
+  const process = data?.process as ProcessSummaryPartsFragment;
+
+  return error ? (
+    onError()
+  ) : loading || !process ? (
+    <Loading />
+  ) : (
     <>
-      <Head title={process.name} description={process.description} />
+      <Head title={process.name} description={process.description ?? ""} />
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box>
@@ -66,7 +91,8 @@ export const Process = () => {
               variant="contained"
               sx={{
                 width: "140px",
-                display: process.userRoles.request ? "flex" : "none",
+                // TODO: Query user roles from group/individual
+                display: true ? "flex" : "none",
               }}
               onClick={() =>
                 navigate(
@@ -82,7 +108,8 @@ export const Process = () => {
               variant="contained"
               sx={{
                 width: "140px",
-                display: process.userRoles.edit ? "flex" : "none",
+                // TODO: Query user roles from group/individual
+                display: true ? "flex" : "none",
               }}
             >
               Edit process
@@ -108,12 +135,9 @@ export const Process = () => {
           <RequestTab
             defaultFilterOption={FilterOptions.All}
             hideCreateButton
-            processId={process.processId}
           />
         </Box>
       </Box>
     </>
-  ) : (
-    <div>Hmmmmm.... can't find that process</div>
   );
 };

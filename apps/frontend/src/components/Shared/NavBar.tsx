@@ -75,7 +75,7 @@ const UserDropDown = ({
     update: (cache) =>
       cache.evict({
         id: "ROOT_QUERY",
-        fieldName: "me",
+        name: "me",
       }),
   });
 

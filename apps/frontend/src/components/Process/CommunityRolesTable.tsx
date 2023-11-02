@@ -5,13 +5,13 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { Process } from "../../types";
+import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { AvatarsCell } from "../shared/Tables/TableCells";
 
 export const CommunityRolesTable = ({
   process,
 }: {
-  process: Process.default;
+  process: ProcessSummaryPartsFragment;
 }) => {
   return (
     <TableContainer
@@ -51,7 +51,7 @@ export const CommunityRolesTable = ({
                 how this process works over time
               </Typography>
             </TableCell>
-            <AvatarsCell align="center" avatars={[process.roles.edit]} />
+            {/* <AvatarsCell align="center" avatars={[process.roles.edit]} /> */}
           </TableRow>
         </TableBody>
       </Table>
