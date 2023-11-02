@@ -1,7 +1,10 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import { Process } from "frontend/src/graphql/generated/graphql";
+import { Group, Process, User } from "frontend/src/graphql/generated/graphql";
+import { discordServers } from "./discord_resolvers";
+import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { formatUser, userInclude } from "backend/src/utils/formatUser";
 
 import { groupsForCurrentUser } from "./group_resolvers";
 
@@ -90,10 +93,48 @@ const processesForGroup = async (
   return formattedProcesses;
 };
 
+// get all groups and users that a user is eligible to assign a role in a process
+// to start that is just going to be
+// 1) groups that are part of groups that user is in
+// 2) the user themselves
+const groupsAndUsersEliglbeForRole = async (
+  root: unknown,
+  args: {},
+  context: GraphqlRequestContext,
+): Promise<(User | Group)[]> => {
+  const servers = await discordServers(root, {}, context);
+  const serverIds = await servers.map((server) => server.id);
+  const arr: (User | Group)[] = [];
+
+  const groups = await prisma.group.findMany({
+    where: {
+      discordRoleGroup: {
+        discordServer: {
+          discordServerId: { in: serverIds },
+        },
+      },
+    },
+    include: groupInclude,
+  });
+  const formattedGroups = groups.map((group) => formatGroup(group));
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: context.currentUser.id,
+    },
+    include: userInclude,
+  });
+  const formattedUser = formatUser(user);
+
+  const res: (User | Group)[] = arr.concat(formattedGroups, formattedUser);
+  return res;
+};
+
 export const processQueries = {
   process,
   processesForCurrentUser,
   processesForGroup,
+  groupsAndUsersEliglbeForRole,
 };
 
 export const processMutations = { newProcess };

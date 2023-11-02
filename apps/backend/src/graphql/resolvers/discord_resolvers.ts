@@ -3,7 +3,7 @@ import { GraphqlRequestContext } from "../context";
 import { APIGuild, Guild } from "discord.js";
 import { DiscordApi } from "@discord/api";
 
-const discordServers = async (
+export const discordServers = async (
   root: unknown,
   args: {},
   context: GraphqlRequestContext,

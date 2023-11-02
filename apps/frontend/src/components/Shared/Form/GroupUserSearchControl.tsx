@@ -7,41 +7,21 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 
-import { AgentType } from "../../../graphql/generated/graphql";
-import { ProcessOption } from "../../NewProcess/newProcessWizard";
+import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { Avatar } from "../Avatar";
-
-const options: ProcessOption[] = [
-  {
-    id: "0ec840c7-f906-4470-8b2b-2af9ca74a4cf",
-    name: "Token Engineering Commons",
-    type: AgentType.Group,
-    icon: "https://yt3.googleusercontent.com/ytc/AOPolaSkSJ6dSSdglPQ45Z6t7PuxR0r7elOmaKnS6_aP=s176-c-k-c0x00ffffff-no-rj",
-  },
-  {
-    id: "4f18f7dd-5111-4288-91fa-7a6fcfe32281",
-    name: "poppe",
-    type: AgentType.User,
-    icon: "https://cdn.discordapp.com/avatars/707707546114457641/3947a78996ba9e32703b635a40de6822.webp?size=240",
-  },
-  {
-    id: "4f18f7dd-5111-4288-91fa-7a6fcfe32281",
-    name: "@core-team",
-    type: AgentType.User,
-    icon: "",
-  },
-];
 
 interface GroupUserSearchControlProps {
   control: Control;
   name: string;
   label: string;
+  agents: AgentSummaryPartsFragment[];
 }
 
 export const GroupUserSearchControl = ({
   control,
   name,
   label,
+  agents,
   ...props
 }: GroupUserSearchControlProps) => {
   return (
@@ -55,26 +35,20 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={options}
-            getOptionLabel={(option: ProcessOption) => option.name}
+            options={agents}
+            getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
             onChange={(_event, data) => field.onChange(data)}
             isOptionEqualToValue={(
-              option: ProcessOption,
-              value: ProcessOption,
+              option: AgentSummaryPartsFragment,
+              value: AgentSummaryPartsFragment,
             ) => option.name === value.name}
-            renderTags={(value: readonly ProcessOption[], getTagProps) =>
-              value.map((option: ProcessOption, index: number) => (
+            renderTags={(
+              value: readonly AgentSummaryPartsFragment[],
+              getTagProps,
+            ) =>
+              value.map((option: AgentSummaryPartsFragment, index: number) => (
                 <Chip
-                  avatar={
-                    <Avatar
-                      name={option.name}
-                      avatarUrl={
-                        option.oragnization
-                          ? option.oragnization.icon
-                          : option.icon
-                      }
-                    />
-                  }
+                  avatar={<Avatar name={option.name} avatarUrl={option.icon} />}
                   variant="filled"
                   label={option.name}
                   color="primary"

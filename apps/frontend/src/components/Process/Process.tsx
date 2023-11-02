@@ -31,9 +31,6 @@ export const Process = () => {
   const { processId: processIdShort } = useParams();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
-  // 605ae87d-5be4-4728-8f40-8ce3179c4ae2
-  // cU71SoHQzMzLWhpv7Fpa5N
-
   const processId: string = shortUUIDToFull(processIdShort as string);
   const theme = useTheme();
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));

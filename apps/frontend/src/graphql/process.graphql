@@ -20,6 +20,12 @@ query ProcessesForGroup($groupId: String!) {
   }
 }
 
+query GroupsAndUsersEliglbeForRole {
+  groupsAndUsersEliglbeForRole {
+    ...AgentSummaryParts
+  }
+}
+
 fragment ProcessSummaryParts on Process {
   id
   currentProcessVersionId
