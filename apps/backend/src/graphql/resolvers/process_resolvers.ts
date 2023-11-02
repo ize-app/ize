@@ -91,6 +91,7 @@ const processesForGroup = async (
 };
 
 export const processQueries = {
+  process,
   processesForCurrentUser,
   processesForGroup,
 };

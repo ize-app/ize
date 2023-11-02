@@ -66,7 +66,7 @@ export const ProcessIntro = () => {
       description: formState.description ?? "",
       customIntegration: formState.customIntegration ?? "no",
       webhookUri: formState.webhookUri ?? "",
-      options: formState.options ?? "Yes/no emojiis",
+      options: formState.options ?? FormOptionChoice.Checkmark,
       customOptions: formState.customOptions ?? [],
     },
     resolver: zodResolver(formSchema),

@@ -131,7 +131,6 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
     roles: formatRoles(roleSet),
     createdAt: processData.createdAt.toDateString(),
   };
-  console.log("data is ", data.roles.request);
   return data;
 };
 
