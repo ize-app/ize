@@ -2,7 +2,31 @@ type Mutation {
   newRequest(processId: String!, requestInputs: [RequestInputArgs!]): String!
 }
 
+type Query {
+  request(requestId: String!): Request!
+}
+
 input RequestInputArgs {
   inputId: String!
   value: String!
+}
+
+type Request {
+  id: String!
+  name: String!
+  creator: User!
+  process: Process!
+  expirationDate: String!
+  inputs: [RequestInput!]!
+  createdAt: String!
+}
+
+type RequestInput {
+  inputTemplateId: String!
+  requestInputId: String!
+  name: String!
+  description: String
+  type: InputDataType!
+  value: String!
+  required: Boolean!
 }

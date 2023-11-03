@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -5,16 +6,25 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import {
+  RequestDocument,
+  RequestSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
-import { intervalToIntuitiveTimeString } from "../../utils/inputs";
+import {
+  intervalToIntuitiveTimeString,
+  shortUUIDToFull,
+} from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import { NameWithPopper } from "../shared/Avatar";
+import Loading from "../shared/Loading";
 import { RequestInputTable, SubmitResponse } from "../shared/Request";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
-import { ResponseList } from "../shared/Request/ResponseList";
-import { ResponseCount, requestMockData } from "../shared/Tables/mockData";
+import { ResponseCount } from "../shared/Tables/mockData";
 
 export default function HorizontalBars({
   responseCounts,
@@ -92,15 +102,37 @@ export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
 };
 
 export const Request = () => {
-  const { requestId } = useParams();
-  const request = requestMockData.find(
-    (request) => request.requestId === requestId,
-  );
+  const { requestId: shortRequestId } = useParams();
+  const requestId = shortUUIDToFull(shortRequestId as string);
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const navigate = useNavigate();
+
+  const { data, loading, error } = useQuery(RequestDocument, {
+    variables: {
+      requestId: requestId,
+    },
+  });
+
+  console.log("data is ", data);
+
+  // const onError = () => {
+  //   navigate("/");
+  //   setSnackbarOpen(true);
+  //   setSnackbarData({ message: "Invalid request", type: "error" });
+  // };
+
+  // useEffect(() => {
+  //   if (error) onError();
+  // }, [error, onError]);
+
+  const request = data?.request as RequestSummaryPartsFragment;
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
 
-  return request ? (
+  return loading || !request ? (
+    <Loading />
+  ) : (
     <>
       <Head
         title={request.name}
@@ -130,7 +162,7 @@ export const Request = () => {
             })}
           >
             <Box sx={{ display: "flex", flexDirection: "row", gap: "12px" }}>
-              <RemainingTime expirationDate={request.expirationDate} />
+              <RemainingTime expirationDate={new Date()} />
             </Box>
             <Box sx={{ display: "flex", gap: ".3rem" }}>
               <Typography variant="body1"> Requested by </Typography>{" "}
@@ -173,12 +205,12 @@ export const Request = () => {
                 }}
               />
             </Accordion>
-            <Accordion label="Results" id="response-count-panel">
+            {/* <Accordion label="Results" id="response-count-panel">
               <HorizontalBars responseCounts={request.result.responseCount} />
             </Accordion>
             <Accordion label="Responses" id="response-list-panel">
               <ResponseList responses={request.responses} />
-            </Accordion>
+            </Accordion> */}
           </Box>
           <Box
             sx={{
@@ -205,7 +237,5 @@ export const Request = () => {
         </Box>
       </Box>
     </>
-  ) : (
-    <div>Cannot find request</div>
   );
 };

@@ -58,7 +58,6 @@ export const newRequestService = async (
         },
       },
     });
-    console.log("request created,", request.id);
 
     return request.id;
   });

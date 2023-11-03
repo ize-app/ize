@@ -1,3 +1,35 @@
 mutation NewRequest($processId: String!, $requestInputs: [RequestInputArgs!]) {
   newRequest(processId: $processId, requestInputs: $requestInputs)
 }
+
+query Request($requestId: String!) {
+  request(requestId: $requestId) {
+    ...RequestSummaryParts
+  }
+}
+
+fragment RequestSummaryParts on Request {
+  id
+  name
+  creator {
+    ...UserSummaryParts
+  }
+  process {
+    ...ProcessSummaryParts
+  }
+  expirationDate
+  inputs {
+    ...RequestInputSummaryParts
+  }
+  createdAt
+}
+
+fragment RequestInputSummaryParts on RequestInput {
+  inputTemplateId
+  requestInputId
+  name
+  description
+  type
+  value
+  required
+}

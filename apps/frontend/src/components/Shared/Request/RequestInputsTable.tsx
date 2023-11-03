@@ -5,7 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { RequestInput } from "../Tables/mockData";
+import { RequestInput } from "../../../graphql/generated/graphql";
 
 const RequestInputRow = ({
   input,
@@ -18,7 +18,7 @@ const RequestInputRow = ({
     <TableRow>
       <TableCell>
         <Typography fontWeight={500} variant={fontSize}>
-          {input.property}
+          {input.name}
         </Typography>
       </TableCell>
       <TableCell>
@@ -48,7 +48,7 @@ export const RequestInputTable = ({
     >
       <Table aria-label="collapsible table" size={rowSize}>
         <TableBody>
-          {inputs.map((input, index) => (
+          {inputs.map((input: RequestInput, index) => (
             <RequestInputRow
               input={input}
               fontSize={rowSize === "medium" ? "body1" : "body2"}
