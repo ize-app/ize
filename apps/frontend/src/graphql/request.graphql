@@ -8,6 +8,24 @@ query Request($requestId: String!) {
   }
 }
 
+query RequestsForGroup($groupId: String!) {
+  requestsForGroup(groupId: $groupId) {
+    ...RequestSummaryParts
+  }
+}
+
+query RequestsForCurrentUser {
+  requestsForCurrentUser {
+    ...RequestSummaryParts
+  }
+}
+
+query RequestsForProcess($processId: String!) {
+  requestsForProcess(processId: $processId) {
+    ...RequestSummaryParts
+  }
+}
+
 fragment RequestSummaryParts on Request {
   id
   name

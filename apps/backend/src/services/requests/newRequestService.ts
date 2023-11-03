@@ -28,6 +28,9 @@ export const newRequestService = async (
           },
         },
       },
+      where: {
+        id: processId,
+      },
     });
 
     process.currentProcessVersion.roleSet.roleGroups[0].groupId;

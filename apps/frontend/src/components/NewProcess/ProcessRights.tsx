@@ -121,7 +121,7 @@ const SliderContainer = ({
   </Box>
 );
 export const ProcessRights = () => {
-  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
+  const { data, loading } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
 
   const agents =
     data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
@@ -156,6 +156,7 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
+    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       ...data,
@@ -169,7 +170,7 @@ export const ProcessRights = () => {
     onNext();
   };
 
-  return (
+  return loading ? null : (
     <>
       <WizardBody>
         <form

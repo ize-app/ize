@@ -1,32 +1,16 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { Prisma, PrismaClient } from "@prisma/client";
+
+import { NewProcessArgs } from "frontend/src/graphql/generated/graphql";
+
 import {
   createOptionSystem,
   createInputTemplateSet,
   createAction,
   createDecisionSystem,
   createRoleSet,
-  CreateInputTemplateArgs,
-  CreateOptionArgs,
-  CreateAbsoluteDecisionArgs,
-  CreatePercentageDecisionArgs,
-  CreateRoleGroupArgs,
-  CreateRoleUserArgs,
 } from "./processHelpers";
-
-export interface NewCustomProcessInputs {
-  name: string;
-  description?: string;
-  expirationSeconds: number;
-  options: CreateOptionArgs[];
-  inputs: CreateInputTemplateArgs[];
-  webhookUri?: string;
-  absoluteDecision?: CreateAbsoluteDecisionArgs;
-  percentageDecision?: CreatePercentageDecisionArgs;
-  roles: (CreateRoleGroupArgs | CreateRoleUserArgs)[];
-  editProcessId: string;
-}
 
 export const newCustomProcess = async (
   {
@@ -40,7 +24,7 @@ export const newCustomProcess = async (
     percentageDecision,
     roles,
     editProcessId,
-  }: NewCustomProcessInputs,
+  }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {

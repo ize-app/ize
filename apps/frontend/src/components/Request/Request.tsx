@@ -113,8 +113,6 @@ export const Request = () => {
     },
   });
 
-  console.log("data is ", data);
-
   // const onError = () => {
   //   navigate("/");
   //   setSnackbarOpen(true);

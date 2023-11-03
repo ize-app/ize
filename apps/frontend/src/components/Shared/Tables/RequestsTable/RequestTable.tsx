@@ -14,8 +14,9 @@ import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { ExpandedRequest } from "./ExpandedRequest";
+import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { Route } from "../../../../routers/routes";
-import { RequestProps } from "../mockData";
+import { fullUUIDToShort } from "../../../../utils/inputs";
 import {
   AvatarsCell,
   StatusCell,
@@ -23,21 +24,23 @@ import {
   TwoTierCell,
 } from "../TableCells";
 
-function RequestRow(props: { request: RequestProps }) {
+function RequestRow(props: { request: RequestSummaryPartsFragment }) {
   const { request } = props;
   const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
 
-  const alreadyResponded = typeof request.userResponse === "string";
-  const requestOpen = request.expirationDate >= new Date();
+  const alreadyResponded = true; //typeof request.userResponse === "string";
+  const requestOpen = true; // request.expirationDate >= new Date();
 
   return (
     <React.Fragment>
       <TableRow
         onClick={() =>
           navigate(
-            generatePath(Route.Request, { requestId: request.requestId }),
+            generatePath(Route.Request, {
+              requestId: fullUUIDToShort(request.id),
+            }),
           )
         }
         sx={{
@@ -61,7 +64,8 @@ function RequestRow(props: { request: RequestProps }) {
         <StatusCell
           align="center"
           hideOnSmallScreen={true}
-          expirationDate={request.expirationDate}
+          expirationDate={new Date()}
+          // expirationDate={request.expirationDate}
           alreadyResponded={alreadyResponded}
         ></StatusCell>
         <TableCellHideable align={"center"}>
@@ -82,7 +86,7 @@ function RequestRow(props: { request: RequestProps }) {
             </Button>
           ) : (
             <Typography>
-              {request.userResponse ? request.userResponse : "-"}
+              {/* {request.userResponse ? request.userResponse : "-"} */}
             </Typography>
           )}
         </TableCellHideable>
@@ -104,7 +108,7 @@ function RequestRow(props: { request: RequestProps }) {
 }
 
 interface RequestTableProps {
-  requests: RequestProps[];
+  requests: RequestSummaryPartsFragment[];
 }
 
 export default function RequestTable({ requests }: RequestTableProps) {
@@ -137,7 +141,7 @@ export default function RequestTable({ requests }: RequestTableProps) {
         </TableHead>
         <TableBody>
           {requests.map((request) => (
-            <RequestRow key={request.requestId} request={request} />
+            <RequestRow key={request.id} request={request} />
           ))}
         </TableBody>
       </Table>

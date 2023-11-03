@@ -1,22 +1,24 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import { Group, Process, User } from "frontend/src/graphql/generated/graphql";
+import {
+  Group,
+  Process,
+  User,
+  NewProcessArgs,
+} from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { formatUser, userInclude } from "backend/src/utils/formatUser";
 
 import { groupsForCurrentUser } from "./group_resolvers";
 
-import {
-  newCustomProcess,
-  NewCustomProcessInputs,
-} from "../../services/processes/newProcess";
+import { newCustomProcess } from "../../services/processes/newProcess";
 
 const newProcess = async (
   root: unknown,
   args: {
-    process: NewCustomProcessInputs;
+    process: NewProcessArgs;
   },
   context: GraphqlRequestContext,
 ): Promise<string> => {
@@ -74,7 +76,22 @@ const processesForCurrentUser = async (
                     },
                   },
                 },
-                { roleUsers: { some: { userId: context.currentUser.id } } },
+                {
+                  roleUsers: {
+                    some: {
+                      AND: [
+                        { userId: context.currentUser.id },
+                        {
+                          type: {
+                            in: args.requestRoleOnly
+                              ? ["Request"]
+                              : ["Request", "Respond"],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
               ],
             },
           },
@@ -93,7 +110,6 @@ const processesForGroup = async (
   args: { groupId: string },
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  const currentGroups = await groupsForCurrentUser(root, {}, context);
 
   const processes = await prisma.process.findMany({
     where: {
@@ -105,6 +121,8 @@ const processesForGroup = async (
     },
     include: processInclude,
   });
+
+
   const formattedProcesses = processes.map((process) => formatProcess(process));
 
   return formattedProcesses;

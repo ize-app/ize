@@ -12,6 +12,8 @@ import {
   GroupSummaryPartsFragment,
   ProcessSummaryPartsFragment,
   ProcessesForGroupDocument,
+  RequestSummaryPartsFragment,
+  RequestsForGroupDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { colors } from "../../style/style";
@@ -42,13 +44,20 @@ export const Group = () => {
   const processes = (processData?.processesForGroup ??
     []) as ProcessSummaryPartsFragment[];
 
+  const { data: requestData, loading: requestLoading } = useQuery(
+    RequestsForGroupDocument,
+    {
+      variables: {
+        groupId: groupId,
+      },
+    },
+  );
+
+  const requests = (requestData?.requestsForGroup ??
+    []) as RequestSummaryPartsFragment[];
+
   const group = data?.group as GroupSummaryPartsFragment;
 
-  // be8f71a5-4e73-49b6-a6fe-32c6f00b7bb3
-  // pwNXPJX1qV5Z3fBAPQxWrZ
-
-  // 2PSykC1knZWg6Pqtkgia6R
-  // 0ec840c7-f906-4470-8b2b-2af9ca74a4cf
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -62,7 +71,10 @@ export const Group = () => {
   };
 
   const tabs = [
-    { title: "Requests", content: <RequestTab /> },
+    {
+      title: "Requests",
+      content: <RequestTab requests={requests} />,
+    },
     {
       title: "Process",
       content: <ProcessTab processes={processes} loading={processLoading} />,
