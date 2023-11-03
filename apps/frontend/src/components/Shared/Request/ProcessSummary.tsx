@@ -6,16 +6,19 @@ import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Link, generatePath } from "react-router-dom";
 
+import { ProcessSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { Route } from "../../../routers/routes";
-import { Process } from "../../../types";
-import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
+import {
+  fullUUIDToShort,
+  intervalToIntuitiveTimeString,
+} from "../../../utils/inputs";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
 import { AvatarsCell } from "../Tables/TableCells";
 
 export const ProcessSummaryTable = ({
   process,
 }: {
-  process: Process.default;
+  process: ProcessSummaryPartsFragment;
 }) => {
   return (
     <TableContainer
@@ -39,8 +42,10 @@ export const ProcessSummaryTable = ({
             <TableCell>
               <Typography variant="body1">
                 <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
                   to={generatePath(Route.Process, {
-                    processId: process.processId,
+                    processId: fullUUIDToShort(process.id),
                   })}
                 >
                   {process.name}
@@ -57,7 +62,7 @@ export const ProcessSummaryTable = ({
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                {summarizeDecisionSystem(process.decision)}
+                {summarizeDecisionSystem(process.decisionSystem)}
               </Typography>
             </TableCell>
           </TableRow>
@@ -78,7 +83,7 @@ export const ProcessSummaryTable = ({
             <TableCell>
               <Typography variant="body1">
                 {intervalToIntuitiveTimeString(
-                  process.decision.requestExpirationSeconds * 1000,
+                  process.expirationSeconds * 1000,
                 )}
               </Typography>
             </TableCell>

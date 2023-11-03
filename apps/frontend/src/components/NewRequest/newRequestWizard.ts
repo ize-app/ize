@@ -1,9 +1,9 @@
+import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
-import { Process } from "../../types";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export interface NewRequestState {
-  process?: Process.default;
+  process?: ProcessSummaryPartsFragment;
   userInputs?: UserInputs;
 }
 

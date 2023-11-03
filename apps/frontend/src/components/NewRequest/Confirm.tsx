@@ -18,7 +18,7 @@ export const Confirm = () => {
       ? formState.process.inputs.map((inputMetadata) => ({
           property: inputMetadata.name,
           value: formState.userInputs
-            ? formState.userInputs[inputMetadata.inputId]
+            ? formState.userInputs[inputMetadata.id]
             : "-",
         }))
       : [];

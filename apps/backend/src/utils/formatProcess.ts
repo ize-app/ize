@@ -13,7 +13,7 @@ import {
   Roles,
 } from "frontend/src/graphql/generated/graphql";
 
-const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
+export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   roleGroups: {
     include: {
       group: {

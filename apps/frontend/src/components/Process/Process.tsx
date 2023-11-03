@@ -17,7 +17,7 @@ import {
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import RequestTab, {
@@ -97,7 +97,7 @@ export const Process = () => {
               onClick={() =>
                 navigate(
                   generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                    processId: processId,
+                    processId: fullUUIDToShort(processId),
                   }),
                 )
               }

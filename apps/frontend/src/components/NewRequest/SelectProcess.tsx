@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -9,7 +10,12 @@ import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { processMockData } from "../shared/Tables/mockData";
+import {
+  GetProcessesToCreateRequestDocument,
+  ProcessSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
+import { fullUUIDToShort } from "../../utils/inputs";
+import Loading from "../shared/Loading";
 import Search from "../shared/Tables/Search";
 import { WizardBody } from "../shared/Wizard";
 
@@ -17,11 +23,21 @@ export const SelectProcess = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const processes = processMockData.filter(
-    (process) => process.userRoles.request,
-  );
-  return (
+  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
+
+  const processes = (data?.processesForCurrentUser ??
+    []) as ProcessSummaryPartsFragment[];
+
+  const filteredProcesses = processes.filter((process) => {
+    const regExSearchQuery = new RegExp(searchQuery, "i");
+    return process.name.search(regExSearchQuery) !== -1;
+  });
+
+  return loading ? (
+    <Loading />
+  ) : (
     <WizardBody>
+      {" "}
       <Box
         sx={{
           display: "flex",
@@ -56,10 +72,10 @@ export const SelectProcess = () => {
           }}
         >
           <TableBody>
-            {processes.map((process) => (
+            {filteredProcesses.map((process) => (
               <TableRow
-                key={process.processId}
-                onClick={() => navigate(process.processId)}
+                key={process.id}
+                onClick={() => navigate(fullUUIDToShort(process.id))}
               >
                 <TableCell>
                   <Typography fontWeight={500}>{process.name}</Typography>

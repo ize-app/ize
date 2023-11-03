@@ -1,0 +1,3 @@
+mutation NewRequest($processId: String!, $requestInputs: [RequestInputArgs!]) {
+  newRequest(processId: $processId, requestInputs: $requestInputs)
+}

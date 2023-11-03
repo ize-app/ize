@@ -9,7 +9,13 @@ query Process($processId: String!) {
 }
 
 query Processes {
-  processesForCurrentUser {
+  processesForCurrentUser(requestRoleOnly: false) {
+    ...ProcessSummaryParts
+  }
+}
+
+query GetProcessesToCreateRequest {
+  processesForCurrentUser(requestRoleOnly: true) {
     ...ProcessSummaryParts
   }
 }

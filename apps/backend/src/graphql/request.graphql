@@ -1,0 +1,8 @@
+type Mutation {
+  newRequest(processId: String!, requestInputs: [RequestInputArgs!]): String!
+}
+
+input RequestInputArgs {
+  inputId: String!
+  value: String!
+}

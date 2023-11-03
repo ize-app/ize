@@ -42,7 +42,9 @@ const process = async (
 
 const processesForCurrentUser = async (
   root: unknown,
-  args: {},
+  args: {
+    requestRoleOnly: boolean;
+  },
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
   const currentGroups = await groupsForCurrentUser(root, {}, context);
@@ -56,7 +58,22 @@ const processesForCurrentUser = async (
           currentProcessVersion: {
             roleSet: {
               OR: [
-                { roleGroups: { some: { groupId: { in: groupIds } } } },
+                {
+                  roleGroups: {
+                    some: {
+                      AND: [
+                        { groupId: { in: groupIds } },
+                        {
+                          type: {
+                            in: args.requestRoleOnly
+                              ? ["Request"]
+                              : ["Request", "Respond"],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
                 { roleUsers: { some: { userId: context.currentUser.id } } },
               ],
             },
