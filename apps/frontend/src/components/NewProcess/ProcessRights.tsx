@@ -23,8 +23,6 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const userGroupSchema = z.object({
   id: z.string(),
-  name: z.string(),
-  icon: z.string(),
   type: z.nativeEnum(AgentType),
 });
 
