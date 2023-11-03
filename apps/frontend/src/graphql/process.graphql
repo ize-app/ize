@@ -8,8 +8,8 @@ query Process($processId: String!) {
   }
 }
 
-query Processes {
-  processesForCurrentUser(requestRoleOnly: false) {
+query Processes($groups: [String!]!) {
+  processesForCurrentUser(requestRoleOnly: false, groups: $groups) {
     ...ProcessSummaryParts
   }
 }

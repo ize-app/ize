@@ -6,6 +6,7 @@ import {
   Process,
   User,
   NewProcessArgs,
+  QueryProcessesForCurrentUserArgs,
 } from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
@@ -44,14 +45,9 @@ const process = async (
 
 const processesForCurrentUser = async (
   root: unknown,
-  args: {
-    requestRoleOnly: boolean;
-  },
+  args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  const currentGroups = await groupsForCurrentUser(root, {}, context);
-  const groupIds = currentGroups.map((group) => group.id);
-
   const processes = await prisma.process.findMany({
     where: {
       // Add editProcess lookup later
@@ -64,7 +60,7 @@ const processesForCurrentUser = async (
                   roleGroups: {
                     some: {
                       AND: [
-                        { groupId: { in: groupIds } },
+                        { groupId: { in: args.groups } },
                         {
                           type: {
                             in: args.requestRoleOnly
@@ -110,7 +106,6 @@ const processesForGroup = async (
   args: { groupId: string },
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-
   const processes = await prisma.process.findMany({
     where: {
       currentProcessVersion: {
@@ -121,7 +116,6 @@ const processesForGroup = async (
     },
     include: processInclude,
   });
-
 
   const formattedProcesses = processes.map((process) => formatProcess(process));
 

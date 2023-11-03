@@ -5,13 +5,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
-import { RequestInput } from "../../../graphql/generated/graphql";
+export interface InputSummaryRow {
+  name: string;
+  value: string | number;
+}
 
 const RequestInputRow = ({
   input,
   fontSize,
 }: {
-  input: RequestInput;
+  input: InputSummaryRow;
   fontSize: "body1" | "body2";
 }) => {
   return (
@@ -32,7 +35,7 @@ export const RequestInputTable = ({
   inputs,
   rowSize,
 }: {
-  inputs: RequestInput[];
+  inputs: InputSummaryRow[];
   rowSize?: "small" | "medium";
 }) => {
   return (
@@ -48,7 +51,7 @@ export const RequestInputTable = ({
     >
       <Table aria-label="collapsible table" size={rowSize}>
         <TableBody>
-          {inputs.map((input: RequestInput, index) => (
+          {inputs.map((input: InputSummaryRow, index) => (
             <RequestInputRow
               input={input}
               fontSize={rowSize === "medium" ? "body1" : "body2"}

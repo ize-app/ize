@@ -13,6 +13,7 @@ import {
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
+  QueryRequestsForCurrentUserArgs,
   Request,
 } from "frontend/src/graphql/generated/graphql";
 
@@ -41,12 +42,9 @@ const request = async (
 
 const requestsForCurrentUser = async (
   root: unknown,
-  args: {},
+  args: QueryRequestsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Request[]> => {
-  const currentGroups = await groupsForCurrentUser(root, {}, context);
-  const groupIds = currentGroups.map((group) => group.id);
-
   const requests = await prisma.request.findMany({
     include: requestInclude,
     where: {
@@ -57,7 +55,7 @@ const requestsForCurrentUser = async (
               roleGroups: {
                 some: {
                   AND: [
-                    { groupId: { in: groupIds } },
+                    { groupId: { in: args.groups } },
                     {
                       type: "Request",
                     },

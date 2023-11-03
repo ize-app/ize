@@ -160,7 +160,9 @@ export const Request = () => {
             })}
           >
             <Box sx={{ display: "flex", flexDirection: "row", gap: "12px" }}>
-              <RemainingTime expirationDate={new Date()} />
+              <RemainingTime
+                expirationDate={new Date(Date.parse(request.expirationDate))}
+              />
             </Box>
             <Box sx={{ display: "flex", gap: ".3rem" }}>
               <Typography variant="body1"> Requested by </Typography>{" "}

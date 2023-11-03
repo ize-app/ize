@@ -101,7 +101,7 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   const data = {
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
-    createdAt: processData.createdAt.toDateString(),
+    createdAt: processData.createdAt.toString(),
     ...formattedProcessVersion,
   };
   return data;

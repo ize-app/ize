@@ -52,5 +52,5 @@ export const formatGroup = (group: GroupPrismaType): Group => ({
       group.discordRoleGroup.discordServer.icon,
     ),
   },
-  createdAt: group.createdAt.toDateString(),
+  createdAt: group.createdAt.toString(),
 });

@@ -30,8 +30,10 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
 
   const navigate = useNavigate();
 
-  const alreadyResponded = true; //typeof request.userResponse === "string";
-  const requestOpen = true; // request.expirationDate >= new Date();
+  const expirationDate = new Date(Date.parse(request.expirationDate));
+
+  const alreadyResponded = false; //typeof request.userResponse === "string";
+  const requestOpen = expirationDate >= new Date();
 
   return (
     <React.Fragment>
@@ -64,8 +66,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
         <StatusCell
           align="center"
           hideOnSmallScreen={true}
-          expirationDate={new Date()}
-          // expirationDate={request.expirationDate}
+          expirationDate={expirationDate}
           alreadyResponded={alreadyResponded}
         ></StatusCell>
         <TableCellHideable align={"center"}>

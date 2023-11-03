@@ -48,7 +48,7 @@ export const Process = () => {
     },
   });
 
-  const { data: requestData, requestLoading: requestLoading } = useQuery(
+  const { data: requestData, loading: requestLoading } = useQuery(
     RequestsForProcessDocument,
     {
       variables: {
@@ -154,6 +154,7 @@ export const Process = () => {
             defaultFilterOption={FilterOptions.All}
             hideCreateButton
             requests={requests}
+            loading={requestLoading}
           />
         </Box>
       </Box>

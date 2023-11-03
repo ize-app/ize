@@ -42,7 +42,7 @@ export const formatRequest = (requestData: RequestPrismaType): Request => {
   const process: Process = {
     ...formatProcessVersion(requestData.processVersion),
     id: requestData.processVersion.process.id,
-    createdAt: requestData.processVersion.process.createdAt.toDateString(),
+    createdAt: requestData.processVersion.process.createdAt.toString(),
     currentProcessVersionId:
       requestData.processVersion.process.currentProcessVersionId,
   };
@@ -56,10 +56,10 @@ export const formatRequest = (requestData: RequestPrismaType): Request => {
     id: requestData.id,
     name: name,
     creator: formatUser(requestData.creator),
-    expirationDate: requestData.expirationDate.toDateString(),
+    expirationDate: requestData.expirationDate.toString(),
     inputs: inputs,
     process: process,
-    createdAt: requestData.createdAt.toDateString(),
+    createdAt: requestData.createdAt.toString(),
   };
 
   return req;
