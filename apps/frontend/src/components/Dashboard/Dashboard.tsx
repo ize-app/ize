@@ -9,6 +9,7 @@ import {
   RequestSummaryPartsFragment,
   RequestsForCurrentUserDocument,
 } from "../../graphql/generated/graphql";
+import PageContainer from "../../layout/PageContainer";
 import GroupTab from "../shared/Tables/GroupsTable/GroupTab";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
@@ -67,7 +68,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <>
+    <PageContainer>
       <Tabs
         tabs={tabs}
         currentTabIndex={currentTabIndex}
@@ -78,7 +79,7 @@ const Dashboard = () => {
           {tab.content}
         </TabPanel>
       ))}
-    </>
+    </PageContainer>
   );
 };
 

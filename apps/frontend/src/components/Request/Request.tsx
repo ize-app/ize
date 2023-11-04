@@ -17,6 +17,7 @@ import {
   ResponseCount,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import {
   intervalToIntuitiveTimeString,
   shortUUIDToFull,
@@ -132,7 +133,7 @@ export const Request = () => {
   return loading || !request ? (
     <Loading />
   ) : (
-    <>
+    <PageContainer>
       <Head
         title={request.name}
         description={"Process: " + request.process.name}
@@ -278,6 +279,6 @@ export const Request = () => {
           </Box>
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };

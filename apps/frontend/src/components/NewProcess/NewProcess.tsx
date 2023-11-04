@@ -24,6 +24,7 @@ import {
   RoleType,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
@@ -144,14 +145,13 @@ export const SetupProcess = () => {
   } = useWizard(newProcessWizard);
 
   return (
-    <>
+    <PageContainer>
       <Head
         title={"Create a process"}
         description={
           "Create a new process for making and automatically executing decisions"
         }
       />
-
       <Box
         sx={{
           display: "flex",
@@ -176,6 +176,6 @@ export const SetupProcess = () => {
           />
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };

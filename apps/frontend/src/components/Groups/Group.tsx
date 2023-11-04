@@ -16,6 +16,7 @@ import {
   RequestsForGroupDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { colors } from "../../style/style";
 import { shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../shared/Loading";
@@ -91,22 +92,24 @@ export const Group = () => {
         title={group.name}
         description={`Where ${group.name} makes decisions and evolves their process`}
       />
-      <Box>
-        <BannerWithAvatar
-          bannerUrl={""}
-          avatarUrl={group.icon ?? ""}
-          name={group.name}
-          color={group.color}
-          parent={{
-            name: group?.organization?.name,
-            avatarUrl: group?.organization?.icon,
-          }}
-          id={group.id}
-        />
+      <BannerWithAvatar
+        bannerUrl={""}
+        avatarUrl={group.icon ?? ""}
+        name={group.name}
+        color={group.color}
+        parent={{
+          name: group?.organization?.name,
+          avatarUrl: group?.organization?.icon,
+        }}
+        id={group.id}
+      />
+      <PageContainer>
         <Box
-          sx={{
-            paddingLeft: "1.5rem",
-          }}
+          sx={
+            {
+              // paddingLeft: "1.5rem",
+            }
+          }
         >
           <Typography variant="h1">{group.name}</Typography>
           <Box
@@ -158,17 +161,17 @@ export const Group = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
-      <Tabs
-        tabs={tabs}
-        currentTabIndex={currentTabIndex}
-        handleChange={handleChange}
-      />
-      {tabs.map((tab: TabProps, index) => (
-        <TabPanel value={currentTabIndex} index={index} key={index}>
-          {tab.content}
-        </TabPanel>
-      ))}
+        <Tabs
+          tabs={tabs}
+          currentTabIndex={currentTabIndex}
+          handleChange={handleChange}
+        />
+        {tabs.map((tab: TabProps, index) => (
+          <TabPanel value={currentTabIndex} index={index} key={index}>
+            {tab.content}
+          </TabPanel>
+        ))}
+      </PageContainer>
     </>
   );
 };

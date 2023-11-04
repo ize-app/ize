@@ -18,6 +18,7 @@ import {
   RequestsForProcessDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
@@ -73,7 +74,7 @@ export const Process = () => {
   ) : processLoading || !process ? (
     <Loading />
   ) : (
-    <>
+    <PageContainer>
       <Head title={process.name} description={process.description ?? ""} />
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -158,6 +159,6 @@ export const Process = () => {
           />
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };

@@ -10,6 +10,8 @@ import {
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
 } from "./editProcessWizard";
+import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const EditProcess = () => {
@@ -38,29 +40,37 @@ export const EditProcess = () => {
   } = useWizard(editProcessWizard);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-        marginTop: "16px",
-      }}
-    >
-      <Stepper activeStep={progressBarStep}>
-        {EDIT_PROCESS_PROGRESS_BAR_STEPS.map((title) => (
-          <Step key={title}>
-            <StepLabel>{title}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Typography variant="h1" sx={{ marginTop: "32px" }}>
-        {title}
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <Outlet
-          context={{ formState, setFormState, onNext, onPrev, nextLabel }}
-        />
+    <PageContainer>
+      <Head
+        title={"Edit process"}
+        description={
+          "Edit what this process does and how your group arrives at a deicion."
+        }
+      />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          marginTop: "16px",
+        }}
+      >
+        <Stepper activeStep={progressBarStep}>
+          {EDIT_PROCESS_PROGRESS_BAR_STEPS.map((title) => (
+            <Step key={title}>
+              <StepLabel>{title}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Typography variant="h1" sx={{ marginTop: "32px" }}>
+          {title}
+        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+          <Outlet
+            context={{ formState, setFormState, onNext, onPrev, nextLabel }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </PageContainer>
   );
 };

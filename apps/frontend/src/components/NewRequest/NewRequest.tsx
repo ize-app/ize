@@ -19,6 +19,7 @@ import {
   RequestInputArgs,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
@@ -76,7 +77,7 @@ export const NewRequest = () => {
   } = useWizard(newRequestWizard);
 
   return (
-    <>
+    <PageContainer>
       <Head
         title={"Create a request"}
         description={"Propose a new decision by creating a request."}
@@ -105,6 +106,6 @@ export const NewRequest = () => {
           />
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };
