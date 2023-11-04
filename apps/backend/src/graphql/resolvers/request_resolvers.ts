@@ -10,6 +10,7 @@ import { requestInclude } from "../../utils/formatRequest";
 
 import {
   MutationNewRequestArgs,
+  MutationNewResponseArgs,
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
@@ -23,6 +24,30 @@ const newRequest = async (
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newRequestService(root, args, context);
+};
+
+const newResponse = async (
+  root: unknown,
+  args: MutationNewResponseArgs,
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  const existingResponse = await prisma.response.findFirst({
+    where: {
+      requestId: args.requestId,
+      creatorId: context.currentUser.id,
+    },
+  });
+  if (existingResponse) throw Error("User already responded to this request ");
+
+  const response = await prisma.response.create({
+    data: {
+      optionId: args.optionId,
+      requestId: args.requestId,
+      creatorId: context.currentUser.id,
+    },
+  });
+
+  return response.id;
 };
 
 const request = async (
@@ -132,4 +157,4 @@ export const requestQueries = {
   requestsForProcess,
 };
 
-export const requestMutations = { newRequest };
+export const requestMutations = { newRequest, newResponse };

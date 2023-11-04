@@ -1,5 +1,6 @@
 type Mutation {
   newRequest(processId: String!, requestInputs: [RequestInputArgs!]): String!
+  newResponse(requestId: String!, optionId: String!): String!
 }
 
 type Query {

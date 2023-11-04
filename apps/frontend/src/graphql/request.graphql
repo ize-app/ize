@@ -2,6 +2,10 @@ mutation NewRequest($processId: String!, $requestInputs: [RequestInputArgs!]) {
   newRequest(processId: $processId, requestInputs: $requestInputs)
 }
 
+mutation NewResponse($requestId: String!, $optionId: String!) {
+  newResponse(requestId: $requestId, optionId: $optionId)
+}
+
 query Request($requestId: String!) {
   request(requestId: $requestId) {
     ...RequestSummaryParts

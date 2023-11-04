@@ -12,7 +12,6 @@ import { useState } from "react";
 import { AgentSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
 
-
 export interface AvatarWithNameProps {
   avatarUrl: string | undefined | null;
   name: string;

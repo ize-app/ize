@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -6,7 +7,10 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { ProcessOption } from "../../../graphql/generated/graphql";
+import {
+  NewResponseDocument,
+  ProcessOption,
+} from "../../../graphql/generated/graphql";
 import { RadioControl } from "../Form";
 
 const formSchema = z.object({
@@ -16,10 +20,12 @@ const formSchema = z.object({
 type FormFields = z.infer<typeof formSchema>;
 
 export const SubmitResponse = ({
+  requestId,
   options,
   onSubmit,
   displayAsColumn,
 }: {
+  requestId: string;
   options: ProcessOption[];
   onSubmit: () => void;
   displayAsColumn: boolean;
@@ -27,10 +33,31 @@ export const SubmitResponse = ({
   const { setSnackbarOpen, setSnackbarData, snackbarData } =
     useContext(SnackbarContext);
 
-  const submitSideEffects = () => {
-    setSnackbarData({ ...snackbarData, message: "Response submitted!" });
-    setSnackbarOpen(true);
-    onSubmit();
+  const [mutate] = useMutation(NewResponseDocument);
+
+  const onComplete = async (data: FormFields) => {
+    try {
+      await mutate({
+        variables: {
+          requestId: requestId,
+          optionId: data.option,
+        },
+      });
+      setSnackbarData({
+        ...snackbarData,
+        message: "Response submitted!",
+        type: "success",
+      });
+      setSnackbarOpen(true);
+      onSubmit();
+    } catch {
+      setSnackbarOpen(true);
+      setSnackbarData({
+        ...snackbarData,
+        message: "Response failed",
+        type: "error",
+      });
+    }
   };
 
   const { control, handleSubmit } = useForm<FormFields>({
@@ -64,7 +91,7 @@ export const SubmitResponse = ({
           sx={{ flexDirection: "column", gap: "4px" }}
           options={options.map((option) => ({
             label: option.value,
-            value: option.value,
+            value: option.id,
           }))}
         />
       </Box>
@@ -79,7 +106,7 @@ export const SubmitResponse = ({
           justifyContent: "center",
         }}
       >
-        <Button variant="contained" onClick={handleSubmit(submitSideEffects)}>
+        <Button variant="contained" onClick={handleSubmit(onComplete)}>
           Submit
         </Button>
       </Box>

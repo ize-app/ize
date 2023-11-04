@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { RequestInputTable, SubmitResponse } from "../../Request";
-import { RequestProps } from "../mockData";
 
 export const ExpandedRequest = ({
   request,
@@ -103,9 +102,12 @@ export const ExpandedRequest = ({
       </Box>
       <Paper elevation={2}>
         <SubmitResponse
+          requestId={request.id}
           displayAsColumn={false}
           options={request.process.options}
-          onSubmit={() => collapseRow()}
+          onSubmit={() => {
+            collapseRow();
+          }}
         />
       </Paper>
     </Box>
