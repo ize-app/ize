@@ -35,7 +35,9 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
 
   const expirationDate = new Date(Date.parse(request.expirationDate));
 
-  const alreadyResponded = false; //typeof request.userResponse === "string";
+  const userResponse = request.responses.userResponse?.value as string;
+
+  const alreadyResponded = !!userResponse;
   const requestOpen = expirationDate >= new Date();
 
   return (
@@ -90,7 +92,8 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
             </Button>
           ) : (
             <Typography>
-              {/* {request.userResponse ? request.userResponse : "-"} */}
+              {userResponse.substring(0, 12) +
+                (userResponse.length > 12 ? "..." : "")}
             </Typography>
           )}
         </TableCellHideable>

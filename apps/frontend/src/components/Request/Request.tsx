@@ -14,6 +14,7 @@ import {
   AgentSummaryPartsFragment,
   RequestDocument,
   RequestSummaryPartsFragment,
+  ResponseCount,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import {
@@ -25,7 +26,7 @@ import { NameWithPopper } from "../shared/Avatar";
 import Loading from "../shared/Loading";
 import { RequestInputTable, SubmitResponse } from "../shared/Request";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
-import { ResponseCount } from "../shared/Tables/mockData";
+import { ResponseList } from "../shared/Request/ResponseList";
 
 export default function HorizontalBars({
   responseCounts,
@@ -37,7 +38,7 @@ export default function HorizontalBars({
       yAxis={[
         {
           scaleType: "band",
-          data: responseCounts.map((elem) => elem.label),
+          data: responseCounts.map((elem) => elem.value),
           disableTicks: true,
         },
       ]}
@@ -114,17 +115,16 @@ export const Request = () => {
     },
   });
 
-  // const onError = () => {
-  //   navigate("/");
-  //   setSnackbarOpen(true);
-  //   setSnackbarData({ message: "Invalid request", type: "error" });
-  // };
+  const onError = () => {
+    navigate("/");
+    setSnackbarOpen(true);
+    setSnackbarData({ message: "Invalid request", type: "error" });
+  };
 
-  // useEffect(() => {
-  //   if (error) onError();
-  // }, [error, onError]);
+  if (error) onError();
 
   const request = data?.request as RequestSummaryPartsFragment;
+  console.log("request is ", request);
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -195,23 +195,64 @@ export const Request = () => {
             <Accordion
               id="submit-response-panel"
               defaultExpanded={true}
-              label="Submit your response"
+              label={
+                request?.responses?.userResponse
+                  ? "Your response"
+                  : "Submit your response"
+              }
               elevation={6}
             >
               <SubmitResponse
                 options={request.process.options}
                 displayAsColumn={true}
+                requestId={request.id}
+                userResponse={request.responses.userResponse}
                 onSubmit={() => {
                   return;
                 }}
               />
             </Accordion>
-            {/* <Accordion label="Results" id="response-count-panel">
-              <HorizontalBars responseCounts={request.result.responseCount} />
+
+            <Accordion label="Results" id="response-count-panel">
+              {request.responses.userResponse ? (
+                <HorizontalBars
+                  responseCounts={request.responses.responseCount}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Typography>
+                    Please respond before you can see the other responses
+                  </Typography>
+                </Box>
+              )}
             </Accordion>
             <Accordion label="Responses" id="response-list-panel">
-              <ResponseList responses={request.responses} />
-            </Accordion> */}
+              {request.responses.userResponse ? (
+                <ResponseList responses={request.responses.allResponses} />
+              ) : (
+                <Box
+                  sx={{
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Typography>
+                    Please respond before you can see the other responses
+                  </Typography>
+                </Box>
+              )}
+            </Accordion>
           </Box>
           <Box
             sx={{

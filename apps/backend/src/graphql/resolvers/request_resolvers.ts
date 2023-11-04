@@ -10,6 +10,7 @@ import { requestInclude } from "../../utils/formatRequest";
 
 import {
   MutationNewRequestArgs,
+  MutationNewResponseArgs,
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
@@ -25,6 +26,30 @@ const newRequest = async (
   return await newRequestService(root, args, context);
 };
 
+const newResponse = async (
+  root: unknown,
+  args: MutationNewResponseArgs,
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  const existingResponse = await prisma.response.findFirst({
+    where: {
+      requestId: args.requestId,
+      creatorId: context.currentUser.id,
+    },
+  });
+  if (existingResponse) throw Error("User already responded to this request ");
+
+  const response = await prisma.response.create({
+    data: {
+      optionId: args.optionId,
+      requestId: args.requestId,
+      creatorId: context.currentUser.id,
+    },
+  });
+
+  return response.id;
+};
+
 const request = async (
   root: unknown,
   args: QueryRequestArgs,
@@ -37,7 +62,7 @@ const request = async (
     },
   });
 
-  return formatRequest(req);
+  return formatRequest(req, context.currentUser.id);
 };
 
 const requestsForCurrentUser = async (
@@ -81,7 +106,9 @@ const requestsForCurrentUser = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 const requestsForGroup = async (
@@ -105,7 +132,9 @@ const requestsForGroup = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 const requestsForProcess = async (
@@ -122,7 +151,9 @@ const requestsForProcess = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 export const requestQueries = {
@@ -132,4 +163,4 @@ export const requestQueries = {
   requestsForProcess,
 };
 
-export const requestMutations = { newRequest };
+export const requestMutations = { newRequest, newResponse };

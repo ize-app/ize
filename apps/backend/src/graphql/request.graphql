@@ -1,5 +1,6 @@
 type Mutation {
   newRequest(processId: String!, requestInputs: [RequestInputArgs!]): String!
+  newResponse(requestId: String!, optionId: String!): String!
 }
 
 type Query {
@@ -22,6 +23,28 @@ type Request {
   expirationDate: String!
   inputs: [RequestInput!]!
   createdAt: String!
+  responses: Responses!
+}
+
+type Responses {
+  userResponse: Response
+  allResponses: [Response!]!
+  responseCount: [ResponseCount!]!
+}
+
+type Response {
+  optionId: String!
+  value: String!
+  user: User!
+  type: OptionType!
+  createdAt: String!
+}
+
+type ResponseCount {
+  optionId: String!
+  value: String!
+  type: OptionType!
+  count: Int!
 }
 
 type RequestInput {

@@ -10,6 +10,8 @@ export interface RadioControlProps extends RadioGroupProps {
   name: string;
   control: Control;
   label?: string;
+  disabled?: boolean;
+  defaultValue?: string;
   options: { value: string; label: string }[];
 }
 
@@ -18,13 +20,15 @@ export const RadioControl = ({
   control,
   label,
   options,
+  defaultValue,
+  disabled = false,
   ...props
 }: RadioControlProps): JSX.Element => (
   <Controller
     name={name}
     control={control}
     render={({ field, fieldState: { error } }) => (
-      <FormControl component="fieldset" required>
+      <FormControl component="fieldset" required disabled={disabled}>
         {label ? (
           <FormLabel component="legend" id="radio-buttons-group-options">
             {label}
@@ -34,6 +38,7 @@ export const RadioControl = ({
           {...field}
           {...props}
           row
+          defaultValue={defaultValue}
           aria-labelledby="radio-buttons-group-options"
           name="row-radio-buttons-group-options"
         >
