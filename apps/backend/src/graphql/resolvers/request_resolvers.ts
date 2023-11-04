@@ -62,7 +62,7 @@ const request = async (
     },
   });
 
-  return formatRequest(req);
+  return formatRequest(req, context.currentUser.id);
 };
 
 const requestsForCurrentUser = async (
@@ -106,7 +106,9 @@ const requestsForCurrentUser = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 const requestsForGroup = async (
@@ -130,7 +132,9 @@ const requestsForGroup = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 const requestsForProcess = async (
@@ -147,7 +151,9 @@ const requestsForProcess = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request));
+  return requests.map((request) =>
+    formatRequest(request, context.currentUser.id),
+  );
 };
 
 export const requestQueries = {

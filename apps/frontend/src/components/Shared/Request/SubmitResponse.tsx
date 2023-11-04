@@ -1,8 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -10,6 +11,7 @@ import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import {
   NewResponseDocument,
   ProcessOption,
+  Response,
 } from "../../../graphql/generated/graphql";
 import { RadioControl } from "../Form";
 
@@ -23,13 +25,17 @@ export const SubmitResponse = ({
   requestId,
   options,
   onSubmit,
+  userResponse,
   displayAsColumn,
 }: {
   requestId: string;
   options: ProcessOption[];
   onSubmit: () => void;
+  userResponse: Response | null | undefined;
   displayAsColumn: boolean;
 }) => {
+  const [hasVoted, setHasVoted] = useState<boolean>(!!userResponse);
+
   const { setSnackbarOpen, setSnackbarData, snackbarData } =
     useContext(SnackbarContext);
 
@@ -49,6 +55,7 @@ export const SubmitResponse = ({
         type: "success",
       });
       setSnackbarOpen(true);
+      setHasVoted(true);
       onSubmit();
     } catch {
       setSnackbarOpen(true);
@@ -62,7 +69,7 @@ export const SubmitResponse = ({
 
   const { control, handleSubmit } = useForm<FormFields>({
     defaultValues: {
-      option: "",
+      option: userResponse?.optionId ? userResponse?.optionId : "",
     },
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
@@ -76,7 +83,7 @@ export const SubmitResponse = ({
         padding: "16px",
         flexDirection: displayAsColumn ? "column" : "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-start",
         alignSelf: "stretch",
         [theme.breakpoints.down("sm")]: {
           flexDirection: "column",
@@ -88,6 +95,7 @@ export const SubmitResponse = ({
           name="option"
           //@ts-ignore
           control={control}
+          disabled={hasVoted}
           sx={{ flexDirection: "column", gap: "4px" }}
           options={options.map((option) => ({
             label: option.value,
@@ -95,6 +103,19 @@ export const SubmitResponse = ({
           }))}
         />
       </Box>
+      {hasVoted ? (
+        <Typography sx={{ marginTop: "8px" }}>
+          Responded on{" "}
+          {(userResponse
+            ? new Date(Date.parse(userResponse?.createdAt))
+            : new Date()
+          ).toLocaleDateString("en-us", {
+            day: "numeric",
+            year: "numeric",
+            month: "long",
+          })}
+        </Typography>
+      ) : null}
 
       <Box
         sx={{
@@ -106,9 +127,11 @@ export const SubmitResponse = ({
           justifyContent: "center",
         }}
       >
-        <Button variant="contained" onClick={handleSubmit(onComplete)}>
-          Submit
-        </Button>
+        {hasVoted ? null : (
+          <Button variant="contained" onClick={handleSubmit(onComplete)}>
+            Submit
+          </Button>
+        )}
       </Box>
     </Box>
   );

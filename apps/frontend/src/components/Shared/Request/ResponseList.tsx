@@ -4,19 +4,19 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
+import { Response } from "../../../graphql/generated/graphql";
 import { AvatarWithName } from "../Avatar";
-import { Response } from "../Tables/mockData";
 
 const ResponseListRow = ({ response }: { response: Response }) => {
   return (
     <TableRow>
       <TableCell>
         <AvatarWithName
-          avatarUrl={response.user.avatarUrl}
+          avatarUrl={response.user.icon}
           name={response.user.name}
         />
       </TableCell>
-      <TableCell>{response.selection.optionLabel}</TableCell>
+      <TableCell>{response.value}</TableCell>
     </TableRow>
   );
 };

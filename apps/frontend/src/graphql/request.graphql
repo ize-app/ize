@@ -44,6 +44,9 @@ fragment RequestSummaryParts on Request {
     ...RequestInputSummaryParts
   }
   createdAt
+  responses {
+    ...ResponsesSummaryParts
+  }
 }
 
 fragment RequestInputSummaryParts on RequestInput {
@@ -54,4 +57,33 @@ fragment RequestInputSummaryParts on RequestInput {
   type
   value
   required
+}
+
+fragment ResponsesSummaryParts on Responses {
+  userResponse {
+    ...ResponseSummaryParts
+  }
+  allResponses {
+    ...ResponseSummaryParts
+  }
+  responseCount {
+    ...ResponseCountSummaryParts
+  }
+}
+
+fragment ResponseSummaryParts on Response {
+  optionId
+  value
+  user {
+    ...UserSummaryParts
+  }
+  type
+  createdAt
+}
+
+fragment ResponseCountSummaryParts on ResponseCount {
+  optionId
+  value
+  type
+  count
 }

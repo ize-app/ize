@@ -1,8 +1,8 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
-
 import { formatProcessVersion } from "../utils/formatProcess";
+import { responseInclude, formatResponses } from "./formatResponse";
 
 import { processVersionInclude } from "../utils/formatProcess";
 import {
@@ -32,13 +32,19 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   requestInputs: {
     include: requestInputInclude,
   },
+  responses: {
+    include: responseInclude,
+  },
 });
 
 type RequestPrismaType = Prisma.RequestGetPayload<{
   include: typeof requestInclude;
 }>;
 
-export const formatRequest = (requestData: RequestPrismaType): Request => {
+export const formatRequest = (
+  requestData: RequestPrismaType,
+  userId: string | undefined,
+): Request => {
   const process: Process = {
     ...formatProcessVersion(requestData.processVersion),
     id: requestData.processVersion.process.id,
@@ -60,6 +66,7 @@ export const formatRequest = (requestData: RequestPrismaType): Request => {
     inputs: inputs,
     process: process,
     createdAt: requestData.createdAt.toString(),
+    responses: formatResponses(requestData.responses, userId, process.options),
   };
 
   return req;

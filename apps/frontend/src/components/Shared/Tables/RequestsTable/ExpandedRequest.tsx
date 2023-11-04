@@ -104,6 +104,7 @@ export const ExpandedRequest = ({
         <SubmitResponse
           requestId={request.id}
           displayAsColumn={false}
+          userResponse={request.responses.userResponse}
           options={request.process.options}
           onSubmit={() => {
             collapseRow();
