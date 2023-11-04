@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
+  AgentSummaryPartsFragment,
   RequestDocument,
   RequestSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
@@ -167,7 +168,7 @@ export const Request = () => {
             <Box sx={{ display: "flex", gap: ".3rem" }}>
               <Typography variant="body1"> Requested by </Typography>{" "}
               <NameWithPopper
-                users={[request.creator]}
+                agents={[request.creator as AgentSummaryPartsFragment]}
                 name={request.creator.name}
               />
             </Box>

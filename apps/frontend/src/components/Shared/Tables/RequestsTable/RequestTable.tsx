@@ -14,7 +14,10 @@ import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { ExpandedRequest } from "./ExpandedRequest";
-import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import {
+  AgentSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "../../../../graphql/generated/graphql";
 import { Route } from "../../../../routers/routes";
 import { fullUUIDToShort } from "../../../../utils/inputs";
 import {
@@ -60,7 +63,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
         />
         <AvatarsCell
           align="center"
-          avatars={[request.creator]}
+          avatars={[request.creator as AgentSummaryPartsFragment]}
           hideOnSmallScreen={true}
         />
         <StatusCell

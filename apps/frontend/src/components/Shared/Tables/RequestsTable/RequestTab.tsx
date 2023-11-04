@@ -3,14 +3,19 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 
 import RequestTable from "./RequestTable";
-import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
-import { UserDataProps } from "../../Avatar";
+import {
+  AgentSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "../../../../graphql/generated/graphql";
 import { Select } from "../../Form/Select";
 import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
 import Search from "../Search";
 
-const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
+const searchForUser = (
+  regExSearchQuery: RegExp,
+  users: AgentSummaryPartsFragment[],
+) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {
@@ -69,7 +74,11 @@ const RequestTab = ({
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
       else if (request.process.name.search(regExSearchQuery) !== -1)
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, [request.creator]))
+      else if (
+        searchForUser(regExSearchQuery, [
+          request.creator as AgentSummaryPartsFragment,
+        ])
+      )
         searchMatch = true;
 
       return selectMatch && searchMatch;

@@ -65,7 +65,7 @@ export const Group = () => {
   };
 
   const onError = () => {
-    // navigate("/");
+    navigate("/");
     setSnackbarOpen(true);
     setSnackbarData({ message: "Invalid group", type: "error" });
   };
@@ -73,7 +73,7 @@ export const Group = () => {
   const tabs = [
     {
       title: "Requests",
-      content: <RequestTab requests={requests} />,
+      content: <RequestTab requests={requests} loading={requestLoading} />,
     },
     {
       title: "Process",
@@ -97,14 +97,10 @@ export const Group = () => {
           avatarUrl={group.icon ?? ""}
           name={group.name}
           color={group.color}
-          parent={
-            group.name !== "@everyone"
-              ? {
-                  name: group?.organization?.name,
-                  avatarUrl: group?.organization?.icon,
-                }
-              : undefined
-          }
+          parent={{
+            name: group?.organization?.name,
+            avatarUrl: group?.organization?.icon,
+          }}
         />
         <Box
           sx={{

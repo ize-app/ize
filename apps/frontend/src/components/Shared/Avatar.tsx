@@ -9,31 +9,41 @@ import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import { AgentSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
 
-export interface UserDataProps {
-  avatarUrl?: string;
-  name: string;
-  parent?: UserDataProps;
-}
-
-export interface UsersDataProps {
-  users: UserDataProps[];
-}
 
 export interface AvatarWithNameProps {
   avatarUrl: string | undefined | null;
   name: string;
   color?: string | null;
-  parent?: UserDataProps;
+  parent?: AvatarProps;
 }
 
 export interface AvatarProps extends MuiAvatarProps {
   avatarUrl?: string | undefined | null;
   name: string;
-  parent?: UserDataProps;
+  parent?: AvatarProps;
   backgroundColor?: string | null | undefined;
 }
+
+const reformatAgent = (agent: AgentSummaryPartsFragment): AvatarProps => {
+  const parent =
+    agent.__typename === "Group"
+      ? {
+          name: agent.organization.name,
+          avatarUrl: agent.organization.icon,
+        }
+      : undefined;
+
+  return {
+    avatarUrl: agent.icon,
+    name: agent.name,
+    backgroundColor:
+      agent.__typename === "Group" && agent.color ? agent.color : "",
+    parent: parent,
+  };
+};
 
 export const Avatar = ({
   avatarUrl,
@@ -129,7 +139,7 @@ const AvatarPopper = ({
   anchorEl,
   open,
 }: {
-  users: UserDataProps[];
+  users: AvatarProps[];
   anchorEl: HTMLElement | null;
   open: boolean;
 }) => (
@@ -168,7 +178,15 @@ const AvatarPopper = ({
     )}
   </Popper>
 );
-export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
+export const AvatarGroup = ({
+  agents,
+}: {
+  agents: AgentSummaryPartsFragment[];
+}): JSX.Element => {
+  const agentsFormatted: AvatarProps[] = agents.map((agent) =>
+    reformatAgent(agent),
+  );
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -182,48 +200,42 @@ export const AvatarGroup = ({ users }: UsersDataProps): JSX.Element => {
 
   return (
     <>
-      {users.length > 1 ? (
-        <MuiAvatarGroup
-          max={3}
-          total={users.length}
-          sx={{
-            "& .MuiAvatarGroup-avatar": {},
-          }}
-          aria-haspopup="true"
-          onMouseEnter={handlePopperOpen}
-          onMouseLeave={handlePopperClose}
-        >
-          {users.map((user) => (
-            <Avatar
-              key={user.name}
-              avatarUrl={user.avatarUrl}
-              parent={user.parent}
-              name={user.name}
-            />
-          ))}
-        </MuiAvatarGroup>
-      ) : (
-        <Avatar
-          avatarUrl={users[0].avatarUrl}
-          name={users[0].name}
-          parent={users[0].parent}
-          aria-haspopup="true"
-          onMouseEnter={handlePopperOpen}
-          onMouseLeave={handlePopperClose}
-        />
-      )}
-      <AvatarPopper users={users} anchorEl={anchorEl} open={open} />
+      <MuiAvatarGroup
+        max={3}
+        total={agents.length}
+        sx={{
+          "& .MuiAvatarGroup-avatar": {},
+        }}
+        aria-haspopup="true"
+        onMouseEnter={handlePopperOpen}
+        onMouseLeave={handlePopperClose}
+      >
+        {agentsFormatted.map((a) => (
+          <Avatar
+            key={a.name}
+            avatarUrl={a.avatarUrl}
+            parent={a.parent}
+            name={a.name}
+            backgroundColor={a.backgroundColor}
+          />
+        ))}
+      </MuiAvatarGroup>
+      <AvatarPopper users={agentsFormatted} anchorEl={anchorEl} open={open} />
     </>
   );
 };
 
 export const NameWithPopper = ({
   name,
-  users,
+  agents,
 }: {
   name: string;
-  users: UserDataProps[];
+  agents: AgentSummaryPartsFragment[];
 }) => {
+  const agentsFormatted: AvatarProps[] = agents.map((agent) =>
+    reformatAgent(agent),
+  );
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -246,7 +258,7 @@ export const NameWithPopper = ({
       >
         {name}
       </Typography>
-      <AvatarPopper users={users} anchorEl={anchorEl} open={open} />
+      <AvatarPopper users={agentsFormatted} anchorEl={anchorEl} open={open} />
     </>
   );
 };
