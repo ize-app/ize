@@ -101,6 +101,7 @@ export const Group = () => {
             name: group?.organization?.name,
             avatarUrl: group?.organization?.icon,
           }}
+          id={group.id}
         />
         <Box
           sx={{

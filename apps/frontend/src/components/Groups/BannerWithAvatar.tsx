@@ -4,17 +4,19 @@ import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 
 import { avatarString, stringToColor } from "../../utils/inputs";
-import { AvatarProps } from "../shared/Avatar";
+import { ParentProps } from "../shared/Avatar";
 
 interface BannerWithIconProps {
+  id: string;
   bannerUrl: string;
   avatarUrl: string;
   name: string;
-  parent: AvatarProps | undefined;
+  parent: ParentProps | undefined;
   color: string | null | undefined;
 }
 
 const BannerWithAvatar = ({
+  id,
   bannerUrl,
   avatarUrl,
   name,
@@ -22,7 +24,7 @@ const BannerWithAvatar = ({
   color,
 }: BannerWithIconProps): JSX.Element => {
   const avatarStyles = (theme: Theme): SxProps => ({
-    bgcolor: color ? color : stringToColor(name),
+    bgcolor: color ? color : stringToColor(id),
     borderRadius: "20px",
     fontWeight: "600",
     letterSpacing: ".2rem",
@@ -44,7 +46,7 @@ const BannerWithAvatar = ({
       <Box
         sx={{
           position: "relative",
-          maxHeight: "300px",
+          maxHeight: "200px", //300px
           minHeight: "5rem",
           overflow: "hidden",
         }}
@@ -77,8 +79,8 @@ const BannerWithAvatar = ({
               component="img"
               src={bannerUrl}
               sx={{
-                background: `linear-gradient(0deg, ${stringToColor(name)} 0%, ${
-                  color ? color : stringToColor(name.repeat(2))
+                background: `linear-gradient(0deg, ${stringToColor(id)} 40%, ${
+                  color ? color : stringToColor(id.repeat(2))
                 } 100%)`,
                 objectFit: "cover",
                 minWidth: "100%",

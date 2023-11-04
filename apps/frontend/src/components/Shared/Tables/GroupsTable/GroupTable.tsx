@@ -33,6 +33,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              id={group.id}
               color={group.color}
               name={group.name}
               avatarUrl={group.icon}
@@ -47,6 +48,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              id={group.name}
               name={group.organization.name}
               avatarUrl={group.organization.icon}
             />

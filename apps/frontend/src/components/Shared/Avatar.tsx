@@ -16,19 +16,20 @@ import {
 import { avatarString, stringToColor } from "../../utils/inputs";
 
 export interface AvatarWithNameProps {
+  id: string;
   avatarUrl: string | undefined | null;
   name: string;
   color?: string | null;
   parent?: ParentProps;
 }
 
-interface ParentProps {
+export interface ParentProps {
   avatarUrl: string | undefined | null;
   name: string;
 }
 
 export interface AvatarProps extends MuiAvatarProps {
-  id?: string;
+  id: string;
   type?: AgentType;
   avatarUrl?: string | undefined | null;
   name: string;
@@ -78,6 +79,7 @@ export const Avatar = ({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       badgeContent={
         <Avatar
+          id={parent.name}
           name={parent.name}
           avatarUrl={parent.avatarUrl}
           className={"avatarBadge"}
@@ -108,6 +110,7 @@ export const Avatar = ({
 };
 
 export const AvatarWithName = ({
+  id,
   name,
   avatarUrl: url,
   parent,
@@ -125,6 +128,7 @@ export const AvatarWithName = ({
       }}
     >
       <Avatar
+        id={id}
         avatarUrl={url}
         name={name}
         backgroundColor={color}
@@ -179,9 +183,10 @@ const AvatarPopper = ({
           }}
           elevation={4}
         >
-          {users.map((user, index) => (
+          {users.map((user) => (
             <AvatarWithName
-              key={user.name + index.toString()}
+              id={user.id}
+              key={user.id}
               name={user.name}
               avatarUrl={user.avatarUrl}
               parent={user.parent}
@@ -226,7 +231,8 @@ export const AvatarGroup = ({
       >
         {agentsFormatted.map((a) => (
           <Avatar
-            key={a.name}
+            id={a.id}
+            key={a.id}
             avatarUrl={a.avatarUrl}
             parent={a.parent}
             name={a.name}
