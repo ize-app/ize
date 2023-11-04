@@ -16,12 +16,13 @@ export const Confirm = () => {
   const inputs =
     formState.process && formState.userInputs
       ? formState.process.inputs.map((inputMetadata) => ({
-          property: inputMetadata.name,
+          name: inputMetadata.name,
           value: formState.userInputs
-            ? formState.userInputs[inputMetadata.inputId]
+            ? formState.userInputs[inputMetadata.id]
             : "-",
         }))
       : [];
+
   return formState.process && formState.userInputs ? (
     <>
       <WizardBody>

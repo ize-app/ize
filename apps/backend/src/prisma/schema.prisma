@@ -410,9 +410,10 @@ model RequestInput {
   requestId String   @map("request_id") @db.Uuid
   inputId   String   @map("input_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
+  value     String
 
-  request Request       @relation(fields: [requestId], references: [id])
-  input   InputTemplate @relation(fields: [inputId], references: [id])
+  request Request       @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  input   InputTemplate @relation(fields: [inputId], references: [id], onDelete: Cascade)
 
   @@map("request_inputs")
 }

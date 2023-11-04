@@ -14,10 +14,12 @@ import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
   ProcessDocument,
   ProcessSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+  RequestsForProcessDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import RequestTab, {
@@ -36,11 +38,29 @@ export const Process = () => {
   const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery(ProcessDocument, {
+  const {
+    data: processData,
+    loading: processLoading,
+    error: processError,
+  } = useQuery(ProcessDocument, {
     variables: {
       processId: processId,
     },
   });
+
+  const { data: requestData, loading: requestLoading } = useQuery(
+    RequestsForProcessDocument,
+    {
+      variables: {
+        processId: processId,
+      },
+    },
+  );
+
+  const process = processData?.process as ProcessSummaryPartsFragment;
+
+  const requests =
+    requestData?.requestsForProcess as RequestSummaryPartsFragment[];
 
   const onError = () => {
     navigate("/");
@@ -48,11 +68,9 @@ export const Process = () => {
     setSnackbarData({ message: "Invalid process", type: "error" });
   };
 
-  const process = data?.process as ProcessSummaryPartsFragment;
-
-  return error ? (
+  return processError ? (
     onError()
-  ) : loading || !process ? (
+  ) : processLoading || !process ? (
     <Loading />
   ) : (
     <>
@@ -97,7 +115,7 @@ export const Process = () => {
               onClick={() =>
                 navigate(
                   generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                    processId: processId,
+                    processId: fullUUIDToShort(processId),
                   }),
                 )
               }
@@ -135,6 +153,8 @@ export const Process = () => {
           <RequestTab
             defaultFilterOption={FilterOptions.All}
             hideCreateButton
+            requests={requests}
+            loading={requestLoading}
           />
         </Box>
       </Box>

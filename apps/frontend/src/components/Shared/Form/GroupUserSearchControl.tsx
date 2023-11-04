@@ -7,7 +7,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 
-import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import {
+  AgentSummaryPartsFragment,
+  AgentType,
+  OrganizationPartsFragment,
+} from "../../../graphql/generated/graphql";
 import { Avatar } from "../Avatar";
 
 interface GroupUserSearchControlProps {
@@ -15,6 +19,14 @@ interface GroupUserSearchControlProps {
   name: string;
   label: string;
   agents: AgentSummaryPartsFragment[];
+}
+
+interface SearchOption {
+  id: string;
+  name: string;
+  type: AgentType;
+  organization?: OrganizationPartsFragment;
+  icon: string | null | undefined;
 }
 
 export const GroupUserSearchControl = ({
@@ -35,18 +47,25 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={agents}
-            getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
+            options={agents.map((agent) => ({
+              id: agent.id,
+              name: agent.name,
+              type:
+                agent.__typename === "Group" ? AgentType.Group : AgentType.User,
+              icon: agent.icon,
+              organization:
+                agent.__typename === "Group" ? agent.organization : undefined,
+            }))}
+            getOptionLabel={(option: SearchOption) => option.name}
             onChange={(_event, data) => field.onChange(data)}
             isOptionEqualToValue={(
-              option: AgentSummaryPartsFragment,
-              value: AgentSummaryPartsFragment,
-            ) => option.name === value.name}
-            renderTags={(
-              value: readonly AgentSummaryPartsFragment[],
-              getTagProps,
-            ) =>
-              value.map((option: AgentSummaryPartsFragment, index: number) => (
+              option: SearchOption,
+              value: SearchOption,
+            ) => {
+              return option.name === value.name;
+            }}
+            renderTags={(value: readonly SearchOption[], getTagProps) =>
+              value.map((option: SearchOption, index: number) => (
                 <Chip
                   avatar={<Avatar name={option.name} avatarUrl={option.icon} />}
                   variant="filled"
@@ -72,14 +91,7 @@ export const GroupUserSearchControl = ({
                 <Avatar
                   avatarUrl={option.icon}
                   name={option.name}
-                  parent={
-                    option.oragnization
-                      ? {
-                          name: option.oragnization.name,
-                          avatarUrl: option.oragnization.icon,
-                        }
-                      : undefined
-                  }
+                  parent={option.organization}
                 />
                 <Typography
                   variant="body1"

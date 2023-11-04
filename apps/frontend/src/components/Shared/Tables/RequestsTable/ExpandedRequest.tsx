@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
+import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { RequestInputTable, SubmitResponse } from "../../Request";
 import { RequestProps } from "../mockData";
 
@@ -12,7 +13,7 @@ export const ExpandedRequest = ({
   request,
   collapseRow,
 }: {
-  request: RequestProps;
+  request: RequestSummaryPartsFragment;
   collapseRow: () => void;
 }) => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ export const ExpandedRequest = ({
               startIcon={<Launch />}
               sx={{ width: "100px" }}
               onClick={() => {
-                navigate(`/request/${request.requestId}`);
+                navigate(`/request/${request.id}`);
               }}
             >
               Request
@@ -79,7 +80,7 @@ export const ExpandedRequest = ({
               startIcon={<Launch />}
               sx={{ width: "100px" }}
               onClick={() => {
-                navigate(`/process/${request.process.processId}`);
+                navigate(`/process/${request.process.id}`);
               }}
             >
               Process

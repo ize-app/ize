@@ -2,8 +2,12 @@ import { useQuery } from "@apollo/client";
 import { useState } from "react";
 
 import {
+  GroupSummaryPartsFragment,
+  GroupsDocument,
   ProcessSummaryPartsFragment,
   ProcessesDocument,
+  RequestSummaryPartsFragment,
+  RequestsForCurrentUserDocument,
 } from "../../graphql/generated/graphql";
 import GroupTab from "../shared/Tables/GroupsTable/GroupTab";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
@@ -18,18 +22,48 @@ const Dashboard = () => {
     setTabIndex(newValue);
   };
 
-  const { data, loading } = useQuery(ProcessesDocument);
+  const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument);
 
-  const processes = (data?.processesForCurrentUser ??
+  const groups = (groupsData?.groupsForCurrentUser ??
+    []) as GroupSummaryPartsFragment[];
+
+  const { data: processData, loading: processLoading } = useQuery(
+    ProcessesDocument,
+    {
+      variables: {
+        groups: groups.map((group) => group.id),
+      },
+    },
+  );
+
+  const { data: requestData, loading: requestLoading } = useQuery(
+    RequestsForCurrentUserDocument,
+    {
+      variables: {
+        groups: groups.map((group) => group.id),
+      },
+    },
+  );
+
+  const processes = (processData?.processesForCurrentUser ??
     []) as ProcessSummaryPartsFragment[];
 
+  const requests = (requestData?.requestsForCurrentUser ??
+    []) as RequestSummaryPartsFragment[];
+
   const tabs = [
-    { title: "Requests", content: <RequestTab /> },
+    {
+      title: "Requests",
+      content: <RequestTab requests={requests} loading={requestLoading} />,
+    },
     {
       title: "Process",
-      content: <ProcessTab processes={processes} loading={loading} />,
+      content: <ProcessTab processes={processes} loading={processLoading} />,
     },
-    { title: "Groups", content: <GroupTab /> },
+    {
+      title: "Groups",
+      content: <GroupTab groups={groups} loading={groupsLoading} />,
+    },
   ];
 
   return (

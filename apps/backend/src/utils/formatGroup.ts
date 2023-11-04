@@ -33,11 +33,6 @@ export const formatGroup = (group: GroupPrismaType): Group => ({
         group.discordRoleGroup.discordRoleId,
         group.discordRoleGroup.icon,
       )
-    : group.discordRoleGroup.name === "@everyone"
-    ? DiscordApi.createServerIconURL(
-        group.discordRoleGroup.discordServer.discordServerId,
-        group.discordRoleGroup.discordServer.icon,
-      )
     : null,
   // Discord uses 0 to mean "no color", though we want to represent that with null instead
   color:
@@ -52,5 +47,5 @@ export const formatGroup = (group: GroupPrismaType): Group => ({
       group.discordRoleGroup.discordServer.icon,
     ),
   },
-  createdAt: group.createdAt.toDateString(),
+  createdAt: group.createdAt.toString(),
 });

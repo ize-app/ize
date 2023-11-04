@@ -3,13 +3,19 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 
 import RequestTable from "./RequestTable";
-import { UserDataProps } from "../../Avatar";
+import {
+  AgentSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "../../../../graphql/generated/graphql";
 import { Select } from "../../Form/Select";
+import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
-import { requestMockData } from "../mockData";
 import Search from "../Search";
 
-const searchForUser = (regExSearchQuery: RegExp, users: UserDataProps[]) => {
+const searchForUser = (
+  regExSearchQuery: RegExp,
+  users: AgentSummaryPartsFragment[],
+) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {
@@ -27,13 +33,17 @@ export enum FilterOptions {
 }
 
 interface RequestTabProps {
+  requests: RequestSummaryPartsFragment[];
+  loading: boolean;
   defaultFilterOption?: FilterOptions;
   hideCreateButton?: boolean;
   processId?: string;
 }
 
 const RequestTab = ({
+  requests,
   defaultFilterOption = FilterOptions.Open,
+  loading,
   hideCreateButton = false,
   processId,
 }: RequestTabProps) => {
@@ -42,7 +52,7 @@ const RequestTab = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectOption, setSelectOption] = useState(defaultFilterOption);
 
-  const filteredRequestData = requestMockData
+  const filteredRequestData = (requests ?? [])
     .filter((request) => {
       const regExSearchQuery = new RegExp(searchQuery, "i");
       const expirationDate = new Date(request.expirationDate);
@@ -51,7 +61,7 @@ const RequestTab = ({
       let selectMatch = false;
       let searchMatch = false;
 
-      if (processId && request.process.processId !== processId) {
+      if (processId && request.process.id !== processId) {
         return false;
       }
 
@@ -64,7 +74,11 @@ const RequestTab = ({
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
       else if (request.process.name.search(regExSearchQuery) !== -1)
         searchMatch = true;
-      else if (searchForUser(regExSearchQuery, [request.creator]))
+      else if (
+        searchForUser(regExSearchQuery, [
+          request.creator as AgentSummaryPartsFragment,
+        ])
+      )
         searchMatch = true;
 
       return selectMatch && searchMatch;
@@ -72,8 +86,8 @@ const RequestTab = ({
     .sort((a, b) => {
       const now = new Date();
 
-      const aOpen = a.expirationDate > now;
-      const bOpen = b.expirationDate > now;
+      const aOpen = new Date(Date.parse(a.expirationDate)) > now;
+      const bOpen = new Date(Date.parse(b.expirationDate)) > now;
 
       if (aOpen && !bOpen) return -1;
       else if (!aOpen && bOpen) return 1;
@@ -86,7 +100,9 @@ const RequestTab = ({
       }
     });
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Box
       sx={{
         display: "flex",

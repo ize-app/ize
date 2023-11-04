@@ -37,11 +37,9 @@ const findFirstLetter = (name: string): string => {
 };
 
 export const avatarString = (name: string) => {
-  if (name[0] === "@") return findFirstLetter(name);
-  else
-    return `${name.split(" ")[0][0]}${
-      name.split(" ").length > 1 ? name.split(" ")[1][0] : ""
-    }`;
+  return `${findFirstLetter(name.split(" ")[0])}${
+    name.split(" ").length > 1 ? findFirstLetter(name.split(" ")[1]) : ""
+  }`;
 };
 
 //using milliseconds because that's how native JS expresses time intervals

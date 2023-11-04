@@ -13,7 +13,10 @@ import {
   Roles,
 } from "frontend/src/graphql/generated/graphql";
 
-const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
+export interface ProcessVersion
+  extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId"> {}
+
+export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   roleGroups: {
     include: {
       group: {
@@ -43,34 +46,42 @@ type DecisionSystemPrismaType = Prisma.DecisionSystemGetPayload<{
   include: typeof decisionSystemInclude;
 }>;
 
-export const processInclude = Prisma.validator<Prisma.ProcessInclude>()({
-  currentProcessVersion: {
-    include: {
-      creator: {
-        include: userInclude,
-      },
-      optionSystem: {
-        include: {
-          defaultProcessOptionSet: {
-            include: {
-              options: true,
-            },
+export const processVersionInclude =
+  Prisma.validator<Prisma.ProcessVersionInclude>()({
+    creator: {
+      include: userInclude,
+    },
+    process: true,
+    optionSystem: {
+      include: {
+        defaultProcessOptionSet: {
+          include: {
+            options: true,
           },
         },
       },
-      inputTemplateSet: {
-        include: {
-          inputTemplates: true,
-        },
-      },
-      decisionSystem: {
-        include: decisionSystemInclude,
-      },
-      action: true,
-      roleSet: {
-        include: roleSetInclude,
+    },
+    inputTemplateSet: {
+      include: {
+        inputTemplates: true,
       },
     },
+    decisionSystem: {
+      include: decisionSystemInclude,
+    },
+    action: true,
+    roleSet: {
+      include: roleSetInclude,
+    },
+  });
+
+type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
+  include: typeof processVersionInclude;
+}>;
+
+export const processInclude = Prisma.validator<Prisma.ProcessInclude>()({
+  currentProcessVersion: {
+    include: processVersionInclude,
   },
 });
 
@@ -84,6 +95,21 @@ interface customActionConfig {
 
 export const formatProcess = (processData: ProcessPrismaType): Process => {
   const { currentProcessVersion } = processData;
+
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+
+  const data = {
+    id: processData.id,
+    currentProcessVersionId: currentProcessVersion?.id,
+    createdAt: processData.createdAt.toString(),
+    ...formattedProcessVersion,
+  };
+  return data;
+};
+
+export const formatProcessVersion = (
+  processVersion: ProcessVersionPrismaType,
+): ProcessVersion => {
   const {
     creator,
     optionSystem,
@@ -91,14 +117,13 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
     decisionSystem,
     action,
     roleSet,
-  } = currentProcessVersion;
+  } = processVersion;
 
   const data = {
-    id: processData.id,
-    currentProcessVersionId: currentProcessVersion?.id,
-    name: currentProcessVersion.name,
-    description: currentProcessVersion.description,
-    expirationSeconds: currentProcessVersion.expirationSeconds,
+    currentProcessVersionId: processVersion?.id,
+    name: processVersion.name,
+    description: processVersion.description,
+    expirationSeconds: processVersion.expirationSeconds,
     creator: formatUser(creator),
     options: optionSystem.defaultProcessOptionSet.options
       .sort((a, b) => a.position - b.position)
@@ -129,7 +154,6 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
         ? (action.config as object as customActionConfig).uri
         : undefined,
     roles: formatRoles(roleSet),
-    createdAt: processData.createdAt.toDateString(),
   };
   return data;
 };

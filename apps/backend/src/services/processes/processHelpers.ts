@@ -1,44 +1,21 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-export interface CreateOptionArgs
-  extends Omit<
-    Prisma.OptionCreateManyInput,
-    "id" | "created_at" | "position"
-  > {}
-
-export interface CreateInputTemplateArgs
-  extends Omit<
-    Prisma.InputTemplateCreateManyInput,
-    "id" | "created_at" | "position"
-  > {}
-
-export interface CreateAbsoluteDecisionArgs
-  extends Omit<Prisma.AbsoluteDecisionSystemCreateInput, "id" | "created_at"> {}
-
-export interface CreatePercentageDecisionArgs
-  extends Omit<
-    Prisma.PercentageDecisionSystemCreateInput,
-    "id" | "created_at"
-  > {}
-
-export interface CreateRoleUserArgs
-  extends Omit<Prisma.RoleUserCreateInput, "created_at"> {
-  agentType: "User";
-}
-
-export interface CreateRoleGroupArgs
-  extends Omit<Prisma.RoleGroupCreateInput, "created_at"> {
-  agentType: "Group";
-}
+import {
+  ProcessOptionArgs,
+  InputTemplateArgs,
+  AbsoluteDecisionArgs,
+  PercentageDecisionArgs,
+  RoleArgs,
+} from "frontend/src/graphql/generated/graphql";
 
 export const createOptionSystem = async (
   {
     options,
     transaction = prisma,
   }: {
-    options: CreateOptionArgs[];
+    options: ProcessOptionArgs[];
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
@@ -69,7 +46,7 @@ export const createInputTemplateSet = async (
     inputs,
     transaction = prisma,
   }: {
-    inputs: CreateInputTemplateArgs[];
+    inputs: InputTemplateArgs[];
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
@@ -77,7 +54,10 @@ export const createInputTemplateSet = async (
   await transaction.inputTemplateSet.create({
     data: {
       inputTemplates: {
-        create: inputs.map((input, index) => ({ ...input, position: index })),
+        create: inputs.map((input, index) => ({
+          ...input,
+          position: index,
+        })),
       },
     },
   });
@@ -105,8 +85,8 @@ export const createDecisionSystem = async (
     percentageDecision,
     transaction = prisma,
   }: {
-    absoluteDecision?: CreateAbsoluteDecisionArgs;
-    percentageDecision?: CreatePercentageDecisionArgs;
+    absoluteDecision?: AbsoluteDecisionArgs;
+    percentageDecision?: PercentageDecisionArgs;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
@@ -137,7 +117,7 @@ export const createRoleSet = async (
     roles,
     transaction = prisma,
   }: {
-    roles: (CreateRoleUserArgs | CreateRoleGroupArgs)[];
+    roles: RoleArgs[];
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,

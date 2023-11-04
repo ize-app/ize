@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarWithName } from "../../Avatar";
-import { AvatarsCell, TableCellHideable } from "../TableCells";
+import { TableCellHideable } from "../TableCells";
 
 function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   const { group } = props;
@@ -39,17 +39,19 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             />
           </Box>
         </TableCellHideable>
-
-        <AvatarsCell
-          align="center"
-          hideOnSmallScreen={true}
-          avatars={[
-            {
-              name: group.organization.name,
-              avatarUrl: group.organization.icon,
-            },
-          ]}
-        />
+        <TableCellHideable component="th" scope="row" align="left">
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <AvatarWithName
+              name={group.organization.name}
+              avatarUrl={group.organization.icon}
+            />
+          </Box>
+        </TableCellHideable>
         <TableCellHideable align={"right"} hideOnSmallScreen={true}>
           <Box
             sx={{

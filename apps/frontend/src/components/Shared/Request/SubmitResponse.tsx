@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import { ProcessOption } from "../../../graphql/generated/graphql";
 import { RadioControl } from "../Form";
 
 const formSchema = z.object({
@@ -19,7 +20,7 @@ export const SubmitResponse = ({
   onSubmit,
   displayAsColumn,
 }: {
-  options: string[];
+  options: ProcessOption[];
   onSubmit: () => void;
   displayAsColumn: boolean;
 }) => {
@@ -61,7 +62,10 @@ export const SubmitResponse = ({
           //@ts-ignore
           control={control}
           sx={{ flexDirection: "column", gap: "4px" }}
-          options={options.map((option) => ({ label: option, value: option }))}
+          options={options.map((option) => ({
+            label: option.value,
+            value: option.value,
+          }))}
         />
       </Box>
 

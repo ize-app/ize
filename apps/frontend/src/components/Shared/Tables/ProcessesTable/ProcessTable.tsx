@@ -20,7 +20,6 @@ import {
   Route,
   newRequestRoute,
 } from "../../../../routers/routes";
-import { Process } from "../../../../types";
 import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 

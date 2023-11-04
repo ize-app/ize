@@ -1,22 +1,25 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import { Group, Process, User } from "frontend/src/graphql/generated/graphql";
+import {
+  Group,
+  Process,
+  User,
+  NewProcessArgs,
+  QueryProcessesForCurrentUserArgs,
+} from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { formatUser, userInclude } from "backend/src/utils/formatUser";
 
 import { groupsForCurrentUser } from "./group_resolvers";
 
-import {
-  newCustomProcess,
-  NewCustomProcessInputs,
-} from "../../services/processes/newProcess";
+import { newCustomProcess } from "../../services/processes/newProcess";
 
 const newProcess = async (
   root: unknown,
   args: {
-    process: NewCustomProcessInputs;
+    process: NewProcessArgs;
   },
   context: GraphqlRequestContext,
 ): Promise<string> => {
@@ -42,12 +45,9 @@ const process = async (
 
 const processesForCurrentUser = async (
   root: unknown,
-  args: {},
+  args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  const currentGroups = await groupsForCurrentUser(root, {}, context);
-  const groupIds = currentGroups.map((group) => group.id);
-
   const processes = await prisma.process.findMany({
     where: {
       // Add editProcess lookup later
@@ -56,8 +56,38 @@ const processesForCurrentUser = async (
           currentProcessVersion: {
             roleSet: {
               OR: [
-                { roleGroups: { some: { groupId: { in: groupIds } } } },
-                { roleUsers: { some: { userId: context.currentUser.id } } },
+                {
+                  roleGroups: {
+                    some: {
+                      AND: [
+                        { groupId: { in: args.groups } },
+                        {
+                          type: {
+                            in: args.requestRoleOnly
+                              ? ["Request"]
+                              : ["Request", "Respond"],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+                {
+                  roleUsers: {
+                    some: {
+                      AND: [
+                        { userId: context.currentUser.id },
+                        {
+                          type: {
+                            in: args.requestRoleOnly
+                              ? ["Request"]
+                              : ["Request", "Respond"],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
               ],
             },
           },
@@ -76,8 +106,6 @@ const processesForGroup = async (
   args: { groupId: string },
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  const currentGroups = await groupsForCurrentUser(root, {}, context);
-
   const processes = await prisma.process.findMany({
     where: {
       currentProcessVersion: {
@@ -88,6 +116,7 @@ const processesForGroup = async (
     },
     include: processInclude,
   });
+
   const formattedProcesses = processes.map((process) => formatProcess(process));
 
   return formattedProcesses;

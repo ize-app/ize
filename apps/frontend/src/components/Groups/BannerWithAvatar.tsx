@@ -4,13 +4,13 @@ import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 
 import { avatarString, stringToColor } from "../../utils/inputs";
-import { UserDataProps } from "../shared/Avatar";
+import { AvatarProps } from "../shared/Avatar";
 
 interface BannerWithIconProps {
   bannerUrl: string;
   avatarUrl: string;
   name: string;
-  parent: UserDataProps | undefined;
+  parent: AvatarProps | undefined;
   color: string | null | undefined;
 }
 
@@ -117,7 +117,7 @@ const BannerWithAvatar = ({
               badgeContent={
                 <MuiAvatar
                   alt={name}
-                  src={parent.avatarUrl}
+                  src={parent.avatarUrl ?? undefined}
                   children={avatarString(name.toUpperCase())}
                   sx={(theme) => ({
                     border: "2px solid white",

@@ -3,8 +3,9 @@ import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
 
+import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
-import { AvatarGroup, UserDataProps } from "../Avatar";
+import { AvatarGroup } from "../Avatar";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;
@@ -23,7 +24,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: UserDataProps[];
+  avatars: AgentSummaryPartsFragment[];
   align: "center" | "left";
 }
 
@@ -105,7 +106,7 @@ export const AvatarsCell = ({
           justifyContent: align === "center" ? "center" : "flex-start",
         }}
       >
-        <AvatarGroup users={avatars} />
+        <AvatarGroup agents={avatars} />
       </Box>
     </TableCellHideable>
   );

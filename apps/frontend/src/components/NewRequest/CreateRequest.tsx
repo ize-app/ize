@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -7,17 +8,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as z from "zod";
 
 import { useNewRequestWizardState } from "./newRequestWizard";
-import { zodCleanNumber, zodCleanString } from "../../utils/inputs";
-import { ProcessInputType } from "../NewProcess/newProcessWizard";
+import {
+  InputDataType,
+  ProcessDocument,
+  ProcessSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
+import * as Routes from "../../routers/routes";
+import {
+  shortUUIDToFull,
+  zodCleanNumber,
+  zodCleanString,
+} from "../../utils/inputs";
 import { TextFieldControl } from "../shared/Form";
+import Loading from "../shared/Loading";
 import { ProcessOptions } from "../shared/Process/ProcessOptions";
-import { processMockData } from "../shared/Tables/mockData";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
-const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
+const createInputValidation = (type: InputDataType, isRequired: boolean) => {
   let val: z.ZodTypeAny;
   switch (type) {
-    case ProcessInputType.Number:
+    case InputDataType.Float:
       val = zodCleanNumber(
         isRequired
           ? z.number({ invalid_type_error: "Please enter a valid number" })
@@ -26,7 +36,7 @@ const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
               .optional(),
       );
       break;
-    case ProcessInputType.Text:
+    case InputDataType.Text:
       val = zodCleanString(
         isRequired ? z.string().nonempty() : z.string().optional(),
       );
@@ -38,15 +48,28 @@ const createInputValidation = (type: ProcessInputType, isRequired: boolean) => {
 export const CreateRequest = () => {
   const { formState, setFormState, onPrev, nextLabel } =
     useNewRequestWizardState();
-  const { processId } = useParams();
+  const { processId: shortProcessId } = useParams();
+  const processId = shortUUIDToFull(shortProcessId as string);
   const navigate = useNavigate();
+
+  const { data, loading, error } = useQuery(ProcessDocument, {
+    variables: {
+      processId: processId,
+    },
+  });
+
+  const onError = () => {
+    navigate(Routes.newRequestRoute(Routes.NewRequestRoute.SelectProcess));
+  };
+
+  const process = data?.process as ProcessSummaryPartsFragment;
 
   const formSchema = z.object(
     formState.process
       ? formState.process.inputs.reduce(
           (acc, input) => ({
             ...acc,
-            [input.inputId]: createInputValidation(input.type, input.required),
+            [input.id]: createInputValidation(input.type, input.required),
           }),
           {},
         )
@@ -58,7 +81,7 @@ export const CreateRequest = () => {
   const { control, handleSubmit } = useForm({
     defaultValues: formState.process
       ? formState.process.inputs.reduce(
-          (acc, input) => ({ ...acc, [input.inputId]: "" }),
+          (acc, input) => ({ ...acc, [input.id]: "" }),
           {},
         )
       : {},
@@ -76,13 +99,14 @@ export const CreateRequest = () => {
   };
 
   useEffect(() => {
-    const process = processMockData.find(
-      (process) => process.processId === processId,
-    );
     setFormState({ process });
-  }, [processId, setFormState]);
+  }, [process, setFormState]);
 
-  return (
+  if (error) onError();
+
+  return loading ? (
+    <Loading />
+  ) : (
     <>
       <WizardBody>
         {/* <div>Create a new request for {formState.process?.name}</div> */}
@@ -94,12 +118,13 @@ export const CreateRequest = () => {
             marginBottom: "24px",
           }}
         >
+          <Typography fontWeight={600} color="primary">
+            Process: {process.name}
+          </Typography>
           <Typography variant="body1">
             Your request will have the following options:
           </Typography>
-          <ProcessOptions
-            options={formState.process ? formState.process?.options : []}
-          />
+          <ProcessOptions options={formState?.process?.options ?? []} />
         </Box>
         <Box
           sx={{
@@ -112,12 +137,12 @@ export const CreateRequest = () => {
           {control
             ? formState.process?.inputs.map((input) => (
                 <TextFieldControl
-                  key={input.inputId}
+                  key={input.id}
                   label={input.name}
                   control={control}
-                  name={input.inputId}
+                  name={input.id}
                   required={input.required}
-                  placeholder={input.description}
+                  placeholder={input.description ?? ""}
                 />
               ))
             : null}
