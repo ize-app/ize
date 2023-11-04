@@ -21,9 +21,18 @@ import {
 } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
+const organizationSchema = z.object({
+  name: z.string(),
+  avatarUrl: z.string().optional(),
+});
+
 const userGroupSchema = z.object({
   id: z.string(),
+  name: z.string(),
   type: z.nativeEnum(AgentType),
+  avatarUrl: z.string().url().optional().nullable(),
+  backgroundColor: z.string().optional().nullable(),
+  parent: organizationSchema.optional(),
 });
 
 const formSchema = z
@@ -127,6 +136,8 @@ export const ProcessRights = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
   const totalGroupMembers = 128;
+
+  console.log("inside process rights, form state  is", formState);
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
