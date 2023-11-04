@@ -46,9 +46,15 @@ const createInputValidation = (type: InputDataType, isRequired: boolean) => {
 };
 
 export const CreateRequest = () => {
-  const { formState, setFormState, onPrev, nextLabel } =
+  const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
     useNewRequestWizardState();
   const { processId: shortProcessId } = useParams();
+
+  useEffect(
+    () => setParams({ processId: shortProcessId }),
+    [shortProcessId, setParams],
+  );
+
   const processId = shortUUIDToFull(shortProcessId as string);
   const navigate = useNavigate();
 
@@ -94,8 +100,8 @@ export const CreateRequest = () => {
       ...prev,
       userInputs: data,
     }));
-    // onNext({ processId });
-    navigate("confirm");
+    onNext();
+    // navigate("confirm");
   };
 
   useEffect(() => {

@@ -37,6 +37,7 @@ export const EditProcess = () => {
     formState,
     setFormState,
     nextLabel,
+    setParams,
   } = useWizard(editProcessWizard);
 
   return (
@@ -44,7 +45,7 @@ export const EditProcess = () => {
       <Head
         title={"Edit process"}
         description={
-          "Edit what this process does and how your group arrives at a deicion."
+          "Edit what this process does and how your group arrives at a decision."
         }
       />
       <Box
@@ -67,7 +68,14 @@ export const EditProcess = () => {
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           <Outlet
-            context={{ formState, setFormState, onNext, onPrev, nextLabel }}
+            context={{
+              formState,
+              setFormState,
+              onNext,
+              onPrev,
+              nextLabel,
+              setParams,
+            }}
           />
         </Box>
       </Box>

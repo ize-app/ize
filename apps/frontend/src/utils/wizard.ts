@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
+  Params,
+  generatePath,
   matchPath,
   useLocation,
   useNavigate,
@@ -26,6 +28,8 @@ type ContextType<FormState> = {
   setFormState: Dispatch<SetStateAction<FormState>>;
   onNext: () => void;
   onPrev: () => void;
+  params: Params;
+  setParams: Dispatch<SetStateAction<Params>>;
   validWizardState: (formState: FormState) => boolean;
   nextLabel: string;
 };
@@ -41,6 +45,9 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const [formState, setFormState] = useState<FormState>(
     wizard.initialFormState,
   );
+
+  const [params, setParams] = useState<Params>({});
+
   const currentStepIndex = wizard.steps.findIndex((step) => {
     return matchPath(step.path, location.pathname) !== null;
   });
@@ -75,7 +82,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     ? wizard.onComplete
     : nextStep
     ? () => {
-        navigate(nextStep!.path);
+        navigate(generatePath(nextStep!.path, params));
       }
     : undefined;
 
@@ -83,7 +90,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   const onPrev = prevStep
     ? () => {
-        navigate(prevStep!.path);
+        navigate(generatePath(prevStep!.path, params));
       }
     : undefined;
 
@@ -96,5 +103,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     setFormState,
     title,
     canNext,
+    params,
+    setParams,
   };
 }
