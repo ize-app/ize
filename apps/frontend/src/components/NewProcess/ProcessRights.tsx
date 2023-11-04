@@ -32,7 +32,7 @@ const userGroupSchema = z.object({
   type: z.nativeEnum(AgentType),
   avatarUrl: z.string().url().optional().nullable(),
   backgroundColor: z.string().optional().nullable(),
-  parent: organizationSchema.optional(),
+  parent: organizationSchema.optional().nullable(),
 });
 
 const formSchema = z
@@ -165,7 +165,6 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       ...data,

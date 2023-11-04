@@ -2,17 +2,17 @@ import { AgentType, InputTemplateArgs } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
-export interface ProcessOption {
+export interface RoleSelection {
   id: string;
   name: string;
-  icon: string;
+  avatarUrl?: string | null | undefined;
   type: AgentType;
-  oragnization?: Organization;
+  parent?: Organization | null;
 }
 
 interface Organization {
   name: string;
-  icon: string;
+  avatarUrl?: string;
 }
 
 export interface NewProcessState {
@@ -58,9 +58,9 @@ export interface ProcessInput {
 }
 
 export interface ProcessRights {
-  request: ProcessOption[];
-  response: ProcessOption[];
-  edit: ProcessOption;
+  request: RoleSelection[];
+  response: RoleSelection[];
+  edit: RoleSelection;
 }
 
 export enum ProcessInputType {
