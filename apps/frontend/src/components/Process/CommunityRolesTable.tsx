@@ -6,6 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
 import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
+import { reformatAgentForAvatar } from "../shared/Avatar";
 import { AvatarsCell } from "../shared/Tables/TableCells";
 
 export const CommunityRolesTable = ({
@@ -33,7 +34,12 @@ export const CommunityRolesTable = ({
                 trigger this process
               </Typography>
             </TableCell>
-            <AvatarsCell align="center" avatars={process.roles.request} />
+            <AvatarsCell
+              align="center"
+              avatars={process.roles.request.map((agent) =>
+                reformatAgentForAvatar(agent),
+              )}
+            />
           </TableRow>
           <TableRow id={"community-roles-row-2"}>
             <TableCell>
@@ -42,7 +48,12 @@ export const CommunityRolesTable = ({
                 respond to requests made by this process
               </Typography>
             </TableCell>
-            <AvatarsCell align="center" avatars={process.roles.respond} />
+            <AvatarsCell
+              align="center"
+              avatars={process.roles.respond.map((agent) =>
+                reformatAgentForAvatar(agent),
+              )}
+            />
           </TableRow>
           <TableRow id={"community-roles-row-3"}>
             <TableCell>

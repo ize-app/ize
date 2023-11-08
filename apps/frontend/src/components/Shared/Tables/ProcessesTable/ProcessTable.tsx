@@ -69,13 +69,13 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
           )}
           hideOnSmallScreen={true}
         />
-        <AvatarsCell
+        {/* <AvatarsCell
           align="center"
           avatars={process.roles.respond.map((role) =>
             reformatAgentForAvatar(role),
           )}
           hideOnSmallScreen={true}
-        />
+        /> */}
         <AvatarsCell
           avatars={process.roles.respond.map((role) =>
             reformatAgentForAvatar(role),
@@ -154,13 +154,13 @@ export default function ProcessTable({
             >
               Request
             </TableCellHideable>
-            <TableCellHideable
+            {/* <TableCellHideable
               hideOnSmallScreen={true}
               width="100px"
               align="center"
             >
               Respond
-            </TableCellHideable>
+            </TableCellHideable> */}
             <TableCellHideable
               align="center"
               width={"100px"}
