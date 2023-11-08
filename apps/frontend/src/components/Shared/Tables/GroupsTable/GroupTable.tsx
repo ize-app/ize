@@ -54,16 +54,8 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             />
           </Box>
         </TableCellHideable>
-        <TableCellHideable align={"right"} hideOnSmallScreen={true}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "8px",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Typography>{group.memberCount ?? 34}</Typography>
-          </Box>
+        <TableCellHideable align={"center"} hideOnSmallScreen={true}>
+          <Typography>{group.memberCount}</Typography>
         </TableCellHideable>
       </TableRow>
     </React.Fragment>
