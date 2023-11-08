@@ -18,7 +18,13 @@ import {
   RequestsForProcessDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
-import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
+import PageContainer from "../../layout/PageContainer";
+import {
+  EditProcessRoute,
+  NewRequestRoute,
+  editProcessRoute,
+  newRequestRoute,
+} from "../../routers/routes";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
@@ -73,7 +79,7 @@ export const Process = () => {
   ) : processLoading || !process ? (
     <Loading />
   ) : (
-    <>
+    <PageContainer>
       <Head title={process.name} description={process.description ?? ""} />
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -124,6 +130,13 @@ export const Process = () => {
             </Button>
             <Button
               variant="contained"
+              onClick={() => {
+                navigate(
+                  generatePath(editProcessRoute(EditProcessRoute.Intro), {
+                    processId: fullUUIDToShort(process.id),
+                  }),
+                );
+              }}
               sx={{
                 width: "140px",
                 // TODO: Query user roles from group/individual
@@ -158,6 +171,6 @@ export const Process = () => {
           />
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };

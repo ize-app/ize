@@ -12,6 +12,7 @@ import {
   fullUUIDToShort,
   intervalToIntuitiveTimeString,
 } from "../../../utils/inputs";
+import { reformatAgentForAvatar } from "../Avatar";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
 import { AvatarsCell } from "../Tables/TableCells";
 
@@ -72,7 +73,12 @@ export const ProcessSummaryTable = ({
                 Who can respond
               </Typography>
             </TableCell>
-            <AvatarsCell align="left" avatars={process.roles.respond} />
+            <AvatarsCell
+              align="left"
+              avatars={process.roles.respond.map((agent) =>
+                reformatAgentForAvatar(agent),
+              )}
+            />
           </TableRow>
           <TableRow>
             <TableCell>

@@ -1,4 +1,4 @@
-import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import { Outlet } from "react-router-dom";
 
 import Head from "./Head";
@@ -10,10 +10,10 @@ export const DefaultLayout = () => {
     <>
       <Head title="Cults" description="The decision-making engine" />
       <NavBar />
-      <Container sx={{ display: "flex", flexDirection: "column" }}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Outlet />
         <Snackbar />
-      </Container>
+      </Box>
     </>
   );
 };

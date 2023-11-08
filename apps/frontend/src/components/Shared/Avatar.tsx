@@ -9,24 +9,38 @@ import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { AgentSummaryPartsFragment } from "../../graphql/generated/graphql";
+import {
+  AgentSummaryPartsFragment,
+  AgentType,
+} from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
 
 export interface AvatarWithNameProps {
+  id: string;
   avatarUrl: string | undefined | null;
   name: string;
   color?: string | null;
-  parent?: AvatarProps;
+  parent?: ParentProps;
+  type: AgentType;
+}
+
+export interface ParentProps {
+  avatarUrl: string | undefined | null;
+  name: string;
 }
 
 export interface AvatarProps extends MuiAvatarProps {
-  avatarUrl?: string | undefined | null;
+  id: string;
+  type: AgentType;
+  avatarUrl?: string | null | undefined;
   name: string;
-  parent?: AvatarProps;
+  parent?: ParentProps;
   backgroundColor?: string | null | undefined;
 }
 
-const reformatAgent = (agent: AgentSummaryPartsFragment): AvatarProps => {
+export const reformatAgentForAvatar = (
+  agent: AgentSummaryPartsFragment,
+): AvatarProps => {
   const parent =
     agent.__typename === "Group"
       ? {
@@ -36,6 +50,8 @@ const reformatAgent = (agent: AgentSummaryPartsFragment): AvatarProps => {
       : undefined;
 
   return {
+    id: agent.id,
+    type: agent.__typename === "Group" ? AgentType.Group : AgentType.User,
     avatarUrl: agent.icon,
     name: agent.name,
     backgroundColor:
@@ -45,6 +61,7 @@ const reformatAgent = (agent: AgentSummaryPartsFragment): AvatarProps => {
 };
 
 export const Avatar = ({
+  id,
   avatarUrl,
   name,
   parent,
@@ -53,7 +70,7 @@ export const Avatar = ({
 }: AvatarProps): JSX.Element => {
   const { sx } = props;
   const defaultStyles: SxProps = {
-    bgcolor: backgroundColor ? backgroundColor : stringToColor(name),
+    bgcolor: backgroundColor ? backgroundColor : stringToColor(id ?? name),
   };
   const styles = { ...sx, ...defaultStyles } as SxProps;
 
@@ -63,6 +80,7 @@ export const Avatar = ({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       badgeContent={
         <Avatar
+          id={parent.name}
           name={parent.name}
           avatarUrl={parent.avatarUrl}
           className={"avatarBadge"}
@@ -93,6 +111,7 @@ export const Avatar = ({
 };
 
 export const AvatarWithName = ({
+  id,
   name,
   avatarUrl: url,
   parent,
@@ -110,6 +129,7 @@ export const AvatarWithName = ({
       }}
     >
       <Avatar
+        id={id}
         avatarUrl={url}
         name={name}
         backgroundColor={color}
@@ -164,12 +184,15 @@ const AvatarPopper = ({
           }}
           elevation={4}
         >
-          {users.map((user, index) => (
+          {users.map((user) => (
             <AvatarWithName
-              key={user.name + index.toString()}
+              id={user.id}
+              type={user.type}
+              key={user.id}
               name={user.name}
               avatarUrl={user.avatarUrl}
               parent={user.parent}
+              color={user.backgroundColor}
             />
           ))}
         </Paper>
@@ -180,12 +203,8 @@ const AvatarPopper = ({
 export const AvatarGroup = ({
   agents,
 }: {
-  agents: AgentSummaryPartsFragment[];
+  agents: AvatarProps[];
 }): JSX.Element => {
-  const agentsFormatted: AvatarProps[] = agents.map((agent) =>
-    reformatAgent(agent),
-  );
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -209,9 +228,11 @@ export const AvatarGroup = ({
         onMouseEnter={handlePopperOpen}
         onMouseLeave={handlePopperClose}
       >
-        {agentsFormatted.map((a) => (
+        {agents.map((a) => (
           <Avatar
-            key={a.name}
+            id={a.id}
+            key={a.id}
+            type={a.type}
             avatarUrl={a.avatarUrl}
             parent={a.parent}
             name={a.name}
@@ -219,7 +240,7 @@ export const AvatarGroup = ({
           />
         ))}
       </MuiAvatarGroup>
-      <AvatarPopper users={agentsFormatted} anchorEl={anchorEl} open={open} />
+      <AvatarPopper users={agents} anchorEl={anchorEl} open={open} />
     </>
   );
 };
@@ -232,7 +253,7 @@ export const NameWithPopper = ({
   agents: AgentSummaryPartsFragment[];
 }) => {
   const agentsFormatted: AvatarProps[] = agents.map((agent) =>
-    reformatAgent(agent),
+    reformatAgentForAvatar(agent),
   );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

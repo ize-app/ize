@@ -19,6 +19,7 @@ import {
   RequestInputArgs,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
@@ -28,8 +29,8 @@ export const NewRequest = () => {
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
-      const newGroupId = data.newRequest;
-      navigate(`/requests/${fullUUIDToShort(newGroupId)}`);
+      const newProcessId = data.newRequest;
+      navigate(`/requests/${fullUUIDToShort(newProcessId)}`);
     },
   });
 
@@ -73,10 +74,12 @@ export const NewRequest = () => {
     formState,
     setFormState,
     nextLabel,
+    params,
+    setParams,
   } = useWizard(newRequestWizard);
 
   return (
-    <>
+    <PageContainer>
       <Head
         title={"Create a request"}
         description={"Propose a new decision by creating a request."}
@@ -101,10 +104,18 @@ export const NewRequest = () => {
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           <Outlet
-            context={{ formState, setFormState, onNext, onPrev, nextLabel }}
+            context={{
+              formState,
+              setFormState,
+              onNext,
+              onPrev,
+              nextLabel,
+              params,
+              setParams,
+            }}
           />
         </Box>
       </Box>
-    </>
+    </PageContainer>
   );
 };

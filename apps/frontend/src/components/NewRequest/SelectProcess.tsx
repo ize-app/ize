@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useNewRequestWizardState } from "./newRequestWizard";
 import {
   GetProcessesToCreateRequestDocument,
   ProcessSummaryPartsFragment,
@@ -22,6 +23,7 @@ import { WizardBody } from "../shared/Wizard";
 export const SelectProcess = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const { setParams } = useNewRequestWizardState();
 
   const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
 
@@ -75,7 +77,10 @@ export const SelectProcess = () => {
             {filteredProcesses.map((process) => (
               <TableRow
                 key={process.id}
-                onClick={() => navigate(fullUUIDToShort(process.id))}
+                onClick={() => {
+                  setParams({ processId: fullUUIDToShort(process.id) });
+                  navigate(fullUUIDToShort(process.id));
+                }}
               >
                 <TableCell>
                   <Typography fontWeight={500}>{process.name}</Typography>

@@ -14,12 +14,10 @@ import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { ExpandedRequest } from "./ExpandedRequest";
-import {
-  AgentSummaryPartsFragment,
-  RequestSummaryPartsFragment,
-} from "../../../../graphql/generated/graphql";
+import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { Route } from "../../../../routers/routes";
 import { fullUUIDToShort } from "../../../../utils/inputs";
+import { reformatAgentForAvatar } from "../../Avatar";
 import {
   AvatarsCell,
   StatusCell,
@@ -65,7 +63,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
         />
         <AvatarsCell
           align="center"
-          avatars={[request.creator as AgentSummaryPartsFragment]}
+          avatars={[reformatAgentForAvatar(request.creator)]}
           hideOnSmallScreen={true}
         />
         <StatusCell
@@ -92,8 +90,10 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
             </Button>
           ) : (
             <Typography>
-              {userResponse.substring(0, 12) +
-                (userResponse.length > 12 ? "..." : "")}
+              {alreadyResponded
+                ? userResponse.substring(0, 12) +
+                  (userResponse.length > 12 ? "..." : "")
+                : "-"}
             </Typography>
           )}
         </TableCellHideable>

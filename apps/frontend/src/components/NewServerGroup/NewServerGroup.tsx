@@ -20,6 +20,7 @@ import {
   SetUpDiscordServerInput,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
+import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
 
@@ -69,7 +70,7 @@ export const NewServerGroup = () => {
   } = useWizard(newServerWizard);
 
   return (
-    <>
+    <PageContainer>
       <Head
         title={"Create a group"}
         description={
@@ -135,6 +136,6 @@ export const NewServerGroup = () => {
           )}
         </Stack>
       </Box>
-    </>
+    </PageContainer>
   );
 };

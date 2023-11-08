@@ -33,6 +33,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              id={group.id}
               color={group.color}
               name={group.name}
               avatarUrl={group.icon}
@@ -47,21 +48,14 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              id={group.name}
               name={group.organization.name}
               avatarUrl={group.organization.icon}
             />
           </Box>
         </TableCellHideable>
-        <TableCellHideable align={"right"} hideOnSmallScreen={true}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "8px",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Typography>{group.memberCount ?? 34}</Typography>
-          </Box>
+        <TableCellHideable align={"center"} hideOnSmallScreen={true}>
+          <Typography>{group.memberCount}</Typography>
         </TableCellHideable>
       </TableRow>
     </React.Fragment>

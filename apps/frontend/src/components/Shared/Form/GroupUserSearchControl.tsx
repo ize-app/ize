@@ -7,26 +7,14 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 
-import {
-  AgentSummaryPartsFragment,
-  AgentType,
-  OrganizationPartsFragment,
-} from "../../../graphql/generated/graphql";
-import { Avatar } from "../Avatar";
+import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import { Avatar, AvatarProps, reformatAgentForAvatar } from "../Avatar";
 
 interface GroupUserSearchControlProps {
   control: Control;
   name: string;
   label: string;
   agents: AgentSummaryPartsFragment[];
-}
-
-interface SearchOption {
-  id: string;
-  name: string;
-  type: AgentType;
-  organization?: OrganizationPartsFragment;
-  icon: string | null | undefined;
 }
 
 export const GroupUserSearchControl = ({
@@ -47,33 +35,39 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={agents.map((agent) => ({
-              id: agent.id,
-              name: agent.name,
-              type:
-                agent.__typename === "Group" ? AgentType.Group : AgentType.User,
-              icon: agent.icon,
-              organization:
-                agent.__typename === "Group" ? agent.organization : undefined,
-            }))}
-            getOptionLabel={(option: SearchOption) => option.name}
+            options={agents.map((agent) => {
+              const reformattedAgent = {
+                ...reformatAgentForAvatar(agent),
+              };
+              return reformattedAgent;
+            })}
+            getOptionLabel={(option: AvatarProps) => option.name}
             onChange={(_event, data) => field.onChange(data)}
-            isOptionEqualToValue={(
-              option: SearchOption,
-              value: SearchOption,
-            ) => {
-              return option.name === value.name;
+            isOptionEqualToValue={(option: AvatarProps, value: AvatarProps) => {
+              return option.id === value.id;
             }}
-            renderTags={(value: readonly SearchOption[], getTagProps) =>
-              value.map((option: SearchOption, index: number) => (
-                <Chip
-                  avatar={<Avatar name={option.name} avatarUrl={option.icon} />}
-                  variant="filled"
-                  label={option.name}
-                  color="primary"
-                  {...getTagProps({ index })}
-                />
-              ))
+            renderTags={(value: readonly AvatarProps[], getTagProps) =>
+              value.map((option: AvatarProps, index: number) => {
+                return (
+                  <Chip
+                    avatar={
+                      <Avatar
+                        id={option.id}
+                        backgroundColor={option.backgroundColor}
+                        name={option.name}
+                        avatarUrl={
+                          option.parent?.avatarUrl ?? option.avatarUrl ?? ""
+                        }
+                        type={option.type}
+                      />
+                    }
+                    variant="filled"
+                    label={option.name}
+                    color="primary"
+                    {...getTagProps({ index })}
+                  />
+                );
+              })
             }
             renderOption={(props, option) => (
               <Box
@@ -89,9 +83,12 @@ export const GroupUserSearchControl = ({
                 {...props}
               >
                 <Avatar
-                  avatarUrl={option.icon}
+                  id={option.id}
+                  avatarUrl={option.avatarUrl}
                   name={option.name}
-                  parent={option.organization}
+                  parent={option.parent}
+                  backgroundColor={option.backgroundColor}
+                  type={option.type}
                 />
                 <Typography
                   variant="body1"

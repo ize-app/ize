@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
-import { AvatarGroup } from "../Avatar";
+import { AvatarGroup, AvatarProps } from "../Avatar";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;
@@ -24,7 +24,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: AgentSummaryPartsFragment[];
+  avatars: AvatarProps[];
   align: "center" | "left";
 }
 

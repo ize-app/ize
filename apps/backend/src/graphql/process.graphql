@@ -1,3 +1,18 @@
+type Mutation {
+  newProcess(process: newProcessArgs!): String!
+  newEditProcessRequest(inputs: newEditProcessRequestArgs!): String!
+}
+
+type Query {
+  process(processId: String!): Process!
+  processesForCurrentUser(
+    requestRoleOnly: Boolean!
+    groups: [String!]
+  ): [Process!]!
+  processesForGroup(groupId: String!): [Process!]!
+  groupsAndUsersEliglbeForRole: [Agent!]!
+}
+
 input newProcessArgs {
   name: String!
   description: String
@@ -11,15 +26,18 @@ input newProcessArgs {
   editProcessId: String
 }
 
-type Mutation {
-  newProcess(process: newProcessArgs!): String!
-}
-
-type Query {
-  process(processId: String!): Process!
-  processesForCurrentUser(requestRoleOnly: Boolean!, groups: [String!]): [Process!]!
-  processesForGroup(groupId: String!): [Process!]!
-  groupsAndUsersEliglbeForRole: [Agent!]!
+input newEditProcessRequestArgs {
+  processId: String!
+  name: String
+  description: String
+  expirationSeconds: Int
+  options: [ProcessOptionArgs!]
+  inputs: [InputTemplateArgs!]
+  webhookUri: String
+  absoluteDecision: AbsoluteDecisionArgs
+  percentageDecision: PercentageDecisionArgs
+  roles: [RoleArgs!]
+  editProcessId: String
 }
 
 type Process {

@@ -21,9 +21,18 @@ import {
 } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
+const organizationSchema = z.object({
+  name: z.string(),
+  avatarUrl: z.string().optional(),
+});
+
 const userGroupSchema = z.object({
   id: z.string(),
+  name: z.string(),
   type: z.nativeEnum(AgentType),
+  avatarUrl: z.string().url().optional().nullable(),
+  backgroundColor: z.string().optional().nullable(),
+  parent: organizationSchema.optional().nullable(),
 });
 
 const formSchema = z
@@ -37,10 +46,10 @@ const formSchema = z
         .min(1, "Please select at least one group or individual."),
       edit: userGroupSchema,
     }),
+    requestExpirationSeconds: z.number(),
     decision: z.object({
       decisionThreshold: z.number(),
       decisionThresholdType: z.nativeEnum(ThresholdTypes),
-      requestExpirationSeconds: z.number(),
       quorum: z.object({ quorumThreshold: z.number().optional() }).optional(),
     }),
   })
@@ -128,6 +137,8 @@ export const ProcessRights = () => {
     useNewProcessWizardState();
   const totalGroupMembers = 128;
 
+  console.log("inside process rights, form state  is", formState);
+
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       rights: {
@@ -135,12 +146,11 @@ export const ProcessRights = () => {
         response: formState.rights?.response ?? [],
         edit: formState.rights?.edit,
       },
+      requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
       decision: {
         decisionThresholdType:
           formState.decision?.decisionThresholdType ?? ThresholdTypes.Absolute,
         decisionThreshold: formState.decision?.decisionThreshold ?? 1,
-        requestExpirationSeconds:
-          formState.decision?.requestExpirationSeconds ?? 86400,
         quorum: {
           quorumThreshold: formState.decision?.quorum?.quorumThreshold ?? 0,
         },
@@ -154,14 +164,11 @@ export const ProcessRights = () => {
     watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
 
   const onSubmit = (data: FormFields) => {
-    console.log("data is ", data);
     setFormState((prev) => ({
       ...prev,
       ...data,
       decision: {
         ...data.decision,
-        requestExpirationSeconds:
-          data.decision.requestExpirationSeconds ?? 3600,
       },
     }));
 
@@ -191,7 +198,7 @@ export const ProcessRights = () => {
               //@ts-ignore
               control={control}
               sx={{ width: "300px" }}
-              name="decision.requestExpirationSeconds"
+              name="requestExpirationSeconds"
               selectOptions={[
                 { name: "1 hour", value: 3600 },
                 { name: "4 hours", value: 14400 },

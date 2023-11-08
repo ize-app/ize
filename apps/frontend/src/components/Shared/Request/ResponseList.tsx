@@ -12,6 +12,7 @@ const ResponseListRow = ({ response }: { response: Response }) => {
     <TableRow>
       <TableCell>
         <AvatarWithName
+          id={response.user.id}
           avatarUrl={response.user.icon}
           name={response.user.name}
         />

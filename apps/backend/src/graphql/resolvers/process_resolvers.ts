@@ -6,6 +6,7 @@ import {
   Process,
   User,
   NewProcessArgs,
+  NewEditProcessRequestArgs,
   QueryProcessesForCurrentUserArgs,
 } from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
@@ -24,6 +25,16 @@ const newProcess = async (
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newCustomProcess(args.process, context);
+};
+
+const newEditProcessRequest = async (
+  root: unknown,
+  args: {
+    process: NewEditProcessRequestArgs;
+  },
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  return "1";
 };
 
 const process = async (
@@ -166,4 +177,4 @@ export const processQueries = {
   groupsAndUsersEliglbeForRole,
 };
 
-export const processMutations = { newProcess };
+export const processMutations = { newProcess, newEditProcessRequest };

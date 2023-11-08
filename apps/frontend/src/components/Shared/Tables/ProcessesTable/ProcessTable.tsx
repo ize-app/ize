@@ -16,11 +16,14 @@ import { generatePath, useNavigate } from "react-router-dom";
 
 import { ProcessSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import {
+  EditProcessRoute,
   NewRequestRoute,
   Route,
+  editProcessRoute,
   newRequestRoute,
 } from "../../../../routers/routes";
 import { fullUUIDToShort } from "../../../../utils/inputs";
+import { reformatAgentForAvatar } from "../../Avatar";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
 function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
@@ -61,16 +64,22 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
         </TableCell>
         <AvatarsCell
           align="center"
-          avatars={process.roles.request}
+          avatars={process.roles.request.map((role) =>
+            reformatAgentForAvatar(role),
+          )}
           hideOnSmallScreen={true}
         />
-        <AvatarsCell
+        {/* <AvatarsCell
           align="center"
-          avatars={process.roles.respond}
+          avatars={process.roles.respond.map((role) =>
+            reformatAgentForAvatar(role),
+          )}
           hideOnSmallScreen={true}
-        />
+        /> */}
         <AvatarsCell
-          avatars={process.roles.respond}
+          avatars={process.roles.respond.map((role) =>
+            reformatAgentForAvatar(role),
+          )}
           align="center"
           hideOnSmallScreen={true}
         />
@@ -82,6 +91,11 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   children={<Edit />}
                   onClick={(e) => {
                     e.stopPropagation();
+                    navigate(
+                      generatePath(editProcessRoute(EditProcessRoute.Intro), {
+                        processId: fullUUIDToShort(process.id),
+                      }),
+                    );
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
@@ -140,13 +154,13 @@ export default function ProcessTable({
             >
               Request
             </TableCellHideable>
-            <TableCellHideable
+            {/* <TableCellHideable
               hideOnSmallScreen={true}
               width="100px"
               align="center"
             >
               Respond
-            </TableCellHideable>
+            </TableCellHideable> */}
             <TableCellHideable
               align="center"
               width={"100px"}
