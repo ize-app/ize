@@ -90,8 +90,10 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
             </Button>
           ) : (
             <Typography>
-              {userResponse.substring(0, 12) +
-                (userResponse.length > 12 ? "..." : "")}
+              {alreadyResponded
+                ? userResponse.substring(0, 12) +
+                  (userResponse.length > 12 ? "..." : "")
+                : "-"}
             </Typography>
           )}
         </TableCellHideable>
