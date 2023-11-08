@@ -29,27 +29,28 @@ export const EDIT_PROCESS_WIZARD_STEPS: WizardSteps<EditProcessState> = [
     title: "Basic info",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: () => true,
+    validWizardState: (formState: EditProcessState) =>
+      !!formState.currentProcess,
   },
   {
     path: editProcessRoute(EditProcessRoute.Inputs),
     title: "Inputs fields on each request",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: () => true,
+    validWizardState: (formState: EditProcessState) => !!formState.name,
   },
   {
     path: editProcessRoute(EditProcessRoute.Decisions),
     title: "How decisions are made",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: () => true,
+    validWizardState: (formState: EditProcessState) => !!formState.inputs,
   },
   {
     path: editProcessRoute(EditProcessRoute.Confirm),
     title: "Review edits and create request",
     progressBarStep: 2,
     canNext: () => true,
-    validWizardState: () => true,
+    validWizardState: (formState: EditProcessState) => !!formState.decision,
   },
 ];

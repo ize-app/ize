@@ -1,23 +1,26 @@
 import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useEditProcessWizardState } from "./editProcessWizard";
 import { processToFormState } from "./helpers/formatProcessDataToFormState";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { ProcessDocument } from "../../graphql/generated/graphql";
 import { shortUUIDToFull } from "../../utils/inputs";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 export const Intro = () => {
   const { onNext, nextLabel, onPrev, setParams, setFormState } =
     useEditProcessWizardState();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const { processId: processIdShort } = useParams();
   const processId: string = shortUUIDToFull(processIdShort as string);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setParams({ processId: processIdShort });
   }, [setParams, processIdShort]);
 
-  useQuery(ProcessDocument, {
+  const { error } = useQuery(ProcessDocument, {
     variables: {
       processId: processId,
     },
@@ -30,6 +33,14 @@ export const Intro = () => {
       }));
     },
   });
+
+  const onError = () => {
+    navigate("/");
+    setSnackbarOpen(true);
+    setSnackbarData({ message: "Invalid process", type: "error" });
+  };
+
+  if (error) onError();
 
   return (
     <>
