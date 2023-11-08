@@ -2,6 +2,10 @@ mutation NewProcess($process: newProcessArgs!) {
   newProcess(process: $process)
 }
 
+mutation NewEditProcessRequest($inputs: newEditProcessRequestArgs!) {
+  newEditProcessRequest(inputs: $inputs)
+}
+
 query Process($processId: String!) {
   process(processId: $processId) {
     ...ProcessSummaryParts

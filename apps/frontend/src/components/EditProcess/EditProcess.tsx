@@ -1,26 +1,58 @@
+import { useMutation } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
+import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import {
   EDIT_PROCESS_PROGRESS_BAR_STEPS,
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
+  useEditProcessWizardState,
 } from "./editProcessWizard";
+import createEditProcessMutation from "./helpers/createEditProcessMutation";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
+import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
+import { NewProcessState } from "../NewProcess/newProcessWizard";
 
 export const EditProcess = () => {
   const navigate = useNavigate();
+  const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
-  // TODO: Will remove this disable once we put the actual mutation in this function
-  // eslint-disable-next-line @typescript-eslint/require-await
+  const [mutate] = useMutation(NewEditProcessRequestDocument, {
+    onCompleted: (data) => {
+      // const newRequestId = data.newEditProcessRequest;
+      // navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+    },
+  });
+
   const onComplete = async () => {
-    navigate("/");
+    try {
+      await mutate({
+        variables: {
+          inputs: createEditProcessMutation(
+            "1",
+            formState.currentProcess as NewProcessState,
+            formState as NewProcessState,
+          ),
+        },
+      });
+
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request created!", type: "success" });
+      navigate("/");
+    } catch (e) {
+      console.log("inside the error", e);
+      navigate("/");
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request creation failed", type: "error" });
+    }
   };
 
   const editProcessWizard: Wizard<EditProcessState> = {

@@ -61,7 +61,6 @@ const formatDiffDataForTable = (
   }
 
   if (diffForms.decision) {
-    console.log("diff decision is ", diffForms.decision);
     currentProcess["decision"] = oldFormState.decision;
     proposedChanges["decision"] = newFormState.decision;
   }
