@@ -1,8 +1,9 @@
 import { EditProcessRoute, editProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+import { NewProcessState } from "../NewProcess/newProcessWizard";
 
-export interface EditProcessState {
-  name?: string;
+export interface EditProcessState extends NewProcessState {
+  currentProcess?: NewProcessState;
 }
 
 export function useEditProcessWizardState() {

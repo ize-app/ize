@@ -12,7 +12,12 @@ export interface RadioControlProps extends RadioGroupProps {
   label?: string;
   disabled?: boolean;
   defaultValue?: string;
-  options: { value: string; label: string }[];
+  options: OptionProps[];
+}
+
+export interface OptionProps {
+  value: string;
+  label: string;
 }
 
 export const RadioControl = ({

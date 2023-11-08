@@ -44,7 +44,7 @@ export const GroupUserSearchControl = ({
             getOptionLabel={(option: AvatarProps) => option.name}
             onChange={(_event, data) => field.onChange(data)}
             isOptionEqualToValue={(option: AvatarProps, value: AvatarProps) => {
-              return option.name === value.name;
+              return option.id === value.id;
             }}
             renderTags={(value: readonly AvatarProps[], getTagProps) =>
               value.map((option: AvatarProps, index: number) => {
@@ -58,6 +58,7 @@ export const GroupUserSearchControl = ({
                         avatarUrl={
                           option.parent?.avatarUrl ?? option.avatarUrl ?? ""
                         }
+                        type={option.type}
                       />
                     }
                     variant="filled"
@@ -87,6 +88,7 @@ export const GroupUserSearchControl = ({
                   name={option.name}
                   parent={option.parent}
                   backgroundColor={option.backgroundColor}
+                  type={option.type}
                 />
                 <Typography
                   variant="body1"

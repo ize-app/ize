@@ -7,6 +7,7 @@ import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
 import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { ProcessOptions } from "../shared/Process/ProcessOptions";
+import SummarizeInputTemplates from "../shared/Process/SummarizeInputTemplates";
 
 export const RequestTemplateTable = ({
   process,
@@ -49,16 +50,7 @@ export const RequestTemplateTable = ({
               </Typography>
             </TableCell>
             <TableCell>
-              <ul style={{ padding: "0px 10px" }}>
-                {process.inputs.map((input, index) => (
-                  <li key={input.name + index.toString()}>
-                    <Typography>
-                      <span style={{ fontWeight: 500 }}>{input.name}</span> (
-                      {input.type}): {input.description}`
-                    </Typography>
-                  </li>
-                ))}
-              </ul>
+              <SummarizeInputTemplates inputs={process.inputs} />
             </TableCell>
           </TableRow>
         </TableBody>

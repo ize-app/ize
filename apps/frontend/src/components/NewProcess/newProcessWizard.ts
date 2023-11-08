@@ -1,23 +1,21 @@
-import { AgentType, InputTemplateArgs } from "../../graphql/generated/graphql";
+import {
+  InputDataType,
+  InputTemplateArgs,
+  OptionType,
+} from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+import { AvatarProps } from "../shared/Avatar";
 
-export interface RoleSelection {
-  id: string;
-  name: string;
-  avatarUrl?: string | null | undefined;
-  type: AgentType;
-  parent?: Organization | null;
-}
-
-interface Organization {
-  name: string;
-  avatarUrl?: string;
+export enum HasCustomIntegration {
+  "Yes" = "yes",
+  "No" = "no",
 }
 
 export interface NewProcessState {
   name?: string;
   description?: string;
+  requestExpirationSeconds?: number;
   customIntegration?: string;
   webhookUri?: string;
   options?: string;
@@ -29,7 +27,6 @@ export interface NewProcessState {
 
 export interface ProcessDecision {
   decisionThresholdType?: ThresholdTypes;
-  requestExpirationSeconds?: number;
   decisionThreshold?: number;
   quorum?: ProcessQuorum;
 }
@@ -39,6 +36,31 @@ export enum FormOptionChoice {
   Emoji = "Emoji",
   Checkmark = "Checkmark",
 }
+
+export const DefaultOptionSets = new Map([
+  [
+    FormOptionChoice.Checkmark,
+    {
+      display: "✅ ❌",
+      data: [
+        { value: "✅", type: OptionType.Text },
+        { value: "❌", type: OptionType.Text },
+      ],
+    },
+  ],
+  [
+    FormOptionChoice.Emoji,
+    {
+      display: "😃 😐 😭",
+      data: [
+        { value: "😃", type: OptionType.Text },
+        { value: "😐", type: OptionType.Text },
+        { value: "😐", type: OptionType.Text },
+      ],
+    },
+  ],
+  [FormOptionChoice.Custom, { display: "Custom", data: [] }],
+]);
 
 export interface ProcessQuorum {
   quorumType?: ThresholdTypes;
@@ -50,17 +72,10 @@ export enum ThresholdTypes {
   Percentage = "Percentage",
 }
 
-export interface ProcessInput {
-  name: string;
-  description: string;
-  required: boolean;
-  type: ProcessInputType;
-}
-
 export interface ProcessRights {
-  request: RoleSelection[];
-  response: RoleSelection[];
-  edit: RoleSelection;
+  request: AvatarProps[];
+  response: AvatarProps[];
+  edit: AvatarProps;
 }
 
 export enum ProcessInputType {

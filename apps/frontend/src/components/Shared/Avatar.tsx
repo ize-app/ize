@@ -21,6 +21,7 @@ export interface AvatarWithNameProps {
   name: string;
   color?: string | null;
   parent?: ParentProps;
+  type: AgentType;
 }
 
 export interface ParentProps {
@@ -30,8 +31,8 @@ export interface ParentProps {
 
 export interface AvatarProps extends MuiAvatarProps {
   id: string;
-  type?: AgentType;
-  avatarUrl?: string | undefined | null;
+  type: AgentType;
+  avatarUrl?: string | null | undefined;
   name: string;
   parent?: ParentProps;
   backgroundColor?: string | null | undefined;
@@ -186,10 +187,12 @@ const AvatarPopper = ({
           {users.map((user) => (
             <AvatarWithName
               id={user.id}
+              type={user.type}
               key={user.id}
               name={user.name}
               avatarUrl={user.avatarUrl}
               parent={user.parent}
+              color={user.backgroundColor}
             />
           ))}
         </Paper>
@@ -200,12 +203,8 @@ const AvatarPopper = ({
 export const AvatarGroup = ({
   agents,
 }: {
-  agents: AgentSummaryPartsFragment[];
+  agents: AvatarProps[];
 }): JSX.Element => {
-  const agentsFormatted: AvatarProps[] = agents.map((agent) =>
-    reformatAgentForAvatar(agent),
-  );
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -229,10 +228,11 @@ export const AvatarGroup = ({
         onMouseEnter={handlePopperOpen}
         onMouseLeave={handlePopperClose}
       >
-        {agentsFormatted.map((a) => (
+        {agents.map((a) => (
           <Avatar
             id={a.id}
             key={a.id}
+            type={a.type}
             avatarUrl={a.avatarUrl}
             parent={a.parent}
             name={a.name}
@@ -240,7 +240,7 @@ export const AvatarGroup = ({
           />
         ))}
       </MuiAvatarGroup>
-      <AvatarPopper users={agentsFormatted} anchorEl={anchorEl} open={open} />
+      <AvatarPopper users={agents} anchorEl={anchorEl} open={open} />
     </>
   );
 };

@@ -12,7 +12,12 @@ import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { FormOptionChoice, useNewProcessWizardState } from "./newProcessWizard";
+import {
+  DefaultOptionSets,
+  FormOptionChoice,
+  HasCustomIntegration,
+  useNewProcessWizardState,
+} from "./newProcessWizard";
 import { RadioControl } from "../shared/Form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
@@ -39,7 +44,10 @@ const formSchema = z
   })
   .refine(
     (data) => {
-      if (data.customIntegration === "yes" && data.webhookUri === "")
+      if (
+        data.customIntegration === HasCustomIntegration.Yes &&
+        data.webhookUri === ""
+      )
         return false;
       return true;
     },
@@ -47,7 +55,10 @@ const formSchema = z
   )
   .refine(
     (data) => {
-      if (data.options === "custom" && data?.customOptions?.length === 0)
+      if (
+        data.options === FormOptionChoice.Custom &&
+        data?.customOptions?.length === 0
+      )
         return false;
       return true;
     },
@@ -157,12 +168,12 @@ export const ProcessIntro = () => {
                     name="row-radio-buttons-group-custom-integration"
                   >
                     <FormControlLabel
-                      value={"no"}
+                      value={HasCustomIntegration.No}
                       control={<Radio />}
                       label="No"
                     />
                     <FormControlLabel
-                      value={"yes"}
+                      value={HasCustomIntegration.Yes}
                       control={<Radio />}
                       label="Yes"
                     />
@@ -201,11 +212,13 @@ export const ProcessIntro = () => {
               control={control}
               name="options"
               label="What options will users choose between?"
-              options={[
-                { value: FormOptionChoice.Checkmark, label: "✅ ❌" },
-                { value: FormOptionChoice.Emoji, label: "😃 😐 😭" },
-                { value: FormOptionChoice.Custom, label: "Custom" },
-              ]}
+              options={Array.from(DefaultOptionSets, ([value, data]) => ({
+                value,
+                data,
+              })).map((option) => ({
+                label: option.data.display,
+                value: option.value,
+              }))}
             />
 
             {isCustomOptions && (
