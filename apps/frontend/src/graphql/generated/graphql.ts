@@ -292,6 +292,7 @@ export type Request = {
   name: Scalars['String']['output'];
   process: Process;
   responses: Responses;
+  result?: Maybe<Result>;
 };
 
 export type RequestInput = {
@@ -332,6 +333,12 @@ export type Responses = {
   allResponses: Array<Response>;
   responseCount: Array<ResponseCount>;
   userResponse?: Maybe<Response>;
+};
+
+export type Result = {
+  __typename?: 'Result';
+  createdAt: Scalars['String']['output'];
+  selectedOption?: Maybe<ProcessOption>;
 };
 
 export type RoleArgs = {
@@ -922,6 +929,7 @@ export type Request = {
   name: Scalars['String']['output'];
   process: Process;
   responses: Responses;
+  result?: Maybe<Result>;
 };
 
 export type RequestInput = {
@@ -962,6 +970,12 @@ export type Responses = {
   allResponses: Array<Response>;
   responseCount: Array<ResponseCount>;
   userResponse?: Maybe<Response>;
+};
+
+export type Result = {
+  __typename?: 'Result';
+  createdAt: Scalars['String']['output'];
+  selectedOption?: Maybe<ProcessOption>;
 };
 
 export type RoleArgs = {

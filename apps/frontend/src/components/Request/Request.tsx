@@ -119,7 +119,7 @@ export const Request = () => {
   const onError = () => {
     navigate("/");
     setSnackbarOpen(true);
-    setSnackbarData({ message: "Invalid request", type: "error" });
+    setSnackbarData({ message: "Cannot find this request", type: "error" });
   };
 
   if (error) onError();

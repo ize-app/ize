@@ -71,7 +71,7 @@ export const Process = () => {
   const onError = () => {
     navigate("/");
     setSnackbarOpen(true);
-    setSnackbarData({ message: "Invalid process", type: "error" });
+    setSnackbarData({ message: "Cannot find this process", type: "error" });
   };
 
   return processError ? (

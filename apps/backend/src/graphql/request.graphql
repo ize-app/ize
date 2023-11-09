@@ -24,12 +24,18 @@ type Request {
   inputs: [RequestInput!]!
   createdAt: String!
   responses: Responses!
+  result: Result
 }
 
 type Responses {
   userResponse: Response
   allResponses: [Response!]!
   responseCount: [ResponseCount!]!
+}
+
+type Result {
+  createdAt: String!
+  selectedOption: ProcessOption
 }
 
 type Response {

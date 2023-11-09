@@ -29,8 +29,8 @@ const formatResponse = (response: ResponsePrismaType): Response => ({
 
 export const formatResponses = (
   responses: ResponsePrismaType[],
-  userId: string | undefined,
   options: ProcessOption[],
+  userId?: string,
 ): Responses => {
   let userResponse;
   const allResponses: Response[] = [];

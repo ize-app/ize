@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient,  } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
@@ -118,7 +118,6 @@ export const formatProcessVersion = (
     action,
     roleSet,
   } = processVersion;
-
   const data = {
     currentProcessVersionId: processVersion?.id,
     name: processVersion.name,
@@ -147,14 +146,13 @@ export const formatProcessVersion = (
         }),
       ),
     webhookUri:
-      action &&
-      action.type === "customWebhook" &&
-      action?.config &&
-      typeof action?.config === "object"
-        ? (action.config as object as customActionConfig).uri
+      action && action.type === "customWebhook" && action?.config
+        ? // @ts-ignore
+          JSON.parse(action.config as string).uri
         : undefined,
     roles: formatRoles(roleSet),
   };
+
   return data;
 };
 
@@ -174,7 +172,7 @@ const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   return roles;
 };
 
-const formatDecisionSystem = (
+export const formatDecisionSystem = (
   decisionSystem: DecisionSystemPrismaType,
 ): AbsoluteDecision | PercentageDecision => {
   if (decisionSystem.type === "Absolute")
