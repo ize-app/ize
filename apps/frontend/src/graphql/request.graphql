@@ -47,6 +47,9 @@ fragment RequestSummaryParts on Request {
   responses {
     ...ResponsesSummaryParts
   }
+  result {
+    ...ResultSummaryParts
+  }
 }
 
 fragment RequestInputSummaryParts on RequestInput {
@@ -86,4 +89,12 @@ fragment ResponseCountSummaryParts on ResponseCount {
   value
   type
   count
+}
+
+fragment ResultSummaryParts on Result {
+  selectedOption {
+    ...OptionSummaryParts
+  }
+  actionComplete
+  createdAt
 }

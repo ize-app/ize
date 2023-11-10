@@ -10,6 +10,8 @@ const executeAction = async ({
   requestId: string;
   transaction?: Prisma.TransactionClient;
 }) => {
+  let wasSuccess: boolean;
+
   const reqRaw = await transaction.request.findFirst({
     include: requestInclude,
     where: {
@@ -18,8 +20,20 @@ const executeAction = async ({
   });
 
   const request = formatRequest(reqRaw);
-  if (request.process.webhookUri)
-    callWebhook({ uri: request.process.webhookUri, payload: request });
+  if (request.process.action.actionDetails.__typename === "WebhookAction") {
+    wasSuccess = await callWebhook({
+      uri: request.process.action.actionDetails.uri,
+      payload: request,
+    });
+  }
+
+  await transaction.actionAttempt.create({
+    data: {
+      resultId: request.result.id,
+      actionId: request.process.action.id,
+      success: wasSuccess,
+    },
+  });
 };
 
 export default executeAction;

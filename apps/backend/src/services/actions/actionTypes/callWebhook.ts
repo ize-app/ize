@@ -7,10 +7,19 @@ const callWebhook = async ({
   uri: string;
   payload: Request;
 }) => {
-  const response = await fetch(uri, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch(uri, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+    return true;
+  } catch (e) {
+    console.log("Custom webhook error: ", e);
+    return false;
+  }
 };
 
 export default callWebhook;

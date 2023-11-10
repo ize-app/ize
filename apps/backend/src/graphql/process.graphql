@@ -40,6 +40,11 @@ input newEditProcessRequestArgs {
   editProcessId: String
 }
 
+input ProcessOptionArgs {
+  value: String!
+  type: OptionType!
+}
+
 type Process {
   id: String!
   currentProcessVersionId: String!
@@ -49,21 +54,26 @@ type Process {
   creator: User!
   options: [ProcessOption!]!
   inputs: [InputTemplate!]!
+  action: Action
   roles: Roles!
-  webhookUri: String
   decisionSystem: DecisionTypes!
   createdAt: String!
-}
-
-input ProcessOptionArgs {
-  value: String!
-  type: OptionType!
 }
 
 type ProcessOption {
   id: String!
   value: String!
   type: OptionType!
+}
+
+type Action {
+  id: String!
+  optionFilter: ProcessOption
+  actionDetails: WebhookAction!
+}
+
+type WebhookAction {
+  uri: String!
 }
 
 enum OptionType {

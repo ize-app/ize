@@ -72,10 +72,15 @@ export const createAction = async (
   },
   context: GraphqlRequestContext,
 ) => {
-  const customWebhookConfig = JSON.stringify({ uri: webhookUri });
-
   return await transaction.action.create({
-    data: { type: "customWebhook", config: customWebhookConfig },
+    data: {
+      type: "customWebhook",
+      webhookAction: {
+        create: {
+          uri: webhookUri,
+        },
+      },
+    },
   });
 };
 

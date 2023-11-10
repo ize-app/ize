@@ -34,8 +34,10 @@ type Responses {
 }
 
 type Result {
+  id: String!
   createdAt: String!
-  selectedOption: ProcessOption
+  selectedOption: ProcessOption!
+  actionComplete: Boolean!
 }
 
 type Response {

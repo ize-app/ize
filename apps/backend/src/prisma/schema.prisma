@@ -221,6 +221,7 @@ model Option {
   response Response[]
   /// Final decisions that selected this option
   results  Result[]
+  action   Action[]
 
   @@map("options")
 }
@@ -279,14 +280,43 @@ enum InputTemplateDataType {
 
 /// Action that is automatically executed when a request arrives at a decision
 model Action {
-  id              String           @id @default(uuid()) @db.Uuid
-  type            ActionType
-  config          Json?
+  id        String     @id @default(uuid()) @db.Uuid
+  type      ActionType
+  /// Option Id here refers to whether execution of this action can only happen when a certain option is selected as the result
+  /// A null value means that there is no filter and action will be executed regardless of the result
+  optionId  String?    @map("option_id") @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  option          Option?          @relation(fields: [optionId], references: [id], onDelete: Cascade)
   /// Process versions that use this action
   processVersions ProcessVersion[]
-  createdAt       DateTime         @default(now()) @map("created_at")
+  actionAttempts  ActionAttempt[]
+  webhookAction   WebhookAction?
 
   @@map("actions")
+}
+
+model ActionAttempt {
+  id        String   @id @default(uuid()) @db.Uuid
+  success   Boolean
+  actionId  String   @map("action_id") @db.Uuid
+  resultId  String   @map("result_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  result Result @relation(fields: [resultId], references: [id])
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@map("action_attempt")
+}
+
+model WebhookAction {
+  id       String @id @default(uuid()) @db.Uuid
+  uri      String
+  actionId String @unique @map("action_id") @db.Uuid
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_actions")
 }
 
 enum ActionType {
@@ -440,8 +470,9 @@ model Result {
   optionId  String   @map("option_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  option  Option  @relation(fields: [optionId], references: [id], onDelete: Cascade)
-  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  option        Option          @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  request       Request         @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actionAttempts ActionAttempt[]
 
   @@map("results")
 }
