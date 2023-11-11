@@ -23,6 +23,7 @@ export interface NewProcessState {
   inputs?: InputTemplateArgs[];
   rights?: ProcessRights;
   decision?: ProcessDecision;
+  webhookTriggerFilter?: string;
 }
 
 export interface ProcessDecision {

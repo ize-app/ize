@@ -20,20 +20,21 @@ const executeAction = async ({
   });
 
   const request = formatRequest(reqRaw);
+
   if (request.process.action.actionDetails.__typename === "WebhookAction") {
     wasSuccess = await callWebhook({
       uri: request.process.action.actionDetails.uri,
       payload: request,
     });
-  }
 
-  await transaction.actionAttempt.create({
-    data: {
-      resultId: request.result.id,
-      actionId: request.process.action.id,
-      success: wasSuccess,
-    },
-  });
+    await transaction.actionAttempt.create({
+      data: {
+        resultId: request.result.id,
+        actionId: request.process.action.id,
+        success: wasSuccess,
+      },
+    });
+  }
 };
 
 export default executeAction;

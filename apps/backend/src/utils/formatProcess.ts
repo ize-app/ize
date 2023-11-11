@@ -229,6 +229,9 @@ export const formatAction = (
   return {
     id: action.id,
     optionFilter: options.find((option) => option.id === action.optionId),
-    actionDetails: { ...action.webhookAction },
+    actionDetails: {
+      ...action.webhookAction,
+      __typename: "WebhookAction",
+    },
   };
 };

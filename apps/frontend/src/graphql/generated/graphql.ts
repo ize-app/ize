@@ -406,6 +406,7 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
+  webhookTriggerFilter?: InputMaybe<Scalars['String']['input']>;
   webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1066,6 +1067,7 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
+  webhookTriggerFilter?: InputMaybe<Scalars['String']['input']>;
   webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 

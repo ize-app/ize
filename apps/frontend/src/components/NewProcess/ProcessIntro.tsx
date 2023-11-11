@@ -18,7 +18,8 @@ import {
   HasCustomIntegration,
   useNewProcessWizardState,
 } from "./newProcessWizard";
-import { RadioControl } from "../shared/Form";
+import { RadioControl, SelectControl } from "../shared/Form";
+import { SelectOption } from "../shared/Form/SelectControl";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const formSchema = z
@@ -32,6 +33,7 @@ const formSchema = z
     customIntegration: z.string().nonempty(),
     webhookUri: z.string().url("Please add a valid URL").optional(),
     options: z.string(),
+    webhookTriggerFilter: z.string().optional(),
     customOptions: z
       .array(
         z
@@ -63,9 +65,71 @@ const formSchema = z
       return true;
     },
     { path: ["customOptions"] },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.customIntegration === HasCustomIntegration.Yes &&
+        webhookTriggerFilterOptions({
+          optionType: data.options,
+          customOptions: data.customOptions ?? [],
+        }).findIndex((option) => data.webhookTriggerFilter === option.value) ===
+          -1
+      )
+        return false;
+
+      return true;
+    },
+    {
+      path: ["webhookTriggerFilter"],
+      message:
+        "Please select an one of your options to be the webhook trigger.",
+    },
   );
 
 type FormFields = z.infer<typeof formSchema>;
+
+const defaultWebhookTriggerOption = {
+  name: "All options trigger webhook",
+  value: "allOptionsTriggerWebhook",
+};
+
+const getOptionSet = ({
+  optionType,
+  customOptions,
+}: {
+  optionType: string;
+  customOptions: string[];
+}): string[] => {
+  const optionTypeCast = optionType as FormOptionChoice;
+
+  const options: string[] =
+    optionTypeCast === FormOptionChoice.Custom
+      ? customOptions ?? []
+      : DefaultOptionSets.get(optionTypeCast)?.data.map(
+          (option) => option.value,
+        ) ?? [];
+  return options;
+};
+
+const webhookTriggerFilterOptions = ({
+  optionType,
+  customOptions,
+}: {
+  optionType: string;
+  customOptions: string[];
+}): SelectOption[] => {
+  // react hook form converts everything to a string and the enum type is lost
+
+  const options = getOptionSet({ optionType, customOptions }).map((option) => ({
+    value: option,
+    name: option,
+  }));
+
+  options.unshift(defaultWebhookTriggerOption);
+
+  return options;
+};
 
 export const ProcessIntro = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
@@ -79,13 +143,18 @@ export const ProcessIntro = () => {
       webhookUri: formState.webhookUri ?? "",
       options: formState.options ?? FormOptionChoice.Checkmark,
       customOptions: formState.customOptions ?? [],
+      webhookTriggerFilter:
+        formState.webhookTriggerFilter ?? defaultWebhookTriggerOption.value,
     },
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
   });
 
+  const options = watch("options");
+  const customOptions = watch("customOptions");
+
   const isCustomIntegration = watch("customIntegration") === "yes";
-  const isCustomOptions = watch("options") === FormOptionChoice.Custom;
+  const isCustomOptions = options === FormOptionChoice.Custom;
 
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
@@ -96,6 +165,7 @@ export const ProcessIntro = () => {
       webhookUri: data.webhookUri,
       options: data.options,
       customOptions: data.customOptions,
+      webhookTriggerFilter: data.webhookTriggerFilter,
     }));
     onNext();
   };
@@ -182,30 +252,42 @@ export const ProcessIntro = () => {
               )}
             />
             {isCustomIntegration && (
-              <Controller
-                name={"webhookUri"}
-                control={control}
-                shouldUnregister
-                render={({ field, fieldState: { error } }) => {
-                  return (
-                    <FormControl>
-                      <TextField
-                        {...field}
-                        label={"Webhook URI"}
-                        required
-                        error={Boolean(error)}
-                      />
-                      <FormHelperText
-                        sx={{
-                          color: error?.message ? "error.main" : "",
-                        }}
-                      >
-                        {error?.message ?? ""}
-                      </FormHelperText>
-                    </FormControl>
-                  );
-                }}
-              />
+              <>
+                <Controller
+                  name={"webhookUri"}
+                  control={control}
+                  shouldUnregister
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <FormControl>
+                        <TextField
+                          {...field}
+                          label={"Webhook URI"}
+                          required
+                          error={Boolean(error)}
+                        />
+                        <FormHelperText
+                          sx={{
+                            color: error?.message ? "error.main" : "",
+                          }}
+                        >
+                          {error?.message ?? ""}
+                        </FormHelperText>
+                      </FormControl>
+                    );
+                  }}
+                />
+                <SelectControl
+                  name={`webhookTriggerFilter`}
+                  label={"When should this webhook be triggered?"}
+                  selectOptions={webhookTriggerFilterOptions({
+                    optionType: options,
+                    customOptions: customOptions ?? [],
+                  })}
+                  //@ts-ignore
+                  control={control}
+                />
+              </>
             )}
             <RadioControl
               //@ts-ignore

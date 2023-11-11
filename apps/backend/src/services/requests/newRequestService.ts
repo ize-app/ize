@@ -33,8 +33,6 @@ export const newRequestService = async (
       },
     });
 
-    process.currentProcessVersion.roleSet.roleGroups[0].groupId;
-
     const hasGroupPermission =
       process.currentProcessVersion.roleSet.roleGroups.reduce((acc, curr) => {
         if (groupIds.includes(curr.groupId)) acc = true;
@@ -42,7 +40,7 @@ export const newRequestService = async (
       }, false);
 
     const hasUserPermission = process.currentProcessVersion.roleSet.roleUsers
-      .map((user) => user.id)
+      .map((user) => user.userId)
       .includes(context.currentUser.id);
 
     if (!(hasGroupPermission || hasUserPermission))

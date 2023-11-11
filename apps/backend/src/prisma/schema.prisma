@@ -306,7 +306,7 @@ model ActionAttempt {
   result Result @relation(fields: [resultId], references: [id])
   action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
 
-  @@map("action_attempt")
+  @@map("action_attempts")
 }
 
 model WebhookAction {
@@ -470,8 +470,8 @@ model Result {
   optionId  String   @map("option_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  option        Option          @relation(fields: [optionId], references: [id], onDelete: Cascade)
-  request       Request         @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  option         Option          @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  request        Request         @relation(fields: [requestId], references: [id], onDelete: Cascade)
   actionAttempts ActionAttempt[]
 
   @@map("results")

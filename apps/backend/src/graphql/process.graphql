@@ -20,6 +20,7 @@ input newProcessArgs {
   options: [ProcessOptionArgs!]!
   inputs: [InputTemplateArgs!]!
   webhookUri: String
+  webhookTriggerFilter: String
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
   roles: [RoleArgs!]!

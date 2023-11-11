@@ -17,6 +17,7 @@ export const formatFormStateForProcessMutation = (
     name: formState.name as string,
     description: formState.description,
     webhookUri: formState.webhookUri,
+    webhookTriggerFilter: formState.webhookTriggerFilter,
     expirationSeconds: formState.requestExpirationSeconds as number,
     inputs: formState.inputs as InputTemplateArgs[],
     roles: formatRoles(formState.rights as ProcessRights),

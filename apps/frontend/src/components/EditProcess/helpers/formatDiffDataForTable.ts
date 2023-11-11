@@ -1,6 +1,6 @@
 import { diff } from "deep-object-diff";
 
-import { formatOptions } from "../../NewProcess/helpers/formatOptions";
+import { formatOptions } from "../../NewProcess/newProcessMutationHelpers/formatOptions";
 import {
   FormOptionChoice,
   NewProcessState,
