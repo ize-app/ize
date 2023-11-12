@@ -16,11 +16,17 @@ export const formatFormStateForProcessMutation = (
   const inputs: NewProcessArgs = {
     name: formState.name as string,
     description: formState.description,
-    webhookUri: formState.webhookUri,
-    webhookTriggerFilter: formState.webhookTriggerFilter,
     expirationSeconds: formState.requestExpirationSeconds as number,
     inputs: formState.inputs as InputTemplateArgs[],
     roles: formatRoles(formState.rights as ProcessRights),
+    action: formState.action?.webhook.uri
+      ? {
+          optionTrigger: formState.action.optionTrigger as string,
+          webhook: {
+            uri: formState.action.webhook.uri,
+          },
+        }
+      : undefined,
     editProcessId: formState.rights?.edit.id as string,
     options: formatOptions(
       formState.options as FormOptionChoice,

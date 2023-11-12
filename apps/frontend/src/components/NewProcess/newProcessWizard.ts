@@ -16,14 +16,12 @@ export interface NewProcessState {
   name?: string;
   description?: string;
   requestExpirationSeconds?: number;
-  customIntegration?: string;
-  webhookUri?: string;
   options?: string;
   customOptions?: string[];
   inputs?: InputTemplateArgs[];
   rights?: ProcessRights;
   decision?: ProcessDecision;
-  webhookTriggerFilter?: string;
+  action?: Action;
 }
 
 export interface ProcessDecision {
@@ -82,6 +80,16 @@ export interface ProcessRights {
 export enum ProcessInputType {
   Text = "Text",
   Number = "Number",
+}
+
+export interface Action {
+  webhook: WebhookActionForm;
+  optionTrigger?: string;
+}
+
+export interface WebhookActionForm {
+  uri?: string;
+  hasWebhook?: string;
 }
 
 export function useNewProcessWizardState() {

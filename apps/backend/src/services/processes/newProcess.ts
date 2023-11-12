@@ -17,19 +17,18 @@ export const newCustomProcess = async (
     name,
     description,
     expirationSeconds,
-    webhookTriggerFilter,
     options,
     inputs,
-    webhookUri,
     absoluteDecision,
     percentageDecision,
     roles,
+    action,
     editProcessId,
   }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {
-    let action;
+    let newAction;
     const inputTemplateSet = await createInputTemplateSet(
       { inputs, transaction },
       context,
@@ -39,11 +38,6 @@ export const newCustomProcess = async (
       { options, transaction },
       context,
     );
-
-    const webhookTriggerFilterOption =
-      optionSystem.defaultProcessOptionSet.options.find(
-        (option) => option.value === webhookTriggerFilter,
-      );
 
     const decision = await createDecisionSystem(
       {
@@ -56,10 +50,15 @@ export const newCustomProcess = async (
 
     const roleSet = await createRoleSet({ roles, transaction }, context);
 
-    if (webhookUri) {
-      action = await createAction(
+    if (action.webhook.uri) {
+      let webhookTriggerFilterOption =
+        optionSystem.defaultProcessOptionSet.options.find(
+          (option) => option.value === action.optionTrigger,
+        );
+
+      newAction = await createAction(
         {
-          webhookUri,
+          webhookUri: action.webhook.uri,
           filterOptionId: webhookTriggerFilterOption
             ? webhookTriggerFilterOption?.id
             : null,
@@ -87,7 +86,7 @@ export const newCustomProcess = async (
               inputTemplateSetId: inputTemplateSet.id,
               decisionSystemId: decision.id,
               roleSetId: roleSet.id,
-              actionId: action?.id,
+              actionId: newAction?.id,
             },
           ],
         },

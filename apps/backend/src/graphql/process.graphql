@@ -19,12 +19,20 @@ input newProcessArgs {
   expirationSeconds: Int!
   options: [ProcessOptionArgs!]!
   inputs: [InputTemplateArgs!]!
-  webhookUri: String
-  webhookTriggerFilter: String
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
   roles: [RoleArgs!]!
+  action: newActionArgs
   editProcessId: String
+}
+
+input newActionArgs {
+  optionTrigger: String!
+  webhook: newWebhookActionArgs!
+}
+
+input newWebhookActionArgs {
+  uri: String!
 }
 
 input newEditProcessRequestArgs {

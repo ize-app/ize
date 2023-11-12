@@ -382,6 +382,11 @@ export type WebhookAction = {
   uri: Scalars['String']['output'];
 };
 
+export type NewActionArgs = {
+  optionTrigger: Scalars['String']['input'];
+  webhook: NewWebhookActionArgs;
+};
+
 export type NewEditProcessRequestArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -398,6 +403,7 @@ export type NewEditProcessRequestArgs = {
 
 export type NewProcessArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  action?: InputMaybe<NewActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
@@ -406,8 +412,10 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
-  webhookTriggerFilter?: InputMaybe<Scalars['String']['input']>;
-  webhookUri?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type NewWebhookActionArgs = {
+  uri: Scalars['String']['input'];
 };
 
 export type SetUpDiscordServerInput = {
@@ -1043,6 +1051,11 @@ export type WebhookAction = {
   uri: Scalars['String']['output'];
 };
 
+export type NewActionArgs = {
+  optionTrigger: Scalars['String']['input'];
+  webhook: NewWebhookActionArgs;
+};
+
 export type NewEditProcessRequestArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1059,6 +1072,7 @@ export type NewEditProcessRequestArgs = {
 
 export type NewProcessArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  action?: InputMaybe<NewActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
@@ -1067,8 +1081,10 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
-  webhookTriggerFilter?: InputMaybe<Scalars['String']['input']>;
-  webhookUri?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type NewWebhookActionArgs = {
+  uri: Scalars['String']['input'];
 };
 
 export type SetUpDiscordServerInput = {

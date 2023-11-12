@@ -22,6 +22,16 @@ import { RadioControl, SelectControl } from "../shared/Form";
 import { SelectOption } from "../shared/Form/SelectControl";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
+const webhookFormSchema = z.object({
+  hasWebhook: z.string().nonempty(),
+  uri: z.string().url("Please add a valid URL").optional(),
+});
+
+const actionFormSchema = z.object({
+  optionTrigger: z.string().optional(),
+  webhook: webhookFormSchema,
+});
+
 const formSchema = z
   .object({
     name: z
@@ -30,10 +40,8 @@ const formSchema = z
       .nonempty("Please add a valid title")
       .max(140, "Please keep the name under 140 characters"),
     description: z.string().trim().nonempty("Please add a valid description"),
-    customIntegration: z.string().nonempty(),
-    webhookUri: z.string().url("Please add a valid URL").optional(),
+
     options: z.string(),
-    webhookTriggerFilter: z.string().optional(),
     customOptions: z
       .array(
         z
@@ -43,12 +51,13 @@ const formSchema = z
       )
       .min(1, "Add at least 1 option")
       .optional(),
+    action: actionFormSchema,
   })
   .refine(
     (data) => {
       if (
-        data.customIntegration === HasCustomIntegration.Yes &&
-        data.webhookUri === ""
+        data.action.webhook.hasWebhook === HasCustomIntegration.Yes &&
+        data.action.webhook.uri === ""
       )
         return false;
       return true;
@@ -69,11 +78,11 @@ const formSchema = z
   .refine(
     (data) => {
       if (
-        data.customIntegration === HasCustomIntegration.Yes &&
+        data.action.webhook.hasWebhook === HasCustomIntegration.Yes &&
         webhookTriggerFilterOptions({
           optionType: data.options,
           customOptions: data.customOptions ?? [],
-        }).findIndex((option) => data.webhookTriggerFilter === option.value) ===
+        }).findIndex((option) => data.action.optionTrigger === option.value) ===
           -1
       )
         return false;
@@ -139,12 +148,16 @@ export const ProcessIntro = () => {
     defaultValues: {
       name: formState.name ?? "",
       description: formState.description ?? "",
-      customIntegration: formState.customIntegration ?? "no",
-      webhookUri: formState.webhookUri ?? "",
+      action: {
+        optionTrigger:
+          formState.action?.optionTrigger ?? defaultWebhookTriggerOption.value,
+        webhook: {
+          hasWebhook: formState.action?.webhook.hasWebhook ?? "no",
+          uri: formState.action?.webhook.uri ?? "",
+        },
+      },
       options: formState.options ?? FormOptionChoice.Checkmark,
       customOptions: formState.customOptions ?? [],
-      webhookTriggerFilter:
-        formState.webhookTriggerFilter ?? defaultWebhookTriggerOption.value,
     },
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
@@ -153,7 +166,7 @@ export const ProcessIntro = () => {
   const options = watch("options");
   const customOptions = watch("customOptions");
 
-  const isCustomIntegration = watch("customIntegration") === "yes";
+  const isCustomIntegration = watch("action.webhook.hasWebhook") === "yes";
   const isCustomOptions = options === FormOptionChoice.Custom;
 
   const onSubmit = (data: FormFields) => {
@@ -161,11 +174,15 @@ export const ProcessIntro = () => {
       ...prev,
       name: data.name,
       description: data.description,
-      customIntegration: data.customIntegration,
-      webhookUri: data.webhookUri,
+      action: {
+        optionTrigger: data.action.optionTrigger,
+        webhook: {
+          hasWebhook: data.action.webhook.hasWebhook,
+          uri: data.action.webhook.uri,
+        },
+      },
       options: data.options,
       customOptions: data.customOptions,
-      webhookTriggerFilter: data.webhookTriggerFilter,
     }));
     onNext();
   };
@@ -220,7 +237,7 @@ export const ProcessIntro = () => {
               )}
             />
             <Controller
-              name={"customIntegration"}
+              name={"action.webhook.hasWebhook"}
               control={control}
               render={({ field }) => (
                 <FormControl component="fieldset" required>
@@ -254,7 +271,7 @@ export const ProcessIntro = () => {
             {isCustomIntegration && (
               <>
                 <Controller
-                  name={"webhookUri"}
+                  name={"action.webhook.uri"}
                   control={control}
                   shouldUnregister
                   render={({ field, fieldState: { error } }) => {
@@ -278,7 +295,7 @@ export const ProcessIntro = () => {
                   }}
                 />
                 <SelectControl
-                  name={`webhookTriggerFilter`}
+                  name={`action.optionTrigger`}
                   label={"When should this webhook be triggered?"}
                   selectOptions={webhookTriggerFilterOptions({
                     optionType: options,
