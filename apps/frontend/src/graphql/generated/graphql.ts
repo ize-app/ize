@@ -32,6 +32,11 @@ export type Action = {
   optionFilter?: Maybe<ProcessOption>;
 };
 
+export type ActionArgs = {
+  optionTrigger: Scalars['String']['input'];
+  webhook: WebhookActionArgs;
+};
+
 export type Agent = Group | User;
 
 export enum AgentType {
@@ -382,13 +387,13 @@ export type WebhookAction = {
   uri: Scalars['String']['output'];
 };
 
-export type NewActionArgs = {
-  optionTrigger: Scalars['String']['input'];
-  webhook: NewWebhookActionArgs;
+export type WebhookActionArgs = {
+  uri: Scalars['String']['input'];
 };
 
 export type NewEditProcessRequestArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  action?: InputMaybe<ActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
@@ -398,12 +403,11 @@ export type NewEditProcessRequestArgs = {
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   processId: Scalars['String']['input'];
   roles?: InputMaybe<Array<RoleArgs>>;
-  webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type NewProcessArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
-  action?: InputMaybe<NewActionArgs>;
+  action?: InputMaybe<ActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
@@ -412,10 +416,6 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
-};
-
-export type NewWebhookActionArgs = {
-  uri: Scalars['String']['input'];
 };
 
 export type SetUpDiscordServerInput = {
@@ -701,6 +701,11 @@ export type Action = {
   optionFilter?: Maybe<ProcessOption>;
 };
 
+export type ActionArgs = {
+  optionTrigger: Scalars['String']['input'];
+  webhook: WebhookActionArgs;
+};
+
 export type Agent = Group | User;
 
 export enum AgentType {
@@ -1051,13 +1056,13 @@ export type WebhookAction = {
   uri: Scalars['String']['output'];
 };
 
-export type NewActionArgs = {
-  optionTrigger: Scalars['String']['input'];
-  webhook: NewWebhookActionArgs;
+export type WebhookActionArgs = {
+  uri: Scalars['String']['input'];
 };
 
 export type NewEditProcessRequestArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  action?: InputMaybe<ActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
@@ -1067,12 +1072,11 @@ export type NewEditProcessRequestArgs = {
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   processId: Scalars['String']['input'];
   roles?: InputMaybe<Array<RoleArgs>>;
-  webhookUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type NewProcessArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
-  action?: InputMaybe<NewActionArgs>;
+  action?: InputMaybe<ActionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
@@ -1081,10 +1085,6 @@ export type NewProcessArgs = {
   options: Array<ProcessOptionArgs>;
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
-};
-
-export type NewWebhookActionArgs = {
-  uri: Scalars['String']['input'];
 };
 
 export type SetUpDiscordServerInput = {

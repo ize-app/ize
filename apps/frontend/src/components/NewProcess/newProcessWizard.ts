@@ -1,8 +1,4 @@
-import {
-  InputDataType,
-  InputTemplateArgs,
-  OptionType,
-} from "../../graphql/generated/graphql";
+import { InputTemplateArgs, OptionType } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import { AvatarProps } from "../shared/Avatar";
@@ -11,6 +7,11 @@ export enum HasCustomIntegration {
   "Yes" = "yes",
   "No" = "no",
 }
+
+export const defaultWebhookTriggerOption = {
+  name: "All options trigger webhook",
+  value: "allOptionsTriggerWebhook",
+};
 
 export interface NewProcessState {
   name?: string;
@@ -21,7 +22,7 @@ export interface NewProcessState {
   inputs?: InputTemplateArgs[];
   rights?: ProcessRights;
   decision?: ProcessDecision;
-  action?: Action;
+  action?: ActionForm;
 }
 
 export interface ProcessDecision {
@@ -82,7 +83,7 @@ export enum ProcessInputType {
   Number = "Number",
 }
 
-export interface Action {
+export interface ActionForm {
   webhook: WebhookActionForm;
   optionTrigger?: string;
 }

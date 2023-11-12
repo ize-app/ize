@@ -10,9 +10,10 @@ import {
   InputTemplateArgs,
   ProcessOption,
 } from "../../../graphql/generated/graphql";
-import { ProcessDecision } from "../../NewProcess/newProcessWizard";
+import { ActionForm, ProcessDecision } from "../../NewProcess/newProcessWizard";
 import { AvatarProps } from "../../shared/Avatar";
 import { ProcessOptions } from "../Process/ProcessOptions";
+import SummarizeAction from "../Process/SummarizeAction";
 import { summarizeDecisionSystemForm } from "../Process/summarizeDecisionSystem";
 import SummarizeInputTemplates from "../Process/SummarizeInputTemplates";
 import { AvatarsCell } from "../Tables/TableCells";
@@ -20,7 +21,7 @@ import { AvatarsCell } from "../Tables/TableCells";
 export interface ProcessSnapshotForDiff {
   name?: string;
   description?: string;
-  webhookUri?: string;
+  action?: ActionForm;
   options?: ProcessOption[];
   request?: AvatarProps[];
   respond?: AvatarProps[];
@@ -142,25 +143,37 @@ export const EditProcessRequestInputTable = ({
               </TableCell>
             </TableRow>
           )}
-          {oldProcess.webhookUri && (
+          {oldProcess.action && (
             <TableRow>
               <TableCell>
                 <Typography fontWeight={500} variant={fontSize}>
-                  Webhook Uri
+                  Custom integration
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={fontSize}>
-                  {oldProcess.webhookUri}
-                </Typography>
+                {oldProcess.action?.webhook ? (
+                  <SummarizeAction
+                    uri={oldProcess.action.webhook.uri as string}
+                    optionTrigger={oldProcess.action.optionTrigger ?? undefined}
+                  />
+                ) : (
+                  <Typography>No custom integration</Typography>
+                )}
               </TableCell>
               <TableCell width={"40px"}>
                 <ArrowForwardIcon />
               </TableCell>
               <TableCell>
-                <Typography variant={fontSize}>
-                  {proposedChanges.webhookUri}
-                </Typography>
+                {proposedChanges.action?.webhook ? (
+                  <SummarizeAction
+                    uri={proposedChanges.action.webhook.uri as string}
+                    optionTrigger={
+                      proposedChanges.action.optionTrigger ?? undefined
+                    }
+                  />
+                ) : (
+                  <Typography>No custom integration</Typography>
+                )}
               </TableCell>
             </TableRow>
           )}

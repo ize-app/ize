@@ -22,16 +22,16 @@ input newProcessArgs {
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
   roles: [RoleArgs!]!
-  action: newActionArgs
+  action: ActionArgs
   editProcessId: String
 }
 
-input newActionArgs {
-  optionTrigger: String!
-  webhook: newWebhookActionArgs!
+input ActionArgs {
+  optionTrigger: String
+  webhook: WebhookActionArgs!
 }
 
-input newWebhookActionArgs {
+input WebhookActionArgs {
   uri: String!
 }
 
@@ -42,10 +42,10 @@ input newEditProcessRequestArgs {
   expirationSeconds: Int
   options: [ProcessOptionArgs!]
   inputs: [InputTemplateArgs!]
-  webhookUri: String
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
   roles: [RoleArgs!]
+  action: ActionArgs
   editProcessId: String
 }
 

@@ -1,3 +1,4 @@
+import createActionInputs from "./createActionInputs";
 import { formatOptions } from "./formatOptions";
 import { formatRoles } from "./formatRoles";
 import {
@@ -19,14 +20,7 @@ export const formatFormStateForProcessMutation = (
     expirationSeconds: formState.requestExpirationSeconds as number,
     inputs: formState.inputs as InputTemplateArgs[],
     roles: formatRoles(formState.rights as ProcessRights),
-    action: formState.action?.webhook.uri
-      ? {
-          optionTrigger: formState.action.optionTrigger as string,
-          webhook: {
-            uri: formState.action.webhook.uri,
-          },
-        }
-      : undefined,
+    action: createActionInputs(formState.action),
     editProcessId: formState.rights?.edit.id as string,
     options: formatOptions(
       formState.options as FormOptionChoice,

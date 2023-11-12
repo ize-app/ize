@@ -16,6 +16,7 @@ import {
   DefaultOptionSets,
   FormOptionChoice,
   HasCustomIntegration,
+  defaultWebhookTriggerOption,
   useNewProcessWizardState,
 } from "./newProcessWizard";
 import { RadioControl, SelectControl } from "../shared/Form";
@@ -97,11 +98,6 @@ const formSchema = z
   );
 
 type FormFields = z.infer<typeof formSchema>;
-
-const defaultWebhookTriggerOption = {
-  name: "All options trigger webhook",
-  value: "allOptionsTriggerWebhook",
-};
 
 const getOptionSet = ({
   optionType,

@@ -1,3 +1,4 @@
+import { formatActionToFormState } from "./formatActionToFormState";
 import { formatDecisionToFormState } from "./formatDecisionToFormState";
 import { formatInputsToFormState } from "./formatInputsToFormState";
 import {
@@ -8,7 +9,6 @@ import { formatRolesToFormState } from "./formatRolesToFormState";
 import { ProcessSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import {
   FormOptionChoice,
-  HasCustomIntegration,
   NewProcessState,
 } from "../../NewProcess/newProcessWizard";
 
@@ -20,10 +20,6 @@ export const processToFormState = (
   return {
     name: process.name,
     description: process.description ?? undefined,
-    webhookUri: process.webhookUri ?? undefined,
-    customIntegration: process.webhookUri
-      ? HasCustomIntegration.Yes
-      : HasCustomIntegration.No,
     options: defaultOption,
     customOptions:
       defaultOption === FormOptionChoice.Custom
@@ -32,5 +28,6 @@ export const processToFormState = (
     rights: formatRolesToFormState(process.roles),
     inputs: formatInputsToFormState(process.inputs),
     decision: formatDecisionToFormState(process.decisionSystem),
+    action: formatActionToFormState(process.action ?? undefined),
   };
 };
