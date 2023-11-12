@@ -14,13 +14,14 @@ export const formatResult = (
   availableOptions: ProcessOption[],
 ): Result => {
   if (!result) return null;
+  
   let selectedOption: ProcessOption;
 
   const actionComplete =
     result.actionAttempts.findIndex((attempt) => attempt.success) !== -1;
 
   for (let i = 0; i <= availableOptions.length - 1; i++) {
-    if (availableOptions[i].id === result.id) {
+    if (availableOptions[i].id === result.optionId) {
       selectedOption = availableOptions[i];
       break;
     }

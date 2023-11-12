@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
@@ -14,7 +14,10 @@ import {
   AgentSummaryPartsFragment,
   RequestDocument,
   RequestSummaryPartsFragment,
+  Response,
   ResponseCount,
+  Result,
+  ResultSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -25,7 +28,11 @@ import {
 import { Accordion } from "../shared/Accordion";
 import { NameWithPopper } from "../shared/Avatar";
 import Loading from "../shared/Loading";
-import { RequestInputTable, SubmitResponse } from "../shared/Request";
+import {
+  FinalDecision,
+  RequestInputTable,
+  SubmitResponse,
+} from "../shared/Request";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
 import { ResponseList } from "../shared/Request/ResponseList";
 
@@ -67,17 +74,38 @@ export default function HorizontalBars({
   );
 }
 
-export const RemainingTime = ({ expirationDate }: { expirationDate: Date }) => {
+export const RemainingTime = ({
+  expirationDate,
+  result,
+}: {
+  expirationDate: Date;
+  result: ResultSummaryPartsFragment | undefined;
+}) => {
   const now = new Date();
   const timeLeft = expirationDate.getTime() - now.getTime();
   const timeLeftStr = intervalToIntuitiveTimeString(timeLeft);
   const displayRed = timeLeft < 1000 * 60 * 60 * 24;
 
-  if (timeLeft < 0) {
+  if (result) {
     return (
       <>
         <Chip label={"Closed"} color="secondary" size="small" />
         <Typography>
+          Decision on{" "}
+          {expirationDate.toLocaleString("en-US", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
+        </Typography>
+      </>
+    );
+  } else if (timeLeft < 0) {
+    return (
+      <>
+        <Chip label={"Closed"} color="secondary" size="small" />
+        <Typography>
+          Expired on{" "}
           {expirationDate.toLocaleString("en-US", {
             day: "numeric",
             month: "short",
@@ -125,7 +153,6 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.request as RequestSummaryPartsFragment;
-  console.log("request is ", request);
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -164,6 +191,7 @@ export const Request = () => {
             <Box sx={{ display: "flex", flexDirection: "row", gap: "12px" }}>
               <RemainingTime
                 expirationDate={new Date(Date.parse(request.expirationDate))}
+                result={request.result ?? undefined}
               />
             </Box>
             <Box sx={{ display: "flex", gap: ".3rem" }}>
@@ -193,26 +221,35 @@ export const Request = () => {
               },
             })}
           >
-            <Accordion
-              id="submit-response-panel"
-              defaultExpanded={true}
-              label={
-                request?.responses?.userResponse
-                  ? "Your response"
-                  : "Submit your response"
-              }
-              elevation={6}
-            >
-              <SubmitResponse
-                options={request.process.options}
-                displayAsColumn={true}
-                requestId={request.id}
-                userResponse={request.responses.userResponse}
-                onSubmit={() => {
-                  return;
-                }}
+            {request.result ||
+            new Date() > new Date(Date.parse(request.expirationDate)) ? (
+              <FinalDecision
+                expirationDate={new Date(Date.parse(request.expirationDate))}
+                result={request.result as Result}
+                userResponse={request.responses.userResponse as Response}
               />
-            </Accordion>
+            ) : (
+              <Accordion
+                id="submit-response-panel"
+                defaultExpanded={true}
+                label={
+                  request?.responses?.userResponse
+                    ? "Your response"
+                    : "Submit your response"
+                }
+                elevation={6}
+              >
+                <SubmitResponse
+                  options={request.process.options}
+                  displayAsColumn={true}
+                  requestId={request.id}
+                  userResponse={request.responses.userResponse as Response}
+                  onSubmit={() => {
+                    return;
+                  }}
+                />
+              </Accordion>
+            )}
 
             <Accordion label="Results" id="response-count-panel">
               {request.responses.userResponse ? (
@@ -237,7 +274,9 @@ export const Request = () => {
             </Accordion>
             <Accordion label="Responses" id="response-list-panel">
               {request.responses.userResponse ? (
-                <ResponseList responses={request.responses.allResponses} />
+                <ResponseList
+                  responses={request.responses.allResponses as Response[]}
+                />
               ) : (
                 <Box
                   sx={{
@@ -262,7 +301,7 @@ export const Request = () => {
               },
             }}
           >
-            {request.inputs.length === 1 ? (
+            {request.inputs.length === 0 ? null : (
               <Accordion
                 label="Request details"
                 id="request-details-panel"
@@ -270,7 +309,7 @@ export const Request = () => {
               >
                 <RequestInputTable rowSize="medium" inputs={request.inputs} />
               </Accordion>
-            ) : null}
+            )}
             <Accordion
               label="Process details"
               id="process-details-panel"

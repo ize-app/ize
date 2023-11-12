@@ -13,6 +13,7 @@ import {
   intervalToIntuitiveTimeString,
 } from "../../../utils/inputs";
 import { reformatAgentForAvatar } from "../Avatar";
+import { ProcessOptions } from "../Process/ProcessOptions";
 import SummarizeAction from "../Process/SummarizeAction";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
 import { AvatarsCell } from "../Tables/TableCells";
@@ -53,6 +54,16 @@ export const ProcessSummaryTable = ({
                   {process.name}
                 </Link>
               </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Typography variant="body1" fontWeight={500}>
+                Options
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <ProcessOptions options={process.options} />
             </TableCell>
           </TableRow>
           {process.action?.actionDetails.__typename === "WebhookAction" ? (
