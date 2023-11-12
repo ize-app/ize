@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { formatFormStateForProcessMutation } from "./helpers/formatFormStateForProcessMutation";
+import { formatFormStateForProcessMutation } from "./newProcessMutationHelpers/formatFormStateForProcessMutation";
 import {
   NEW_PROCESS_PROGRESS_BAR_STEPS,
   NEW_PROCESS_WIZARD_STEPS,

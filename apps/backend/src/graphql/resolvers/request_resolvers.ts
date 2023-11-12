@@ -5,6 +5,7 @@ import { newRequestService } from "@services/requests/newRequestService";
 import { formatRequest } from "../../utils/formatRequest";
 
 import { groupsForCurrentUser } from "./group_resolvers";
+import determineDecision from "@services/decisions/determineDecision";
 
 import { requestInclude } from "../../utils/formatRequest";
 
@@ -47,6 +48,8 @@ const newResponse = async (
     },
   });
 
+  await determineDecision({ requestId: args.requestId });
+  
   return response.id;
 };
 

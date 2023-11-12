@@ -19,23 +19,16 @@ export const newCustomProcess = async (
     expirationSeconds,
     options,
     inputs,
-    webhookUri,
     absoluteDecision,
     percentageDecision,
     roles,
+    action,
     editProcessId,
   }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {
-    // TODO: replace placeholders
-
-    let action;
-
-    if (webhookUri) {
-      action = await createAction({ webhookUri, transaction }, context);
-    }
-
+    let newAction;
     const inputTemplateSet = await createInputTemplateSet(
       { inputs, transaction },
       context,
@@ -57,6 +50,24 @@ export const newCustomProcess = async (
 
     const roleSet = await createRoleSet({ roles, transaction }, context);
 
+    if (action.webhook.uri) {
+      let webhookTriggerFilterOption =
+        optionSystem.defaultProcessOptionSet.options.find(
+          (option) => option.value === action.optionTrigger,
+        );
+
+      newAction = await createAction(
+        {
+          webhookUri: action.webhook.uri,
+          filterOptionId: webhookTriggerFilterOption
+            ? webhookTriggerFilterOption?.id
+            : null,
+          transaction,
+        },
+        context,
+      );
+    }
+
     const process = await transaction.process.create({
       include: {
         processVersions: true,
@@ -75,7 +86,7 @@ export const newCustomProcess = async (
               inputTemplateSetId: inputTemplateSet.id,
               decisionSystemId: decision.id,
               roleSetId: roleSet.id,
-              actionId: action?.id,
+              actionId: newAction?.id,
             },
           ],
         },

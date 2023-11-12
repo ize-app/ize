@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
 
-import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import { ResultSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
 import { AvatarGroup, AvatarProps } from "../Avatar";
 
@@ -21,6 +21,7 @@ interface TwoTierCellProps extends TableCellHideableProps {
 interface StatusCellProps extends TableCellHideableProps {
   expirationDate: Date;
   alreadyResponded: boolean;
+  result: ResultSummaryPartsFragment | undefined;
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
@@ -115,6 +116,7 @@ export const AvatarsCell = ({
 export const StatusCell = ({
   expirationDate,
   alreadyResponded,
+  result,
   ...props
 }: StatusCellProps): JSX.Element => {
   const now = new Date();
@@ -122,16 +124,17 @@ export const StatusCell = ({
   const timeLeftStr = intervalToIntuitiveTimeString(timeLeft);
 
   // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
-  if (timeLeft < 0) {
+  if (result) {
     return (
       <TwoTierCell
-        topText="Closed"
-        bottomText={expirationDate.toLocaleString("en-US", {
-          day: "numeric",
-          month: "short",
-        })}
+        topText="Final decision"
+        bottomText={result.selectedOption.value}
         {...props}
       />
+    );
+  } else if (timeLeft < 0) {
+    return (
+      <TwoTierCell topText="Expired" bottomText="No decision" {...props} />
     );
   } else {
     return (

@@ -1,8 +1,9 @@
-import { Prisma, PrismaClient,  } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
 import {
+  Action,
   Process,
   ProcessOption,
   OptionType,
@@ -37,6 +38,26 @@ type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
   include: typeof roleSetInclude;
 }>;
 
+const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()(
+  {},
+);
+
+type InputTemplatePrismaType = Prisma.InputTemplateGetPayload<{
+  include: typeof inputTemplateInclude;
+}>;
+
+const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>()({
+  defaultProcessOptionSet: {
+    include: {
+      options: true,
+    },
+  },
+});
+
+type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
+  include: typeof optionSystemInclude;
+}>;
+
 const decisionSystemInclude = Prisma.validator<Prisma.DecisionSystemInclude>()({
   absoluteDecisionSystem: true,
   percentageDecisionSystem: true,
@@ -44,6 +65,14 @@ const decisionSystemInclude = Prisma.validator<Prisma.DecisionSystemInclude>()({
 
 type DecisionSystemPrismaType = Prisma.DecisionSystemGetPayload<{
   include: typeof decisionSystemInclude;
+}>;
+
+const actionInclude = Prisma.validator<Prisma.ActionInclude>()({
+  webhookAction: true,
+});
+
+type ActionPrismaType = Prisma.ActionGetPayload<{
+  include: typeof actionInclude;
 }>;
 
 export const processVersionInclude =
@@ -63,13 +92,15 @@ export const processVersionInclude =
     },
     inputTemplateSet: {
       include: {
-        inputTemplates: true,
+        inputTemplates: inputTemplateInclude,
       },
     },
     decisionSystem: {
       include: decisionSystemInclude,
     },
-    action: true,
+    action: {
+      include: actionInclude,
+    },
     roleSet: {
       include: roleSetInclude,
     },
@@ -119,21 +150,14 @@ export const formatProcessVersion = (
     roleSet,
   } = processVersion;
 
-  const data = {
-    currentProcessVersionId: processVersion?.id,
+  const options = formatOptions(optionSystem);
+
+  const data: ProcessVersion = {
     name: processVersion.name,
     description: processVersion.description,
     expirationSeconds: processVersion.expirationSeconds,
     creator: formatUser(creator),
-    options: optionSystem.defaultProcessOptionSet.options
-      .sort((a, b) => a.position - b.position)
-      .map(
-        (option): ProcessOption => ({
-          id: option.id,
-          value: option.value,
-          type: option.type as OptionType,
-        }),
-      ),
+    options: options,
     decisionSystem: formatDecisionSystem(decisionSystem),
     inputs: inputTemplateSet.inputTemplates
       .sort((a, b) => a.position - b.position)
@@ -146,15 +170,10 @@ export const formatProcessVersion = (
           type: input.type as InputDataType,
         }),
       ),
-    webhookUri:
-      action &&
-      action.type === "customWebhook" &&
-      action?.config &&
-      typeof action?.config === "object"
-        ? (action.config as object as customActionConfig).uri
-        : undefined,
+    action: formatAction(action, options),
     roles: formatRoles(roleSet),
   };
+
   return data;
 };
 
@@ -174,7 +193,7 @@ const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   return roles;
 };
 
-const formatDecisionSystem = (
+export const formatDecisionSystem = (
   decisionSystem: DecisionSystemPrismaType,
 ): AbsoluteDecision | PercentageDecision => {
   if (decisionSystem.type === "Absolute")
@@ -188,4 +207,31 @@ const formatDecisionSystem = (
       quorum: decisionSystem.absoluteDecisionSystem.threshold,
       percentage: decisionSystem.percentageDecisionSystem.percentage,
     };
+};
+
+export const formatOptions = (
+  optionSystem: OptionSystemPrismaType,
+): ProcessOption[] =>
+  optionSystem.defaultProcessOptionSet.options
+    .sort((a, b) => a.position - b.position)
+    .map(
+      (option): ProcessOption => ({
+        id: option.id,
+        value: option.value,
+        type: option.type as OptionType,
+      }),
+    );
+
+export const formatAction = (
+  action: ActionPrismaType,
+  options: ProcessOption[],
+): Action => {
+  return {
+    id: action.id,
+    optionFilter: options.find((option) => option.id === action.optionId),
+    actionDetails: {
+      ...action.webhookAction,
+      __typename: "WebhookAction",
+    },
+  };
 };

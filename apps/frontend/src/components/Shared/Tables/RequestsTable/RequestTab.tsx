@@ -66,9 +66,16 @@ const RequestTab = ({
       }
 
       if (selectOption === "All") selectMatch = true;
-      else if (selectOption === "Closed" && expirationDate < now)
+      else if (
+        selectOption === "Closed" &&
+        (expirationDate < now || !!request.result)
+      )
         selectMatch = true;
-      else if (selectOption === "Open" && expirationDate > now)
+      else if (
+        selectOption === "Open" &&
+        expirationDate > now &&
+        !request.result
+      )
         selectMatch = true;
 
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;

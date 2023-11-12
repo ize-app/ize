@@ -36,6 +36,13 @@ export const createOptionSystem = async (
       dataType: "Text",
       defaultProcessOptionSetId: optionSet.id,
     },
+    include: {
+      defaultProcessOptionSet: {
+        include: {
+          options: true,
+        },
+      },
+    },
   });
 
   return optionSystem;
@@ -65,17 +72,25 @@ export const createInputTemplateSet = async (
 export const createAction = async (
   {
     webhookUri,
+    filterOptionId,
     transaction = prisma,
   }: {
     webhookUri: string;
+    filterOptionId: string | null;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  const customWebhookConfig = JSON.stringify({ uri: webhookUri });
-
   return await transaction.action.create({
-    data: { type: "customWebhook", config: customWebhookConfig },
+    data: {
+      type: "customWebhook",
+      optionId: filterOptionId,
+      webhookAction: {
+        create: {
+          uri: webhookUri,
+        },
+      },
+    },
   });
 };
 

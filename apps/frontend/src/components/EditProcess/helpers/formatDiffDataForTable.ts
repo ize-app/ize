@@ -1,6 +1,6 @@
 import { diff } from "deep-object-diff";
 
-import { formatOptions } from "../../NewProcess/helpers/formatOptions";
+import { formatOptions } from "../../NewProcess/newProcessMutationHelpers/formatOptions";
 import {
   FormOptionChoice,
   NewProcessState,
@@ -41,9 +41,9 @@ const formatDiffDataForTable = (
     proposedChanges["inputs"] = newFormState.inputs;
   }
 
-  if (diffForms.webhookUri) {
-    currentProcess["webhookUri"] = oldFormState.webhookUri;
-    proposedChanges["webhookUri"] = newFormState.webhookUri;
+  if (diffForms.action) {
+    currentProcess["action"] = oldFormState.action;
+    proposedChanges["action"] = newFormState.action;
   }
 
   if (diffForms.rights?.request) {

@@ -1,8 +1,9 @@
 import { diff } from "deep-object-diff";
 
 import { NewEditProcessRequestArgs } from "../../../graphql/generated/graphql";
-import { formatOptions } from "../../NewProcess/helpers/formatOptions";
-import { formatRoles } from "../../NewProcess/helpers/formatRoles";
+import createActionInputs from "../../NewProcess/newProcessMutationHelpers/createActionInputs";
+import { formatOptions } from "../../NewProcess/newProcessMutationHelpers/formatOptions";
+import { formatRoles } from "../../NewProcess/newProcessMutationHelpers/formatRoles";
 import {
   FormOptionChoice,
   NewProcessState,
@@ -26,8 +27,8 @@ export const createEditProcessMutation = (
   if (diffForms.description) {
     inputs["description"] = newFormState.description;
   }
-  if (diffForms.webhookUri) {
-    inputs["webhookUri"] = newFormState.webhookUri;
+  if (diffForms.action) {
+    inputs["action"] = createActionInputs(newFormState.action);
   }
 
   if (diffForms.options || diffForms.customOptions) {

@@ -42,7 +42,6 @@ fragment ProcessSummaryParts on Process {
   name
   description
   expirationSeconds
-  webhookUri
   options {
     ...OptionSummaryParts
   }
@@ -54,6 +53,9 @@ fragment ProcessSummaryParts on Process {
   }
   decisionSystem {
     ...DecisionTypesSummaryParts
+  }
+  action {
+    ...ActionSummaryParts
   }
   createdAt
 }
@@ -114,4 +116,18 @@ fragment DecisionTypesSummaryParts on DecisionTypes {
     quorum
     percentage
   }
+}
+
+fragment ActionSummaryParts on Action {
+  id
+  optionFilter {
+    ...OptionSummaryParts
+  }
+  actionDetails {
+    ...WebhookActionSummaryParts
+  }
+}
+
+fragment WebhookActionSummaryParts on WebhookAction {
+  uri
 }

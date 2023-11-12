@@ -68,7 +68,7 @@ export const Group = () => {
   const onError = () => {
     navigate("/");
     setSnackbarOpen(true);
-    setSnackbarData({ message: "Invalid group", type: "error" });
+    setSnackbarData({ message: "Cannot find this group", type: "error" });
   };
 
   const tabs = [

@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { resultInclude, formatResult } from "./formatResult";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 import { formatProcessVersion } from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
@@ -10,7 +11,6 @@ import {
   Process,
   InputTemplate,
   RequestInput,
-  RequestInputArgs,
 } from "frontend/src/graphql/generated/graphql";
 
 export const requestInputInclude =
@@ -35,6 +35,9 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   responses: {
     include: responseInclude,
   },
+  result: {
+    include: resultInclude,
+  },
 });
 
 type RequestPrismaType = Prisma.RequestGetPayload<{
@@ -43,7 +46,7 @@ type RequestPrismaType = Prisma.RequestGetPayload<{
 
 export const formatRequest = (
   requestData: RequestPrismaType,
-  userId: string | undefined,
+  userId?: string,
 ): Request => {
   const process: Process = {
     ...formatProcessVersion(requestData.processVersion),
@@ -66,7 +69,8 @@ export const formatRequest = (
     inputs: inputs,
     process: process,
     createdAt: requestData.createdAt.toString(),
-    responses: formatResponses(requestData.responses, userId, process.options),
+    responses: formatResponses(requestData.responses, process.options, userId),
+    result: formatResult(requestData.result, process.options),
   };
 
   return req;
