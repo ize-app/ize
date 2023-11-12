@@ -28,12 +28,10 @@ import {
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
+import SummarizeAction from "../shared/Process/SummarizeAction";
 import RequestTab, {
   FilterOptions,
 } from "../shared/Tables/RequestsTable/RequestTab";
-
-const truncatedUri = (uri: string) =>
-  uri.substring(0, 15) + "..." + uri.substring(uri.length - 5, uri.length - 1);
 
 export const Process = () => {
   const { processId: processIdShort } = useParams();
@@ -92,16 +90,13 @@ export const Process = () => {
             </Typography>
           </Box>
           <Typography>{process.description}</Typography>
-          {process.webhookUri ? (
-            <>
-              <br />
-              <Typography>
-                After each decision, action run automatically via{" "}
-                <a href={process.webhookUri}>
-                  {truncatedUri(process.webhookUri)}
-                </a>
-              </Typography>
-            </>
+          <br />
+          {process.action &&
+          process.action.actionDetails.__typename === "WebhookAction" ? (
+            <SummarizeAction
+              uri={process.action.actionDetails.uri}
+              optionTrigger={process.action.optionFilter?.value}
+            />
           ) : null}
           <Box
             sx={{

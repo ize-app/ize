@@ -262,13 +262,15 @@ export const Request = () => {
               },
             }}
           >
-            <Accordion
-              label="Request details"
-              id="request-details-panel"
-              defaultExpanded={true}
-            >
-              <RequestInputTable rowSize="medium" inputs={request.inputs} />
-            </Accordion>
+            {request.inputs.length === 1 ? (
+              <Accordion
+                label="Request details"
+                id="request-details-panel"
+                defaultExpanded={true}
+              >
+                <RequestInputTable rowSize="medium" inputs={request.inputs} />
+              </Accordion>
+            ) : null}
             <Accordion
               label="Process details"
               id="process-details-panel"
