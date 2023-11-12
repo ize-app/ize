@@ -36,7 +36,9 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
   const userResponse = request.responses.userResponse?.value as string;
 
   const alreadyResponded = !!userResponse;
-  const requestOpen = expirationDate >= new Date();
+  const notHaveFinalDecision = !request.result;
+  const notExpired = expirationDate >= new Date();
+  const isOpenRequest = notHaveFinalDecision && notExpired;
 
   return (
     <React.Fragment>
@@ -52,7 +54,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           [`& .${tableCellClasses.root}`]: {
             borderBottom: "none",
           },
-          backgroundColor: requestOpen ? "" : "#F7F2FA",
+          backgroundColor: isOpenRequest ? "" : "#F7F2FA",
         }}
       >
         <TwoTierCell
@@ -71,9 +73,10 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           hideOnSmallScreen={true}
           expirationDate={expirationDate}
           alreadyResponded={alreadyResponded}
+          result={request.result ?? undefined}
         ></StatusCell>
         <TableCellHideable align={"center"}>
-          {!alreadyResponded && requestOpen ? (
+          {!alreadyResponded && notExpired ? (
             <Button
               variant="outlined"
               endIcon={
@@ -98,7 +101,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           )}
         </TableCellHideable>
       </TableRow>
-      {!alreadyResponded && requestOpen && (
+      {!alreadyResponded && isOpenRequest && (
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -142,7 +145,7 @@ export default function RequestTable({ requests }: RequestTableProps) {
               Status
             </TableCellHideable>
             <TableCell align="center" width={"70px"}>
-              Response
+              Your response
             </TableCell>
           </TableRow>
         </TableHead>

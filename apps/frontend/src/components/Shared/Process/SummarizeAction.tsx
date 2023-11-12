@@ -17,9 +17,8 @@ const SummarizeAction = ({
     </Typography>
   ) : (
     <Typography>
-      When the final decision is{" "}
-      <span style={{ fontWeight: 900 }}>{optionTrigger}</span>, a custom
-      integration is triggered via {uri}
+      If decision is <span style={{ fontWeight: 900 }}>{optionTrigger}</span>, a
+      custom integration is triggered via {uri}
     </Typography>
   );
 };
