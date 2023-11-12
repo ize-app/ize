@@ -36,6 +36,13 @@ const FinalDecision = ({
       ) : isExpired ? (
         <Typography>Request expired without a decision</Typography>
       ) : null}
+      {typeof result?.actionComplete === "boolean" ? (
+        result.actionComplete ? (
+          <Typography>Custom integration ran successfully</Typography>
+        ) : (
+          <Typography color="red">Custom integration failed ⚠️</Typography>
+        )
+      ) : null}
       {userResponse ? (
         <Typography>
           You responded:{" "}
