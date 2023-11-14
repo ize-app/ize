@@ -134,7 +134,9 @@ export const StatusCell = ({
     );
   } else if (timeLeft < 0) {
     return (
-      <TwoTierCell topText="Expired" bottomText="No decision" {...props} />
+      <TableCellHideable align="center">
+        <Typography color="red">Expired</Typography>
+      </TableCellHideable>
     );
   } else {
     return (
