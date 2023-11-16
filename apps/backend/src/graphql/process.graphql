@@ -19,11 +19,9 @@ input newProcessArgs {
   expirationSeconds: Int!
   options: [ProcessOptionArgs!]!
   inputs: [InputTemplateArgs!]!
-  absoluteDecision: AbsoluteDecisionArgs
-  percentageDecision: PercentageDecisionArgs
+  decision: DecisionArgs!
   roles: [RoleArgs!]!
   action: ActionArgs
-  editProcessId: String
 }
 
 input ActionArgs {
@@ -35,6 +33,11 @@ input WebhookActionArgs {
   uri: String!
 }
 
+input DecisionArgs {
+  absoluteDecision: AbsoluteDecisionArgs
+  percentageDecision: PercentageDecisionArgs
+}
+
 input newEditProcessRequestArgs {
   processId: String!
   name: String
@@ -42,8 +45,7 @@ input newEditProcessRequestArgs {
   expirationSeconds: Int
   options: [ProcessOptionArgs!]
   inputs: [InputTemplateArgs!]
-  absoluteDecision: AbsoluteDecisionArgs
-  percentageDecision: PercentageDecisionArgs
+  decision: DecisionArgs
   roles: [RoleArgs!]
   action: ActionArgs
   editProcessId: String

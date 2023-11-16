@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { formatFormStateForProcessMutation } from "./newProcessMutationHelpers/formatFormStateForProcessMutation";
 import {
   NEW_PROCESS_PROGRESS_BAR_STEPS,
   NEW_PROCESS_WIZARD_STEPS,
@@ -18,6 +17,7 @@ import { NewProcessDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
+import { createNewProcessMutation } from "../../utils/processMutationHelpers";
 import { Wizard, useWizard } from "../../utils/wizard";
 
 export const SetupProcess = () => {
@@ -36,7 +36,7 @@ export const SetupProcess = () => {
     try {
       await mutate({
         variables: {
-          process: formatFormStateForProcessMutation(formState),
+          process: createNewProcessMutation(formState),
         },
       });
       setSnackbarData({

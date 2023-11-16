@@ -1,5 +1,5 @@
-import { ActionArgs } from "../../../graphql/generated/graphql";
-import { ActionForm } from "../newProcessWizard";
+import { ActionForm } from "../../components/NewProcess/newProcessWizard";
+import { ActionArgs } from "../../graphql/generated/graphql";
 
 const createActionInputs = (
   action: ActionForm | undefined,

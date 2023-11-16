@@ -1,10 +1,10 @@
 import {
-  OptionType,
-  ProcessOptionArgs,
-} from "../../../graphql/generated/graphql";
-import { DefaultOptionSets, FormOptionChoice } from "../newProcessWizard";
+  DefaultOptionSets,
+  FormOptionChoice,
+} from "../../components/NewProcess/newProcessWizard";
+import { OptionType, ProcessOptionArgs } from "../../graphql/generated/graphql";
 
-export const formatOptions = (
+const createOptionInputs = (
   selectedOptionSet: FormOptionChoice,
   customOptions: string[],
 ): ProcessOptionArgs[] => {
@@ -18,3 +18,5 @@ export const formatOptions = (
       ?.data as ProcessOptionArgs[];
   }
 };
+
+export default createOptionInputs;

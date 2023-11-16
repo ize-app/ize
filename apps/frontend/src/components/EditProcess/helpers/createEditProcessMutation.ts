@@ -1,9 +1,12 @@
 import { diff } from "deep-object-diff";
 
 import { NewEditProcessRequestArgs } from "../../../graphql/generated/graphql";
-import createActionInputs from "../../NewProcess/newProcessMutationHelpers/createActionInputs";
-import { formatOptions } from "../../NewProcess/newProcessMutationHelpers/formatOptions";
-import { formatRoles } from "../../NewProcess/newProcessMutationHelpers/formatRoles";
+import {
+  createActionInputs,
+  createDecisionInputs,
+  createOptionInputs,
+  createRoleInputs,
+} from "../../../utils/processMutationHelpers";
 import {
   FormOptionChoice,
   NewProcessState,
@@ -32,7 +35,7 @@ export const createEditProcessMutation = (
   }
 
   if (diffForms.options || diffForms.customOptions) {
-    inputs["options"] = formatOptions(
+    inputs["options"] = createOptionInputs(
       newFormState.options as FormOptionChoice,
       newFormState.customOptions ?? [],
     ).map((option, index) => ({ ...option, id: index.toString() }));
@@ -43,24 +46,11 @@ export const createEditProcessMutation = (
   }
 
   if (diffForms.rights?.request || diffForms.rights?.response) {
-    inputs["roles"] = formatRoles(newFormState.rights as ProcessRights);
-  }
-
-  if (diffForms.rights?.edit) {
-    inputs["editProcessId"] = newFormState.rights?.edit.id;
+    inputs["roles"] = createRoleInputs(newFormState.rights as ProcessRights);
   }
 
   if (diffForms.decision) {
-    if (newFormState.decision?.decisionThresholdType === "Absolute") {
-      inputs["absoluteDecision"] = {
-        threshold: newFormState.decision?.decisionThreshold as number,
-      };
-    } else if (newFormState.decision?.decisionThresholdType === "Percentage") {
-      inputs["percentageDecision"] = {
-        quorum: newFormState.decision?.quorum as number,
-        percentage: newFormState.decision?.decisionThreshold as number,
-      };
-    }
+    inputs["decision"] = createDecisionInputs(newFormState.decision);
   }
 
   return inputs;

@@ -33,7 +33,7 @@ export type Action = {
 };
 
 export type ActionArgs = {
-  optionTrigger: Scalars['String']['input'];
+  optionTrigger?: InputMaybe<Scalars['String']['input']>;
   webhook: WebhookActionArgs;
 };
 
@@ -43,6 +43,11 @@ export enum AgentType {
   Group = 'Group',
   User = 'User'
 }
+
+export type DecisionArgs = {
+  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+};
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
@@ -392,29 +397,26 @@ export type WebhookActionArgs = {
 };
 
 export type NewEditProcessRequestArgs = {
-  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   action?: InputMaybe<ActionArgs>;
+  decision?: InputMaybe<DecisionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   inputs?: InputMaybe<Array<InputTemplateArgs>>;
   name?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<Array<ProcessOptionArgs>>;
-  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   processId: Scalars['String']['input'];
   roles?: InputMaybe<Array<RoleArgs>>;
 };
 
 export type NewProcessArgs = {
-  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   action?: InputMaybe<ActionArgs>;
+  decision: DecisionArgs;
   description?: InputMaybe<Scalars['String']['input']>;
-  editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
   inputs: Array<InputTemplateArgs>;
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;
-  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
 };
 
@@ -702,7 +704,7 @@ export type Action = {
 };
 
 export type ActionArgs = {
-  optionTrigger: Scalars['String']['input'];
+  optionTrigger?: InputMaybe<Scalars['String']['input']>;
   webhook: WebhookActionArgs;
 };
 
@@ -712,6 +714,11 @@ export enum AgentType {
   Group = 'Group',
   User = 'User'
 }
+
+export type DecisionArgs = {
+  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+};
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
@@ -1061,29 +1068,26 @@ export type WebhookActionArgs = {
 };
 
 export type NewEditProcessRequestArgs = {
-  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   action?: InputMaybe<ActionArgs>;
+  decision?: InputMaybe<DecisionArgs>;
   description?: InputMaybe<Scalars['String']['input']>;
   editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   inputs?: InputMaybe<Array<InputTemplateArgs>>;
   name?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<Array<ProcessOptionArgs>>;
-  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   processId: Scalars['String']['input'];
   roles?: InputMaybe<Array<RoleArgs>>;
 };
 
 export type NewProcessArgs = {
-  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   action?: InputMaybe<ActionArgs>;
+  decision: DecisionArgs;
   description?: InputMaybe<Scalars['String']['input']>;
-  editProcessId?: InputMaybe<Scalars['String']['input']>;
   expirationSeconds: Scalars['Int']['input'];
   inputs: Array<InputTemplateArgs>;
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;
-  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
   roles: Array<RoleArgs>;
 };
 

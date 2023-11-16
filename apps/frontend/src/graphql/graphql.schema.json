@@ -127,13 +127,9 @@
             "name": "optionTrigger",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -210,6 +206,41 @@
         "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "DecisionArgs",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "absoluteDecision",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "AbsoluteDecisionArgs",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "percentageDecision",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "PercentageDecisionArgs",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
@@ -4164,11 +4195,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "absoluteDecision",
+            "name": "action",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "AbsoluteDecisionArgs",
+              "name": "ActionArgs",
               "ofType": null
             },
             "defaultValue": null,
@@ -4176,11 +4207,11 @@
             "deprecationReason": null
           },
           {
-            "name": "action",
+            "name": "decision",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "ActionArgs",
+              "name": "DecisionArgs",
               "ofType": null
             },
             "defaultValue": null,
@@ -4276,18 +4307,6 @@
             "deprecationReason": null
           },
           {
-            "name": "percentageDecision",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "PercentageDecisionArgs",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "processId",
             "description": null,
             "type": {
@@ -4335,18 +4354,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "absoluteDecision",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "AbsoluteDecisionArgs",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "action",
             "description": null,
             "type": {
@@ -4359,19 +4366,23 @@
             "deprecationReason": null
           },
           {
-            "name": "description",
+            "name": "decision",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "DecisionArgs",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "editProcessId",
+            "name": "description",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4457,18 +4468,6 @@
                   }
                 }
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "percentageDecision",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "PercentageDecisionArgs",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,

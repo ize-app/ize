@@ -1,6 +1,6 @@
 import { diff } from "deep-object-diff";
 
-import { formatOptions } from "../../NewProcess/newProcessMutationHelpers/formatOptions";
+import { createOptionInputs } from "../../../utils/processMutationHelpers";
 import {
   FormOptionChoice,
   NewProcessState,
@@ -26,11 +26,11 @@ const formatDiffDataForTable = (
   }
 
   if (diffForms.options || diffForms.customOptions) {
-    currentProcess["options"] = formatOptions(
+    currentProcess["options"] = createOptionInputs(
       oldFormState.options as FormOptionChoice,
       oldFormState.customOptions ?? [],
     ).map((option, index) => ({ ...option, id: index.toString() }));
-    proposedChanges["options"] = formatOptions(
+    proposedChanges["options"] = createOptionInputs(
       newFormState.options as FormOptionChoice,
       newFormState.customOptions ?? [],
     ).map((option, index) => ({ ...option, id: index.toString() }));
@@ -53,11 +53,6 @@ const formatDiffDataForTable = (
   if (diffForms.rights?.response) {
     currentProcess["respond"] = oldFormState.rights?.response;
     proposedChanges["respond"] = newFormState.rights?.response;
-  }
-
-  if (diffForms.rights?.edit) {
-    currentProcess["edit"] = oldFormState.rights?.edit;
-    proposedChanges["edit"] = newFormState.rights?.edit;
   }
 
   if (diffForms.decision) {
