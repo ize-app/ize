@@ -164,6 +164,7 @@ export const ProcessRights = () => {
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
       ...prev,
+      ...data,
       requestExpirationSeconds: data.requestExpirationSeconds,
       decision: {
         ...data.decision,
@@ -216,21 +217,22 @@ export const ProcessRights = () => {
               label={"Who can respond to requests?"}
               agents={agents}
             />
-            <RadioControl
+
+            <SelectControl
               //@ts-ignore
               control={control}
               name="decision.decisionThresholdType"
-              label="At what point is a final decision reached?"
-              options={[
+              selectOptions={[
                 {
                   value: ThresholdTypes.Absolute,
-                  label: "An option receives a certain # of votes",
+                  name: "An option receives a certain # of votes",
                 },
                 {
                   value: ThresholdTypes.Percentage,
-                  label: "An option receives a certain % of votes",
+                  name: "An option receives a certain % of votes",
                 },
               ]}
+              label="How is a final decision reached?"
             />
             <SliderContainer
               label={
