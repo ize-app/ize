@@ -23,7 +23,7 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const organizationSchema = z.object({
   name: z.string(),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().optional().nullable(),
 });
 
 const userGroupSchema = z.object({
@@ -164,7 +164,7 @@ export const ProcessRights = () => {
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
       ...prev,
-      ...data,
+      requestExpirationSeconds: data.requestExpirationSeconds,
       decision: {
         ...data.decision,
       },
