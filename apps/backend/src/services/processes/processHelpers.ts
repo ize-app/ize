@@ -5,9 +5,8 @@ import { Prisma } from "@prisma/client";
 import {
   ProcessOptionArgs,
   InputTemplateArgs,
-  AbsoluteDecisionArgs,
-  PercentageDecisionArgs,
   RoleArgs,
+  DecisionArgs,
 } from "frontend/src/graphql/generated/graphql";
 
 export const createOptionSystem = async (
@@ -96,31 +95,29 @@ export const createAction = async (
 
 export const createDecisionSystem = async (
   {
-    absoluteDecision,
-    percentageDecision,
+    decision,
     transaction = prisma,
   }: {
-    absoluteDecision?: AbsoluteDecisionArgs;
-    percentageDecision?: PercentageDecisionArgs;
+    decision: DecisionArgs;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  if (absoluteDecision)
+  if (decision.absoluteDecision)
     return await transaction.decisionSystem.create({
       data: {
         type: "Absolute",
         absoluteDecisionSystem: {
-          create: absoluteDecision,
+          create: decision.absoluteDecision,
         },
       },
     });
-  else if (percentageDecision) {
+  else if (decision.percentageDecision) {
     return await transaction.decisionSystem.create({
       data: {
         type: "Percentage",
         percentageDecisionSystem: {
-          create: percentageDecision,
+          create: decision.percentageDecision,
         },
       },
     });

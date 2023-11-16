@@ -17,8 +17,9 @@ import { NewProcessDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
-import { createNewProcessMutation } from "../../utils/processMutationHelpers";
-import { Wizard, useWizard } from "../../utils/wizard";
+
+import { createNewProcessMutation } from "@/utils/processMutationHelpers";
+import { Wizard, useWizard } from "@/utils/wizard";
 
 export const SetupProcess = () => {
   const navigate = useNavigate();
