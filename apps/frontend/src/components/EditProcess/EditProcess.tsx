@@ -47,7 +47,6 @@ export const EditProcess = () => {
       setSnackbarData({ message: "Request created!", type: "success" });
       navigate("/");
     } catch (e) {
-      console.log("inside the error", e);
       navigate("/");
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request creation failed", type: "error" });

@@ -53,7 +53,6 @@ export const NewRequest = () => {
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request created!", type: "success" });
     } catch (e) {
-      console.log("inside the error", e);
       navigate("/");
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request creation failed", type: "error" });

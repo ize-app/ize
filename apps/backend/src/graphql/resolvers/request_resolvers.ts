@@ -119,7 +119,6 @@ const requestsForGroup = async (
   args: QueryRequestsForGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<Request[]> => {
-  console.log("group id  is ", args.groupId);
   const requests = await prisma.request.findMany({
     include: requestInclude,
     where: {
