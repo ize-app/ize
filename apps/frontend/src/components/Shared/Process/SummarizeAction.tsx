@@ -9,7 +9,6 @@ const SummarizeAction = ({
   uri: string;
   optionTrigger: string | undefined;
 }) => {
-  console.log("option trigger is ", optionTrigger);
   return !optionTrigger ||
     optionTrigger === defaultWebhookTriggerOption.value ? (
     <Typography>

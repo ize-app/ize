@@ -67,7 +67,6 @@ export const ProcessInputs = () => {
   });
 
   const onSubmit = (data: FormFields) => {
-    console.log("inputs are ", data.processInputs);
     setFormState((prev) => ({
       ...prev,
       inputs: [...data.processInputs],

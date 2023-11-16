@@ -1,8 +1,6 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "../../discord/api";
-import { randomUUID } from "crypto";
-import { Prisma, PrismaClient } from "@prisma/client";
 
 export async function setUpDiscordServerService(
   {
@@ -17,18 +15,11 @@ export async function setUpDiscordServerService(
   const botApi = DiscordApi.forBotUser();
   const server = await botApi.getDiscordServer(serverId);
   const serverRoles = await botApi.getDiscordServerRoles(serverId);
-  const everyoneRole = serverRoles.find((role) => role.name === "@everyone");
 
   return await prisma.$transaction(async (transaction) => {
     if (!server) {
       throw new Error("Cannot find server");
     }
-
-    if (!everyoneRole) {
-      throw new Error("Cannot find @everyone role");
-    }
-
-    const dog: string = context.currentUser.id;
 
     const existingGroup = await transaction.group.findFirst({
       where: {
@@ -44,13 +35,48 @@ export async function setUpDiscordServerService(
       throw new Error("Server has already been set-up");
     }
 
+    const serverRecord = await transaction.discordServer.create({
+      data: {
+        discordServerId: serverId,
+        icon: server.icon,
+        banner: server.banner,
+        name: server.name,
+      },
+    });
+
     const members = await botApi.getDiscordGuildMembers({
       serverId: server.id,
     });
 
     const memberCount = botApi.countRoleMembers(members, serverRoles);
 
-    const everyoneGroup = await transaction.group.create({
+    const relevantGroups = serverRoles.filter(
+      (role) => !role.tags?.bot_id || role.name === "@everyone",
+    );
+
+    await Promise.all(
+      relevantGroups.map((group) => {
+        return transaction.group.create({
+          data: {
+            creatorId: context.currentUser.id,
+            activeAt: new Date(),
+            discordRoleGroup: {
+              create: {
+                discordRoleId: group.id,
+                color: group.color,
+                name: group.name,
+                icon: group.icon,
+                unicodeEmoji: group.unicode_emoji,
+                memberCount: memberCount[group.id],
+                discordServerId: serverRecord.id,
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    return await transaction.group.findFirst({
       include: {
         discordRoleGroup: {
           include: {
@@ -58,53 +84,12 @@ export async function setUpDiscordServerService(
           },
         },
       },
-      data: {
-        creatorId: context.currentUser.id,
-        activeAt: new Date(),
+      where: {
         discordRoleGroup: {
-          create: {
-            discordRoleId: everyoneRole.id,
-            color: everyoneRole.color,
-            name: everyoneRole.name,
-            icon: everyoneRole.icon,
-            unicodeEmoji: everyoneRole.unicode_emoji,
-            memberCount: memberCount[everyoneRole.id],
-            discordServer: {
-              create: {
-                discordServerId: serverId,
-                icon: server.icon,
-                banner: server.banner,
-                name: server.name,
-              },
-            },
-          },
+          discordServerId: serverRecord.id,
+          name: "@everyone",
         },
       },
     });
-
-    if (roleId) {
-      const newRole = serverRoles.find((role) => role.id === roleId);
-
-      await transaction.group.create({
-        include: { discordRoleGroup: true },
-        data: {
-          creatorId: context.currentUser.id,
-          activeAt: new Date(),
-          discordRoleGroup: {
-            create: {
-              discordRoleId: newRole.id,
-              color: newRole.color,
-              name: newRole.name,
-              icon: newRole.icon,
-              unicodeEmoji: newRole.unicode_emoji,
-              memberCount: memberCount[newRole.id],
-              discordServerId: everyoneGroup.discordRoleGroup.discordServer.id,
-            },
-          },
-        },
-      });
-    }
-
-    return everyoneGroup;
   });
 }

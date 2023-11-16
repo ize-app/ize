@@ -137,8 +137,6 @@ export const ProcessRights = () => {
     useNewProcessWizardState();
   const totalGroupMembers = 128;
 
-  console.log("inside process rights, form state  is", formState);
-
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       rights: {
