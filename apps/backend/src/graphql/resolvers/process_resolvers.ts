@@ -133,10 +133,6 @@ const processesForGroup = async (
   return formattedProcesses;
 };
 
-// get all groups and users that a user is eligible to assign a role in a process
-// to start that is just going to be
-// 1) groups that are part of groups that user is in
-// 2) the user themselves
 const groupsAndUsersEliglbeForRole = async (
   root: unknown,
   args: {},

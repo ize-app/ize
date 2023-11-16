@@ -2,10 +2,13 @@ import createActionInputs from "./createActionInputs";
 import { formatOptions } from "./formatOptions";
 import { formatRoles } from "./formatRoles";
 import {
+  AbsoluteDecisionArgs,
   InputTemplateArgs,
   NewProcessArgs,
+  PercentageDecisionArgs,
 } from "../../../graphql/generated/graphql";
 import {
+  DecisionType,
   FormOptionChoice,
   NewProcessState,
   ProcessRights,
@@ -21,21 +24,19 @@ export const formatFormStateForProcessMutation = (
     inputs: formState.inputs as InputTemplateArgs[],
     roles: formatRoles(formState.rights as ProcessRights),
     action: createActionInputs(formState.action),
-    editProcessId: formState.rights?.edit.id as string,
     options: formatOptions(
       formState.options as FormOptionChoice,
       formState.customOptions as string[],
     ),
   };
 
-  if (formState.decision?.decisionThresholdType === "Absolute") {
+  if (formState.decision?.type === DecisionType.Absolute) {
     inputs["absoluteDecision"] = {
-      threshold: formState.decision.decisionThreshold as number,
+      ...(formState.decision.absoluteDecision as AbsoluteDecisionArgs),
     };
-  } else if (formState.decision?.decisionThresholdType === "Percentage") {
+  } else if (formState.decision?.type === DecisionType.Percentage) {
     inputs["percentageDecision"] = {
-      quorum: formState.decision.quorum as number,
-      percentage: formState.decision.decisionThreshold as number,
+      ...(formState.decision.percentageDecision as PercentageDecisionArgs),
     };
   }
 

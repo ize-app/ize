@@ -1,7 +1,7 @@
 import { DecisionTypesSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import {
+  DecisionType,
   ProcessDecision,
-  ThresholdTypes,
 } from "../../NewProcess/newProcessWizard";
 
 export const summarizeDecisionSystem = (
@@ -24,14 +24,15 @@ export const summarizeDecisionSystemForm = (
   decision: ProcessDecision,
 ): string => {
   const summaryText =
-    decision.decisionThresholdType === ThresholdTypes.Absolute
+    decision.type === DecisionType.Absolute
       ? `First option with ${
-          decision.decisionThreshold as number
+          decision.absoluteDecision?.threshold as number
         } responses is selected.`
       : `Once there have been at least ${
-          decision.quorum?.quorumThreshold as number
+          decision.percentageDecision?.quorum as number
+        } as number
         } responses total, the first option to get at least ${
-          (decision.decisionThreshold as number) * 100
+          (decision.percentageDecision?.percentage as number) * 100
         }% of the vote is selected.`;
 
   return summaryText;

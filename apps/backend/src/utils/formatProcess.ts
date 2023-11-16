@@ -170,7 +170,7 @@ export const formatProcessVersion = (
           type: input.type as InputDataType,
         }),
       ),
-    action: formatAction(action, options),
+    action: action ? formatAction(action, options) : undefined,
     roles: formatRoles(roleSet),
   };
 

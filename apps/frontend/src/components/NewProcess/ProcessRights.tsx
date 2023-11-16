@@ -7,7 +7,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { ThresholdTypes, useNewProcessWizardState } from "./newProcessWizard";
+import { DecisionType, useNewProcessWizardState } from "./newProcessWizard";
 import {
   AgentSummaryPartsFragment,
   AgentType,
@@ -15,7 +15,6 @@ import {
 } from "../../graphql/generated/graphql";
 import {
   GroupUserSearchControl,
-  RadioControl,
   SelectControl,
   SliderControl,
 } from "../shared/Form";
@@ -35,6 +34,15 @@ const userGroupSchema = z.object({
   parent: organizationSchema.optional().nullable(),
 });
 
+const absoluteDecisionSchema = z.object({
+  threshold: z.number(),
+});
+
+const percentageDecisionSchema = z.object({
+  percentage: z.number(),
+  quorum: z.number(),
+});
+
 const formSchema = z
   .object({
     rights: z.object({
@@ -44,25 +52,24 @@ const formSchema = z
       response: z
         .array(userGroupSchema)
         .min(1, "Please select at least one group or individual."),
-      edit: userGroupSchema,
     }),
     requestExpirationSeconds: z.number(),
     decision: z.object({
-      decisionThreshold: z.number(),
-      decisionThresholdType: z.nativeEnum(ThresholdTypes),
-      quorum: z.object({ quorumThreshold: z.number().optional() }).optional(),
+      type: z.nativeEnum(DecisionType),
+      absoluteDecision: absoluteDecisionSchema.optional(),
+      percentageDecision: percentageDecisionSchema.optional(),
     }),
   })
   .refine(
     (data) => {
       if (
-        data.decision.decisionThresholdType === ThresholdTypes.Percentage &&
-        data.decision?.quorum?.quorumThreshold === undefined
+        data.decision.type === DecisionType.Percentage &&
+        data.decision?.percentageDecision?.quorum === undefined
       )
         return false;
       return true;
     },
-    { path: ["decision.quorum.quorumThreshold"] },
+    { path: ["decision.percentageDecision.quorum"] },
   );
 
 type FormFields = z.infer<typeof formSchema>;
@@ -87,8 +94,6 @@ const RightsContainer = ({
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        border: "solid 1px #EADDFF",
-        borderRadius: "6px",
         padding: "12px",
       }}
     >
@@ -142,15 +147,16 @@ export const ProcessRights = () => {
       rights: {
         request: formState.rights?.request ?? [],
         response: formState.rights?.response ?? [],
-        edit: formState.rights?.edit,
       },
       requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
       decision: {
-        decisionThresholdType:
-          formState.decision?.decisionThresholdType ?? ThresholdTypes.Absolute,
-        decisionThreshold: formState.decision?.decisionThreshold ?? 1,
-        quorum: {
-          quorumThreshold: formState.decision?.quorum?.quorumThreshold ?? 0,
+        type: formState.decision?.type ?? DecisionType.Absolute,
+        percentageDecision: {
+          quorum: formState.decision?.percentageDecision?.quorum ?? 3,
+          percentage: formState.decision?.percentageDecision?.percentage ?? 51,
+        },
+        absoluteDecision: {
+          threshold: formState.decision?.absoluteDecision?.threshold ?? 3,
         },
       },
     },
@@ -159,7 +165,11 @@ export const ProcessRights = () => {
   });
 
   const isPercentageThreshold =
-    watch("decision.decisionThresholdType") === ThresholdTypes.Percentage;
+    watch("decision.type") === DecisionType.Percentage;
+
+  const absoluteThreshold = watch("decision.absoluteDecision.threshold");
+  const percentageThreshold = watch("decision.percentageDecision.percentage");
+  const percentageQuorum = watch("decision.percentageDecision.quorum");
 
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
@@ -185,18 +195,18 @@ export const ProcessRights = () => {
             gap: "20px",
           }}
         >
-          <RightsContainer title={"How is this process triggered?"}>
+          <RightsContainer title={"Request"}>
             <GroupUserSearchControl
               //@ts-ignore
               control={control}
               name={"rights.request"}
-              label={"Who can create requests to trigger this process?"}
+              label={"Who can create requests?"}
               agents={agents}
             />
             <SelectControl
               //@ts-ignore
               control={control}
-              sx={{ width: "300px" }}
+              sx={{ width: "400px" }}
               name="requestExpirationSeconds"
               selectOptions={[
                 { name: "1 hour", value: 3600 },
@@ -209,7 +219,7 @@ export const ProcessRights = () => {
               label="Days until request expires"
             />
           </RightsContainer>
-          <RightsContainer title={"How is a final decision reached?"}>
+          <RightsContainer title={"Response"}>
             <GroupUserSearchControl
               //@ts-ignore
               control={control}
@@ -221,62 +231,82 @@ export const ProcessRights = () => {
             <SelectControl
               //@ts-ignore
               control={control}
-              name="decision.decisionThresholdType"
+              name="decision.type"
+              sx={{ width: "400px" }}
               selectOptions={[
                 {
-                  value: ThresholdTypes.Absolute,
-                  name: "An option receives a certain # of votes",
+                  value: DecisionType.Absolute,
+                  name: "Threshold vote",
                 },
                 {
-                  value: ThresholdTypes.Percentage,
-                  name: "An option receives a certain % of votes",
+                  value: DecisionType.Percentage,
+                  name: "Percentage vote",
                 },
               ]}
-              label="How is a final decision reached?"
+              label="When is there a final result?"
             />
-            <SliderContainer
-              label={
-                isPercentageThreshold
-                  ? "What percentage of votes?"
-                  : "How many votes?"
-              }
-            >
-              <SliderControl
-                name="decision.decisionThreshold"
-                //@ts-ignore
-                control={control}
-                max={100}
-                valueLabelFormat={(value: number) =>
-                  isPercentageThreshold ? value.toString() + "%" : value
-                }
-                min={isPercentageThreshold ? 50 : 1}
-                valueLabelDisplay="on"
-              />
-              <Box
-                sx={{
-                  width: "100px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "4px",
-                }}
-              >
-                {isPercentageThreshold ? "100%" : totalGroupMembers}
-                {isPercentageThreshold ? null : <Groups color="primary" />}
-              </Box>
-            </SliderContainer>
             {isPercentageThreshold ? (
+              <>
+                <SliderContainer
+                  label={`First option with ${percentageThreshold}% of responses wins`}
+                >
+                  <SliderControl
+                    name="decision.percentageDecision.percentage"
+                    //@ts-ignore
+                    control={control}
+                    max={100}
+                    valueLabelFormat={(value: number) => value.toString() + "%"}
+                    min={51}
+                  />
+                  <Box
+                    sx={{
+                      width: "100px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    {isPercentageThreshold ? "100%" : totalGroupMembers}
+                    {isPercentageThreshold ? null : <Groups color="primary" />}
+                  </Box>
+                </SliderContainer>
+                <SliderContainer
+                  label={`...but there must be at least ${percentageQuorum} responses total (the quorum)`}
+                >
+                  <SliderControl
+                    name="decision.percentageDecision.quorum"
+                    //@ts-ignore
+                    control={control}
+                    max={100}
+                    min={1}
+                  />
+                  <Box
+                    sx={{
+                      width: "100px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    {totalGroupMembers}
+                    <Groups color="primary" />
+                  </Box>
+                </SliderContainer>
+              </>
+            ) : (
               <SliderContainer
-                label={
-                  "What's the minimum # of people that need to vote to reach a decision (the quorum)?"
-                }
+                label={`First option with ${absoluteThreshold} responses wins`}
               >
                 <SliderControl
-                  name="decision.quorum.quorumThreshold"
-                  valueLabelDisplay="on"
+                  name="decision.absoluteDecision.threshold"
                   //@ts-ignore
                   control={control}
                   max={100}
+                  valueLabelFormat={(value: number) =>
+                    isPercentageThreshold ? value.toString() + "%" : value
+                  }
                   min={1}
                 />
                 <Box
@@ -288,22 +318,11 @@ export const ProcessRights = () => {
                     gap: "4px",
                   }}
                 >
-                  {totalGroupMembers}
-                  <Groups color="primary" />
+                  {isPercentageThreshold ? "100%" : totalGroupMembers}
+                  {isPercentageThreshold ? null : <Groups color="primary" />}
                 </Box>
               </SliderContainer>
-            ) : null}
-          </RightsContainer>
-          <RightsContainer title={"How can this process evolve?"}>
-            {/* <Typography>Edit</Typography> */}
-            <GroupUserSearchControl
-              multiple={false}
-              //@ts-ignore
-              control={control}
-              name={"rights.edit"}
-              label={"Who is responsible for how this process evolves?"}
-              agents={agents}
-            />
+            )}
           </RightsContainer>
         </form>
       </WizardBody>

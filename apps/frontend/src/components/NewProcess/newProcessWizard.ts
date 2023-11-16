@@ -1,4 +1,10 @@
-import { InputTemplateArgs, OptionType } from "../../graphql/generated/graphql";
+import {
+  AbsoluteDecisionArgs,
+  InputTemplateArgs,
+  OptionType,
+  PercentageDecisionArgs,
+  WebhookActionArgs,
+} from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import { AvatarProps } from "../shared/Avatar";
@@ -26,9 +32,9 @@ export interface NewProcessState {
 }
 
 export interface ProcessDecision {
-  decisionThresholdType?: ThresholdTypes;
-  decisionThreshold?: number;
-  quorum?: ProcessQuorum;
+  type?: DecisionType;
+  absoluteDecision?: AbsoluteDecisionArgs;
+  percentageDecision?: PercentageDecisionArgs;
 }
 
 export enum FormOptionChoice {
@@ -63,11 +69,11 @@ export const DefaultOptionSets = new Map([
 ]);
 
 export interface ProcessQuorum {
-  quorumType?: ThresholdTypes;
+  quorumType?: DecisionType;
   quorumThreshold?: number;
 }
 
-export enum ThresholdTypes {
+export enum DecisionType {
   Absolute = "Absolute",
   Percentage = "Percentage",
 }
@@ -75,12 +81,6 @@ export enum ThresholdTypes {
 export interface ProcessRights {
   request: AvatarProps[];
   response: AvatarProps[];
-  edit: AvatarProps;
-}
-
-export enum ProcessInputType {
-  Text = "Text",
-  Number = "Number",
 }
 
 export interface ActionForm {

@@ -50,7 +50,7 @@ export const newCustomProcess = async (
 
     const roleSet = await createRoleSet({ roles, transaction }, context);
 
-    if (action.webhook.uri) {
+    if (action?.webhook?.uri) {
       let webhookTriggerFilterOption =
         optionSystem.defaultProcessOptionSet.options.find(
           (option) => option.value === action.optionTrigger,
