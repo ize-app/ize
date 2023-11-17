@@ -18,10 +18,10 @@ import {
   HasCustomIntegration,
   defaultWebhookTriggerOption,
   useNewProcessWizardState,
-} from "./newProcessWizard";
-import { RadioControl, SelectControl } from "../shared/Form";
-import { SelectOption } from "../shared/Form/SelectControl";
-import { WizardBody, WizardNav } from "../shared/Wizard";
+} from "../../../../NewProcess/newProcessWizard";
+import { RadioControl, SelectControl } from "../..";
+import { SelectOption } from "../../SelectControl";
+import { WizardBody, WizardNav } from "../../../Wizard";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -136,7 +136,7 @@ const webhookTriggerFilterOptions = ({
   return options;
 };
 
-export const ProcessIntro = () => {
+export const Template = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
 

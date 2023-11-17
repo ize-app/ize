@@ -12,17 +12,13 @@ import Typography from "@mui/material/Typography";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { useNewProcessWizardState } from "./newProcessWizard";
+import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
 import {
   InputDataType,
   InputTemplateArgs,
-} from "../../graphql/generated/graphql";
-import {
-  CheckboxControl,
-  SelectControl,
-  TextFieldControl,
-} from "../shared/Form";
-import { WizardBody, WizardNav } from "../shared/Wizard";
+} from "../../../../../graphql/generated/graphql";
+import { CheckboxControl, SelectControl, TextFieldControl } from "../..";
+import { WizardBody, WizardNav } from "../../../Wizard";
 
 const fieldArrayName = "processInputs";
 
@@ -39,7 +35,7 @@ interface FormFields {
   processInputs: InputTemplateArgs[];
 }
 
-export const ProcessInputs = () => {
+export const TemplateInputs = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
 

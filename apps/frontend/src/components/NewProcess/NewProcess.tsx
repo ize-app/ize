@@ -21,7 +21,7 @@ import { fullUUIDToShort } from "../../utils/inputs";
 import { createNewProcessMutation } from "@/utils/processMutationHelpers";
 import { Wizard, useWizard } from "@/utils/wizard";
 
-export const SetupProcess = () => {
+const NewProcess = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } =
     useContext(SnackbarContext);
@@ -104,3 +104,5 @@ export const SetupProcess = () => {
     </PageContainer>
   );
 };
+
+export default NewProcess;

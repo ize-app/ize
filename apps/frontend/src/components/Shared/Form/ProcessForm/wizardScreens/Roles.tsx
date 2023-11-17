@@ -7,18 +7,17 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { DecisionType, useNewProcessWizardState } from "./newProcessWizard";
+import {
+  DecisionType,
+  useNewProcessWizardState,
+} from "../../../../NewProcess/newProcessWizard";
 import {
   AgentSummaryPartsFragment,
   AgentType,
   GroupsAndUsersEliglbeForRoleDocument,
-} from "../../graphql/generated/graphql";
-import {
-  GroupUserSearchControl,
-  SelectControl,
-  SliderControl,
-} from "../shared/Form";
-import { WizardBody, WizardNav } from "../shared/Wizard";
+} from "../../../../../graphql/generated/graphql";
+import { GroupUserSearchControl, SelectControl, SliderControl } from "../..";
+import { WizardBody, WizardNav } from "../../../Wizard";
 
 const organizationSchema = z.object({
   name: z.string(),
@@ -132,7 +131,7 @@ const SliderContainer = ({
     </Box>
   </Box>
 );
-export const ProcessRights = () => {
+export const Roles = () => {
   const { data, loading } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
 
   const agents =
