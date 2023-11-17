@@ -28,7 +28,7 @@ const createDecisionFormState = (
       };
       break;
     default:
-      decForm = {};
+      throw Error("Invalid decision type");
   }
   return decForm;
 };
