@@ -1,10 +1,10 @@
-import { DecisionTypes } from "../../../graphql/generated/graphql";
+import { DecisionTypes } from "@/graphql/generated/graphql";
 import {
   DecisionType,
   ProcessDecision,
-} from "../../NewProcess/newProcessWizard";
+} from "@/components/NewProcess/newProcessWizard";
 
-export const formatDecisionToFormState = (
+const createDecisionFormState = (
   decisionSystem: DecisionTypes,
 ): ProcessDecision => {
   let decForm: ProcessDecision;
@@ -31,3 +31,5 @@ export const formatDecisionToFormState = (
   }
   return decForm;
 };
+
+export default createDecisionFormState;

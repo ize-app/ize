@@ -12,7 +12,7 @@ import {
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
 } from "./editProcessWizard";
-import createEditProcessMutation from "./helpers/createEditProcessMutation";
+import createEditProcessMutation from "../shared/Form/ProcessForm/createProcessMutation/createEditProcessMutation";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";

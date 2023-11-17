@@ -10,68 +10,21 @@ import * as z from "zod";
 import {
   DecisionType,
   useNewProcessWizardState,
-} from "../../../../NewProcess/newProcessWizard";
+} from "@/components/NewProcess/newProcessWizard";
 import {
   AgentSummaryPartsFragment,
-  AgentType,
   GroupsAndUsersEliglbeForRoleDocument,
-} from "../../../../../graphql/generated/graphql";
-import { GroupUserSearchControl, SelectControl, SliderControl } from "../..";
-import { WizardBody, WizardNav } from "../../../Wizard";
+} from "@/graphql/generated/graphql";
+import {
+  GroupUserSearchControl,
+  SelectControl,
+  SliderControl,
+} from "@/components/shared/Form";
+import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
-const organizationSchema = z.object({
-  name: z.string(),
-  avatarUrl: z.string().optional().nullable(),
-});
+import { rolesFormSchema } from "../formSchema";
 
-const userGroupSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  type: z.nativeEnum(AgentType),
-  avatarUrl: z.string().url().optional().nullable(),
-  backgroundColor: z.string().optional().nullable(),
-  parent: organizationSchema.optional().nullable(),
-});
-
-const absoluteDecisionSchema = z.object({
-  threshold: z.number(),
-});
-
-const percentageDecisionSchema = z.object({
-  percentage: z.number(),
-  quorum: z.number(),
-});
-
-const formSchema = z
-  .object({
-    rights: z.object({
-      request: z
-        .array(userGroupSchema)
-        .min(1, "Please select at least one group or individual."),
-      response: z
-        .array(userGroupSchema)
-        .min(1, "Please select at least one group or individual."),
-    }),
-    requestExpirationSeconds: z.number(),
-    decision: z.object({
-      type: z.nativeEnum(DecisionType),
-      absoluteDecision: absoluteDecisionSchema.optional(),
-      percentageDecision: percentageDecisionSchema.optional(),
-    }),
-  })
-  .refine(
-    (data) => {
-      if (
-        data.decision.type === DecisionType.Percentage &&
-        data.decision?.percentageDecision?.quorum === undefined
-      )
-        return false;
-      return true;
-    },
-    { path: ["decision.percentageDecision.quorum"] },
-  );
-
-type FormFields = z.infer<typeof formSchema>;
+type FormFields = z.infer<typeof rolesFormSchema>;
 
 const RightsContainer = ({
   title,
@@ -159,7 +112,7 @@ export const Roles = () => {
         },
       },
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(rolesFormSchema),
     shouldUnregister: true,
   });
 

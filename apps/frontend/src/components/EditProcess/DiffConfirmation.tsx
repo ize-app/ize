@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 
 import { useEditProcessWizardState } from "./editProcessWizard";
-import formatDiffDataForTable from "./helpers/formatDiffDataForTable";
+import formatDiffDataForTable from "./formatDiffDataForTable";
 import { NewProcessState } from "../NewProcess/newProcessWizard";
 import { Accordion } from "../shared/Accordion";
 import { EditProcessRequestInputTable } from "../shared/Request/EditProcessRequestsInputsTable";

@@ -1,5 +1,5 @@
-import { ProcessRights } from "../../components/NewProcess/newProcessWizard";
-import { RoleArgs, RoleType } from "../../graphql/generated/graphql";
+import { ProcessRights } from "../../../../NewProcess/newProcessWizard";
+import { RoleArgs, RoleType } from "../../../../../graphql/generated/graphql";
 
 const createRoleInputs = (rights: ProcessRights): RoleArgs[] => {
   const request = rights?.request.map((role) => ({

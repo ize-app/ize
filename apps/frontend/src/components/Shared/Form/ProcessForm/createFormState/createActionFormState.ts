@@ -1,10 +1,10 @@
-import { Action } from "../../../graphql/generated/graphql";
+import { Action } from "@/graphql/generated/graphql";
 import {
   ActionForm,
   HasCustomIntegration,
-} from "../../NewProcess/newProcessWizard";
+} from "@/components/NewProcess/newProcessWizard";
 
-export const formatActionToFormState = (
+const createActionFormState = (
   action: Action | undefined,
 ): ActionForm | undefined => {
   if (action?.actionDetails.__typename === "WebhookAction") {
@@ -17,3 +17,5 @@ export const formatActionToFormState = (
     };
   } else return undefined;
 };
+
+export default createActionFormState;

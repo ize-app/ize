@@ -32,9 +32,9 @@ export interface NewProcessState {
 }
 
 export interface ProcessDecision {
-  type: DecisionType;
-  absoluteDecision: AbsoluteDecisionArgs;
-  percentageDecision: PercentageDecisionArgs;
+  type?: DecisionType;
+  absoluteDecision?: AbsoluteDecisionArgs;
+  percentageDecision?: PercentageDecisionArgs;
 }
 
 export enum FormOptionChoice {

@@ -18,7 +18,7 @@ import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 
-import { createNewProcessMutation } from "@/utils/processMutationHelpers";
+import { createNewProcessMutation } from "@/components/shared/Form/ProcessForm/createProcessMutation";
 import { Wizard, useWizard } from "@/utils/wizard";
 
 const NewProcess = () => {

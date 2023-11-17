@@ -1,11 +1,11 @@
 import { diff } from "deep-object-diff";
 
-import { createOptionInputs } from "../../../utils/processMutationHelpers";
+import { createOptionInputs } from "../shared/Form/ProcessForm/createProcessMutation";
 import {
   FormOptionChoice,
   NewProcessState,
-} from "../../NewProcess/newProcessWizard";
-import { ProcessSnapshotForDiff } from "../../shared/Request/EditProcessRequestsInputsTable";
+} from "../NewProcess/newProcessWizard";
+import { ProcessSnapshotForDiff } from "../shared/Request/EditProcessRequestsInputsTable";
 
 const formatDiffDataForTable = (
   oldFormState: NewProcessState,

@@ -10,7 +10,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useFieldArray, useForm } from "react-hook-form";
-import * as z from "zod";
 
 import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
 import {
@@ -20,16 +19,11 @@ import {
 import { CheckboxControl, SelectControl, TextFieldControl } from "../..";
 import { WizardBody, WizardNav } from "../../../Wizard";
 
+import { createInputTemplatesFormSchema } from "../formSchema";
+
 const fieldArrayName = "processInputs";
 
-const rowSchema = z.object({
-  name: z.string().trim().min(1),
-  description: z.string().trim(),
-  required: z.boolean(),
-  type: z.nativeEnum(InputDataType),
-});
-
-const formSchema = z.object({ [fieldArrayName]: z.array(rowSchema) });
+const inputTemplatesFormSchema = createInputTemplatesFormSchema(fieldArrayName);
 
 interface FormFields {
   processInputs: InputTemplateArgs[];
@@ -51,7 +45,7 @@ export const TemplateInputs = () => {
     });
 
   const { control, handleSubmit } = useForm<FormFields>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(inputTemplatesFormSchema),
     defaultValues: {
       [fieldArrayName]: intitialFormState,
     },

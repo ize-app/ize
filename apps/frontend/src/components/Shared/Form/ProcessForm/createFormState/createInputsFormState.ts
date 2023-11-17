@@ -1,9 +1,6 @@
-import {
-  InputTemplate,
-  InputTemplateArgs,
-} from "../../../graphql/generated/graphql";
+import { InputTemplate, InputTemplateArgs } from "@/graphql/generated/graphql";
 
-export const formatInputsToFormState = (
+const createInputsFormState = (
   inputTemplates: InputTemplate[],
 ): InputTemplateArgs[] => {
   return inputTemplates.map((input) => ({
@@ -13,3 +10,5 @@ export const formatInputsToFormState = (
     description: input.description,
   }));
 };
+
+export default createInputsFormState;

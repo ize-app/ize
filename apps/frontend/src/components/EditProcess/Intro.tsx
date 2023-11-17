@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useEditProcessWizardState } from "./editProcessWizard";
-import { processToFormState } from "./helpers/formatProcessDataToFormState";
+import createProcessFormState from "../shared/Form/ProcessForm/createFormState/createProcessFormState";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { ProcessDocument } from "../../graphql/generated/graphql";
 import { shortUUIDToFull } from "../../utils/inputs";
@@ -25,7 +25,7 @@ export const Intro = () => {
       processId: processId,
     },
     onCompleted: (data) => {
-      const formState = processToFormState(data.process);
+      const formState = createProcessFormState(data.process);
       setFormState((prev) => ({
         ...prev,
         currentProcess: { ...formState },

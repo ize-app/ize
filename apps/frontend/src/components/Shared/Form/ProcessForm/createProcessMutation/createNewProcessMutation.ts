@@ -2,11 +2,11 @@ import {
   FormOptionChoice,
   NewProcessState,
   ProcessRights,
-} from "../../components/NewProcess/newProcessWizard";
+} from "../../../../NewProcess/newProcessWizard";
 import {
   InputTemplateArgs,
   NewProcessArgs,
-} from "../../graphql/generated/graphql";
+} from "../../../../../graphql/generated/graphql";
 
 import {
   createActionInputs,

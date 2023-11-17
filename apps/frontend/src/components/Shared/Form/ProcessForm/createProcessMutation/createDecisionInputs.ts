@@ -1,8 +1,8 @@
 import {
   DecisionType,
   ProcessDecision,
-} from "../../components/NewProcess/newProcessWizard";
-import { DecisionArgs } from "../../graphql/generated/graphql";
+} from "../../../../NewProcess/newProcessWizard";
+import { DecisionArgs } from "../../../../../graphql/generated/graphql";
 
 const createDecisionInputs = (
   formDecision: ProcessDecision | undefined,

@@ -1,12 +1,10 @@
-import { ProcessOption } from "../../../graphql/generated/graphql";
+import { ProcessOption } from "@/graphql/generated/graphql";
 import {
   DefaultOptionSets,
   FormOptionChoice,
-} from "../../NewProcess/newProcessWizard";
+} from "@/components/NewProcess/newProcessWizard";
 
-export const formatOptionsToFormState = (
-  options: ProcessOption[],
-): string[] => {
+export const createOptionFormState = (options: ProcessOption[]): string[] => {
   return options.map((value) => value.value);
 };
 

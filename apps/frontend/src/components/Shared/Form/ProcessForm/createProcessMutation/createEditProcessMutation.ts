@@ -1,17 +1,17 @@
 import { diff } from "deep-object-diff";
 
-import { NewEditProcessRequestArgs } from "../../../graphql/generated/graphql";
+import { NewEditProcessRequestArgs } from "../../../../../graphql/generated/graphql";
 import {
   createActionInputs,
   createDecisionInputs,
   createOptionInputs,
   createRoleInputs,
-} from "../../../utils/processMutationHelpers";
+} from ".";
 import {
   FormOptionChoice,
   NewProcessState,
   ProcessRights,
-} from "../../NewProcess/newProcessWizard";
+} from "../../../../NewProcess/newProcessWizard";
 
 export const createEditProcessMutation = (
   processId: string,
