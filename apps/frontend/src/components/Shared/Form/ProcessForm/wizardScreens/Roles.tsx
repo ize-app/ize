@@ -128,7 +128,7 @@ export const Roles = () => {
     onNext();
   };
 
-  return loading ? null : (
+  return (
     <>
       <WizardBody>
         <form
