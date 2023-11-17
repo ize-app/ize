@@ -1,14 +1,14 @@
 import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
+import { TextFieldControl } from "@/components/shared/Form";
 import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
 import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
+import InputAdornment from "@mui/material/InputAdornment";
 import {
   AgentSummaryPartsFragment,
   GroupsAndUsersEliglbeForRoleDocument,
@@ -16,7 +16,6 @@ import {
 import {
   GroupUserSearchControl,
   SelectControl,
-  SliderControl,
 } from "@/components/shared/Form";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
@@ -90,7 +89,6 @@ export const Roles = () => {
 
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
-  const totalGroupMembers = 128;
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
@@ -116,10 +114,6 @@ export const Roles = () => {
 
   const isPercentageThreshold =
     watch("decision.type") === DecisionType.Percentage;
-
-  const absoluteThreshold = watch("decision.absoluteDecision.threshold");
-  const percentageThreshold = watch("decision.percentageDecision.percentage");
-  const percentageQuorum = watch("decision.percentageDecision.quorum");
 
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
@@ -156,7 +150,7 @@ export const Roles = () => {
             <SelectControl
               //@ts-ignore
               control={control}
-              sx={{ width: "400px" }}
+              sx={{ width: "300px" }}
               name="requestExpirationSeconds"
               selectOptions={[
                 { name: "1 hour", value: 3600 },
@@ -177,102 +171,82 @@ export const Roles = () => {
               label={"Who can respond to requests?"}
               agents={agents}
             />
-
-            <SelectControl
-              //@ts-ignore
-              control={control}
-              name="decision.type"
-              sx={{ width: "400px" }}
-              selectOptions={[
-                {
-                  value: DecisionType.Absolute,
-                  name: "Threshold vote",
-                },
-                {
-                  value: DecisionType.Percentage,
-                  name: "Percentage vote",
-                },
-              ]}
-              label="When is there a final result?"
-            />
-            {isPercentageThreshold ? (
-              <>
-                <SliderContainer
-                  label={`First option with ${percentageThreshold}% of responses wins`}
-                >
-                  <SliderControl
-                    name="decision.percentageDecision.percentage"
-                    //@ts-ignore
-                    control={control}
-                    max={100}
-                    valueLabelFormat={(value: number) => value.toString() + "%"}
-                    min={51}
-                  />
-                  <Box
-                    sx={{
-                      width: "100px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    {isPercentageThreshold ? "100%" : totalGroupMembers}
-                    {isPercentageThreshold ? null : <Groups color="primary" />}
-                  </Box>
-                </SliderContainer>
-                <SliderContainer
-                  label={`...but there must be at least ${percentageQuorum} responses total (the quorum)`}
-                >
-                  <SliderControl
-                    name="decision.percentageDecision.quorum"
-                    //@ts-ignore
-                    control={control}
-                    max={100}
-                    min={1}
-                  />
-                  <Box
-                    sx={{
-                      width: "100px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    {totalGroupMembers}
-                    <Groups color="primary" />
-                  </Box>
-                </SliderContainer>
-              </>
-            ) : (
-              <SliderContainer
-                label={`First option with ${absoluteThreshold} responses wins`}
-              >
-                <SliderControl
-                  name="decision.absoluteDecision.threshold"
+            <Box
+              sx={{
+                display: "flex",
+                gap: "24px",
+                justifyContent: "flex-start",
+                flexWrap: "wrap",
+              }}
+            >
+              <Box sx={{}}>
+                <SelectControl
                   //@ts-ignore
                   control={control}
-                  max={100}
-                  valueLabelFormat={(value: number) =>
-                    isPercentageThreshold ? value.toString() + "%" : value
-                  }
-                  min={1}
+                  name="decision.type"
+                  sx={{ width: "300px" }}
+                  selectOptions={[
+                    {
+                      value: DecisionType.Absolute,
+                      name: "Threshold vote",
+                    },
+                    {
+                      value: DecisionType.Percentage,
+                      name: "Percentage vote",
+                    },
+                  ]}
+                  label="When is there a final result?"
                 />
-                <Box
-                  sx={{
-                    width: "100px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "4px",
-                  }}
-                >
-                  {isPercentageThreshold ? "100%" : totalGroupMembers}
-                  {isPercentageThreshold ? null : <Groups color="primary" />}
+              </Box>
+              {isPercentageThreshold ? (
+                <>
+                  <Box>
+                    <TextFieldControl
+                      //@ts-ignore
+                      control={control}
+                      name="decision.percentageDecision.percentage"
+                      label={`Option becomes final result when it has:`}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          % of responses
+                        </InputAdornment>
+                      }
+                      sx={{ width: "300px" }}
+                      required
+                    />
+                  </Box>
+                  <Box>
+                    <TextFieldControl
+                      //@ts-ignore
+                      control={control}
+                      name="decision.percentageDecision.quorum"
+                      label={`Quorum (min # of responses for a result)`}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          total responses
+                        </InputAdornment>
+                      }
+                      sx={{ width: "300px" }}
+                      required
+                    />
+                  </Box>
+                </>
+              ) : (
+                <Box>
+                  <TextFieldControl
+                    //@ts-ignore
+                    control={control}
+                    name="decision.absoluteDecision.threshold"
+                    label={"Option is selected once it has:"}
+                    sx={{ width: "300px" }}
+                    endAdornment={
+                      <InputAdornment position="end">responses</InputAdornment>
+                    }
+                    required
+                  />
                 </Box>
-              </SliderContainer>
-            )}
+              )}
+            </Box>
           </RightsContainer>
         </form>
       </WizardBody>

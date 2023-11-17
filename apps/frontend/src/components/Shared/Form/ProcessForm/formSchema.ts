@@ -107,12 +107,12 @@ const userGroupFormSchema = z.object({
 });
 
 const absoluteDecisionFormSchema = z.object({
-  threshold: z.number(),
+  threshold: z.coerce.number(),
 });
 
 const percentageDecisionFormSchema = z.object({
-  percentage: z.number(),
-  quorum: z.number(),
+  percentage: z.coerce.number(),
+  quorum: z.coerce.number(),
 });
 
 export const rolesFormSchema = z
@@ -142,4 +142,20 @@ export const rolesFormSchema = z
       return true;
     },
     { path: ["decision.percentageDecision.quorum"] },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.decision.type === DecisionType.Percentage &&
+        !!data.decision?.percentageDecision &&
+        (data.decision?.percentageDecision?.percentage < 51 ||
+          data.decision?.percentageDecision?.percentage > 100)
+      )
+        return false;
+      return true;
+    },
+    {
+      path: ["decision.percentageDecision.percentage"],
+      message: "Please enter a value between 50% and 100%",
+    },
   );
