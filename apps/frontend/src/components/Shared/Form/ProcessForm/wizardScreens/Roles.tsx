@@ -7,10 +7,8 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import {
-  DecisionType,
-  useNewProcessWizardState,
-} from "@/components/NewProcess/newProcessWizard";
+import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
+import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
 import {
   AgentSummaryPartsFragment,
   GroupsAndUsersEliglbeForRoleDocument,

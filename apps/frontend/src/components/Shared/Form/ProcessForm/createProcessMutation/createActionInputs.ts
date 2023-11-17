@@ -1,4 +1,5 @@
-import { ActionForm } from "../../../../NewProcess/newProcessWizard";
+import { ActionForm } from "@/components/shared/Form/ProcessForm/types";
+
 import { ActionArgs } from "../../../../../graphql/generated/graphql";
 
 const createActionInputs = (

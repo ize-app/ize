@@ -7,11 +7,11 @@ import {
   createOptionInputs,
   createRoleInputs,
 } from ".";
+import { NewProcessState } from "../../../../NewProcess/newProcessWizard";
 import {
   FormOptionChoice,
-  NewProcessState,
   ProcessRights,
-} from "../../../../NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 
 export const createEditProcessMutation = (
   processId: string,

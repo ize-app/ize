@@ -1,7 +1,9 @@
-import { FormOptionChoice } from "@/components/NewProcess/newProcessWizard";
-import { defaultWebhookTriggerOption } from "@/components/NewProcess/newProcessWizard";
 import { SelectOption } from "../../SelectControl";
-import { DefaultOptionSets } from "@/components/NewProcess/newProcessWizard";
+import {
+  DefaultOptionSets,
+  FormOptionChoice,
+  defaultWebhookTriggerOption,
+} from "@/components/shared/Form/ProcessForm/types";
 
 const getOptionSet = ({
   optionType,

@@ -1,8 +1,9 @@
 import { Action } from "@/graphql/generated/graphql";
+
 import {
   ActionForm,
   HasCustomIntegration,
-} from "@/components/NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 
 const createActionFormState = (
   action: Action | undefined,

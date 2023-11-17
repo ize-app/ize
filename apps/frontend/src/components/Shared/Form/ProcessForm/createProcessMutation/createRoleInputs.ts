@@ -1,4 +1,4 @@
-import { ProcessRights } from "../../../../NewProcess/newProcessWizard";
+import { ProcessRights } from "@/components/shared/Form/ProcessForm/types";
 import { RoleArgs, RoleType } from "../../../../../graphql/generated/graphql";
 
 const createRoleInputs = (rights: ProcessRights): RoleArgs[] => {

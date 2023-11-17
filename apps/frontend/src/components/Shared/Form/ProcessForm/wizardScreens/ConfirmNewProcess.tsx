@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 
-import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
-import { WizardBody, WizardNav } from "../../../Wizard";
+import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
+import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
 export const ConfirmNewProcess = () => {
   const { formState, onPrev, onNext, nextLabel } = useNewProcessWizardState();

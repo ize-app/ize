@@ -14,13 +14,14 @@ import * as z from "zod";
 import { requestTemplateFormSchema } from "../formSchema";
 
 import { webhookTriggerFilterOptions } from "../helpers/optionHelpers";
+import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
+
 import {
   DefaultOptionSets,
   FormOptionChoice,
   HasCustomIntegration,
   defaultWebhookTriggerOption,
-  useNewProcessWizardState,
-} from "@/components/NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 import { RadioControl, SelectControl } from "@/components/shared/Form";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 

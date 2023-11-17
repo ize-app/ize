@@ -1,10 +1,8 @@
 import { diff } from "deep-object-diff";
 
 import { createOptionInputs } from "../shared/Form/ProcessForm/createProcessMutation";
-import {
-  FormOptionChoice,
-  NewProcessState,
-} from "../NewProcess/newProcessWizard";
+import { NewProcessState } from "../NewProcess/newProcessWizard";
+import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { ProcessSnapshotForDiff } from "../shared/Request/EditProcessRequestsInputsTable";
 
 const formatDiffDataForTable = (

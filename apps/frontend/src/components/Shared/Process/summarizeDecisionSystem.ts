@@ -2,7 +2,7 @@ import { DecisionTypesSummaryPartsFragment } from "../../../graphql/generated/gr
 import {
   DecisionType,
   ProcessDecision,
-} from "../../NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 
 export const summarizeDecisionSystem = (
   decision: DecisionTypesSummaryPartsFragment,

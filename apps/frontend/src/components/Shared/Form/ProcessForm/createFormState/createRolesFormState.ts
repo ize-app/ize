@@ -1,5 +1,6 @@
 import { RoleSummaryPartsFragment } from "@/graphql/generated/graphql";
-import { ProcessRights } from "@/components/NewProcess/newProcessWizard";
+import { ProcessRights } from "@/components/shared/Form/ProcessForm/types";
+
 import { reformatAgentForAvatar } from "@/components/shared/Avatar";
 
 const createRolesFormState = (

@@ -7,10 +7,8 @@ import {
 } from "./createOptionsFormState";
 import createRolesFormState from "./createRolesFormState";
 import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
-import {
-  FormOptionChoice,
-  NewProcessState,
-} from "@/components/NewProcess/newProcessWizard";
+import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
+import { NewProcessState } from "@/components/NewProcess/newProcessWizard";
 
 const createProcessFormState = (
   process: ProcessSummaryPartsFragment,

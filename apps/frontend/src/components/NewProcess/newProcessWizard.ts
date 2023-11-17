@@ -1,23 +1,11 @@
-import {
-  AbsoluteDecisionArgs,
-  InputTemplateArgs,
-  OptionType,
-  PercentageDecisionArgs,
-  WebhookActionArgs,
-} from "../../graphql/generated/graphql";
+import { InputTemplateArgs } from "../../graphql/generated/graphql";
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-import { AvatarProps } from "../shared/Avatar";
-
-export enum HasCustomIntegration {
-  "Yes" = "yes",
-  "No" = "no",
-}
-
-export const defaultWebhookTriggerOption = {
-  name: "All options trigger webhook",
-  value: "allOptionsTriggerWebhook",
-};
+import {
+  ActionForm,
+  ProcessDecision,
+  ProcessRights,
+} from "@/components/shared/Form/ProcessForm/types";
 
 export interface NewProcessState {
   name?: string;
@@ -29,68 +17,6 @@ export interface NewProcessState {
   rights?: ProcessRights;
   decision?: ProcessDecision;
   action?: ActionForm;
-}
-
-export interface ProcessDecision {
-  type?: DecisionType;
-  absoluteDecision?: AbsoluteDecisionArgs;
-  percentageDecision?: PercentageDecisionArgs;
-}
-
-export enum FormOptionChoice {
-  Custom = "Custom",
-  Emoji = "Emoji",
-  Checkmark = "Checkmark",
-}
-
-export const DefaultOptionSets = new Map([
-  [
-    FormOptionChoice.Checkmark,
-    {
-      display: "✅ ❌",
-      data: [
-        { value: "✅", type: OptionType.Text },
-        { value: "❌", type: OptionType.Text },
-      ],
-    },
-  ],
-  [
-    FormOptionChoice.Emoji,
-    {
-      display: "😃 😐 😭",
-      data: [
-        { value: "😃", type: OptionType.Text },
-        { value: "😐", type: OptionType.Text },
-        { value: "😐", type: OptionType.Text },
-      ],
-    },
-  ],
-  [FormOptionChoice.Custom, { display: "Custom", data: [] }],
-]);
-
-export interface ProcessQuorum {
-  quorumType?: DecisionType;
-  quorumThreshold?: number;
-}
-
-export enum DecisionType {
-  Absolute = "Absolute",
-  Percentage = "Percentage",
-}
-
-export interface ProcessRights {
-  request: AvatarProps[];
-  response: AvatarProps[];
-}
-
-export interface ActionForm {
-  webhook: WebhookActionForm;
-  optionTrigger?: string;
-}
-
-export interface WebhookActionForm {
-  uri?: string;
-  hasWebhook?: string;
 }
 
 export function useNewProcessWizardState() {

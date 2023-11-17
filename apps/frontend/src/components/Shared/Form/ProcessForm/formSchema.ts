@@ -1,9 +1,11 @@
 import * as z from "zod";
-import { HasCustomIntegration } from "@/components/NewProcess/newProcessWizard";
 import { webhookTriggerFilterOptions } from "./helpers/optionHelpers";
-import { FormOptionChoice } from "@/components/NewProcess/newProcessWizard";
+import {
+  FormOptionChoice,
+  DecisionType,
+  HasCustomIntegration,
+} from "@/components/shared/Form/ProcessForm/types";
 import { InputDataType } from "@/graphql/generated/graphql";
-import { DecisionType } from "@/components/NewProcess/newProcessWizard";
 import { AgentType } from "@/graphql/generated/graphql";
 
 const webhookFormSchema = z.object({

@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 
-import { defaultWebhookTriggerOption } from "../../NewProcess/newProcessWizard";
+import { defaultWebhookTriggerOption } from "@/components/shared/Form/ProcessForm/types";
 
 const SummarizeAction = ({
   uri,

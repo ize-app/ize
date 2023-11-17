@@ -2,7 +2,7 @@ import { ProcessOption } from "@/graphql/generated/graphql";
 import {
   DefaultOptionSets,
   FormOptionChoice,
-} from "@/components/NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 
 export const createOptionFormState = (options: ProcessOption[]): string[] => {
   return options.map((value) => value.value);

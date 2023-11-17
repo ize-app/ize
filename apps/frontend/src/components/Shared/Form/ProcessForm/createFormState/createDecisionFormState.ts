@@ -1,8 +1,9 @@
 import { DecisionTypes } from "@/graphql/generated/graphql";
+
 import {
   DecisionType,
   ProcessDecision,
-} from "@/components/NewProcess/newProcessWizard";
+} from "@/components/shared/Form/ProcessForm/types";
 
 const createDecisionFormState = (
   decisionSystem: DecisionTypes,
