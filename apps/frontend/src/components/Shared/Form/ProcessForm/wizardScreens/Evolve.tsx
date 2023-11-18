@@ -9,13 +9,12 @@ import {
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-
-import { rolesFormSchema } from "../formSchema";
 import RolesAndDecisionSystem from "../components/RolesAndDecisionSystem";
 
+import { rolesFormSchema } from "../formSchema";
 type FormFields = z.infer<typeof rolesFormSchema>;
 
-export const Roles = () => {
+export const Evolve = ({}) => {
   const { data, loading } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
 
   const agents =
@@ -26,19 +25,23 @@ export const Roles = () => {
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      rights: {
-        request: formState.rights?.request ?? [],
-        response: formState.rights?.response ?? [],
-      },
-      requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
-      decision: {
-        type: formState.decision?.type ?? DecisionType.Absolute,
-        percentageDecision: {
-          quorum: formState.decision?.percentageDecision?.quorum ?? 3,
-          percentage: formState.decision?.percentageDecision?.percentage ?? 51,
+      evolve: {
+        rights: {
+          request:
+            formState.rights?.request.concat(formState.rights?.response) ?? [],
+          response: formState.rights?.response ?? [],
         },
-        absoluteDecision: {
-          threshold: formState.decision?.absoluteDecision?.threshold ?? 3,
+        requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
+        decision: {
+          type: formState.decision?.type ?? DecisionType.Absolute,
+          percentageDecision: {
+            quorum: formState.decision?.percentageDecision?.quorum ?? 3,
+            percentage:
+              formState.decision?.percentageDecision?.percentage ?? 51,
+          },
+          absoluteDecision: {
+            threshold: formState.decision?.absoluteDecision?.threshold ?? 3,
+          },
         },
       },
     },
@@ -61,7 +64,6 @@ export const Roles = () => {
 
     onNext();
   };
-
   return (
     <>
       <WizardBody>
@@ -74,9 +76,11 @@ export const Roles = () => {
           }}
         >
           <RolesAndDecisionSystem
+            //@ts-ignore
             control={control}
             agents={agents}
             isPercentageThreshold={isPercentageThreshold}
+            namePrepend="evolve."
           />
         </form>
       </WizardBody>

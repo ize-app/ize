@@ -36,6 +36,10 @@ export interface ProcessDecision {
   percentageDecision?: PercentageDecisionArgs;
 }
 
+export interface EvolutionProcess {
+  
+}
+
 export enum FormOptionChoice {
   Custom = "Custom",
   Emoji = "Emoji",

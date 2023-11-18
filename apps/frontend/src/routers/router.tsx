@@ -78,6 +78,10 @@ export const router = createBrowserRouter([
             element: <ProcessForm.Roles />,
           },
           {
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Evolve),
+            element: <ProcessForm.Evolve />,
+          },
+          {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Finish),
             element: <ProcessForm.ConfirmNewProcess />,
           },
@@ -130,6 +134,10 @@ export const router = createBrowserRouter([
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Decisions),
             element: <ProcessForm.Roles />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Evolve),
+            element: <ProcessForm.Evolve />,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Confirm),
