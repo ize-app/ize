@@ -37,7 +37,11 @@ export interface ProcessDecision {
   percentageDecision?: PercentageDecisionArgs;
 }
 
-export interface EvolutionProcess {}
+export interface EvolveProcessForm {
+  evolveDefaults: DefaultEvolveProcessOptions;
+  rights: ProcessRights;
+  decision: ProcessDecision;
+}
 
 export enum FormOptionChoice {
   Custom = "Custom",

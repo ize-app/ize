@@ -4,6 +4,7 @@ import {
   FormOptionChoice,
   DecisionType,
   HasCustomIntegration,
+  DefaultEvolveProcessOptions,
 } from "@/components/shared/Form/ProcessForm/types";
 import { InputDataType } from "@/graphql/generated/graphql";
 import { AgentType } from "@/graphql/generated/graphql";
@@ -115,47 +116,59 @@ const percentageDecisionFormSchema = z.object({
   quorum: z.coerce.number(),
 });
 
-export const rolesFormSchema = z
-  .object({
-    rights: z.object({
-      request: z
-        .array(userGroupFormSchema)
-        .min(1, "Please select at least one group or individual."),
-      response: z
-        .array(userGroupFormSchema)
-        .min(1, "Please select at least one group or individual."),
-    }),
-    decision: z.object({
-      type: z.nativeEnum(DecisionType),
-      requestExpirationSeconds: z.number(),
-      absoluteDecision: absoluteDecisionFormSchema.optional(),
-      percentageDecision: percentageDecisionFormSchema.optional(),
-    }),
-  })
-  .refine(
-    (data) => {
-      if (
-        data.decision.type === DecisionType.Percentage &&
-        data.decision?.percentageDecision?.quorum === undefined
-      )
-        return false;
-      return true;
-    },
-    { path: ["decision.percentageDecision.quorum"] },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.decision.type === DecisionType.Percentage &&
-        !!data.decision?.percentageDecision &&
-        (data.decision?.percentageDecision?.percentage < 51 ||
-          data.decision?.percentageDecision?.percentage > 100)
-      )
-        return false;
-      return true;
-    },
-    {
-      path: ["decision.percentageDecision.percentage"],
-      message: "Please enter a value between 50% and 100%",
-    },
-  );
+const rolesFormSchemaUnrefined = z.object({
+  rights: z.object({
+    request: z
+      .array(userGroupFormSchema)
+      .min(1, "Please select at least one group or individual."),
+    response: z
+      .array(userGroupFormSchema)
+      .min(1, "Please select at least one group or individual."),
+  }),
+  decision: z.object({
+    type: z.nativeEnum(DecisionType),
+    requestExpirationSeconds: z.number(),
+    absoluteDecision: absoluteDecisionFormSchema.optional(),
+    percentageDecision: percentageDecisionFormSchema.optional(),
+  }),
+});
+
+const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
+  schema
+    .refine(
+      (data) => {
+        if (
+          data.decision.type === DecisionType.Percentage &&
+          data.decision?.percentageDecision?.quorum === undefined
+        )
+          return false;
+        return true;
+      },
+      { path: ["decision.percentageDecision.quorum"] },
+    )
+    .refine(
+      (data) => {
+        if (
+          data.decision.type === DecisionType.Percentage &&
+          !!data.decision?.percentageDecision &&
+          (data.decision?.percentageDecision?.percentage < 51 ||
+            data.decision?.percentageDecision?.percentage > 100)
+        )
+          return false;
+        return true;
+      },
+      {
+        path: ["decision.percentageDecision.percentage"],
+        message: "Please enter a value between 50% and 100%",
+      },
+    );
+
+export const rolesFormSchema = refineExtendedSharedSchema(
+  rolesFormSchemaUnrefined,
+);
+
+export const evolveProcessFormSchema = z.object({
+  evolve: rolesFormSchemaUnrefined.extend({
+    evolveDefaults: z.nativeEnum(DefaultEvolveProcessOptions),
+  }),
+});

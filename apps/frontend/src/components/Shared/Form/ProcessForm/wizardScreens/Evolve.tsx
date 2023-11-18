@@ -15,14 +15,14 @@ import {
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import RolesAndDecisionSystem from "../components/RolesAndDecisionSystem";
 
-import { rolesFormSchema } from "../formSchema";
 import { RadioControl } from "../..";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { useContext } from "react";
 import { createDiscordAvatarURL } from "@/utils/discord";
 import { Typography } from "@mui/material";
+import { evolveProcessFormSchema } from "../formSchema";
 
-type FormFields = z.infer<typeof rolesFormSchema>;
+type FormFields = z.infer<typeof evolveProcessFormSchema>;
 
 const namePrepend = "evolve.";
 
@@ -39,8 +39,11 @@ export const Evolve = ({}) => {
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       evolve: {
+        evolveDefaults:
+          formState.evolve?.evolveDefaults ??
+          DefaultEvolveProcessOptions.ParticipantsRequestButCreatorApproves,
         rights: {
-          request: [
+          request: formState.evolve?.rights?.request ?? [
             ...new Set([
               //@ts-ignore
               ...formState.rights?.request,
@@ -48,7 +51,7 @@ export const Evolve = ({}) => {
             ]),
           ],
           response:
-            [
+            formState.evolve?.rights?.response ?? [
               {
                 id: user.id,
                 type: AgentType.User,
@@ -59,40 +62,45 @@ export const Evolve = ({}) => {
                 ),
                 name: user.discordData.username,
               },
-            ] ?? [],
+            ] ??
+            [],
         },
         decision: {
-          type: formState.decision?.type ?? DecisionType.Absolute,
+          type: formState.evolve?.decision?.type ?? DecisionType.Absolute,
           requestExpirationSeconds:
-            formState.decision?.requestExpirationSeconds ?? 86400,
+            formState.evolve?.decision?.requestExpirationSeconds ?? 86400,
           percentageDecision: {
-            quorum: formState.decision?.percentageDecision?.quorum ?? 3,
+            quorum: formState.evolve?.decision?.percentageDecision?.quorum ?? 3,
             percentage:
-              formState.decision?.percentageDecision?.percentage ?? 51,
+              formState.evolve?.decision?.percentageDecision?.percentage ?? 51,
           },
           absoluteDecision: {
-            threshold: formState.decision?.absoluteDecision?.threshold ?? 1,
+            threshold:
+              formState.evolve?.decision?.absoluteDecision?.threshold ?? 1,
           },
         },
       },
     },
-    resolver: zodResolver(rolesFormSchema),
+    resolver: zodResolver(evolveProcessFormSchema),
     shouldUnregister: true,
   });
 
   const isPercentageThreshold =
-    watch("decision.type") === DecisionType.Percentage;
+    watch("evolve.decision.type") === DecisionType.Percentage;
 
   const isCustomProcess =
-    watch(namePrepend + "evolveDefaults") ===
-    DefaultEvolveProcessOptions.Custom;
+    watch("evolve.evolveDefaults") === DefaultEvolveProcessOptions.Custom;
 
   const onSubmit = (data: FormFields) => {
     setFormState((prev) => ({
       ...prev,
-      ...data,
-      decision: {
-        ...data.decision,
+      evolve: {
+        evolveDefaults: data.evolve.evolveDefaults,
+        decision: { ...data.evolve.decision },
+        rights: {
+          request: [...data.evolve.rights.request],
+          response: [...data.evolve.rights.response],
+        },
       },
     }));
 

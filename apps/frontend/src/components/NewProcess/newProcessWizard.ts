@@ -3,6 +3,7 @@ import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import {
   ActionForm,
+  EvolveProcessForm,
   ProcessDecision,
   ProcessRights,
 } from "@/components/shared/Form/ProcessForm/types";
@@ -16,6 +17,7 @@ export interface NewProcessState {
   rights?: ProcessRights;
   decision?: ProcessDecision;
   action?: ActionForm;
+  evolve: EvolveProcessForm;
 }
 
 export function useNewProcessWizardState() {
