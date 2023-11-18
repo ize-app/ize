@@ -74,6 +74,7 @@ export const Roles = () => {
           }}
         >
           <RolesAndDecisionSystem
+            //@ts-ignore
             control={control}
             agents={agents}
             isPercentageThreshold={isPercentageThreshold}

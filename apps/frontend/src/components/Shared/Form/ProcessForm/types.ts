@@ -36,9 +36,7 @@ export interface ProcessDecision {
   percentageDecision?: PercentageDecisionArgs;
 }
 
-export interface EvolutionProcess {
-  
-}
+export interface EvolutionProcess {}
 
 export enum FormOptionChoice {
   Custom = "Custom",
@@ -80,3 +78,8 @@ export const defaultWebhookTriggerOption = {
   name: "All options trigger webhook",
   value: "allOptionsTriggerWebhook",
 };
+
+export enum DefaultEvolveProcessOptions {
+  ParticipantsRequestButCreatorApproves = "ParticipantsRequestButCreatorApproves",
+  Custom = "Custom",
+}
