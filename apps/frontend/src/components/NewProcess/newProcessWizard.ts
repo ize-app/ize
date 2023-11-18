@@ -10,7 +10,6 @@ import {
 export interface NewProcessState {
   name?: string;
   description?: string;
-  requestExpirationSeconds?: number;
   options?: string;
   customOptions?: string[];
   inputs?: InputTemplateArgs[];

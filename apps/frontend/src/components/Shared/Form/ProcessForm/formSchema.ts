@@ -125,9 +125,9 @@ export const rolesFormSchema = z
         .array(userGroupFormSchema)
         .min(1, "Please select at least one group or individual."),
     }),
-    requestExpirationSeconds: z.number(),
     decision: z.object({
       type: z.nativeEnum(DecisionType),
+      requestExpirationSeconds: z.number(),
       absoluteDecision: absoluteDecisionFormSchema.optional(),
       percentageDecision: percentageDecisionFormSchema.optional(),
     }),

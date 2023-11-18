@@ -18,7 +18,7 @@ const createNewProcessMutation = (
   const inputs: NewProcessArgs = {
     name: formState.name as string,
     description: formState.description,
-    expirationSeconds: formState.requestExpirationSeconds as number,
+    expirationSeconds: formState.decision?.requestExpirationSeconds as number,
     inputs: formState.inputs as InputTemplateArgs[],
     roles: createRoleInputs(formState.rights as ProcessRights),
     action: createActionInputs(formState.action),

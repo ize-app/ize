@@ -31,6 +31,7 @@ export interface WebhookActionForm {
 }
 
 export interface ProcessDecision {
+  requestExpirationSeconds?: number;
   type: DecisionType;
   absoluteDecision?: AbsoluteDecisionArgs;
   percentageDecision?: PercentageDecisionArgs;

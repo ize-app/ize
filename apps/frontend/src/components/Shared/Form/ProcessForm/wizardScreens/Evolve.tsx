@@ -61,9 +61,10 @@ export const Evolve = ({}) => {
               },
             ] ?? [],
         },
-        requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
         decision: {
           type: formState.decision?.type ?? DecisionType.Absolute,
+          requestExpirationSeconds:
+            formState.decision?.requestExpirationSeconds ?? 86400,
           percentageDecision: {
             quorum: formState.decision?.percentageDecision?.quorum ?? 3,
             percentage:
@@ -90,7 +91,6 @@ export const Evolve = ({}) => {
     setFormState((prev) => ({
       ...prev,
       ...data,
-      requestExpirationSeconds: data.requestExpirationSeconds,
       decision: {
         ...data.decision,
       },

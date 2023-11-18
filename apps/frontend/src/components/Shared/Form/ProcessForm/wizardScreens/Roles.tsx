@@ -30,9 +30,10 @@ export const Roles = () => {
         request: formState.rights?.request ?? [],
         response: formState.rights?.response ?? [],
       },
-      requestExpirationSeconds: formState.requestExpirationSeconds ?? 86400,
       decision: {
         type: formState.decision?.type ?? DecisionType.Absolute,
+        requestExpirationSeconds:
+          formState.decision?.requestExpirationSeconds ?? 86400,
         percentageDecision: {
           quorum: formState.decision?.percentageDecision?.quorum ?? 3,
           percentage: formState.decision?.percentageDecision?.percentage ?? 51,
@@ -53,7 +54,6 @@ export const Roles = () => {
     setFormState((prev) => ({
       ...prev,
       ...data,
-      requestExpirationSeconds: data.requestExpirationSeconds,
       decision: {
         ...data.decision,
       },

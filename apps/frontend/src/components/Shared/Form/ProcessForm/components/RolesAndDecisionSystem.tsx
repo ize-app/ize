@@ -64,7 +64,7 @@ const RolesAndDecisionSystem = ({
           //@ts-ignore
           control={control}
           sx={{ width: "300px" }}
-          name={namePrepend + "requestExpirationSeconds"}
+          name={namePrepend + "decision.requestExpirationSeconds"}
           selectOptions={[
             { name: "1 hour", value: 3600 },
             { name: "4 hours", value: 14400 },
