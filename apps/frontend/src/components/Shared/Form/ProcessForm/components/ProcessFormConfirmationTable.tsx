@@ -11,16 +11,18 @@ import {
   ProcessDecision,
   ProcessForm,
 } from "@/components/shared/Form/ProcessForm/types";
-import { InputTemplate, ProcessOption } from "@/graphql/generated/graphql";
+import { InputTemplate } from "@/graphql/generated/graphql";
 import SummarizeInputTemplates from "@/components/shared/Process/SummarizeInputTemplates";
 import { ReactNode } from "react";
 import SummarizeAction from "@/components/shared/Process/SummarizeAction";
-import { AvatarsCell } from "@/components/shared/Tables/TableCells";
 import { AvatarProps } from "@/components/shared/Avatar";
 import { summarizeDecisionSystemForm } from "@/components/shared/Process/summarizeDecisionSystem";
 import { createOptionInputs } from "../createProcessMutation";
+import { AvatarGroup } from "@/components/shared/Avatar";
+import { Box } from "@mui/material";
+import { HasCustomIntegration } from "@/components/shared/Form/ProcessForm/types";
 
-enum ProcessFormDisplayFields {
+export enum ProcessFormDisplayFields {
   Name = "Name",
   Description = "Description",
   Options = "Options",
@@ -61,27 +63,26 @@ const displayProcessFormField = (
         />
       );
     case ProcessFormDisplayFields.Action:
-      return form.action?.webhook ? (
+      return form.action?.webhook.hasWebhook === HasCustomIntegration.Yes ? (
         <SummarizeAction
           uri={form.action.webhook.uri as string}
           optionTrigger={form.action.optionTrigger ?? undefined}
+          fontSize={fontSize}
         />
       ) : (
-        <Typography>No custom integration</Typography>
+        <Typography variant={fontSize}>No custom integration</Typography>
       );
     case ProcessFormDisplayFields.Request:
       return (
-        <AvatarsCell
-          avatars={form?.rights?.request as AvatarProps[]}
-          align="left"
-        />
+        <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
+          <AvatarGroup agents={form?.rights?.request as AvatarProps[]} />
+        </Box>
       );
     case ProcessFormDisplayFields.Respond:
       return (
-        <AvatarsCell
-          avatars={form?.rights?.response as AvatarProps[]}
-          align="left"
-        />
+        <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
+          <AvatarGroup agents={form?.rights?.response as AvatarProps[]} />
+        </Box>
       );
     case ProcessFormDisplayFields.Decision:
       return (
@@ -91,17 +92,19 @@ const displayProcessFormField = (
       );
     case ProcessFormDisplayFields.RequestEvolve:
       return (
-        <AvatarsCell
-          avatars={form?.evolve?.rights?.request as AvatarProps[]}
-          align="left"
-        />
+        <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
+          <AvatarGroup
+            agents={form?.evolve?.rights?.request as AvatarProps[]}
+          />
+        </Box>
       );
     case ProcessFormDisplayFields.RespondEvolve:
       return (
-        <AvatarsCell
-          avatars={form?.evolve?.rights?.response as AvatarProps[]}
-          align="left"
-        />
+        <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
+          <AvatarGroup
+            agents={form?.evolve?.rights?.request as AvatarProps[]}
+          />
+        </Box>
       );
     case ProcessFormDisplayFields.DecisionEvolve:
       return (
@@ -133,14 +136,9 @@ export const ProcessFormConfirmationTable = ({
     <TableContainer
       sx={{
         overflowX: "initial",
-        // [`& :last-of-type.${tableRowClasses.root}`]: {
-        //   [`& .${tableCellClasses.root}`]: {
-        //     borderBottom: "none",
-        //   },
-        // },
-        [`& ${tableRowClasses.root}`]: {
+        [`& :last-of-type.${tableRowClasses.root}`]: {
           [`& .${tableCellClasses.root}`]: {
-            border: "none",
+            borderBottom: "none",
           },
         },
       }}
@@ -148,8 +146,8 @@ export const ProcessFormConfirmationTable = ({
       <Table aria-label="collapsible table" size={rowSize}>
         <TableBody>
           {fields.map((field) => (
-            <TableRow sx={{ minHeight: "100px" }}>
-              <TableCell>
+            <TableRow>
+              <TableCell width="200px">
                 <Typography fontWeight={500} variant={fontSize}>
                   {field}
                 </Typography>

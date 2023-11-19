@@ -33,7 +33,7 @@ export const Roles = () => {
       decision: {
         type: formState.decision?.type ?? DecisionType.Absolute,
         requestExpirationSeconds:
-          formState.decision?.requestExpirationSeconds ?? 86400,
+        formState.decision?.requestExpirationSeconds ?? 86400,
         percentageDecision: {
           quorum: formState.decision?.percentageDecision?.quorum ?? 3,
           percentage: formState.decision?.percentageDecision?.percentage ?? 51,
