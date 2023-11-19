@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 
 import { useEditProcessWizardState } from "./editProcessWizard";
 import formatDiffDataForTable from "./formatDiffDataForTable";
-import { NewProcessState } from "../NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { Accordion } from "../shared/Accordion";
 import { EditProcessRequestInputTable } from "../shared/Request/EditProcessRequestsInputsTable";
 import { WizardBody, WizardNav } from "../shared/Wizard";
@@ -10,7 +10,7 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 export const DiffConfirmation = () => {
   const { onNext, nextLabel, onPrev, formState } = useEditProcessWizardState();
   const [oldChanges, newChanges] = formatDiffDataForTable(
-    formState.currentProcess as NewProcessState,
+    formState.currentProcess as ProcessForm,
     formState,
   );
   return (

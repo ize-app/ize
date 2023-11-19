@@ -1,7 +1,9 @@
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
+import { ProcessFormConfirmationTable } from "../components/ProcessFormConfirmationTable";
 
 export const ConfirmNewProcess = () => {
   const { formState, onPrev, onNext, nextLabel } = useNewProcessWizardState();
@@ -16,6 +18,9 @@ export const ConfirmNewProcess = () => {
           </span>{" "}
           works. Click "Finish" to create the process.
         </Typography>
+        <Box sx={{ maxWidth: "800px" }}>
+          <ProcessFormConfirmationTable process={formState} />
+        </Box>
       </WizardBody>
       <WizardNav onNext={onNext} onPrev={onPrev} nextLabel={nextLabel} />
     </>

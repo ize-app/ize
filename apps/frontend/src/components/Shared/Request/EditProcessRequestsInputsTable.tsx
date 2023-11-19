@@ -10,13 +10,31 @@ import {
   InputTemplateArgs,
   ProcessOption,
 } from "../../../graphql/generated/graphql";
-import { ActionForm, ProcessDecision } from "../../NewProcess/newProcessWizard";
+import {
+  ActionForm,
+  ProcessDecision,
+} from "@/components/shared/Form/ProcessForm/types";
 import { AvatarProps } from "../../shared/Avatar";
 import { ProcessOptions } from "../Process/ProcessOptions";
 import SummarizeAction from "../Process/SummarizeAction";
 import { summarizeDecisionSystemForm } from "../Process/summarizeDecisionSystem";
 import SummarizeInputTemplates from "../Process/SummarizeInputTemplates";
 import { AvatarsCell } from "../Tables/TableCells";
+
+// diff function
+// do a diff and see what top level categories are different
+// create array of those fields or you can pass in null 
+
+// pass to function that displays all elements of array you selected, default all (type of keys of ?)
+
+// iterates through array and displays field
+// create object with display transformer for all fields
+
+
+// create row / table for this
+
+
+// pass in old and new normal process state
 
 export interface ProcessSnapshotForDiff {
   name?: string;
@@ -36,7 +54,7 @@ export const EditProcessRequestInputTable = ({
   rowSize,
 }: {
   oldProcess: ProcessSnapshotForDiff;
-  proposedChanges: ProcessSnapshotForDiff;
+  proposedChanges?: ProcessSnapshotForDiff;
   rowSize?: "small" | "medium";
 }) => {
   const fontSize = rowSize === "medium" ? "body1" : "body2";
@@ -54,7 +72,7 @@ export const EditProcessRequestInputTable = ({
       <Table aria-label="collapsible table" size={rowSize}>
         <TableBody>
           {oldProcess.name && (
-            <TableRow>
+            <TableRow sx={{minHeight: "60px"}}>
               <TableCell>
                 <Typography fontWeight={500} variant={fontSize}>
                   Name

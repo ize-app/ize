@@ -1,18 +1,18 @@
 import { diff } from "deep-object-diff";
 
 import { createOptionInputs } from "../shared/Form/ProcessForm/createProcessMutation";
-import { NewProcessState } from "../NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { ProcessSnapshotForDiff } from "../shared/Request/EditProcessRequestsInputsTable";
 
 const formatDiffDataForTable = (
-  oldFormState: NewProcessState,
-  newFormState: NewProcessState,
+  oldFormState: ProcessForm,
+  newFormState: ProcessForm,
 ): [ProcessSnapshotForDiff, ProcessSnapshotForDiff] => {
   const currentProcess: ProcessSnapshotForDiff = {};
   const proposedChanges: ProcessSnapshotForDiff = {};
 
-  const diffForms = diff(oldFormState, newFormState) as NewProcessState;
+  const diffForms = diff(oldFormState, newFormState) as ProcessForm;
 
   if (diffForms?.name) {
     currentProcess["name"] = oldFormState.name;

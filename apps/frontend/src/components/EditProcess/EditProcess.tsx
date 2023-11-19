@@ -18,7 +18,7 @@ import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
-import { NewProcessState } from "../NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 
 export const EditProcess = () => {
   const navigate = useNavigate();
@@ -37,8 +37,8 @@ export const EditProcess = () => {
         variables: {
           inputs: createEditProcessMutation(
             "1",
-            formState.currentProcess as NewProcessState,
-            formState as NewProcessState,
+            formState.currentProcess as ProcessForm,
+            formState as ProcessForm,
           ),
         },
       });

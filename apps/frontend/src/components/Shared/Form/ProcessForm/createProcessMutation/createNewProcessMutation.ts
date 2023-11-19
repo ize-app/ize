@@ -1,4 +1,4 @@
-import { NewProcessState } from "@/components/NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/NewProcess/newProcessWizard";
 import {
   FormOptionChoice,
   ProcessRights,
@@ -12,9 +12,7 @@ import {
   createRoleInputs,
 } from "./index";
 
-const createNewProcessMutation = (
-  formState: NewProcessState,
-): NewProcessArgs => {
+const createNewProcessMutation = (formState: ProcessForm): NewProcessArgs => {
   const inputs: NewProcessArgs = {
     name: formState.name as string,
     description: formState.description,

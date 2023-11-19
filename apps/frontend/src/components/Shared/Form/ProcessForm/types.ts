@@ -2,8 +2,21 @@ import {
   AbsoluteDecisionArgs,
   OptionType,
   PercentageDecisionArgs,
+  InputTemplateArgs,
 } from "@/graphql/generated/graphql";
 import { AvatarProps } from "@/components/shared/Avatar";
+
+export interface ProcessForm {
+  name?: string;
+  description?: string;
+  options?: string;
+  customOptions?: string[];
+  inputs?: InputTemplateArgs[];
+  rights?: ProcessRights;
+  decision?: ProcessDecision;
+  action?: ActionForm;
+  evolve?: EvolveProcessForm;
+}
 
 export interface ProcessQuorum {
   quorumType?: DecisionType;

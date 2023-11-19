@@ -7,7 +7,7 @@ import {
   createOptionInputs,
   createRoleInputs,
 } from ".";
-import { NewProcessState } from "../../../../NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import {
   FormOptionChoice,
   ProcessRights,
@@ -15,14 +15,14 @@ import {
 
 export const createEditProcessMutation = (
   processId: string,
-  oldFormState: NewProcessState,
-  newFormState: NewProcessState,
+  oldFormState: ProcessForm,
+  newFormState: ProcessForm,
 ): NewEditProcessRequestArgs => {
   const inputs: NewEditProcessRequestArgs = {
     processId: processId,
   };
 
-  const diffForms = diff(oldFormState, newFormState) as NewProcessState;
+  const diffForms = diff(oldFormState, newFormState) as ProcessForm;
 
   if (diffForms.name) {
     inputs["name"] = newFormState.name;

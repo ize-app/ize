@@ -8,11 +8,11 @@ import {
 import createRolesFormState from "./createRolesFormState";
 import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
-import { NewProcessState } from "@/components/NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 
 const createProcessFormState = (
   process: ProcessSummaryPartsFragment,
-): NewProcessState => {
+): ProcessForm => {
   const defaultOption = getDefaultOptionSet(process.options);
 
   return {
@@ -25,7 +25,10 @@ const createProcessFormState = (
         : undefined,
     rights: createRolesFormState(process.roles),
     inputs: createInputsFormState(process.inputs),
-    decision: createDecisionFormState(process.decisionSystem),
+    decision: createDecisionFormState(
+      process.decisionSystem,
+      process.expirationSeconds,
+    ),
     action: createActionFormState(process.action ?? undefined),
   };
 };

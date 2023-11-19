@@ -10,8 +10,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import {
   NEW_PROCESS_PROGRESS_BAR_STEPS,
   NEW_PROCESS_WIZARD_STEPS,
-  NewProcessState,
 } from "./newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewProcessDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
@@ -53,7 +53,7 @@ const NewProcess = () => {
     }
   };
 
-  const newProcessWizard: Wizard<NewProcessState> = {
+  const newProcessWizard: Wizard<ProcessForm> = {
     steps: NEW_PROCESS_WIZARD_STEPS,
     onComplete,
     initialFormState: {},
