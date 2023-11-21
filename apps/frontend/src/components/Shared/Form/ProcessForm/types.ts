@@ -3,6 +3,7 @@ import {
   OptionType,
   PercentageDecisionArgs,
   InputTemplateArgs,
+  InputDataType,
 } from "@/graphql/generated/graphql";
 import { AvatarProps } from "@/components/shared/Avatar";
 
@@ -101,3 +102,10 @@ export enum DefaultEvolveProcessOptions {
   ParticipantsRequestButCreatorApproves = "ParticipantsRequestButCreatorApproves",
   Custom = "Custom",
 }
+
+export const defaultInputRequestTitle: InputTemplateArgs = {
+  name: "Request title",
+  description: "Brief summary of request",
+  required: true,
+  type: InputDataType.Text,
+};

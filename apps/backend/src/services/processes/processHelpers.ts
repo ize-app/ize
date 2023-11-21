@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
-import { Prisma } from "@prisma/client";
+import { ActionType, Prisma } from "@prisma/client";
 
 import {
   ProcessOptionArgs,
@@ -70,27 +70,39 @@ export const createInputTemplateSet = async (
 
 export const createAction = async (
   {
+    type,
     webhookUri,
     filterOptionId,
     transaction = prisma,
   }: {
-    webhookUri: string;
+    type: ActionType;
+    webhookUri?: string;
     filterOptionId: string | null;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  return await transaction.action.create({
-    data: {
-      type: "customWebhook",
-      optionId: filterOptionId,
-      webhookAction: {
-        create: {
-          uri: webhookUri,
+  switch (type) {
+    case ActionType.customWebhook:
+      return await transaction.action.create({
+        data: {
+          type: ActionType.customWebhook,
+          optionId: filterOptionId,
+          webhookAction: {
+            create: {
+              uri: webhookUri,
+            },
+          },
         },
-      },
-    },
-  });
+      });
+    case ActionType.evolveProcess:
+      return await transaction.action.create({
+        data: {
+          type: ActionType.evolveProcess,
+          optionId: filterOptionId,
+        },
+      });
+  }
 };
 
 export const createDecisionSystem = async (

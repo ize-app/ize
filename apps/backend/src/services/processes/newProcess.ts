@@ -1,8 +1,9 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { ActionType,  ProcessType } from "@prisma/client";
 
 import { NewProcessArgs } from "frontend/src/graphql/generated/graphql";
+import { newEvolveProcess } from "./newEvolveProcess";
 
 import {
   createOptionSystem,
@@ -21,6 +22,7 @@ export const newCustomProcess = async (
     inputs,
     roles,
     action,
+    evolve,
   }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
@@ -54,6 +56,7 @@ export const newCustomProcess = async (
 
       newActionRecord = await createAction(
         {
+          type: ActionType.customWebhook,
           webhookUri: action.webhook.uri,
           filterOptionId: webhookTriggerFilterOption
             ? webhookTriggerFilterOption?.id
@@ -64,25 +67,30 @@ export const newCustomProcess = async (
       );
     }
 
+    const evolveProcessId = await newEvolveProcess(
+      { evolve, transaction },
+      context,
+    );
+
     const processRecord = await transaction.process.create({
       include: {
         processVersions: true,
       },
       data: {
-        type: "Custom",
+        type: ProcessType.Custom,
         processVersions: {
           create: [
             {
               name,
               description,
-              expirationSeconds,
-              // TODO: Why is this error not happening on the other file
-              creatorId: context?.currentUser?.id as string,
+              expirationSeconds: decision.expirationSeconds,
+              creatorId: context?.currentUser?.id,
               optionSystemId: optionSystemRecord.id,
               inputTemplateSetId: inputTemplateSetRecord.id,
               decisionSystemId: decisionRecord.id,
               roleSetId: roleSetRecord.id,
               actionId: newActionRecord?.id,
+              evolveProcessId,
             },
           ],
         },
