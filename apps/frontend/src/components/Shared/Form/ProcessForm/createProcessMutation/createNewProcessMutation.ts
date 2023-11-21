@@ -1,4 +1,4 @@
-import { ProcessForm } from "@/components/NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import {
   FormOptionChoice,
   ProcessRights,
@@ -16,7 +16,6 @@ const createNewProcessMutation = (formState: ProcessForm): NewProcessArgs => {
   const inputs: NewProcessArgs = {
     name: formState.name as string,
     description: formState.description,
-    expirationSeconds: formState.decision?.requestExpirationSeconds as number,
     inputs: formState.inputs as InputTemplateArgs[],
     roles: createRoleInputs(formState.rights as ProcessRights),
     action: createActionInputs(formState.action),
@@ -25,6 +24,10 @@ const createNewProcessMutation = (formState: ProcessForm): NewProcessArgs => {
       formState.customOptions as string[],
     ),
     decision: createDecisionInputs(formState.decision),
+    evolve: {
+      decision: createDecisionInputs(formState.evolve?.decision),
+      roles: createRoleInputs(formState.evolve?.rights as ProcessRights),
+    },
   };
 
   return inputs;

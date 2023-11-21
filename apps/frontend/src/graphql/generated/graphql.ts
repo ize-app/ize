@@ -46,6 +46,7 @@ export enum AgentType {
 
 export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
 };
 
@@ -86,6 +87,11 @@ export type DiscordRoleGroup = {
   memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   unicodeEmoji?: Maybe<Scalars['String']['output']>;
+};
+
+export type EvolveArgs = {
+  decision: DecisionArgs;
+  roles: Array<RoleArgs>;
 };
 
 export type Group = {
@@ -413,7 +419,7 @@ export type NewProcessArgs = {
   action?: InputMaybe<ActionArgs>;
   decision: DecisionArgs;
   description?: InputMaybe<Scalars['String']['input']>;
-  expirationSeconds: Scalars['Int']['input'];
+  evolve: EvolveArgs;
   inputs: Array<InputTemplateArgs>;
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;
@@ -717,6 +723,7 @@ export enum AgentType {
 
 export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
+  expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
 };
 
@@ -757,6 +764,11 @@ export type DiscordRoleGroup = {
   memberCount: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   unicodeEmoji?: Maybe<Scalars['String']['output']>;
+};
+
+export type EvolveArgs = {
+  decision: DecisionArgs;
+  roles: Array<RoleArgs>;
 };
 
 export type Group = {
@@ -1084,7 +1096,7 @@ export type NewProcessArgs = {
   action?: InputMaybe<ActionArgs>;
   decision: DecisionArgs;
   description?: InputMaybe<Scalars['String']['input']>;
-  expirationSeconds: Scalars['Int']['input'];
+  evolve: EvolveArgs;
   inputs: Array<InputTemplateArgs>;
   name: Scalars['String']['input'];
   options: Array<ProcessOptionArgs>;

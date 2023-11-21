@@ -16,12 +16,12 @@ type Query {
 input newProcessArgs {
   name: String!
   description: String
-  expirationSeconds: Int!
   options: [ProcessOptionArgs!]!
   inputs: [InputTemplateArgs!]!
   decision: DecisionArgs!
   roles: [RoleArgs!]!
   action: ActionArgs
+  evolve: EvolveArgs!
 }
 
 input ActionArgs {
@@ -34,8 +34,14 @@ input WebhookActionArgs {
 }
 
 input DecisionArgs {
+  expirationSeconds: Int!
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
+}
+
+input EvolveArgs {
+  decision: DecisionArgs!
+  roles: [RoleArgs!]!
 }
 
 input newEditProcessRequestArgs {

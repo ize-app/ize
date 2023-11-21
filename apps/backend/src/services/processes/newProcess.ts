@@ -16,7 +16,6 @@ export const newCustomProcess = async (
   {
     name,
     description,
-    expirationSeconds,
     options,
     decision,
     inputs,

@@ -14,12 +14,14 @@ const createDecisionInputs = (
   switch (formDecision?.type) {
     case DecisionType.Absolute:
       return {
+        expirationSeconds: formDecision?.requestExpirationSeconds as number,
         absoluteDecision: {
           ...(formDecision.absoluteDecision as AbsoluteDecisionArgs),
         },
       };
     case DecisionType.Percentage:
       return {
+        expirationSeconds: formDecision?.requestExpirationSeconds as number,
         percentageDecision: {
           ...(formDecision.percentageDecision as PercentageDecisionArgs),
         },
