@@ -303,7 +303,7 @@ model ActionAttempt {
   resultId  String   @map("result_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  result Result @relation(fields: [resultId], references: [id])
+  result Result @relation(fields: [resultId], references: [id], onDelete: Cascade)
   action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
 
   @@map("action_attempts")

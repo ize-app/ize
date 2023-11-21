@@ -74,6 +74,9 @@ type Process {
   action: Action
   roles: Roles!
   decisionSystem: DecisionTypes!
+  # not making evolve required because the evolve process needs to leave out
+  # it's own edit process to avoid infinite recursion
+  evolve: Process
   createdAt: String!
 }
 
@@ -86,11 +89,19 @@ type ProcessOption {
 type Action {
   id: String!
   optionFilter: ProcessOption
-  actionDetails: WebhookAction!
+  actionDetails: ActionType
 }
+
+union ActionType = WebhookAction | EvolveProcessAction
 
 type WebhookAction {
   uri: String!
+}
+
+# using an object is useful here for the union of ActionType, but GraphQL doesn't let you add empty object
+# so I'm adding a dummy field here to allow it to work
+type EvolveProcessAction {
+  _: Boolean
 }
 
 enum OptionType {

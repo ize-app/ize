@@ -7,7 +7,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
@@ -150,8 +149,10 @@ export const Process = () => {
           >
             <DecisionSystemSummaryTable process={process} />
           </Accordion>
-          <Accordion label="Community roles" id="community-role-panel">
-            <CommunityRolesTable process={process} />
+          <Accordion label="How process evolves" id="decision-panel">
+            <DecisionSystemSummaryTable
+              process={process.evolve as ProcessSummaryPartsFragment}
+            />
           </Accordion>
           <Accordion label="Request format" id="request-format-panel">
             <RequestTemplateTable process={process} />

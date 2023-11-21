@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
@@ -110,9 +110,21 @@ type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
   include: typeof processVersionInclude;
 }>;
 
+// creating a seperate "editProcessInclude" to avoid infinite recursion since edit process can refer to itself
+export const editProcessInclude = Prisma.validator<Prisma.ProcessInclude>()({
+  currentProcessVersion: {
+    include: { ...processVersionInclude },
+  },
+});
+
 export const processInclude = Prisma.validator<Prisma.ProcessInclude>()({
   currentProcessVersion: {
-    include: processVersionInclude,
+    include: {
+      ...processVersionInclude,
+      evolveProcess: {
+        include: editProcessInclude,
+      },
+    },
   },
 });
 
@@ -120,11 +132,32 @@ type ProcessPrismaType = Prisma.ProcessGetPayload<{
   include: typeof processInclude;
 }>;
 
+type EditProcessPrismaType = Prisma.ProcessGetPayload<{
+  include: typeof editProcessInclude;
+}>;
+
 interface customActionConfig {
   uri: string;
 }
 
 export const formatProcess = (processData: ProcessPrismaType): Process => {
+  const { currentProcessVersion } = processData;
+
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+
+  const data = {
+    id: processData.id,
+    currentProcessVersionId: currentProcessVersion?.id,
+    createdAt: processData.createdAt.toString(),
+    evolve: formatEvolveProcess(currentProcessVersion.evolveProcess),
+    ...formattedProcessVersion,
+  };
+  return data;
+};
+
+export const formatEvolveProcess = (
+  processData: EditProcessPrismaType,
+): Process => {
   const { currentProcessVersion } = processData;
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
@@ -226,12 +259,25 @@ export const formatAction = (
   action: ActionPrismaType,
   options: ProcessOption[],
 ): Action => {
-  return {
-    id: action.id,
-    optionFilter: options.find((option) => option.id === action.optionId),
-    actionDetails: {
-      ...action.webhookAction,
-      __typename: "WebhookAction",
-    },
-  };
+  const optionFilter = options.find((option) => option.id === action.optionId);
+
+  switch (action.type) {
+    case "customWebhook":
+      return {
+        id: action.id,
+        optionFilter,
+        actionDetails: {
+          ...action.webhookAction,
+          __typename: "WebhookAction",
+        },
+      };
+    case "evolveProcess":
+      return {
+        id: action.id,
+        optionFilter,
+        actionDetails: {
+          __typename: "EvolveProcessAction",
+        },
+      };
+  }
 };

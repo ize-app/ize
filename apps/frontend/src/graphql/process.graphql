@@ -36,7 +36,7 @@ query GroupsAndUsersEliglbeForRole {
   }
 }
 
-fragment ProcessSummaryParts on Process {
+fragment BaseProcessSummaryParts on Process {
   id
   currentProcessVersionId
   name
@@ -58,6 +58,13 @@ fragment ProcessSummaryParts on Process {
     ...ActionSummaryParts
   }
   createdAt
+}
+
+fragment ProcessSummaryParts on Process {
+  ...BaseProcessSummaryParts
+  evolve {
+    ...BaseProcessSummaryParts
+  }
 }
 
 fragment AgentSummaryParts on Agent {

@@ -72,13 +72,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "WebhookAction",
-                "ofType": null
-              }
+              "kind": "UNION",
+              "name": "ActionType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -155,6 +151,27 @@
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
+      },
+      {
+        "kind": "UNION",
+        "name": "ActionType",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "EvolveProcessAction",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "WebhookAction",
+            "ofType": null
+          }
+        ]
       },
       {
         "kind": "UNION",
@@ -686,6 +703,29 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "EvolveProcessAction",
+        "description": null,
+        "fields": [
+          {
+            "name": "_",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -1702,6 +1742,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "evolve",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Process",
               "ofType": null
             },
             "isDeprecated": false,
