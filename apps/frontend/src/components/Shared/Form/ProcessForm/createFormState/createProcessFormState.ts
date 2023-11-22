@@ -6,9 +6,13 @@ import {
   getDefaultOptionSet,
 } from "./createOptionsFormState";
 import createRolesFormState from "./createRolesFormState";
-import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
+import {
+  Process,
+  ProcessSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
 import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import createEvolveFormState from "./createEvolveFormState";
 
 const createProcessFormState = (
   process: ProcessSummaryPartsFragment,
@@ -30,6 +34,7 @@ const createProcessFormState = (
       process.expirationSeconds,
     ),
     action: createActionFormState(process.action ?? undefined),
+    evolve: createEvolveFormState(process.evolve as Process),
   };
 };
 

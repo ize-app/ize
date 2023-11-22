@@ -47,8 +47,15 @@ export const EDIT_PROCESS_WIZARD_STEPS: WizardSteps<EditProcessState> = [
     validWizardState: (formState: EditProcessState) => !!formState.inputs,
   },
   {
+    path: editProcessRoute(EditProcessRoute.Evolve),
+    title: "How process evolves",
+    progressBarStep: 1,
+    canNext: () => true,
+    validWizardState: (formState: ProcessForm) => !!formState.rights,
+  },
+  {
     path: editProcessRoute(EditProcessRoute.Confirm),
-    title: "Review edits and create request",
+    title: "Confirm request details",
     progressBarStep: 2,
     canNext: () => true,
     validWizardState: (formState: EditProcessState) => !!formState.decision,

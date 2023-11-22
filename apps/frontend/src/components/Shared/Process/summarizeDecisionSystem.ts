@@ -30,9 +30,8 @@ export const summarizeDecisionSystemForm = (
         } responses is selected.`
       : `Once there have been at least ${
           decision.percentageDecision?.quorum as number
-        } as number
         } responses total, the first option to get at least ${
-          (decision.percentageDecision?.percentage as number) * 100
+          decision.percentageDecision?.percentage as number
         }% of the vote is selected.`;
 
   return summaryText;

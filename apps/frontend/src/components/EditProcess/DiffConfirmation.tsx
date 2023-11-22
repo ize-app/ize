@@ -1,39 +1,25 @@
 import Box from "@mui/material/Box";
 
 import { useEditProcessWizardState } from "./editProcessWizard";
-import formatDiffDataForTable from "./formatDiffDataForTable";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
-import { Accordion } from "../shared/Accordion";
-import { EditProcessRequestInputTable } from "../shared/Request/EditProcessRequestsInputsTable";
 import { WizardBody, WizardNav } from "../shared/Wizard";
+import { ProcessFormConfirmationTable } from "../shared/Form/ProcessForm/components/ProcessFormConfirmationTable";
+import getEvolveDiffForDisplay from "./getEvolveDiffForDisplay";
 
 export const DiffConfirmation = () => {
   const { onNext, nextLabel, onPrev, formState } = useEditProcessWizardState();
-  const [oldChanges, newChanges] = formatDiffDataForTable(
-    formState.currentProcess as ProcessForm,
-    formState,
-  );
   return (
     <>
       <WizardBody>
-        <Box sx={{ maxWidth: "800px" }}>
-          <Accordion
-            id={"request-summary-panel"}
-            label="Request summary"
-            defaultExpanded={true}
-          >
-            <EditProcessRequestInputTable
-              oldProcess={oldChanges}
-              proposedChanges={newChanges}
-            />
-          </Accordion>
-          {/* <Accordion
-            id={"process-summary-panel"}
-            label="Process summary"
-            defaultExpanded={isOverSmScreen}
-          >
-            <ProcessSummaryTable process={formState.process} />
-          </Accordion> */}
+        <Box sx={{ maxWidth: "1000px", marginTop: "24px" }}>
+          <ProcessFormConfirmationTable
+            process={formState.currentProcess as ProcessForm}
+            evolvedProcess={formState}
+            fields={getEvolveDiffForDisplay(
+              formState.currentProcess as ProcessForm,
+              formState,
+            )}
+          />
         </Box>
       </WizardBody>
       <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />

@@ -20,6 +20,7 @@ import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 
+
 export const EditProcess = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);

@@ -8,15 +8,24 @@ import {
 const createActionFormState = (
   action: Action | undefined,
 ): ActionForm | undefined => {
-  if (action?.actionDetails.__typename === "WebhookAction") {
-    return {
-      optionTrigger: action.optionFilter?.value,
-      webhook: {
-        hasWebhook: HasCustomIntegration.Yes,
-        uri: action.actionDetails.uri,
-      },
-    };
-  } else return undefined;
+  switch (action?.actionDetails?.__typename) {
+    case "WebhookAction":
+      return {
+        optionTrigger: action.optionFilter?.value,
+        webhook: {
+          hasWebhook: HasCustomIntegration.Yes,
+          uri: action.actionDetails.uri,
+        },
+      };
+    default:
+      return {
+        optionTrigger: undefined,
+        webhook: {
+          hasWebhook: HasCustomIntegration.No,
+          uri: undefined,
+        },
+      };
+  }
 };
 
 export default createActionFormState;

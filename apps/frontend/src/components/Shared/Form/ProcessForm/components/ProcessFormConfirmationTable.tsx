@@ -2,6 +2,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
@@ -102,7 +103,7 @@ const displayProcessFormField = (
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
           <AvatarGroup
-            agents={form?.evolve?.rights?.request as AvatarProps[]}
+            agents={form?.evolve?.rights?.response as AvatarProps[]}
           />
         </Box>
       );
@@ -144,6 +145,13 @@ export const ProcessFormConfirmationTable = ({
       }}
     >
       <Table aria-label="collapsible table" size={rowSize}>
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell align="left">Current</TableCell>
+            <TableCell align="left">Proposed evolution</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
           {fields.map((field) => (
             <TableRow>
@@ -152,18 +160,13 @@ export const ProcessFormConfirmationTable = ({
                   {field}
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ width: evolvedProcess ? "40%" : "100%" }}>
                 {displayProcessFormField(field, process, fontSize)}
               </TableCell>
               {evolvedProcess && (
                 <>
-                  <TableCell width={"40px"}>
-                    <ArrowForwardIcon />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant={fontSize}>
+                  <TableCell sx={{ width: "40%" }}>
                       {displayProcessFormField(field, evolvedProcess, fontSize)}
-                    </Typography>
                   </TableCell>
                 </>
               )}
