@@ -12,7 +12,7 @@ import {
   createRoleInputs,
 } from "./index";
 
-const createNewProcessMutation = (formState: ProcessForm): NewProcessArgs => {
+const createProcessMutation = (formState: ProcessForm): NewProcessArgs => {
   const inputs: NewProcessArgs = {
     name: formState.name as string,
     description: formState.description,
@@ -33,4 +33,4 @@ const createNewProcessMutation = (formState: ProcessForm): NewProcessArgs => {
   return inputs;
 };
 
-export default createNewProcessMutation;
+export default createProcessMutation;

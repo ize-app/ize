@@ -411,16 +411,9 @@ export type WebhookActionArgs = {
 };
 
 export type NewEditProcessRequestArgs = {
-  action?: InputMaybe<ActionArgs>;
-  decision?: InputMaybe<DecisionArgs>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  editProcessId?: InputMaybe<Scalars['String']['input']>;
-  expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
-  inputs?: InputMaybe<Array<InputTemplateArgs>>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  options?: InputMaybe<Array<ProcessOptionArgs>>;
+  currentProcess: NewProcessArgs;
+  evolvedProcess: NewProcessArgs;
   processId: Scalars['String']['input'];
-  roles?: InputMaybe<Array<RoleArgs>>;
 };
 
 export type NewProcessArgs = {
@@ -1103,16 +1096,9 @@ export type WebhookActionArgs = {
 };
 
 export type NewEditProcessRequestArgs = {
-  action?: InputMaybe<ActionArgs>;
-  decision?: InputMaybe<DecisionArgs>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  editProcessId?: InputMaybe<Scalars['String']['input']>;
-  expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
-  inputs?: InputMaybe<Array<InputTemplateArgs>>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  options?: InputMaybe<Array<ProcessOptionArgs>>;
+  currentProcess: NewProcessArgs;
+  evolvedProcess: NewProcessArgs;
   processId: Scalars['String']['input'];
-  roles?: InputMaybe<Array<RoleArgs>>;
 };
 
 export type NewProcessArgs = {

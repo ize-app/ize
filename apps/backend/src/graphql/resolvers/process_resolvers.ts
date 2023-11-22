@@ -29,9 +29,7 @@ const newProcess = async (
 
 const newEditProcessRequest = async (
   root: unknown,
-  args: {
-    process: NewEditProcessRequestArgs;
-  },
+  args: NewEditProcessRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return "1";

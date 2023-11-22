@@ -12,13 +12,13 @@ import {
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
 } from "./editProcessWizard";
-import createEditProcessMutation from "../shared/Form/ProcessForm/createProcessMutation/createEditProcessMutation";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import { createProcessMutation } from "../shared/Form/ProcessForm/createProcessMutation";
 
 const EditProcess = () => {
   const navigate = useNavigate();
@@ -35,11 +35,13 @@ const EditProcess = () => {
     try {
       await mutate({
         variables: {
-          inputs: createEditProcessMutation(
-            "1",
-            formState.currentProcess as ProcessForm,
-            formState as ProcessForm,
-          ),
+          inputs: {
+            processId: params.processId as string,
+            currentProcess: createProcessMutation(
+              formState.currentProcess as ProcessForm,
+            ),
+            evolvedProcess: createProcessMutation(formState),
+          },
         },
       });
 
@@ -67,6 +69,7 @@ const EditProcess = () => {
     formState,
     setFormState,
     nextLabel,
+    params,
     setParams,
   } = useWizard(editProcessWizard);
 

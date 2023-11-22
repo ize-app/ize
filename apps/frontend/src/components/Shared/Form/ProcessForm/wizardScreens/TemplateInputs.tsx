@@ -68,15 +68,7 @@ export const TemplateInputs = () => {
     <>
       <WizardBody>
         <Typography variant="body1">
-          This process is triggered by creating a{" "}
-          <span style={{ fontWeight: "bold" }}>request</span>. You can define
-          whether this process needs certain information to be triggered via{" "}
-          <span style={{ fontWeight: "bold" }}>input fields</span>. Input fields
-          help keep proposals consistent and make it easier to build
-          integrations with other tools. <br />
-          <br />
-          For example, a “Reimburse expense” process might have a required
-          “Amount” field on each proposal. <br />
+          Input fields define information that is required to be on each process.
         </Typography>
         <form>
           <TableContainer sx={{ overflowX: "auto" }}>
