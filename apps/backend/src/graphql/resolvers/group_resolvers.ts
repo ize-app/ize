@@ -4,6 +4,7 @@ import { prisma } from "backend/src/prisma/client";
 import { DiscordApi } from "@discord/api";
 
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
 
 const setUpDiscordServer = async (
   root: unknown,
@@ -37,45 +38,7 @@ export const groupsForCurrentUser = async (
   args: {},
   context: GraphqlRequestContext,
 ) => {
-  const userDiscordData = await prisma.discordData.findFirstOrThrow({
-    where: { userId: context.currentUser.id },
-  });
-  const botApi = DiscordApi.forBotUser();
-
-  // Get the servers for the user using the users' API token
-  const userGuilds = await context.discordApi.getDiscordServers();
-
-  // Get the roles for the user in those servers
-  // Only pulls roles that discord bot has access to (i.e. roles of servers that have bot installed)
-  const userGuildMembers = await Promise.all(
-    userGuilds.map(async (guild) => {
-      return botApi.getDiscordGuildMember({
-        serverId: guild.id,
-        memberId: userDiscordData.discordId,
-      });
-    }),
-  );
-
-  // converting to Set to remove many duplicate "undefined" roleIds
-  const roleIds = [
-    ...new Set(userGuildMembers.map((member) => member.roles).flat()),
-  ];
-
-  // Get groups that the user is in a server, role or has created.
-  const groups = await prisma.group.findMany({
-    where: {
-      OR: [
-        { discordRoleGroup: { discordRoleId: { in: roleIds } } },
-        // @everyone isn't part of roleIds returned from discord API
-        { discordRoleGroup: { name: "@everyone" } },
-        { creatorId: context.currentUser.id },
-      ],
-    },
-    include: groupInclude,
-  });
-
-  const formattedGroups = groups.map((group) => formatGroup(group));
-  return formattedGroups;
+  return groupsForCurrentUserService(context);
 };
 
 export const groupMutations = {

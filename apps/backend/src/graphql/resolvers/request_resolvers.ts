@@ -24,7 +24,7 @@ const newRequest = async (
   args: MutationNewRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newRequestService(root, args, context);
+  return await newRequestService({ args }, context);
 };
 
 const newResponse = async (
@@ -49,7 +49,7 @@ const newResponse = async (
   });
 
   await determineDecision({ requestId: args.requestId });
-  
+
   return response.id;
 };
 
