@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 
-import { useEditProcessWizardState } from "./editProcessWizard";
+import { useEditProcessWizardState } from "../../../../EditProcess/editProcessWizard";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
-import { WizardBody, WizardNav } from "../shared/Wizard";
-import { ProcessFormConfirmationTable } from "../shared/Form/ProcessForm/components/ProcessFormConfirmationTable";
-import getEvolveDiffForDisplay from "./getEvolveDiffForDisplay";
+import { WizardBody, WizardNav } from "../../../Wizard";
+import { ProcessFormConfirmationTable } from "../components/ProcessFormConfirmationTable";
+import getEvolveDiffForDisplay from "../helpers/getEvolveDiffForDisplay";
 
 export const DiffConfirmation = () => {
   const { onNext, nextLabel, onPrev, formState } = useEditProcessWizardState();

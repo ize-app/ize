@@ -43,9 +43,9 @@ export const ConfirmNewProcess = () => {
             <ProcessFormConfirmationTable
               process={formState}
               fields={[
-                Fields.DecisionEvolve,
-                Fields.RequestEvolve,
-                Fields.RespondEvolve,
+                Fields.EvolveDecision,
+                Fields.EvolveRequest,
+                Fields.EvolveRespond,
               ]}
             />
           </Accordion>

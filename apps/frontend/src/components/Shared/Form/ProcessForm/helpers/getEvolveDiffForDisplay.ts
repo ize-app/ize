@@ -1,6 +1,6 @@
 import { diff } from "deep-object-diff";
-import { ProcessForm } from "../shared/Form/ProcessForm/types";
-import { ProcessFormDisplayFields as DiffField } from "../shared/Form/ProcessForm/components/ProcessFormConfirmationTable";
+import { ProcessForm } from "../types";
+import { ProcessFormDisplayFields as DiffField } from "../components/ProcessFormConfirmationTable";
 
 const getEvolveDiffForDisplay = (
   process: ProcessForm,
@@ -21,10 +21,10 @@ const getEvolveDiffForDisplay = (
   if (processDiff.rights?.response) diffFields.push(DiffField.Respond);
 
   if (processDiff.evolve?.rights?.request)
-    diffFields.push(DiffField.RequestEvolve);
+    diffFields.push(DiffField.EvolveRequest);
   if (processDiff.evolve?.rights?.response)
-    diffFields.push(DiffField.RespondEvolve);
-  if (processDiff.evolve?.decision) diffFields.push(DiffField.DecisionEvolve);
+    diffFields.push(DiffField.EvolveRespond);
+  if (processDiff.evolve?.decision) diffFields.push(DiffField.EvolveDecision);
 
   return diffFields;
 };

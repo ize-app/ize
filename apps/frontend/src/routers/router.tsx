@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
 import { _404 } from "@/components/404";
-import * as EditProcess from "@/components/EditProcess";
+import EditProcess from "@/components/EditProcess/EditProcess";
 import { Group } from "@/components/Groups/Group";
 import { Home } from "@/components/Home";
 import NewProcess from "@/components/NewProcess/NewProcess";
@@ -113,14 +113,14 @@ export const router = createBrowserRouter([
       {
         element: (
           <AuthRoute>
-            <EditProcess.default />
+            <EditProcess />
           </AuthRoute>
         ),
         path: Routes.Route.EditProcess,
         children: [
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
-            element: <EditProcess.Intro />,
+            element: <ProcessForm.EditProcessIntro />,
             index: true,
           },
           {
@@ -141,7 +141,7 @@ export const router = createBrowserRouter([
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Confirm),
-            element: <EditProcess.DiffConfirmation />,
+            element: <ProcessForm.DiffConfirmation />,
           },
         ],
       },

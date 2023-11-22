@@ -22,6 +22,7 @@ import { createOptionInputs } from "../createProcessMutation";
 import { AvatarGroup } from "@/components/shared/Avatar";
 import { Box } from "@mui/material";
 import { HasCustomIntegration } from "@/components/shared/Form/ProcessForm/types";
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 export enum ProcessFormDisplayFields {
   Name = "Name",
@@ -32,9 +33,11 @@ export enum ProcessFormDisplayFields {
   Request = "Request",
   Respond = "Respond",
   Decision = "Decision",
-  RequestEvolve = "Request to evolve process",
-  RespondEvolve = "Respond on whether to evolve process",
-  DecisionEvolve = "Decide on evolving process",
+  RequestExpiration = "Request expiration",
+  EvolveRequestExpiration = "Evolve request expiration",
+  EvolveRequest = "Request to evolve process",
+  EvolveRespond = "Respond on whether to evolve process",
+  EvolveDecision = "Decide on evolving process",
 }
 
 const displayProcessFormField = (
@@ -91,7 +94,7 @@ const displayProcessFormField = (
           {summarizeDecisionSystemForm(form?.decision as ProcessDecision)}
         </Typography>
       );
-    case ProcessFormDisplayFields.RequestEvolve:
+    case ProcessFormDisplayFields.EvolveRequest:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
           <AvatarGroup
@@ -99,7 +102,7 @@ const displayProcessFormField = (
           />
         </Box>
       );
-    case ProcessFormDisplayFields.RespondEvolve:
+    case ProcessFormDisplayFields.EvolveRespond:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
           <AvatarGroup
@@ -107,11 +110,27 @@ const displayProcessFormField = (
           />
         </Box>
       );
-    case ProcessFormDisplayFields.DecisionEvolve:
+    case ProcessFormDisplayFields.EvolveDecision:
       return (
         <Typography variant={fontSize}>
           {summarizeDecisionSystemForm(
             form?.evolve?.decision as ProcessDecision,
+          )}
+        </Typography>
+      );
+    case ProcessFormDisplayFields.RequestExpiration:
+      return (
+        <Typography>
+          {intervalToIntuitiveTimeString(
+            (form.decision?.requestExpirationSeconds as number) * 1000,
+          )}
+        </Typography>
+      );
+    case ProcessFormDisplayFields.EvolveRequestExpiration:
+      return (
+        <Typography>
+          {intervalToIntuitiveTimeString(
+            (form.evolve?.decision?.requestExpirationSeconds as number) * 1000,
           )}
         </Typography>
       );
@@ -153,9 +172,16 @@ export const ProcessFormConfirmationTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {fields.map((field) => (
-            <TableRow>
-              <TableCell width="200px">
+          {fields.map((field, index) => (
+            <TableRow key={field[0] + index.toString()}>
+              <TableCell
+                sx={(theme) => ({
+                  [theme.breakpoints.up("sm")]: {
+                    minWidth: "300px",
+                  },
+                  minWidth: "100px",
+                })}
+              >
                 <Typography fontWeight={500} variant={fontSize}>
                   {field}
                 </Typography>
@@ -166,7 +192,7 @@ export const ProcessFormConfirmationTable = ({
               {evolvedProcess && (
                 <>
                   <TableCell sx={{ width: "40%" }}>
-                      {displayProcessFormField(field, evolvedProcess, fontSize)}
+                    {displayProcessFormField(field, evolvedProcess, fontSize)}
                   </TableCell>
                 </>
               )}
