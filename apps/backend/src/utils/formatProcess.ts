@@ -46,13 +46,14 @@ type InputTemplatePrismaType = Prisma.InputTemplateGetPayload<{
   include: typeof inputTemplateInclude;
 }>;
 
-const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>()({
-  defaultProcessOptionSet: {
-    include: {
-      options: true,
+export const optionSystemInclude =
+  Prisma.validator<Prisma.OptionSystemInclude>()({
+    defaultProcessOptionSet: {
+      include: {
+        options: true,
+      },
     },
-  },
-});
+  });
 
 type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
   include: typeof optionSystemInclude;
@@ -82,13 +83,7 @@ export const processVersionInclude =
     },
     process: true,
     optionSystem: {
-      include: {
-        defaultProcessOptionSet: {
-          include: {
-            options: true,
-          },
-        },
-      },
+      include: optionSystemInclude,
     },
     inputTemplateSet: {
       include: {

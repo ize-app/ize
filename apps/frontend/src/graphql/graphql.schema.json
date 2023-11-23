@@ -135,13 +135,9 @@
             "name": "webhook",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "WebhookActionArgs",
-                "ofType": null
-              }
+              "kind": "INPUT_OBJECT",
+              "name": "WebhookActionArgs",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -902,6 +898,12 @@
           },
           {
             "name": "Int",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "StringArray",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

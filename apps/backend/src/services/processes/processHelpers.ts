@@ -7,6 +7,7 @@ import {
   InputTemplateArgs,
   RoleArgs,
   DecisionArgs,
+  ActionArgs,
 } from "frontend/src/graphql/generated/graphql";
 
 export const createOptionSystem = async (
@@ -71,37 +72,36 @@ export const createInputTemplateSet = async (
 export const createAction = async (
   {
     type,
-    webhookUri,
+    action,
     filterOptionId,
     transaction = prisma,
   }: {
     type: ActionType;
-    webhookUri?: string;
+    action: ActionArgs;
     filterOptionId: string | null;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  switch (type) {
-    case ActionType.customWebhook:
-      return await transaction.action.create({
-        data: {
-          type: ActionType.customWebhook,
-          optionId: filterOptionId,
-          webhookAction: {
-            create: {
-              uri: webhookUri,
-            },
+  if (action?.webhook) {
+    return await transaction.action.create({
+      data: {
+        type: ActionType.customWebhook,
+        optionId: filterOptionId,
+        webhookAction: {
+          create: {
+            uri: action.webhook.uri,
           },
         },
-      });
-    case ActionType.evolveProcess:
-      return await transaction.action.create({
-        data: {
-          type: ActionType.evolveProcess,
-          optionId: filterOptionId,
-        },
-      });
+      },
+    });
+  } else if (type === ActionType.evolveProcess) {
+    return await transaction.action.create({
+      data: {
+        type: ActionType.evolveProcess,
+        optionId: filterOptionId,
+      },
+    });
   }
 };
 

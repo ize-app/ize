@@ -34,7 +34,7 @@ export type Action = {
 
 export type ActionArgs = {
   optionTrigger?: InputMaybe<Scalars['String']['input']>;
-  webhook: WebhookActionArgs;
+  webhook?: InputMaybe<WebhookActionArgs>;
 };
 
 export type ActionType = EvolveProcessAction | WebhookAction;
@@ -117,6 +117,7 @@ export type Group = {
 export enum InputDataType {
   Float = 'Float',
   Int = 'Int',
+  StringArray = 'StringArray',
   Text = 'Text',
   Uri = 'Uri'
 }
@@ -719,7 +720,7 @@ export type Action = {
 
 export type ActionArgs = {
   optionTrigger?: InputMaybe<Scalars['String']['input']>;
-  webhook: WebhookActionArgs;
+  webhook?: InputMaybe<WebhookActionArgs>;
 };
 
 export type ActionType = EvolveProcessAction | WebhookAction;
@@ -802,6 +803,7 @@ export type Group = {
 export enum InputDataType {
   Float = 'Float',
   Int = 'Int',
+  StringArray = 'StringArray',
   Text = 'Text',
   Uri = 'Uri'
 }

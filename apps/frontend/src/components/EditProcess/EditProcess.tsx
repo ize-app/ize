@@ -19,6 +19,7 @@ import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { createProcessMutation } from "../shared/Form/ProcessForm/createProcessMutation";
+import { shortUUIDToFull, fullUUIDToShort } from "@/utils/inputs";
 
 const EditProcess = () => {
   const navigate = useNavigate();
@@ -26,8 +27,8 @@ const EditProcess = () => {
 
   const [mutate] = useMutation(NewEditProcessRequestDocument, {
     onCompleted: (data) => {
-      // const newRequestId = data.newEditProcessRequest;
-      // navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+      const newRequestId = data.newEditProcessRequest;
+      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
     },
   });
 
@@ -36,7 +37,7 @@ const EditProcess = () => {
       await mutate({
         variables: {
           inputs: {
-            processId: params.processId as string,
+            processId: shortUUIDToFull(params.processId as string),
             currentProcess: createProcessMutation(
               formState.currentProcess as ProcessForm,
             ),

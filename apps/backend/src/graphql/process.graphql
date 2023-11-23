@@ -26,7 +26,7 @@ input newProcessArgs {
 
 input ActionArgs {
   optionTrigger: String
-  webhook: WebhookActionArgs!
+  webhook: WebhookActionArgs
 }
 
 input WebhookActionArgs {
@@ -124,6 +124,7 @@ enum InputDataType {
   Float
   Text
   Uri
+  StringArray
 }
 
 input RoleArgs {

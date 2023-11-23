@@ -16,6 +16,7 @@ import { formatUser, userInclude } from "backend/src/utils/formatUser";
 import { groupsForCurrentUser } from "./group_resolvers";
 
 import { newCustomProcess } from "../../services/processes/newProcess";
+import { newEditRequestService } from "@services/requests/newEditRequestService";
 
 const newProcess = async (
   root: unknown,
@@ -29,10 +30,10 @@ const newProcess = async (
 
 const newEditProcessRequest = async (
   root: unknown,
-  args: NewEditProcessRequestArgs,
+  args: { inputs: NewEditProcessRequestArgs },
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return "1";
+  return await newEditRequestService({ args: args.inputs }, context);
 };
 
 const process = async (
@@ -102,6 +103,7 @@ const processesForCurrentUser = async (
           },
         },
       ],
+      type: { not: "Evolve" },
     },
     include: processInclude,
   });

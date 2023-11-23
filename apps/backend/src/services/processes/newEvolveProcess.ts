@@ -35,7 +35,6 @@ export const newEvolveProcess = async (
     type: "Text",
   };
 
-  
   const inputTemplateSetRecord = await createInputTemplateSet(
     {
       inputs: [
@@ -47,11 +46,11 @@ export const newEvolveProcess = async (
           type: "Text",
         },
         {
-          name: "Process ID",
-          description: "ID of the process to be evolved",
+          name: "Process versions",
+          description: "Array of process version IDs being proposed.",
           required: true,
           //@ts-ignore
-          type: "Text",
+          type: "StringArray",
         },
       ],
       transaction,
@@ -94,6 +93,7 @@ export const newEvolveProcess = async (
   const actionRecord = await createAction(
     {
       type: ActionType.evolveProcess,
+      action: {},
       filterOptionId: webhookTriggerFilterOption
         ? webhookTriggerFilterOption?.id
         : null,
@@ -119,6 +119,7 @@ export const newEvolveProcess = async (
             decisionSystemId: decisionRecord.id,
             roleSetId: roleSetRecord.id,
             actionId: actionRecord?.id,
+            approved: true,
           },
         ],
       },

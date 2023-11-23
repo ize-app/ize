@@ -149,6 +149,7 @@ model ProcessVersion {
   decisionSystemId   String   @map("decision_system_id") @db.Uuid
   evolveProcessId    String?  @map("evolve_process_id") @db.Uuid
   createdAt          DateTime @default(now()) @map("created_at")
+  approved           Boolean  @default(false)
 
   /// Parent process for this process version 
   process                  Process          @relation("Process", fields: [processId], references: [id], onDelete: Cascade)
@@ -274,6 +275,7 @@ enum InputTemplateDataType {
   Float
   Text
   Uri
+  StringArray
 
   @@map("input_template_data_types")
 }

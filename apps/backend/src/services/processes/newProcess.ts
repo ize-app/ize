@@ -1,6 +1,6 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { ActionType,  ProcessType } from "@prisma/client";
+import { ActionType, ProcessType } from "@prisma/client";
 
 import { NewProcessArgs } from "frontend/src/graphql/generated/graphql";
 import { newEvolveProcess } from "./newEvolveProcess";
@@ -57,7 +57,7 @@ export const newCustomProcess = async (
       newActionRecord = await createAction(
         {
           type: ActionType.customWebhook,
-          webhookUri: action.webhook.uri,
+          action,
           filterOptionId: webhookTriggerFilterOption
             ? webhookTriggerFilterOption?.id
             : null,
@@ -90,6 +90,7 @@ export const newCustomProcess = async (
               decisionSystemId: decisionRecord.id,
               roleSetId: roleSetRecord.id,
               actionId: newActionRecord?.id,
+              approved: true,
               evolveProcessId,
             },
           ],
