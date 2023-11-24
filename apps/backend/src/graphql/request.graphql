@@ -25,12 +25,24 @@ type Request {
   createdAt: String!
   responses: Responses!
   result: Result
+  evolveProcessChanges: [EvolveProcessesDiff]!
 }
 
 type Responses {
   userResponse: Response
   allResponses: [Response!]!
   responseCount: [ResponseCount!]!
+}
+
+type EvolveProcessesDiff {
+  processName: String!
+  processId: String!
+  changes: ProposedProcessEvolution!
+}
+
+type ProposedProcessEvolution {
+  current: Process!
+  proposed: Process!
 }
 
 type Result {

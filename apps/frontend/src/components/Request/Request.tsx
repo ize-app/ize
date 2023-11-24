@@ -153,6 +153,7 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.request as RequestSummaryPartsFragment;
+  console.log("request is ", request);
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));

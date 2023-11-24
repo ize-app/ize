@@ -6,25 +6,26 @@ const editProcesses = async ({
   processVersions: string;
 }) => {
   try {
-    const processVersionArray = JSON.parse(processVersions);
+    type ProcessIdChanges = [oldId: string, newId: string];
+    const processVersionArray: ProcessIdChanges[] = JSON.parse(processVersions);
     await prisma.$transaction(async (transaction) => {
       // update current process version of main process
       // set process version accepted to true
 
       await Promise.all(
-        processVersionArray.map(async (processVersionId: string) => {
+        processVersionArray.map(async (processVersionChange) => {
           const updatedVersion = await transaction.processVersion.update({
             data: {
               approved: true,
             },
             where: {
-              id: processVersionId,
+              id: processVersionChange[1],
             },
           });
 
           await transaction.process.update({
             data: {
-              currentProcessVersionId: processVersionId,
+              currentProcessVersionId: processVersionChange[1],
             },
             where: {
               id: updatedVersion.processId,

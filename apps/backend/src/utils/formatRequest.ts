@@ -2,8 +2,9 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { resultInclude, formatResult } from "./formatResult";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
-import { formatProcessVersion } from "../utils/formatProcess";
+import { formatProcess, formatProcessVersion } from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
+import { prisma } from "../prisma/client";
 
 import { processVersionInclude } from "../utils/formatProcess";
 import {
@@ -11,6 +12,7 @@ import {
   Process,
   InputTemplate,
   RequestInput,
+  EvolveProcessesDiff,
 } from "frontend/src/graphql/generated/graphql";
 
 export const requestInputInclude =
@@ -44,10 +46,10 @@ type RequestPrismaType = Prisma.RequestGetPayload<{
   include: typeof requestInclude;
 }>;
 
-export const formatRequest = (
+export const formatRequest = async (
   requestData: RequestPrismaType,
   userId?: string,
-): Request => {
+): Promise<Request> => {
   const process: Process = {
     ...formatProcessVersion(requestData.processVersion),
     id: requestData.processVersion.process.id,
@@ -63,7 +65,8 @@ export const formatRequest = (
     requestData.requestInputs,
   );
 
-  const req: Request = {
+
+  const req: Request = await {
     id: requestData.id,
     name: name,
     creator: formatUser(requestData.creator),
@@ -73,6 +76,10 @@ export const formatRequest = (
     createdAt: requestData.createdAt.toString(),
     responses: formatResponses(requestData.responses, process.options, userId),
     result: formatResult(requestData.result, process.options),
+    evolveProcessChanges:
+      process.type === "Evolve"
+        ? await formatEvolveProcessChanges(inputs)
+        : null,
   };
 
   return req;
@@ -101,3 +108,71 @@ const formatInputs = (
 
   return [titleInput.value, inputsWithValue];
 };
+
+const formatEvolveProcessChanges = async (
+  inputs: RequestInput[],
+): Promise<EvolveProcessesDiff[]> => {
+  type ProcessIdChanges = [oldId: string, newId: string];
+
+  const processVersionsArrayString = inputs.find(
+    (input) => (input.name = "Process versions"),
+  ).value;
+  const processVersionArray: ProcessIdChanges[] = JSON.parse(
+    processVersionsArrayString,
+  );
+
+  const processVersionIdArray = processVersionArray.flat();
+
+  const processVersions = await prisma.processVersion.findMany({
+    where: {
+      id: { in: [...processVersionIdArray] },
+    },
+    include: processVersionInclude,
+  });
+
+  //@ts-ignore
+  const formattedProcesses: Process[] = processVersions.map(
+    (processVersion) => ({
+      ...formatProcessVersion(processVersion),
+      id: processVersion.process.id,
+      createdAt: processVersion.process.createdAt.toString(),
+      //@ts-ignore
+      type: processVersion.process.type,
+      currentProcessVersionId: processVersion.id,
+    }),
+  );
+
+  // const processes: EvolveProcessesDiff = Promise.all(processVersionArray.map());
+  const changes: EvolveProcessesDiff[] = processVersionArray.map(
+    (versionChangeArray) => {
+      const [oldId, newId] = versionChangeArray;
+      const currentProcess = formattedProcesses.find(
+        (process) => process.currentProcessVersionId === oldId,
+      );
+      const proposedProcess = formattedProcesses.find(
+        (process) => process.currentProcessVersionId === newId,
+      );
+      return {
+        processId: currentProcess.id,
+        processName: currentProcess.name,
+        changes: {
+          current: currentProcess,
+          proposed: proposedProcess,
+        },
+      };
+    },
+  );
+
+  return changes;
+};
+
+// type EvolveProcessesDiff {
+//   processName: String!
+//   processId: String!
+//   changes: ProposedProcessEvolution!
+// }
+
+// type ProposedProcessEvolution {
+//   old: Process!
+//   proposed: Process!
+// }

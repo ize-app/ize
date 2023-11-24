@@ -50,6 +50,31 @@ fragment RequestSummaryParts on Request {
   result {
     ...ResultSummaryParts
   }
+  evolveProcessChanges {
+    ...EvolveProcessChangesSummaryParts
+  }
+}
+
+fragment EvolveProcessChangesSummaryParts on EvolveProcessesDiff {
+  processName
+  processId
+  changes {
+    ...ProposedProcessEvolutionSummaryParts
+  }
+}
+
+fragment ProposedProcessEvolutionSummaryParts on ProposedProcessEvolution {
+  current {
+    ...ProcessSummaryParts
+  }
+  proposed {
+    ...ProcessSummaryParts
+  }
+}
+
+type ProposedProcessEvolution {
+  current: Process!
+  proposed: Process!
 }
 
 fragment RequestInputSummaryParts on RequestInput {

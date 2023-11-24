@@ -20,7 +20,7 @@ const executeAction = async ({
     },
   });
 
-  const request = formatRequest(reqRaw);
+  const request = await formatRequest(reqRaw);
 
   if (!request.process.action) return;
 
