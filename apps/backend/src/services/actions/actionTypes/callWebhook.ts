@@ -17,7 +17,7 @@ const callWebhook = async ({
     }
     return true;
   } catch (e) {
-    console.log("Custom webhook error: ", e);
+    console.log("Call webhook action error: ", e);
     return false;
   }
 };

@@ -232,7 +232,7 @@ export const formatDecisionSystem = (
   else if (decisionSystem.type === "Percentage")
     return {
       __typename: "PercentageDecision",
-      quorum: decisionSystem.absoluteDecisionSystem.threshold,
+      quorum: decisionSystem.percentageDecisionSystem.quorum,
       percentage: decisionSystem.percentageDecisionSystem.percentage,
     };
 };

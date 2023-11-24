@@ -81,7 +81,7 @@ export const newEditRequestService = async (
       )
     : null;
 
-  const actionOptionFilterId = args.evolvedProcess.action
+  const actionOptionFilterId = args.evolvedProcess.action?.optionTrigger
     ? (
         newOptionSystem ?? currOptionSystem
       ).defaultProcessOptionSet.options.find(
@@ -188,6 +188,7 @@ export const newEditRequestService = async (
             )
           ).id
         : currEvolveVers.roleSetId,
+      actionId: currEvolveVers.actionId,
     },
   };
 
@@ -223,7 +224,9 @@ export const newEditRequestService = async (
           },
           {
             inputId: evolveRequestProcessVersionInput.id,
-            value: newProcessVersions.map((version) => version.id).toString(),
+            value: await JSON.stringify(
+              newProcessVersions.map((version) => version.id),
+            ),
           },
         ],
       },

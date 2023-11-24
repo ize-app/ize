@@ -1,4 +1,7 @@
-import { ActionForm } from "@/components/shared/Form/ProcessForm/types";
+import {
+  ActionForm,
+  defaultWebhookTriggerOption,
+} from "@/components/shared/Form/ProcessForm/types";
 
 import { ActionArgs } from "../../../../../graphql/generated/graphql";
 
@@ -7,7 +10,10 @@ const createActionInputs = (
 ): ActionArgs | undefined =>
   action?.webhook.uri
     ? {
-        optionTrigger: action.optionTrigger as string,
+        optionTrigger:
+          action.optionTrigger === defaultWebhookTriggerOption.value
+            ? null
+            : (action.optionTrigger as string),
         webhook: {
           uri: action.webhook.uri,
         },
