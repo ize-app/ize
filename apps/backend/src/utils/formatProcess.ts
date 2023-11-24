@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ProcessType } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
@@ -12,10 +12,14 @@ import {
   AbsoluteDecision,
   PercentageDecision,
   Roles,
+  ParentProcess,
 } from "frontend/src/graphql/generated/graphql";
 
 export interface ProcessVersion
-  extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId"> {}
+  extends Omit<
+    Process,
+    "id" | "createdAt" | "currentProcessVersionId" | "type"
+  > {}
 
 export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   roleGroups: {
@@ -76,6 +80,14 @@ type ActionPrismaType = Prisma.ActionGetPayload<{
   include: typeof actionInclude;
 }>;
 
+const parentInclude = Prisma.validator<Prisma.ProcessInclude>()({
+  currentProcessVersion: true,
+});
+
+type ParentPrismaType = Prisma.ProcessGetPayload<{
+  include: typeof parentInclude;
+}>;
+
 export const processVersionInclude =
   Prisma.validator<Prisma.ProcessVersionInclude>()({
     creator: {
@@ -98,6 +110,11 @@ export const processVersionInclude =
     },
     roleSet: {
       include: roleSetInclude,
+    },
+    parentProcess: {
+      include: {
+        currentProcessVersion: true,
+      },
     },
   });
 
@@ -131,20 +148,22 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
   include: typeof editProcessInclude;
 }>;
 
-interface customActionConfig {
-  uri: string;
-}
-
 export const formatProcess = (processData: ProcessPrismaType): Process => {
+  console.log("inside process data", processData);
   const { currentProcessVersion } = processData;
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
-  const data = {
+  const data: Process = {
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
+    //@ts-ignore
+    type: processData.type,
     createdAt: processData.createdAt.toString(),
-    evolve: formatEvolveProcess(currentProcessVersion.evolveProcess),
+    evolve:
+      processData.type === "Evolve"
+        ? null
+        : formatEvolveProcess(currentProcessVersion.evolveProcess),
     ...formattedProcessVersion,
   };
   return data;
@@ -157,10 +176,12 @@ export const formatEvolveProcess = (
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
-  const data = {
+  const data: Process = {
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
     createdAt: processData.createdAt.toString(),
+    //@ts-ignore
+    type: processData.type,
     ...formattedProcessVersion,
   };
   return data;
@@ -176,12 +197,17 @@ export const formatProcessVersion = (
     decisionSystem,
     action,
     roleSet,
+    parentProcess,
   } = processVersion;
 
   const options = formatOptions(optionSystem);
 
   const data: ProcessVersion = {
-    name: processVersion.name,
+    name: formatName(
+      processVersion.name,
+      processVersion.process.type,
+      processVersion.parentProcess,
+    ),
     description: processVersion.description,
     expirationSeconds: processVersion.expirationSeconds,
     creator: formatUser(creator),
@@ -199,10 +225,21 @@ export const formatProcessVersion = (
         }),
       ),
     action: action ? formatAction(action, options) : undefined,
+    parent: formatParent(processVersion.parentProcess),
     roles: formatRoles(roleSet),
   };
 
   return data;
+};
+
+const formatName = (
+  name: string,
+  type: ProcessType,
+  parent: ParentPrismaType | null,
+) => {
+  if (type === "Evolve" && parent) {
+    return `Evolve process of "${parent.currentProcessVersion.name}"`;
+  } else return name;
 };
 
 const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
@@ -275,4 +312,15 @@ export const formatAction = (
         },
       };
   }
+};
+
+export const formatParent = (
+  parent: ParentPrismaType,
+): ParentProcess | null => {
+  if (parent)
+    return {
+      id: parent.id,
+      name: parent.currentProcessVersion.name,
+    };
+  else return null;
 };

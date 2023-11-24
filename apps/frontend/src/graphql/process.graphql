@@ -42,6 +42,7 @@ fragment BaseProcessSummaryParts on Process {
   name
   description
   expirationSeconds
+  type
   options {
     ...OptionSummaryParts
   }
@@ -56,6 +57,9 @@ fragment BaseProcessSummaryParts on Process {
   }
   action {
     ...ActionSummaryParts
+  }
+  parent {
+    ...ParentProcessSummaryParts
   }
   createdAt
 }
@@ -101,6 +105,11 @@ fragment RoleSummaryParts on Roles {
   edit {
     ...AgentSummaryParts
   }
+}
+
+fragment ParentProcessSummaryParts on ParentProcess {
+  id
+  name
 }
 
 fragment AbsoluteDecisionSummaryParts on AbsoluteDecision {

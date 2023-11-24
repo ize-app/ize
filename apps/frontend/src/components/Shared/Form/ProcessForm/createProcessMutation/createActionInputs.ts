@@ -8,7 +8,7 @@ import { ActionArgs } from "../../../../../graphql/generated/graphql";
 const createActionInputs = (
   action: ActionForm | undefined,
 ): ActionArgs | undefined =>
-  action?.webhook.uri
+  action?.webhook?.uri
     ? {
         optionTrigger:
           action.optionTrigger === defaultWebhookTriggerOption.value

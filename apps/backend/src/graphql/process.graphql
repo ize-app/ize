@@ -62,6 +62,7 @@ type Process {
   description: String
   expirationSeconds: Int!
   creator: User!
+  type: ProcessType!
   options: [ProcessOption!]!
   inputs: [InputTemplate!]!
   action: Action
@@ -70,7 +71,13 @@ type Process {
   # not making evolve required because the evolve process needs to leave out
   # it's own edit process to avoid infinite recursion
   evolve: Process
+  parent: ParentProcess
   createdAt: String!
+}
+
+enum ProcessType {
+  Custom
+  Evolve
 }
 
 type ProcessOption {
@@ -83,6 +90,11 @@ type Action {
   id: String!
   optionFilter: ProcessOption
   actionDetails: ActionType
+}
+
+type ParentProcess {
+  name: String!
+  id: String!
 }
 
 union ActionType = WebhookAction | EvolveProcessAction

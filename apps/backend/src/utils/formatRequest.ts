@@ -52,6 +52,8 @@ export const formatRequest = (
     ...formatProcessVersion(requestData.processVersion),
     id: requestData.processVersion.process.id,
     createdAt: requestData.processVersion.process.createdAt.toString(),
+    //@ts-ignore
+    type: requestData.processVersion.process.type,
     currentProcessVersionId:
       requestData.processVersion.process.currentProcessVersionId,
   };

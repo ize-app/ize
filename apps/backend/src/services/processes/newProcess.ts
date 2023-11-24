@@ -98,6 +98,19 @@ export const newCustomProcess = async (
       },
     });
 
+
+    // add process parent ID to evolve process
+    await transaction.processVersion.updateMany({
+      data: {
+        parentProcessId: processRecord.id,
+      },
+      where: {
+        process: {
+          id: evolveProcessId,
+        },
+      },
+    });
+
     const finalProcessRecord = await transaction.process.update({
       where: {
         id: processRecord.id,

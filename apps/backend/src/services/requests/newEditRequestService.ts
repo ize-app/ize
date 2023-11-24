@@ -189,6 +189,7 @@ export const newEditRequestService = async (
           ).id
         : currEvolveVers.roleSetId,
       actionId: currEvolveVers.actionId,
+      parentProcessId: currEvolveVers.parentProcessId,
     },
   };
 
@@ -220,7 +221,7 @@ export const newEditRequestService = async (
         requestInputs: [
           {
             inputId: evolveRequestTitleInput.id,
-            value: `Edit process of "${currVers.name}"`,
+            value: `Evolve process of "${currVers.name}"`,
           },
           {
             inputId: evolveRequestProcessVersionInput.id,
