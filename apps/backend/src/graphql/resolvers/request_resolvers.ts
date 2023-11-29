@@ -65,7 +65,7 @@ const request = async (
     },
   });
 
-  return formatRequest(req, context.currentUser.id);
+  return await formatRequest(req, context.currentUser.id);
 };
 
 const requestsForCurrentUser = async (

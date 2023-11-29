@@ -2,7 +2,11 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { resultInclude, formatResult } from "./formatResult";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
-import { formatProcess, formatProcessVersion } from "../utils/formatProcess";
+import {
+  ProcessVersionPrismaType,
+  formatProcess,
+  formatProcessVersion,
+} from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
 import { prisma } from "../prisma/client";
 
@@ -65,6 +69,10 @@ export const formatRequest = async (
     requestData.requestInputs,
   );
 
+  const evolveChanges =
+    process.type === "Evolve"
+      ? await formatEvolveProcessChanges(inputs, requestData.id)
+      : null;
 
   const req: Request = await {
     id: requestData.id,
@@ -76,10 +84,7 @@ export const formatRequest = async (
     createdAt: requestData.createdAt.toString(),
     responses: formatResponses(requestData.responses, process.options, userId),
     result: formatResult(requestData.result, process.options),
-    evolveProcessChanges:
-      process.type === "Evolve"
-        ? await formatEvolveProcessChanges(inputs)
-        : null,
+    evolveProcessChanges: evolveChanges,
   };
 
   return req;
@@ -111,9 +116,11 @@ const formatInputs = (
 
 const formatEvolveProcessChanges = async (
   inputs: RequestInput[],
+  requestId: string,
 ): Promise<EvolveProcessesDiff[]> => {
   type ProcessIdChanges = [oldId: string, newId: string];
 
+  // string arrays of changes between process Versions
   const processVersionsArrayString = inputs.find(
     (input) => (input.name = "Process versions"),
   ).value;
@@ -123,6 +130,7 @@ const formatEvolveProcessChanges = async (
 
   const processVersionIdArray = processVersionArray.flat();
 
+  // get both the current / proposed process versions from db
   const processVersions = await prisma.processVersion.findMany({
     where: {
       id: { in: [...processVersionIdArray] },
@@ -130,34 +138,29 @@ const formatEvolveProcessChanges = async (
     include: processVersionInclude,
   });
 
-  //@ts-ignore
-  const formattedProcesses: Process[] = processVersions.map(
-    (processVersion) => ({
-      ...formatProcessVersion(processVersion),
-      id: processVersion.process.id,
-      createdAt: processVersion.process.createdAt.toString(),
-      //@ts-ignore
-      type: processVersion.process.type,
-      currentProcessVersionId: processVersion.id,
-    }),
-  );
-
-  // const processes: EvolveProcessesDiff = Promise.all(processVersionArray.map());
   const changes: EvolveProcessesDiff[] = processVersionArray.map(
     (versionChangeArray) => {
       const [oldId, newId] = versionChangeArray;
-      const currentProcess = formattedProcesses.find(
-        (process) => process.currentProcessVersionId === oldId,
-      );
-      const proposedProcess = formattedProcesses.find(
-        (process) => process.currentProcessVersionId === newId,
-      );
+
+      // finding the current process
+      const currentProcessVersion = processVersions.find((vers) => {
+        return vers.id === oldId;
+      });
+      const proposedProcessVersion = processVersions.find((vers) => {
+        return vers.id === newId;
+      });
+
+      const currentProcess = processVersionToProcess(currentProcessVersion);
+      const proposedProcess = processVersionToProcess(proposedProcessVersion);
+      // adding suffic at end because apollo's caching
+      proposedProcess.id = proposedProcess.id + "_proposed_" + requestId;
+
       return {
         processId: currentProcess.id,
         processName: currentProcess.name,
         changes: {
-          current: currentProcess,
-          proposed: proposedProcess,
+          current: { ...currentProcess },
+          proposed: { ...proposedProcess },
         },
       };
     },
@@ -166,13 +169,15 @@ const formatEvolveProcessChanges = async (
   return changes;
 };
 
-// type EvolveProcessesDiff {
-//   processName: String!
-//   processId: String!
-//   changes: ProposedProcessEvolution!
-// }
-
-// type ProposedProcessEvolution {
-//   old: Process!
-//   proposed: Process!
-// }
+const processVersionToProcess = (
+  processVersion: ProcessVersionPrismaType,
+): Process => {
+  return {
+    ...formatProcessVersion(processVersion),
+    id: processVersion.process.id,
+    createdAt: processVersion.process.createdAt.toString(),
+    //@ts-ignore
+    type: processVersion.process.type,
+    currentProcessVersionId: processVersion.id,
+  };
+};

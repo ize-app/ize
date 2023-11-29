@@ -155,6 +155,7 @@ export const ProcessFormConfirmationTable = ({
   return (
     <TableContainer
       sx={{
+        marginBottom: "16px",
         overflowX: "initial",
         [`& :last-of-type.${tableRowClasses.root}`]: {
           [`& .${tableCellClasses.root}`]: {

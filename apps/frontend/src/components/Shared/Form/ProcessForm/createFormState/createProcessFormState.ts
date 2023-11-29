@@ -34,7 +34,9 @@ const createProcessFormState = (
       process.expirationSeconds,
     ),
     action: createActionFormState(process.action ?? undefined),
-    evolve: createEvolveFormState(process.evolve as Process),
+    evolve: process.evolve
+      ? createEvolveFormState(process.evolve as Process)
+      : undefined,
   };
 };
 

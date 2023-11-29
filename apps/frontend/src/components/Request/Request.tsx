@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
   AgentSummaryPartsFragment,
+  ProcessSummaryPartsFragment,
   RequestDocument,
   RequestSummaryPartsFragment,
   Response,
@@ -35,6 +36,7 @@ import {
 } from "../shared/Request";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
 import { ResponseList } from "../shared/Request/ResponseList";
+import ProcessEvolveRequestDiff from "../shared/Request/ProcessEvolveRequestDiff";
 
 export default function HorizontalBars({
   responseCounts,
@@ -153,7 +155,6 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.request as RequestSummaryPartsFragment;
-  console.log("request is ", request);
 
   const theme = useTheme();
   const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -302,7 +303,27 @@ export const Request = () => {
               },
             }}
           >
-            {request.inputs.length === 0 ? null : (
+            {request.evolveProcessChanges &&
+              request.evolveProcessChanges.map((change) => (
+                <>
+                  <Accordion
+                    label={`Proposed evolution: "${change?.processName}"`}
+                    id="proposed-process-evolution-panel"
+                    defaultExpanded={true}
+                  >
+                    <ProcessEvolveRequestDiff
+                      current={
+                        change?.changes.current as ProcessSummaryPartsFragment
+                      }
+                      proposed={
+                        change?.changes.proposed as ProcessSummaryPartsFragment
+                      }
+                    />
+                  </Accordion>
+                </>
+              ))}
+            {request.inputs.length === 0 ||
+            request.evolveProcessChanges ? null : (
               <Accordion
                 label="Request details"
                 id="request-details-panel"
@@ -312,7 +333,11 @@ export const Request = () => {
               </Accordion>
             )}
             <Accordion
-              label="Process details"
+              label={
+                request.evolveProcessChanges
+                  ? "Evolve process details"
+                  : "Process details"
+              }
               id="process-details-panel"
               defaultExpanded={isOverMdScreen}
             >

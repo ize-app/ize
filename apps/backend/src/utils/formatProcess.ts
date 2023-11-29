@@ -118,7 +118,7 @@ export const processVersionInclude =
     },
   });
 
-type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
+export type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
   include: typeof processVersionInclude;
 }>;
 
@@ -149,7 +149,6 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
 }>;
 
 export const formatProcess = (processData: ProcessPrismaType): Process => {
-  console.log("inside process data", processData);
   const { currentProcessVersion } = processData;
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);

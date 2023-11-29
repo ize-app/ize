@@ -25,7 +25,7 @@ type Request {
   createdAt: String!
   responses: Responses!
   result: Result
-  evolveProcessChanges: [EvolveProcessesDiff]!
+  evolveProcessChanges: [EvolveProcessesDiff]
 }
 
 type Responses {
