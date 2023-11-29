@@ -5,9 +5,8 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
-import { generatePath, useNavigate, useParams } from "react-router-dom";
+import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 
-import { CommunityRolesTable } from "./CommunityRolesTable";
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
@@ -33,8 +32,11 @@ import RequestTab, {
   FilterOptions,
 } from "../shared/Tables/RequestsTable/RequestTab";
 
+import { Route } from "../../routers/routes";
+
 export const Process = () => {
   const { processId: processIdShort } = useParams();
+
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
   const processId: string = shortUUIDToFull(processIdShort as string);
@@ -63,6 +65,8 @@ export const Process = () => {
 
   const process = processData?.process as ProcessSummaryPartsFragment;
 
+  console.log("process data is , ", process, "error is ", processError);
+
   const requests =
     requestData?.requestsForProcess as RequestSummaryPartsFragment[];
 
@@ -72,9 +76,9 @@ export const Process = () => {
     setSnackbarData({ message: "Cannot find this process", type: "error" });
   };
 
-  return processError ? (
-    onError()
-  ) : processLoading || !process ? (
+  // if (processError) onError();
+
+  return processLoading || !process ? (
     <Loading />
   ) : (
     <PageContainer>
@@ -88,11 +92,25 @@ export const Process = () => {
             <Typography variant={"h1"} marginTop="8px">
               {process.name}
             </Typography>
+            {process.parent && (
+              <Typography variant={"body1"} marginTop="8px">
+                Part of process:{" "}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  to={generatePath(Route.Process, {
+                    processId: fullUUIDToShort(process.parent?.id),
+                  })}
+                >
+                  {process.parent.name}
+                </Link>
+              </Typography>
+            )}
           </Box>
           <Typography>{process.description}</Typography>
           <br />
           {process.action &&
-          process.action.actionDetails.__typename === "WebhookAction" ? (
+          process.action?.actionDetails?.__typename === "WebhookAction" ? (
             <SummarizeAction
               uri={process.action.actionDetails.uri}
               optionTrigger={process.action.optionFilter?.value}
@@ -102,44 +120,69 @@ export const Process = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              marginTop: "16px",
+              marginTop: "8px",
               gap: "16px",
             }}
           >
-            <Button
-              variant="contained"
-              sx={{
-                width: "140px",
-                // TODO: Query user roles from group/individual
-                display: true ? "flex" : "none",
-              }}
-              onClick={() =>
-                navigate(
-                  generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                    processId: fullUUIDToShort(processId),
-                  }),
-                )
-              }
-            >
-              Create request
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                navigate(
-                  generatePath(editProcessRoute(EditProcessRoute.Intro), {
-                    processId: fullUUIDToShort(process.id),
-                  }),
-                );
-              }}
-              sx={{
-                width: "140px",
-                // TODO: Query user roles from group/individual
-                display: true ? "flex" : "none",
-              }}
-            >
-              Edit process
-            </Button>
+            {process.type !== "Evolve" ? (
+              <>
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "140px",
+                    // TODO: Query user roles from group/individual
+                    display: true ? "flex" : "none",
+                  }}
+                  onClick={() =>
+                    navigate(
+                      generatePath(
+                        newRequestRoute(NewRequestRoute.CreateRequest),
+                        {
+                          processId: fullUUIDToShort(processId),
+                        },
+                      ),
+                    )
+                  }
+                >
+                  Create request
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    navigate(
+                      generatePath(editProcessRoute(EditProcessRoute.Intro), {
+                        processId: fullUUIDToShort(process.id),
+                      }),
+                    );
+                  }}
+                  sx={{
+                    width: "140px",
+                    // TODO: Query user roles from group/individual
+                    display: true ? "flex" : "none",
+                  }}
+                >
+                  Evolve process
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate(
+                    generatePath(editProcessRoute(EditProcessRoute.Intro), {
+                      processId: fullUUIDToShort(process.parent?.id as string),
+                    }),
+                  );
+                }}
+                sx={{
+                  width: "140px",
+                  // TODO: Query user roles from group/individual
+                  display: true ? "flex" : "none",
+                }}
+              >
+                Evolve Process
+              </Button>
+            )}
           </Box>
         </Box>
         <Box sx={{ maxWidth: "800px" }}>
@@ -150,9 +193,13 @@ export const Process = () => {
           >
             <DecisionSystemSummaryTable process={process} />
           </Accordion>
-          <Accordion label="Community roles" id="community-role-panel">
-            <CommunityRolesTable process={process} />
-          </Accordion>
+          {process.type !== "Evolve" && (
+            <Accordion label="How process evolves" id="decision-panel">
+              <DecisionSystemSummaryTable
+                process={process.evolve as ProcessSummaryPartsFragment}
+              />
+            </Accordion>
+          )}
           <Accordion label="Request format" id="request-format-panel">
             <RequestTemplateTable process={process} />
           </Accordion>

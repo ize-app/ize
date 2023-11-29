@@ -2,6 +2,7 @@ import { requestInclude, formatRequest } from "../../utils/formatRequest";
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import callWebhook from "./actionTypes/callWebhook";
+import editProcesses from "./actionTypes/editProcesses";
 
 const executeAction = async ({
   requestId,
@@ -10,7 +11,7 @@ const executeAction = async ({
   requestId: string;
   transaction?: Prisma.TransactionClient;
 }) => {
-  let wasSuccess: boolean;
+  let wasSuccess: boolean = false;
 
   const reqRaw = await transaction.request.findFirst({
     include: requestInclude,
@@ -19,22 +20,33 @@ const executeAction = async ({
     },
   });
 
-  const request = formatRequest(reqRaw);
+  const request = await formatRequest(reqRaw);
 
-  if (request.process.action.actionDetails.__typename === "WebhookAction") {
-    wasSuccess = await callWebhook({
-      uri: request.process.action.actionDetails.uri,
-      payload: request,
-    });
+  if (!request.process.action) return;
 
-    await transaction.actionAttempt.create({
-      data: {
-        resultId: request.result.id,
-        actionId: request.process.action.id,
-        success: wasSuccess,
-      },
-    });
+  switch (request.process.action.actionDetails.__typename) {
+    case "WebhookAction":
+      wasSuccess = await callWebhook({
+        uri: request.process.action.actionDetails.uri,
+        payload: request,
+      });
+    case "EvolveProcessAction":
+      const processVersions = request.inputs.find(
+        (input) => (input.name = "Process versions"),
+      ).value;
+
+      wasSuccess = await editProcesses({
+        processVersions: processVersions,
+      });
   }
+
+  await transaction.actionAttempt.create({
+    data: {
+      resultId: request.result.id,
+      actionId: request.process.action.id,
+      success: wasSuccess,
+    },
+  });
 };
 
 export default executeAction;

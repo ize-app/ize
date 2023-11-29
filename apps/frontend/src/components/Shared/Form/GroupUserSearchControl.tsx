@@ -14,7 +14,7 @@ interface GroupUserSearchControlProps {
   control: Control;
   name: string;
   label: string;
-  agents: AgentSummaryPartsFragment[];
+  agents: AgentSummaryPartsFragment[] | undefined;
 }
 
 export const GroupUserSearchControl = ({
@@ -35,7 +35,7 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={agents.map((agent) => {
+            options={(agents ?? []).map((agent) => {
               const reformattedAgent = {
                 ...reformatAgentForAvatar(agent),
               };

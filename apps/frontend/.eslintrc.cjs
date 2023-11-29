@@ -13,6 +13,9 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
+  "import/resolver": {
+    typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",

@@ -2,13 +2,14 @@ import { useQuery } from "@apollo/client";
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useEditProcessWizardState } from "./editProcessWizard";
-import { processToFormState } from "./helpers/formatProcessDataToFormState";
-import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { ProcessDocument } from "../../graphql/generated/graphql";
-import { shortUUIDToFull } from "../../utils/inputs";
-import { WizardBody, WizardNav } from "../shared/Wizard";
-export const Intro = () => {
+import { useEditProcessWizardState } from "../../../../EditProcess/editProcessWizard";
+import createProcessFormState from "../createFormState/createProcessFormState";
+import { SnackbarContext } from "../../../../../contexts/SnackbarContext";
+import { ProcessDocument } from "../../../../../graphql/generated/graphql";
+import { shortUUIDToFull } from "../../../../../utils/inputs";
+import { WizardBody, WizardNav } from "../../../Wizard";
+
+export const EditProcessIntro = () => {
   const { onNext, nextLabel, onPrev, setParams, setFormState } =
     useEditProcessWizardState();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
@@ -25,7 +26,7 @@ export const Intro = () => {
       processId: processId,
     },
     onCompleted: (data) => {
-      const formState = processToFormState(data.process);
+      const formState = createProcessFormState(data.process);
       setFormState((prev) => ({
         ...prev,
         currentProcess: { ...formState },

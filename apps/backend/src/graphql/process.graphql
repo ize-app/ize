@@ -16,37 +16,38 @@ type Query {
 input newProcessArgs {
   name: String!
   description: String
-  expirationSeconds: Int!
   options: [ProcessOptionArgs!]!
   inputs: [InputTemplateArgs!]!
-  absoluteDecision: AbsoluteDecisionArgs
-  percentageDecision: PercentageDecisionArgs
+  decision: DecisionArgs!
   roles: [RoleArgs!]!
   action: ActionArgs
-  editProcessId: String
+  evolve: EvolveArgs!
 }
 
 input ActionArgs {
   optionTrigger: String
-  webhook: WebhookActionArgs!
+  webhook: WebhookActionArgs
 }
 
 input WebhookActionArgs {
   uri: String!
 }
 
-input newEditProcessRequestArgs {
-  processId: String!
-  name: String
-  description: String
-  expirationSeconds: Int
-  options: [ProcessOptionArgs!]
-  inputs: [InputTemplateArgs!]
+input DecisionArgs {
+  expirationSeconds: Int!
   absoluteDecision: AbsoluteDecisionArgs
   percentageDecision: PercentageDecisionArgs
-  roles: [RoleArgs!]
-  action: ActionArgs
-  editProcessId: String
+}
+
+input EvolveArgs {
+  decision: DecisionArgs!
+  roles: [RoleArgs!]!
+}
+
+input newEditProcessRequestArgs {
+  processId: String!
+  currentProcess: newProcessArgs!
+  evolvedProcess: newProcessArgs!
 }
 
 input ProcessOptionArgs {
@@ -61,12 +62,22 @@ type Process {
   description: String
   expirationSeconds: Int!
   creator: User!
+  type: ProcessType!
   options: [ProcessOption!]!
   inputs: [InputTemplate!]!
   action: Action
   roles: Roles!
   decisionSystem: DecisionTypes!
+  # not making evolve required because the evolve process needs to leave out
+  # it's own edit process to avoid infinite recursion
+  evolve: Process
+  parent: ParentProcess
   createdAt: String!
+}
+
+enum ProcessType {
+  Custom
+  Evolve
 }
 
 type ProcessOption {
@@ -78,11 +89,24 @@ type ProcessOption {
 type Action {
   id: String!
   optionFilter: ProcessOption
-  actionDetails: WebhookAction!
+  actionDetails: ActionType
 }
+
+type ParentProcess {
+  name: String!
+  id: String!
+}
+
+union ActionType = WebhookAction | EvolveProcessAction
 
 type WebhookAction {
   uri: String!
+}
+
+# using an object is useful here for the union of ActionType, but GraphQL doesn't let you add empty object
+# so I'm adding a dummy field here to allow it to work
+type EvolveProcessAction {
+  _: Boolean
 }
 
 enum OptionType {
@@ -112,6 +136,7 @@ enum InputDataType {
   Float
   Text
   Uri
+  StringArray
 }
 
 input RoleArgs {

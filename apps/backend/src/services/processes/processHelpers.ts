@@ -1,13 +1,13 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
-import { Prisma } from "@prisma/client";
+import { ActionType, Prisma } from "@prisma/client";
 
 import {
   ProcessOptionArgs,
   InputTemplateArgs,
-  AbsoluteDecisionArgs,
-  PercentageDecisionArgs,
   RoleArgs,
+  DecisionArgs,
+  ActionArgs,
 } from "frontend/src/graphql/generated/graphql";
 
 export const createOptionSystem = async (
@@ -71,56 +71,65 @@ export const createInputTemplateSet = async (
 
 export const createAction = async (
   {
-    webhookUri,
+    type,
+    action,
     filterOptionId,
     transaction = prisma,
   }: {
-    webhookUri: string;
+    type: ActionType;
+    action: ActionArgs;
     filterOptionId: string | null;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  return await transaction.action.create({
-    data: {
-      type: "customWebhook",
-      optionId: filterOptionId,
-      webhookAction: {
-        create: {
-          uri: webhookUri,
+  if (action?.webhook) {
+    return await transaction.action.create({
+      data: {
+        type: ActionType.customWebhook,
+        optionId: filterOptionId,
+        webhookAction: {
+          create: {
+            uri: action.webhook.uri,
+          },
         },
       },
-    },
-  });
+    });
+  } else if (type === ActionType.evolveProcess) {
+    return await transaction.action.create({
+      data: {
+        type: ActionType.evolveProcess,
+        optionId: filterOptionId,
+      },
+    });
+  }
 };
 
 export const createDecisionSystem = async (
   {
-    absoluteDecision,
-    percentageDecision,
+    decision,
     transaction = prisma,
   }: {
-    absoluteDecision?: AbsoluteDecisionArgs;
-    percentageDecision?: PercentageDecisionArgs;
+    decision: DecisionArgs;
     transaction?: Prisma.TransactionClient;
   },
   context: GraphqlRequestContext,
 ) => {
-  if (absoluteDecision)
+  if (decision.absoluteDecision)
     return await transaction.decisionSystem.create({
       data: {
         type: "Absolute",
         absoluteDecisionSystem: {
-          create: absoluteDecision,
+          create: decision.absoluteDecision,
         },
       },
     });
-  else if (percentageDecision) {
+  else if (decision.percentageDecision) {
     return await transaction.decisionSystem.create({
       data: {
         type: "Percentage",
         percentageDecisionSystem: {
-          create: percentageDecision,
+          create: decision.percentageDecision,
         },
       },
     });

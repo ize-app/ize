@@ -5,8 +5,12 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
-import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import {
+  ProcessSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "../../../../graphql/generated/graphql";
 import { RequestInputTable, SubmitResponse } from "../../Request";
+import ProcessEvolveRequestDiff from "../../Request/ProcessEvolveRequestDiff";
 
 export const ExpandedRequest = ({
   request,
@@ -92,12 +96,38 @@ export const ExpandedRequest = ({
             flexDirection: "column",
             alignItems: "flex-start",
             justifyContent: "center",
-            flex: "1 0 0",
+            flex: "2 0 0",
             alignSelf: "stretch",
             background: "var(--m-3-white, #FFF)",
           }}
         >
-          <RequestInputTable inputs={request.inputs} rowSize="small" />
+          {request.evolveProcessChanges ? (
+            <>
+              {request.evolveProcessChanges.map((change) => (
+                <>
+                  <Typography
+                    color="secondary"
+                    fontWeight={500}
+                    margin="8px 16px"
+                    width="100%"
+                    textAlign={"center"}
+                  >
+                    Proposed evolution of : '{change?.processName}''
+                  </Typography>
+                  <ProcessEvolveRequestDiff
+                    current={
+                      change?.changes.current as ProcessSummaryPartsFragment
+                    }
+                    proposed={
+                      change?.changes.proposed as ProcessSummaryPartsFragment
+                    }
+                  />
+                </>
+              ))}
+            </>
+          ) : (
+            <RequestInputTable inputs={request.inputs} rowSize="small" />
+          )}
         </Box>
       </Box>
       <Paper elevation={2}>

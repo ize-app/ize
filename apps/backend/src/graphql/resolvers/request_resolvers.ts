@@ -24,7 +24,7 @@ const newRequest = async (
   args: MutationNewRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newRequestService(root, args, context);
+  return await newRequestService({ args }, context);
 };
 
 const newResponse = async (
@@ -49,7 +49,7 @@ const newResponse = async (
   });
 
   await determineDecision({ requestId: args.requestId });
-  
+
   return response.id;
 };
 
@@ -65,14 +65,14 @@ const request = async (
     },
   });
 
-  return formatRequest(req, context.currentUser.id);
+  return await formatRequest(req, context.currentUser.id);
 };
 
 const requestsForCurrentUser = async (
   root: unknown,
   args: QueryRequestsForCurrentUserArgs,
   context: GraphqlRequestContext,
-): Promise<Request[]> => {
+): Promise<Promise<Request>[]> => {
   const requests = await prisma.request.findMany({
     include: requestInclude,
     where: {
@@ -134,8 +134,8 @@ const requestsForGroup = async (
     },
   });
 
-  return requests.map((request) =>
-    formatRequest(request, context.currentUser.id),
+  return Promise.all(
+    requests.map((request) => formatRequest(request, context.currentUser.id)),
   );
 };
 
@@ -153,8 +153,8 @@ const requestsForProcess = async (
     },
   });
 
-  return requests.map((request) =>
-    formatRequest(request, context.currentUser.id),
+  return Promise.all(
+    requests.map((request) => formatRequest(request, context.currentUser.id)),
   );
 };
 

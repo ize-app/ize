@@ -8,6 +8,8 @@ import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 import { summarizeDecisionSystem } from "../shared/Process/summarizeDecisionSystem";
+import { reformatAgentForAvatar } from "../shared/Avatar";
+import { AvatarsCell } from "../shared/Tables/TableCells";
 
 export const DecisionSystemSummaryTable = ({
   process,
@@ -27,11 +29,41 @@ export const DecisionSystemSummaryTable = ({
     >
       <Table aria-label="table" id={"decision-summary-table"}>
         <TableBody>
+          <TableRow id={"community-roles-row-1"}>
+            <TableCell>
+              <Typography variant="body1">
+                <span style={{ fontWeight: 500 }}>Request</span>
+                {/* : Who can
+                trigger this process */}
+              </Typography>
+            </TableCell>
+            <AvatarsCell
+              align="left"
+              avatars={process.roles.request.map((agent) =>
+                reformatAgentForAvatar(agent),
+              )}
+            />
+          </TableRow>
+          <TableRow id={"community-roles-row-2"}>
+            <TableCell>
+              <Typography variant="body1">
+                <span style={{ fontWeight: 500 }}>Respond</span>
+                {/* : Who can
+                respond to requests made by this process */}
+              </Typography>
+            </TableCell>
+            <AvatarsCell
+              align="left"
+              avatars={process.roles.respond.map((agent) =>
+                reformatAgentForAvatar(agent),
+              )}
+            />
+          </TableRow>
           <TableRow id={"decision-summary-row-1"}>
             <TableCell
               sx={(theme) => ({
                 [theme.breakpoints.up("sm")]: {
-                  width: "180px",
+                  width: "240px",
                 },
               })}
             >

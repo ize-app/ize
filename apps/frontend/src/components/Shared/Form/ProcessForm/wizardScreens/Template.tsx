@@ -11,132 +11,23 @@ import RadioGroup from "@mui/material/RadioGroup";
 import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+import { requestTemplateFormSchema } from "../formSchema";
+
+import { webhookTriggerFilterOptions } from "../helpers/optionHelpers";
+import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
 
 import {
   DefaultOptionSets,
   FormOptionChoice,
   HasCustomIntegration,
   defaultWebhookTriggerOption,
-  useNewProcessWizardState,
-} from "./newProcessWizard";
-import { RadioControl, SelectControl } from "../shared/Form";
-import { SelectOption } from "../shared/Form/SelectControl";
-import { WizardBody, WizardNav } from "../shared/Wizard";
+} from "@/components/shared/Form/ProcessForm/types";
+import { RadioControl, SelectControl } from "@/components/shared/Form";
+import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
-const webhookFormSchema = z.object({
-  hasWebhook: z.string().nonempty(),
-  uri: z.string().url("Please add a valid URL").optional(),
-});
+type FormFields = z.infer<typeof requestTemplateFormSchema>;
 
-const actionFormSchema = z.object({
-  optionTrigger: z.string().optional(),
-  webhook: webhookFormSchema,
-});
-
-const formSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .nonempty("Please add a valid title")
-      .max(140, "Please keep the name under 140 characters"),
-    description: z.string().trim().nonempty("Please add a valid description"),
-
-    options: z.string(),
-    customOptions: z
-      .array(
-        z
-          .string({ invalid_type_error: "Please only include text options" })
-          .trim()
-          .nonempty("Please only include text options"),
-      )
-      .min(1, "Add at least 1 option")
-      .optional(),
-    action: actionFormSchema,
-  })
-  .refine(
-    (data) => {
-      if (
-        data.action.webhook.hasWebhook === HasCustomIntegration.Yes &&
-        data.action.webhook.uri === ""
-      )
-        return false;
-      return true;
-    },
-    { path: ["webookUri"] },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.options === FormOptionChoice.Custom &&
-        data?.customOptions?.length === 0
-      )
-        return false;
-      return true;
-    },
-    { path: ["customOptions"] },
-  )
-  .refine(
-    (data) => {
-      if (
-        data.action.webhook.hasWebhook === HasCustomIntegration.Yes &&
-        webhookTriggerFilterOptions({
-          optionType: data.options,
-          customOptions: data.customOptions ?? [],
-        }).findIndex((option) => data.action.optionTrigger === option.value) ===
-          -1
-      )
-        return false;
-
-      return true;
-    },
-    {
-      path: ["webhookTriggerFilter"],
-      message:
-        "Please select an one of your options to be the webhook trigger.",
-    },
-  );
-
-type FormFields = z.infer<typeof formSchema>;
-
-const getOptionSet = ({
-  optionType,
-  customOptions,
-}: {
-  optionType: string;
-  customOptions: string[];
-}): string[] => {
-  const optionTypeCast = optionType as FormOptionChoice;
-
-  const options: string[] =
-    optionTypeCast === FormOptionChoice.Custom
-      ? customOptions ?? []
-      : DefaultOptionSets.get(optionTypeCast)?.data.map(
-          (option) => option.value,
-        ) ?? [];
-  return options;
-};
-
-const webhookTriggerFilterOptions = ({
-  optionType,
-  customOptions,
-}: {
-  optionType: string;
-  customOptions: string[];
-}): SelectOption[] => {
-  // react hook form converts everything to a string and the enum type is lost
-
-  const options = getOptionSet({ optionType, customOptions }).map((option) => ({
-    value: option,
-    name: option,
-  }));
-
-  options.unshift(defaultWebhookTriggerOption);
-
-  return options;
-};
-
-export const ProcessIntro = () => {
+export const Template = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
 
@@ -155,7 +46,7 @@ export const ProcessIntro = () => {
       options: formState.options ?? FormOptionChoice.Checkmark,
       customOptions: formState.customOptions ?? [],
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(requestTemplateFormSchema),
     shouldUnregister: true,
   });
 

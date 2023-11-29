@@ -10,36 +10,26 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useFieldArray, useForm } from "react-hook-form";
-import * as z from "zod";
 
-import { useNewProcessWizardState } from "./newProcessWizard";
+import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
 import {
   InputDataType,
   InputTemplateArgs,
-} from "../../graphql/generated/graphql";
-import {
-  CheckboxControl,
-  SelectControl,
-  TextFieldControl,
-} from "../shared/Form";
-import { WizardBody, WizardNav } from "../shared/Wizard";
+} from "../../../../../graphql/generated/graphql";
+import { CheckboxControl, SelectControl, TextFieldControl } from "../..";
+import { WizardBody, WizardNav } from "../../../Wizard";
+
+import { createInputTemplatesFormSchema } from "../formSchema";
 
 const fieldArrayName = "processInputs";
 
-const rowSchema = z.object({
-  name: z.string().trim().min(1),
-  description: z.string().trim(),
-  required: z.boolean(),
-  type: z.nativeEnum(InputDataType),
-});
-
-const formSchema = z.object({ [fieldArrayName]: z.array(rowSchema) });
+const inputTemplatesFormSchema = createInputTemplatesFormSchema(fieldArrayName);
 
 interface FormFields {
   processInputs: InputTemplateArgs[];
 }
 
-export const ProcessInputs = () => {
+export const TemplateInputs = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } =
     useNewProcessWizardState();
 
@@ -55,7 +45,7 @@ export const ProcessInputs = () => {
     });
 
   const { control, handleSubmit } = useForm<FormFields>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(inputTemplatesFormSchema),
     defaultValues: {
       [fieldArrayName]: intitialFormState,
     },
@@ -78,15 +68,7 @@ export const ProcessInputs = () => {
     <>
       <WizardBody>
         <Typography variant="body1">
-          This process is triggered by creating a{" "}
-          <span style={{ fontWeight: "bold" }}>request</span>. You can define
-          whether this process needs certain information to be triggered via{" "}
-          <span style={{ fontWeight: "bold" }}>input fields</span>. Input fields
-          help keep proposals consistent and make it easier to build
-          integrations with other tools. <br />
-          <br />
-          For example, a “Reimburse expense” process might have a required
-          “Amount” field on each proposal. <br />
+          Input fields define information that is required to be on each process.
         </Typography>
         <form>
           <TableContainer sx={{ overflowX: "auto" }}>

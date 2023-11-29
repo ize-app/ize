@@ -1,7 +1,7 @@
-import { RoleArgs, RoleType } from "../../../graphql/generated/graphql";
-import { ProcessRights } from "../newProcessWizard";
+import { ProcessRights } from "@/components/shared/Form/ProcessForm/types";
+import { RoleArgs, RoleType } from "../../../../../graphql/generated/graphql";
 
-export const formatRoles = (rights: ProcessRights): RoleArgs[] => {
+const createRoleInputs = (rights: ProcessRights): RoleArgs[] => {
   const request = rights?.request.map((role) => ({
     id: role.id,
     type: RoleType.Request,
@@ -15,3 +15,5 @@ export const formatRoles = (rights: ProcessRights): RoleArgs[] => {
 
   return request.concat(response);
 };
+
+export default createRoleInputs;

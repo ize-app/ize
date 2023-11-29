@@ -1,8 +1,9 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { ActionType, ProcessType } from "@prisma/client";
 
 import { NewProcessArgs } from "frontend/src/graphql/generated/graphql";
+import { newEvolveProcess } from "./newEvolveProcess";
 
 import {
   createOptionSystem,
@@ -16,49 +17,47 @@ export const newCustomProcess = async (
   {
     name,
     description,
-    expirationSeconds,
     options,
+    decision,
     inputs,
-    absoluteDecision,
-    percentageDecision,
     roles,
     action,
-    editProcessId,
+    evolve,
   }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {
-    let newAction;
-    const inputTemplateSet = await createInputTemplateSet(
+    let newActionRecord;
+    const inputTemplateSetRecord = await createInputTemplateSet(
       { inputs, transaction },
       context,
     );
 
-    const optionSystem = await createOptionSystem(
+    const optionSystemRecord = await createOptionSystem(
       { options, transaction },
       context,
     );
 
-    const decision = await createDecisionSystem(
+    const decisionRecord = await createDecisionSystem(
       {
-        absoluteDecision,
-        percentageDecision,
+        decision,
         transaction,
       },
       context,
     );
 
-    const roleSet = await createRoleSet({ roles, transaction }, context);
+    const roleSetRecord = await createRoleSet({ roles, transaction }, context);
 
-    if (action.webhook.uri) {
+    if (action?.webhook?.uri) {
       let webhookTriggerFilterOption =
-        optionSystem.defaultProcessOptionSet.options.find(
+        optionSystemRecord.defaultProcessOptionSet.options.find(
           (option) => option.value === action.optionTrigger,
         );
 
-      newAction = await createAction(
+      newActionRecord = await createAction(
         {
-          webhookUri: action.webhook.uri,
+          type: ActionType.customWebhook,
+          action,
           filterOptionId: webhookTriggerFilterOption
             ? webhookTriggerFilterOption?.id
             : null,
@@ -68,38 +67,57 @@ export const newCustomProcess = async (
       );
     }
 
-    const process = await transaction.process.create({
+    const evolveProcessId = await newEvolveProcess(
+      { evolve, transaction },
+      context,
+    );
+
+    const processRecord = await transaction.process.create({
       include: {
         processVersions: true,
       },
       data: {
-        type: "Custom",
+        type: ProcessType.Custom,
         processVersions: {
           create: [
             {
               name,
               description,
-              expirationSeconds,
-              // TODO: Why is this error not happening on the other file
-              creatorId: context?.currentUser?.id as string,
-              optionSystemId: optionSystem.id,
-              inputTemplateSetId: inputTemplateSet.id,
-              decisionSystemId: decision.id,
-              roleSetId: roleSet.id,
-              actionId: newAction?.id,
+              expirationSeconds: decision.expirationSeconds,
+              creatorId: context?.currentUser?.id,
+              optionSystemId: optionSystemRecord.id,
+              inputTemplateSetId: inputTemplateSetRecord.id,
+              decisionSystemId: decisionRecord.id,
+              roleSetId: roleSetRecord.id,
+              actionId: newActionRecord?.id,
+              approved: true,
+              evolveProcessId,
             },
           ],
         },
       },
     });
 
-    const finalProcess = await transaction.process.update({
-      where: {
-        id: process.id,
+
+    // add process parent ID to evolve process
+    await transaction.processVersion.updateMany({
+      data: {
+        parentProcessId: processRecord.id,
       },
-      data: { currentProcessVersionId: process.processVersions[0].id },
+      where: {
+        process: {
+          id: evolveProcessId,
+        },
+      },
     });
 
-    return finalProcess.id;
+    const finalProcessRecord = await transaction.process.update({
+      where: {
+        id: processRecord.id,
+      },
+      data: { currentProcessVersionId: processRecord.processVersions[0].id },
+    });
+
+    return finalProcessRecord.id;
   });
 };

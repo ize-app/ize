@@ -1,17 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { AuthRoute } from "./AuthRoute";
-import * as Routes from "./routes";
-import { _404 } from "../components/404";
-import * as EditProcess from "../components/EditProcess";
-import { Group } from "../components/Groups/Group";
-import { Home } from "../components/Home";
-import * as NewProcess from "../components/NewProcess";
-import * as NewRequest from "../components/NewRequest";
-import * as NewServerGroup from "../components/NewServerGroup";
-import { Process } from "../components/Process/Process";
-import { Request } from "../components/Request/Request";
-import { DefaultLayout } from "../layout/default";
+import { AuthRoute } from "@/routers/AuthRoute";
+import * as Routes from "@/routers/routes";
+import { _404 } from "@/components/404";
+import EditProcess from "@/components/EditProcess/EditProcess";
+import { Group } from "@/components/Groups/Group";
+import { Home } from "@/components/Home";
+import NewProcess from "@/components/NewProcess/NewProcess";
+import * as NewRequest from "@/components/NewRequest";
+import * as NewServerGroup from "@/components/NewServerGroup";
+import { Process } from "@/components/Process/Process";
+import { Request } from "@/components/Request/Request";
+import { DefaultLayout } from "@/layout/default";
+import * as ProcessForm from "@/components/shared/Form/ProcessForm/wizardScreens";
 
 export const router = createBrowserRouter([
   {
@@ -58,27 +59,31 @@ export const router = createBrowserRouter([
       {
         element: (
           <AuthRoute>
-            <NewProcess.default />
+            <NewProcess />
           </AuthRoute>
         ),
         path: Routes.Route.NewProcess,
         children: [
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
-            element: <NewProcess.ProcessIntro />,
+            element: <ProcessForm.Template />,
             index: true,
           },
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Inputs),
-            element: <NewProcess.ProcessInputs />,
+            element: <ProcessForm.TemplateInputs />,
           },
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Decisions),
-            element: <NewProcess.ProcessRights />,
+            element: <ProcessForm.Roles />,
+          },
+          {
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Evolve),
+            element: <ProcessForm.Evolve />,
           },
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Finish),
-            element: <NewProcess.ProcessFinish />,
+            element: <ProcessForm.ConfirmNewProcess />,
           },
         ],
       },
@@ -108,31 +113,35 @@ export const router = createBrowserRouter([
       {
         element: (
           <AuthRoute>
-            <EditProcess.default />
+            <EditProcess />
           </AuthRoute>
         ),
         path: Routes.Route.EditProcess,
         children: [
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
-            element: <EditProcess.Intro />,
+            element: <ProcessForm.EditProcessIntro />,
             index: true,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.BasicInfo),
-            element: <NewProcess.ProcessIntro />,
+            element: <ProcessForm.Template />,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Inputs),
-            element: <NewProcess.ProcessInputs />,
+            element: <ProcessForm.TemplateInputs />,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Decisions),
-            element: <NewProcess.ProcessRights />,
+            element: <ProcessForm.Roles />,
+          },
+          {
+            path: Routes.editProcessRoute(Routes.EditProcessRoute.Evolve),
+            element: <ProcessForm.Evolve />,
           },
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Confirm),
-            element: <EditProcess.DiffConfirmation />,
+            element: <ProcessForm.DiffConfirmation />,
           },
         ],
       },

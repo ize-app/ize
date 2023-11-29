@@ -12,22 +12,23 @@ import {
   EDIT_PROCESS_WIZARD_STEPS,
   EditProcessState,
 } from "./editProcessWizard";
-import createEditProcessMutation from "./helpers/createEditProcessMutation";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
-import { NewProcessState } from "../NewProcess/newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import { createProcessMutation } from "../shared/Form/ProcessForm/createProcessMutation";
+import { shortUUIDToFull, fullUUIDToShort } from "@/utils/inputs";
 
-export const EditProcess = () => {
+const EditProcess = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
   const [mutate] = useMutation(NewEditProcessRequestDocument, {
     onCompleted: (data) => {
-      // const newRequestId = data.newEditProcessRequest;
-      // navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+      const newRequestId = data.newEditProcessRequest;
+      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
     },
   });
 
@@ -35,11 +36,13 @@ export const EditProcess = () => {
     try {
       await mutate({
         variables: {
-          inputs: createEditProcessMutation(
-            "1",
-            formState.currentProcess as NewProcessState,
-            formState as NewProcessState,
-          ),
+          inputs: {
+            processId: shortUUIDToFull(params.processId as string),
+            currentProcess: createProcessMutation(
+              formState.currentProcess as ProcessForm,
+            ),
+            evolvedProcess: createProcessMutation(formState),
+          },
         },
       });
 
@@ -67,6 +70,7 @@ export const EditProcess = () => {
     formState,
     setFormState,
     nextLabel,
+    params,
     setParams,
   } = useWizard(editProcessWizard);
 
@@ -112,3 +116,5 @@ export const EditProcess = () => {
     </PageContainer>
   );
 };
+
+export default EditProcess;

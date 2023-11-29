@@ -10,7 +10,7 @@ const SummarizeInputTemplates = ({
   variant?: "body1" | "body2";
 }) => {
   return (
-    <ul style={{ padding: "0px 10px" }}>
+    <ul style={{ padding: "0px 10px", margin: "0px 0px" }}>
       {inputs.map((input, index) => (
         <li key={input.name + index.toString()}>
           <Typography variant={variant}>

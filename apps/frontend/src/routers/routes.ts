@@ -14,6 +14,7 @@ export enum NewProcessRoute {
   Intro = "",
   Inputs = "/inputs",
   Decisions = "/decisions",
+  Evolve = "/evolve",
   Finish = "/finish",
 }
 
@@ -35,6 +36,7 @@ export enum EditProcessRoute {
   BasicInfo = "/info",
   Inputs = "/inputs",
   Decisions = "/decisions",
+  Evolve = "/evolve",
   Confirm = "/confirm",
 }
 

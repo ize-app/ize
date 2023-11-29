@@ -7,20 +7,21 @@ import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { formatFormStateForProcessMutation } from "./newProcessMutationHelpers/formatFormStateForProcessMutation";
 import {
   NEW_PROCESS_PROGRESS_BAR_STEPS,
   NEW_PROCESS_WIZARD_STEPS,
-  NewProcessState,
 } from "./newProcessWizard";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewProcessDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
-import { Wizard, useWizard } from "../../utils/wizard";
 
-export const SetupProcess = () => {
+import { createProcessMutation } from "@/components/shared/Form/ProcessForm/createProcessMutation";
+import { Wizard, useWizard } from "@/utils/wizard";
+
+const NewProcess = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } =
     useContext(SnackbarContext);
@@ -36,7 +37,7 @@ export const SetupProcess = () => {
     try {
       await mutate({
         variables: {
-          process: formatFormStateForProcessMutation(formState),
+          process: createProcessMutation(formState),
         },
       });
       setSnackbarData({
@@ -52,7 +53,7 @@ export const SetupProcess = () => {
     }
   };
 
-  const newProcessWizard: Wizard<NewProcessState> = {
+  const newProcessWizard: Wizard<ProcessForm> = {
     steps: NEW_PROCESS_WIZARD_STEPS,
     onComplete,
     initialFormState: {},
@@ -103,3 +104,5 @@ export const SetupProcess = () => {
     </PageContainer>
   );
 };
+
+export default NewProcess;

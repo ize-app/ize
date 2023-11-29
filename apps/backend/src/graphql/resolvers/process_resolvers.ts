@@ -16,6 +16,7 @@ import { formatUser, userInclude } from "backend/src/utils/formatUser";
 import { groupsForCurrentUser } from "./group_resolvers";
 
 import { newCustomProcess } from "../../services/processes/newProcess";
+import { newEditRequestService } from "@services/requests/newEditRequestService";
 
 const newProcess = async (
   root: unknown,
@@ -29,12 +30,10 @@ const newProcess = async (
 
 const newEditProcessRequest = async (
   root: unknown,
-  args: {
-    process: NewEditProcessRequestArgs;
-  },
+  args: { inputs: NewEditProcessRequestArgs },
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return "1";
+  return await newEditRequestService({ args: args.inputs }, context);
 };
 
 const process = async (
@@ -104,6 +103,7 @@ const processesForCurrentUser = async (
           },
         },
       ],
+      type: { not: "Evolve" },
     },
     include: processInclude,
   });
@@ -133,10 +133,6 @@ const processesForGroup = async (
   return formattedProcesses;
 };
 
-// get all groups and users that a user is eligible to assign a role in a process
-// to start that is just going to be
-// 1) groups that are part of groups that user is in
-// 2) the user themselves
 const groupsAndUsersEliglbeForRole = async (
   root: unknown,
   args: {},

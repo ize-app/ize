@@ -71,6 +71,8 @@ export const Group = () => {
     setSnackbarData({ message: "Cannot find this group", type: "error" });
   };
 
+  if (error) onError();
+
   const tabs = [
     {
       title: "Requests",
@@ -82,9 +84,7 @@ export const Group = () => {
     },
   ];
 
-  return error ? (
-    onError()
-  ) : loading || !group ? (
+  return loading || !group ? (
     <Loading />
   ) : (
     <>
