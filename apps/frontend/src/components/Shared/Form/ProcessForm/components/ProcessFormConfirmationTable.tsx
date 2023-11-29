@@ -177,10 +177,10 @@ export const ProcessFormConfirmationTable = ({
             <TableRow key={field[0] + index.toString()}>
               <TableCell
                 sx={(theme) => ({
-                  [theme.breakpoints.up("sm")]: {
-                    minWidth: "300px",
-                  },
-                  minWidth: "100px",
+                  // [theme.breakpoints.up("sm")]: {
+                  //   minWidth: "300px",
+                  // },
+                  width: "150px",
                 })}
               >
                 <Typography fontWeight={500} variant={fontSize}>

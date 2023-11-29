@@ -94,128 +94,131 @@ export const newEditRequestService = async (
     new: Prisma.ProcessVersionCreateArgs,
   ];
 
-  // create process version record of both the core process record and it's accompanying edit process
-  const newProcessVersionArgs: ProcessVersionChange = [
-    currVers.id,
-    {
-      data: {
-        processId: args.processId,
-        name: diffProcess.name ? args.evolvedProcess.name : currVers.name,
-        description: diffProcess.description
-          ? args.evolvedProcess.description
-          : currVers.description,
-        expirationSeconds: diffProcess.decision?.expirationSeconds
-          ? args.evolvedProcess.decision.expirationSeconds
-          : currVers.expirationSeconds,
-        creatorId: context?.currentUser?.id,
-        optionSystemId: diffProcess.options
-          ? (
-              await createOptionSystem(
-                { options: args.evolvedProcess.options, transaction },
-                context,
-              )
-            ).id
-          : currVers.optionSystemId,
-        inputTemplateSetId: diffProcess.inputs
-          ? (
-              await createInputTemplateSet(
-                { inputs: args.evolvedProcess.inputs, transaction },
-                context,
-              )
-            ).id
-          : currVers.inputTemplateSetId,
-        // TODO: Clean this up to not be so brittle - move expiration seconds out
-        decisionSystemId:
-          diffProcess.decision?.absoluteDecision ||
-          diffProcess.decision?.percentageDecision
-            ? (
-                await createDecisionSystem(
-                  { decision: args.evolvedProcess.decision, transaction },
-                  context,
-                )
-              ).id
-            : currVers.decisionSystemId,
-        roleSetId: diffProcess.roles
-          ? (
-              await createRoleSet(
-                { roles: args.evolvedProcess.roles, transaction },
-                context,
-              )
-            ).id
-          : currVers.roleSetId,
-        actionId: args.evolvedProcess.action
-          ? diffProcess.action || diffProcess.options
-            ? (
-                await createAction(
-                  {
-                    type: ActionType.customWebhook,
-                    action: args.evolvedProcess.action,
-                    filterOptionId: actionOptionFilterId,
-                  },
-                  context,
-                )
-              ).id
-            : currVers.actionId
-          : null,
-        evolveProcessId: currVers.evolveProcessId,
-      },
-    },
-  ];
+  const requestChanges: ProcessVersionChange[] = [];
 
-  const evolveProcessVersionArgs: ProcessVersionChange = [
-    currEvolveVers.id,
-    {
-      data: {
-        //   ...currEvolveVers,
-        processId: currEvolveVers.processId,
-        name: currEvolveVers.name,
-        description: currEvolveVers.description,
-        optionSystemId: currEvolveVers.optionSystemId,
-        inputTemplateSetId: currEvolveVers.inputTemplateSetId,
-        expirationSeconds: diffProcess.evolve?.decision?.expirationSeconds
-          ? args.evolvedProcess.evolve.decision?.expirationSeconds
-          : currEvolveVers.expirationSeconds,
-        creatorId: context?.currentUser?.id,
-        // TODO: Clean this up to not be so brittle - move expiration seconds out
-        decisionSystemId:
-          diffProcess.evolve?.decision?.absoluteDecision ||
-          diffProcess.evolve?.decision?.percentageDecision
+  // this is a very janky way of checking withers there are more fields than just "evolve" that have a diff
+  // because that would mean that there is a change on the core process
+  if (Object.keys(diffProcess).length > 1)
+    requestChanges.push([
+      currVers.id,
+      {
+        data: {
+          processId: args.processId,
+          name: diffProcess.name ? args.evolvedProcess.name : currVers.name,
+          description: diffProcess.description
+            ? args.evolvedProcess.description
+            : currVers.description,
+          expirationSeconds: diffProcess.decision?.expirationSeconds
+            ? args.evolvedProcess.decision.expirationSeconds
+            : currVers.expirationSeconds,
+          creatorId: context?.currentUser?.id,
+          optionSystemId: diffProcess.options
             ? (
-                await createDecisionSystem(
-                  {
-                    decision: args.evolvedProcess.evolve.decision,
-                    transaction,
-                  },
+                await createOptionSystem(
+                  { options: args.evolvedProcess.options, transaction },
                   context,
                 )
               ).id
-            : currEvolveVers.decisionSystemId,
-        roleSetId: diffProcess.evolve?.roles
-          ? (
-              await createRoleSet(
-                { roles: args.evolvedProcess.evolve.roles, transaction },
-                context,
-              )
-            ).id
-          : currEvolveVers.roleSetId,
-        actionId: currEvolveVers.actionId,
-        parentProcessId: currEvolveVers.parentProcessId,
+            : currVers.optionSystemId,
+          inputTemplateSetId: diffProcess.inputs
+            ? (
+                await createInputTemplateSet(
+                  { inputs: args.evolvedProcess.inputs, transaction },
+                  context,
+                )
+              ).id
+            : currVers.inputTemplateSetId,
+          // TODO: Clean this up to not be so brittle - move expiration seconds out
+          decisionSystemId:
+            diffProcess.decision?.absoluteDecision ||
+            diffProcess.decision?.percentageDecision
+              ? (
+                  await createDecisionSystem(
+                    { decision: args.evolvedProcess.decision, transaction },
+                    context,
+                  )
+                ).id
+              : currVers.decisionSystemId,
+          roleSetId: diffProcess.roles
+            ? (
+                await createRoleSet(
+                  { roles: args.evolvedProcess.roles, transaction },
+                  context,
+                )
+              ).id
+            : currVers.roleSetId,
+          actionId: args.evolvedProcess.action
+            ? diffProcess.action || diffProcess.options
+              ? (
+                  await createAction(
+                    {
+                      type: ActionType.customWebhook,
+                      action: args.evolvedProcess.action,
+                      filterOptionId: actionOptionFilterId,
+                    },
+                    context,
+                  )
+                ).id
+              : currVers.actionId
+            : null,
+          evolveProcessId: currVers.evolveProcessId,
+        },
       },
-    },
-  ];
+    ]);
 
-   type ProcessIdChanges = [oldId: string, newId: string];
+  if (diffProcess.evolve)
+    requestChanges.push([
+      currEvolveVers.id,
+      {
+        data: {
+          //   ...currEvolveVers,
+          processId: currEvolveVers.processId,
+          name: currEvolveVers.name,
+          description: currEvolveVers.description,
+          optionSystemId: currEvolveVers.optionSystemId,
+          inputTemplateSetId: currEvolveVers.inputTemplateSetId,
+          expirationSeconds: diffProcess.evolve?.decision?.expirationSeconds
+            ? args.evolvedProcess.evolve.decision?.expirationSeconds
+            : currEvolveVers.expirationSeconds,
+          creatorId: context?.currentUser?.id,
+          // TODO: Clean this up to not be so brittle - move expiration seconds out
+          decisionSystemId:
+            diffProcess.evolve?.decision?.absoluteDecision ||
+            diffProcess.evolve?.decision?.percentageDecision
+              ? (
+                  await createDecisionSystem(
+                    {
+                      decision: args.evolvedProcess.evolve.decision,
+                      transaction,
+                    },
+                    context,
+                  )
+                ).id
+              : currEvolveVers.decisionSystemId,
+          roleSetId: diffProcess.evolve?.roles
+            ? (
+                await createRoleSet(
+                  { roles: args.evolvedProcess.evolve.roles, transaction },
+                  context,
+                )
+              ).id
+            : currEvolveVers.roleSetId,
+          actionId: currEvolveVers.actionId,
+          parentProcessId: currEvolveVers.parentProcessId,
+        },
+      },
+    ]);
+
+  type ProcessIdChanges = [oldId: string, newId: string];
 
   const processVersionsChanges: ProcessIdChanges[] = await Promise.all(
-    [newProcessVersionArgs, evolveProcessVersionArgs].map(
-      async (processVersionChange: ProcessVersionChange) => {
-        const [oldId, newArgs] = processVersionChange;
-        return [
-          oldId,
-          (await transaction.processVersion.create({ ...newArgs })).id,
-        ];
-      },
-    ),
+    requestChanges.map(async (processVersionChange: ProcessVersionChange) => {
+      const [oldId, newArgs] = processVersionChange;
+      return [
+        oldId,
+        (await transaction.processVersion.create({ ...newArgs })).id,
+      ];
+    }),
   );
 
   const evolveRequestTitleInput =
