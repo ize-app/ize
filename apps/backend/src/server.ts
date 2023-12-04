@@ -125,7 +125,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     where: { discordData: { discordId: id } },
   });
 
-  // TODO: Encrypy using AES - NOT hashing
+  // TODO: Encrypt using AES - NOT hashing
   // const encryptedAccessToken = await bcrypt.hash(
   //   access_token,
   //   BCRYPT_SALT_ROUNDS

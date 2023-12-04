@@ -7,11 +7,5 @@
   "workspaces": [
     "apps/frontend",
     "apps/backend"
-  ],
-  "dependencies": {
-    "bcrypt": "^5.1.0"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.0"
-  }
+  ]
 }
