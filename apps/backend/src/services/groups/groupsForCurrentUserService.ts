@@ -1,6 +1,5 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { Prisma } from "@prisma/client";
 import { DiscordApi } from "@discord/api";
 
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";

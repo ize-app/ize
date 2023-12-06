@@ -8,7 +8,7 @@ import {
   RoleArgs,
   DecisionArgs,
   ActionArgs,
-} from "frontend/src/graphql/generated/graphql";
+} from "@graphql/generated/resolver-types";
 
 export const createOptionSystem = async (
   {

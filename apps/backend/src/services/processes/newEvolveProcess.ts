@@ -1,13 +1,7 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import {
-  ActionType,
-  OptionDataType,
-  Prisma,
-  ProcessType,
-} from "@prisma/client";
-
-import { EvolveArgs } from "frontend/src/graphql/generated/graphql";
+import { ActionType, Prisma, ProcessType } from "@prisma/client";
+import { EvolveArgs } from "@graphql/generated/resolver-types";
 
 import {
   createOptionSystem,

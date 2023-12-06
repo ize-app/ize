@@ -1,9 +1,9 @@
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { MutationNewRequestArgs } from "frontend/src/graphql/generated/graphql";
+import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
+
 import { roleSetInclude } from "../../utils/formatProcess";
-import { groupsForCurrentUser } from "@graphql/resolvers/group_resolvers";
 import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
 
 export const newRequestService = async (

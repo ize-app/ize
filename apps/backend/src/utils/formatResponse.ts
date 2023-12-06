@@ -1,12 +1,13 @@
-import { Prisma, PrismaClient, OptionDataType } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { userInclude, formatUser } from "./formatUser";
+
 import {
   Response,
   ResponseCount,
   Responses,
   ProcessOption,
   OptionType,
-} from "frontend/src/graphql/generated/graphql";
+} from "@graphql/generated/resolver-types";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   creator: {

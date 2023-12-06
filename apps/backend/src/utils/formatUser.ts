@@ -1,6 +1,6 @@
 import { DiscordApi } from "@discord/api";
 import { Prisma } from "@prisma/client";
-import { User } from "frontend/src/graphql/generated/graphql";
+import { User } from "@graphql/generated/resolver-types";
 
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
   discordData: true,

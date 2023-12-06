@@ -1,4 +1,9 @@
-import { Prisma, ProcessType } from "@prisma/client";
+import {
+  DecisionSystemTypes,
+  Prisma,
+  ProcessType as PrismaProcessType,
+  ActionType as PrismaActionType,
+} from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
@@ -13,7 +18,9 @@ import {
   PercentageDecision,
   Roles,
   ParentProcess,
-} from "frontend/src/graphql/generated/graphql";
+  ProcessType,
+  RoleType,
+} from "@graphql/generated/resolver-types";
 
 export interface ProcessVersion
   extends Omit<
@@ -160,7 +167,7 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
     type: processData.type,
     createdAt: processData.createdAt.toString(),
     evolve:
-      processData.type === "Evolve"
+      processData.type === ProcessType.Evolve
         ? null
         : formatEvolveProcess(currentProcessVersion.evolveProcess),
     ...formattedProcessVersion,
@@ -233,10 +240,10 @@ export const formatProcessVersion = (
 
 const formatName = (
   name: string,
-  type: ProcessType,
+  type: PrismaProcessType,
   parent: ParentPrismaType | null,
 ) => {
-  if (type === "Evolve" && parent) {
+  if (type === ProcessType.Evolve && parent) {
     return `Evolve process of "${parent.currentProcessVersion.name}"`;
   } else return name;
 };
@@ -244,14 +251,17 @@ const formatName = (
 const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
   roleSet.roleGroups.forEach((role) => {
-    if (role.type === "Request") roles.request.push(formatGroup(role.group));
-    else if (role.type === "Respond")
+    if (role.type === RoleType.Request)
+      roles.request.push(formatGroup(role.group));
+    else if (role.type === RoleType.Respond)
       roles.respond.push(formatGroup(role.group));
   });
 
   roleSet.roleUsers.forEach((role) => {
-    if (role.type === "Request") roles.request.push(formatUser(role.user));
-    else if (role.type === "Respond") roles.respond.push(formatUser(role.user));
+    if (role.type === RoleType.Request)
+      roles.request.push(formatUser(role.user));
+    else if (role.type === RoleType.Respond)
+      roles.respond.push(formatUser(role.user));
   });
 
   return roles;
@@ -260,12 +270,12 @@ const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
 export const formatDecisionSystem = (
   decisionSystem: DecisionSystemPrismaType,
 ): AbsoluteDecision | PercentageDecision => {
-  if (decisionSystem.type === "Absolute")
+  if (decisionSystem.type === DecisionSystemTypes.Absolute)
     return {
       __typename: "AbsoluteDecision",
       threshold: decisionSystem.absoluteDecisionSystem.threshold,
     };
-  else if (decisionSystem.type === "Percentage")
+  else if (decisionSystem.type === DecisionSystemTypes.Percentage)
     return {
       __typename: "PercentageDecision",
       quorum: decisionSystem.percentageDecisionSystem.quorum,
@@ -293,7 +303,7 @@ export const formatAction = (
   const optionFilter = options.find((option) => option.id === action.optionId);
 
   switch (action.type) {
-    case "customWebhook":
+    case PrismaActionType.customWebhook:
       return {
         id: action.id,
         optionFilter,
@@ -302,7 +312,7 @@ export const formatAction = (
           __typename: "WebhookAction",
         },
       };
-    case "evolveProcess":
+    case PrismaActionType.evolveProcess:
       return {
         id: action.id,
         optionFilter,

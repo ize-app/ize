@@ -2,7 +2,7 @@ import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { ActionType, ProcessType } from "@prisma/client";
 
-import { NewProcessArgs } from "frontend/src/graphql/generated/graphql";
+import { NewProcessArgs } from "@graphql/generated/resolver-types";
 import { newEvolveProcess } from "./newEvolveProcess";
 
 import {
@@ -97,7 +97,6 @@ export const newCustomProcess = async (
         },
       },
     });
-
 
     // add process parent ID to evolve process
     await transaction.processVersion.updateMany({

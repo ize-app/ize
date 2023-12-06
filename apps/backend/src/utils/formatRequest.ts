@@ -1,23 +1,23 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { Prisma } from "@prisma/client";
 import { resultInclude, formatResult } from "./formatResult";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 import {
   ProcessVersionPrismaType,
-  formatProcess,
   formatProcessVersion,
 } from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
 import { prisma } from "../prisma/client";
 
 import { processVersionInclude } from "../utils/formatProcess";
+
 import {
   Request,
   Process,
   InputTemplate,
   RequestInput,
   EvolveProcessesDiff,
-} from "frontend/src/graphql/generated/graphql";
+  ProcessType,
+} from "@graphql/generated/resolver-types";
 
 export const requestInputInclude =
   Prisma.validator<Prisma.RequestInputInclude>()({
@@ -70,7 +70,7 @@ export const formatRequest = async (
   );
 
   const evolveChanges =
-    process.type === "Evolve"
+    process.type === ProcessType.Evolve
       ? await formatEvolveProcessChanges(inputs, requestData.id)
       : null;
 

@@ -1,13 +1,10 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { ActionType, OptionSystemPayload, Prisma } from "@prisma/client";
-import { ProcessType } from "@prisma/client";
-
 import {
-  EvolveArgs,
   NewEditProcessRequestArgs,
   NewProcessArgs,
-} from "frontend/src/graphql/generated/graphql";
+} from "@graphql/generated/resolver-types";
 import { newRequestService } from "./newRequestService";
 import { diff } from "deep-object-diff";
 import {

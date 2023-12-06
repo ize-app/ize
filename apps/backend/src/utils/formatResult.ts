@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Result, ProcessOption } from "frontend/src/graphql/generated/graphql";
+import { Result, ProcessOption } from "@graphql/generated/resolver-types";
 
 export const resultInclude = Prisma.validator<Prisma.ResultInclude>()({
   actionAttempts: true,
@@ -14,7 +14,7 @@ export const formatResult = (
   availableOptions: ProcessOption[],
 ): Result => {
   if (!result) return null;
-  
+
   let selectedOption: ProcessOption;
 
   const actionComplete =

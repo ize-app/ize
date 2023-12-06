@@ -2,6 +2,7 @@ import { IDiscordServer } from "@discord/server_types";
 import { GraphqlRequestContext } from "../context";
 import { APIGuild, Guild } from "discord.js";
 import { DiscordApi } from "@discord/api";
+import { QueryDiscordServerRolesArgs } from "@graphql/generated/resolver-types";
 
 export const discordServers = async (
   root: unknown,
@@ -26,7 +27,7 @@ export const discordServers = async (
 
 const discordServerRoles = async (
   root: unknown,
-  args: { serverId: string },
+  args: QueryDiscordServerRolesArgs,
   context: GraphqlRequestContext,
 ) => {
   const botApi = DiscordApi.forBotUser();

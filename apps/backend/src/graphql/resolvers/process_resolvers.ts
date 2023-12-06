@@ -1,28 +1,27 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import {
-  Group,
-  Process,
-  User,
-  NewProcessArgs,
-  NewEditProcessRequestArgs,
-  QueryProcessesForCurrentUserArgs,
-} from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { formatUser, userInclude } from "backend/src/utils/formatUser";
 
-import { groupsForCurrentUser } from "./group_resolvers";
+import {
+  Group,
+  Process,
+  User,
+  MutationNewProcessArgs,
+  MutationNewEditProcessRequestArgs,
+  QueryProcessArgs,
+  QueryProcessesForCurrentUserArgs,
+  QueryProcessesForGroupArgs,
+} from "@graphql/generated/resolver-types";
 
 import { newCustomProcess } from "../../services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 
 const newProcess = async (
   root: unknown,
-  args: {
-    process: NewProcessArgs;
-  },
+  args: MutationNewProcessArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newCustomProcess(args.process, context);
@@ -30,7 +29,7 @@ const newProcess = async (
 
 const newEditProcessRequest = async (
   root: unknown,
-  args: { inputs: NewEditProcessRequestArgs },
+  args: MutationNewEditProcessRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newEditRequestService({ args: args.inputs }, context);
@@ -38,9 +37,7 @@ const newEditProcessRequest = async (
 
 const process = async (
   root: unknown,
-  args: {
-    processId: string;
-  },
+  args: QueryProcessArgs,
   context: GraphqlRequestContext,
 ): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
@@ -114,7 +111,7 @@ const processesForCurrentUser = async (
 
 const processesForGroup = async (
   root: unknown,
-  args: { groupId: string },
+  args: QueryProcessesForGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({

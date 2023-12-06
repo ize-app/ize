@@ -1,4 +1,4 @@
-import { PercentageDecision } from "frontend/src/graphql/generated/graphql";
+import { PercentageDecision } from "@graphql/generated/resolver-types";
 import { ResponseCount } from "../determineDecision";
 
 const decidePercentageThreshold = (

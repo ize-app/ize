@@ -4,7 +4,6 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { newRequestService } from "@services/requests/newRequestService";
 import { formatRequest } from "../../utils/formatRequest";
 
-import { groupsForCurrentUser } from "./group_resolvers";
 import determineDecision from "@services/decisions/determineDecision";
 
 import { requestInclude } from "../../utils/formatRequest";
@@ -17,7 +16,7 @@ import {
   QueryRequestsForProcessArgs,
   QueryRequestsForCurrentUserArgs,
   Request,
-} from "frontend/src/graphql/generated/graphql";
+} from "@graphql/generated/resolver-types";
 
 const newRequest = async (
   root: unknown,

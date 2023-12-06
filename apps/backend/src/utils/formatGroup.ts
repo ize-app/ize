@@ -2,7 +2,7 @@ import { DiscordApi } from "@discord/api";
 import { Prisma } from "@prisma/client";
 
 import { userInclude, formatUser } from "./formatUser";
-import { Group } from "frontend/src/graphql/generated/graphql";
+import { Group } from "@graphql/generated/resolver-types";
 
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
