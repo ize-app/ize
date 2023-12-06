@@ -1,12 +1,6 @@
+/* eslint-disable no-prototype-builtins */
 import { Prisma } from "@prisma/client";
-import {
-  Guild,
-  Role,
-  GuildMember,
-  APIGuildMember,
-  APIRole,
-  APIGuild,
-} from "discord.js";
+import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 
 type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 
@@ -25,7 +19,10 @@ export class DiscordApi {
   }
 
   static forBotUser() {
-    return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
+    return new DiscordApi(
+      process.env.DISCORD_CULTS_BOT_API_TOKEN as string,
+      true,
+    );
   }
 
   static colorIntToHex(colorInt: number): string {

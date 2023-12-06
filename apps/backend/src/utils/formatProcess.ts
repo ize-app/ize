@@ -163,8 +163,7 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   const data: Process = {
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
-    //@ts-ignore
-    type: processData.type,
+    type: processData.type as ProcessType,
     createdAt: processData.createdAt.toString(),
     evolve:
       processData.type === ProcessType.Evolve
@@ -186,7 +185,7 @@ export const formatEvolveProcess = (
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
     createdAt: processData.createdAt.toString(),
-    //@ts-ignore
+    //@ts-expect-error
     type: processData.type,
     ...formattedProcessVersion,
   };

@@ -1,16 +1,18 @@
 import { IDiscordServer } from "@discord/server_types";
 import { GraphqlRequestContext } from "../context";
-import { APIGuild, Guild } from "discord.js";
+import { APIGuild } from "discord.js";
 import { DiscordApi } from "@discord/api";
 import { QueryDiscordServerRolesArgs } from "@graphql/generated/resolver-types";
 
 export const discordServers = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<Array<IDiscordServer>> => {
   const botApi = DiscordApi.forBotUser();
   const botGuilds = await botApi.getDiscordServers();
+  if (!context.discordApi)
+    throw Error("No Discord authentication data for user");
   const userGuilds = await context.discordApi.getDiscordServers();
 
   const guilds = userGuilds.filter((guild: APIGuild) => {
@@ -28,7 +30,6 @@ export const discordServers = async (
 const discordServerRoles = async (
   root: unknown,
   args: QueryDiscordServerRolesArgs,
-  context: GraphqlRequestContext,
 ) => {
   const botApi = DiscordApi.forBotUser();
   const roles = await botApi.getDiscordServerRoles(args.serverId);

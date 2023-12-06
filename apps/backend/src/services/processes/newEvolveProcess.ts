@@ -79,7 +79,7 @@ export const newEvolveProcess = async (
     context,
   );
 
-  let webhookTriggerFilterOption =
+  const webhookTriggerFilterOption =
     optionSystemRecord.defaultProcessOptionSet.options.find(
       (option) => option.value === "✅",
     );

@@ -38,7 +38,6 @@ const newEditProcessRequest = async (
 const process = async (
   root: unknown,
   args: QueryProcessArgs,
-  context: GraphqlRequestContext,
 ): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
     include: processInclude,
@@ -112,7 +111,6 @@ const processesForCurrentUser = async (
 const processesForGroup = async (
   root: unknown,
   args: QueryProcessesForGroupArgs,
-  context: GraphqlRequestContext,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({
     where: {
@@ -132,7 +130,7 @@ const processesForGroup = async (
 
 const groupsAndUsersEliglbeForRole = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
   const servers = await discordServers(root, {}, context);

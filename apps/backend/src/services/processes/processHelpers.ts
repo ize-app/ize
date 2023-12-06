@@ -18,7 +18,7 @@ export const createOptionSystem = async (
     options: ProcessOptionArgs[];
     transaction?: Prisma.TransactionClient;
   },
-  context: GraphqlRequestContext,
+  _context: GraphqlRequestContext,
 ) => {
   const optionSet = await transaction.optionSet.create({
     data: {

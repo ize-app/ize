@@ -9,7 +9,7 @@ const users = async (): Promise<User[]> => {
 
 const me = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   contextValue: GraphqlRequestContext,
 ): Promise<User> => {
   return contextValue.currentUser;

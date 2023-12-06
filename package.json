@@ -1,5 +1,6 @@
 {
   "name": "cults",
+  "description": "Monorepo for the Cults app",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -17,6 +18,15 @@
     "@graphql-codegen/fragment-matcher": "^5.0.0",
     "@graphql-codegen/introspection": "^4.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
-    "@graphql-codegen/typescript-resolvers": "^4.0.1"
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
+    "@types/node": "^20.10.3",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "typescript": "^5.3.2"
   }
 }
