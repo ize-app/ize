@@ -25,7 +25,7 @@ import { ProcessOptions } from "../shared/Process/ProcessOptions";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const createInputValidation = (type: InputDataType, isRequired: boolean) => {
-  let val: z.ZodTypeAny;
+  let val: z.ZodTypeAny = z.any();
   switch (type) {
     case InputDataType.Float:
       val = zodCleanNumber(
@@ -41,6 +41,8 @@ const createInputValidation = (type: InputDataType, isRequired: boolean) => {
         isRequired ? z.string().nonempty() : z.string().optional(),
       );
       break;
+    default:
+      val = z.any();
   }
   return val;
 };

@@ -15,7 +15,7 @@ export interface SelectControlProps extends SelectProps {
   control: Control;
   label: string;
   selectOptions: SelectOption[];
-  selectOption: SelectOption;
+  selectOption?: SelectOption;
 }
 
 export const SelectControl = ({

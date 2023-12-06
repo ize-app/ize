@@ -134,6 +134,8 @@ export const ExpandedRequest = ({
         <SubmitResponse
           requestId={request.id}
           displayAsColumn={false}
+          // Holding off on all user object fixes until I do user object / avatar rewrite
+          //@ts-ignore
           userResponse={request.responses.userResponse}
           options={request.process.options}
           onSubmit={() => {

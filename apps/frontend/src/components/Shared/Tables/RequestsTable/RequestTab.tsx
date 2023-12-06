@@ -144,7 +144,7 @@ const RequestTab = ({
           </Box>
           <Select
             onChange={(event: SelectChangeEvent) => {
-              setSelectOption(event.target.value);
+              setSelectOption(event.target.value as FilterOptions);
             }}
             selectOptions={selectOptions}
             selectOption={selectOption}

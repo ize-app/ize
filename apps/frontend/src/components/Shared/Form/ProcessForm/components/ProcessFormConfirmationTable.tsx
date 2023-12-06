@@ -1,4 +1,3 @@
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -176,7 +175,7 @@ export const ProcessFormConfirmationTable = ({
           {fields.map((field, index) => (
             <TableRow key={field[0] + index.toString()}>
               <TableCell
-                sx={(theme) => ({
+                sx={(_theme) => ({
                   // [theme.breakpoints.up("sm")]: {
                   //   minWidth: "300px",
                   // },

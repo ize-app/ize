@@ -66,7 +66,7 @@ export const ProcessSummaryTable = ({
               <ProcessOptions options={process.options} />
             </TableCell>
           </TableRow>
-          {process.action?.actionDetails.__typename === "WebhookAction" ? (
+          {process.action?.actionDetails?.__typename === "WebhookAction" ? (
             <TableRow>
               <TableCell>
                 <Typography variant="body1" fontWeight={500}>

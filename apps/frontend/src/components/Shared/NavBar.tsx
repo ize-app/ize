@@ -75,7 +75,7 @@ const UserDropDown = ({
     update: (cache) =>
       cache.evict({
         id: "ROOT_QUERY",
-        name: "me",
+        fieldName: "me",
       }),
   });
 
@@ -93,7 +93,11 @@ const UserDropDown = ({
   return (
     <>
       <UserDropDownContainer onClick={handleClick}>
-        <Avatar avatarUrl={avatarURL} name={username} />
+        {
+          // holding off on all avatar ts scripts until I rewrite that component
+          //@ts-ignore
+          <Avatar avatarUrl={avatarURL} name={username} />
+        }
         <Typography variant="body1">{username}</Typography>
         <ArrowDropDown />
       </UserDropDownContainer>

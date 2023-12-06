@@ -9,7 +9,10 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import {
+  AgentType,
+  GroupSummaryPartsFragment,
+} from "../../../../graphql/generated/graphql";
 import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarWithName } from "../../Avatar";
 import { TableCellHideable } from "../TableCells";
@@ -33,6 +36,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              type={AgentType.Group}
               id={group.id}
               color={group.color}
               name={group.name}
@@ -48,6 +52,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              type={AgentType.Group}
               id={group.name}
               name={group.organization.name}
               avatarUrl={group.organization.icon}

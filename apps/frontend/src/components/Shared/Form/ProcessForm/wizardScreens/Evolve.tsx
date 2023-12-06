@@ -27,7 +27,7 @@ type FormFields = z.infer<typeof evolveProcessFormSchema>;
 const namePrepend = "evolve.";
 
 export const Evolve = ({}) => {
-  const { data, loading } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
+  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
   const { user } = useContext(CurrentUserContext);
 
   const agents =
@@ -53,14 +53,14 @@ export const Evolve = ({}) => {
           response:
             formState.evolve?.rights?.response ?? [
               {
-                id: user.id,
+                id: user?.id,
                 type: AgentType.User,
                 avatarUrl: createDiscordAvatarURL(
-                  user.discordData.discordId,
-                  user.discordData.avatar,
+                  user?.discordData?.discordId as string,
+                  user?.discordData.avatar as string,
                   128,
                 ),
-                name: user.discordData.username,
+                name: user?.discordData.username,
               },
             ] ??
             [],
@@ -92,6 +92,8 @@ export const Evolve = ({}) => {
     watch("evolve.evolveDefaults") === DefaultEvolveProcessOptions.Custom;
 
   const onSubmit = (data: FormFields) => {
+    // Going to rebuild the role selection so going to ignore this error for now
+    //@ts-ignore
     setFormState((prev) => ({
       ...prev,
       evolve: {

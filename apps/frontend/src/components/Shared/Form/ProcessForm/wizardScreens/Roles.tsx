@@ -16,7 +16,7 @@ import RolesAndDecisionSystem from "../components/RolesAndDecisionSystem";
 type FormFields = z.infer<typeof rolesFormSchema>;
 
 export const Roles = () => {
-  const { data, loading } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
+  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
 
   const agents =
     data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
@@ -33,7 +33,7 @@ export const Roles = () => {
       decision: {
         type: formState.decision?.type ?? DecisionType.Absolute,
         requestExpirationSeconds:
-        formState.decision?.requestExpirationSeconds ?? 86400,
+          formState.decision?.requestExpirationSeconds ?? 86400,
         percentageDecision: {
           quorum: formState.decision?.percentageDecision?.quorum ?? 3,
           percentage: formState.decision?.percentageDecision?.percentage ?? 51,
@@ -51,6 +51,8 @@ export const Roles = () => {
     watch("decision.type") === DecisionType.Percentage;
 
   const onSubmit = (data: FormFields) => {
+    // Going to rebuild the role selection so going to ignore this error for now
+    //@ts-ignore
     setFormState((prev) => ({
       ...prev,
       ...data,

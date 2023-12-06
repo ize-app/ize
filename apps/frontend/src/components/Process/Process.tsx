@@ -76,7 +76,7 @@ export const Process = () => {
     setSnackbarData({ message: "Cannot find this process", type: "error" });
   };
 
-  // if (processError) onError();
+  if (processError) onError();
 
   return processLoading || !process ? (
     <Loading />
