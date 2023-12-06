@@ -5,7 +5,6 @@ import { DiscordApi } from "../../discord/api";
 export async function setUpDiscordServerService(
   {
     serverId,
-    roleId,
   }: {
     serverId: string;
     roleId?: string;

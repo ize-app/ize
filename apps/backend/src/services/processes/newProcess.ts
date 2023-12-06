@@ -14,63 +14,36 @@ import {
 } from "./processHelpers";
 
 export const newCustomProcess = async (
-  {
-    name,
-    description,
-    options,
-    decision,
-    inputs,
-    roles,
-    action,
-    evolve,
-  }: NewProcessArgs,
+  { name, description, options, decision, inputs, roles, action, evolve }: NewProcessArgs,
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {
     let newActionRecord;
-    const inputTemplateSetRecord = await createInputTemplateSet(
-      { inputs, transaction },
-      context,
-    );
+    const inputTemplateSetRecord = await createInputTemplateSet({ inputs, transaction });
 
-    const optionSystemRecord = await createOptionSystem(
-      { options, transaction },
-      context,
-    );
+    const optionSystemRecord = await createOptionSystem({ options, transaction });
 
-    const decisionRecord = await createDecisionSystem(
-      {
-        decision,
-        transaction,
-      },
-      context,
-    );
+    const decisionRecord = await createDecisionSystem({
+      decision,
+      transaction,
+    });
 
-    const roleSetRecord = await createRoleSet({ roles, transaction }, context);
+    const roleSetRecord = await createRoleSet({ roles, transaction });
 
     if (action?.webhook?.uri) {
-      let webhookTriggerFilterOption =
-        optionSystemRecord.defaultProcessOptionSet.options.find(
-          (option) => option.value === action.optionTrigger,
-        );
-
-      newActionRecord = await createAction(
-        {
-          type: ActionType.customWebhook,
-          action,
-          filterOptionId: webhookTriggerFilterOption
-            ? webhookTriggerFilterOption?.id
-            : null,
-          transaction,
-        },
-        context,
+      const webhookTriggerFilterOption = optionSystemRecord?.defaultProcessOptionSet?.options.find(
+        (option) => option.value === action.optionTrigger,
       );
+
+      newActionRecord = await createAction({
+        type: ActionType.customWebhook,
+        action,
+        filterOptionId: webhookTriggerFilterOption ? webhookTriggerFilterOption?.id : null,
+        transaction,
+      });
     }
 
-    const evolveProcessId = await newEvolveProcess(
-      { evolve, transaction },
-      context,
-    );
+    const evolveProcessId = await newEvolveProcess({ evolve, transaction }, context);
 
     const processRecord = await transaction.process.create({
       include: {

@@ -23,10 +23,7 @@ import {
 } from "@graphql/generated/resolver-types";
 
 export interface ProcessVersion
-  extends Omit<
-    Process,
-    "id" | "createdAt" | "currentProcessVersionId" | "type"
-  > {}
+  extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId" | "type"> {}
 
 export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   roleGroups: {
@@ -49,22 +46,15 @@ type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
   include: typeof roleSetInclude;
 }>;
 
-const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()(
-  {},
-);
+const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()({});
 
-type InputTemplatePrismaType = Prisma.InputTemplateGetPayload<{
-  include: typeof inputTemplateInclude;
-}>;
-
-export const optionSystemInclude =
-  Prisma.validator<Prisma.OptionSystemInclude>()({
-    defaultProcessOptionSet: {
-      include: {
-        options: true,
-      },
+export const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>()({
+  defaultProcessOptionSet: {
+    include: {
+      options: true,
     },
-  });
+  },
+});
 
 type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
   include: typeof optionSystemInclude;
@@ -95,35 +85,34 @@ type ParentPrismaType = Prisma.ProcessGetPayload<{
   include: typeof parentInclude;
 }>;
 
-export const processVersionInclude =
-  Prisma.validator<Prisma.ProcessVersionInclude>()({
-    creator: {
-      include: userInclude,
+export const processVersionInclude = Prisma.validator<Prisma.ProcessVersionInclude>()({
+  creator: {
+    include: userInclude,
+  },
+  process: true,
+  optionSystem: {
+    include: optionSystemInclude,
+  },
+  inputTemplateSet: {
+    include: {
+      inputTemplates: inputTemplateInclude,
     },
-    process: true,
-    optionSystem: {
-      include: optionSystemInclude,
+  },
+  decisionSystem: {
+    include: decisionSystemInclude,
+  },
+  action: {
+    include: actionInclude,
+  },
+  roleSet: {
+    include: roleSetInclude,
+  },
+  parentProcess: {
+    include: {
+      currentProcessVersion: true,
     },
-    inputTemplateSet: {
-      include: {
-        inputTemplates: inputTemplateInclude,
-      },
-    },
-    decisionSystem: {
-      include: decisionSystemInclude,
-    },
-    action: {
-      include: actionInclude,
-    },
-    roleSet: {
-      include: roleSetInclude,
-    },
-    parentProcess: {
-      include: {
-        currentProcessVersion: true,
-      },
-    },
-  });
+  },
+});
 
 export type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
   include: typeof processVersionInclude;
@@ -155,8 +144,16 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
   include: typeof editProcessInclude;
 }>;
 
+// Used to format all processes, except for evolve processes
 export const formatProcess = (processData: ProcessPrismaType): Process => {
   const { currentProcessVersion } = processData;
+
+  if (!currentProcessVersion)
+    throw Error(
+      "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
+    );
+  if (!currentProcessVersion.evolveProcess)
+    throw Error("ERROR formatProcess: Can't find evolve process of process id:" + processData.id);
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
@@ -174,10 +171,13 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   return data;
 };
 
-export const formatEvolveProcess = (
-  processData: EditProcessPrismaType,
-): Process => {
+export const formatEvolveProcess = (processData: EditProcessPrismaType): Process => {
   const { currentProcessVersion } = processData;
+
+  if (!currentProcessVersion)
+    throw Error(
+      "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
+    );
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
@@ -185,25 +185,15 @@ export const formatEvolveProcess = (
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
     createdAt: processData.createdAt.toString(),
-    //@ts-expect-error
-    type: processData.type,
+    type: processData.type as ProcessType,
     ...formattedProcessVersion,
   };
   return data;
 };
 
-export const formatProcessVersion = (
-  processVersion: ProcessVersionPrismaType,
-): ProcessVersion => {
-  const {
-    creator,
-    optionSystem,
-    inputTemplateSet,
-    decisionSystem,
-    action,
-    roleSet,
-    parentProcess,
-  } = processVersion;
+export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): ProcessVersion => {
+  const { creator, optionSystem, inputTemplateSet, decisionSystem, action, roleSet } =
+    processVersion;
 
   const options = formatOptions(optionSystem);
 
@@ -237,11 +227,7 @@ export const formatProcessVersion = (
   return data;
 };
 
-const formatName = (
-  name: string,
-  type: PrismaProcessType,
-  parent: ParentPrismaType | null,
-) => {
+const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaType | null) => {
   if (type === ProcessType.Evolve && parent) {
     return `Evolve process of "${parent.currentProcessVersion.name}"`;
   } else return name;
@@ -250,17 +236,13 @@ const formatName = (
 const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
   roleSet.roleGroups.forEach((role) => {
-    if (role.type === RoleType.Request)
-      roles.request.push(formatGroup(role.group));
-    else if (role.type === RoleType.Respond)
-      roles.respond.push(formatGroup(role.group));
+    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.group));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.group));
   });
 
   roleSet.roleUsers.forEach((role) => {
-    if (role.type === RoleType.Request)
-      roles.request.push(formatUser(role.user));
-    else if (role.type === RoleType.Respond)
-      roles.respond.push(formatUser(role.user));
+    if (role.type === RoleType.Request) roles.request.push(formatUser(role.user));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatUser(role.user));
   });
 
   return roles;
@@ -282,9 +264,7 @@ export const formatDecisionSystem = (
     };
 };
 
-export const formatOptions = (
-  optionSystem: OptionSystemPrismaType,
-): ProcessOption[] =>
+export const formatOptions = (optionSystem: OptionSystemPrismaType): ProcessOption[] =>
   optionSystem.defaultProcessOptionSet.options
     .sort((a, b) => a.position - b.position)
     .map(
@@ -295,10 +275,7 @@ export const formatOptions = (
       }),
     );
 
-export const formatAction = (
-  action: ActionPrismaType,
-  options: ProcessOption[],
-): Action => {
+export const formatAction = (action: ActionPrismaType, options: ProcessOption[]): Action => {
   const optionFilter = options.find((option) => option.id === action.optionId);
 
   switch (action.type) {
@@ -322,9 +299,7 @@ export const formatAction = (
   }
 };
 
-export const formatParent = (
-  parent: ParentPrismaType,
-): ParentProcess | null => {
+export const formatParent = (parent: ParentPrismaType): ParentProcess | null => {
   if (parent)
     return {
       id: parent.id,

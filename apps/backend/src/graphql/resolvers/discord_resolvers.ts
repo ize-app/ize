@@ -11,8 +11,7 @@ export const discordServers = async (
 ): Promise<Array<IDiscordServer>> => {
   const botApi = DiscordApi.forBotUser();
   const botGuilds = await botApi.getDiscordServers();
-  if (!context.discordApi)
-    throw Error("No Discord authentication data for user");
+  if (!context.discordApi) throw Error("No Discord authentication data for user");
   const userGuilds = await context.discordApi.getDiscordServers();
 
   const guilds = userGuilds.filter((guild: APIGuild) => {
@@ -27,10 +26,7 @@ export const discordServers = async (
   return servers;
 };
 
-const discordServerRoles = async (
-  root: unknown,
-  args: QueryDiscordServerRolesArgs,
-) => {
+const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesArgs) => {
   const botApi = DiscordApi.forBotUser();
   const roles = await botApi.getDiscordServerRoles(args.serverId);
   const cleanedRoles = roles.map((role) => ({

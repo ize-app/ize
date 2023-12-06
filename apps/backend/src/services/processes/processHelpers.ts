@@ -1,5 +1,4 @@
 import { prisma } from "../../prisma/client";
-import { GraphqlRequestContext } from "@graphql/context";
 import { ActionType, Prisma } from "@prisma/client";
 
 import {
@@ -10,16 +9,13 @@ import {
   ActionArgs,
 } from "@graphql/generated/resolver-types";
 
-export const createOptionSystem = async (
-  {
-    options,
-    transaction = prisma,
-  }: {
-    options: ProcessOptionArgs[];
-    transaction?: Prisma.TransactionClient;
-  },
-  _context: GraphqlRequestContext,
-) => {
+export const createOptionSystem = async ({
+  options,
+  transaction = prisma,
+}: {
+  options: ProcessOptionArgs[];
+  transaction?: Prisma.TransactionClient;
+}) => {
   const optionSet = await transaction.optionSet.create({
     data: {
       options: {
@@ -48,16 +44,13 @@ export const createOptionSystem = async (
   return optionSystem;
 };
 
-export const createInputTemplateSet = async (
-  {
-    inputs,
-    transaction = prisma,
-  }: {
-    inputs: InputTemplateArgs[];
-    transaction?: Prisma.TransactionClient;
-  },
-  context: GraphqlRequestContext,
-) =>
+export const createInputTemplateSet = async ({
+  inputs,
+  transaction = prisma,
+}: {
+  inputs: InputTemplateArgs[];
+  transaction?: Prisma.TransactionClient;
+}) =>
   await transaction.inputTemplateSet.create({
     data: {
       inputTemplates: {
@@ -69,20 +62,17 @@ export const createInputTemplateSet = async (
     },
   });
 
-export const createAction = async (
-  {
-    type,
-    action,
-    filterOptionId,
-    transaction = prisma,
-  }: {
-    type: ActionType;
-    action: ActionArgs;
-    filterOptionId: string | null;
-    transaction?: Prisma.TransactionClient;
-  },
-  context: GraphqlRequestContext,
-) => {
+export const createAction = async ({
+  type,
+  action,
+  filterOptionId,
+  transaction = prisma,
+}: {
+  type: ActionType;
+  action: ActionArgs;
+  filterOptionId: string | null;
+  transaction?: Prisma.TransactionClient;
+}) => {
   if (action?.webhook) {
     return await transaction.action.create({
       data: {
@@ -105,16 +95,13 @@ export const createAction = async (
   }
 };
 
-export const createDecisionSystem = async (
-  {
-    decision,
-    transaction = prisma,
-  }: {
-    decision: DecisionArgs;
-    transaction?: Prisma.TransactionClient;
-  },
-  context: GraphqlRequestContext,
-) => {
+export const createDecisionSystem = async ({
+  decision,
+  transaction = prisma,
+}: {
+  decision: DecisionArgs;
+  transaction?: Prisma.TransactionClient;
+}) => {
   if (decision.absoluteDecision)
     return await transaction.decisionSystem.create({
       data: {
@@ -136,16 +123,13 @@ export const createDecisionSystem = async (
   } else throw Error("No decision system provided");
 };
 
-export const createRoleSet = async (
-  {
-    roles,
-    transaction = prisma,
-  }: {
-    roles: RoleArgs[];
-    transaction?: Prisma.TransactionClient;
-  },
-  context: GraphqlRequestContext,
-) => {
+export const createRoleSet = async ({
+  roles,
+  transaction = prisma,
+}: {
+  roles: RoleArgs[];
+  transaction?: Prisma.TransactionClient;
+}) => {
   return await transaction.roleSet.create({
     data: {
       roleGroups: {

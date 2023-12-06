@@ -12,13 +12,12 @@ type ResultPrismaType = Prisma.ResultGetPayload<{
 export const formatResult = (
   result: ResultPrismaType | null,
   availableOptions: ProcessOption[],
-): Result => {
+): Result | null => {
   if (!result) return null;
 
-  let selectedOption: ProcessOption;
+  let selectedOption: ProcessOption | null = null;
 
-  const actionComplete =
-    result.actionAttempts.findIndex((attempt) => attempt.success) !== -1;
+  const actionComplete = result.actionAttempts.findIndex((attempt) => attempt.success) !== -1;
 
   for (let i = 0; i <= availableOptions.length - 1; i++) {
     if (availableOptions[i].id === result.optionId) {
@@ -26,6 +25,9 @@ export const formatResult = (
       break;
     }
   }
+
+  if (!selectedOption) throw Error("ERROR formatResult: Cannot find selected Option");
+
   return {
     id: result.id,
     createdAt: result.createdAt.toString(),

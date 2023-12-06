@@ -30,7 +30,7 @@ const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
 
 export const groupsForCurrentUser = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<Group[]> => {
   return groupsForCurrentUserService(context);

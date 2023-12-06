@@ -30,14 +30,16 @@ const executeAction = async ({
         uri: request.process.action.actionDetails.uri,
         payload: request,
       });
+      break;
     case "EvolveProcessAction":
+      // eslint-disable-next-line no-case-declarations
       const processVersions = request.inputs.find(
         (input) => (input.name = "Process versions"),
       ).value;
-
       wasSuccess = await editProcesses({
         processVersions: processVersions,
       });
+      break;
   }
 
   await transaction.actionAttempt.create({

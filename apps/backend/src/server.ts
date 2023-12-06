@@ -23,7 +23,7 @@ import { User } from "@prisma/client";
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-const BCRYPT_SALT_ROUNDS = 12;
+// const BCRYPT_SALT_ROUNDS = 12;
 
 const app = express();
 
@@ -117,8 +117,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     },
   });
 
-  const { id, username, avatar, discriminator, email } =
-    (await userResponse.json()) as APIUser;
+  const { id, username, avatar, discriminator, email } = (await userResponse.json()) as APIUser;
 
   // TODO: Save user to database
   const user = await prisma.user.findFirst({

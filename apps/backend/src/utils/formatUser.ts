@@ -14,10 +14,7 @@ export const formatUser = (user: UserPrismaType): User => ({
   __typename: "User",
   id: user.id,
   name: user.discordData.username,
-  icon: DiscordApi.createAvatarURL(
-    user.discordData.discordId,
-    user.discordData.avatar,
-  ),
+  icon: DiscordApi.createAvatarURL(user.discordData.discordId, user.discordData.avatar),
   createdAt: user.createdAt.toString(),
   discordData: user.discordData,
 });

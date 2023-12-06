@@ -1,7 +1,7 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { ActionType, Prisma, ProcessType } from "@prisma/client";
-import { EvolveArgs } from "@graphql/generated/resolver-types";
+import { EvolveArgs, InputDataType, OptionType } from "@graphql/generated/resolver-types";
 
 import {
   createOptionSystem,
@@ -21,80 +21,50 @@ export const newEvolveProcess = async (
   },
   context: GraphqlRequestContext,
 ) => {
-  // TODO: import this from the FE
-  const defaultInputRequestTitle = {
-    name: "Request title",
-    description: "Brief summary of request",
-    required: true,
-    type: "Text",
-  };
-
-  const inputTemplateSetRecord = await createInputTemplateSet(
-    {
-      inputs: [
-        {
-          name: "Request title",
-          description: "Brief summary of request",
-          required: true,
-          //@ts-ignore
-          type: "Text",
-        },
-        {
-          name: "Process versions",
-          description: "Array of process version IDs being proposed.",
-          required: true,
-          //@ts-ignore
-          type: "StringArray",
-        },
-      ],
-      transaction,
-    },
-    context,
-  );
+  const inputTemplateSetRecord = await createInputTemplateSet({
+    inputs: [
+      {
+        name: "Request title",
+        description: "Brief summary of request",
+        required: true,
+        type: InputDataType.Text,
+      },
+      {
+        name: "Process versions",
+        description: "Array of process version IDs being proposed.",
+        required: true,
+        type: InputDataType.StringArray,
+      },
+    ],
+    transaction,
+  });
 
   // TODO: Remove ts-ignore. They are there because there's an issue importing enums from the frontend
-  const optionSystemRecord = await createOptionSystem(
-    {
-      options: [
-        //@ts-ignore
-        { value: "✅", type: "Text" },
-        //@ts-ignore
-        { value: "❌", type: "Text" },
-      ],
-      transaction,
-    },
-    context,
+  const optionSystemRecord = await createOptionSystem({
+    options: [
+      { value: "✅", type: OptionType.Text },
+      { value: "❌", type: OptionType.Text },
+    ],
+    transaction,
+  });
+
+  const decisionRecord = await createDecisionSystem({
+    decision: evolve.decision,
+    transaction,
+  });
+
+  const roleSetRecord = await createRoleSet({ roles: evolve.roles, transaction });
+
+  const webhookTriggerFilterOption = optionSystemRecord.defaultProcessOptionSet.options.find(
+    (option) => option.value === "✅",
   );
 
-  const decisionRecord = await createDecisionSystem(
-    {
-      decision: evolve.decision,
-      transaction,
-    },
-    context,
-  );
-
-  const roleSetRecord = await createRoleSet(
-    { roles: evolve.roles, transaction },
-    context,
-  );
-
-  const webhookTriggerFilterOption =
-    optionSystemRecord.defaultProcessOptionSet.options.find(
-      (option) => option.value === "✅",
-    );
-
-  const actionRecord = await createAction(
-    {
-      type: ActionType.evolveProcess,
-      action: {},
-      filterOptionId: webhookTriggerFilterOption
-        ? webhookTriggerFilterOption?.id
-        : null,
-      transaction,
-    },
-    context,
-  );
+  const actionRecord = await createAction({
+    type: ActionType.evolveProcess,
+    action: {},
+    filterOptionId: webhookTriggerFilterOption ? webhookTriggerFilterOption?.id : null,
+    transaction,
+  });
 
   const processRecord = await transaction.process.create({
     include: {
