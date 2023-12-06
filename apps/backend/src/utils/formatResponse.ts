@@ -45,11 +45,13 @@ export const formatResponses = (
   for (let i = 0; i <= responses.length - 1; i++) {
     const formattedResponse = formatResponse(responses[i]);
     allResponses.push(formattedResponse);
-    responseCount.find(
+    const responseCounter = responseCount.find(
       (option) => option.optionId === formattedResponse.optionId,
-    ).count++;
-    if (userId && formattedResponse.user.id === userId)
-      userResponse = formattedResponse;
+    );
+    if (!responseCounter)
+      throw Error("Error formatResponses: Cannot create count of responses for each option");
+    responseCounter.count++;
+    if (userId && formattedResponse.user.id === userId) userResponse = formattedResponse;
   }
   return { userResponse, allResponses, responseCount };
 };

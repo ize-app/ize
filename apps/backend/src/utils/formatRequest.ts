@@ -55,7 +55,7 @@ export const formatRequest = async (
     id: requestData.processVersion.process.id,
     createdAt: requestData.processVersion.process.createdAt.toString(),
     type: requestData.processVersion.process.type as ProcessType,
-    currentProcessVersionId: requestData.processVersion.process.currentProcessVersionId,
+    currentProcessVersionId: requestData.processVersion.id,
   };
 
   const [name, inputs] = formatInputs(process.inputs, requestData.requestInputs);
@@ -87,6 +87,8 @@ const formatInputs = (
 ): [string, RequestInput[]] => {
   const inputsWithValue = inputTemplates.map((elem) => {
     const requestInput = requestInputs.find((input) => input.inputId === elem.id);
+    if (!requestInput)
+      throw Error("ERROR formatInputs: Request inputs do not match process's input templates.");
     return {
       inputTemplateId: elem.id,
       requestInputId: requestInput.id,
@@ -100,7 +102,9 @@ const formatInputs = (
 
   const titleInput = inputsWithValue.shift();
 
-  return [titleInput.value, inputsWithValue];
+  if (!titleInput) throw Error("ERROR formatInputs: No title input");
+
+  return [titleInput?.value as string, inputsWithValue];
 };
 
 const formatEvolveProcessChanges = async (
@@ -110,9 +114,14 @@ const formatEvolveProcessChanges = async (
   type ProcessIdChanges = [oldId: string, newId: string];
 
   // string arrays of changes between process Versions
-  const processVersionsArrayString = inputs.find(
-    (input) => (input.name = "Process versions"),
-  ).value;
+  const processVersionsArrayString = inputs.find((input) => (input.name = "Process versions"))
+    ?.value;
+
+  if (!processVersionsArrayString)
+    throw Error(
+      "ERROR formatEvolveProcessChanges: Cannot find processVersionsArray in edit request",
+    );
+
   const processVersionArray: ProcessIdChanges[] = JSON.parse(processVersionsArrayString);
 
   const processVersionIdArray = processVersionArray.flat();
@@ -135,6 +144,9 @@ const formatEvolveProcessChanges = async (
     const proposedProcessVersion = processVersions.find((vers) => {
       return vers.id === newId;
     });
+
+    if (!currentProcessVersion || !proposedProcessVersion)
+      throw Error("ERROR formatEvolveProcessChanges: Cannot find process versions");
 
     const currentProcess = processVersionToProcess(currentProcessVersion);
     const proposedProcess = processVersionToProcess(proposedProcessVersion);

@@ -35,10 +35,7 @@ const newEditProcessRequest = async (
   return await newEditRequestService({ args: args.inputs }, context);
 };
 
-const process = async (
-  root: unknown,
-  args: QueryProcessArgs,
-): Promise<Process> => {
+const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
     include: processInclude,
     where: {
@@ -54,6 +51,8 @@ const processesForCurrentUser = async (
   args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
+  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
+
   const processes = await prisma.process.findMany({
     where: {
       // Add editProcess lookup later
@@ -66,12 +65,10 @@ const processesForCurrentUser = async (
                   roleGroups: {
                     some: {
                       AND: [
-                        { groupId: { in: args.groups } },
+                        { groupId: { in: args.groups ?? [] } },
                         {
                           type: {
-                            in: args.requestRoleOnly
-                              ? ["Request"]
-                              : ["Request", "Respond"],
+                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
                           },
                         },
                       ],
@@ -85,9 +82,7 @@ const processesForCurrentUser = async (
                         { userId: context.currentUser.id },
                         {
                           type: {
-                            in: args.requestRoleOnly
-                              ? ["Request"]
-                              : ["Request", "Respond"],
+                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
                           },
                         },
                       ],
@@ -133,6 +128,8 @@ const groupsAndUsersEliglbeForRole = async (
   args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
+  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
+  
   const servers = await discordServers(root, {}, context);
   const serverIds = await servers.map((server) => server.id);
   const arr: (User | Group)[] = [];

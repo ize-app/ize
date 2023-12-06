@@ -2,7 +2,7 @@ import { setUpDiscordServerService } from "@services/groups/discord_server_group
 import { GraphqlRequestContext } from "backend/src/graphql/context";
 import { prisma } from "backend/src/prisma/client";
 
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { groupInclude, formatGroup, GroupPrismaType } from "backend/src/utils/formatGroup";
 import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
 
 import {
@@ -16,11 +16,11 @@ const setUpDiscordServer = async (
   args: MutationSetUpDiscordServerArgs,
   context: GraphqlRequestContext,
 ) => {
-  return await setUpDiscordServerService(args.input, context);
+  return await setUpDiscordServerService(args, context);
 };
 
 const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
-  const group = await prisma.group.findFirst({
+  const group: GroupPrismaType = await prisma.group.findFirst({
     include: groupInclude,
     where: { id: args.id },
   });

@@ -1,4 +1,5 @@
-src/graphql/generated
+apps/frontend/src/graphql/generated
+apps/backend/src/graphql/generated
 
 #### everthing below this comment is same as .gitignore
 node_modules
