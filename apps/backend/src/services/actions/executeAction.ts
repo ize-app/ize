@@ -1,4 +1,4 @@
-import { requestInclude, formatRequest } from "../../utils/formatRequest";
+import { requestInclude, formatRequest, RequestPrismaType } from "../../utils/formatRequest";
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import callWebhook from "./actionTypes/callWebhook";
@@ -20,9 +20,10 @@ const executeAction = async ({
     },
   });
 
-  const request = await formatRequest(reqRaw);
+  const request = await formatRequest(reqRaw as RequestPrismaType);
 
-  if (!request.process.action) return;
+  if (!request.process.action?.actionDetails || !request.result)
+    throw Error("ERROR Execute Action: Malformed result");
 
   switch (request.process.action.actionDetails.__typename) {
     case "WebhookAction":
@@ -33,9 +34,9 @@ const executeAction = async ({
       break;
     case "EvolveProcessAction":
       // eslint-disable-next-line no-case-declarations
-      const processVersions = request.inputs.find(
-        (input) => (input.name = "Process versions"),
-      ).value;
+      const processVersions = request.inputs.find((input) => (input.name = "Process versions"))
+        ?.value;
+      if (!processVersions) throw Error("ERROR Evolve Process Requese");
       wasSuccess = await editProcesses({
         processVersions: processVersions,
       });

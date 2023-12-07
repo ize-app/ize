@@ -21,6 +21,7 @@ export const newEvolveProcess = async (
   },
   context: GraphqlRequestContext,
 ) => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   const inputTemplateSetRecord = await createInputTemplateSet({
     inputs: [
       {
@@ -55,7 +56,7 @@ export const newEvolveProcess = async (
 
   const roleSetRecord = await createRoleSet({ roles: evolve.roles, transaction });
 
-  const webhookTriggerFilterOption = optionSystemRecord.defaultProcessOptionSet.options.find(
+  const webhookTriggerFilterOption = optionSystemRecord?.defaultProcessOptionSet?.options.find(
     (option) => option.value === "✅",
   );
 
@@ -105,7 +106,7 @@ export const newEvolveProcess = async (
       evolveProcessId: finalProcessRecord.id,
     },
     where: {
-      id: finalProcessRecord.currentProcessVersionId,
+      id: finalProcessRecord.currentProcessVersionId as string,
     },
   });
 

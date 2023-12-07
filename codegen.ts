@@ -13,6 +13,9 @@ const config: CodegenConfig = {
       presetConfig: {
         fragmentMasking: false,
       },
+      config: {
+        dedupeFragments: true,
+      },
       plugins: ["fragment-matcher", "typescript"],
     },
     "./apps/frontend/src/graphql/graphql.schema.json": {

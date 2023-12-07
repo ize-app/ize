@@ -64,8 +64,6 @@ export const Process = () => {
   };
 
   if (processError) onError();
-  console.log("process loading is", processLoading);
-  console.log("process is ", process);
 
   return processLoading || !process ? (
     <Loading />

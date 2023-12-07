@@ -74,7 +74,7 @@ export type DiscordApiServerRole = {
 
 export type DiscordData = {
   __typename?: 'DiscordData';
-  avatar: Scalars['String']['output'];
+  avatar?: Maybe<Scalars['String']['output']>;
   discordId: Scalars['String']['output'];
   discriminator?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -691,7 +691,7 @@ export type DiscordApiServerRoleResolvers<ContextType = GraphqlRequestContext, P
 };
 
 export type DiscordDataResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordData'] = ResolversParentTypes['DiscordData']> = {
-  avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   discordId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   discriminator?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

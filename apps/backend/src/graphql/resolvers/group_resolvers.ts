@@ -20,7 +20,7 @@ const setUpDiscordServer = async (
 };
 
 const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
-  const group: GroupPrismaType = await prisma.group.findFirst({
+  const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
     include: groupInclude,
     where: { id: args.id },
   });

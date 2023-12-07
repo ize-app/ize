@@ -23,14 +23,14 @@ const determineDecision = async ({
   requestId: string;
   transaction?: Prisma.TransactionClient;
 }) => {
-  let decidedOptionId: string;
+  let decidedOptionId: string | null;
 
   const responseCount = await transaction.response.groupBy({
     ...responseGroupByArgs,
     where: { requestId },
   });
 
-  const request = await transaction.request.findFirst({
+  const request = await transaction.request.findFirstOrThrow({
     include: requestInclude,
     where: {
       id: requestId,

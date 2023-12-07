@@ -1,6 +1,5 @@
-
+// @ts-nocheck 
 /* eslint-disable */
-// @ts-nocheck
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -74,7 +73,7 @@ export type DiscordApiServerRole = {
 
 export type DiscordData = {
   __typename?: 'DiscordData';
-  avatar: Scalars['String']['output'];
+  avatar?: Maybe<Scalars['String']['output']>;
   discordId: Scalars['String']['output'];
   discriminator?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -650,13 +649,13 @@ export type ResultSummaryPartsFragment = { __typename?: 'Result', actionComplete
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar?: string | null } } | null };
 
-export type MePartsFragment = { __typename?: 'Me', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string } };
+export type MePartsFragment = { __typename?: 'Me', id: string, name?: string | null, discordData: { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar?: string | null } };
 
 export type UserSummaryPartsFragment = { __typename?: 'User', id: string, name: string, icon?: string | null, createdAt: string };
 
-export type DiscordDataPartsFragment = { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar: string };
+export type DiscordDataPartsFragment = { __typename?: 'DiscordData', id: string, username: string, discordId: string, discriminator?: string | null, avatar?: string | null };
 
 export const DiscordServerPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DiscordServerPartsFragment, unknown>;
 export const DiscordServerRolePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"botRole"}}]}}]} as unknown as DocumentNode<DiscordServerRolePartsFragment, unknown>;
@@ -796,7 +795,7 @@ export type DiscordApiServerRole = {
 
 export type DiscordData = {
   __typename?: 'DiscordData';
-  avatar: Scalars['String']['output'];
+  avatar?: Maybe<Scalars['String']['output']>;
   discordId: Scalars['String']['output'];
   discriminator?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];

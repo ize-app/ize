@@ -18,6 +18,8 @@ export const newCustomProcess = async (
   context: GraphqlRequestContext,
 ) => {
   return await prisma.$transaction(async (transaction) => {
+    if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
     let newActionRecord;
     const inputTemplateSetRecord = await createInputTemplateSet({ inputs, transaction });
 

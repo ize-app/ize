@@ -129,7 +129,7 @@ const groupsAndUsersEliglbeForRole = async (
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
   if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
-  
+
   const servers = await discordServers(root, {}, context);
   const serverIds = await servers.map((server) => server.id);
   const arr: (User | Group)[] = [];
@@ -146,7 +146,7 @@ const groupsAndUsersEliglbeForRole = async (
   });
   const formattedGroups = groups.map((group) => formatGroup(group));
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findFirstOrThrow({
     where: {
       id: context.currentUser.id,
     },

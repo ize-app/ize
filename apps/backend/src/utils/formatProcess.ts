@@ -3,6 +3,7 @@ import {
   Prisma,
   ProcessType as PrismaProcessType,
   ActionType as PrismaActionType,
+  WebhookAction,
 } from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
@@ -20,6 +21,7 @@ import {
   ParentProcess,
   ProcessType,
   RoleType,
+  DecisionTypes,
 } from "@graphql/generated/resolver-types";
 
 export interface ProcessVersion
@@ -56,7 +58,7 @@ export const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>(
   },
 });
 
-type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
+export type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
   include: typeof optionSystemInclude;
 }>;
 
@@ -228,7 +230,7 @@ export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): 
 };
 
 const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaType | null) => {
-  if (type === ProcessType.Evolve && parent) {
+  if (type === ProcessType.Evolve && parent?.currentProcessVersion) {
     return `Evolve process of "${parent.currentProcessVersion.name}"`;
   } else return name;
 };
@@ -248,24 +250,25 @@ const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   return roles;
 };
 
-export const formatDecisionSystem = (
-  decisionSystem: DecisionSystemPrismaType,
-): AbsoluteDecision | PercentageDecision => {
-  if (decisionSystem.type === DecisionSystemTypes.Absolute)
-    return {
-      __typename: "AbsoluteDecision",
-      threshold: decisionSystem.absoluteDecisionSystem.threshold,
-    };
-  else if (decisionSystem.type === DecisionSystemTypes.Percentage)
-    return {
-      __typename: "PercentageDecision",
-      quorum: decisionSystem.percentageDecisionSystem.quorum,
-      percentage: decisionSystem.percentageDecisionSystem.percentage,
-    };
+export const formatDecisionSystem = (decisionSystem: DecisionSystemPrismaType): DecisionTypes => {
+  switch (decisionSystem.type) {
+    case DecisionSystemTypes.Absolute:
+      return {
+        __typename: "AbsoluteDecision",
+        threshold: (decisionSystem.absoluteDecisionSystem as AbsoluteDecision).threshold,
+      };
+    case DecisionSystemTypes.Percentage:
+      return {
+        __typename: "PercentageDecision",
+        quorum: (decisionSystem.percentageDecisionSystem as PercentageDecision).quorum,
+        percentage: (decisionSystem.percentageDecisionSystem as PercentageDecision).percentage,
+      };
+  }
 };
 
-export const formatOptions = (optionSystem: OptionSystemPrismaType): ProcessOption[] =>
-  optionSystem.defaultProcessOptionSet.options
+export const formatOptions = (optionSystem: OptionSystemPrismaType): ProcessOption[] => {
+  if (!optionSystem.defaultProcessOptionSet) throw Error("ERROR: No default options");
+  return optionSystem.defaultProcessOptionSet.options
     .sort((a, b) => a.position - b.position)
     .map(
       (option): ProcessOption => ({
@@ -274,6 +277,7 @@ export const formatOptions = (optionSystem: OptionSystemPrismaType): ProcessOpti
         type: option.type as OptionType,
       }),
     );
+};
 
 export const formatAction = (action: ActionPrismaType, options: ProcessOption[]): Action => {
   const optionFilter = options.find((option) => option.id === action.optionId);
@@ -284,7 +288,7 @@ export const formatAction = (action: ActionPrismaType, options: ProcessOption[])
         id: action.id,
         optionFilter,
         actionDetails: {
-          ...action.webhookAction,
+          ...(action.webhookAction as WebhookAction),
           __typename: "WebhookAction",
         },
       };
@@ -299,11 +303,11 @@ export const formatAction = (action: ActionPrismaType, options: ProcessOption[])
   }
 };
 
-export const formatParent = (parent: ParentPrismaType): ParentProcess | null => {
-  if (parent)
+export const formatParent = (parent: ParentPrismaType | null): ParentProcess | null => {
+  if (parent && parent.currentProcessVersion)
     return {
       id: parent.id,
-      name: parent.currentProcessVersion.name,
+      name: parent.currentProcessVersion?.name,
     };
   else return null;
 };

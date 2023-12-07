@@ -23,6 +23,8 @@ const newRequest = async (
   args: MutationNewRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
   return await newRequestService({ args }, context);
 };
 
@@ -31,13 +33,15 @@ const newResponse = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
   const existingResponse = await prisma.response.findFirst({
     where: {
       requestId: args.requestId,
       creatorId: context.currentUser.id,
     },
   });
-  if (existingResponse) throw Error("User already responded to this request ");
+  if (existingResponse) throw Error("ERROR User already responded to this request ");
 
   const response = await prisma.response.create({
     data: {
@@ -64,7 +68,7 @@ const request = async (
     },
   });
 
-  return await formatRequest(req, context.currentUser.id);
+  return await formatRequest(req, context.currentUser?.id);
 };
 
 const requestsForCurrentUser = async (
@@ -72,6 +76,8 @@ const requestsForCurrentUser = async (
   args: QueryRequestsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Promise<Request>[]> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
   const requests = await prisma.request.findMany({
     include: requestInclude,
     where: {
@@ -108,9 +114,7 @@ const requestsForCurrentUser = async (
     },
   });
 
-  return requests.map((request) =>
-    formatRequest(request, context.currentUser.id),
-  );
+  return requests.map((request) => formatRequest(request, context.currentUser?.id));
 };
 
 const requestsForGroup = async (
@@ -133,9 +137,9 @@ const requestsForGroup = async (
     },
   });
 
-  return Promise.all(
-    requests.map((request) => formatRequest(request, context.currentUser.id)),
-  );
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
 };
 
 const requestsForProcess = async (
@@ -152,9 +156,7 @@ const requestsForProcess = async (
     },
   });
 
-  return Promise.all(
-    requests.map((request) => formatRequest(request, context.currentUser.id)),
-  );
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
 };
 
 export const requestQueries = {

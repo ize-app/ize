@@ -11,8 +11,8 @@ const me = async (
   root: unknown,
   args: Record<string, never>,
   contextValue: GraphqlRequestContext,
-): Promise<User> => {
-  return contextValue.currentUser;
+): Promise<User | null> => {
+  return contextValue.currentUser ?? null;
 };
 
 export const userQueries = {

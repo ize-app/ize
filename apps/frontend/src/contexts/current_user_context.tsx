@@ -8,18 +8,12 @@ interface CurrentUserContextValue {
 }
 
 export const CurrentUserContext = createContext<CurrentUserContextValue>({
-  user: undefined,
+  user: null,
 });
 
-export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { data } = useQuery(MeDocument);
   const user = data?.me;
 
-  return (
-    <CurrentUserContext.Provider value={{ user }}>
-      {children}
-    </CurrentUserContext.Provider>
-  );
+  return <CurrentUserContext.Provider value={{ user }}>{children}</CurrentUserContext.Provider>;
 };

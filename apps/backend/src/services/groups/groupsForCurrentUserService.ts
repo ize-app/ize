@@ -5,6 +5,8 @@ import { DiscordApi } from "@discord/api";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 
 export const groupsForCurrentUserService = async (context: GraphqlRequestContext) => {
+  if (!context.currentUser || !context.discordApi) throw Error("ERROR Unauthenticated user");
+
   const userDiscordData = await prisma.discordData.findFirstOrThrow({
     where: { userId: context.currentUser.id },
   });

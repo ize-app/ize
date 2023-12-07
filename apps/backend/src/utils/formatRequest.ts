@@ -42,7 +42,7 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   },
 });
 
-type RequestPrismaType = Prisma.RequestGetPayload<{
+export type RequestPrismaType = Prisma.RequestGetPayload<{
   include: typeof requestInclude;
 }>;
 

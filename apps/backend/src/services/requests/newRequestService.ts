@@ -16,6 +16,8 @@ export const newRequestService = async (
   },
   context: GraphqlRequestContext,
 ) => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
   const { processId, requestInputs } = args;
 
   const currentGroups = await groupsForCurrentUserService(context);
@@ -41,13 +43,15 @@ export const newRequestService = async (
     },
   });
 
-  const hasGroupPermission =
-    process.currentProcessVersion.roleSet.roleGroups.reduce((acc, curr) => {
+  const hasGroupPermission = process.currentProcessVersion?.roleSet.roleGroups.reduce(
+    (acc, curr) => {
       if (groupIds.includes(curr.groupId)) acc = true;
       return acc;
-    }, false);
+    },
+    false,
+  );
 
-  const hasUserPermission = process.currentProcessVersion.roleSet.roleUsers
+  const hasUserPermission = process.currentProcessVersion?.roleSet.roleUsers
     .map((user) => user.userId)
     .includes(context.currentUser.id);
 
@@ -56,14 +60,13 @@ export const newRequestService = async (
 
   const request = await transaction.request.create({
     data: {
-      processVersionId: process.currentProcessVersionId,
+      processVersionId: process.currentProcessVersionId as string,
       creatorId: context.currentUser.id,
       expirationDate: new Date(
-        new Date().getTime() +
-          process.currentProcessVersion.expirationSeconds * 1000,
+        new Date().getTime() + (process?.currentProcessVersion?.expirationSeconds as number) * 1000,
       ),
       requestInputs: {
-        create: requestInputs,
+        create: requestInputs ?? [],
       },
     },
   });

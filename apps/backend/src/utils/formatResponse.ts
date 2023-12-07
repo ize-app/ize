@@ -42,6 +42,7 @@ export const formatResponses = (
     count: 0,
   }));
 
+  // format each response while also creating count of responses for each option
   for (let i = 0; i <= responses.length - 1; i++) {
     const formattedResponse = formatResponse(responses[i]);
     allResponses.push(formattedResponse);

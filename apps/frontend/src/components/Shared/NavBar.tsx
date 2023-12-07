@@ -53,7 +53,7 @@ const NavLink = ({ title, url }: NavLinkProps): JSX.Element => {
 
 interface UserDropDownProps {
   username: string;
-  avatarURL: string;
+  avatarURL: string | null;
 }
 
 const UserDropDownContainer = styled.li`
@@ -63,10 +63,7 @@ const UserDropDownContainer = styled.li`
   gap: 8px;
 `;
 
-const UserDropDown = ({
-  username,
-  avatarURL,
-}: UserDropDownProps): JSX.Element => {
+const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -157,10 +154,7 @@ export const NavBar: React.FC = () => {
       {isHomePage && user == null ? (
         <Box></Box>
       ) : (
-        <img
-          src="/logo-yellow.png"
-          style={{ height: "24px", marginLeft: "12px" }}
-        />
+        <img src="/logo-yellow.png" style={{ height: "24px", marginLeft: "12px" }} />
       )}
 
       <NavControlContainer>
@@ -171,11 +165,11 @@ export const NavBar: React.FC = () => {
             {isOverSmScreen ? <NavLink title="Dashboard" url="/" /> : null}
             <UserDropDown
               username={user.discordData.username}
-              avatarURL={createDiscordAvatarURL(
-                user.discordData.discordId,
-                user.discordData.avatar,
-                128,
-              )}
+              avatarURL={
+                user.discordData.avatar
+                  ? createDiscordAvatarURL(user.discordData.discordId, user.discordData.avatar, 128)
+                  : null
+              }
             />
           </>
         )}
