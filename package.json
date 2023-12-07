@@ -10,9 +10,10 @@
     "apps/backend"
   ],
   "scripts": {
+    "build": "tsc --build --verbose",
     "codegen": "graphql-codegen --config codegen.ts && ts-node scripts/ignoreCodegenTSErrors.ts",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier . --write",
+    "format": "prettier . --write"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
