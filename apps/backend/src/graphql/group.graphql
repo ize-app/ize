@@ -9,7 +9,7 @@ type Mutation {
 
 type Query {
   group(id: String!): Group!
-  groupsForCurrentUser: [Group!]!
+  groupsForCurrentUser(groupIds: [String!]!): [Group!]!
 }
 
 type Group {

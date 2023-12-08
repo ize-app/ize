@@ -9,6 +9,7 @@ import {
   Group,
   MutationSetUpDiscordServerArgs,
   QueryGroupArgs,
+  QueryGroupsForCurrentUserArgs,
 } from "@graphql/generated/resolver-types";
 
 const setUpDiscordServer = async (
@@ -30,10 +31,10 @@ const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
 
 export const groupsForCurrentUser = async (
   root: unknown,
-  args: Record<string, never>,
+  args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Group[]> => {
-  return getGroupsOfUserService(context);
+  return getGroupsOfUserService(args);
 };
 
 export const groupMutations = {

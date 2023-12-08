@@ -306,13 +306,18 @@ export type QueryGroupArgs = {
 };
 
 
+export type QueryGroupsForCurrentUserArgs = {
+  groupIds: Array<Scalars['String']['input']>;
+};
+
+
 export type QueryProcessArgs = {
   processId: Scalars['String']['input'];
 };
 
 
 export type QueryProcessesForCurrentUserArgs = {
-  groups: Array<Scalars['String']['input']>;
+  groupIds: Array<Scalars['String']['input']>;
   requestRoleOnly: Scalars['Boolean']['input'];
 };
 
@@ -328,7 +333,7 @@ export type QueryRequestArgs = {
 
 
 export type QueryRequestsForCurrentUserArgs = {
-  groups: Array<Scalars['String']['input']>;
+  groupIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -829,13 +834,13 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   discordServers?: Resolver<Array<ResolversTypes['DiscordAPIServer']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsAndUsersEliglbeForRole?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
-  groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
+  groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
-  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'groups' | 'requestRoleOnly'>>;
+  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'groupIds' | 'requestRoleOnly'>>;
   processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
   request?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryRequestArgs, 'requestId'>>;
-  requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groups'>>;
+  requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groupIds'>>;
   requestsForGroup?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForGroupArgs, 'groupId'>>;
   requestsForProcess?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForProcessArgs, 'processId'>>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;

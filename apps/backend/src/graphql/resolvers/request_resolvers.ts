@@ -102,7 +102,7 @@ const requestsForCurrentUser = async (
               roleGroups: {
                 some: {
                   AND: [
-                    { groupId: { in: args.groups } },
+                    { groupId: { in: args.groupIds } },
                     {
                       type: "Request",
                     },

@@ -1,18 +1,15 @@
-import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 
-import { getGroupIdsOfUserService } from "./getGroupIdsOfUserService";
+import { QueryGroupsForCurrentUserArgs } from "@graphql/generated/resolver-types";
 
-export const getGroupsOfUserService = async (context: GraphqlRequestContext) => {
-  const groupIds = await getGroupIdsOfUserService(context);
-
+export const getGroupsOfUserService = async (args: QueryGroupsForCurrentUserArgs) => {
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({
     where: {
       id: {
-        in: groupIds,
+        in: args.groupIds,
       },
     },
     include: groupInclude,

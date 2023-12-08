@@ -10,6 +10,12 @@ query Group($id: String!) {
   }
 }
 
+query Groups($groupIds: [String!]!) {
+  groupsForCurrentUser(groupIds: $groupIds) {
+    ...GroupSummaryParts
+  }
+}
+
 fragment GroupSummaryParts on Group {
   id
   name
@@ -50,10 +56,4 @@ fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
   discordServerId
   name
   icon
-}
-
-query Groups {
-  groupsForCurrentUser {
-    ...GroupSummaryParts
-  }
 }

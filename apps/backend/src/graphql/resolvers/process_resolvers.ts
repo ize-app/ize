@@ -65,7 +65,7 @@ const processesForCurrentUser = async (
                   roleGroups: {
                     some: {
                       AND: [
-                        { groupId: { in: args.groups ?? [] } },
+                        { groupId: { in: args.groupIds ?? [] } },
                         {
                           type: {
                             in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
