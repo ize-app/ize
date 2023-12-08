@@ -1,12 +1,5 @@
 import { useQuery } from "@apollo/client";
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-} from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack } from "@mui/material";
 
 import { useNewServerGroupWizardState } from "./newServerWizard";
 import { DiscordServerRolesDocument } from "../../graphql/generated/graphql";
@@ -47,9 +40,7 @@ export const DefineServerGroupProcesses = () => {
                 </MenuItem>
               ))}
             </Select>
-            <FormHelperText>
-              Who get's to respond to requests on the server?
-            </FormHelperText>
+            <FormHelperText>Who get's to respond to requests on the server?</FormHelperText>
           </FormControl>
         </Stack>
       )}

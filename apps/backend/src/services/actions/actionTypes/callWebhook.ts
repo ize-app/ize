@@ -1,12 +1,6 @@
 import { Request } from "frontend/src/graphql/generated/graphql";
 
-const callWebhook = async ({
-  uri,
-  payload,
-}: {
-  uri: string;
-  payload: Request;
-}) => {
+const callWebhook = async ({ uri, payload }: { uri: string; payload: Request }) => {
   try {
     const response = await fetch(uri, {
       method: "POST",

@@ -8,11 +8,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import {
-  NewResponseDocument,
-  ProcessOption,
-  Response,
-} from "../../../graphql/generated/graphql";
+import { NewResponseDocument, ProcessOption, Response } from "../../../graphql/generated/graphql";
 import { RadioControl } from "../Form";
 
 const formSchema = z.object({
@@ -36,8 +32,7 @@ export const SubmitResponse = ({
 }) => {
   const [hasVoted, setHasVoted] = useState<boolean>(!!userResponse);
 
-  const { setSnackbarOpen, setSnackbarData, snackbarData } =
-    useContext(SnackbarContext);
+  const { setSnackbarOpen, setSnackbarData, snackbarData } = useContext(SnackbarContext);
 
   const [mutate] = useMutation(NewResponseDocument);
 

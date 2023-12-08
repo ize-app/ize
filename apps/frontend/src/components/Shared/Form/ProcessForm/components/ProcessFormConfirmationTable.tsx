@@ -1,26 +1,27 @@
+import { Box } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import { ProcessOptions } from "@/components/shared/Process/ProcessOptions";
+import { ReactNode } from "react";
+
+import { createOptionInputs } from "../createProcessMutation";
+
+import { AvatarGroup, AvatarProps } from "@/components/shared/Avatar";
 import {
   FormOptionChoice,
+  HasCustomIntegration,
   ProcessDecision,
   ProcessForm,
 } from "@/components/shared/Form/ProcessForm/types";
-import { InputTemplate } from "@/graphql/generated/graphql";
-import SummarizeInputTemplates from "@/components/shared/Process/SummarizeInputTemplates";
-import { ReactNode } from "react";
+import { ProcessOptions } from "@/components/shared/Process/ProcessOptions";
 import SummarizeAction from "@/components/shared/Process/SummarizeAction";
-import { AvatarProps } from "@/components/shared/Avatar";
 import { summarizeDecisionSystemForm } from "@/components/shared/Process/summarizeDecisionSystem";
-import { createOptionInputs } from "../createProcessMutation";
-import { AvatarGroup } from "@/components/shared/Avatar";
-import { Box } from "@mui/material";
-import { HasCustomIntegration } from "@/components/shared/Form/ProcessForm/types";
+import SummarizeInputTemplates from "@/components/shared/Process/SummarizeInputTemplates";
+import { InputTemplate } from "@/graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 export enum ProcessFormDisplayFields {
@@ -50,12 +51,7 @@ const displayProcessFormField = (
     case ProcessFormDisplayFields.Description:
       return <Typography variant={fontSize}>{form.description}</Typography>;
     case ProcessFormDisplayFields.Inputs:
-      return (
-        <SummarizeInputTemplates
-          variant={fontSize}
-          inputs={form.inputs as InputTemplate[]}
-        />
-      );
+      return <SummarizeInputTemplates variant={fontSize} inputs={form.inputs as InputTemplate[]} />;
     case ProcessFormDisplayFields.Options:
       return (
         <ProcessOptions
@@ -96,25 +92,19 @@ const displayProcessFormField = (
     case ProcessFormDisplayFields.EvolveRequest:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup
-            agents={form?.evolve?.rights?.request as AvatarProps[]}
-          />
+          <AvatarGroup agents={form?.evolve?.rights?.request as AvatarProps[]} />
         </Box>
       );
     case ProcessFormDisplayFields.EvolveRespond:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup
-            agents={form?.evolve?.rights?.response as AvatarProps[]}
-          />
+          <AvatarGroup agents={form?.evolve?.rights?.response as AvatarProps[]} />
         </Box>
       );
     case ProcessFormDisplayFields.EvolveDecision:
       return (
         <Typography variant={fontSize}>
-          {summarizeDecisionSystemForm(
-            form?.evolve?.decision as ProcessDecision,
-          )}
+          {summarizeDecisionSystemForm(form?.evolve?.decision as ProcessDecision)}
         </Typography>
       );
     case ProcessFormDisplayFields.RequestExpiration:

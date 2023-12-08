@@ -1,16 +1,11 @@
-import {
-  DecisionType,
-  ProcessDecision,
-} from "@/components/shared/Form/ProcessForm/types";
+import { DecisionType, ProcessDecision } from "@/components/shared/Form/ProcessForm/types";
 import {
   AbsoluteDecisionArgs,
   DecisionArgs,
   PercentageDecisionArgs,
 } from "@/graphql/generated/graphql";
 
-const createDecisionInputs = (
-  formDecision: ProcessDecision | undefined,
-): DecisionArgs => {
+const createDecisionInputs = (formDecision: ProcessDecision | undefined): DecisionArgs => {
   switch (formDecision?.type) {
     case DecisionType.Absolute:
       return {

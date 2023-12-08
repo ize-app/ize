@@ -1,9 +1,5 @@
+import { DecisionType, ProcessDecision } from "@/components/shared/Form/ProcessForm/types";
 import { DecisionTypes } from "@/graphql/generated/graphql";
-
-import {
-  DecisionType,
-  ProcessDecision,
-} from "@/components/shared/Form/ProcessForm/types";
 
 const createDecisionFormState = (
   decisionSystem: DecisionTypes,

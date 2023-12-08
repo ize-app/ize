@@ -30,7 +30,7 @@ const FinalDecision = ({
     >
       {result ? (
         <Typography>
-          Final decision:{" "}
+          Final decision:&nbsp;{" "}
           <span style={{ fontWeight: 900 }}>{result.selectedOption.value}</span>
         </Typography>
       ) : isExpired ? (
@@ -45,8 +45,7 @@ const FinalDecision = ({
       ) : null}
       {userResponse ? (
         <Typography>
-          You responded:{" "}
-          <span style={{ fontWeight: 900 }}>{userResponse.value}</span>
+          You responded:&nbsp;<span style={{ fontWeight: 900 }}>{userResponse.value}</span>
         </Typography>
       ) : (
         <Typography>You did not respond</Typography>

@@ -2,27 +2,26 @@ import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
+
+import RolesAndDecisionSystem from "../components/RolesAndDecisionSystem";
+import { rolesFormSchema } from "../formSchema";
+
 import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
+import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
+import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import {
   AgentSummaryPartsFragment,
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
-import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-
-import { rolesFormSchema } from "../formSchema";
-import RolesAndDecisionSystem from "../components/RolesAndDecisionSystem";
 
 type FormFields = z.infer<typeof rolesFormSchema>;
 
 export const Roles = () => {
   const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
 
-  const agents =
-    data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
+  const agents = data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
 
-  const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useNewProcessWizardState();
+  const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
@@ -32,8 +31,7 @@ export const Roles = () => {
       },
       decision: {
         type: formState.decision?.type ?? DecisionType.Absolute,
-        requestExpirationSeconds:
-          formState.decision?.requestExpirationSeconds ?? 86400,
+        requestExpirationSeconds: formState.decision?.requestExpirationSeconds ?? 86400,
         percentageDecision: {
           quorum: formState.decision?.percentageDecision?.quorum ?? 3,
           percentage: formState.decision?.percentageDecision?.percentage ?? 51,
@@ -47,8 +45,7 @@ export const Roles = () => {
     shouldUnregister: true,
   });
 
-  const isPercentageThreshold =
-    watch("decision.type") === DecisionType.Percentage;
+  const isPercentageThreshold = watch("decision.type") === DecisionType.Percentage;
 
   const onSubmit = (data: FormFields) => {
     // Going to rebuild the role selection so going to ignore this error for now
@@ -83,11 +80,7 @@ export const Roles = () => {
           />
         </form>
       </WizardBody>
-      <WizardNav
-        onNext={handleSubmit(onSubmit)}
-        onPrev={onPrev}
-        nextLabel={nextLabel}
-      />
+      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );
 };

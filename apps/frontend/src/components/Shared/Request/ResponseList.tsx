@@ -38,10 +38,7 @@ export const ResponseList = ({ responses }: { responses: Response[] }) => {
       <Table aria-label="collapsible table" size={"medium"}>
         <TableBody>
           {responses.map((response, index) => (
-            <ResponseListRow
-              response={response}
-              key={"response" + index.toString()}
-            />
+            <ResponseListRow response={response} key={"response" + index.toString()} />
           ))}
         </TableBody>
       </Table>

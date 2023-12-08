@@ -14,10 +14,7 @@ import {
   UserInputs,
 } from "./newRequestWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import {
-  NewRequestDocument,
-  RequestInputArgs,
-} from "../../graphql/generated/graphql";
+import { NewRequestDocument, RequestInputArgs } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
@@ -36,12 +33,12 @@ export const NewRequest = () => {
 
   const onComplete = async () => {
     try {
-      const inputs: RequestInputArgs[] = Object.entries(
-        formState.userInputs as UserInputs,
-      ).map((entry) => ({
-        inputId: entry[0],
-        value: entry[1].toString(),
-      }));
+      const inputs: RequestInputArgs[] = Object.entries(formState.userInputs as UserInputs).map(
+        (entry) => ({
+          inputId: entry[0],
+          value: entry[1].toString(),
+        }),
+      );
 
       await mutate({
         variables: {

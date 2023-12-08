@@ -1,5 +1,6 @@
 import { EditProcessRoute, editProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 
 export interface EditProcessState extends ProcessForm {
@@ -10,11 +11,7 @@ export function useEditProcessWizardState() {
   return useWizardFormState<EditProcessState>();
 }
 
-export const EDIT_PROCESS_PROGRESS_BAR_STEPS = [
-  "How edits work",
-  "Make edits",
-  "Review edits",
-];
+export const EDIT_PROCESS_PROGRESS_BAR_STEPS = ["How edits work", "Make edits", "Review edits"];
 
 export const EDIT_PROCESS_WIZARD_STEPS: WizardSteps<EditProcessState> = [
   {
@@ -29,8 +26,7 @@ export const EDIT_PROCESS_WIZARD_STEPS: WizardSteps<EditProcessState> = [
     title: "Basic info",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: (formState: EditProcessState) =>
-      !!formState.currentProcess,
+    validWizardState: (formState: EditProcessState) => !!formState.currentProcess,
   },
   {
     path: editProcessRoute(EditProcessRoute.Inputs),

@@ -1,17 +1,13 @@
 import { NewProcessRoute, newProcessRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+
 import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 
 export function useNewProcessWizardState() {
   return useWizardFormState<ProcessForm>();
 }
 
-export const NEW_PROCESS_PROGRESS_BAR_STEPS = [
-  "Template",
-  "Participate",
-  "Evolve",
-  "Finish",
-];
+export const NEW_PROCESS_PROGRESS_BAR_STEPS = ["Template", "Participate", "Evolve", "Finish"];
 
 export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<ProcessForm> = [
   {
@@ -47,7 +43,6 @@ export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<ProcessForm> = [
     title: "Confirm new process details",
     progressBarStep: 3,
     canNext: () => true,
-    validWizardState: (formState: ProcessForm) =>
-      !!formState.decision && !!formState.rights,
+    validWizardState: (formState: ProcessForm) => !!formState.decision && !!formState.rights,
   },
 ];

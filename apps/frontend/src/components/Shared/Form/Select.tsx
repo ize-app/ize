@@ -8,11 +8,7 @@ export interface SelectProps {
   onChange: (event: SelectChangeEvent) => void;
 }
 
-export const Select = ({
-  selectOptions,
-  selectOption,
-  onChange,
-}: SelectProps): JSX.Element => (
+export const Select = ({ selectOptions, selectOption, onChange }: SelectProps): JSX.Element => (
   <FormControl sx={{ width: "200px" }}>
     <MuiSelect
       labelId="select-filter"

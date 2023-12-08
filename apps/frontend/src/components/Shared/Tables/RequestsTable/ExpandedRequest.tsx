@@ -5,12 +5,13 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
+import { RequestInputTable, SubmitResponse } from "../../Request";
+import ProcessEvolveRequestDiff from "../../Request/ProcessEvolveRequestDiff";
+
 import {
   ProcessSummaryPartsFragment,
   RequestSummaryPartsFragment,
-} from "../../../../graphql/generated/graphql";
-import { RequestInputTable, SubmitResponse } from "../../Request";
-import ProcessEvolveRequestDiff from "../../Request/ProcessEvolveRequestDiff";
+} from "@/graphql/generated/graphql";
 
 export const ExpandedRequest = ({
   request,
@@ -115,12 +116,8 @@ export const ExpandedRequest = ({
                     Proposed evolution of : '{change?.processName}''
                   </Typography>
                   <ProcessEvolveRequestDiff
-                    current={
-                      change?.changes.current as ProcessSummaryPartsFragment
-                    }
-                    proposed={
-                      change?.changes.proposed as ProcessSummaryPartsFragment
-                    }
+                    current={change?.changes.current as ProcessSummaryPartsFragment}
+                    proposed={change?.changes.proposed as ProcessSummaryPartsFragment}
                   />
                 </>
               ))}

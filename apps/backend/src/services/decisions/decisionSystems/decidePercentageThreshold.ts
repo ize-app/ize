@@ -11,10 +11,7 @@ const decidePercentageThreshold = (
 
   for (let i = 0; i <= responseCount.length - 1; i++) {
     const option = responseCount[i];
-    if (
-      option._count.optionId >= system.quorum &&
-      option._count.optionId >= decisionThreshold
-    ) {
+    if (option._count.optionId >= system.quorum && option._count.optionId >= decisionThreshold) {
       return option.optionId;
     }
   }

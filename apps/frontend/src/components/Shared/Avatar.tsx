@@ -9,10 +9,7 @@ import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import {
-  AgentSummaryPartsFragment,
-  AgentType,
-} from "../../graphql/generated/graphql";
+import { AgentSummaryPartsFragment, AgentType } from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
 
 export interface AvatarWithNameProps {
@@ -38,9 +35,7 @@ export interface AvatarProps extends MuiAvatarProps {
   backgroundColor?: string | null | undefined;
 }
 
-export const reformatAgentForAvatar = (
-  agent: AgentSummaryPartsFragment,
-): AvatarProps => {
+export const reformatAgentForAvatar = (agent: AgentSummaryPartsFragment): AvatarProps => {
   const parent =
     agent.__typename === "Group"
       ? {
@@ -54,8 +49,7 @@ export const reformatAgentForAvatar = (
     type: agent.__typename === "Group" ? AgentType.Group : AgentType.User,
     avatarUrl: agent.icon,
     name: agent.name,
-    backgroundColor:
-      agent.__typename === "Group" && agent.color ? agent.color : "",
+    backgroundColor: agent.__typename === "Group" && agent.color ? agent.color : "",
     parent: parent,
   };
 };
@@ -138,11 +132,7 @@ export const AvatarWithName = ({
           avatarUrl={url}
           name={name}
           backgroundColor={color}
-          parent={
-            parent
-              ? { name: parent.name, avatarUrl: parent.avatarUrl }
-              : undefined
-          }
+          parent={parent ? { name: parent.name, avatarUrl: parent.avatarUrl } : undefined}
         />
       }
       <Typography
@@ -206,11 +196,7 @@ const AvatarPopper = ({
     )}
   </Popper>
 );
-export const AvatarGroup = ({
-  agents,
-}: {
-  agents: AvatarProps[];
-}): JSX.Element => {
+export const AvatarGroup = ({ agents }: { agents: AvatarProps[] }): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -258,9 +244,7 @@ export const NameWithPopper = ({
   name: string;
   agents: AgentSummaryPartsFragment[];
 }) => {
-  const agentsFormatted: AvatarProps[] = agents.map((agent) =>
-    reformatAgentForAvatar(agent),
-  );
+  const agentsFormatted: AvatarProps[] = agents.map((agent) => reformatAgentForAvatar(agent));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

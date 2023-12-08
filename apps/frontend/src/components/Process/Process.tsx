@@ -5,7 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
-import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
+import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
@@ -18,14 +18,18 @@ import {
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { EditProcessRoute, NewRequestRoute, editProcessRoute, newRequestRoute } from "../../routers/routes";
+import {
+  EditProcessRoute,
+  NewRequestRoute,
+  Route,
+  editProcessRoute,
+  newRequestRoute,
+} from "../../routers/routes";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import SummarizeAction from "../shared/Process/SummarizeAction";
 import RequestTab, { FilterOptions } from "../shared/Tables/RequestsTable/RequestTab";
-
-import { Route } from "../../routers/routes";
 
 export const Process = () => {
   const { processId: processIdShort } = useParams();
@@ -169,7 +173,11 @@ export const Process = () => {
           </Box>
         </Box>
         <Box sx={{ maxWidth: "800px" }}>
-          <Accordion label="How decisions are made" id="decision-panel" defaultExpanded={isOverSmScreen}>
+          <Accordion
+            label="How decisions are made"
+            id="decision-panel"
+            defaultExpanded={isOverSmScreen}
+          >
             <DecisionSystemSummaryTable process={process} />
           </Accordion>
           {process.type !== "Evolve" && (

@@ -7,11 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import {
-  NEW_PROCESS_PROGRESS_BAR_STEPS,
-  NEW_PROCESS_WIZARD_STEPS,
-} from "./newProcessWizard";
-import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import { NEW_PROCESS_PROGRESS_BAR_STEPS, NEW_PROCESS_WIZARD_STEPS } from "./newProcessWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewProcessDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
@@ -19,12 +15,12 @@ import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 
 import { createProcessMutation } from "@/components/shared/Form/ProcessForm/createProcessMutation";
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { Wizard, useWizard } from "@/utils/wizard";
 
 const NewProcess = () => {
   const navigate = useNavigate();
-  const { setSnackbarData, setSnackbarOpen, snackbarData } =
-    useContext(SnackbarContext);
+  const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
 
   const [mutate] = useMutation(NewProcessDocument, {
     onCompleted: (data) => {
@@ -59,23 +55,14 @@ const NewProcess = () => {
     initialFormState: {},
   };
 
-  const {
-    onPrev,
-    onNext,
-    progressBarStep,
-    title,
-    formState,
-    setFormState,
-    nextLabel,
-  } = useWizard(newProcessWizard);
+  const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel } =
+    useWizard(newProcessWizard);
 
   return (
     <PageContainer>
       <Head
         title={"Create a process"}
-        description={
-          "Create a new process for making and automatically executing decisions"
-        }
+        description={"Create a new process for making and automatically executing decisions"}
       />
       <Box
         sx={{
@@ -96,9 +83,7 @@ const NewProcess = () => {
           {title}
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-          <Outlet
-            context={{ formState, setFormState, onNext, onPrev, nextLabel }}
-          />
+          <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
         </Box>
       </Box>
     </PageContainer>

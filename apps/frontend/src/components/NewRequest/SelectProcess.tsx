@@ -27,8 +27,7 @@ export const SelectProcess = () => {
 
   const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
 
-  const processes = (data?.processesForCurrentUser ??
-    []) as ProcessSummaryPartsFragment[];
+  const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 
   const filteredProcesses = processes.filter((process) => {
     const regExSearchQuery = new RegExp(searchQuery, "i");
@@ -57,10 +56,7 @@ export const SelectProcess = () => {
           }}
         />
       </Box>
-      <TableContainer
-        component={Paper}
-        sx={{ overflowX: "initial", maxWidth: "800px" }}
-      >
+      <TableContainer component={Paper} sx={{ overflowX: "initial", maxWidth: "800px" }}>
         <Table
           aria-label="table"
           stickyHeader={true}

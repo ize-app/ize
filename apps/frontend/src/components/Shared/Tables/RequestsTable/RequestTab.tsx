@@ -3,19 +3,17 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 
 import RequestTable from "./RequestTable";
-import {
-  AgentSummaryPartsFragment,
-  RequestSummaryPartsFragment,
-} from "../../../../graphql/generated/graphql";
 import { Select } from "../../Form/Select";
 import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
 import Search from "../Search";
 
-const searchForUser = (
-  regExSearchQuery: RegExp,
-  users: AgentSummaryPartsFragment[],
-) => {
+import {
+  AgentSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
+
+const searchForUser = (regExSearchQuery: RegExp, users: AgentSummaryPartsFragment[]) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {
@@ -66,26 +64,14 @@ const RequestTab = ({
       }
 
       if (selectOption === "All") selectMatch = true;
-      else if (
-        selectOption === "Closed" &&
-        (expirationDate < now || !!request.result)
-      )
+      else if (selectOption === "Closed" && (expirationDate < now || !!request.result))
         selectMatch = true;
-      else if (
-        selectOption === "Open" &&
-        expirationDate > now &&
-        !request.result
-      )
+      else if (selectOption === "Open" && expirationDate > now && !request.result)
         selectMatch = true;
 
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
-      else if (request.process.name.search(regExSearchQuery) !== -1)
-        searchMatch = true;
-      else if (
-        searchForUser(regExSearchQuery, [
-          request.creator as AgentSummaryPartsFragment,
-        ])
-      )
+      else if (request.process.name.search(regExSearchQuery) !== -1) searchMatch = true;
+      else if (searchForUser(regExSearchQuery, [request.creator as AgentSummaryPartsFragment]))
         searchMatch = true;
 
       return selectMatch && searchMatch;

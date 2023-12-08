@@ -39,10 +39,7 @@ export const SelectControl = ({
           label={label}
         >
           {selectOptions.map((option, index) => (
-            <MenuItem
-              key={`${option.name + index.toString()}`}
-              value={option.value}
-            >
+            <MenuItem key={`${option.name + index.toString()}`} value={option.value}>
               {option.name}
             </MenuItem>
           ))}

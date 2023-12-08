@@ -22,27 +22,16 @@ import {
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import {
-  intervalToIntuitiveTimeString,
-  shortUUIDToFull,
-} from "../../utils/inputs";
+import { intervalToIntuitiveTimeString, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import { NameWithPopper } from "../shared/Avatar";
 import Loading from "../shared/Loading";
-import {
-  FinalDecision,
-  RequestInputTable,
-  SubmitResponse,
-} from "../shared/Request";
+import { FinalDecision, RequestInputTable, SubmitResponse } from "../shared/Request";
+import ProcessEvolveRequestDiff from "../shared/Request/ProcessEvolveRequestDiff";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
 import { ResponseList } from "../shared/Request/ResponseList";
-import ProcessEvolveRequestDiff from "../shared/Request/ProcessEvolveRequestDiff";
 
-export default function HorizontalBars({
-  responseCounts,
-}: {
-  responseCounts: ResponseCount[];
-}) {
+export default function HorizontalBars({ responseCounts }: { responseCounts: ResponseCount[] }) {
   return (
     <BarChart
       yAxis={[
@@ -64,10 +53,7 @@ export default function HorizontalBars({
         {
           id: "bottomAxisKey",
           label: "Response count",
-          max: responseCounts.reduce(
-            (acc, curr) => Math.max(acc, curr.count),
-            0,
-          ),
+          max: responseCounts.reduce((acc, curr) => Math.max(acc, curr.count), 0),
         },
       ]}
       width={350}
@@ -121,10 +107,7 @@ export const RemainingTime = ({
       <>
         <Chip label="Open" color="primary" size="small" />
         <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <AccessAlarmIcon
-            fontSize="small"
-            color={displayRed ? "error" : "primary"}
-          />
+          <AccessAlarmIcon fontSize="small" color={displayRed ? "error" : "primary"} />
           <Typography color={displayRed ? "error" : "primary"}>
             {timeLeftStr} left to respond
           </Typography>
@@ -163,10 +146,7 @@ export const Request = () => {
     <Loading />
   ) : (
     <PageContainer>
-      <Head
-        title={request.name}
-        description={"Process: " + request.process.name}
-      />
+      <Head title={request.name} description={"Process: " + request.process.name} />
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Box>
           <Box>
@@ -223,8 +203,7 @@ export const Request = () => {
               },
             })}
           >
-            {request.result ||
-            new Date() > new Date(Date.parse(request.expirationDate)) ? (
+            {request.result || new Date() > new Date(Date.parse(request.expirationDate)) ? (
               <FinalDecision
                 expirationDate={new Date(Date.parse(request.expirationDate))}
                 result={request.result as Result}
@@ -234,11 +213,7 @@ export const Request = () => {
               <Accordion
                 id="submit-response-panel"
                 defaultExpanded={true}
-                label={
-                  request?.responses?.userResponse
-                    ? "Your response"
-                    : "Submit your response"
-                }
+                label={request?.responses?.userResponse ? "Your response" : "Submit your response"}
                 elevation={6}
               >
                 <SubmitResponse
@@ -255,9 +230,7 @@ export const Request = () => {
 
             <Accordion label="Results" id="response-count-panel">
               {request.responses.userResponse ? (
-                <HorizontalBars
-                  responseCounts={request.responses.responseCount}
-                />
+                <HorizontalBars responseCounts={request.responses.responseCount} />
               ) : (
                 <Box
                   sx={{
@@ -268,17 +241,13 @@ export const Request = () => {
                     marginBottom: "8px",
                   }}
                 >
-                  <Typography>
-                    Please respond before you can see the other responses
-                  </Typography>
+                  <Typography>Please respond before you can see the other responses</Typography>
                 </Box>
               )}
             </Accordion>
             <Accordion label="Responses" id="response-list-panel">
               {request.responses.userResponse ? (
-                <ResponseList
-                  responses={request.responses.allResponses as Response[]}
-                />
+                <ResponseList responses={request.responses.allResponses as Response[]} />
               ) : (
                 <Box
                   sx={{
@@ -289,9 +258,7 @@ export const Request = () => {
                     marginBottom: "8px",
                   }}
                 >
-                  <Typography>
-                    Please respond before you can see the other responses
-                  </Typography>
+                  <Typography>Please respond before you can see the other responses</Typography>
                 </Box>
               )}
             </Accordion>
@@ -312,32 +279,19 @@ export const Request = () => {
                     defaultExpanded={true}
                   >
                     <ProcessEvolveRequestDiff
-                      current={
-                        change?.changes.current as ProcessSummaryPartsFragment
-                      }
-                      proposed={
-                        change?.changes.proposed as ProcessSummaryPartsFragment
-                      }
+                      current={change?.changes.current as ProcessSummaryPartsFragment}
+                      proposed={change?.changes.proposed as ProcessSummaryPartsFragment}
                     />
                   </Accordion>
                 </>
               ))}
-            {request.inputs.length === 0 ||
-            request.evolveProcessChanges ? null : (
-              <Accordion
-                label="Request details"
-                id="request-details-panel"
-                defaultExpanded={true}
-              >
+            {request.inputs.length === 0 || request.evolveProcessChanges ? null : (
+              <Accordion label="Request details" id="request-details-panel" defaultExpanded={true}>
                 <RequestInputTable rowSize="medium" inputs={request.inputs} />
               </Accordion>
             )}
             <Accordion
-              label={
-                request.evolveProcessChanges
-                  ? "Evolve process details"
-                  : "Process details"
-              }
+              label={request.evolveProcessChanges ? "Evolve process details" : "Process details"}
               id="process-details-panel"
               defaultExpanded={isOverMdScreen}
             >

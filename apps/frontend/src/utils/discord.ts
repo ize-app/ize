@@ -18,6 +18,4 @@ const createDiscordImageUrl = (
   size: DiscordImageSize,
   type: "avatars" | "icons",
 ): string =>
-  `https://cdn.discordapp.com/${type}/${discordId}/${avatarHash}.png${
-    size ? `?size=${size}` : ""
-  }`;
+  `https://cdn.discordapp.com/${type}/${discordId}/${avatarHash}.png${size ? `?size=${size}` : ""}`;

@@ -24,9 +24,7 @@ export const SnackbarContext = createContext<SnackbarContextValue>({
   },
 });
 
-export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarData, setSnackbarData] = useState({
     message: "Success!",

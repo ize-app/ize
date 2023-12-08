@@ -13,9 +13,6 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
-  "import/resolver": {
-    typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
-  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
@@ -50,7 +47,7 @@ module.exports = {
     ],
     // turn on errors for missing imports
     "import/no-unresolved": "error",
-    // 'import/no-named-as-default-member': 'off',
+    "import/no-named-as-default-member": "off",
     "import/order": [
       "error",
       {
@@ -73,10 +70,15 @@ module.exports = {
     ],
   },
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
+    // use tsconfigs of root project and packages to determine import resolution
     "import/resolver": {
       typescript: {
-        project: "./tsconfig.json",
+        project: ["./tsconfig.json"],
       },
     },
   },
+  ignorePatterns: ["**/graphql/generated/*.ts"],
 };

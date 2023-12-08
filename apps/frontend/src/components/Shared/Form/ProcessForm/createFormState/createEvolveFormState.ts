@@ -1,19 +1,13 @@
-import {
-  DecisionTypes,
-  Process,
-  RoleSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
+import createDecisionFormState from "./createDecisionFormState";
+import createRolesFormState from "./createRolesFormState";
 
 import {
   DefaultEvolveProcessOptions,
   EvolveProcessForm,
 } from "@/components/shared/Form/ProcessForm/types";
-import createDecisionFormState from "./createDecisionFormState";
-import createRolesFormState from "./createRolesFormState";
+import { DecisionTypes, Process, RoleSummaryPartsFragment } from "@/graphql/generated/graphql";
 
-const createEvolveFormState = (
-  evolve: Process | undefined,
-): EvolveProcessForm | undefined => {
+const createEvolveFormState = (evolve: Process | undefined): EvolveProcessForm | undefined => {
   return {
     evolveDefaults: DefaultEvolveProcessOptions.Custom,
     decision: createDecisionFormState(

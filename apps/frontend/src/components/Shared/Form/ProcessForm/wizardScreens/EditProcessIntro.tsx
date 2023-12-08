@@ -2,16 +2,15 @@ import { useQuery } from "@apollo/client";
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useEditProcessWizardState } from "../../../../EditProcess/editProcessWizard";
-import createProcessFormState from "../createFormState/createProcessFormState";
 import { SnackbarContext } from "../../../../../contexts/SnackbarContext";
 import { ProcessDocument } from "../../../../../graphql/generated/graphql";
 import { shortUUIDToFull } from "../../../../../utils/inputs";
+import { useEditProcessWizardState } from "../../../../EditProcess/editProcessWizard";
 import { WizardBody, WizardNav } from "../../../Wizard";
+import createProcessFormState from "../createFormState/createProcessFormState";
 
 export const EditProcessIntro = () => {
-  const { onNext, nextLabel, onPrev, setParams, setFormState } =
-    useEditProcessWizardState();
+  const { onNext, nextLabel, onPrev, setParams, setFormState } = useEditProcessWizardState();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const { processId: processIdShort } = useParams();
   const processId: string = shortUUIDToFull(processIdShort as string);

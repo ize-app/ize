@@ -1,4 +1,5 @@
 import { SelectOption } from "../../SelectControl";
+
 import {
   DefaultOptionSets,
   FormOptionChoice,
@@ -17,9 +18,7 @@ const getOptionSet = ({
   const options: string[] =
     optionTypeCast === FormOptionChoice.Custom
       ? customOptions ?? []
-      : DefaultOptionSets.get(optionTypeCast)?.data.map(
-          (option) => option.value,
-        ) ?? [];
+      : DefaultOptionSets.get(optionTypeCast)?.data.map((option) => option.value) ?? [];
   return options;
 };
 

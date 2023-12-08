@@ -60,29 +60,25 @@ export const HowCultsWorks = () => {
         icon={<GroupsOutlined color="primary" sx={{ fontSize: "60px" }} />}
         iconSide="left"
       >
-        We're going to create a Cults{" "}
-        <span style={{ fontWeight: "bold" }}>group</span> for {serverName}.
-        You'll also be able to create Cults groups for any of {serverName}'s
-        roles.
+        We're going to create a Cults <span style={{ fontWeight: "bold" }}>group</span> for{" "}
+        {serverName}. You'll also be able to create Cults groups for any of {serverName}'s roles.
       </ExplainerBox>
 
       <ExplainerBox
         icon={<AccountTreeOutlined color="primary" sx={{ fontSize: "60px" }} />}
         iconSide="left"
       >
-        Groups create <span style={{ fontWeight: "bold" }}>processes</span>{" "}
-        together that define how certain kinds of decisions are made- e.g.
-        adding an event to a shared calendar, giving someone a Discord role,
-        approving an expense, etc.
+        Groups create <span style={{ fontWeight: "bold" }}>processes</span> together that define how
+        certain kinds of decisions are made- e.g. adding an event to a shared calendar, giving
+        someone a Discord role, approving an expense, etc.
       </ExplainerBox>
       <ExplainerBox
         icon={<TaskAltOutlined color="primary" sx={{ fontSize: "60px" }} />}
         iconSide="left"
       >
-        Processes are used to create{" "}
-        <span style={{ fontWeight: "bold" }}>requests</span>. For example, you
-        could use the “Give user @core-team Discord role” process to propose
-        giving example-user#1234 the @core-team role.
+        Processes are used to create <span style={{ fontWeight: "bold" }}>requests</span>. For
+        example, you could use the “Give user @core-team Discord role” process to propose giving
+        example-user#1234 the @core-team role.
       </ExplainerBox>
     </Box>
   );

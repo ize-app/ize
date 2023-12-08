@@ -8,12 +8,7 @@ interface WizardNavProps {
   disableNext?: boolean;
 }
 
-export const WizardNav = ({
-  onPrev,
-  onNext,
-  nextLabel,
-  disableNext,
-}: WizardNavProps) => (
+export const WizardNav = ({ onPrev, onNext, nextLabel, disableNext }: WizardNavProps) => (
   <Stack
     direction="row"
     justifyContent="space-between"

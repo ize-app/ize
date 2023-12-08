@@ -11,15 +11,14 @@ const SummarizeAction = ({
   optionTrigger: string | undefined;
   fontSize?: "body1" | "body2";
 }) => {
-  return !optionTrigger ||
-    optionTrigger === defaultWebhookTriggerOption.value ? (
+  return !optionTrigger || optionTrigger === defaultWebhookTriggerOption.value ? (
     <Typography variant={fontSize}>
       After all decisions, a custom integration is triggered via {uri}
     </Typography>
   ) : (
     <Typography variant={fontSize}>
-      If decision is <span style={{ fontWeight: 900 }}>{optionTrigger}</span>, a
-      custom integration is triggered via {uri}
+      If decision is <span style={{ fontWeight: 900 }}>{optionTrigger}</span>, a custom integration
+      is triggered via {uri}
     </Typography>
   );
 };

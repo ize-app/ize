@@ -1,11 +1,14 @@
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import {
+  ProcessFormDisplayFields as Fields,
+  ProcessFormConfirmationTable,
+} from "../components/ProcessFormConfirmationTable";
 
 import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
-import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { ProcessFormConfirmationTable } from "../components/ProcessFormConfirmationTable";
 import { Accordion } from "@/components/shared/Accordion";
-import { ProcessFormDisplayFields as Fields } from "../components/ProcessFormConfirmationTable";
+import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
 export const ConfirmNewProcess = () => {
   const { formState, onPrev, onNext, nextLabel } = useNewProcessWizardState();
@@ -15,10 +18,8 @@ export const ConfirmNewProcess = () => {
       <WizardBody>
         <Typography variant="body1">
           Almost done! Confirm the details for how{" "}
-          <span style={{ fontWeight: "bold" }}>
-            {formState.name ?? "this process"}
-          </span>{" "}
-          works. Click "Finish" to create the process.
+          <span style={{ fontWeight: "bold" }}>{formState.name ?? "this process"}</span> works.
+          Click "Finish" to create the process.
         </Typography>
         <Box sx={{ maxWidth: "800px", marginTop: "24px" }}>
           <Accordion label="Request Template" id="request-template-summary">
@@ -42,11 +43,7 @@ export const ConfirmNewProcess = () => {
           <Accordion label="Decision" id="decision-summary">
             <ProcessFormConfirmationTable
               process={formState}
-              fields={[
-                Fields.EvolveDecision,
-                Fields.EvolveRequest,
-                Fields.EvolveRespond,
-              ]}
+              fields={[Fields.EvolveDecision, Fields.EvolveRequest, Fields.EvolveRespond]}
             />
           </Accordion>
         </Box>

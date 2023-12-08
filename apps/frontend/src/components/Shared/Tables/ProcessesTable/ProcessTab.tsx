@@ -10,10 +10,7 @@ import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
 import Search from "../Search";
 
-const searchForUser = (
-  regExSearchQuery: RegExp,
-  users: AgentSummaryPartsFragment[],
-) => {
+const searchForUser = (regExSearchQuery: RegExp, users: AgentSummaryPartsFragment[]) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {
@@ -39,10 +36,8 @@ const ProcessTab = ({
       let searchMatch = false;
 
       if (process.name.search(regExSearchQuery) !== -1) searchMatch = true;
-      else if (searchForUser(regExSearchQuery, process.roles.request))
-        searchMatch = true;
-      else if (searchForUser(regExSearchQuery, process.roles.respond))
-        searchMatch = true;
+      else if (searchForUser(regExSearchQuery, process.roles.request)) searchMatch = true;
+      else if (searchForUser(regExSearchQuery, process.roles.respond)) searchMatch = true;
       // else if (searchForUser(regExSearchQuery, [process.roles.edit]))
       //   searchMatch = true;
 

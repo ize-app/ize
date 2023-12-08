@@ -1,7 +1,4 @@
-import {
-  DefaultOptionSets,
-  FormOptionChoice,
-} from "@/components/shared/Form/ProcessForm/types";
+import { DefaultOptionSets, FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { OptionType, ProcessOptionArgs } from "@/graphql/generated/graphql";
 
 const createOptionInputs = (
@@ -14,8 +11,7 @@ const createOptionInputs = (
       type: OptionType.Text,
     }));
   else {
-    return DefaultOptionSets.get(selectedOptionSet)
-      ?.data as ProcessOptionArgs[];
+    return DefaultOptionSets.get(selectedOptionSet)?.data as ProcessOptionArgs[];
   }
 };
 

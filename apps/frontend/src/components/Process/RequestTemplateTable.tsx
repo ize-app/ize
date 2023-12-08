@@ -9,11 +9,7 @@ import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { ProcessOptions } from "../shared/Process/ProcessOptions";
 import SummarizeInputTemplates from "../shared/Process/SummarizeInputTemplates";
 
-export const RequestTemplateTable = ({
-  process,
-}: {
-  process: ProcessSummaryPartsFragment;
-}) => {
+export const RequestTemplateTable = ({ process }: { process: ProcessSummaryPartsFragment }) => {
   return (
     <TableContainer
       sx={{

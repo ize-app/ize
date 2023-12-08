@@ -1,10 +1,6 @@
 import { prisma } from "../../../prisma/client";
 
-const editProcesses = async ({
-  processVersions,
-}: {
-  processVersions: string;
-}) => {
+const editProcesses = async ({ processVersions }: { processVersions: string }) => {
   try {
     type ProcessIdChanges = [oldId: string, newId: string];
     const processVersionArray: ProcessIdChanges[] = JSON.parse(processVersions);

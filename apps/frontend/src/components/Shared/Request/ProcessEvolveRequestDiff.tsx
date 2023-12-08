@@ -1,7 +1,8 @@
-import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { ProcessFormConfirmationTable } from "../Form/ProcessForm/components/ProcessFormConfirmationTable";
 import createProcessFormState from "../Form/ProcessForm/createFormState/createProcessFormState";
 import getEvolveDiffForDisplay from "../Form/ProcessForm/helpers/getEvolveDiffForDisplay";
+
+import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
 
 const ProcessEvolveRequestDiff = ({
   current,
@@ -14,7 +15,7 @@ const ProcessEvolveRequestDiff = ({
   const propFormat = createProcessFormState(proposed);
 
   return (
-    <ProcessFormConfirmationTable 
+    <ProcessFormConfirmationTable
       process={currFormat}
       evolvedProcess={propFormat}
       fields={getEvolveDiffForDisplay(currFormat, propFormat)}
