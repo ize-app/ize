@@ -23,7 +23,7 @@ export const _404 = () => (
         😭 404 😭
       </Typography>
       <Typography variant="body1">
-        This isn't a real page. Check your URL and try again :)
+        This isn't a valid URL. Check your URL and try again :) If you keep having the same issue, feel free to message tyler@cults.app
       </Typography>
     </Box>
   </Box>
