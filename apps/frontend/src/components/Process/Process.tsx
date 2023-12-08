@@ -182,7 +182,11 @@ export const Process = () => {
           </Accordion>
           {process.type !== "Evolve" && (
             <Accordion label="How process evolves" id="decision-panel">
-              <DecisionSystemSummaryTable process={process.evolve as ProcessSummaryPartsFragment} />
+              {
+                // TODO fix the evolve process type so there's no error
+                //@ts-ignore
+                <DecisionSystemSummaryTable process={process.evolve} />
+              }
             </Accordion>
           )}
           <Accordion label="Request format" id="request-format-panel">
