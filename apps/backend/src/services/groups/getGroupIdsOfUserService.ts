@@ -2,9 +2,7 @@ import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
 
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
-
-export const groupsForCurrentUserService = async (context: GraphqlRequestContext) => {
+export const getGroupIdsOfUserService = async (context: GraphqlRequestContext) => {
   if (!context.currentUser || !context.discordApi) throw Error("ERROR Unauthenticated user");
 
   const userDiscordData = await prisma.discordData.findFirstOrThrow({
@@ -39,9 +37,7 @@ export const groupsForCurrentUserService = async (context: GraphqlRequestContext
         { creatorId: context.currentUser.id },
       ],
     },
-    include: groupInclude,
   });
 
-  const formattedGroups = groups.map((group) => formatGroup(group));
-  return formattedGroups;
+  return groups.map((group) => group.id);
 };

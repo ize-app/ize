@@ -4,7 +4,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
 import { roleSetInclude } from "../../utils/formatProcess";
-import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
+import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
 import { validateRequestInputs } from "./validateRequestInputs";
 
 export const newRequestService = async (
@@ -21,8 +21,7 @@ export const newRequestService = async (
 
   const { processId, requestInputs } = args;
 
-  const currentGroups = await groupsForCurrentUserService(context);
-  const groupIds = currentGroups.map((group) => group.id);
+  const groupIds = await getGroupIdsOfUserService(context);
 
   const process = await transaction.process.findFirstOrThrow({
     include: {
