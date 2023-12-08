@@ -11,11 +11,10 @@ query Me {
 }
 
 fragment MeParts on Me {
-  id
-  name
-  discordData {
-    ...DiscordDataParts
+  user {
+    ...UserSummaryParts
   }
+  groupIds
 }
 
 fragment UserSummaryParts on User {

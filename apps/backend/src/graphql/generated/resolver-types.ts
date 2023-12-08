@@ -155,9 +155,8 @@ export type LogOutResponse = {
 
 export type Me = {
   __typename?: 'Me';
-  discordData: DiscordData;
-  id: Scalars['String']['output'];
-  name?: Maybe<Scalars['String']['output']>;
+  groupIds: Array<Scalars['String']['output']>;
+  user: User;
 };
 
 export type Mutation = {
@@ -752,9 +751,8 @@ export type LogOutResponseResolvers<ContextType = GraphqlRequestContext, ParentT
 };
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
-  discordData?: Resolver<ResolversTypes['DiscordData'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  groupIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

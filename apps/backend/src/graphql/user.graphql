@@ -4,9 +4,8 @@ type Query {
 }
 
 type Me {
-  id: String!
-  name: String
-  discordData: DiscordData!
+  user: User!
+  groupIds: [String!]!
 }
 
 type User {
