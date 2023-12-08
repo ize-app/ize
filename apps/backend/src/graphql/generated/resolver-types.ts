@@ -313,7 +313,7 @@ export type QueryProcessArgs = {
 
 
 export type QueryProcessesForCurrentUserArgs = {
-  groups?: InputMaybe<Array<Scalars['String']['input']>>;
+  groups: Array<Scalars['String']['input']>;
   requestRoleOnly: Scalars['Boolean']['input'];
 };
 
@@ -834,7 +834,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
-  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'requestRoleOnly'>>;
+  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'groups' | 'requestRoleOnly'>>;
   processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
   request?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryRequestArgs, 'requestId'>>;
   requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groups'>>;

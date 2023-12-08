@@ -25,7 +25,12 @@ export const SelectProcess = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { setParams } = useNewRequestWizardState();
 
-  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
+  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument, {
+    variables: {
+      // TODO replace with actual groups
+      groups: [],
+    },
+  });
 
   const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 
