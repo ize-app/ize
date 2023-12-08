@@ -4,20 +4,14 @@ import { forwardRef, useContext } from "react";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(
-  function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  },
-);
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const Snackbar = () => {
-  const { snackbarOpen, setSnackbarOpen, snackbarData } =
-    useContext(SnackbarContext);
+  const { snackbarOpen, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
 
-  const handleClose = (
-    _event?: React.SyntheticEvent | Event,
-    reason?: string,
-  ) => {
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
@@ -26,16 +20,8 @@ const Snackbar = () => {
   };
 
   return (
-    <MuiSnackbar
-      open={snackbarOpen}
-      autoHideDuration={7000}
-      onClose={handleClose}
-    >
-      <Alert
-        onClose={handleClose}
-        severity={snackbarData.type}
-        sx={{ width: "100%" }}
-      >
+    <MuiSnackbar open={snackbarOpen} autoHideDuration={7000} onClose={handleClose}>
+      <Alert onClose={handleClose} severity={snackbarData.type} sx={{ width: "100%" }}>
         {snackbarData.message ?? "Success!"}
       </Alert>
     </MuiSnackbar>

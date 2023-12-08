@@ -39,9 +39,7 @@ export const DecisionSystemSummaryTable = ({
             </TableCell>
             <AvatarsCell
               align="left"
-              avatars={process.roles.request.map((agent) =>
-                reformatAgentForAvatar(agent),
-              )}
+              avatars={process.roles.request.map((agent) => reformatAgentForAvatar(agent))}
             />
           </TableRow>
           <TableRow id={"community-roles-row-2"}>
@@ -54,9 +52,7 @@ export const DecisionSystemSummaryTable = ({
             </TableCell>
             <AvatarsCell
               align="left"
-              avatars={process.roles.respond.map((agent) =>
-                reformatAgentForAvatar(agent),
-              )}
+              avatars={process.roles.respond.map((agent) => reformatAgentForAvatar(agent))}
             />
           </TableRow>
           <TableRow id={"decision-summary-row-1"}>
@@ -85,9 +81,7 @@ export const DecisionSystemSummaryTable = ({
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                {intervalToIntuitiveTimeString(
-                  process.expirationSeconds * 1000,
-                )}
+                {intervalToIntuitiveTimeString(process.expirationSeconds * 1000)}
               </Typography>
             </TableCell>
           </TableRow>

@@ -1,20 +1,20 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "../../discord/api";
+import { MutationSetUpDiscordServerArgs } from "@graphql/generated/resolver-types";
 
 export async function setUpDiscordServerService(
-  {
-    serverId,
-    roleId,
-  }: {
-    serverId: string;
-    roleId?: string;
-  },
+  args: MutationSetUpDiscordServerArgs,
   context: GraphqlRequestContext,
 ) {
+  const {
+    input: { serverId },
+  } = args;
   const botApi = DiscordApi.forBotUser();
   const server = await botApi.getDiscordServer(serverId);
   const serverRoles = await botApi.getDiscordServerRoles(serverId);
+
+  if (!context?.currentUser) throw Error("ERROR: No user is authenticated");
 
   return await prisma.$transaction(async (transaction) => {
     if (!server) {
@@ -58,7 +58,7 @@ export async function setUpDiscordServerService(
       relevantGroups.map((group) => {
         return transaction.group.create({
           data: {
-            creatorId: context.currentUser.id,
+            creatorId: context?.currentUser?.id as string,
             activeAt: new Date(),
             discordRoleGroup: {
               create: {

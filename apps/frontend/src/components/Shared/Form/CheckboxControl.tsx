@@ -7,22 +7,13 @@ export interface CheckboxControlProps extends CheckboxProps {
   control: Control;
 }
 
-export const CheckboxControl = ({
-  name,
-  control,
-  ...props
-}: CheckboxControlProps): JSX.Element => (
+export const CheckboxControl = ({ name, control, ...props }: CheckboxControlProps): JSX.Element => (
   <Controller
     name={name}
     control={control}
     render={({ field }) => (
       <FormControl>
-        <Checkbox
-          {...props}
-          {...field}
-          id={`checkbox-${name}`}
-          checked={field.value as boolean}
-        />
+        <Checkbox {...props} {...field} id={`checkbox-${name}`} checked={field.value as boolean} />
       </FormControl>
     )}
   />

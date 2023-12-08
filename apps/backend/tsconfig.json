@@ -1,8 +1,10 @@
 {
+  // inherits from parent tsconfig
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "ESNext",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -14,10 +16,16 @@
       "@discord/*": ["src/discord/*"],
       "@services/*": ["src/services/*"]
     },
+
+    "strict": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+
+    // "Composite" and "declaration" are necessary so this app can be referenced as a npm package
+    "composite": true,
+    "declaration": true
   },
-  "include": ["src/**/*.ts"],
+  // "include": ["src/**/*.ts"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }

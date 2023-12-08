@@ -1,28 +1,27 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import {
-  Group,
-  Process,
-  User,
-  NewProcessArgs,
-  NewEditProcessRequestArgs,
-  QueryProcessesForCurrentUserArgs,
-} from "frontend/src/graphql/generated/graphql";
 import { discordServers } from "./discord_resolvers";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { formatUser, userInclude } from "backend/src/utils/formatUser";
 
-import { groupsForCurrentUser } from "./group_resolvers";
+import {
+  Group,
+  Process,
+  User,
+  MutationNewProcessArgs,
+  MutationNewEditProcessRequestArgs,
+  QueryProcessArgs,
+  QueryProcessesForCurrentUserArgs,
+  QueryProcessesForGroupArgs,
+} from "@graphql/generated/resolver-types";
 
 import { newCustomProcess } from "../../services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 
 const newProcess = async (
   root: unknown,
-  args: {
-    process: NewProcessArgs;
-  },
+  args: MutationNewProcessArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newCustomProcess(args.process, context);
@@ -30,19 +29,13 @@ const newProcess = async (
 
 const newEditProcessRequest = async (
   root: unknown,
-  args: { inputs: NewEditProcessRequestArgs },
+  args: MutationNewEditProcessRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newEditRequestService({ args: args.inputs }, context);
 };
 
-const process = async (
-  root: unknown,
-  args: {
-    processId: string;
-  },
-  context: GraphqlRequestContext,
-): Promise<Process> => {
+const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
     include: processInclude,
     where: {
@@ -58,6 +51,8 @@ const processesForCurrentUser = async (
   args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
+  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
+
   const processes = await prisma.process.findMany({
     where: {
       // Add editProcess lookup later
@@ -70,12 +65,10 @@ const processesForCurrentUser = async (
                   roleGroups: {
                     some: {
                       AND: [
-                        { groupId: { in: args.groups } },
+                        { groupId: { in: args.groups ?? [] } },
                         {
                           type: {
-                            in: args.requestRoleOnly
-                              ? ["Request"]
-                              : ["Request", "Respond"],
+                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
                           },
                         },
                       ],
@@ -89,9 +82,7 @@ const processesForCurrentUser = async (
                         { userId: context.currentUser.id },
                         {
                           type: {
-                            in: args.requestRoleOnly
-                              ? ["Request"]
-                              : ["Request", "Respond"],
+                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
                           },
                         },
                       ],
@@ -114,8 +105,7 @@ const processesForCurrentUser = async (
 
 const processesForGroup = async (
   root: unknown,
-  args: { groupId: string },
-  context: GraphqlRequestContext,
+  args: QueryProcessesForGroupArgs,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({
     where: {
@@ -135,9 +125,11 @@ const processesForGroup = async (
 
 const groupsAndUsersEliglbeForRole = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
+  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
+
   const servers = await discordServers(root, {}, context);
   const serverIds = await servers.map((server) => server.id);
   const arr: (User | Group)[] = [];
@@ -154,7 +146,7 @@ const groupsAndUsersEliglbeForRole = async (
   });
   const formattedGroups = groups.map((group) => formatGroup(group));
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findFirstOrThrow({
     where: {
       id: context.currentUser.id,
     },

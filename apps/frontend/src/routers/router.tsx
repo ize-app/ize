@@ -1,7 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { AuthRoute } from "@/routers/AuthRoute";
-import * as Routes from "@/routers/routes";
 import { _404 } from "@/components/404";
 import EditProcess from "@/components/EditProcess/EditProcess";
 import { Group } from "@/components/Groups/Group";
@@ -11,8 +9,10 @@ import * as NewRequest from "@/components/NewRequest";
 import * as NewServerGroup from "@/components/NewServerGroup";
 import { Process } from "@/components/Process/Process";
 import { Request } from "@/components/Request/Request";
-import { DefaultLayout } from "@/layout/default";
 import * as ProcessForm from "@/components/shared/Form/ProcessForm/wizardScreens";
+import { DefaultLayout } from "@/layout/default";
+import { AuthRoute } from "@/routers/AuthRoute";
+import * as Routes from "@/routers/routes";
 
 export const router = createBrowserRouter([
   {
@@ -32,22 +32,16 @@ export const router = createBrowserRouter([
         path: Routes.Route.NewServerGroup,
         children: [
           {
-            path: Routes.newServerRoute(
-              Routes.NewServerGroupRoute.SelectServer,
-            ),
+            path: Routes.newServerRoute(Routes.NewServerGroupRoute.SelectServer),
             element: <NewServerGroup.DiscordUserServers />,
             index: true,
           },
           {
-            path: Routes.newServerRoute(
-              Routes.NewServerGroupRoute.HowCultsWorks,
-            ),
+            path: Routes.newServerRoute(Routes.NewServerGroupRoute.HowCultsWorks),
             element: <NewServerGroup.HowCultsWorks />,
           },
           {
-            path: Routes.newServerRoute(
-              Routes.NewServerGroupRoute.DefineProcess,
-            ),
+            path: Routes.newServerRoute(Routes.NewServerGroupRoute.DefineProcess),
             element: <NewServerGroup.DefineServerGroupProcesses />,
           },
           {

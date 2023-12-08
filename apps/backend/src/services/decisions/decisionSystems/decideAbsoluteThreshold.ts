@@ -1,4 +1,4 @@
-import { AbsoluteDecision } from "frontend/src/graphql/generated/graphql";
+import { AbsoluteDecision } from "@graphql/generated/resolver-types";
 import { ResponseCount } from "../determineDecision";
 
 const decideAbsoluteThreshold = (

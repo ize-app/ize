@@ -1,23 +1,14 @@
 import Box from "@mui/material/Box";
+import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Control } from "react-hook-form";
-import { TextFieldControl } from "@/components/shared/Form";
-import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
-import InputAdornment from "@mui/material/InputAdornment";
-import { AgentSummaryPartsFragment } from "@/graphql/generated/graphql";
-import {
-  GroupUserSearchControl,
-  SelectControl,
-} from "@/components/shared/Form";
 
-const RolesContainer = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) => (
+import { GroupUserSearchControl, SelectControl, TextFieldControl } from "@/components/shared/Form";
+import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
+import { AgentSummaryPartsFragment } from "@/graphql/generated/graphql";
+
+const RolesContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <Box
     sx={{
       display: "flex",
@@ -119,11 +110,7 @@ const RolesAndDecisionSystem = ({
                   control={control}
                   name={namePrepend + "decision.percentageDecision.percentage"}
                   label={`Option becomes final result when it has:`}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      % of responses
-                    </InputAdornment>
-                  }
+                  endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
                   sx={{ width: "300px" }}
                   required
                 />
@@ -134,11 +121,7 @@ const RolesAndDecisionSystem = ({
                   control={control}
                   name={namePrepend + "decision.percentageDecision.quorum"}
                   label={`Quorum (min # of responses for a result)`}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      total responses
-                    </InputAdornment>
-                  }
+                  endAdornment={<InputAdornment position="end">total responses</InputAdornment>}
                   sx={{ width: "300px" }}
                   required
                 />
@@ -152,9 +135,7 @@ const RolesAndDecisionSystem = ({
                 name={namePrepend + "decision.absoluteDecision.threshold"}
                 label={"Option is selected once it has:"}
                 sx={{ width: "300px" }}
-                endAdornment={
-                  <InputAdornment position="end">responses</InputAdornment>
-                }
+                endAdornment={<InputAdornment position="end">responses</InputAdornment>}
                 required
               />
             </Box>

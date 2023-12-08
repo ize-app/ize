@@ -23,7 +23,7 @@ import { User } from "@prisma/client";
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-const BCRYPT_SALT_ROUNDS = 12;
+// const BCRYPT_SALT_ROUNDS = 12;
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use(authenticate);
 
 const sessionValue = {
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET as string,
   cookie: { secure: false },
 };
 
@@ -48,8 +48,8 @@ app.get("/auth/discord/login", (req, res) => {
   const discord_base_url = "https://discord.com/api/oauth2";
   const params = new URLSearchParams({
     state,
-    client_id: process.env.DISCORD_OAUTH_CLIENT_ID,
-    redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI,
+    client_id: process.env.DISCORD_OAUTH_CLIENT_ID as string,
+    redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI as string,
     response_type: "code",
     scope: USER_SCOPES.join(" "),
   });
@@ -94,10 +94,10 @@ app.get("/auth/discord/callback", async (req, res) => {
   const discordResponse = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     body: new URLSearchParams({
-      client_id: process.env.DISCORD_OAUTH_CLIENT_ID,
-      client_secret: process.env.DISCORD_OAUTH_CLIENT_SECRET,
+      client_id: process.env.DISCORD_OAUTH_CLIENT_ID as string,
+      client_secret: process.env.DISCORD_OAUTH_CLIENT_SECRET as string,
       grant_type: "authorization_code",
-      redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI,
+      redirect_uri: process.env.DISCORD_OAUTH_REDIRECT_URI as string,
       code: code as string,
       state: state as string,
     }),
@@ -117,15 +117,14 @@ app.get("/auth/discord/callback", async (req, res) => {
     },
   });
 
-  const { id, username, avatar, discriminator, email } =
-    (await userResponse.json()) as APIUser;
+  const { id, username, avatar, discriminator, email } = (await userResponse.json()) as APIUser;
 
   // TODO: Save user to database
   const user = await prisma.user.findFirst({
     where: { discordData: { discordId: id } },
   });
 
-  // TODO: Encrypy using AES - NOT hashing
+  // TODO: Encrypt using AES - NOT hashing
   // const encryptedAccessToken = await bcrypt.hash(
   //   access_token,
   //   BCRYPT_SALT_ROUNDS
@@ -199,11 +198,11 @@ app.get("/auth/discord/callback", async (req, res) => {
   }
 
   // Creating a JWT
-  const token = jwt.sign({ sub: id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ sub: id }, process.env.JWT_SECRET as string);
 
   res.cookie("token", token);
 
-  res.redirect(process.env.CLIENT_REDIRECT_URL);
+  res.redirect(process.env.CLIENT_REDIRECT_URL as string);
 });
 
 const typeDefs = mergeTypeDefs(

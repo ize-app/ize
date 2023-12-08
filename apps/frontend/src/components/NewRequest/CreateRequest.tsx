@@ -14,33 +14,27 @@ import {
   ProcessSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 import * as Routes from "../../routers/routes";
-import {
-  shortUUIDToFull,
-  zodCleanNumber,
-  zodCleanString,
-} from "../../utils/inputs";
+import { shortUUIDToFull, zodCleanNumber, zodCleanString } from "../../utils/inputs";
 import { TextFieldControl } from "../shared/Form";
 import Loading from "../shared/Loading";
 import { ProcessOptions } from "../shared/Process/ProcessOptions";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
 const createInputValidation = (type: InputDataType, isRequired: boolean) => {
-  let val: z.ZodTypeAny;
+  let val: z.ZodTypeAny = z.any();
   switch (type) {
     case InputDataType.Float:
       val = zodCleanNumber(
         isRequired
           ? z.number({ invalid_type_error: "Please enter a valid number" })
-          : z
-              .number({ invalid_type_error: "Please enter a valid number" })
-              .optional(),
+          : z.number({ invalid_type_error: "Please enter a valid number" }).optional(),
       );
       break;
     case InputDataType.Text:
-      val = zodCleanString(
-        isRequired ? z.string().nonempty() : z.string().optional(),
-      );
+      val = zodCleanString(isRequired ? z.string().nonempty() : z.string().optional());
       break;
+    default:
+      val = z.any();
   }
   return val;
 };
@@ -50,10 +44,7 @@ export const CreateRequest = () => {
     useNewRequestWizardState();
   const { processId: shortProcessId } = useParams();
 
-  useEffect(
-    () => setParams({ processId: shortProcessId }),
-    [shortProcessId, setParams],
-  );
+  useEffect(() => setParams({ processId: shortProcessId }), [shortProcessId, setParams]);
 
   const processId = shortUUIDToFull(shortProcessId as string);
   const navigate = useNavigate();
@@ -86,10 +77,7 @@ export const CreateRequest = () => {
 
   const { control, handleSubmit } = useForm({
     defaultValues: formState.process
-      ? formState.process.inputs.reduce(
-          (acc, input) => ({ ...acc, [input.id]: "" }),
-          {},
-        )
+      ? formState.process.inputs.reduce((acc, input) => ({ ...acc, [input.id]: "" }), {})
       : {},
     resolver: zodResolver(formSchema),
     shouldUnregister: true,
@@ -127,9 +115,7 @@ export const CreateRequest = () => {
           <Typography fontWeight={600} color="primary">
             Process: {process.name}
           </Typography>
-          <Typography variant="body1">
-            Your request will have the following options:
-          </Typography>
+          <Typography variant="body1">Your request will have the following options:</Typography>
           <ProcessOptions options={formState?.process?.options ?? []} />
         </Box>
         <Box
@@ -154,11 +140,7 @@ export const CreateRequest = () => {
             : null}
         </Box>
       </WizardBody>
-      <WizardNav
-        onNext={handleSubmit(onSubmit)}
-        onPrev={onPrev}
-        nextLabel={nextLabel}
-      />
+      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );
 };

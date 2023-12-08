@@ -19,19 +19,11 @@ export interface TabsProps {
   handleChange: (_event: React.SyntheticEvent, newValue: number) => void;
 }
 
-export const Tabs = ({
-  tabs,
-  currentTabIndex,
-  handleChange,
-}: TabsProps): JSX.Element => {
+export const Tabs = ({ tabs, currentTabIndex, handleChange }: TabsProps): JSX.Element => {
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <MuiTabs
-          value={currentTabIndex}
-          onChange={handleChange}
-          aria-label="tabs"
-        >
+        <MuiTabs value={currentTabIndex} onChange={handleChange} aria-label="tabs">
           {tabs.map((tab: TabProps, index) => {
             return <Tab label={tab.title} key={index} {...a11yProps(index)} />;
           })}

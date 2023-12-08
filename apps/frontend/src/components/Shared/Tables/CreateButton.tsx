@@ -56,9 +56,7 @@ const CreateButton = (): JSX.Element => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem>
-          <Link to={newRequestRoute(NewRequestRoute.SelectProcess)}>
-            New request
-          </Link>
+          <Link to={newRequestRoute(NewRequestRoute.SelectProcess)}>New request</Link>
         </MenuItem>
         <MenuItem>
           <Link to={newProcessRoute(NewProcessRoute.Intro)}>New process</Link>

@@ -1,22 +1,14 @@
 import createActionFormState from "./createActionFormState";
 import createDecisionFormState from "./createDecisionFormState";
-import createInputsFormState from "./createInputsFormState";
-import {
-  createOptionFormState,
-  getDefaultOptionSet,
-} from "./createOptionsFormState";
-import createRolesFormState from "./createRolesFormState";
-import {
-  Process,
-  ProcessSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
-import { FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
-import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import createEvolveFormState from "./createEvolveFormState";
+import createInputsFormState from "./createInputsFormState";
+import { createOptionFormState, getDefaultOptionSet } from "./createOptionsFormState";
+import createRolesFormState from "./createRolesFormState";
 
-const createProcessFormState = (
-  process: ProcessSummaryPartsFragment,
-): ProcessForm => {
+import { FormOptionChoice, ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import { Process, ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
+
+const createProcessFormState = (process: ProcessSummaryPartsFragment): ProcessForm => {
   const defaultOption = getDefaultOptionSet(process.options);
 
   return {
@@ -29,14 +21,9 @@ const createProcessFormState = (
         : undefined,
     rights: createRolesFormState(process.roles),
     inputs: createInputsFormState(process.inputs),
-    decision: createDecisionFormState(
-      process.decisionSystem,
-      process.expirationSeconds,
-    ),
+    decision: createDecisionFormState(process.decisionSystem, process.expirationSeconds),
     action: createActionFormState(process.action ?? undefined),
-    evolve: process.evolve
-      ? createEvolveFormState(process.evolve as Process)
-      : undefined,
+    evolve: process.evolve ? createEvolveFormState(process.evolve as Process) : undefined,
   };
 };
 

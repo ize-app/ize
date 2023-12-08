@@ -8,21 +8,14 @@ import { Link, generatePath } from "react-router-dom";
 
 import { ProcessSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { Route } from "../../../routers/routes";
-import {
-  fullUUIDToShort,
-  intervalToIntuitiveTimeString,
-} from "../../../utils/inputs";
+import { fullUUIDToShort, intervalToIntuitiveTimeString } from "../../../utils/inputs";
 import { reformatAgentForAvatar } from "../Avatar";
 import { ProcessOptions } from "../Process/ProcessOptions";
 import SummarizeAction from "../Process/SummarizeAction";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
 import { AvatarsCell } from "../Tables/TableCells";
 
-export const ProcessSummaryTable = ({
-  process,
-}: {
-  process: ProcessSummaryPartsFragment;
-}) => {
+export const ProcessSummaryTable = ({ process }: { process: ProcessSummaryPartsFragment }) => {
   return (
     <TableContainer
       sx={{
@@ -66,7 +59,7 @@ export const ProcessSummaryTable = ({
               <ProcessOptions options={process.options} />
             </TableCell>
           </TableRow>
-          {process.action?.actionDetails.__typename === "WebhookAction" ? (
+          {process.action?.actionDetails?.__typename === "WebhookAction" ? (
             <TableRow>
               <TableCell>
                 <Typography variant="body1" fontWeight={500}>
@@ -102,9 +95,7 @@ export const ProcessSummaryTable = ({
             </TableCell>
             <AvatarsCell
               align="left"
-              avatars={process.roles.respond.map((agent) =>
-                reformatAgentForAvatar(agent),
-              )}
+              avatars={process.roles.respond.map((agent) => reformatAgentForAvatar(agent))}
             />
           </TableRow>
           <TableRow>
@@ -115,9 +106,7 @@ export const ProcessSummaryTable = ({
             </TableCell>
             <TableCell>
               <Typography variant="body1">
-                {intervalToIntuitiveTimeString(
-                  process.expirationSeconds * 1000,
-                )}
+                {intervalToIntuitiveTimeString(process.expirationSeconds * 1000)}
               </Typography>
             </TableCell>
           </TableRow>

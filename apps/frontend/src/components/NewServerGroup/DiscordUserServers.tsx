@@ -1,12 +1,5 @@
 import { useQuery } from "@apollo/client";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 
 import { useNewServerGroupWizardState } from "./newServerWizard";
 import { DiscordServersDocument } from "../../graphql/generated/graphql";
@@ -21,8 +14,8 @@ export const DiscordUserServers = () => {
   if (!servers || servers.length === 0) {
     return (
       <div>
-        It looks you you don't have any servers with the Cults Bot. Please add
-        the Cults bot to your server and try again.
+        It looks you you don't have any servers with the Cults Bot. Please add the Cults bot to your
+        server and try again.
       </div>
     );
   }

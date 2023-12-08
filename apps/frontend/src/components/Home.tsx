@@ -38,11 +38,7 @@ const UnauthenticatedHome = () => {
           },
         })}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          href="/api/auth/discord/login"
-        >
+        <Button variant="contained" color="primary" href="/api/auth/discord/login">
           Join Alpha Waitlist
         </Button>
         <ConnectToDiscord />
@@ -53,9 +49,5 @@ const UnauthenticatedHome = () => {
 
 export const Home = () => {
   const { user } = useContext(CurrentUserContext);
-  return user == null || user?.discordData == null ? (
-    <UnauthenticatedHome />
-  ) : (
-    <Dashboard />
-  );
+  return user == null || user?.discordData == null ? <UnauthenticatedHome /> : <Dashboard />;
 };

@@ -8,12 +8,7 @@ interface SliderControlProps extends SliderProps {
   max: number;
 }
 
-export const SliderControl = ({
-  control,
-  name,
-  max,
-  ...props
-}: SliderControlProps) => {
+export const SliderControl = ({ control, name, max, ...props }: SliderControlProps) => {
   return (
     <Controller
       name={name}

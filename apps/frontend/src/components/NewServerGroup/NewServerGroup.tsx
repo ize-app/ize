@@ -58,16 +58,8 @@ export const NewServerGroup = () => {
     initialFormState: {},
   };
 
-  const {
-    onPrev,
-    onNext,
-    progressBarStep,
-    title,
-    canNext,
-    formState,
-    setFormState,
-    nextLabel,
-  } = useWizard(newServerWizard);
+  const { onPrev, onNext, progressBarStep, title, canNext, formState, setFormState, nextLabel } =
+    useWizard(newServerWizard);
 
   return (
     <PageContainer>
@@ -125,11 +117,7 @@ export const NewServerGroup = () => {
           )}
           {onNext && (
             <div>
-              <Button
-                disabled={!canNext(formState)}
-                variant="contained"
-                onClick={onNext}
-              >
+              <Button disabled={!canNext(formState)} variant="contained" onClick={onNext}>
                 {nextLabel}
               </Button>
             </div>

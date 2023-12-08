@@ -2,10 +2,10 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "../backend/src/graphql/**/*.graphql",
-  documents: "./src/graphql/**/*.graphql",
+  schema: "./apps/backend/src/graphql/**/*.graphql",
+  documents: "./apps/frontend//src/graphql/**/*.graphql",
   generates: {
-    "src/graphql/generated/": {
+    "./apps/frontend/src/graphql/generated/": {
       preset: "client",
       // NOT Trying out a new feature 'fragment masking'. This is the new default. Idk
       // The authors are pretty gung ho about it but so far kinda annoying. Keeping it on
@@ -13,10 +13,19 @@ const config: CodegenConfig = {
       presetConfig: {
         fragmentMasking: false,
       },
+      config: {
+        dedupeFragments: true,
+      },
       plugins: ["fragment-matcher", "typescript"],
     },
-    "./src/graphql/graphql.schema.json": {
+    "./apps/frontend/src/graphql/graphql.schema.json": {
       plugins: ["introspection"],
+    },
+    "./apps/backend/src/graphql/generated/resolver-types.ts": {
+      plugins: ["typescript", "typescript-resolvers"],
+      config: {
+        contextType: "../context#GraphqlRequestContext",
+      },
     },
   },
 };

@@ -1,8 +1,6 @@
 import { InputTemplate, InputTemplateArgs } from "@/graphql/generated/graphql";
 
-const createInputsFormState = (
-  inputTemplates: InputTemplate[],
-): InputTemplateArgs[] => {
+const createInputsFormState = (inputTemplates: InputTemplate[]): InputTemplateArgs[] => {
   return inputTemplates.map((input) => ({
     name: input.name,
     required: input.required,

@@ -42,9 +42,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [formState, setFormState] = useState<FormState>(
-    wizard.initialFormState,
-  );
+  const [formState, setFormState] = useState<FormState>(wizard.initialFormState);
 
   const [params, setParams] = useState<Params>({});
 
@@ -53,9 +51,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   });
 
   if (currentStepIndex === -1) {
-    throw new Error(
-      `Could not find step for path ${location.pathname} in wizard`,
-    );
+    throw new Error(`Could not find step for path ${location.pathname} in wizard`);
   }
   // Get current step and associated attributes
   const currentStep = wizard.steps.at(currentStepIndex)!;
@@ -81,10 +77,10 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const onNext = isFinalStep
     ? wizard.onComplete
     : nextStep
-    ? () => {
-        navigate(generatePath(nextStep!.path, params));
-      }
-    : undefined;
+      ? () => {
+          navigate(generatePath(nextStep!.path, params));
+        }
+      : undefined;
 
   const nextLabel = isFinalStep ? "Finish" : "Next";
 

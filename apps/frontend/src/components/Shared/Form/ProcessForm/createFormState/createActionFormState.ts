@@ -1,13 +1,7 @@
+import { ActionForm, HasCustomIntegration } from "@/components/shared/Form/ProcessForm/types";
 import { Action } from "@/graphql/generated/graphql";
 
-import {
-  ActionForm,
-  HasCustomIntegration,
-} from "@/components/shared/Form/ProcessForm/types";
-
-const createActionFormState = (
-  action: Action | undefined,
-): ActionForm | undefined => {
+const createActionFormState = (action: Action | undefined): ActionForm | undefined => {
   switch (action?.actionDetails?.__typename) {
     case "WebhookAction":
       return {

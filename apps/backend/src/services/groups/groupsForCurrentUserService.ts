@@ -1,13 +1,12 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { Prisma } from "@prisma/client";
 import { DiscordApi } from "@discord/api";
 
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 
-export const groupsForCurrentUserService = async (
-  context: GraphqlRequestContext,
-) => {
+export const groupsForCurrentUserService = async (context: GraphqlRequestContext) => {
+  if (!context.currentUser || !context.discordApi) throw Error("ERROR Unauthenticated user");
+
   const userDiscordData = await prisma.discordData.findFirstOrThrow({
     where: { userId: context.currentUser.id },
   });
@@ -28,9 +27,7 @@ export const groupsForCurrentUserService = async (
   );
 
   // converting to Set to remove many duplicate "undefined" roleIds
-  const roleIds = [
-    ...new Set(userGuildMembers.map((member) => member.roles).flat()),
-  ];
+  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())];
 
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({

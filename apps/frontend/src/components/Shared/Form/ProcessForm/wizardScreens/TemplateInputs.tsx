@@ -11,14 +11,10 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useFieldArray, useForm } from "react-hook-form";
 
-import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
-import {
-  InputDataType,
-  InputTemplateArgs,
-} from "../../../../../graphql/generated/graphql";
 import { CheckboxControl, SelectControl, TextFieldControl } from "../..";
+import { InputDataType, InputTemplateArgs } from "../../../../../graphql/generated/graphql";
+import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
 import { WizardBody, WizardNav } from "../../../Wizard";
-
 import { createInputTemplatesFormSchema } from "../formSchema";
 
 const fieldArrayName = "processInputs";
@@ -30,8 +26,7 @@ interface FormFields {
 }
 
 export const TemplateInputs = () => {
-  const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useNewProcessWizardState();
+  const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
   const { inputs } = formState;
 
@@ -165,11 +160,7 @@ export const TemplateInputs = () => {
           </Button>
         </form>
       </WizardBody>
-      <WizardNav
-        onNext={handleSubmit(onSubmit)}
-        onPrev={onPrev}
-        nextLabel={nextLabel}
-      />
+      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );
 };

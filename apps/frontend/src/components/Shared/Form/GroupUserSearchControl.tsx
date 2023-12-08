@@ -55,9 +55,7 @@ export const GroupUserSearchControl = ({
                         id={option.id}
                         backgroundColor={option.backgroundColor}
                         name={option.name}
-                        avatarUrl={
-                          option.parent?.avatarUrl ?? option.avatarUrl ?? ""
-                        }
+                        avatarUrl={option.parent?.avatarUrl ?? option.avatarUrl ?? ""}
                         type={option.type}
                       />
                     }

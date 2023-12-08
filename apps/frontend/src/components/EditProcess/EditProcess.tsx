@@ -17,9 +17,10 @@ import { NewEditProcessRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "../../utils/wizard";
-import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
 import { createProcessMutation } from "../shared/Form/ProcessForm/createProcessMutation";
-import { shortUUIDToFull, fullUUIDToShort } from "@/utils/inputs";
+
+import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
+import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
 
 const EditProcess = () => {
   const navigate = useNavigate();
@@ -38,9 +39,7 @@ const EditProcess = () => {
         variables: {
           inputs: {
             processId: shortUUIDToFull(params.processId as string),
-            currentProcess: createProcessMutation(
-              formState.currentProcess as ProcessForm,
-            ),
+            currentProcess: createProcessMutation(formState.currentProcess as ProcessForm),
             evolvedProcess: createProcessMutation(formState),
           },
         },
@@ -78,9 +77,7 @@ const EditProcess = () => {
     <PageContainer>
       <Head
         title={"Edit process"}
-        description={
-          "Edit what this process does and how your group arrives at a decision."
-        }
+        description={"Edit what this process does and how your group arrives at a decision."}
       />
       <Box
         sx={{

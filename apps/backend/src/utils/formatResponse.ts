@@ -1,12 +1,13 @@
-import { Prisma, PrismaClient, OptionDataType } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { userInclude, formatUser } from "./formatUser";
+
 import {
   Response,
   ResponseCount,
   Responses,
   ProcessOption,
   OptionType,
-} from "frontend/src/graphql/generated/graphql";
+} from "@graphql/generated/resolver-types";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   creator: {
@@ -41,14 +42,17 @@ export const formatResponses = (
     count: 0,
   }));
 
+  // format each response while also creating count of responses for each option
   for (let i = 0; i <= responses.length - 1; i++) {
     const formattedResponse = formatResponse(responses[i]);
     allResponses.push(formattedResponse);
-    responseCount.find(
+    const responseCounter = responseCount.find(
       (option) => option.optionId === formattedResponse.optionId,
-    ).count++;
-    if (userId && formattedResponse.user.id === userId)
-      userResponse = formattedResponse;
+    );
+    if (!responseCounter)
+      throw Error("Error formatResponses: Cannot create count of responses for each option");
+    responseCounter.count++;
+    if (userId && formattedResponse.user.id === userId) userResponse = formattedResponse;
   }
   return { userResponse, allResponses, responseCount };
 };

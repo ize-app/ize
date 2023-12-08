@@ -1,12 +1,6 @@
+/* eslint-disable no-prototype-builtins */
 import { Prisma } from "@prisma/client";
-import {
-  Guild,
-  Role,
-  GuildMember,
-  APIGuildMember,
-  APIRole,
-  APIGuild,
-} from "discord.js";
+import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 
 type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 
@@ -21,11 +15,12 @@ export class DiscordApi {
       include: { discordOauth: true; discordData: true };
     }>,
   ) {
+    if (!user?.discordOauth?.accessToken) throw Error("ERROR No Discord access token for user.");
     return new DiscordApi(user.discordOauth.accessToken, false);
   }
 
   static forBotUser() {
-    return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN, true);
+    return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN as string, true);
   }
 
   static colorIntToHex(colorInt: number): string {
@@ -42,11 +37,8 @@ export class DiscordApi {
       size ? `?size=${size}` : ""
     }`;
 
-  static createAvatarURL = (
-    userId: string,
-    imageHash: string,
-    size?: DiscordImageSize,
-  ): string => this.createDiscordImageUrl(userId, imageHash, "avatars", size);
+  static createAvatarURL = (userId: string, imageHash: string, size?: DiscordImageSize): string =>
+    this.createDiscordImageUrl(userId, imageHash, "avatars", size);
 
   static createServerIconURL = (
     serverId: string,
@@ -54,31 +46,21 @@ export class DiscordApi {
     size?: DiscordImageSize,
   ): string => this.createDiscordImageUrl(serverId, imageHash, "icons", size);
 
-  static createRoleIconURL = (
-    roleId: string,
-    imageHash: string,
-    size?: DiscordImageSize,
-  ): string =>
+  static createRoleIconURL = (roleId: string, imageHash: string, size?: DiscordImageSize): string =>
     this.createDiscordImageUrl(roleId, imageHash, "role-icons", size);
 
   async getDiscordServers(): Promise<Array<APIGuild>> {
-    const guildsResponse = await fetch(
-      "https://discord.com/api/users/@me/guilds",
-      {
-        headers: this.headers,
-      },
-    );
+    const guildsResponse = await fetch("https://discord.com/api/users/@me/guilds", {
+      headers: this.headers,
+    });
 
     return guildsResponse.json();
   }
 
   async getDiscordServer(serverId: string): Promise<APIGuild> {
-    const guildResponse = await fetch(
-      `https://discord.com/api/guilds/${serverId}`,
-      {
-        headers: this.headers,
-      },
-    );
+    const guildResponse = await fetch(`https://discord.com/api/guilds/${serverId}`, {
+      headers: this.headers,
+    });
 
     return guildResponse.json();
   }
@@ -88,12 +70,9 @@ export class DiscordApi {
       throw new Error("Only bot users can get server roles");
     }
 
-    const rolesResponse = await fetch(
-      `https://discord.com/api/guilds/${serverId}/roles`,
-      {
-        headers: this.headers,
-      },
-    );
+    const rolesResponse = await fetch(`https://discord.com/api/guilds/${serverId}/roles`, {
+      headers: this.headers,
+    });
 
     return rolesResponse.json();
   }
@@ -119,11 +98,7 @@ export class DiscordApi {
     return rolesResponse.json();
   }
 
-  async getDiscordGuildMembers({
-    serverId,
-  }: {
-    serverId: string;
-  }): Promise<APIGuildMember[]> {
+  async getDiscordGuildMembers({ serverId }: { serverId: string }): Promise<APIGuildMember[]> {
     if (!this.isBot) {
       throw new Error("Only bot users can get member info");
     }
@@ -139,25 +114,19 @@ export class DiscordApi {
     return rolesResponse.json();
   }
 
-  countRoleMembers(
-    members: APIGuildMember[],
-    roles: APIRole[],
-  ): { [roleId: string]: number } {
-    const nonbotMembers = members.filter((member) => !member.user.bot);
+  countRoleMembers(members: APIGuildMember[], roles: APIRole[]): { [roleId: string]: number } {
+    const nonbotMembers = members.filter((member) => !member?.user?.bot);
 
-    const everyoneRoleId = roles.find((role) => role.name === "@everyone").id;
+    const everyoneRole = roles.find((role) => role.name === "@everyone");
 
-    const roleCounts = nonbotMembers.reduce(
-      (acc: { [roleId: string]: number }, curr) => {
-        curr.roles.forEach((roleId) => {
-          if (acc.hasOwnProperty(roleId)) acc[roleId] = acc[roleId]++;
-          else acc[roleId] = 1;
-        });
-        return acc;
-      },
-      {},
-    );
-    roleCounts[everyoneRoleId] = nonbotMembers.length;
+    const roleCounts = nonbotMembers.reduce((acc: { [roleId: string]: number }, curr) => {
+      curr.roles.forEach((roleId) => {
+        if (acc.hasOwnProperty(roleId)) acc[roleId] = acc[roleId]++;
+        else acc[roleId] = 1;
+      });
+      return acc;
+    }, {});
+    if (everyoneRole) roleCounts[everyoneRole.id] = nonbotMembers.length;
 
     return roleCounts;
   }

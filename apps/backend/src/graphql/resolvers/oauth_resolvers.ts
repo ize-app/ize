@@ -1,11 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 
-const logOut = async (
-  root: unknown,
-  args: unknown,
-  context: GraphqlRequestContext,
-) => {
+const logOut = async (root: unknown, args: unknown, context: GraphqlRequestContext) => {
   try {
     const discordOauth = await prisma.discordOauth.delete({
       where: {
@@ -16,8 +12,8 @@ const logOut = async (
     await fetch("https://discord.com/api/oauth2/token/revoke", {
       method: "POST",
       body: new URLSearchParams({
-        client_id: process.env.DISCORD_OAUTH_CLIENT_ID,
-        client_secret: process.env.DISCORD_OAUTH_CLIENT_SECRET,
+        client_id: process.env.DISCORD_OAUTH_CLIENT_ID as string,
+        client_secret: process.env.DISCORD_OAUTH_CLIENT_SECRET as string,
         token: discordOauth.accessToken,
       }),
       headers: {

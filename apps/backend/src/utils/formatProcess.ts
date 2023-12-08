@@ -1,4 +1,10 @@
-import { Prisma, ProcessType } from "@prisma/client";
+import {
+  DecisionSystemTypes,
+  Prisma,
+  ProcessType as PrismaProcessType,
+  ActionType as PrismaActionType,
+  WebhookAction,
+} from "@prisma/client";
 import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
 import { userInclude, formatUser } from "backend/src/utils/formatUser";
 
@@ -13,13 +19,13 @@ import {
   PercentageDecision,
   Roles,
   ParentProcess,
-} from "frontend/src/graphql/generated/graphql";
+  ProcessType,
+  RoleType,
+  DecisionTypes,
+} from "@graphql/generated/resolver-types";
 
 export interface ProcessVersion
-  extends Omit<
-    Process,
-    "id" | "createdAt" | "currentProcessVersionId" | "type"
-  > {}
+  extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId" | "type"> {}
 
 export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   roleGroups: {
@@ -42,24 +48,17 @@ type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
   include: typeof roleSetInclude;
 }>;
 
-const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()(
-  {},
-);
+const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()({});
 
-type InputTemplatePrismaType = Prisma.InputTemplateGetPayload<{
-  include: typeof inputTemplateInclude;
-}>;
-
-export const optionSystemInclude =
-  Prisma.validator<Prisma.OptionSystemInclude>()({
-    defaultProcessOptionSet: {
-      include: {
-        options: true,
-      },
+export const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>()({
+  defaultProcessOptionSet: {
+    include: {
+      options: true,
     },
-  });
+  },
+});
 
-type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
+export type OptionSystemPrismaType = Prisma.OptionSystemGetPayload<{
   include: typeof optionSystemInclude;
 }>;
 
@@ -88,35 +87,34 @@ type ParentPrismaType = Prisma.ProcessGetPayload<{
   include: typeof parentInclude;
 }>;
 
-export const processVersionInclude =
-  Prisma.validator<Prisma.ProcessVersionInclude>()({
-    creator: {
-      include: userInclude,
+export const processVersionInclude = Prisma.validator<Prisma.ProcessVersionInclude>()({
+  creator: {
+    include: userInclude,
+  },
+  process: true,
+  optionSystem: {
+    include: optionSystemInclude,
+  },
+  inputTemplateSet: {
+    include: {
+      inputTemplates: inputTemplateInclude,
     },
-    process: true,
-    optionSystem: {
-      include: optionSystemInclude,
+  },
+  decisionSystem: {
+    include: decisionSystemInclude,
+  },
+  action: {
+    include: actionInclude,
+  },
+  roleSet: {
+    include: roleSetInclude,
+  },
+  parentProcess: {
+    include: {
+      currentProcessVersion: true,
     },
-    inputTemplateSet: {
-      include: {
-        inputTemplates: inputTemplateInclude,
-      },
-    },
-    decisionSystem: {
-      include: decisionSystemInclude,
-    },
-    action: {
-      include: actionInclude,
-    },
-    roleSet: {
-      include: roleSetInclude,
-    },
-    parentProcess: {
-      include: {
-        currentProcessVersion: true,
-      },
-    },
-  });
+  },
+});
 
 export type ProcessVersionPrismaType = Prisma.ProcessVersionGetPayload<{
   include: typeof processVersionInclude;
@@ -148,19 +146,26 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
   include: typeof editProcessInclude;
 }>;
 
+// Used to format all processes, except for evolve processes
 export const formatProcess = (processData: ProcessPrismaType): Process => {
   const { currentProcessVersion } = processData;
+
+  if (!currentProcessVersion)
+    throw Error(
+      "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
+    );
+  if (!currentProcessVersion.evolveProcess)
+    throw Error("ERROR formatProcess: Can't find evolve process of process id:" + processData.id);
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
   const data: Process = {
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
-    //@ts-ignore
-    type: processData.type,
+    type: processData.type as ProcessType,
     createdAt: processData.createdAt.toString(),
     evolve:
-      processData.type === "Evolve"
+      processData.type === ProcessType.Evolve
         ? null
         : formatEvolveProcess(currentProcessVersion.evolveProcess),
     ...formattedProcessVersion,
@@ -168,10 +173,13 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   return data;
 };
 
-export const formatEvolveProcess = (
-  processData: EditProcessPrismaType,
-): Process => {
+export const formatEvolveProcess = (processData: EditProcessPrismaType): Process => {
   const { currentProcessVersion } = processData;
+
+  if (!currentProcessVersion)
+    throw Error(
+      "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
+    );
 
   const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
 
@@ -179,25 +187,15 @@ export const formatEvolveProcess = (
     id: processData.id,
     currentProcessVersionId: currentProcessVersion?.id,
     createdAt: processData.createdAt.toString(),
-    //@ts-ignore
-    type: processData.type,
+    type: processData.type as ProcessType,
     ...formattedProcessVersion,
   };
   return data;
 };
 
-export const formatProcessVersion = (
-  processVersion: ProcessVersionPrismaType,
-): ProcessVersion => {
-  const {
-    creator,
-    optionSystem,
-    inputTemplateSet,
-    decisionSystem,
-    action,
-    roleSet,
-    parentProcess,
-  } = processVersion;
+export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): ProcessVersion => {
+  const { creator, optionSystem, inputTemplateSet, decisionSystem, action, roleSet } =
+    processVersion;
 
   const options = formatOptions(optionSystem);
 
@@ -231,12 +229,8 @@ export const formatProcessVersion = (
   return data;
 };
 
-const formatName = (
-  name: string,
-  type: ProcessType,
-  parent: ParentPrismaType | null,
-) => {
-  if (type === "Evolve" && parent) {
+const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaType | null) => {
+  if (type === ProcessType.Evolve && parent?.currentProcessVersion) {
     return `Evolve process of "${parent.currentProcessVersion.name}"`;
   } else return name;
 };
@@ -244,39 +238,37 @@ const formatName = (
 const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
   roleSet.roleGroups.forEach((role) => {
-    if (role.type === "Request") roles.request.push(formatGroup(role.group));
-    else if (role.type === "Respond")
-      roles.respond.push(formatGroup(role.group));
+    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.group));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.group));
   });
 
   roleSet.roleUsers.forEach((role) => {
-    if (role.type === "Request") roles.request.push(formatUser(role.user));
-    else if (role.type === "Respond") roles.respond.push(formatUser(role.user));
+    if (role.type === RoleType.Request) roles.request.push(formatUser(role.user));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatUser(role.user));
   });
 
   return roles;
 };
 
-export const formatDecisionSystem = (
-  decisionSystem: DecisionSystemPrismaType,
-): AbsoluteDecision | PercentageDecision => {
-  if (decisionSystem.type === "Absolute")
-    return {
-      __typename: "AbsoluteDecision",
-      threshold: decisionSystem.absoluteDecisionSystem.threshold,
-    };
-  else if (decisionSystem.type === "Percentage")
-    return {
-      __typename: "PercentageDecision",
-      quorum: decisionSystem.percentageDecisionSystem.quorum,
-      percentage: decisionSystem.percentageDecisionSystem.percentage,
-    };
+export const formatDecisionSystem = (decisionSystem: DecisionSystemPrismaType): DecisionTypes => {
+  switch (decisionSystem.type) {
+    case DecisionSystemTypes.Absolute:
+      return {
+        __typename: "AbsoluteDecision",
+        threshold: (decisionSystem.absoluteDecisionSystem as AbsoluteDecision).threshold,
+      };
+    case DecisionSystemTypes.Percentage:
+      return {
+        __typename: "PercentageDecision",
+        quorum: (decisionSystem.percentageDecisionSystem as PercentageDecision).quorum,
+        percentage: (decisionSystem.percentageDecisionSystem as PercentageDecision).percentage,
+      };
+  }
 };
 
-export const formatOptions = (
-  optionSystem: OptionSystemPrismaType,
-): ProcessOption[] =>
-  optionSystem.defaultProcessOptionSet.options
+export const formatOptions = (optionSystem: OptionSystemPrismaType): ProcessOption[] => {
+  if (!optionSystem.defaultProcessOptionSet) throw Error("ERROR: No default options");
+  return optionSystem.defaultProcessOptionSet.options
     .sort((a, b) => a.position - b.position)
     .map(
       (option): ProcessOption => ({
@@ -285,24 +277,22 @@ export const formatOptions = (
         type: option.type as OptionType,
       }),
     );
+};
 
-export const formatAction = (
-  action: ActionPrismaType,
-  options: ProcessOption[],
-): Action => {
+export const formatAction = (action: ActionPrismaType, options: ProcessOption[]): Action => {
   const optionFilter = options.find((option) => option.id === action.optionId);
 
   switch (action.type) {
-    case "customWebhook":
+    case PrismaActionType.customWebhook:
       return {
         id: action.id,
         optionFilter,
         actionDetails: {
-          ...action.webhookAction,
+          ...(action.webhookAction as WebhookAction),
           __typename: "WebhookAction",
         },
       };
-    case "evolveProcess":
+    case PrismaActionType.evolveProcess:
       return {
         id: action.id,
         optionFilter,
@@ -313,13 +303,11 @@ export const formatAction = (
   }
 };
 
-export const formatParent = (
-  parent: ParentPrismaType,
-): ParentProcess | null => {
-  if (parent)
+export const formatParent = (parent: ParentPrismaType | null): ParentProcess | null => {
+  if (parent && parent.currentProcessVersion)
     return {
       id: parent.id,
-      name: parent.currentProcessVersion.name,
+      name: parent.currentProcessVersion?.name,
     };
   else return null;
 };

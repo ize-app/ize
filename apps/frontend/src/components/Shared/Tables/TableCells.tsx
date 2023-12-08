@@ -126,11 +126,7 @@ export const StatusCell = ({
   // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
   if (result) {
     return (
-      <TwoTierCell
-        topText="Final decision"
-        bottomText={result.selectedOption.value}
-        {...props}
-      />
+      <TwoTierCell topText="Final decision" bottomText={result.selectedOption.value} {...props} />
     );
   } else if (timeLeft < 0) {
     return (
@@ -144,8 +140,7 @@ export const StatusCell = ({
         topText="Open"
         bottomText={timeLeftStr}
         bottomStyleOverrides={{
-          color:
-            alreadyResponded || timeLeft > 1000 * 60 * 60 * 24 ? "" : "red",
+          color: alreadyResponded || timeLeft > 1000 * 60 * 60 * 24 ? "" : "red",
         }}
         {...props}
       />

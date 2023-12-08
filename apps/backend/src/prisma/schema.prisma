@@ -33,7 +33,7 @@ model DiscordData {
   discordId     String   @map("discord_id")
   username      String
   discriminator String
-  avatar        String
+  avatar        String?
   email         String?
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")

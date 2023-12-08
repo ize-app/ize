@@ -1,31 +1,26 @@
 import { setUpDiscordServerService } from "@services/groups/discord_server_group";
 import { GraphqlRequestContext } from "backend/src/graphql/context";
 import { prisma } from "backend/src/prisma/client";
-import { DiscordApi } from "@discord/api";
 
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { groupInclude, formatGroup, GroupPrismaType } from "backend/src/utils/formatGroup";
 import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
+
+import {
+  Group,
+  MutationSetUpDiscordServerArgs,
+  QueryGroupArgs,
+} from "@graphql/generated/resolver-types";
 
 const setUpDiscordServer = async (
   root: unknown,
-  args: {
-    input: {
-      serverId: string;
-      roleId?: string;
-    };
-  },
+  args: MutationSetUpDiscordServerArgs,
   context: GraphqlRequestContext,
 ) => {
-  return await setUpDiscordServerService(args.input, context);
+  return await setUpDiscordServerService(args, context);
 };
 
-const group = async (
-  root: unknown,
-  args: {
-    id: string;
-  },
-) => {
-  const group = await prisma.group.findFirst({
+const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
+  const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
     include: groupInclude,
     where: { id: args.id },
   });
@@ -35,9 +30,9 @@ const group = async (
 
 export const groupsForCurrentUser = async (
   root: unknown,
-  args: {},
+  args: Record<string, never>,
   context: GraphqlRequestContext,
-) => {
+): Promise<Group[]> => {
   return groupsForCurrentUserService(context);
 };
 

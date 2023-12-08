@@ -11,33 +11,31 @@ import RadioGroup from "@mui/material/RadioGroup";
 import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { requestTemplateFormSchema } from "../formSchema";
-
 import { webhookTriggerFilterOptions } from "../helpers/optionHelpers";
-import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
 
+import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
+import { RadioControl, SelectControl } from "@/components/shared/Form";
 import {
   DefaultOptionSets,
   FormOptionChoice,
   HasCustomIntegration,
   defaultWebhookTriggerOption,
 } from "@/components/shared/Form/ProcessForm/types";
-import { RadioControl, SelectControl } from "@/components/shared/Form";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 
 type FormFields = z.infer<typeof requestTemplateFormSchema>;
 
 export const Template = () => {
-  const { formState, setFormState, onNext, onPrev, nextLabel } =
-    useNewProcessWizardState();
+  const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       name: formState.name ?? "",
       description: formState.description ?? "",
       action: {
-        optionTrigger:
-          formState.action?.optionTrigger ?? defaultWebhookTriggerOption.value,
+        optionTrigger: formState.action?.optionTrigger ?? defaultWebhookTriggerOption.value,
         webhook: {
           hasWebhook: formState.action?.webhook.hasWebhook ?? "no",
           uri: formState.action?.webhook.uri ?? "",
@@ -84,12 +82,7 @@ export const Template = () => {
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <FormControl>
-                  <TextField
-                    {...field}
-                    label={"Process name"}
-                    required
-                    error={Boolean(error)}
-                  />
+                  <TextField {...field} label={"Process name"} required error={Boolean(error)} />
                   <FormHelperText
                     sx={{
                       color: "error.main",
@@ -128,12 +121,8 @@ export const Template = () => {
               control={control}
               render={({ field }) => (
                 <FormControl component="fieldset" required>
-                  <FormLabel
-                    component="legend"
-                    id="radio-buttons-group-custom-integration"
-                  >
-                    Do you want a custom integration to execute everytime this
-                    process is triggered?{" "}
+                  <FormLabel component="legend" id="radio-buttons-group-custom-integration">
+                    Do you want a custom integration to execute everytime this process is triggered?{" "}
                   </FormLabel>
                   <RadioGroup
                     {...field}
@@ -257,11 +246,7 @@ export const Template = () => {
           </Box>
         </form>
       </WizardBody>
-      <WizardNav
-        onNext={handleSubmit(onSubmit)}
-        onPrev={onPrev}
-        nextLabel={nextLabel}
-      />
+      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );
 };

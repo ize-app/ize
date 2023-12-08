@@ -21,12 +21,12 @@ type Group {
   memberCount: Int!
   organization: Organization!
   createdAt: String!
-  discordRoleGroup: DiscordRoleGroup!
+  discordRoleGroup: DiscordRoleGroup
 }
 
 type Organization {
   name: String!
-  icon: String!
+  icon: String
 }
 
 type DiscordRoleGroup {

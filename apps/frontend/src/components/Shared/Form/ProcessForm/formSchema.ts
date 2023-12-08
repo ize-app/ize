@@ -1,13 +1,14 @@
 import * as z from "zod";
+
 import { webhookTriggerFilterOptions } from "./helpers/optionHelpers";
+
 import {
-  FormOptionChoice,
   DecisionType,
-  HasCustomIntegration,
   DefaultEvolveProcessOptions,
+  FormOptionChoice,
+  HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { InputDataType } from "@/graphql/generated/graphql";
-import { AgentType } from "@/graphql/generated/graphql";
+import { AgentType, InputDataType } from "@/graphql/generated/graphql";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -53,10 +54,7 @@ export const requestTemplateFormSchema = z
   )
   .refine(
     (data) => {
-      if (
-        data.options === FormOptionChoice.Custom &&
-        data?.customOptions?.length === 0
-      )
+      if (data.options === FormOptionChoice.Custom && data?.customOptions?.length === 0)
         return false;
       return true;
     },
@@ -69,8 +67,7 @@ export const requestTemplateFormSchema = z
         webhookTriggerFilterOptions({
           optionType: data.options,
           customOptions: data.customOptions ?? [],
-        }).findIndex((option) => data.action.optionTrigger === option.value) ===
-          -1
+        }).findIndex((option) => data.action.optionTrigger === option.value) === -1
       )
         return false;
 
@@ -78,8 +75,7 @@ export const requestTemplateFormSchema = z
     },
     {
       path: ["webhookTriggerFilter"],
-      message:
-        "Please select an one of your options to be the webhook trigger.",
+      message: "Please select an one of your options to be the webhook trigger.",
     },
   );
 
@@ -118,9 +114,7 @@ const percentageDecisionFormSchema = z.object({
 
 const rolesFormSchemaUnrefined = z.object({
   rights: z.object({
-    request: z
-      .array(userGroupFormSchema)
-      .min(1, "Please select at least one group or individual."),
+    request: z.array(userGroupFormSchema).min(1, "Please select at least one group or individual."),
     response: z
       .array(userGroupFormSchema)
       .min(1, "Please select at least one group or individual."),
@@ -163,9 +157,7 @@ const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
       },
     );
 
-export const rolesFormSchema = refineExtendedSharedSchema(
-  rolesFormSchemaUnrefined,
-);
+export const rolesFormSchema = refineExtendedSharedSchema(rolesFormSchemaUnrefined);
 
 export const evolveProcessFormSchema = z.object({
   evolve: rolesFormSchemaUnrefined.extend({

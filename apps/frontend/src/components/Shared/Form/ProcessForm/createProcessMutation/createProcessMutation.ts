@@ -1,16 +1,16 @@
-import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
-import {
-  FormOptionChoice,
-  ProcessRights,
-} from "@/components/shared/Form/ProcessForm/types";
-import { InputTemplateArgs, NewProcessArgs } from "@/graphql/generated/graphql";
-
 import {
   createActionInputs,
   createDecisionInputs,
   createOptionInputs,
   createRoleInputs,
 } from "./index";
+
+import {
+  FormOptionChoice,
+  ProcessForm,
+  ProcessRights,
+} from "@/components/shared/Form/ProcessForm/types";
+import { InputTemplateArgs, NewProcessArgs } from "@/graphql/generated/graphql";
 
 const createProcessMutation = (formState: ProcessForm): NewProcessArgs => {
   const inputs: NewProcessArgs = {

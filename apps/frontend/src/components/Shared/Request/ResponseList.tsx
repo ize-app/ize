@@ -4,7 +4,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 
-import { Response } from "../../../graphql/generated/graphql";
+import { AgentType, Response } from "../../../graphql/generated/graphql";
 import { AvatarWithName } from "../Avatar";
 
 const ResponseListRow = ({ response }: { response: Response }) => {
@@ -13,6 +13,7 @@ const ResponseListRow = ({ response }: { response: Response }) => {
       <TableCell>
         <AvatarWithName
           id={response.user.id}
+          type={AgentType.User}
           avatarUrl={response.user.icon}
           name={response.user.name}
         />
@@ -37,10 +38,7 @@ export const ResponseList = ({ responses }: { responses: Response[] }) => {
       <Table aria-label="collapsible table" size={"medium"}>
         <TableBody>
           {responses.map((response, index) => (
-            <ResponseListRow
-              response={response}
-              key={"response" + index.toString()}
-            />
+            <ResponseListRow response={response} key={"response" + index.toString()} />
           ))}
         </TableBody>
       </Table>

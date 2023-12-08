@@ -15,11 +15,7 @@ export function useNewRequestWizardState() {
   return useWizardFormState<NewRequestState>();
 }
 
-export const NEW_REQUEST_PROGRESS_BAR_STEPS = [
-  "Select process",
-  "Create request",
-  "Confirm",
-];
+export const NEW_REQUEST_PROGRESS_BAR_STEPS = ["Select process", "Create request", "Confirm"];
 
 export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestState> = [
   {

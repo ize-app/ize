@@ -17,9 +17,7 @@ export const Confirm = () => {
     formState.process && formState.userInputs
       ? formState.process.inputs.map((inputMetadata) => ({
           name: inputMetadata.name,
-          value: formState.userInputs
-            ? formState.userInputs[inputMetadata.id]
-            : "-",
+          value: formState.userInputs ? formState.userInputs[inputMetadata.id] : "-",
         }))
       : [];
 
@@ -27,11 +25,7 @@ export const Confirm = () => {
     <>
       <WizardBody>
         <Box sx={{ maxWidth: "800px" }}>
-          <Accordion
-            id={"request-summary-panel"}
-            label="Request summary"
-            defaultExpanded={true}
-          >
+          <Accordion id={"request-summary-panel"} label="Request summary" defaultExpanded={true}>
             <RequestInputTable inputs={inputs} />
           </Accordion>
           <Accordion

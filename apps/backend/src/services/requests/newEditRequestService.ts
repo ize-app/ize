@@ -1,13 +1,7 @@
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
-import { ActionType, OptionSystemPayload, Prisma } from "@prisma/client";
-import { ProcessType } from "@prisma/client";
-
-import {
-  EvolveArgs,
-  NewEditProcessRequestArgs,
-  NewProcessArgs,
-} from "frontend/src/graphql/generated/graphql";
+import { ActionType, Prisma } from "@prisma/client";
+import { NewEditProcessRequestArgs, NewProcessArgs } from "@graphql/generated/resolver-types";
 import { newRequestService } from "./newRequestService";
 import { diff } from "deep-object-diff";
 import {
@@ -17,7 +11,7 @@ import {
   createOptionSystem,
   createRoleSet,
 } from "@services/processes/processHelpers";
-import { optionSystemInclude } from "../../utils/formatProcess";
+import { optionSystemInclude, OptionSystemPrismaType } from "../../utils/formatProcess";
 
 export const newEditRequestService = async (
   {
@@ -29,6 +23,8 @@ export const newEditRequestService = async (
   },
   context: GraphqlRequestContext,
 ) => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
   const diffProcess: NewProcessArgs = diff(
     args.currentProcess,
     args.evolvedProcess,
@@ -49,8 +45,11 @@ export const newEditRequestService = async (
     },
   });
 
-  const currVers = currentProcessRecord.currentProcessVersion;
-  const evolveProcessId = currVers.evolveProcessId;
+  const currVers = currentProcessRecord?.currentProcessVersion;
+  const evolveProcessId = currVers?.evolveProcessId;
+
+  if (!currVers || !evolveProcessId)
+    throw Error("ERROR Create edit request: Cannot find currrent version of process");
 
   const currentEvolveProcessRecord = await transaction.process.findFirst({
     include: {
@@ -65,34 +64,33 @@ export const newEditRequestService = async (
       },
     },
     where: {
-      id: evolveProcessId,
+      id: evolveProcessId as string,
     },
   });
 
-  const currEvolveVers = currentEvolveProcessRecord.currentProcessVersion;
+  const currEvolveVers = currentEvolveProcessRecord?.currentProcessVersion;
+
+  if (!currEvolveVers) throw Error("ERROR new edit process request: Cannot find evolve process");
 
   // if the option set has changed, need to refind the action filter
-  const currOptionSystem = currVers.optionSystem;
+  // if there is an option trigger for an action, find the the option that matches that option trigger
+  const currOptionSystem: OptionSystemPrismaType = currVers.optionSystem;
 
   const newOptionSystem = diffProcess.options
-    ? await createOptionSystem(
-        { options: args.evolvedProcess.options, transaction },
-        context,
-      )
+    ? await createOptionSystem({ options: args.evolvedProcess.options, transaction })
     : null;
 
+  const optionSet =
+    newOptionSystem?.defaultProcessOptionSet ?? currOptionSystem.defaultProcessOptionSet;
+
+  if (!optionSet) throw Error("ERROR New Evolve Request: Can't find options for this process");
   const actionOptionFilterId = args.evolvedProcess.action?.optionTrigger
-    ? (
-        newOptionSystem ?? currOptionSystem
-      ).defaultProcessOptionSet.options.find(
-        (option) => option.value === args.evolvedProcess.action.optionTrigger,
-      ).id
+    ? optionSet.options.find(
+        (option) => option.value === args.evolvedProcess?.action?.optionTrigger,
+      )?.id
     : null;
 
-  type ProcessVersionChange = [
-    oldId: string,
-    new: Prisma.ProcessVersionCreateArgs,
-  ];
+  type ProcessVersionChange = [oldId: string, new: Prisma.ProcessVersionCreateArgs];
 
   const requestChanges: ProcessVersionChange[] = [];
 
@@ -113,52 +111,33 @@ export const newEditRequestService = async (
             : currVers.expirationSeconds,
           creatorId: context?.currentUser?.id,
           optionSystemId: diffProcess.options
-            ? (
-                await createOptionSystem(
-                  { options: args.evolvedProcess.options, transaction },
-                  context,
-                )
-              ).id
+            ? (await createOptionSystem({ options: args.evolvedProcess.options, transaction })).id
             : currVers.optionSystemId,
           inputTemplateSetId: diffProcess.inputs
-            ? (
-                await createInputTemplateSet(
-                  { inputs: args.evolvedProcess.inputs, transaction },
-                  context,
-                )
-              ).id
+            ? (await createInputTemplateSet({ inputs: args.evolvedProcess.inputs, transaction })).id
             : currVers.inputTemplateSetId,
           // TODO: Clean this up to not be so brittle - move expiration seconds out
           decisionSystemId:
-            diffProcess.decision?.absoluteDecision ||
-            diffProcess.decision?.percentageDecision
+            diffProcess.decision?.absoluteDecision || diffProcess.decision?.percentageDecision
               ? (
-                  await createDecisionSystem(
-                    { decision: args.evolvedProcess.decision, transaction },
-                    context,
-                  )
+                  await createDecisionSystem({
+                    decision: args.evolvedProcess.decision,
+                    transaction,
+                  })
                 ).id
               : currVers.decisionSystemId,
           roleSetId: diffProcess.roles
-            ? (
-                await createRoleSet(
-                  { roles: args.evolvedProcess.roles, transaction },
-                  context,
-                )
-              ).id
+            ? (await createRoleSet({ roles: args.evolvedProcess.roles, transaction })).id
             : currVers.roleSetId,
           actionId: args.evolvedProcess.action
             ? diffProcess.action || diffProcess.options
               ? (
-                  await createAction(
-                    {
-                      type: ActionType.customWebhook,
-                      action: args.evolvedProcess.action,
-                      filterOptionId: actionOptionFilterId,
-                    },
-                    context,
-                  )
-                ).id
+                  await createAction({
+                    type: ActionType.customWebhook,
+                    action: args.evolvedProcess.action,
+                    filterOptionId: actionOptionFilterId ?? null,
+                  })
+                )?.id
               : currVers.actionId
             : null,
           evolveProcessId: currVers.evolveProcessId,
@@ -186,22 +165,14 @@ export const newEditRequestService = async (
             diffProcess.evolve?.decision?.absoluteDecision ||
             diffProcess.evolve?.decision?.percentageDecision
               ? (
-                  await createDecisionSystem(
-                    {
-                      decision: args.evolvedProcess.evolve.decision,
-                      transaction,
-                    },
-                    context,
-                  )
+                  await createDecisionSystem({
+                    decision: args.evolvedProcess.evolve.decision,
+                    transaction,
+                  })
                 ).id
               : currEvolveVers.decisionSystemId,
           roleSetId: diffProcess.evolve?.roles
-            ? (
-                await createRoleSet(
-                  { roles: args.evolvedProcess.evolve.roles, transaction },
-                  context,
-                )
-              ).id
+            ? (await createRoleSet({ roles: args.evolvedProcess.evolve.roles, transaction })).id
             : currEvolveVers.roleSetId,
           actionId: currEvolveVers.actionId,
           parentProcessId: currEvolveVers.parentProcessId,
@@ -214,23 +185,20 @@ export const newEditRequestService = async (
   const processVersionsChanges: ProcessIdChanges[] = await Promise.all(
     requestChanges.map(async (processVersionChange: ProcessVersionChange) => {
       const [oldId, newArgs] = processVersionChange;
-      return [
-        oldId,
-        (await transaction.processVersion.create({ ...newArgs })).id,
-      ];
+      return [oldId, (await transaction.processVersion.create({ ...newArgs })).id];
     }),
   );
 
-  const evolveRequestTitleInput =
-    currEvolveVers.inputTemplateSet.inputTemplates.find(
-      (input) => input.name === "Request title",
-    );
+  const evolveRequestTitleInput = currEvolveVers.inputTemplateSet.inputTemplates.find(
+    (input) => input.name === "Request title",
+  );
 
-  const evolveRequestProcessVersionInput =
-    currEvolveVers.inputTemplateSet.inputTemplates.find(
-      (input) => input.name === "Process versions",
-    );
+  const evolveRequestProcessVersionInput = currEvolveVers.inputTemplateSet.inputTemplates.find(
+    (input) => input.name === "Process versions",
+  );
 
+  if (!evolveRequestTitleInput?.id || !evolveRequestProcessVersionInput?.id)
+    throw Error("ERROR New Evolve Request: Eror constructing request ");
   // create inputs for the request
   // process version of proposed but also need to have process version of edit - might need a special resolver
   // finally create the request using traditional means
@@ -240,7 +208,7 @@ export const newEditRequestService = async (
         processId: evolveProcessId,
         requestInputs: [
           {
-            inputId: evolveRequestTitleInput.id,
+            inputId: evolveRequestTitleInput?.id,
             value: `Evolve process of "${currVers.name}"`,
           },
           {

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "incremental": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "declaration": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": false,
+    "allowSyntheticDefaultImports": true
+  },
+  // "files": [],
+  "references": [
+    {
+      "path": "./apps/backend"
+    },
+    {
+      "path": "./apps/frontend"
+    }
+  ]
+}

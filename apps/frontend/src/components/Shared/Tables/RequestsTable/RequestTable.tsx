@@ -14,16 +14,15 @@ import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { ExpandedRequest } from "./ExpandedRequest";
-import { RequestSummaryPartsFragment } from "../../../../graphql/generated/graphql";
-import { Route } from "../../../../routers/routes";
-import { fullUUIDToShort } from "../../../../utils/inputs";
 import { reformatAgentForAvatar } from "../../Avatar";
+import { AvatarsCell, StatusCell, TableCellHideable, TwoTierCell } from "../TableCells";
+
 import {
-  AvatarsCell,
-  StatusCell,
-  TableCellHideable,
-  TwoTierCell,
-} from "../TableCells";
+  AgentSummaryPartsFragment,
+  RequestSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
+import { Route } from "@/routers/routes";
+import { fullUUIDToShort } from "@/utils/inputs";
 
 function RequestRow(props: { request: RequestSummaryPartsFragment }) {
   const { request } = props;
@@ -65,7 +64,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
         />
         <AvatarsCell
           align="center"
-          avatars={[reformatAgentForAvatar(request.creator)]}
+          avatars={[reformatAgentForAvatar(request.creator as AgentSummaryPartsFragment)]}
           hideOnSmallScreen={true}
         />
         <StatusCell
@@ -79,9 +78,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           {!alreadyResponded && notExpired ? (
             <Button
               variant="outlined"
-              endIcon={
-                open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
-              }
+              endIcon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
@@ -94,8 +91,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           ) : (
             <Typography>
               {alreadyResponded
-                ? userResponse.substring(0, 12) +
-                  (userResponse.length > 12 ? "..." : "")
+                ? userResponse.substring(0, 12) + (userResponse.length > 12 ? "..." : "")
                 : "-"}
             </Typography>
           )}
@@ -105,10 +101,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <ExpandedRequest
-                request={request}
-                collapseRow={() => setOpen(false)}
-              />
+              <ExpandedRequest request={request} collapseRow={() => setOpen(false)} />
             </Collapse>
           </TableCell>
         </TableRow>
@@ -127,21 +120,11 @@ export default function RequestTable({ requests }: RequestTableProps) {
       <Table aria-label="collapsible table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCellHideable sx={{ maxWidth: "50%" }}>
-              Request
-            </TableCellHideable>
-            <TableCellHideable
-              align="center"
-              sx={{ minWidth: "100px" }}
-              hideOnSmallScreen={true}
-            >
+            <TableCellHideable sx={{ maxWidth: "50%" }}>Request</TableCellHideable>
+            <TableCellHideable align="center" sx={{ minWidth: "100px" }} hideOnSmallScreen={true}>
               Creator
             </TableCellHideable>
-            <TableCellHideable
-              hideOnSmallScreen={true}
-              sx={{ minWidth: "100px" }}
-              align="center"
-            >
+            <TableCellHideable hideOnSmallScreen={true} sx={{ minWidth: "100px" }} align="center">
               Status
             </TableCellHideable>
             <TableCell align="center" width={"70px"}>

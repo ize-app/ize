@@ -5,7 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
-import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
+import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
@@ -21,6 +21,7 @@ import PageContainer from "../../layout/PageContainer";
 import {
   EditProcessRoute,
   NewRequestRoute,
+  Route,
   editProcessRoute,
   newRequestRoute,
 } from "../../routers/routes";
@@ -28,11 +29,7 @@ import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import SummarizeAction from "../shared/Process/SummarizeAction";
-import RequestTab, {
-  FilterOptions,
-} from "../shared/Tables/RequestsTable/RequestTab";
-
-import { Route } from "../../routers/routes";
+import RequestTab, { FilterOptions } from "../shared/Tables/RequestsTable/RequestTab";
 
 export const Process = () => {
   const { processId: processIdShort } = useParams();
@@ -54,21 +51,15 @@ export const Process = () => {
     },
   });
 
-  const { data: requestData, loading: requestLoading } = useQuery(
-    RequestsForProcessDocument,
-    {
-      variables: {
-        processId: processId,
-      },
+  const { data: requestData, loading: requestLoading } = useQuery(RequestsForProcessDocument, {
+    variables: {
+      processId: processId,
     },
-  );
+  });
 
   const process = processData?.process as ProcessSummaryPartsFragment;
 
-  console.log("process data is , ", process, "error is ", processError);
-
-  const requests =
-    requestData?.requestsForProcess as RequestSummaryPartsFragment[];
+  const requests = requestData?.requestsForProcess as RequestSummaryPartsFragment[];
 
   const onError = () => {
     navigate("/");
@@ -76,7 +67,7 @@ export const Process = () => {
     setSnackbarData({ message: "Cannot find this process", type: "error" });
   };
 
-  // if (processError) onError();
+  if (processError) onError();
 
   return processLoading || !process ? (
     <Loading />
@@ -109,8 +100,7 @@ export const Process = () => {
           </Box>
           <Typography>{process.description}</Typography>
           <br />
-          {process.action &&
-          process.action?.actionDetails?.__typename === "WebhookAction" ? (
+          {process.action && process.action?.actionDetails?.__typename === "WebhookAction" ? (
             <SummarizeAction
               uri={process.action.actionDetails.uri}
               optionTrigger={process.action.optionFilter?.value}
@@ -135,12 +125,9 @@ export const Process = () => {
                   }}
                   onClick={() =>
                     navigate(
-                      generatePath(
-                        newRequestRoute(NewRequestRoute.CreateRequest),
-                        {
-                          processId: fullUUIDToShort(processId),
-                        },
-                      ),
+                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                        processId: fullUUIDToShort(processId),
+                      }),
                     )
                   }
                 >
@@ -195,9 +182,7 @@ export const Process = () => {
           </Accordion>
           {process.type !== "Evolve" && (
             <Accordion label="How process evolves" id="decision-panel">
-              <DecisionSystemSummaryTable
-                process={process.evolve as ProcessSummaryPartsFragment}
-              />
+              <DecisionSystemSummaryTable process={process.evolve as ProcessSummaryPartsFragment} />
             </Accordion>
           )}
           <Accordion label="Request format" id="request-format-panel">

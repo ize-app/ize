@@ -25,32 +25,23 @@ const Dashboard = () => {
 
   const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument);
 
-  const groups = (groupsData?.groupsForCurrentUser ??
-    []) as GroupSummaryPartsFragment[];
+  const groups = (groupsData?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
 
-  const { data: processData, loading: processLoading } = useQuery(
-    ProcessesDocument,
-    {
-      variables: {
-        groups: groups.map((group) => group.id),
-      },
+  const { data: processData, loading: processLoading } = useQuery(ProcessesDocument, {
+    variables: {
+      groups: groups.map((group) => group.id),
     },
-  );
+  });
 
-  const { data: requestData, loading: requestLoading } = useQuery(
-    RequestsForCurrentUserDocument,
-    {
-      variables: {
-        groups: groups.map((group) => group.id),
-      },
+  const { data: requestData, loading: requestLoading } = useQuery(RequestsForCurrentUserDocument, {
+    variables: {
+      groups: groups.map((group) => group.id),
     },
-  );
+  });
 
-  const processes = (processData?.processesForCurrentUser ??
-    []) as ProcessSummaryPartsFragment[];
+  const processes = (processData?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 
-  const requests = (requestData?.requestsForCurrentUser ??
-    []) as RequestSummaryPartsFragment[];
+  const requests = (requestData?.requestsForCurrentUser ?? []) as RequestSummaryPartsFragment[];
 
   const tabs = [
     {
@@ -69,11 +60,7 @@ const Dashboard = () => {
 
   return (
     <PageContainer>
-      <Tabs
-        tabs={tabs}
-        currentTabIndex={currentTabIndex}
-        handleChange={handleChange}
-      />
+      <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
       {tabs.map((tab: TabProps, index) => (
         <TabPanel value={currentTabIndex} index={index} key={index}>
           {tab.content}

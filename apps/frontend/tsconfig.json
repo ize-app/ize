@@ -1,4 +1,6 @@
 {
+  // inherits from parent tsconfig
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -18,13 +20,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": false
-  },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    // "Composite" and "declaration" are necessary so this app can be referenced as a npm package
+    "composite": true,
+    "declaration": true,
+
+    "noUnusedParameters": true
+  }
 }

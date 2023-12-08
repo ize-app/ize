@@ -37,25 +37,19 @@ export const Group = () => {
     },
   });
 
-  const { data: processData, loading: processLoading } = useQuery(
-    ProcessesForGroupDocument,
-    { variables: { groupId: groupId } },
-  );
+  const { data: processData, loading: processLoading } = useQuery(ProcessesForGroupDocument, {
+    variables: { groupId: groupId },
+  });
 
-  const processes = (processData?.processesForGroup ??
-    []) as ProcessSummaryPartsFragment[];
+  const processes = (processData?.processesForGroup ?? []) as ProcessSummaryPartsFragment[];
 
-  const { data: requestData, loading: requestLoading } = useQuery(
-    RequestsForGroupDocument,
-    {
-      variables: {
-        groupId: groupId,
-      },
+  const { data: requestData, loading: requestLoading } = useQuery(RequestsForGroupDocument, {
+    variables: {
+      groupId: groupId,
     },
-  );
+  });
 
-  const requests = (requestData?.requestsForGroup ??
-    []) as RequestSummaryPartsFragment[];
+  const requests = (requestData?.requestsForGroup ?? []) as RequestSummaryPartsFragment[];
 
   const group = data?.group as GroupSummaryPartsFragment;
 
@@ -147,10 +141,7 @@ export const Group = () => {
                 }}
               >
                 Discord role of{" "}
-                <Box
-                  component="span"
-                  sx={{ fontWeight: "bold", color: colors.primary }}
-                >
+                <Box component="span" sx={{ fontWeight: "bold", color: colors.primary }}>
                   {group.organization.name}
                 </Box>
               </Typography>
@@ -161,11 +152,7 @@ export const Group = () => {
             </Box>
           </Box>
         </Box>
-        <Tabs
-          tabs={tabs}
-          currentTabIndex={currentTabIndex}
-          handleChange={handleChange}
-        />
+        <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
         {tabs.map((tab: TabProps, index) => (
           <TabPanel value={currentTabIndex} index={index} key={index}>
             {tab.content}

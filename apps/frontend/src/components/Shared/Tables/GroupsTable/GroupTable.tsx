@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import { AgentType, GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import { fullUUIDToShort } from "../../../../utils/inputs";
 import { AvatarWithName } from "../../Avatar";
 import { TableCellHideable } from "../TableCells";
@@ -33,6 +33,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              type={AgentType.Group}
               id={group.id}
               color={group.color}
               name={group.name}
@@ -48,6 +49,7 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
             }}
           >
             <AvatarWithName
+              type={AgentType.Group}
               id={group.name}
               name={group.organization.name}
               avatarUrl={group.organization.icon}
@@ -62,29 +64,17 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
   );
 }
 
-export default function GroupTable({
-  groups,
-}: {
-  groups: GroupSummaryPartsFragment[];
-}) {
+export default function GroupTable({ groups }: { groups: GroupSummaryPartsFragment[] }) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
       <Table aria-label="collapsible table" stickyHeader={true}>
         <TableHead>
           <TableRow>
             <TableCellHideable sx={{ width: "1000%" }}>Group</TableCellHideable>
-            <TableCellHideable
-              align="center"
-              sx={{ minWidth: "100px" }}
-              hideOnSmallScreen={true}
-            >
+            <TableCellHideable align="center" sx={{ minWidth: "100px" }} hideOnSmallScreen={true}>
               Server
             </TableCellHideable>
-            <TableCellHideable
-              hideOnSmallScreen={true}
-              sx={{ minWidth: "100px" }}
-              align="center"
-            >
+            <TableCellHideable hideOnSmallScreen={true} sx={{ minWidth: "100px" }} align="center">
               Members
             </TableCellHideable>
           </TableRow>

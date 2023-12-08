@@ -14,17 +14,18 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { ProcessSummaryPartsFragment } from "../../../../graphql/generated/graphql";
+import { reformatAgentForAvatar } from "../../Avatar";
+import { AvatarsCell, TableCellHideable } from "../TableCells";
+
+import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
 import {
   EditProcessRoute,
   NewRequestRoute,
   Route,
   editProcessRoute,
   newRequestRoute,
-} from "../../../../routers/routes";
-import { fullUUIDToShort } from "../../../../utils/inputs";
-import { reformatAgentForAvatar } from "../../Avatar";
-import { AvatarsCell, TableCellHideable } from "../TableCells";
+} from "@/routers/routes";
+import { fullUUIDToShort } from "@/utils/inputs";
 
 function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
   const { process } = props;
@@ -64,15 +65,11 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
         </TableCell>
         <AvatarsCell
           align="center"
-          avatars={process.roles.request.map((role) =>
-            reformatAgentForAvatar(role),
-          )}
+          avatars={process.roles.request.map((role) => reformatAgentForAvatar(role))}
           hideOnSmallScreen={true}
         />
         <AvatarsCell
-          avatars={process.roles.respond.map((role) =>
-            reformatAgentForAvatar(role),
-          )}
+          avatars={process.roles.respond.map((role) => reformatAgentForAvatar(role))}
           align="center"
           hideOnSmallScreen={true}
         />
@@ -104,12 +101,9 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(
-                      generatePath(
-                        newRequestRoute(NewRequestRoute.CreateRequest),
-                        {
-                          processId: fullUUIDToShort(process.id),
-                        },
-                      ),
+                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                        processId: fullUUIDToShort(process.id),
+                      }),
                     );
                   }}
                   color={"primary"}
@@ -125,11 +119,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
   );
 }
 
-export default function ProcessTable({
-  processes,
-}: {
-  processes: ProcessSummaryPartsFragment[];
-}) {
+export default function ProcessTable({ processes }: { processes: ProcessSummaryPartsFragment[] }) {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
       <Table aria-label="table" stickyHeader={true}>
@@ -154,18 +144,10 @@ export default function ProcessTable({
             >
               Respond
             </TableCellHideable> */}
-            <TableCellHideable
-              align="center"
-              width={"100px"}
-              hideOnSmallScreen={true}
-            >
+            <TableCellHideable align="center" width={"100px"} hideOnSmallScreen={true}>
               Respond
             </TableCellHideable>
-            <TableCell
-              align="right"
-              width={"140px"}
-              sx={{ minWidth: "40%" }}
-            ></TableCell>
+            <TableCell align="right" width={"140px"} sx={{ minWidth: "40%" }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
