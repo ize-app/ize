@@ -25,6 +25,5 @@
     "declaration": true,
 
     "noUnusedParameters": true
-  },
-  "include": ["src"]
+  }
 }
