@@ -38,6 +38,8 @@ export const SubmitResponse = ({
 
   const onComplete = async (data: FormFields) => {
     try {
+      setSnackbarOpen(true);
+      setHasVoted(true);
       await mutate({
         variables: {
           requestId: requestId,
@@ -49,8 +51,6 @@ export const SubmitResponse = ({
         message: "Response submitted!",
         type: "success",
       });
-      setSnackbarOpen(true);
-      setHasVoted(true);
       onSubmit();
     } catch {
       setSnackbarOpen(true);
