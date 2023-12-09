@@ -23,8 +23,11 @@ import {
 } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { hasPermission } from "@/utils/hasPermissions";
 
 function RequestRow(props: { request: RequestSummaryPartsFragment }) {
+  const { me } = React.useContext(CurrentUserContext);
   const { request } = props;
   const [open, setOpen] = React.useState(false);
 
@@ -35,9 +38,9 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
   const userResponse = request.responses.userResponse?.value as string;
 
   const alreadyResponded = !!userResponse;
-  const notHaveFinalDecision = !request.result;
+  const noFinalDecision = !request.result;
   const notExpired = expirationDate >= new Date();
-  const isOpenRequest = notHaveFinalDecision && notExpired;
+  const isOpenRequest = noFinalDecision && notExpired;
 
   return (
     <React.Fragment>
