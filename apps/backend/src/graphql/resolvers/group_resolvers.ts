@@ -3,12 +3,13 @@ import { GraphqlRequestContext } from "backend/src/graphql/context";
 import { prisma } from "backend/src/prisma/client";
 
 import { groupInclude, formatGroup, GroupPrismaType } from "backend/src/utils/formatGroup";
-import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
+import { getGroupsOfUserService } from "@services/groups/getGroupsOfUserService";
 
 import {
   Group,
   MutationSetUpDiscordServerArgs,
   QueryGroupArgs,
+  QueryGroupsForCurrentUserArgs,
 } from "@graphql/generated/resolver-types";
 
 const setUpDiscordServer = async (
@@ -30,10 +31,10 @@ const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
 
 export const groupsForCurrentUser = async (
   root: unknown,
-  args: Record<string, never>,
+  args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Group[]> => {
-  return groupsForCurrentUserService(context);
+  return getGroupsOfUserService(args);
 };
 
 export const groupMutations = {

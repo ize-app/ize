@@ -18,8 +18,8 @@ query RequestsForGroup($groupId: String!) {
   }
 }
 
-query RequestsForCurrentUser($groups: [String!]!) {
-  requestsForCurrentUser(groups: $groups) {
+query RequestsForCurrentUser($groupIds: [String!]!) {
+  requestsForCurrentUser(groupIds: $groupIds) {
     ...RequestSummaryParts
   }
 }

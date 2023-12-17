@@ -19,13 +19,21 @@ import { fullUUIDToShort } from "../../utils/inputs";
 import Loading from "../shared/Loading";
 import Search from "../shared/Tables/Search";
 import { WizardBody } from "../shared/Wizard";
+import { CurrentUserContext } from "../../contexts/current_user_context";
+import { useContext } from "react";
 
 export const SelectProcess = () => {
   const navigate = useNavigate();
+  const { me } = useContext(CurrentUserContext);
   const [searchQuery, setSearchQuery] = useState("");
   const { setParams } = useNewRequestWizardState();
 
-  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
+  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument, {
+    variables: {
+      // TODO replace with actual groups
+      groupIds: me?.groupIds ?? [],
+    },
+  });
 
   const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 

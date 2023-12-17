@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import { _404 } from "@/components/404";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import EditProcess from "@/components/EditProcess/EditProcess";
 import { Group } from "@/components/Groups/Group";
 import { Home } from "@/components/Home";
@@ -17,11 +18,12 @@ import * as Routes from "@/routers/routes";
 export const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
-
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: Routes.Route.Home,
         element: <Home />,
+        errorElement: <ErrorBoundary />,
       },
       {
         element: (
@@ -57,6 +59,7 @@ export const router = createBrowserRouter([
           </AuthRoute>
         ),
         path: Routes.Route.NewProcess,
+        errorElement: <ErrorBoundary />,
         children: [
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
@@ -88,6 +91,7 @@ export const router = createBrowserRouter([
           </AuthRoute>
         ),
         path: Routes.Route.NewRequest,
+        errorElement: <ErrorBoundary />,
         children: [
           {
             path: Routes.newRequestRoute(Routes.NewRequestRoute.SelectProcess),
@@ -111,6 +115,7 @@ export const router = createBrowserRouter([
           </AuthRoute>
         ),
         path: Routes.Route.EditProcess,
+        errorElement: <ErrorBoundary />,
         children: [
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Intro),
@@ -141,19 +146,23 @@ export const router = createBrowserRouter([
       },
       {
         path: Routes.Route.Group,
+        errorElement: <ErrorBoundary />,
         element: <Group />,
       },
       {
         path: Routes.Route.Request,
+        errorElement: <ErrorBoundary />,
         element: <Request />,
       },
       {
         path: Routes.Route.Process,
+        errorElement: <ErrorBoundary />,
         element: <Process />,
       },
       {
         path: "*",
         element: <_404 />,
+        errorElement: <ErrorBoundary />,
       },
     ],
   },

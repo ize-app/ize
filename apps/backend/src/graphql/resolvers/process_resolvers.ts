@@ -18,6 +18,7 @@ import {
 
 import { newCustomProcess } from "../../services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
+import { processesForUserService } from "@services/processes/processesForUserService";
 
 const newProcess = async (
   root: unknown,
@@ -51,70 +52,43 @@ const processesForCurrentUser = async (
   args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
-
-  const processes = await prisma.process.findMany({
-    where: {
-      // Add editProcess lookup later
-      OR: [
-        {
-          currentProcessVersion: {
-            roleSet: {
-              OR: [
-                {
-                  roleGroups: {
-                    some: {
-                      AND: [
-                        { groupId: { in: args.groups ?? [] } },
-                        {
-                          type: {
-                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  roleUsers: {
-                    some: {
-                      AND: [
-                        { userId: context.currentUser.id },
-                        {
-                          type: {
-                            in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      ],
-      type: { not: "Evolve" },
-    },
-    include: processInclude,
-  });
-  const formattedProcesses = processes.map((process) => formatProcess(process));
-
-  return formattedProcesses;
+  return await processesForUserService(args, context);
 };
 
+/* 
+Gets all processes that either 
+1) give request/respond permissions to that group or 
+2) have an evovle process with reqest permissions to that group. 
+Note: In the process table UI, "evolve processes" are not shown by themselves, only as attached to their "parent" process
+*/
 const processesForGroup = async (
   root: unknown,
   args: QueryProcessesForGroupArgs,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({
     where: {
-      currentProcessVersion: {
-        roleSet: {
-          roleGroups: { some: { groupId: args.groupId } },
+      OR: [
+        {
+          currentProcessVersion: {
+            roleSet: {
+              roleGroups: { some: { groupId: args.groupId } },
+            },
+          },
         },
-      },
+        {
+          currentProcessVersion: {
+            evolveProcess: {
+              currentProcessVersion: {
+                roleSet: {
+                  roleGroups: { some: { groupId: args.groupId, type: "Request" } },
+                },
+              },
+            },
+          },
+        },
+      ],
     },
+
     include: processInclude,
   });
 

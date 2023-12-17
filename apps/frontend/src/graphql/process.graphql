@@ -12,14 +12,14 @@ query Process($processId: String!) {
   }
 }
 
-query Processes($groups: [String!]!) {
-  processesForCurrentUser(requestRoleOnly: false, groups: $groups) {
+query Processes($groupIds: [String!]!) {
+  processesForCurrentUser(requestRoleOnly: false, groupIds: $groupIds) {
     ...ProcessSummaryParts
   }
 }
 
-query GetProcessesToCreateRequest {
-  processesForCurrentUser(requestRoleOnly: true) {
+query GetProcessesToCreateRequest($groupIds: [String!]!) {
+  processesForCurrentUser(requestRoleOnly: true, groupIds: $groupIds) {
     ...ProcessSummaryParts
   }
 }

@@ -9,7 +9,8 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { DecisionSystemSummaryTable } from "./DecisionSystemSummaryTable";
 import { RequestTemplateTable } from "./RequestTemplateTable";
-import { SnackbarContext } from "../../contexts/SnackbarContext";
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 import {
   ProcessDocument,
   ProcessSummaryPartsFragment,
@@ -26,12 +27,14 @@ import {
   newRequestRoute,
 } from "../../routers/routes";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
+import { hasPermission } from "@/utils/hasPermissions";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import SummarizeAction from "../shared/Process/SummarizeAction";
 import RequestTab, { FilterOptions } from "../shared/Tables/RequestsTable/RequestTab";
 
 export const Process = () => {
+  const { me } = useContext(CurrentUserContext);
   const { processId: processIdShort } = useParams();
 
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
@@ -118,10 +121,10 @@ export const Process = () => {
               <>
                 <Button
                   variant="contained"
+                  disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
                   sx={{
                     width: "140px",
-                    // TODO: Query user roles from group/individual
-                    display: true ? "flex" : "none",
+                    display: !me ? "none" : "flex",
                   }}
                   onClick={() =>
                     navigate(
@@ -142,10 +145,12 @@ export const Process = () => {
                       }),
                     );
                   }}
+                  disabled={
+                    !hasPermission(me?.user.id, me?.groupIds, process.evolve?.roles.request)
+                  }
                   sx={{
                     width: "140px",
-                    // TODO: Query user roles from group/individual
-                    display: true ? "flex" : "none",
+                    display: !me ? "none" : "flex",
                   }}
                 >
                   Evolve process
@@ -161,10 +166,10 @@ export const Process = () => {
                     }),
                   );
                 }}
+                disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
                 sx={{
                   width: "140px",
-                  // TODO: Query user roles from group/individual
-                  display: true ? "flex" : "none",
+                  display: !me ? "none" : "flex",
                 }}
               >
                 Evolve Process
@@ -182,7 +187,11 @@ export const Process = () => {
           </Accordion>
           {process.type !== "Evolve" && (
             <Accordion label="How process evolves" id="decision-panel">
-              <DecisionSystemSummaryTable process={process.evolve as ProcessSummaryPartsFragment} />
+              {
+                // TODO fix the evolve process type so there's no error
+                //@ts-ignore
+                <DecisionSystemSummaryTable process={process.evolve} />
+              }
             </Accordion>
           )}
           <Accordion label="Request format" id="request-format-panel">

@@ -50,6 +50,14 @@ type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
 
 const inputTemplateInclude = Prisma.validator<Prisma.InputTemplateInclude>()({});
 
+export const inputTemplateSetInclude = Prisma.validator<Prisma.InputTemplateSetInclude>()({
+  inputTemplates: inputTemplateInclude,
+});
+
+export type InputTemplatSetPrismaType = Prisma.InputTemplateSetGetPayload<{
+  include: typeof inputTemplateSetInclude;
+}>;
+
 export const optionSystemInclude = Prisma.validator<Prisma.OptionSystemInclude>()({
   defaultProcessOptionSet: {
     include: {

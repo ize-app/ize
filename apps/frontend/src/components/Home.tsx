@@ -48,6 +48,6 @@ const UnauthenticatedHome = () => {
 };
 
 export const Home = () => {
-  const { user } = useContext(CurrentUserContext);
-  return user == null || user?.discordData == null ? <UnauthenticatedHome /> : <Dashboard />;
+  const { me } = useContext(CurrentUserContext);
+  return me?.user == null ? <UnauthenticatedHome /> : <Dashboard />;
 };

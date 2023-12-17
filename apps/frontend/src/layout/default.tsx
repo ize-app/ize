@@ -10,7 +10,7 @@ export const DefaultLayout = () => {
     <>
       <Head title="Cults" description="The decision-making engine" />
       <NavBar />
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <Outlet />
         <Snackbar />
       </Box>

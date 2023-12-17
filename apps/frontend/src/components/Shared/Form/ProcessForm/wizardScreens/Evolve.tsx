@@ -21,7 +21,6 @@ import {
   AgentType,
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
-import { createDiscordAvatarURL } from "@/utils/discord";
 
 type FormFields = z.infer<typeof evolveProcessFormSchema>;
 
@@ -29,7 +28,7 @@ const namePrepend = "evolve.";
 
 export const Evolve = ({}) => {
   const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
-  const { user } = useContext(CurrentUserContext);
+  const { me } = useContext(CurrentUserContext);
 
   const agents = data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
 
@@ -52,14 +51,10 @@ export const Evolve = ({}) => {
           response:
             formState.evolve?.rights?.response ?? [
               {
-                id: user?.id,
+                id: me?.user.id,
                 type: AgentType.User,
-                avatarUrl: createDiscordAvatarURL(
-                  user?.discordData?.discordId as string,
-                  user?.discordData.avatar as string,
-                  128,
-                ),
-                name: user?.discordData.username,
+                avatarUrl: me?.user.icon,
+                name: me?.user.name,
               },
             ] ??
             [],

@@ -15,29 +15,39 @@ import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
 import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 import TabPanel from "../shared/Tables/TabPanel";
 import { TabProps, Tabs } from "../shared/Tables/Tabs";
+import { CurrentUserContext } from "../../contexts/current_user_context";
+import { useContext } from "react";
 
 const Dashboard = () => {
+  const { me } = useContext(CurrentUserContext);
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 
-  const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument);
-
-  const groups = (groupsData?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
+  const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
+    variables: {
+      groupIds: me?.groupIds ?? [],
+    },
+    skip: !me,
+  });
 
   const { data: processData, loading: processLoading } = useQuery(ProcessesDocument, {
     variables: {
-      groups: groups.map((group) => group.id),
+      groupIds: me?.groupIds ?? [],
     },
+    skip: !me,
   });
 
   const { data: requestData, loading: requestLoading } = useQuery(RequestsForCurrentUserDocument, {
     variables: {
-      groups: groups.map((group) => group.id),
+      groupIds: me?.groupIds ?? [],
     },
+    skip: !me,
   });
+
+  const groups = (groupsData?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
 
   const processes = (processData?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 

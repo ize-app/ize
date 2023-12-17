@@ -4,7 +4,8 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
 import { roleSetInclude } from "../../utils/formatProcess";
-import { groupsForCurrentUserService } from "@services/groups/groupsForCurrentUserService";
+import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
+import { validateRequestInputs } from "./validateRequestInputs";
 
 export const newRequestService = async (
   {
@@ -20,8 +21,7 @@ export const newRequestService = async (
 
   const { processId, requestInputs } = args;
 
-  const currentGroups = await groupsForCurrentUserService(context);
-  const groupIds = currentGroups.map((group) => group.id);
+  const groupIds = await getGroupIdsOfUserService(context);
 
   const process = await transaction.process.findFirstOrThrow({
     include: {
@@ -42,6 +42,14 @@ export const newRequestService = async (
       id: processId,
     },
   });
+
+  if (!process.currentProcessVersion)
+    throw Error("ERROR New Request: Can't find current process version");
+
+  if (
+    validateRequestInputs(args.requestInputs ?? [], process.currentProcessVersion?.inputTemplateSet)
+  )
+    throw Error("ERROR New Request: Invalid request inputs");
 
   const hasGroupPermission = process.currentProcessVersion?.roleSet.roleGroups.reduce(
     (acc, curr) => {

@@ -19,7 +19,6 @@ import { CurrentUserContext } from "../../contexts/current_user_context";
 import { LogOutDocument } from "../../graphql/generated/graphql";
 import { Route } from "../../routers/routes";
 import { colors } from "../../style/style";
-import { createDiscordAvatarURL } from "../../utils/discord";
 
 interface NavLinkProps {
   title: string;
@@ -142,7 +141,7 @@ const NavControlContainer = styled.ol`
 `;
 
 export const NavBar: React.FC = () => {
-  const { user } = useContext(CurrentUserContext);
+  const { me } = useContext(CurrentUserContext);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
@@ -151,26 +150,19 @@ export const NavBar: React.FC = () => {
 
   return (
     <NavContainer>
-      {isHomePage && user == null ? (
+      {isHomePage && me == null ? (
         <Box></Box>
       ) : (
         <img src="/logo-yellow.png" style={{ height: "24px", marginLeft: "12px" }} />
       )}
 
       <NavControlContainer>
-        {user == null || user.discordData == null ? (
+        {me == null ? (
           <ConnectToDiscord />
         ) : (
           <>
             {isOverSmScreen ? <NavLink title="Dashboard" url="/" /> : null}
-            <UserDropDown
-              username={user.discordData.username}
-              avatarURL={
-                user.discordData.avatar
-                  ? createDiscordAvatarURL(user.discordData.discordId, user.discordData.avatar, 128)
-                  : null
-              }
-            />
+            <UserDropDown username={me.user.name} avatarURL={me.user.icon ?? null} />
           </>
         )}
       </NavControlContainer>

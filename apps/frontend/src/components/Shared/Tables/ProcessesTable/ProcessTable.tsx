@@ -17,7 +17,9 @@ import { generatePath, useNavigate } from "react-router-dom";
 import { reformatAgentForAvatar } from "../../Avatar";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
-import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
+import {
+  ProcessSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
 import {
   EditProcessRoute,
   NewRequestRoute,
@@ -26,11 +28,16 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { hasPermission } from "@/utils/hasPermissions";
 
 function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
+  const { me } = React.useContext(CurrentUserContext);
   const { process } = props;
-  const navigate = useNavigate();
 
+  console.log("inside process row", process.name);
+
+  const navigate = useNavigate();
   return (
     <React.Fragment>
       <TableRow
@@ -89,7 +96,9 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={false}
+                  disabled={
+                    !hasPermission(me?.user.id, me?.groupIds, process.evolve?.roles.request)
+                  }
                   edge={"start"}
                 />
               </span>
@@ -108,7 +117,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={false}
+                  disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
                 />
               </span>
             </Tooltip>
@@ -137,13 +146,6 @@ export default function ProcessTable({ processes }: { processes: ProcessSummaryP
             >
               Request
             </TableCellHideable>
-            {/* <TableCellHideable
-              hideOnSmallScreen={true}
-              width="100px"
-              align="center"
-            >
-              Respond
-            </TableCellHideable> */}
             <TableCellHideable align="center" width={"100px"} hideOnSmallScreen={true}>
               Respond
             </TableCellHideable>

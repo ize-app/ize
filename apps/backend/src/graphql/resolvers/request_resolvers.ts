@@ -17,6 +17,7 @@ import {
   QueryRequestsForCurrentUserArgs,
   Request,
 } from "@graphql/generated/resolver-types";
+import { resultInclude } from "../../utils/formatResult";
 
 const newRequest = async (
   root: unknown,
@@ -41,7 +42,20 @@ const newResponse = async (
       creatorId: context.currentUser.id,
     },
   });
+
   if (existingResponse) throw Error("ERROR User already responded to this request ");
+
+  const request = await prisma.request.findFirstOrThrow({
+    include: {
+      result: { include: resultInclude },
+    },
+    where: {
+      id: args.requestId,
+    },
+  });
+
+  if (request.expirationDate < new Date() || request.result)
+    throw Error("ERROR New Response: Request is no longer accepting responses");
 
   const response = await prisma.response.create({
     data: {
@@ -88,7 +102,7 @@ const requestsForCurrentUser = async (
               roleGroups: {
                 some: {
                   AND: [
-                    { groupId: { in: args.groups } },
+                    { groupId: { in: args.groupIds } },
                     {
                       type: "Request",
                     },

@@ -5,7 +5,6 @@ import Chip from "@mui/material/Chip";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { BarChart } from "@mui/x-charts/BarChart";
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -16,7 +15,6 @@ import {
   RequestDocument,
   RequestSummaryPartsFragment,
   Response,
-  ResponseCount,
   Result,
   ResultSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
@@ -30,37 +28,6 @@ import { FinalDecision, RequestInputTable, SubmitResponse } from "../shared/Requ
 import ProcessEvolveRequestDiff from "../shared/Request/ProcessEvolveRequestDiff";
 import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
 import { ResponseList } from "../shared/Request/ResponseList";
-
-export default function HorizontalBars({ responseCounts }: { responseCounts: ResponseCount[] }) {
-  return (
-    <BarChart
-      yAxis={[
-        {
-          scaleType: "band",
-          data: responseCounts.map((elem) => elem.value),
-          disableTicks: true,
-        },
-      ]}
-      series={[
-        {
-          data: responseCounts.map((elem) => elem.count),
-          id: "votes",
-          xAxisKey: "bottomAxisKey",
-        },
-      ]}
-      layout="horizontal"
-      xAxis={[
-        {
-          id: "bottomAxisKey",
-          label: "Response count",
-          max: responseCounts.reduce((acc, curr) => Math.max(acc, curr.count), 0),
-        },
-      ]}
-      width={350}
-      height={300}
-    />
-  );
-}
 
 export const RemainingTime = ({
   expirationDate,
@@ -224,27 +191,10 @@ export const Request = () => {
                   onSubmit={() => {
                     return;
                   }}
+                  respondRoles={request.process.roles.respond}
                 />
               </Accordion>
             )}
-
-            <Accordion label="Results" id="response-count-panel">
-              {request.responses.userResponse ? (
-                <HorizontalBars responseCounts={request.responses.responseCount} />
-              ) : (
-                <Box
-                  sx={{
-                    height: "100%",
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <Typography>Please respond before you can see the other responses</Typography>
-                </Box>
-              )}
-            </Accordion>
             <Accordion label="Responses" id="response-list-panel">
               {request.responses.userResponse ? (
                 <ResponseList responses={request.responses.allResponses as Response[]} />
