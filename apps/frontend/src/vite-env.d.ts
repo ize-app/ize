@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_CULTS_API_BASE_URL: string;
+  readonly VITE_STYTCH_PUBLIC_TOKEN: string;
   // more env variables...
 }
 

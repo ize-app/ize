@@ -19,6 +19,7 @@ import { CurrentUserContext } from "../../contexts/current_user_context";
 import { LogOutDocument } from "../../graphql/generated/graphql";
 import { Route } from "../../routers/routes";
 import { colors } from "../../style/style";
+import Login from "./Login";
 
 interface NavLinkProps {
   title: string;
@@ -158,7 +159,10 @@ export const NavBar: React.FC = () => {
 
       <NavControlContainer>
         {me == null ? (
-          <ConnectToDiscord />
+          <>
+            <Login />
+            <ConnectToDiscord />
+          </>
         ) : (
           <>
             {isOverSmScreen ? <NavLink title="Dashboard" url="/" /> : null}

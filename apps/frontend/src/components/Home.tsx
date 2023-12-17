@@ -5,6 +5,7 @@ import { useContext } from "react";
 import Dashboard from "./Dashboard/Dashboard";
 import { ConnectToDiscord } from "./shared/ConnectToDiscord";
 import { CurrentUserContext } from "../contexts/current_user_context";
+import Login from "./shared/Login";
 
 const UnauthenticatedHome = () => {
   return (
@@ -42,6 +43,7 @@ const UnauthenticatedHome = () => {
           Join Alpha Waitlist
         </Button>
         <ConnectToDiscord />
+        <Login />
       </Box>
     </Box>
   );
