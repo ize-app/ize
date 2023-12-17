@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { resultInclude, formatResult } from "./formatResult";
-import { userInclude, formatUser } from "backend/src/utils/formatUser";
+import { userInclude, formatUser } from "@utils/formatUser";
 import { ProcessVersionPrismaType, formatProcessVersion } from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
 import { prisma } from "../prisma/client";

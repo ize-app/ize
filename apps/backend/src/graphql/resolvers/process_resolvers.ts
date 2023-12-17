@@ -1,9 +1,9 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
+import { formatProcess, processInclude } from "@utils/formatProcess";
 import { discordServers } from "./discord_resolvers";
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
-import { formatUser, userInclude } from "backend/src/utils/formatUser";
+import { groupInclude, formatGroup } from "@utils/formatGroup";
+import { formatUser, userInclude } from "@utils/formatUser";
 
 import {
   Group,
@@ -16,7 +16,7 @@ import {
   QueryProcessesForGroupArgs,
 } from "@graphql/generated/resolver-types";
 
-import { newCustomProcess } from "../../services/processes/newProcess";
+import { newCustomProcess } from "@services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
 

@@ -5,8 +5,8 @@ import {
   ActionType as PrismaActionType,
   WebhookAction,
 } from "@prisma/client";
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
-import { userInclude, formatUser } from "backend/src/utils/formatUser";
+import { groupInclude, formatGroup } from "@utils/formatGroup";
+import { userInclude, formatUser } from "@utils/formatUser";
 
 import {
   Action,

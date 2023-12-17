@@ -1,4 +1,4 @@
-import { Request } from "frontend/src/graphql/generated/graphql";
+import { Request } from "@graphql/generated/resolver-types";
 
 const callWebhook = async ({ uri, payload }: { uri: string; payload: Request }) => {
   try {

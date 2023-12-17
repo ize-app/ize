@@ -1,8 +1,8 @@
 import { setUpDiscordServerService } from "@services/groups/discord_server_group";
-import { GraphqlRequestContext } from "backend/src/graphql/context";
-import { prisma } from "backend/src/prisma/client";
+import { GraphqlRequestContext } from "@graphql/context";
+import { prisma } from "@/prisma/client";
 
-import { groupInclude, formatGroup, GroupPrismaType } from "backend/src/utils/formatGroup";
+import { groupInclude, formatGroup, GroupPrismaType } from "@utils/formatGroup";
 import { getGroupsOfUserService } from "@services/groups/getGroupsOfUserService";
 
 import {

@@ -12,9 +12,11 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"],
+      "@/*": ["src/*"],
       "@graphql/*": ["src/graphql/*"],
       "@discord/*": ["src/discord/*"],
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"]
     },
 
     "strict": true,

@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
+import { formatProcess, processInclude } from "@utils/formatProcess";
 import { Process, QueryProcessesForCurrentUserArgs } from "@graphql/generated/resolver-types";
 
 /* 

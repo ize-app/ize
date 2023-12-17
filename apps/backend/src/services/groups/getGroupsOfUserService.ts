@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
+import { groupInclude, formatGroup } from "@utils/formatGroup";
 
 import { QueryGroupsForCurrentUserArgs } from "@graphql/generated/resolver-types";
 

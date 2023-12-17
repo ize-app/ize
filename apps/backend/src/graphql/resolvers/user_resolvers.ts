@@ -3,7 +3,7 @@ import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 import { Me } from "@graphql/generated/resolver-types";
 import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
-import { userInclude, formatUser } from "backend/src/utils/formatUser";
+import { userInclude, formatUser } from "@utils/formatUser";
 
 const users = async (): Promise<User[]> => {
   const users = await prisma.user.findMany();
