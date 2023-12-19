@@ -15,7 +15,7 @@ export class DiscordApi {
       include: { discordOauth: true; discordData: true };
     }>,
   ) {
-    if (!user?.discordOauth?.accessToken) throw Error("ERROR No Discord access token for user.");
+    if (!user?.discordOauth?.accessToken) return undefined;
     return new DiscordApi(user.discordOauth.accessToken, false);
   }
 

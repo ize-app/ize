@@ -2,8 +2,9 @@ import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
 
-export const getGroupIdsOfUserService = async (context: GraphqlRequestContext) => {
-  if (!context.currentUser || !context.discordApi) throw Error("ERROR Unauthenticated user");
+const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<string[]> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+  if (!context.discordApi) return [];
 
   const userDiscordData = await prisma.discordData.findFirstOrThrow({
     where: { userId: context.currentUser.id },
@@ -40,4 +41,12 @@ export const getGroupIdsOfUserService = async (context: GraphqlRequestContext) =
   });
 
   return groups.map((group) => group.id);
+};
+
+export const getGroupIdsOfUserService = async (context: GraphqlRequestContext) => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  const discordGroupIds = await getDiscordGroupIds(context);
+
+  return discordGroupIds;
 };

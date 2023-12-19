@@ -147,12 +147,6 @@ export type InputTemplateArgs = {
   type: InputDataType;
 };
 
-export type LogOutResponse = {
-  __typename?: 'LogOutResponse';
-  error?: Maybe<Scalars['String']['output']>;
-  ok: Scalars['Boolean']['output'];
-};
-
 export type Me = {
   __typename?: 'Me';
   groupIds: Array<Scalars['String']['output']>;
@@ -161,7 +155,6 @@ export type Me = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  logOut?: Maybe<LogOutResponse>;
   newEditProcessRequest: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
@@ -429,7 +422,7 @@ export type Roles = {
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
-  discordData: DiscordData;
+  discordData?: Maybe<DiscordData>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -566,7 +559,6 @@ export type ResolversTypes = {
   InputTemplate: ResolverTypeWrapper<InputTemplate>;
   InputTemplateArgs: InputTemplateArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  LogOutResponse: ResolverTypeWrapper<LogOutResponse>;
   Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
@@ -623,7 +615,6 @@ export type ResolversParentTypes = {
   InputTemplate: InputTemplate;
   InputTemplateArgs: InputTemplateArgs;
   Int: Scalars['Int']['output'];
-  LogOutResponse: LogOutResponse;
   Me: Me;
   Mutation: {};
   OnboardedDiscordServer: OnboardedDiscordServer;
@@ -749,12 +740,6 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LogOutResponseResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LogOutResponse'] = ResolversParentTypes['LogOutResponse']> = {
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  ok?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   groupIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -762,7 +747,6 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  logOut?: Resolver<Maybe<ResolversTypes['LogOutResponse']>, ParentType, ContextType>;
   newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'processId'>>;
@@ -912,7 +896,7 @@ export type RolesResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  discordData?: Resolver<ResolversTypes['DiscordData'], ParentType, ContextType>;
+  discordData?: Resolver<Maybe<ResolversTypes['DiscordData']>, ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -938,7 +922,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   EvolveProcessesDiff?: EvolveProcessesDiffResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
   InputTemplate?: InputTemplateResolvers<ContextType>;
-  LogOutResponse?: LogOutResponseResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   OnboardedDiscordServer?: OnboardedDiscordServerResolvers<ContextType>;

@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { StytchLogin } from "@stytch/react";
-import { OAuthProviders, Products, StytchLoginConfig, StyleConfig } from "@stytch/vanilla-js";
+import {
+  OAuthProviders,
+  Products,
+  StytchLoginConfig,
+  StyleConfig,
+  StytchEvent,
+  StytchError,
+  Callbacks,
+} from "@stytch/vanilla-js";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 
 const config: StytchLoginConfig = {
-  products: [Products.oauth, Products.crypto, Products.passwords],
+  products: [Products.oauth, Products.crypto, Products.passwords, Products.emailMagicLinks],
   oauthOptions: {
     providers: [
       {
@@ -18,9 +26,18 @@ const config: StytchLoginConfig = {
   },
   passwordOptions: {
     loginRedirectURL: "http://localhost:5173",
-    resetPasswordRedirectURL: "http://localhost:5173",
+    resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
+    loginExpirationMinutes: 30,
+    resetPasswordExpirationMinutes: 30,
+  },
+  emailMagicLinksOptions: {
+    loginRedirectURL: "http://localhost:5173",
+    loginExpirationMinutes: 30,
+    signupRedirectURL: "http://localhost:5173",
+    signupExpirationMinutes: 30,
   },
 };
+
 const styles: StyleConfig = {
   container: {
     backgroundColor: "#FFFFFF",
@@ -46,11 +63,16 @@ const styles: StyleConfig = {
       borderRadius: "4px",
     },
   },
-  fontFamily: "Arial",
+  fontFamily: "Roboto",
   //   hideHeaderText: false,
   logo: {
     logoImageUrl: "",
   },
+};
+
+const callBacks: Callbacks = {
+  onEvent: (message: StytchEvent) => console.log("Stytch event", message),
+  onError: (message: StytchError) => console.log("Stytch error", message),
 };
 
 const Login = () => {
@@ -80,7 +102,7 @@ const Login = () => {
             border: "1px solid #21005D",
           }}
         >
-          <StytchLogin config={config} styles={styles} />
+          <StytchLogin config={config} styles={styles} callbacks={callBacks} />
         </Box>
       </Modal>
     </Box>

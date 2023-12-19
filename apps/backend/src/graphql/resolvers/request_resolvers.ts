@@ -151,8 +151,6 @@ const requestsForGroup = async (
     },
   });
 
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-
   return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
 };
 
