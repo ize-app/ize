@@ -6,6 +6,7 @@ type Query {
 type Me {
   user: User!
   groupIds: [String!]!
+  identities: [Identity!]!
 }
 
 type User {
@@ -14,4 +15,25 @@ type User {
   icon: String
   createdAt: String!
   discordData: DiscordData
+}
+
+union Identity = IdentityBlockchain | IdentityEmail | IdentityDiscord
+
+type IdentityBlockchain {
+  id: String!
+  address: String!
+}
+
+type IdentityEmail {
+  id: String!
+  email: String!
+  icon: String
+}
+
+type IdentityDiscord {
+  id: String!
+  username: String!
+  discordUserId: String!
+  discriminator: String
+  icon: String
 }

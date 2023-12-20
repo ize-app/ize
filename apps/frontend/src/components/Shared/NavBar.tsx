@@ -16,7 +16,7 @@ import { Avatar } from "./Avatar";
 import { CurrentUserContext } from "../../contexts/current_user_context";
 import { colors } from "../../style/style";
 import Login from "./Auth/Login";
-import { useStytch } from "@stytch/react";
+import { useStytch, useStytchUser } from "@stytch/react";
 
 interface NavLinkProps {
   title: string;
@@ -132,7 +132,9 @@ const NavControlContainer = styled.ol`
 
 export const NavBar: React.FC = () => {
   const { me } = useContext(CurrentUserContext);
+  const { user } = useStytchUser();
   const location = useLocation();
+  console.log("user is ", user);
 
   const isHomePage = location.pathname === "/";
 

@@ -5,6 +5,9 @@ import { User } from "@graphql/generated/resolver-types";
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
   discordData: true,
   discordOauth: true,
+  Identities: {
+    include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
+  },
 });
 
 export type UserPrismaType = Prisma.UserGetPayload<{

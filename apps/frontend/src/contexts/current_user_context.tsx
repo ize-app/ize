@@ -24,6 +24,8 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
     refetch();
   }, [user, refetch]);
 
+  console.log("me is ", me);
+
   return (
     <CurrentUserContext.Provider value={{ me: me, meLoading }}>
       {children}

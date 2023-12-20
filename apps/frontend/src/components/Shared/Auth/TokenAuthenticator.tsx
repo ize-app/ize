@@ -13,27 +13,24 @@ const TokenAuthenticator = ({ children }: { children: ReactNode }) => {
   const stytch = useStytch();
   const { user } = useStytchUser();
 
+
+
   useEffect(() => {
-    console.log("inside the useEffect");
     // If the stytch SDK is available, and there is no existing user check for a token value in query params
     if (stytch && !user) {
-      console.log("inside block");
       const queryParams = new URLSearchParams(window.location.search);
       const token = queryParams.get("token");
       const tokenType = queryParams.get("stytch_token_type");
 
       // If a token is found, authenticate it with the appropriate method
       if (typeof token === "string" && token && tokenType) {
-        console.log("token is ", token, tokenType);
         const createSession = async () => {
-          console.log("running create sessions");
 
           if (tokenType === "magic_links" || tokenType === "login") {
             stytch.magicLinks.authenticate(token, {
               session_duration_minutes: 60,
             });
           } else if (tokenType === "oauth") {
-            console.log("creating session for oauth");
             stytch.oauth.authenticate(token, {
               session_duration_minutes: 60,
             });

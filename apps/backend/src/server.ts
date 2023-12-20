@@ -80,7 +80,6 @@ server.start().then(() => {
         return {
           currentUser: user,
           discordApi: user ? DiscordApi.forUser(res.locals.user) : undefined,
-          clearCookie: (name: string) => res.clearCookie(name),
         };
       },
     }),
