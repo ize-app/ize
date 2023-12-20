@@ -1,3 +1,5 @@
+import { MetaMaskInpageProvider } from "@metamask/providers";
+
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
@@ -10,6 +12,13 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-interface Window {
-  ethereum: any;
+// interface Window {
+//   ethereum: MetaMaskInpageProvider;
+// }
+
+
+declare global {
+  interface Window {
+    ethereum: MetaMaskInpageProvider;
+  }
 }

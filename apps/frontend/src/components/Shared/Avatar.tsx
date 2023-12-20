@@ -131,7 +131,8 @@ export const AvatarWithName = ({
           id={id}
           avatarUrl={url}
           name={name}
-          backgroundColor={color}
+          variant="square"
+          backgroundColor={color ?? "transparent"}
           parent={parent ? { name: parent.name, avatarUrl: parent.avatarUrl } : undefined}
         />
       }
