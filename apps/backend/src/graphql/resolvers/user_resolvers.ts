@@ -39,7 +39,7 @@ const me = async (
         username: identity.IdentityDiscord.username,
         discordUserId: identity.IdentityDiscord.discordUserId,
         discriminator: identity.IdentityDiscord.discriminator,
-        icon: identity.IdentityDiscord.icon,
+        icon: identity.IdentityDiscord.avatar,
       };
     } else {
       throw Error("Unknown identity");

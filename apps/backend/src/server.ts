@@ -12,8 +12,10 @@ import { authenticate } from "./authentication";
 import { GraphqlRequestContext } from "./graphql/context";
 import { DiscordApi } from "./discord/api";
 import session from "express-session";
-import { User } from "@prisma/client";
-
+import { User, OauthTypes } from "@prisma/client";
+import { prisma } from "./prisma/client";
+import { stytchClient } from "./authentication";
+import { APIUser } from "discord.js";
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
@@ -31,6 +33,112 @@ if (app.get("env") === "production") {
   app.set("trust proxy", 1); // trust first proxy
   sessionValue.cookie.secure = true; // serve secure cookies
 }
+
+app.get("/auth", async (req, res) => {
+  const { stytch_token_type, token } = req.query;
+  let sessionToken: string | undefined;
+
+  if (typeof token === "string" && token && stytch_token_type) {
+    if (stytch_token_type === "oauth") {
+      const authentication = await stytchClient.oauth.authenticate({
+        token: token,
+        session_duration_minutes: 60,
+      });
+      sessionToken = authentication.session_token;
+
+      // check if that user already exists, create if they don't
+      const user = await prisma.user.upsert({
+        where: {
+          stytchId: authentication.user.user_id,
+        },
+        update: {
+          Oauths: {
+            upsert: {
+              update: {
+                type: authentication.provider_type as OauthTypes,
+                accessToken: authentication.provider_values.access_token,
+                refreshToken: authentication.provider_values.refresh_token,
+                scopes: authentication.provider_values.scopes,
+                expiresAt: authentication.provider_values.expires_at,
+              },
+              create: {
+                type: authentication.provider_type as OauthTypes,
+                accessToken: authentication.provider_values.access_token,
+                refreshToken: authentication.provider_values.refresh_token,
+                scopes: authentication.provider_values.scopes,
+                expiresAt: authentication.provider_values.expires_at,
+              },
+            },
+          },
+        },
+        create: {
+          stytchId: authentication.user.user_id,
+          firstName: authentication.user.name?.first_name,
+          lastName: authentication.user.name?.last_name,
+        },
+      });
+
+      // create Discord username identity (if it doesn't already exist) and tie it to that user
+      if (authentication.provider_type === "Discord") {
+        const discordUser = await fetch("https://discord.com/api/users/@me", {
+          headers: {
+            Authorization: `Bearer ${authentication.provider_values.access_token}`,
+          },
+        });
+
+        const { id, username, avatar, discriminator } = (await discordUser.json()) as APIUser;
+
+        const existingIdentity = await prisma.identityDiscord.findFirst({
+          where: {
+            discordUserId: id,
+          },
+        });
+
+        if (existingIdentity) {
+          await prisma.identity.update({
+            where: {
+              id: existingIdentity.identityId,
+            },
+            data: {
+              userId: user.id,
+              IdentityDiscord: {
+                update: {
+                  username,
+                  avatar,
+                  discriminator,
+                },
+              },
+            },
+          });
+        } else {
+          await prisma.identity.create({
+            data: {
+              userId: user.id,
+              IdentityDiscord: {
+                create: {
+                  discordUserId: id,
+                  username,
+                  avatar,
+                  discriminator,
+                },
+              },
+            },
+          });
+        }
+      }
+    } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
+      const authentication = await stytchClient.magicLinks.authenticate({
+        token,
+        session_duration_minutes: 60,
+      });
+      sessionToken = authentication.session_token;
+    }
+  }
+
+  if (sessionToken) res.cookie("stytch_session", sessionToken);
+
+  res.redirect(process.env.CLIENT_REDIRECT_URL as string);
+});
 
 app.use(session(sessionValue));
 

@@ -20,20 +20,23 @@ const config: StytchLoginConfig = {
       {
         type: OAuthProviders.Google,
       },
+      {
+        type: OAuthProviders.Discord,
+      },
     ],
-    loginRedirectURL: "http://localhost:5173",
-    signupRedirectURL: "http://localhost:5173",
+    loginRedirectURL: "http://localhost:5173/api/auth",
+    signupRedirectURL: "http://localhost:5173/api/auth",
   },
   passwordOptions: {
-    loginRedirectURL: "http://localhost:5173",
+    loginRedirectURL: "http://localhost:5173/api/auth", //"http://localhost:5173
     resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
     loginExpirationMinutes: 30,
     resetPasswordExpirationMinutes: 30,
   },
   emailMagicLinksOptions: {
-    loginRedirectURL: "http://localhost:5173",
+    loginRedirectURL: "http://localhost:5173/api/auth",
     loginExpirationMinutes: 30,
-    signupRedirectURL: "http://localhost:5173",
+    signupRedirectURL: "http://localhost:5173/api/auth",
     signupExpirationMinutes: 30,
   },
 };

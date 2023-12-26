@@ -1,6 +1,7 @@
-import { useStytch, useStytchUser } from "@stytch/react";
-import { ReactNode, useEffect } from "react";
+// import { useStytch, useStytchUser } from "@stytch/react";
+import { ReactNode } from "react";
 
+//TODO: Will delete this page once I've confirmed server side Oauth is working fine
 /*
 During both the Magic link and OAuth flow, Stytch will redirect the user back to your application to a specified redirect URL (see Login.js). 
 Stytch will append query parameters to the redirect URL which are then used to complete the authentication flow. 
@@ -10,37 +11,42 @@ TokenAuthenticator will detect the presence of a token in the query parameters, 
 On successful authentication, a session will be created and the user will be shown Profile.js 
 */
 const TokenAuthenticator = ({ children }: { children: ReactNode }) => {
-  const stytch = useStytch();
-  const { user } = useStytchUser();
+  // const stytch = useStytch();
+  // const { user } = useStytchUser();
 
+  // useEffect(() => {
+  //   // If the stytch SDK is available, and there is no existing user check for a token value in query params
+  //   if (stytch && !user) {
+  //     const queryParams = new URLSearchParams(window.location.search);
+  //     const token = queryParams.get("token");
+  //     const tokenType = queryParams.get("stytch_token_type");
 
+  //     // If a token is found, authenticate it with the appropriate method
+  //     if (typeof token === "string" && token && tokenType) {
+  //       const createSession = async () => {
+  //         if (tokenType === "magic_links" || tokenType === "login") {
+  //           await stytch.magicLinks.authenticate(token, {
+  //             session_duration_minutes: 60,
+  //           });
+  //         } else if (tokenType === "oauth") {
+  //           // console.log("inside oauth handler");
+  //           // const url = new URL("http://localhost:5173/api/oauth");
+  //           // url.searchParams.append("token", token);
 
-  useEffect(() => {
-    // If the stytch SDK is available, and there is no existing user check for a token value in query params
-    if (stytch && !user) {
-      const queryParams = new URLSearchParams(window.location.search);
-      const token = queryParams.get("token");
-      const tokenType = queryParams.get("stytch_token_type");
+  //           // console.log("fetching url, ", url);
+  //           // await fetch(url);
 
-      // If a token is found, authenticate it with the appropriate method
-      if (typeof token === "string" && token && tokenType) {
-        const createSession = async () => {
+  //           const auth = await stytch.oauth.authenticate(token, {
+  //             session_duration_minutes: 60,
+  //           });
+  //           console.log("auth is ,", auth);
+  //         }
+  //       };
 
-          if (tokenType === "magic_links" || tokenType === "login") {
-            stytch.magicLinks.authenticate(token, {
-              session_duration_minutes: 60,
-            });
-          } else if (tokenType === "oauth") {
-            stytch.oauth.authenticate(token, {
-              session_duration_minutes: 60,
-            });
-          }
-        };
-
-        createSession();
-      }
-    }
-  }, [stytch, user]);
+  //       createSession();
+  //     }
+  //   }
+  // }, [stytch, user]);
   return children;
 };
 
