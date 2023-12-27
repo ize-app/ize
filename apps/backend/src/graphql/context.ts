@@ -1,7 +1,7 @@
 import { DiscordApi } from "@discord/api";
-import { UserPrismaType } from "@/utils/formatUser";
+import { MePrismaType } from "@/utils/formatUser";
 
 export type GraphqlRequestContext = {
-  currentUser?: UserPrismaType | null;
+  currentUser?: MePrismaType | null;
   discordApi?: DiscordApi;
 };

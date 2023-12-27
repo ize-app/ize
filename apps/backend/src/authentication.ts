@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "./prisma/client";
 import stytch, { Client as StytchClient, CryptoWallet, Email } from "stytch";
-import { UserPrismaType, userInclude } from "./utils/formatUser";
+import { UserPrismaType, meInclude } from "./utils/formatUser";
 
 export const stytchClient: StytchClient = new stytch.Client({
   project_id: process.env.STYTCH_PROJECT_ID as string,
@@ -20,7 +20,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     // find or create user
     const user = await prisma.user.upsert({
-      include: userInclude,
+      include: meInclude,
       where: {
         stytchId: session.user.user_id,
       },
