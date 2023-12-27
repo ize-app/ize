@@ -6,9 +6,10 @@ import { StytchPasswordReset } from "@stytch/react";
 const config: StytchLoginConfig = {
   passwordOptions: {
     loginExpirationMinutes: 30,
-    loginRedirectURL: "http://localhost:5173/api/auth", // http://localhost:5173
+    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname, // http://localhost:5173
     resetPasswordExpirationMinutes: 30,
-    resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
+    resetPasswordRedirectURL:
+      "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
   },
   products: [Products.passwords, Products.emailMagicLinks],
 };

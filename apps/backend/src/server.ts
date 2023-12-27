@@ -35,7 +35,12 @@ if (app.get("env") === "production") {
 }
 
 app.get("/auth", async (req, res) => {
-  const { stytch_token_type, token } = req.query;
+  const { stytch_token_type, token, next_route } = req.query;
+
+  const redirectURL = new URL(next_route?.toString() as string, "http://localhost:5173");
+  // removing potentially malicious url params
+  redirectURL.search = "";
+
   let sessionToken: string | undefined;
   let user;
 
@@ -154,7 +159,7 @@ app.get("/auth", async (req, res) => {
 
   if (sessionToken) res.cookie("stytch_session", sessionToken);
 
-  res.redirect(process.env.CLIENT_REDIRECT_URL as string);
+  res.redirect(redirectURL.toString());
 });
 
 app.use(session(sessionValue));
@@ -194,7 +199,7 @@ server.start().then(() => {
   app.use(
     "/graphql",
     cors<cors.CorsRequest>({
-      origin: process.env.CLIENT_REDIRECT_URL,
+      origin: process.env.CLIENT_BASE_URL,
       credentials: true,
     }),
     json(),

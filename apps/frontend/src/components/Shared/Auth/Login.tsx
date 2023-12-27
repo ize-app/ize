@@ -25,19 +25,19 @@ const config: StytchLoginConfig = {
         custom_scopes: ["identify", "guilds"],
       },
     ],
-    loginRedirectURL: "http://localhost:5173/api/auth",
-    signupRedirectURL: "http://localhost:5173/api/auth",
+    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
+    signupRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
   },
   passwordOptions: {
-    loginRedirectURL: "http://localhost:5173/api/auth", //"http://localhost:5173
+    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname, //"http://localhost:5173
     resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
     loginExpirationMinutes: 30,
     resetPasswordExpirationMinutes: 30,
   },
   emailMagicLinksOptions: {
-    loginRedirectURL: "http://localhost:5173/api/auth",
+    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
     loginExpirationMinutes: 30,
-    signupRedirectURL: "http://localhost:5173/api/auth",
+    signupRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
     signupExpirationMinutes: 30,
   },
 };
