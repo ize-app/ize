@@ -49,27 +49,39 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 // creates email identities in db if they don't exist yet
 const createEmailIdentities = async (user: UserPrismaType, stytchEmails: Email[]) => {
   stytchEmails.forEach(async (email) => {
-    let foundMatch = false;
+    const userEmail = user.Identities.find((identity) => {
+      identity.IdentityEmail?.email === email.email && email.verified;
+    });
 
-    for (let i = 0; i <= user.Identities.length - 1; i++) {
-      // only adding if email is verified (via oauth or magiclink)
-      if (user.Identities[i].IdentityEmail?.email === email.email && email.verified) {
-        foundMatch = true;
-        break;
-      }
-    }
-
-    if (!foundMatch) {
-      await prisma.identity.create({
-        data: {
-          userId: user.id,
-          IdentityEmail: {
-            create: {
-              email: email.email,
-            },
-          },
+    if (!userEmail) {
+      const existingIdentity = await prisma.identityEmail.findFirst({
+        where: {
+          email: email.email,
         },
       });
+      if (!existingIdentity) {
+        // if there isn't an existing identity for this address, create it
+        await prisma.identity.create({
+          data: {
+            userId: user.id,
+            IdentityEmail: {
+              create: {
+                email: email.email,
+              },
+            },
+          },
+        });
+      } else {
+        // otherwise associate existing identity with this user
+        await prisma.identity.update({
+          where: {
+            id: existingIdentity.identityId,
+          },
+          data: {
+            userId: user.id,
+          },
+        });
+      }
     }
   });
 };
@@ -77,26 +89,39 @@ const createEmailIdentities = async (user: UserPrismaType, stytchEmails: Email[]
 // creates blockchain identities in db if they don't exist yet
 const createBlockchainIdentities = async (user: UserPrismaType, stytchWallets: CryptoWallet[]) => {
   stytchWallets.forEach(async (wallet) => {
-    let foundMatch = false;
+    const userWallet = user.Identities.find((identity) => {
+      identity.IdentityBlockchain?.address === wallet.crypto_wallet_address;
+    });
 
-    for (let i = 0; i <= user.Identities.length - 1; i++) {
-      if (user.Identities[i].IdentityBlockchain?.address === wallet.crypto_wallet_address) {
-        foundMatch = true;
-        break;
-      }
-    }
-
-    if (!foundMatch) {
-      await prisma.identity.create({
-        data: {
-          userId: user.id,
-          IdentityBlockchain: {
-            create: {
-              address: wallet.crypto_wallet_address,
-            },
-          },
+    if (!userWallet) {
+      const existingIdentity = await prisma.identityBlockchain.findFirst({
+        where: {
+          address: wallet.crypto_wallet_address,
         },
       });
+      if (!existingIdentity) {
+        // if there isn't an existing identity for this address, create it
+        await prisma.identity.create({
+          data: {
+            userId: user.id,
+            IdentityBlockchain: {
+              create: {
+                address: wallet.crypto_wallet_address,
+              },
+            },
+          },
+        });
+      } else {
+        // otherwise associate existing identity with this user
+        await prisma.identity.update({
+          where: {
+            id: existingIdentity.identityId,
+          },
+          data: {
+            userId: user.id,
+          },
+        });
+      }
     }
   });
 };

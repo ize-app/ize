@@ -37,6 +37,7 @@ if (app.get("env") === "production") {
 app.get("/auth", async (req, res) => {
   const { stytch_token_type, token } = req.query;
   let sessionToken: string | undefined;
+  let user;
 
   if (typeof token === "string" && token && stytch_token_type) {
     if (stytch_token_type === "oauth") {
@@ -47,20 +48,41 @@ app.get("/auth", async (req, res) => {
       sessionToken = authentication.session_token;
 
       // check if that user already exists, create if they don't
-      const user = await prisma.user.upsert({
+      user = await prisma.user.findFirst({
         where: {
           stytchId: authentication.user.user_id,
         },
-        update: {
-          Oauths: {
-            upsert: {
-              update: {
-                type: authentication.provider_type as OauthTypes,
-                accessToken: authentication.provider_values.access_token,
-                refreshToken: authentication.provider_values.refresh_token,
-                scopes: authentication.provider_values.scopes,
-                expiresAt: authentication.provider_values.expires_at,
-              },
+      });
+
+      if (user) {
+        await prisma.oauths.upsert({
+          where: {
+            userId: user.id,
+            type: authentication.provider_type as OauthTypes,
+          },
+          update: {
+            type: authentication.provider_type as OauthTypes,
+            accessToken: authentication.provider_values.access_token,
+            refreshToken: authentication.provider_values.refresh_token,
+            scopes: authentication.provider_values.scopes,
+            expiresAt: authentication.provider_values.expires_at,
+          },
+          create: {
+            userId: user.id,
+            type: authentication.provider_type as OauthTypes,
+            accessToken: authentication.provider_values.access_token,
+            refreshToken: authentication.provider_values.refresh_token,
+            scopes: authentication.provider_values.scopes,
+            expiresAt: authentication.provider_values.expires_at,
+          },
+        });
+      } else {
+        user = await prisma.user.create({
+          data: {
+            stytchId: authentication.user.user_id,
+            firstName: authentication.user.name?.first_name ?? null,
+            lastName: authentication.user.name?.last_name ?? null,
+            Oauths: {
               create: {
                 type: authentication.provider_type as OauthTypes,
                 accessToken: authentication.provider_values.access_token,
@@ -70,13 +92,8 @@ app.get("/auth", async (req, res) => {
               },
             },
           },
-        },
-        create: {
-          stytchId: authentication.user.user_id,
-          firstName: authentication.user.name?.first_name,
-          lastName: authentication.user.name?.last_name,
-        },
-      });
+        });
+      }
 
       // create Discord username identity (if it doesn't already exist) and tie it to that user
       if (authentication.provider_type === "Discord") {

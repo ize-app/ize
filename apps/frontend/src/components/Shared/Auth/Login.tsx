@@ -22,6 +22,7 @@ const config: StytchLoginConfig = {
       },
       {
         type: OAuthProviders.Discord,
+        custom_scopes: ["identify", "guilds"],
       },
     ],
     loginRedirectURL: "http://localhost:5173/api/auth",

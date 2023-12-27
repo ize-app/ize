@@ -6,9 +6,14 @@ const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<strin
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   if (!context.discordApi) return [];
 
-  const userDiscordData = await prisma.discordData.findFirstOrThrow({
-    where: { userId: context.currentUser.id },
+  const discordIdentity = context.currentUser.Identities.find((identity) => {
+    return !!identity.IdentityDiscord;
   });
+
+  const userDiscordData = await prisma.identityDiscord.findFirstOrThrow({
+    where: { identityId: discordIdentity?.IdentityDiscord?.identityId },
+  });
+
   const botApi = DiscordApi.forBotUser();
 
   // Get the servers for the user using the users' API token
@@ -20,7 +25,7 @@ const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<strin
     userGuilds.map(async (guild) => {
       return botApi.getDiscordGuildMember({
         serverId: guild.id,
-        memberId: userDiscordData.discordId,
+        memberId: userDiscordData.discordUserId,
       });
     }),
   );

@@ -25,7 +25,7 @@ model User {
   requests       Request[]
   responses      Response[]
   Identities     Identity[]
-  Oauths         Oauths?
+  Oauths         Oauths[]
 
   @@map("users")
 }
@@ -103,6 +103,7 @@ model Oauths {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, type])
   @@map("oauths")
 }
 

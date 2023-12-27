@@ -1,10 +1,8 @@
-import { DiscordApi } from "@discord/api";
 import { Prisma } from "@prisma/client";
 import { User } from "@graphql/generated/resolver-types";
 
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
-  discordData: true,
-  discordOauth: true,
+  Oauths: true,
   Identities: {
     include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
   },
@@ -15,22 +13,22 @@ export type UserPrismaType = Prisma.UserGetPayload<{
 }>;
 
 export const formatUser = (user: UserPrismaType): User => {
-  if (user.discordData) {
-    return {
-      __typename: "User",
-      id: user.id,
-      name: user.discordData.username,
-      icon:
-        user.discordData.avatar &&
-        DiscordApi.createAvatarURL(user.discordData.discordId, user.discordData.avatar),
-      createdAt: user.createdAt.toString(),
-      discordData: user.discordData,
-    };
-  } else {
-    return {
-      id: user.id,
-      name: user.firstName ? user.firstName + " " + user.lastName : "User",
-      createdAt: user.createdAt.toString(),
-    };
-  }
+  // if (user.discordData) {
+  //   return {
+  //     __typename: "User",
+  //     id: user.id,
+  //     name: user.discordData.username,
+  //     icon:
+  //       user.discordData.avatar &&
+  //       DiscordApi.createAvatarURL(user.discordData.discordId, user.discordData.avatar),
+  //     createdAt: user.createdAt.toString(),
+  //     discordData: user.discordData,
+  //   };
+  // } else {
+
+  return {
+    id: user.id,
+    name: user.firstName ? user.firstName + " " + user.lastName : "User",
+    createdAt: user.createdAt.toString(),
+  };
 };
