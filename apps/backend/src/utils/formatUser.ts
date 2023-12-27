@@ -23,19 +23,6 @@ export type MePrismaType = Prisma.UserGetPayload<{
 }>;
 
 export const formatUser = (user: UserPrismaType): User => {
-  // if (user.discordData) {
-  //   return {
-  //     __typename: "User",
-  //     id: user.id,
-  //     name: user.discordData.username,
-  //     icon:
-  //       user.discordData.avatar &&
-  //       DiscordApi.createAvatarURL(user.discordData.discordId, user.discordData.avatar),
-  //     createdAt: user.createdAt.toString(),
-  //     discordData: user.discordData,
-  //   };
-  // } else {
-
   return {
     id: user.id,
     name: user.firstName ? user.firstName + " " + user.lastName : "User",

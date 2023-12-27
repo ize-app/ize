@@ -17,8 +17,6 @@ model User {
   lastName       String?
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  discordOauth   DiscordOauth?
-  discordData    DiscordData?
   Group          Group[]
   createdProcess ProcessVersion[]
   roleUsers      RoleUser[]
@@ -105,37 +103,6 @@ model Oauths {
 
   @@unique([userId, type])
   @@map("oauths")
-}
-
-model DiscordData {
-  id            String   @id @default(uuid()) @db.Uuid
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @unique @map("user_id") @db.Uuid
-  discordId     String   @map("discord_id")
-  username      String
-  discriminator String
-  avatar        String?
-  email         String?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
-
-  @@map("discord_data")
-}
-
-model DiscordOauth {
-  id           String   @id @default(uuid()) @db.Uuid
-  discordId    String   @map("discord_id")
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String   @unique @map("user_id") @db.Uuid
-  accessToken  String   @map("access_token")
-  refreshToken String   @map("refresh_token")
-  expiresIn    Int      @map("expires_in")
-  scope        String
-  tokenType    String   @map("token_type")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
-
-  @@map("discord_oauths")
 }
 
 model Group {

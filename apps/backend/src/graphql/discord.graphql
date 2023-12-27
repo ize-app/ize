@@ -3,14 +3,6 @@ type Query {
   discordServerRoles(serverId: String!): [DiscordAPIServerRole!]!
 }
 
-type DiscordData {
-  id: String!
-  username: String!
-  discordId: String!
-  discriminator: String
-  avatar: String
-}
-
 type DiscordAPIServer {
   id: String!
   name: String!

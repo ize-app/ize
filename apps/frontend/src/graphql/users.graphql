@@ -1,9 +1,3 @@
-# query Users {
-#   users {
-#     ...UserParts
-#   }
-# }
-
 query Me {
   me {
     ...MeParts
@@ -27,13 +21,6 @@ fragment UserSummaryParts on User {
   createdAt
 }
 
-fragment DiscordDataParts on DiscordData {
-  id
-  username
-  discordId
-  discriminator
-  avatar
-}
 
 fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
   id
