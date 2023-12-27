@@ -16,6 +16,8 @@ import { User, OauthTypes } from "@prisma/client";
 import { prisma } from "./prisma/client";
 import { stytchClient } from "./authentication";
 import { APIUser } from "discord.js";
+import { encrypt } from "./encrypt";
+
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
@@ -59,6 +61,9 @@ app.get("/auth", async (req, res) => {
         },
       });
 
+      const encryptedAccessToken = encrypt(authentication.provider_values.access_token);
+      const encryptedRefreshToken = encrypt(authentication.provider_values.refresh_token);
+
       if (user) {
         await prisma.oauths.upsert({
           where: {
@@ -67,16 +72,16 @@ app.get("/auth", async (req, res) => {
           },
           update: {
             type: authentication.provider_type as OauthTypes,
-            accessToken: authentication.provider_values.access_token,
-            refreshToken: authentication.provider_values.refresh_token,
+            accessToken: encryptedAccessToken,
+            refreshToken: encryptedRefreshToken,
             scopes: authentication.provider_values.scopes,
             expiresAt: authentication.provider_values.expires_at,
           },
           create: {
             userId: user.id,
             type: authentication.provider_type as OauthTypes,
-            accessToken: authentication.provider_values.access_token,
-            refreshToken: authentication.provider_values.refresh_token,
+            accessToken: encryptedAccessToken,
+            refreshToken: encryptedRefreshToken,
             scopes: authentication.provider_values.scopes,
             expiresAt: authentication.provider_values.expires_at,
           },
@@ -90,8 +95,8 @@ app.get("/auth", async (req, res) => {
             Oauths: {
               create: {
                 type: authentication.provider_type as OauthTypes,
-                accessToken: authentication.provider_values.access_token,
-                refreshToken: authentication.provider_values.refresh_token,
+                accessToken: encryptedAccessToken,
+                refreshToken: encryptedRefreshToken,
                 scopes: authentication.provider_values.scopes,
                 expiresAt: authentication.provider_values.expires_at,
               },
@@ -163,18 +168,6 @@ app.get("/auth", async (req, res) => {
 });
 
 app.use(session(sessionValue));
-
-// TODO: Create endpoint for saving session token
-// const BCRYPT_SALT_ROUNDS = 12;
-// Encrypt using AES - NOT hashing
-// const encryptedAccessToken = await bcrypt.hash(
-//   access_token,
-//   BCRYPT_SALT_ROUNDS
-// );
-// const encryptedRefreshToken = await bcrypt.hash(
-//   refresh_token,
-//   BCRYPT_SALT_ROUNDS
-// );
 
 const typeDefs = mergeTypeDefs(
   loadFilesSync("./src/graphql", { recursive: true, extensions: [".graphql"] }),

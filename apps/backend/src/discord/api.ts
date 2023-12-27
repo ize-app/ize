@@ -1,4 +1,5 @@
 /* eslint-disable no-prototype-builtins */
+import { decrypt } from "@/encrypt";
 import { UserPrismaType } from "@/utils/formatUser";
 import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 
@@ -13,7 +14,7 @@ export class DiscordApi {
   static forUser(user: UserPrismaType) {
     const discordAuth = user.Oauths.find((oauth) => oauth.type === "Discord");
     if (!discordAuth) return undefined;
-    else return new DiscordApi(discordAuth.accessToken, false);
+    else return new DiscordApi(decrypt(discordAuth.accessToken), false);
   }
 
   static forBotUser() {
