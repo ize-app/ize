@@ -4,6 +4,7 @@ import Home from "@mui/icons-material/Home";
 import Logout from "@mui/icons-material/Logout";
 import Box from "@mui/material/Box";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import SettingsIcon from "@mui/icons-material/Settings";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
@@ -17,6 +18,7 @@ import { CurrentUserContext } from "../../contexts/current_user_context";
 import { colors } from "../../style/style";
 import Login from "./Auth/Login";
 import { useStytch, useStytchUser } from "@stytch/react";
+import { Route } from "@/routers/routes";
 
 interface NavLinkProps {
   title: string;
@@ -102,6 +104,12 @@ const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element =
             <Home fontSize="small" />
           </ListItemIcon>
           <Link to={"/"}>Dashboard</Link>
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <Link to={Route.UserSettings}>Settings</Link>
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
