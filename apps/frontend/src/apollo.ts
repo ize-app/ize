@@ -10,7 +10,7 @@ export const apolloClient = new ApolloClient({
     possibleTypes: {
       Agent: ["User", "Group"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
-      Identity: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
+      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
     },
   }),
   link,

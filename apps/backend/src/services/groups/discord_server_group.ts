@@ -23,7 +23,7 @@ export async function setUpDiscordServerService(
 
     const existingGroup = await transaction.group.findFirst({
       where: {
-        discordRoleGroup: {
+        GroupDiscordRole: {
           discordServer: {
             discordServerId: serverId,
           },
@@ -60,7 +60,7 @@ export async function setUpDiscordServerService(
           data: {
             creatorId: context?.currentUser?.id as string,
             activeAt: new Date(),
-            discordRoleGroup: {
+            GroupDiscordRole: {
               create: {
                 discordRoleId: group.id,
                 color: group.color,
@@ -78,14 +78,14 @@ export async function setUpDiscordServerService(
 
     return await transaction.group.findFirst({
       include: {
-        discordRoleGroup: {
+        GroupDiscordRole: {
           include: {
             discordServer: true,
           },
         },
       },
       where: {
-        discordRoleGroup: {
+        GroupDiscordRole: {
           discordServerId: serverRecord.id,
           name: "@everyone",
         },

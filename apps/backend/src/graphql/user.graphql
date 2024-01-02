@@ -1,5 +1,4 @@
 type Query {
-  users: [User]
   me: Me
 }
 
@@ -14,25 +13,4 @@ type User {
   name: String!
   icon: String
   createdAt: String!
-}
-
-union Identity = IdentityBlockchain | IdentityEmail | IdentityDiscord
-
-type IdentityBlockchain {
-  id: String!
-  address: String!
-}
-
-type IdentityEmail {
-  id: String!
-  email: String!
-  icon: String
-}
-
-type IdentityDiscord {
-  id: String!
-  username: String!
-  discordUserId: String!
-  discriminator: String
-  icon: String
 }

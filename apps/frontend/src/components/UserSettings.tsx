@@ -18,16 +18,16 @@ export const UserSettings = () => {
 
   const identities = me
     ? me.identities.map((identity) => {
-        switch (identity.__typename) {
+        switch (identity.identityType.__typename) {
           case "IdentityBlockchain": {
             hasBlockchainIdentity = true;
             return (
               <AvatarWithName
                 id={identity.id}
                 key={identity.id}
-                name={identity.address}
+                name={identity.name}
                 avatarUrl={"./ethereum.svg"}
-                type={AgentType.User}
+                type={AgentType.Identity}
               />
             );
           }
@@ -37,9 +37,9 @@ export const UserSettings = () => {
               <AvatarWithName
                 id={identity.id}
                 key={identity.id}
-                name={identity.email}
+                name={identity.name}
                 avatarUrl={"./email.svg"}
-                type={AgentType.User}
+                type={AgentType.Identity}
               />
             );
           }
@@ -49,9 +49,9 @@ export const UserSettings = () => {
               <AvatarWithName
                 id={identity.id}
                 key={identity.id}
-                name={identity.username}
+                name={identity.name}
                 avatarUrl={"./discord-logo-black.svg"}
-                type={AgentType.User}
+                type={AgentType.Identity}
               />
             );
           }

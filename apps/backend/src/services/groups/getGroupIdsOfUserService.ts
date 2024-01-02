@@ -37,9 +37,9 @@ const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<strin
   const groups = await prisma.group.findMany({
     where: {
       OR: [
-        { discordRoleGroup: { discordRoleId: { in: roleIds } } },
+        { GroupDiscordRole: { discordRoleId: { in: roleIds } } },
         // @everyone isn't part of roleIds returned from discord API
-        { discordRoleGroup: { name: "@everyone" } },
+        { GroupDiscordRole: { name: "@everyone" } },
         { creatorId: context.currentUser.id },
       ],
     },

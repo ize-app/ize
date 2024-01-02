@@ -41,11 +41,11 @@ export type ActionArgs = {
 
 export type ActionType = EvolveProcessAction | WebhookAction;
 
-export type Agent = Group | User;
+export type Agent = Group | Identity;
 
 export enum AgentType {
   Group = 'Group',
-  User = 'User'
+  Identity = 'Identity'
 }
 
 export type DecisionArgs = {
@@ -114,7 +114,13 @@ export type Group = {
   organization: Organization;
 };
 
-export type Identity = IdentityBlockchain | IdentityDiscord | IdentityEmail;
+export type Identity = {
+  __typename?: 'Identity';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  identityType: IdentityType;
+  name: Scalars['String']['output'];
+};
 
 export type IdentityBlockchain = {
   __typename?: 'IdentityBlockchain';
@@ -124,9 +130,8 @@ export type IdentityBlockchain = {
 
 export type IdentityDiscord = {
   __typename?: 'IdentityDiscord';
+  avatar?: Maybe<Scalars['String']['output']>;
   discordUserId: Scalars['String']['output'];
-  discriminator?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
@@ -137,6 +142,8 @@ export type IdentityEmail = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
 };
+
+export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
 export enum InputDataType {
   Float = 'Float',
@@ -301,7 +308,6 @@ export type Query = {
   requestsForCurrentUser: Array<Request>;
   requestsForGroup: Array<Request>;
   requestsForProcess: Array<Request>;
-  users?: Maybe<Array<Maybe<User>>>;
 };
 
 
@@ -544,9 +550,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   ActionType: ( EvolveProcessAction ) | ( WebhookAction );
-  Agent: ( Group ) | ( User );
+  Agent: ( Group ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   DecisionTypes: ( AbsoluteDecision ) | ( PercentageDecision );
-  Identity: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
+  IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
 };
 
 
@@ -570,15 +576,16 @@ export type ResolversTypes = {
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Group: ResolverTypeWrapper<Group>;
-  Identity: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Identity']>;
+  Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
   IdentityDiscord: ResolverTypeWrapper<IdentityDiscord>;
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
+  IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   InputDataType: InputDataType;
   InputTemplate: ResolverTypeWrapper<InputTemplate>;
   InputTemplateArgs: InputTemplateArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  Me: ResolverTypeWrapper<Omit<Me, 'identities'> & { identities: Array<ResolversTypes['Identity']> }>;
+  Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
   OptionType: OptionType;
@@ -630,14 +637,15 @@ export type ResolversParentTypes = {
   EvolveProcessesDiff: EvolveProcessesDiff;
   Float: Scalars['Float']['output'];
   Group: Group;
-  Identity: ResolversUnionTypes<ResolversParentTypes>['Identity'];
+  Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
   IdentityDiscord: IdentityDiscord;
   IdentityEmail: IdentityEmail;
+  IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   InputTemplate: InputTemplate;
   InputTemplateArgs: InputTemplateArgs;
   Int: Scalars['Int']['output'];
-  Me: Omit<Me, 'identities'> & { identities: Array<ResolversParentTypes['Identity']> };
+  Me: Me;
   Mutation: {};
   OnboardedDiscordServer: OnboardedDiscordServer;
   Organization: Organization;
@@ -684,7 +692,7 @@ export type ActionTypeResolvers<ContextType = GraphqlRequestContext, ParentType 
 };
 
 export type AgentResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Agent'] = ResolversParentTypes['Agent']> = {
-  __resolveType: TypeResolveFn<'Group' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Group' | 'Identity', ParentType, ContextType>;
 };
 
 export type DecisionTypesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DecisionTypes'] = ResolversParentTypes['DecisionTypes']> = {
@@ -745,7 +753,11 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
-  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  identityType?: Resolver<ResolversTypes['IdentityType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type IdentityBlockchainResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityBlockchain'] = ResolversParentTypes['IdentityBlockchain']> = {
@@ -755,9 +767,8 @@ export type IdentityBlockchainResolvers<ContextType = GraphqlRequestContext, Par
 };
 
 export type IdentityDiscordResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityDiscord'] = ResolversParentTypes['IdentityDiscord']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   discordUserId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  discriminator?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -768,6 +779,10 @@ export type IdentityEmailResolvers<ContextType = GraphqlRequestContext, ParentTy
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityType'] = ResolversParentTypes['IdentityType']> = {
+  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
 };
 
 export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['InputTemplate'] = ResolversParentTypes['InputTemplate']> = {
@@ -867,7 +882,6 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groupIds'>>;
   requestsForGroup?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForGroupArgs, 'groupId'>>;
   requestsForProcess?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForProcessArgs, 'processId'>>;
-  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
 
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
@@ -963,6 +977,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
+  IdentityType?: IdentityTypeResolvers<ContextType>;
   InputTemplate?: InputTemplateResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

@@ -17,6 +17,7 @@ query Groups($groupIds: [String!]!) {
 }
 
 fragment GroupSummaryParts on Group {
+  __typename
   id
   name
   icon

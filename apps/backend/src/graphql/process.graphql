@@ -142,7 +142,7 @@ input RoleArgs {
   id: String!
 }
 
-union Agent = User | Group
+union Agent = Identity | Group
 
 type Roles {
   request: [Agent!]!
@@ -156,7 +156,7 @@ enum RoleType {
 }
 
 enum AgentType {
-  User
+  Identity
   Group
 }
 

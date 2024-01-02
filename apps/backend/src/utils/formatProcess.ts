@@ -7,6 +7,7 @@ import {
 } from "@prisma/client";
 import { groupInclude, formatGroup } from "@utils/formatGroup";
 import { userInclude, formatUser } from "@utils/formatUser";
+import { identityInclude, formatIdentity } from "./formatIdentity";
 
 import {
   Action,
@@ -28,17 +29,17 @@ export interface ProcessVersion
   extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId" | "type"> {}
 
 export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
-  roleGroups: {
+  RoleGroups: {
     include: {
-      group: {
+      Group: {
         include: groupInclude,
       },
     },
   },
-  roleUsers: {
+  RoleIdentities: {
     include: {
-      user: {
-        include: userInclude,
+      Identity: {
+        include: identityInclude,
       },
     },
   },
@@ -245,14 +246,14 @@ const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaT
 
 const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
-  roleSet.roleGroups.forEach((role) => {
-    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.group));
-    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.group));
+  roleSet.RoleGroups.forEach((role) => {
+    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.Group));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.Group));
   });
 
-  roleSet.roleUsers.forEach((role) => {
-    if (role.type === RoleType.Request) roles.request.push(formatUser(role.user));
-    else if (role.type === RoleType.Respond) roles.respond.push(formatUser(role.user));
+  roleSet.RoleIdentities.forEach((role) => {
+    if (role.type === RoleType.Request) roles.request.push(formatIdentity(role.Identity));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatIdentity(role.Identity));
   });
 
   return roles;

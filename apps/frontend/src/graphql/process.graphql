@@ -76,8 +76,8 @@ fragment AgentSummaryParts on Agent {
   ... on Group {
     ...GroupSummaryParts
   }
-  ... on User {
-    ...UserSummaryParts
+  ... on Identity {
+    ...IdentitySummaryParts
   }
 }
 

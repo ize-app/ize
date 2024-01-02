@@ -21,35 +21,3 @@ fragment UserSummaryParts on User {
   createdAt
 }
 
-
-fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
-  id
-  address
-}
-
-fragment IdentityEmailSummaryParts on IdentityEmail {
-  id
-  email
-  icon
-}
-
-fragment IdentityDiscordSummaryParts on IdentityDiscord {
-  id
-  username
-  discordUserId
-  discriminator
-  icon
-}
-
-fragment IdentitySummaryParts on Identity {
-  __typename
-  ... on IdentityBlockchain {
-    ...IdentityBlockchainSummaryParts
-  }
-  ... on IdentityEmail {
-    ...IdentityEmailSummaryParts
-  }
-  ... on IdentityDiscord {
-    ...IdentityDiscordSummaryParts
-  }
-}

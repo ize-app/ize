@@ -71,7 +71,7 @@ const processesForGroup = async (
         {
           currentProcessVersion: {
             roleSet: {
-              roleGroups: { some: { groupId: args.groupId } },
+              RoleGroups: { some: { groupId: args.groupId } },
             },
           },
         },
@@ -80,7 +80,7 @@ const processesForGroup = async (
             evolveProcess: {
               currentProcessVersion: {
                 roleSet: {
-                  roleGroups: { some: { groupId: args.groupId, type: "Request" } },
+                  RoleGroups: { some: { groupId: args.groupId, type: "Request" } },
                 },
               },
             },
@@ -110,7 +110,7 @@ const groupsAndUsersEliglbeForRole = async (
 
   const groups = await prisma.group.findMany({
     where: {
-      discordRoleGroup: {
+      GroupDiscordRole: {
         discordServer: {
           discordServerId: { in: serverIds },
         },

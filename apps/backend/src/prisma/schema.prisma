@@ -19,7 +19,6 @@ model User {
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
   Group          Group[]
   createdProcess ProcessVersion[]
-  roleUsers      RoleUser[]
   requests       Request[]
   responses      Response[]
   Identities     Identity[]
@@ -38,6 +37,7 @@ model Identity {
   IdentityEmail      IdentityEmail?
   IdentityBlockchain IdentityBlockchain?
   IdentityDiscord    IdentityDiscord?
+  RoleIdentity       RoleIdentity[]
 
   @@map("identities")
 }
@@ -113,14 +113,14 @@ model Group {
   updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
   activeAt         DateTime?
   deactivatedat    DateTime?
-  discordRoleGroup DiscordRoleGroup?
+  GroupDiscordRole GroupDiscordRole?
   process          Process[]
-  roleUsers        RoleGroup[]
+  RoleGroups       RoleGroup[]
 
   @@map("groups")
 }
 
-model DiscordRoleGroup {
+model GroupDiscordRole {
   id              String        @id @default(uuid()) @db.Uuid
   discordRoleId   String        @map("discord_role_id")
   group           Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -146,7 +146,7 @@ model DiscordServer {
   banner           String?
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
-  DiscordRoleGroup DiscordRoleGroup[]
+  GroupDiscordRole GroupDiscordRole[]
 
   @@map("discord_servers")
 }
@@ -385,21 +385,21 @@ model RoleSet {
   id             String           @id @default(uuid()) @db.Uuid
   createdAt      DateTime         @default(now()) @map("created_at")
   processVersion ProcessVersion[]
-  roleUsers      RoleUser[]
-  roleGroups     RoleGroup[]
+  RoleIdentities RoleIdentity[]
+  RoleGroups     RoleGroup[]
 
   @@map("role_sets")
 }
 
-model RoleUser {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  roleSetId String   @map("role_set_id") @db.Uuid
-  type      RoleType
-  createdAt DateTime @default(now()) @map("created_at")
+model RoleIdentity {
+  id         String   @id @default(uuid()) @db.Uuid
+  identityId String   @map("user_id") @db.Uuid
+  roleSetId  String   @map("role_set_id") @db.Uuid
+  type       RoleType
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  user    User    @relation(fields: [userId], references: [id])
-  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+  Identity Identity @relation(fields: [identityId], references: [id])
+  RoleSet  RoleSet  @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
   @@map("role_users")
 }
@@ -411,8 +411,8 @@ model RoleGroup {
   type      RoleType
   createdAt DateTime @default(now()) @map("created_at")
 
-  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+  Group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  RoleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
   @@map("role_groups")
 }
