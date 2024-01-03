@@ -14,12 +14,9 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { reformatAgentForAvatar } from "../../Avatar";
 import { AvatarsCell, TableCellHideable } from "../TableCells";
 
-import {
-  ProcessSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
+import { ProcessSummaryPartsFragment } from "@/graphql/generated/graphql";
 import {
   EditProcessRoute,
   NewRequestRoute,
@@ -28,14 +25,10 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { hasPermission } from "@/utils/hasPermissions";
 
 function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
-  const { me } = React.useContext(CurrentUserContext);
   const { process } = props;
-
-  console.log("inside process row", process.name);
 
   const navigate = useNavigate();
   return (
@@ -70,16 +63,8 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
             </Typography>
           </Box>
         </TableCell>
-        <AvatarsCell
-          align="center"
-          avatars={process.roles.request.map((role) => reformatAgentForAvatar(role))}
-          hideOnSmallScreen={true}
-        />
-        <AvatarsCell
-          avatars={process.roles.respond.map((role) => reformatAgentForAvatar(role))}
-          align="center"
-          hideOnSmallScreen={true}
-        />
+        <AvatarsCell align="center" avatars={process.roles.request} hideOnSmallScreen={true} />
+        <AvatarsCell avatars={process.roles.respond} align="center" hideOnSmallScreen={true} />
         <TableCellHideable align={"right"}>
           <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
             <Tooltip title="Edit">
@@ -96,9 +81,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={
-                    !hasPermission(me?.user.id, me?.groupIds, process.evolve?.roles.request)
-                  }
+                  disabled={!hasPermission(process.evolve?.roles.request)}
                   edge={"start"}
                 />
               </span>
@@ -117,7 +100,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
+                  disabled={!hasPermission(process.roles.request)}
                 />
               </span>
             </Tooltip>

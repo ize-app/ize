@@ -15,6 +15,7 @@ export type IdentityPrismaType = Prisma.IdentityGetPayload<{
 export const formatIdentity = (identity: IdentityPrismaType): Identity => {
   if (identity.IdentityBlockchain)
     return {
+      __typename: "Identity",
       id: identity.id,
       name: identity.IdentityBlockchain.address,
       // TODO: replace with avatar logo
@@ -23,6 +24,7 @@ export const formatIdentity = (identity: IdentityPrismaType): Identity => {
     };
   else if (identity.IdentityEmail)
     return {
+      __typename: "Identity",
       id: identity.id,
       // TODO: obfuscate
       name: identity.IdentityEmail.email,
@@ -31,6 +33,7 @@ export const formatIdentity = (identity: IdentityPrismaType): Identity => {
     };
   else if (identity.IdentityDiscord)
     return {
+      __typename: "Identity",
       id: identity.id,
       name: identity.IdentityDiscord.username,
       icon: identity.IdentityDiscord.avatar

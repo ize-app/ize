@@ -34,7 +34,7 @@ export const groupsForCurrentUser = async (
   args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Group[]> => {
-  return getGroupsOfUserService(args);
+  return await getGroupsOfUserService(args);
 };
 
 export const groupMutations = {

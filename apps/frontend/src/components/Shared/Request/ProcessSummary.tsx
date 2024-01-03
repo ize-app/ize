@@ -9,7 +9,6 @@ import { Link, generatePath } from "react-router-dom";
 import { ProcessSummaryPartsFragment } from "../../../graphql/generated/graphql";
 import { Route } from "../../../routers/routes";
 import { fullUUIDToShort, intervalToIntuitiveTimeString } from "../../../utils/inputs";
-import { reformatAgentForAvatar } from "../Avatar";
 import { ProcessOptions } from "../Process/ProcessOptions";
 import SummarizeAction from "../Process/SummarizeAction";
 import { summarizeDecisionSystem } from "../Process/summarizeDecisionSystem";
@@ -93,10 +92,7 @@ export const ProcessSummaryTable = ({ process }: { process: ProcessSummaryPartsF
                 Who can respond
               </Typography>
             </TableCell>
-            <AvatarsCell
-              align="left"
-              avatars={process.roles.respond.map((agent) => reformatAgentForAvatar(agent))}
-            />
+            <AvatarsCell align="left" avatars={process.roles.respond} />
           </TableRow>
           <TableRow>
             <TableCell>

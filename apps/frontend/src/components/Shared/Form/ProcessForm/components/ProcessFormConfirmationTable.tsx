@@ -10,7 +10,7 @@ import { ReactNode } from "react";
 
 import { createOptionInputs } from "../createProcessMutation";
 
-import { AvatarGroup, AvatarProps } from "@/components/shared/Avatar";
+import { AvatarGroup } from "@/components/shared/Avatar";
 import {
   FormOptionChoice,
   HasCustomIntegration,
@@ -21,7 +21,7 @@ import { ProcessOptions } from "@/components/shared/Process/ProcessOptions";
 import SummarizeAction from "@/components/shared/Process/SummarizeAction";
 import { summarizeDecisionSystemForm } from "@/components/shared/Process/summarizeDecisionSystem";
 import SummarizeInputTemplates from "@/components/shared/Process/SummarizeInputTemplates";
-import { InputTemplate } from "@/graphql/generated/graphql";
+import { AgentSummaryPartsFragment, InputTemplate } from "@/graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 export enum ProcessFormDisplayFields {
@@ -74,13 +74,13 @@ const displayProcessFormField = (
     case ProcessFormDisplayFields.Request:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup agents={form?.rights?.request as AvatarProps[]} />
+          <AvatarGroup agents={form?.rights?.request as AgentSummaryPartsFragment[]} />
         </Box>
       );
     case ProcessFormDisplayFields.Respond:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup agents={form?.rights?.response as AvatarProps[]} />
+          <AvatarGroup agents={form?.rights?.response as AgentSummaryPartsFragment[]} />
         </Box>
       );
     case ProcessFormDisplayFields.Decision:
@@ -92,13 +92,13 @@ const displayProcessFormField = (
     case ProcessFormDisplayFields.EvolveRequest:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup agents={form?.evolve?.rights?.request as AvatarProps[]} />
+          <AvatarGroup agents={form?.evolve?.rights?.request as AgentSummaryPartsFragment[]} />
         </Box>
       );
     case ProcessFormDisplayFields.EvolveRespond:
       return (
         <Box sx={{ display: "flex", flexDirection: "flex-start" }}>
-          <AvatarGroup agents={form?.evolve?.rights?.response as AvatarProps[]} />
+          <AvatarGroup agents={form?.evolve?.rights?.response as AgentSummaryPartsFragment[]} />
         </Box>
       );
     case ProcessFormDisplayFields.EvolveDecision:

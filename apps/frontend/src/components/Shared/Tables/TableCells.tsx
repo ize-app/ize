@@ -3,9 +3,13 @@ import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
 
-import { ResultSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import {
+  ResultSummaryPartsFragment,
+  AgentSummaryPartsFragment,
+  UserSummaryPartsFragment,
+} from "../../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
-import { AvatarGroup, AvatarProps } from "../Avatar";
+import { AvatarGroup } from "../Avatar";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;
@@ -25,7 +29,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: AvatarProps[];
+  avatars: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
   align: "center" | "left";
 }
 

@@ -43,7 +43,7 @@ export const SubmitResponse = ({
   const { me } = useContext(CurrentUserContext);
 
   const userLoggedIn = !!me?.user;
-  const hasRespondRole = hasPermission(me?.user.id, me?.groupIds, respondRoles);
+  const hasRespondRole = hasPermission(respondRoles);
   const [hasResponded, setHasResponded] = useState<boolean>(!!userResponse);
 
   const canRespond = userLoggedIn && hasRespondRole && !hasResponded;
