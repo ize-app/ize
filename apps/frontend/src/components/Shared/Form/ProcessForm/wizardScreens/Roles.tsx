@@ -14,6 +14,8 @@ import {
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
 
+import { DevTool } from "@hookform/devtools";
+
 type FormFields = z.infer<typeof rolesFormSchema>;
 
 export const Roles = () => {
@@ -72,6 +74,7 @@ export const Roles = () => {
             gap: "20px",
           }}
         >
+          <DevTool control={control} placement="bottom-left" />
           <RolesAndDecisionSystem
             //@ts-ignore
             control={control}

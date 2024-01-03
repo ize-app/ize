@@ -15,12 +15,11 @@ import {
   DefaultEvolveProcessOptions,
 } from "@/components/shared/Form/ProcessForm/types";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import {
   AgentSummaryPartsFragment,
-  AgentType,
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
+import { deduplicateArrayById } from "@/utils/inputs";
 
 type FormFields = z.infer<typeof evolveProcessFormSchema>;
 
@@ -28,7 +27,6 @@ const namePrepend = "evolve.";
 
 export const Evolve = ({}) => {
   const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
-  const { me } = useContext(CurrentUserContext);
 
   const agents = data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
 
@@ -41,23 +39,18 @@ export const Evolve = ({}) => {
           formState.evolve?.evolveDefaults ??
           DefaultEvolveProcessOptions.ParticipantsRequestButCreatorApproves,
         rights: {
-          request: formState.evolve?.rights?.request ?? [
-            ...new Set([
-              //@ts-ignore
-              ...formState.rights?.request,
-              ...formState.rights?.response,
+          request:
+            formState.evolve?.rights?.request ??
+            deduplicateArrayById([
+              ...(formState.rights?.request ?? []),
+              ...(formState.rights?.response ?? []),
             ]),
-          ],
           response:
-            formState.evolve?.rights?.response ?? [
-              {
-                id: me?.user.id,
-                type: AgentType.User,
-                avatarUrl: me?.user.icon,
-                name: me?.user.name,
-              },
-            ] ??
-            [],
+            formState.evolve?.rights?.response ??
+            deduplicateArrayById([
+              ...(formState.rights?.request ?? []),
+              ...(formState.rights?.response ?? []),
+            ]),
         },
         decision: {
           type: formState.evolve?.decision?.type ?? DecisionType.Absolute,

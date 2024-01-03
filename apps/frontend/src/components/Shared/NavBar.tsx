@@ -14,10 +14,10 @@ import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { Avatar } from "./Avatar";
-import { CurrentUserContext } from "../../contexts/current_user_context";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 import { colors } from "../../style/style";
 import Login from "./Auth/Login";
-import { useStytch, useStytchUser } from "@stytch/react";
+import { useStytch } from "@stytch/react";
 import { Route } from "@/routers/routes";
 
 interface NavLinkProps {
@@ -140,9 +140,7 @@ const NavControlContainer = styled.ol`
 
 export const NavBar: React.FC = () => {
   const { me } = useContext(CurrentUserContext);
-  const { user } = useStytchUser();
   const location = useLocation();
-  console.log("user is ", user);
 
   const isHomePage = location.pathname === "/";
 

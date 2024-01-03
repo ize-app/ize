@@ -1,9 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "@utils/formatProcess";
-import { discordServers } from "./discord_resolvers";
-import { groupInclude, formatGroup } from "@utils/formatGroup";
-import { formatUser, userInclude } from "@utils/formatUser";
+import { getGroupsAndUsersEliglbeForRole } from "@/services/processes/getGroupsAndUsersEligibleForRole";
 
 import {
   Group,
@@ -102,34 +100,7 @@ const groupsAndUsersEliglbeForRole = async (
   args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
-  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
-
-  const servers = await discordServers(root, {}, context);
-  const serverIds = await servers.map((server) => server.id);
-  const arr: (User | Group)[] = [];
-
-  const groups = await prisma.group.findMany({
-    where: {
-      GroupDiscordRole: {
-        discordServer: {
-          discordServerId: { in: serverIds },
-        },
-      },
-    },
-    include: groupInclude,
-  });
-  const formattedGroups = groups.map((group) => formatGroup(group));
-
-  const user = await prisma.user.findFirstOrThrow({
-    where: {
-      id: context.currentUser.id,
-    },
-    include: userInclude,
-  });
-  const formattedUser = formatUser(user);
-
-  const res: (User | Group)[] = arr.concat(formattedGroups, formattedUser);
-  return res;
+  return await getGroupsAndUsersEliglbeForRole(root, args, context);
 };
 
 export const processQueries = {

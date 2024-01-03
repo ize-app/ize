@@ -156,8 +156,8 @@ enum RoleType {
 }
 
 enum AgentType {
-  Identity
   Group
+  Identity
 }
 
 union DecisionTypes = AbsoluteDecision | PercentageDecision

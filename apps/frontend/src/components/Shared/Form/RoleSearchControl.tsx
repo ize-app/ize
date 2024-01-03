@@ -1,29 +1,36 @@
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
+import { useContext } from "react";
 
-import { AgentSummaryPartsFragment } from "../../../graphql/generated/graphql";
-import { Avatar, AvatarProps, reformatAgentForAvatar } from "../Avatar";
+import { AgentSummaryPartsFragment, AgentType, Me } from "../../../graphql/generated/graphql";
+import { Avatar } from "../Avatar";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
-interface GroupUserSearchControlProps {
+interface RoleSearchControlProps {
   control: Control;
   name: string;
   label: string;
   agents: AgentSummaryPartsFragment[] | undefined;
 }
 
-export const GroupUserSearchControl = ({
+export const RoleSearchControl = ({
   control,
   name,
   label,
   agents,
   ...props
-}: GroupUserSearchControlProps) => {
+}: RoleSearchControlProps) => {
+  const { me } = useContext(CurrentUserContext);
+
+  const userIdentities = (me as Me).identities as AgentSummaryPartsFragment[];
   return (
     <Controller
       name={name}
@@ -35,28 +42,49 @@ export const GroupUserSearchControl = ({
             id="tags-filled"
             {...field}
             {...props}
-            options={(agents ?? []).map((agent) => {
-              const reformattedAgent = {
-                ...reformatAgentForAvatar(agent),
-              };
-              return reformattedAgent;
-            })}
-            getOptionLabel={(option: AvatarProps) => option.name}
+            // options={(agents ?? []).map((agent) => {
+            //   const reformattedAgent = {
+            //     ...reformatAgentForAvatar(agent),
+            //   };
+            //   return reformattedAgent;
+            // })}
+            options={[...(agents ?? []), ...userIdentities]}
+            getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
             onChange={(_event, data) => field.onChange(data)}
-            isOptionEqualToValue={(option: AvatarProps, value: AvatarProps) => {
+            isOptionEqualToValue={(
+              option: AgentSummaryPartsFragment,
+              value: AgentSummaryPartsFragment,
+            ) => {
               return option.id === value.id;
             }}
-            renderTags={(value: readonly AvatarProps[], getTagProps) =>
-              value.map((option: AvatarProps, index: number) => {
+            PaperComponent={({ children }) => {
+              return (
+                <Paper>
+                  <Button
+                    color="primary"
+                    fullWidth
+                    sx={{ justifyContent: "flex-start", pl: 2 }}
+                    onMouseDown={() => {
+                      console.log("Add new");
+                    }}
+                  >
+                    + Add New
+                  </Button>
+                  {children}
+                </Paper>
+              );
+            }}
+            renderTags={(value: readonly AgentSummaryPartsFragment[], getTagProps) =>
+              value.map((option: AgentSummaryPartsFragment, index: number) => {
                 return (
                   <Chip
                     avatar={
                       <Avatar
                         id={option.id}
-                        backgroundColor={option.backgroundColor}
+                        // backgroundColor={option.backgroundColor}
                         name={option.name}
-                        avatarUrl={option.parent?.avatarUrl ?? option.avatarUrl ?? ""}
-                        type={option.type}
+                        avatarUrl={option.icon}
+                        type={option.__typename as AgentType}
                       />
                     }
                     variant="filled"
@@ -82,11 +110,11 @@ export const GroupUserSearchControl = ({
               >
                 <Avatar
                   id={option.id}
-                  avatarUrl={option.avatarUrl}
+                  avatarUrl={option.icon}
                   name={option.name}
-                  parent={option.parent}
-                  backgroundColor={option.backgroundColor}
-                  type={option.type}
+                  //   parent={option.parent}
+                  //   backgroundColor={option.backgroundColor}
+                  type={option.__typename as AgentType}
                 />
                 <Typography
                   variant="body1"
@@ -105,7 +133,7 @@ export const GroupUserSearchControl = ({
                 {...params}
                 label={label}
                 variant="outlined"
-                placeholder="Add a group or person..."
+                placeholder="Add a group or identity..."
                 InputProps={{
                   ...params.InputProps,
                   type: "search",

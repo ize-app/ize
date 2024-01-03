@@ -8,7 +8,7 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { AgentType, InputDataType } from "@/graphql/generated/graphql";
+import { InputDataType } from "@/graphql/generated/graphql";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -89,18 +89,14 @@ const inputTemplateFormSchema = z.object({
 export const createInputTemplatesFormSchema = (fieldArrayName: string) =>
   z.object({ [fieldArrayName]: z.array(inputTemplateFormSchema) });
 
-const organizationFormSchema = z.object({
-  name: z.string(),
-  avatarUrl: z.string().optional().nullable(),
-});
-
-const userGroupFormSchema = z.object({
+const agentFormSchema = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.nativeEnum(AgentType),
-  avatarUrl: z.string().url().optional().nullable(),
-  backgroundColor: z.string().optional().nullable(),
-  parent: organizationFormSchema.optional().nullable(),
+  icon: z.string().optional().nullable(),
+  __typename: z.string(),
+  identityType: z.object({
+    __typename: z.any(),
+  }),
 });
 
 const absoluteDecisionFormSchema = z.object({
@@ -114,10 +110,8 @@ const percentageDecisionFormSchema = z.object({
 
 const rolesFormSchemaUnrefined = z.object({
   rights: z.object({
-    request: z.array(userGroupFormSchema).min(1, "Please select at least one group or individual."),
-    response: z
-      .array(userGroupFormSchema)
-      .min(1, "Please select at least one group or individual."),
+    request: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
+    response: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
   }),
   decision: z.object({
     type: z.nativeEnum(DecisionType),
