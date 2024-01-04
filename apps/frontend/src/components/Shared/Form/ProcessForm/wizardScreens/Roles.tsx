@@ -13,10 +13,13 @@ import {
   AgentSummaryPartsFragment,
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
+import { SetFieldValue as SetFieldValueUntyped } from "react-hook-form";
 
 import { DevTool } from "@hookform/devtools";
 
 type FormFields = z.infer<typeof rolesFormSchema>;
+
+export type SetFieldValue = SetFieldValueUntyped<FormFields>;
 
 export const Roles = () => {
   const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
@@ -25,7 +28,12 @@ export const Roles = () => {
 
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
-  const { control, handleSubmit, watch } = useForm<FormFields>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue: setFieldValue,
+  } = useForm<FormFields>({
     defaultValues: {
       rights: {
         request: formState.rights?.request ?? [],
@@ -80,6 +88,7 @@ export const Roles = () => {
             control={control}
             agents={agents}
             isPercentageThreshold={isPercentageThreshold}
+            setFieldValue={setFieldValue}
           />
         </form>
       </WizardBody>

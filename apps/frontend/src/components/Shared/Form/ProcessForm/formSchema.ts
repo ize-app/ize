@@ -9,6 +9,8 @@ import {
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
 import { InputDataType } from "@/graphql/generated/graphql";
+import { NewAgentType } from "@/components/shared/Form/ProcessForm/types";
+import { ethers } from "ethers";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -98,6 +100,48 @@ const agentFormSchema = z.object({
     __typename: z.any(),
   }),
 });
+export const newAgentFormSchema = z.object({
+  type: z.nativeEnum(NewAgentType),
+  ethAddress: z
+    .string()
+    .trim()
+    .transform<string[]>((str, ctx) => {
+      const parsed = z
+        .array(
+          z
+            .string()
+            .trim()
+            .refine((value) => ethers.isAddress(value), {
+              message: "Provided address is invalid. Please insure you have typed correctly.",
+            }),
+        )
+        .safeParse(str.split(","));
+
+      if (!parsed.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: parsed.error.issues[0].message,
+        });
+        return z.NEVER;
+      } else {
+        return parsed.data;
+      }
+    })
+    .optional(),
+  emailAddress: z
+    .string()
+    .trim()
+    .transform<string[]>((str, ctx) => {
+      try {
+        const parsed = z.array(z.string().trim().email()).parse(str.split(","));
+        return parsed;
+      } catch (e) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid email(s)" });
+        return [];
+      }
+    })
+    .optional(),
+});
 
 const absoluteDecisionFormSchema = z.object({
   threshold: z.coerce.number(),
@@ -108,7 +152,7 @@ const percentageDecisionFormSchema = z.object({
   quorum: z.coerce.number(),
 });
 
-const rolesFormSchemaUnrefined = z.object({
+const decisionFormSchemaUnrefined = z.object({
   rights: z.object({
     request: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
     response: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
@@ -121,7 +165,7 @@ const rolesFormSchemaUnrefined = z.object({
   }),
 });
 
-const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
+const refineExtendedSharedSchema = (schema: typeof decisionFormSchemaUnrefined) =>
   schema
     .refine(
       (data) => {
@@ -151,10 +195,10 @@ const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
       },
     );
 
-export const rolesFormSchema = refineExtendedSharedSchema(rolesFormSchemaUnrefined);
+export const rolesFormSchema = refineExtendedSharedSchema(decisionFormSchemaUnrefined);
 
 export const evolveProcessFormSchema = z.object({
-  evolve: rolesFormSchemaUnrefined.extend({
+  evolve: decisionFormSchemaUnrefined.extend({
     evolveDefaults: z.nativeEnum(DefaultEvolveProcessOptions),
   }),
 });

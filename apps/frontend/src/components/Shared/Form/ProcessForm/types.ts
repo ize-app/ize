@@ -29,6 +29,11 @@ export enum DecisionType {
   Percentage = "Percentage",
 }
 
+export enum NewAgentType {
+  Email = "Email",
+  EthAddress = "EthAddress",
+}
+
 export interface ProcessRights {
   request: AgentSummaryPartsFragment[];
   response: AgentSummaryPartsFragment[];

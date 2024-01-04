@@ -92,8 +92,8 @@ const Login = () => {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby="login-modal"
+        aria-describedby="login-modal"
       >
         <Box
           sx={{

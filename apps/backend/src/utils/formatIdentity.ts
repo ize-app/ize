@@ -27,7 +27,7 @@ export const formatIdentity = (identity: IdentityPrismaType): Identity => {
       __typename: "Identity",
       id: identity.id,
       // TODO: obfuscate
-      name: identity.IdentityEmail.email,
+      name: identity.IdentityEmail.email.replace(/(\w{1})[\w.-]+@([\w.]+\w)/, "$1***@$2"),
       icon: identity.IdentityEmail.icon,
       identityType: { __typename: "IdentityEmail", ...identity.IdentityEmail },
     };

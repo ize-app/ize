@@ -8,6 +8,7 @@ import { SelectControl, TextFieldControl } from "@/components/shared/Form";
 import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
 import { AgentSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { RoleSearchControl } from "../../RoleSearchControl";
+import { SetFieldValue } from "../wizardScreens/Roles";
 
 const RolesContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <Box
@@ -36,11 +37,13 @@ const RolesAndDecisionSystem = ({
   agents,
   isPercentageThreshold,
   namePrepend = "",
+  setFieldValue,
 }: {
   control: Control;
   agents: AgentSummaryPartsFragment[];
   isPercentageThreshold: boolean;
   namePrepend?: string;
+  setFieldValue: SetFieldValue;
 }) => {
   return (
     <>
@@ -50,6 +53,7 @@ const RolesAndDecisionSystem = ({
           name={namePrepend + "rights.request"}
           label={"Who can create requests?"}
           agents={agents}
+          setFieldValue={setFieldValue}
         />
         <SelectControl
           //@ts-ignore
@@ -73,6 +77,7 @@ const RolesAndDecisionSystem = ({
           name={namePrepend + "rights.response"}
           label={"Who can respond to requests?"}
           agents={agents}
+          setFieldValue={setFieldValue}
         />
         <Box
           sx={{
