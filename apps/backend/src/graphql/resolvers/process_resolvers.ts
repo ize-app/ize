@@ -9,9 +9,13 @@ import {
   User,
   MutationNewProcessArgs,
   MutationNewEditProcessRequestArgs,
+  MutationNewAgentsArgs,
   QueryProcessArgs,
   QueryProcessesForCurrentUserArgs,
   QueryProcessesForGroupArgs,
+  Agent,
+  NewAgentTypes,
+  // Agent,
 } from "@graphql/generated/resolver-types";
 
 import { newCustomProcess } from "@services/processes/newProcess";
@@ -43,6 +47,70 @@ const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> 
   });
 
   return formatProcess(processData);
+};
+
+const newAgents = async (
+  root: unknown,
+  args: MutationNewAgentsArgs,
+  context: GraphqlRequestContext,
+): Promise<Agent[]> => {
+  // ): Promise<Agent[]> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+  const agents = await Promise.all(
+    args.agents.map(async (a) => {
+      switch (a.type) {
+        case NewAgentTypes.IdentityBlockchain: {
+          const res = await prisma.identityBlockchain.upsert({
+            where: {
+              address: a.value,
+            },
+            update: {},
+            create: {
+              address: a.value,
+              Identity: {
+                create: {},
+              },
+            },
+          });
+          return {
+            __typename: "Identity",
+            identityType: {
+              __typename: "IdentityBlockchain",
+              ...res,
+            },
+            id: res.identityId,
+            name: res.address,
+          } as Agent;
+        }
+        case NewAgentTypes.IdentityEmail: {
+          const res = await prisma.identityEmail.upsert({
+            where: {
+              email: a.value,
+            },
+            update: {},
+            create: {
+              email: a.value,
+              Identity: {
+                create: {},
+              },
+            },
+          });
+          return {
+            __typename: "Identity",
+            identityType: {
+              __typename: "IdentityEmail",
+              ...res,
+            },
+            id: res.identityId,
+            name: res.email,
+          } as Agent;
+        }
+        default:
+          throw Error("ERROR unknown new agent type");
+      }
+    }),
+  );
+  return agents;
 };
 
 const processesForCurrentUser = async (
@@ -110,4 +178,4 @@ export const processQueries = {
   groupsAndUsersEliglbeForRole,
 };
 
-export const processMutations = { newProcess, newEditProcessRequest };
+export const processMutations = { newProcess, newEditProcessRequest, newAgents };

@@ -8,8 +8,7 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { InputDataType } from "@/graphql/generated/graphql";
-import { NewAgentType } from "@/components/shared/Form/ProcessForm/types";
+import { InputDataType, NewAgentTypes } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
 
 const webhookFormSchema = z.object({
@@ -100,8 +99,9 @@ const agentFormSchema = z.object({
     __typename: z.any(),
   }),
 });
+
 export const newAgentFormSchema = z.object({
-  type: z.nativeEnum(NewAgentType),
+  type: z.nativeEnum(NewAgentTypes),
   ethAddress: z
     .string()
     .trim()

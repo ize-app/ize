@@ -6,6 +6,12 @@ mutation NewEditProcessRequest($inputs: newEditProcessRequestArgs!) {
   newEditProcessRequest(inputs: $inputs)
 }
 
+mutation NewAgents($agents: [NewAgentArgs!]!) {
+  newAgents(agents: $agents) {
+    ...AgentSummaryParts
+  }
+}
+
 query Process($processId: String!) {
   process(processId: $processId) {
     ...ProcessSummaryParts

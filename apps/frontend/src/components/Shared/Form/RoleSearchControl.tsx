@@ -10,11 +10,18 @@ import Typography from "@mui/material/Typography";
 import { Control, Controller } from "react-hook-form";
 import { useContext, useState } from "react";
 
-import { AgentSummaryPartsFragment, AgentType, Me } from "../../../graphql/generated/graphql";
+import {
+  AgentSummaryPartsFragment,
+  AgentType,
+  Me,
+  NewAgentTypes,
+} from "../../../graphql/generated/graphql";
 import { Avatar } from "../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { RoleModal } from "./ProcessForm/components/RoleModal";
-import { SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
+import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
+import { MailOutline } from "@mui/icons-material";
+import { DiscordLogoSvg, EthLogoSvg } from "../icons";
 
 interface RoleSearchControlProps {
   control: Control;
@@ -22,6 +29,7 @@ interface RoleSearchControlProps {
   label: string;
   agents: AgentSummaryPartsFragment[] | undefined;
   setFieldValue: SetFieldValue;
+  getFieldValues: GetFieldValues;
 }
 
 export const RoleSearchControl = ({
@@ -30,6 +38,7 @@ export const RoleSearchControl = ({
   label,
   agents,
   setFieldValue,
+  getFieldValues,
   ...props
 }: RoleSearchControlProps) => {
   const { me } = useContext(CurrentUserContext);
@@ -41,16 +50,23 @@ export const RoleSearchControl = ({
   ]);
 
   const [open, setOpen] = useState(false);
+  const [roleModalType, setRoleModalType] = useState(NewAgentTypes.IdentityEmail);
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
-    setOptions((prev) => [...prev, ...value]);
+    setOptions((prev) => {
+      console.log("prev is ", prev);
+      return [...prev, ...value];
+    });
     //@ts-ignore
-    setFieldValue(name, value);
+    const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
+
+    //@ts-ignore
+    setFieldValue(name, [...currentState, ...value]);
   };
 
   return (
     <>
-      <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} />
+      <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} type={roleModalType} />
       <Controller
         name={name}
         control={control}
@@ -74,16 +90,46 @@ export const RoleSearchControl = ({
               PaperComponent={({ children }) => {
                 return (
                   <Paper>
-                    <Button
-                      color="primary"
-                      fullWidth
-                      sx={{ justifyContent: "flex-start", pl: 2 }}
-                      onMouseDown={() => {
-                        setOpen(true);
+                    <Box
+                      sx={{
+                        padding: "8px 12px",
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                        flexWrap: "wrap",
                       }}
                     >
-                      + Add New
-                    </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<MailOutline color="primary" />}
+                        onMouseDown={() => {
+                          setRoleModalType(NewAgentTypes.IdentityEmail);
+                          setOpen(true);
+                        }}
+                      >
+                        Email address
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<EthLogoSvg />}
+                        onMouseDown={() => {
+                          setRoleModalType(NewAgentTypes.IdentityBlockchain);
+                          setOpen(true);
+                        }}
+                      >
+                        Eth address
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<DiscordLogoSvg />}
+                        onMouseDown={() => {
+                          setRoleModalType(NewAgentTypes.IdentityDiscord);
+                          setOpen(true);
+                        }}
+                      >
+                        Discord @role
+                      </Button>
+                    </Box>
                     {children}
                   </Paper>
                 );

@@ -178,11 +178,17 @@ export type Me = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  newAgents: Array<Agent>;
   newEditProcessRequest: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
   setUpDiscordServer: Group;
+};
+
+
+export type MutationNewAgentsArgs = {
+  agents: Array<NewAgentArgs>;
 };
 
 
@@ -211,6 +217,18 @@ export type MutationNewResponseArgs = {
 export type MutationSetUpDiscordServerArgs = {
   input: SetUpDiscordServerInput;
 };
+
+export type NewAgentArgs = {
+  type: NewAgentTypes;
+  value: Scalars['String']['input'];
+};
+
+export enum NewAgentTypes {
+  GroupDiscord = 'GroupDiscord',
+  IdentityBlockchain = 'IdentityBlockchain',
+  IdentityDiscord = 'IdentityDiscord',
+  IdentityEmail = 'IdentityEmail'
+}
 
 export type OnboardedDiscordServer = {
   __typename?: 'OnboardedDiscordServer';
@@ -587,6 +605,8 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
+  NewAgentArgs: NewAgentArgs;
+  NewAgentTypes: NewAgentTypes;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
   OptionType: OptionType;
   Organization: ResolverTypeWrapper<Organization>;
@@ -647,6 +667,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']['output'];
   Me: Me;
   Mutation: {};
+  NewAgentArgs: NewAgentArgs;
   OnboardedDiscordServer: OnboardedDiscordServer;
   Organization: Organization;
   ParentProcess: ParentProcess;
@@ -802,6 +823,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  newAgents?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType, RequireFields<MutationNewAgentsArgs, 'agents'>>;
   newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'processId'>>;
