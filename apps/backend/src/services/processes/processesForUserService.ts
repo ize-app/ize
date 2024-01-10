@@ -97,7 +97,9 @@ export const processesForUserService = async (
     },
     include: processInclude,
   });
-  const formattedProcesses = processes.map((process) => formatProcess(process));
+  const formattedProcesses = processes.map((process) =>
+    formatProcess(process, context.currentUser),
+  );
 
   return formattedProcesses;
 };

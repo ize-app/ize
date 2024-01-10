@@ -6,6 +6,7 @@ import createResult from "./createResult";
 import { decideAbsoluteThreshold, decidePercentageThreshold } from "./decisionSystems";
 
 import executeAction from "@services/actions/executeAction";
+import { MePrismaType } from "@/utils/formatUser";
 
 const responseGroupByArgs = {
   by: ["optionId"],
@@ -19,9 +20,11 @@ export type ResponseCount = Awaited<Prisma.GetResponseGroupByPayload<typeof resp
 const determineDecision = async ({
   requestId,
   transaction = prisma,
+  user,
 }: {
   requestId: string;
   transaction?: Prisma.TransactionClient;
+  user: MePrismaType | undefined | null;
 }) => {
   let decidedOptionId: string | null;
 
@@ -56,7 +59,7 @@ const determineDecision = async ({
       optionId: decidedOptionId,
       transaction,
     });
-    await executeAction({ requestId, transaction });
+    await executeAction({ requestId, transaction, user });
   }
   //
 };

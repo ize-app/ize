@@ -18,6 +18,7 @@ import { newAgentFormSchema } from "../formSchema";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { SelectControl } from "../..";
+import { useState } from "react";
 // import { DevTool } from "@hookform/devtools";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
@@ -42,8 +43,11 @@ interface RoleModalProps {
 }
 
 export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
+  const [disableSubmit, setDisableSubmit] = useState(false);
+
   const [mutate] = useMutation(NewAgentsDocument, {
     onCompleted: (data) => {
+      setDisableSubmit(false);
       setOpen(false);
       onSubmit(data.newAgents);
     },
@@ -64,6 +68,7 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   });
 
   const createAgents = async (data: FormFields) => {
+    setDisableSubmit(true);
     const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
       return {
         agents: (data.emailAddress ?? data.ethAddress ?? []).map((val) => ({
@@ -80,18 +85,6 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   };
 
   const inputType = watch("type");
-
-  //   const testOption = {
-  //     __typename: "Identity",
-  //     id: "1234",
-  //     name: "ayyyyyyy",
-  //     icon: null,
-  //     identityType: {
-  //       __typename: "IdentityBlockchain",
-  //       id: "c434b088-d2f2-4a3a-ae85-416851c22d49",
-  //       address: "0x03f33bb5e7ca4fee122b1b443cebf2ed265c434a",
-  //     },
-  //   };
 
   return (
     <Modal
@@ -151,48 +144,63 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                   );
                 }}
               />
-              <Button onSubmit={handleSubmit(createAgents)} variant="contained">
+              <Button
+                onClick={handleSubmit(createAgents)}
+                variant="contained"
+                disabled={disableSubmit}
+              >
                 Submit
               </Button>
             </Box>
           )}
           {inputType === NewAgentTypes.IdentityEmail && (
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "24px",
-              }}
-            >
-              <Controller
-                name={"emailAddress"}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <FormControl sx={{ width: "100%" }}>
-                    <TextField
-                      {...field}
-                      label={"Email addresses"}
-                      fullWidth
-                      required
-                      error={Boolean(error)}
-                      placeholder="Enter an email or list of emails seperated by commas"
-                    />
-                    <FormHelperText
-                      sx={{
-                        color: error?.message ? "error.main" : "black",
-                      }}
-                    >
-                      {error?.message ?? ""}
-                    </FormHelperText>
-                  </FormControl>
-                )}
-              />
-              <Button type="submit" onSubmit={handleSubmit(createAgents)} variant="contained">
-                Submit
-              </Button>
-            </Box>
+            <>
+              <Typography>
+                Email addresses assigned to this process will be obscured to the public. For
+                example, alexander@example.com would be displayed as a***@example.com.
+              </Typography>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "24px",
+                }}
+              >
+                <Controller
+                  name={"emailAddress"}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <FormControl sx={{ width: "100%" }}>
+                      <TextField
+                        {...field}
+                        label={"Email addresses"}
+                        fullWidth
+                        required
+                        error={Boolean(error)}
+                        placeholder="Enter an email or list of emails seperated by commas"
+                      />
+                      <FormHelperText
+                        sx={{
+                          color: error?.message ? "error.main" : "black",
+                        }}
+                      >
+                        {error?.message ?? ""}
+                      </FormHelperText>
+                    </FormControl>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  onClick={handleSubmit(createAgents)}
+                  variant="contained"
+                  disabled={disableSubmit}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </>
           )}
         </form>
       </Box>

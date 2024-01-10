@@ -16,7 +16,6 @@ interface ImportMeta {
 //   ethereum: MetaMaskInpageProvider;
 // }
 
-
 declare global {
   interface Window {
     ethereum: MetaMaskInpageProvider;

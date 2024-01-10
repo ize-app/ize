@@ -38,7 +38,11 @@ const newEditProcessRequest = async (
   return await newEditRequestService({ args: args.inputs }, context);
 };
 
-const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> => {
+const process = async (
+  root: unknown,
+  args: QueryProcessArgs,
+  context: GraphqlRequestContext,
+): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
     include: processInclude,
     where: {
@@ -46,7 +50,7 @@ const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> 
     },
   });
 
-  return formatProcess(processData);
+  return formatProcess(processData, context.currentUser);
 };
 
 const newAgents = async (
@@ -130,6 +134,7 @@ Note: In the process table UI, "evolve processes" are not shown by themselves, o
 const processesForGroup = async (
   root: unknown,
   args: QueryProcessesForGroupArgs,
+  context: GraphqlRequestContext,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({
     where: {
@@ -158,7 +163,9 @@ const processesForGroup = async (
     include: processInclude,
   });
 
-  const formattedProcesses = processes.map((process) => formatProcess(process));
+  const formattedProcesses = processes.map((process) =>
+    formatProcess(process, context.currentUser),
+  );
 
   return formattedProcesses;
 };

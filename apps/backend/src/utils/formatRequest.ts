@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { resultInclude, formatResult } from "./formatResult";
-import { userInclude, formatUser } from "@utils/formatUser";
+import { userInclude, formatUser, MePrismaType } from "@utils/formatUser";
 import { ProcessVersionPrismaType, formatProcessVersion } from "../utils/formatProcess";
 import { responseInclude, formatResponses } from "./formatResponse";
 import { prisma } from "../prisma/client";
@@ -48,10 +48,11 @@ export type RequestPrismaType = Prisma.RequestGetPayload<{
 
 export const formatRequest = async (
   requestData: RequestPrismaType,
-  userId?: string,
+  user: MePrismaType | undefined | null,
 ): Promise<Request> => {
+  user;
   const process: Process = {
-    ...formatProcessVersion(requestData.processVersion),
+    ...formatProcessVersion(requestData.processVersion, user),
     id: requestData.processVersion.process.id,
     createdAt: requestData.processVersion.process.createdAt.toString(),
     type: requestData.processVersion.process.type as ProcessType,
@@ -62,7 +63,7 @@ export const formatRequest = async (
 
   const evolveChanges =
     process.type === ProcessType.Evolve
-      ? await formatEvolveProcessChanges(inputs, requestData.id)
+      ? await formatEvolveProcessChanges(inputs, requestData.id, user)
       : null;
 
   const req: Request = await {
@@ -73,7 +74,7 @@ export const formatRequest = async (
     inputs: inputs,
     process: process,
     createdAt: requestData.createdAt.toString(),
-    responses: formatResponses(requestData.responses, process.options, userId),
+    responses: formatResponses(requestData.responses, process.options, user?.id),
     result: formatResult(requestData.result, process.options),
     evolveProcessChanges: evolveChanges,
   };
@@ -110,6 +111,7 @@ const formatInputs = (
 const formatEvolveProcessChanges = async (
   inputs: RequestInput[],
   requestId: string,
+  user: MePrismaType | undefined | null,
 ): Promise<EvolveProcessesDiff[]> => {
   type ProcessIdChanges = [oldId: string, newId: string];
 
@@ -148,8 +150,8 @@ const formatEvolveProcessChanges = async (
     if (!currentProcessVersion || !proposedProcessVersion)
       throw Error("ERROR formatEvolveProcessChanges: Cannot find process versions");
 
-    const currentProcess = processVersionToProcess(currentProcessVersion);
-    const proposedProcess = processVersionToProcess(proposedProcessVersion);
+    const currentProcess = processVersionToProcess(currentProcessVersion, user);
+    const proposedProcess = processVersionToProcess(proposedProcessVersion, user);
     // adding suffic at end because apollo's caching
     proposedProcess.id = proposedProcess.id + "_proposed_" + requestId;
 
@@ -166,9 +168,12 @@ const formatEvolveProcessChanges = async (
   return changes;
 };
 
-const processVersionToProcess = (processVersion: ProcessVersionPrismaType): Process => {
+const processVersionToProcess = (
+  processVersion: ProcessVersionPrismaType,
+  user: MePrismaType | undefined | null,
+): Process => {
   return {
-    ...formatProcessVersion(processVersion),
+    ...formatProcessVersion(processVersion, user),
     id: processVersion.process.id,
     createdAt: processVersion.process.createdAt.toString(),
     type: processVersion.process.type as ProcessType,

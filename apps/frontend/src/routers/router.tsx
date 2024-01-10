@@ -15,7 +15,7 @@ import { DefaultLayout } from "@/layout/default";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
 import { ResetPassword } from "@/components/shared/Auth/ResetPassword";
-import { UserSettings } from "@/components/UserSettings";
+import { UserSettings } from "@/components/Settings/UserSettings";
 
 export const router = createBrowserRouter([
   {

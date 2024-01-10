@@ -14,7 +14,7 @@ const me = async (
 
   const groupIds = await getGroupIdsOfUserService(contextValue);
   const identities: Identity[] = contextValue.currentUser.Identities.map((identity) => {
-    return formatIdentity(identity);
+    return formatIdentity(identity, contextValue.currentUser);
   });
 
   const userData = await prisma.user.findFirstOrThrow({

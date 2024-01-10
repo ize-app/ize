@@ -38,7 +38,7 @@ const UnauthenticatedHome = () => {
           },
         })}
       >
-        <Button variant="contained" color="primary" href="/api/auth/discord/login">
+        <Button variant="contained" color="primary" href="/">
           Join Alpha Waitlist
         </Button>
         <Login />

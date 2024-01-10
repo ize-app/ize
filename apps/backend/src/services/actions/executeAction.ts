@@ -3,13 +3,16 @@ import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import callWebhook from "./actionTypes/callWebhook";
 import editProcesses from "./actionTypes/editProcesses";
+import { MePrismaType } from "@/utils/formatUser";
 
 const executeAction = async ({
   requestId,
   transaction = prisma,
+  user,
 }: {
   requestId: string;
   transaction?: Prisma.TransactionClient;
+  user: MePrismaType | undefined | null;
 }) => {
   let wasSuccess: boolean = false;
 
@@ -20,7 +23,7 @@ const executeAction = async ({
     },
   });
 
-  const request = await formatRequest(reqRaw as RequestPrismaType);
+  const request = await formatRequest(reqRaw as RequestPrismaType, user);
 
   if (!request.process.action?.actionDetails || !request.result)
     throw Error("ERROR Execute Action: Malformed result");

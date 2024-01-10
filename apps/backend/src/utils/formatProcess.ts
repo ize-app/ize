@@ -6,7 +6,7 @@ import {
   WebhookAction,
 } from "@prisma/client";
 import { groupInclude, formatGroup } from "@utils/formatGroup";
-import { userInclude, formatUser } from "@utils/formatUser";
+import { userInclude, formatUser, MePrismaType } from "@utils/formatUser";
 import { identityInclude, formatIdentity } from "./formatIdentity";
 
 import {
@@ -156,7 +156,10 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
 }>;
 
 // Used to format all processes, except for evolve processes
-export const formatProcess = (processData: ProcessPrismaType): Process => {
+export const formatProcess = (
+  processData: ProcessPrismaType,
+  user: MePrismaType | undefined | null,
+): Process => {
   const { currentProcessVersion } = processData;
 
   if (!currentProcessVersion)
@@ -166,7 +169,7 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   if (!currentProcessVersion.evolveProcess)
     throw Error("ERROR formatProcess: Can't find evolve process of process id:" + processData.id);
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
 
   const data: Process = {
     id: processData.id,
@@ -176,13 +179,16 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
     evolve:
       processData.type === ProcessType.Evolve
         ? null
-        : formatEvolveProcess(currentProcessVersion.evolveProcess),
+        : formatEvolveProcess(currentProcessVersion.evolveProcess, user),
     ...formattedProcessVersion,
   };
   return data;
 };
 
-export const formatEvolveProcess = (processData: EditProcessPrismaType): Process => {
+export const formatEvolveProcess = (
+  processData: EditProcessPrismaType,
+  user: MePrismaType | undefined | null,
+): Process => {
   const { currentProcessVersion } = processData;
 
   if (!currentProcessVersion)
@@ -190,7 +196,7 @@ export const formatEvolveProcess = (processData: EditProcessPrismaType): Process
       "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
     );
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
 
   const data: Process = {
     id: processData.id,
@@ -202,7 +208,10 @@ export const formatEvolveProcess = (processData: EditProcessPrismaType): Process
   return data;
 };
 
-export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): ProcessVersion => {
+export const formatProcessVersion = (
+  processVersion: ProcessVersionPrismaType,
+  user: MePrismaType | undefined | null,
+): ProcessVersion => {
   const { creator, optionSystem, inputTemplateSet, decisionSystem, action, roleSet } =
     processVersion;
 
@@ -232,7 +241,7 @@ export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): 
       ),
     action: action ? formatAction(action, options) : undefined,
     parent: formatParent(processVersion.parentProcess),
-    roles: formatRoles(roleSet),
+    roles: formatRoles(roleSet, user),
   };
 
   return data;
@@ -244,7 +253,7 @@ const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaT
   } else return name;
 };
 
-const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
+const formatRoles = (roleSet: RoleSetPrismaType, user: MePrismaType | undefined | null): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
   roleSet.RoleGroups.forEach((role) => {
     if (role.type === RoleType.Request) roles.request.push(formatGroup(role.Group));
@@ -252,8 +261,9 @@ const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
   });
 
   roleSet.RoleIdentities.forEach((role) => {
-    if (role.type === RoleType.Request) roles.request.push(formatIdentity(role.Identity));
-    else if (role.type === RoleType.Respond) roles.respond.push(formatIdentity(role.Identity));
+    if (role.type === RoleType.Request) roles.request.push(formatIdentity(role.Identity, user));
+    else if (role.type === RoleType.Respond)
+      roles.respond.push(formatIdentity(role.Identity, user));
   });
 
   return roles;

@@ -12,11 +12,12 @@ import { authenticate } from "./authentication";
 import { GraphqlRequestContext } from "./graphql/context";
 import { DiscordApi } from "./discord/api";
 import session from "express-session";
-import { User, OauthTypes } from "@prisma/client";
+import { OauthTypes } from "@prisma/client";
 import { prisma } from "./prisma/client";
 import { stytchClient } from "./authentication";
 import { APIUser } from "discord.js";
 import { encrypt } from "./encrypt";
+import { MePrismaType } from "./utils/formatUser";
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -167,6 +168,20 @@ app.get("/auth", async (req, res) => {
   res.redirect(redirectURL.toString());
 });
 
+app.get("/auth/attach-discord", async (req, res) => {
+  const session_token = req.cookies["stytch_session"];
+  if (!session_token) res.status(401).send();
+
+  const resp = await stytchClient.oauth.attach({
+    session_token,
+    provider: "discord",
+  });
+
+  // res.cookie("oauth_attach_token", resp.oauth_attach_token);
+
+  res.send(resp.oauth_attach_token);
+});
+
 app.use(session(sessionValue));
 
 const typeDefs = mergeTypeDefs(
@@ -198,7 +213,7 @@ server.start().then(() => {
     json(),
     expressMiddleware(server, {
       context: async ({ res }) => {
-        const user: User | undefined = res.locals.user;
+        const user: MePrismaType | undefined = res.locals.user;
 
         return {
           currentUser: user,

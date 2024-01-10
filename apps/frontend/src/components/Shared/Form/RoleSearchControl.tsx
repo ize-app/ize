@@ -54,7 +54,6 @@ export const RoleSearchControl = ({
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setOptions((prev) => {
-      console.log("prev is ", prev);
       return [...prev, ...value];
     });
     //@ts-ignore

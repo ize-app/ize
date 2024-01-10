@@ -29,11 +29,11 @@ model User {
 
 model Identity {
   id        String   @id @default(uuid()) @db.Uuid
-  userId    String?   @map("user_id") @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  User               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User               User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
   IdentityEmail      IdentityEmail?
   IdentityBlockchain IdentityBlockchain?
   IdentityDiscord    IdentityDiscord?
@@ -203,7 +203,7 @@ model ProcessVersion {
 
   /// Parent process for this process version 
   process                  Process          @relation("Process", fields: [processId], references: [id], onDelete: Cascade)
-  creator                  User             @relation(fields: [creatorId], references: [id])
+  creator                  User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   /// Process defined response options that are included on every request created by this process version
   optionSystem             OptionSystem     @relation(fields: [optionSystemId], references: [id], onDelete: Cascade)
   /// Template for the inputs that will be required on each new request created by this process version
@@ -398,10 +398,10 @@ model RoleIdentity {
   type       RoleType
   createdAt  DateTime @default(now()) @map("created_at")
 
-  Identity Identity @relation(fields: [identityId], references: [id])
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
   RoleSet  RoleSet  @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
-  @@map("role_users")
+  @@map("role_identities")
 }
 
 model RoleGroup {

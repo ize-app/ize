@@ -65,7 +65,7 @@ const newResponse = async (
     },
   });
 
-  await determineDecision({ requestId: args.requestId });
+  await determineDecision({ requestId: args.requestId, user: context.currentUser });
 
   return response.id;
 };
@@ -82,7 +82,7 @@ const request = async (
     },
   });
 
-  return await formatRequest(req, context.currentUser?.id);
+  return await formatRequest(req, context.currentUser);
 };
 
 const requestsForCurrentUser = async (
@@ -130,7 +130,7 @@ const requestsForCurrentUser = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request, context.currentUser?.id));
+  return requests.map((request) => formatRequest(request, context.currentUser));
 };
 
 const requestsForGroup = async (
@@ -153,7 +153,7 @@ const requestsForGroup = async (
     },
   });
 
-  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser)));
 };
 
 const requestsForProcess = async (
@@ -170,7 +170,7 @@ const requestsForProcess = async (
     },
   });
 
-  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser)));
 };
 
 export const requestQueries = {
