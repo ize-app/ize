@@ -3,8 +3,13 @@ import { UserPrismaType } from "@/utils/formatUser";
 import { Email } from "stytch";
 
 // creates email identities in db if they don't exist yet
-export const createEmailIdentities = async (user: UserPrismaType, stytchEmails: Email[]) => {
-  
+// TODO: passing in the profilePictureURL is a hack and
+// will associate the wrong url with the wrong user in some edge cases
+export const createEmailIdentities = async (
+  user: UserPrismaType,
+  stytchEmails: Email[],
+  profilePictureURL?: string | undefined,
+) => {
   stytchEmails.forEach(async (email) => {
     const userEmail = user.Identities.find((identity) => {
       identity.IdentityEmail?.email === email.email && email.verified;
@@ -24,6 +29,7 @@ export const createEmailIdentities = async (user: UserPrismaType, stytchEmails: 
             IdentityEmail: {
               create: {
                 email: email.email,
+                icon: profilePictureURL ?? null,
               },
             },
           },

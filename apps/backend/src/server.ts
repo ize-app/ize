@@ -23,6 +23,7 @@ import { upsertUser } from "./auth/upsertUser";
 import { upsertOauthToken } from "./auth/upsertOauthToken";
 import { createDiscordIdentity } from "./auth/createDiscordIdentity";
 import { redirectAtLogin } from "./auth/redirectAtLogin";
+import { OAuthProvider } from "stytch";
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -70,7 +71,18 @@ app.get("/auth/token", async (req, res) => {
           transaction,
         });
       } else if (stytchOAuthentication.provider_type === "Google") {
-        await createEmailIdentities(user, stytchOAuthentication.user.emails);
+        const providerDetails: OAuthProvider | undefined =
+          stytchOAuthentication.user.providers.find((provider) => {
+            return (
+              provider.oauth_user_registration_id ===
+              stytchOAuthentication.oauth_user_registration_id
+            );
+          });
+        await createEmailIdentities(
+          user,
+          stytchOAuthentication.user.emails,
+          providerDetails?.profile_picture_url,
+        );
       }
     } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
       const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({

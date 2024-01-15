@@ -18,8 +18,7 @@ export const upsertOauthToken = async ({
 
   await prisma.oauths.upsert({
     where: {
-      userId: user.id,
-      type: stytchOAuthentication.provider_type as OauthTypes,
+      userId_type: { userId: user.id, type: stytchOAuthentication.provider_type as OauthTypes },
     },
     update: {
       type: stytchOAuthentication.provider_type as OauthTypes,

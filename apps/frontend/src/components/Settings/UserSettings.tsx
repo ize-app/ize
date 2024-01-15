@@ -45,7 +45,7 @@ export const UserSettings = () => {
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
-                avatarUrl={"./email.svg"}
+                avatarUrl={identity.icon}
                 type={AgentType.Identity}
               />
             );
@@ -58,7 +58,7 @@ export const UserSettings = () => {
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
-                avatarUrl={"./discord-logo-black.svg"}
+                avatarUrl={identity.icon}
                 type={AgentType.Identity}
               />
             );

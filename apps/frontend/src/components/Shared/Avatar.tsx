@@ -151,7 +151,6 @@ export const AvatarWithName = ({
           type={type}
           avatarUrl={url}
           name={name}
-          variant="rounded"
           backgroundColor={color}
           parent={parent ? { name: parent.name, avatarUrl: parent.avatarUrl } : undefined}
         />
