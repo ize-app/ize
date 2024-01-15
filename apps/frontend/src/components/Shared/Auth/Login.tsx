@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { StytchLogin } from "@stytch/react";
 import {
   OAuthProviders,
@@ -8,10 +8,12 @@ import {
   StytchEvent,
   StytchError,
   Callbacks,
+  StytchEventType,
 } from "@stytch/vanilla-js";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 const config: StytchLoginConfig = {
   products: [Products.oauth, Products.crypto, Products.passwords, Products.emailMagicLinks],
@@ -25,19 +27,22 @@ const config: StytchLoginConfig = {
         custom_scopes: ["identify", "guilds"],
       },
     ],
-    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
-    signupRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
+    loginRedirectURL: "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
+    signupRedirectURL:
+      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
   },
   passwordOptions: {
-    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname, //"http://localhost:5173
+    loginRedirectURL:
+      "http://localhost:5173/api/auth/password?next_route=" + window.location.pathname, //"http://localhost:5173
     resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
     loginExpirationMinutes: 30,
     resetPasswordExpirationMinutes: 30,
   },
   emailMagicLinksOptions: {
-    loginRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
+    loginRedirectURL: "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
     loginExpirationMinutes: 30,
-    signupRedirectURL: "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
+    signupRedirectURL:
+      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
     signupExpirationMinutes: 30,
   },
 };
@@ -74,15 +79,35 @@ const styles: StyleConfig = {
   },
 };
 
-const callBacks: Callbacks = {
-  onEvent: (message: StytchEvent) => console.log("Stytch event", message),
-  onError: (message: StytchError) => console.log("Stytch error", message),
-};
-
 const Login = () => {
+  const { refetch } = useContext(CurrentUserContext);
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // Oauth/Magiclink are already redirected to backend endpoint by stytch
+  // so these callbacks call backend for crypto wallets / passwords to create the identity if it doesn't exist already
+  const callBacks: Callbacks = {
+    onEvent: async (message: StytchEvent) => {
+      switch (message.type) {
+        case StytchEventType.CryptoWalletAuthenticate:
+          await fetch("/api/auth/crypto", { method: "POST" });
+          if (refetch) {
+            await refetch();
+          }
+          return;
+        case StytchEventType.PasswordCreate:
+          await fetch("/api/auth/password", { method: "POST" });
+          if (refetch) {
+            await refetch();
+          }
+          return;
+      }
+    },
+    // TODO: set error message toast for this
+    onError: (message: StytchError) => console.log("Stytch authentication error:", message.message),
+  };
 
   return (
     <Box>

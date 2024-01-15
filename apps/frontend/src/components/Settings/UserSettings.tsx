@@ -100,12 +100,16 @@ export const UserSettings = () => {
   so I need to manually construct the request URL
   */
   const authenticateDiscord = useCallback(async () => {
-    const resp = await fetch("api/auth/attach-discord");
+    const resp = await fetch("api/auth/attach-discord", {
+      method: "POST",
+    });
     const attachToken = await resp.text();
 
     const scopes = ["identify", "guilds"];
-    const loginRedirectUrl = "http://localhost:5173/settings";
-    const signupRedirectUrl = "http://localhost:5173/settings";
+    const loginRedirectUrl =
+      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname;
+    const signupRedirectUrl =
+      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname;
     const baseUrl = new URL("https://test.stytch.com/v1/public/oauth/discord/start");
     //@ts-ignore
     baseUrl.searchParams.append("public_token", import.meta.env.VITE_STYTCH_PUBLIC_TOKEN as string);

@@ -1,23 +1,28 @@
+import cookieParser from "cookie-parser";
 import express from "express";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import session from "express-session";
 import cors from "cors";
 import { json } from "body-parser";
-import { resolvers } from "./graphql/resolvers/query_resolvers";
+
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
 import { loadFilesSync } from "@graphql-tools/load-files";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { mergeTypeDefs } from "@graphql-tools/merge";
-import cookieParser from "cookie-parser";
-import { authenticate } from "./authentication";
+
+import { resolvers } from "./graphql/resolvers/query_resolvers";
+import { authenticateSession } from "./auth/authenticateSession";
 import { GraphqlRequestContext } from "./graphql/context";
 import { DiscordApi } from "./discord/api";
-import session from "express-session";
-import { OauthTypes } from "@prisma/client";
 import { prisma } from "./prisma/client";
-import { stytchClient } from "./authentication";
-import { APIUser } from "discord.js";
-import { encrypt } from "./encrypt";
+import { stytchClient } from "./auth/authenticateSession";
 import { MePrismaType } from "./utils/formatUser";
+import { createBlockchainIdentities } from "./auth/createBlockchainIdentities";
+import { createEmailIdentities } from "./auth/createEmailIdentities";
+import { upsertUser } from "./auth/upsertUser";
+import { upsertOauthToken } from "./auth/upsertOauthToken";
+import { createDiscordIdentity } from "./auth/createDiscordIdentity";
+import { redirectAtLogin } from "./auth/redirectAtLogin";
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -25,7 +30,7 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const app = express();
 
 app.use(cookieParser());
-app.use(authenticate);
+app.use(authenticateSession);
 
 const sessionValue = {
   secret: process.env.SESSION_SECRET as string,
@@ -37,149 +42,94 @@ if (app.get("env") === "production") {
   sessionValue.cookie.secure = true; // serve secure cookies
 }
 
-app.get("/auth", async (req, res) => {
-  const { stytch_token_type, token, next_route } = req.query;
-
-  const redirectURL = new URL(next_route?.toString() as string, "http://localhost:5173");
-  // removing potentially malicious url params
-  redirectURL.search = "";
+// handles login / signup for all auth flows that user a access token (oauth / magiclink)
+// creates session and also creates appropriate identities for user
+app.get("/auth/token", async (req, res) => {
+  const { stytch_token_type, token } = req.query;
 
   let sessionToken: string | undefined;
-  let user;
+  await prisma.$transaction(async (transaction) => {
+    if (typeof token !== "string" || !token || !stytch_token_type)
+      throw Error("Missing authentication token");
 
-  if (typeof token === "string" && token && stytch_token_type) {
     if (stytch_token_type === "oauth") {
-      const authentication = await stytchClient.oauth.authenticate({
+      const stytchOAuthentication = await stytchClient.oauth.authenticate({
         token: token,
         session_duration_minutes: 60,
       });
-      sessionToken = authentication.session_token;
 
-      // check if that user already exists, create if they don't
-      user = await prisma.user.findFirst({
-        where: {
-          stytchId: authentication.user.user_id,
-        },
-      });
-
-      const encryptedAccessToken = encrypt(authentication.provider_values.access_token);
-      const encryptedRefreshToken = encrypt(authentication.provider_values.refresh_token);
-
-      if (user) {
-        await prisma.oauths.upsert({
-          where: {
-            userId: user.id,
-            type: authentication.provider_type as OauthTypes,
-          },
-          update: {
-            type: authentication.provider_type as OauthTypes,
-            accessToken: encryptedAccessToken,
-            refreshToken: encryptedRefreshToken,
-            scopes: authentication.provider_values.scopes,
-            expiresAt: authentication.provider_values.expires_at,
-          },
-          create: {
-            userId: user.id,
-            type: authentication.provider_type as OauthTypes,
-            accessToken: encryptedAccessToken,
-            refreshToken: encryptedRefreshToken,
-            scopes: authentication.provider_values.scopes,
-            expiresAt: authentication.provider_values.expires_at,
-          },
-        });
-      } else {
-        user = await prisma.user.create({
-          data: {
-            stytchId: authentication.user.user_id,
-            firstName: authentication.user.name?.first_name ?? null,
-            lastName: authentication.user.name?.last_name ?? null,
-            Oauths: {
-              create: {
-                type: authentication.provider_type as OauthTypes,
-                accessToken: encryptedAccessToken,
-                refreshToken: encryptedRefreshToken,
-                scopes: authentication.provider_values.scopes,
-                expiresAt: authentication.provider_values.expires_at,
-              },
-            },
-          },
-        });
-      }
+      sessionToken = stytchOAuthentication.session_token;
+      const user = await upsertUser({ stytchUser: stytchOAuthentication.user, transaction });
+      await upsertOauthToken({ stytchOAuthentication, user });
 
       // create Discord username identity (if it doesn't already exist) and tie it to that user
-      if (authentication.provider_type === "Discord") {
-        const discordUser = await fetch("https://discord.com/api/users/@me", {
-          headers: {
-            Authorization: `Bearer ${authentication.provider_values.access_token}`,
-          },
+      if (stytchOAuthentication.provider_type === "Discord") {
+        await createDiscordIdentity({
+          userId: user.id,
+          accessToken: stytchOAuthentication.provider_values.access_token,
+          transaction,
         });
-
-        const { id, username, avatar, discriminator } = (await discordUser.json()) as APIUser;
-
-        const existingIdentity = await prisma.identityDiscord.findFirst({
-          where: {
-            discordUserId: id,
-          },
-        });
-
-        if (existingIdentity) {
-          await prisma.identity.update({
-            where: {
-              id: existingIdentity.identityId,
-            },
-            data: {
-              userId: user.id,
-              IdentityDiscord: {
-                update: {
-                  username,
-                  avatar,
-                  discriminator,
-                },
-              },
-            },
-          });
-        } else {
-          await prisma.identity.create({
-            data: {
-              userId: user.id,
-              IdentityDiscord: {
-                create: {
-                  discordUserId: id,
-                  username,
-                  avatar,
-                  discriminator,
-                },
-              },
-            },
-          });
-        }
+      } else if (stytchOAuthentication.provider_type === "Google") {
+        await createEmailIdentities(user, stytchOAuthentication.user.emails);
       }
     } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
-      const authentication = await stytchClient.magicLinks.authenticate({
+      const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
         token,
         session_duration_minutes: 60,
       });
-      sessionToken = authentication.session_token;
+      sessionToken = stytchMagicAuthentication.session_token;
+      const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
+      await createEmailIdentities(user, stytchMagicAuthentication.user.emails);
     }
-  }
+  });
 
   if (sessionToken) res.cookie("stytch_session", sessionToken);
 
-  res.redirect(redirectURL.toString());
+  redirectAtLogin({ req, res });
 });
 
-app.get("/auth/attach-discord", async (req, res) => {
+// Attaches Discord login to an existing Stytch account
+app.post("/auth/attach-discord", async (req, res) => {
   const session_token = req.cookies["stytch_session"];
   if (!session_token) res.status(401).send();
-
   const resp = await stytchClient.oauth.attach({
     session_token,
     provider: "discord",
   });
-
-  // res.cookie("oauth_attach_token", resp.oauth_attach_token);
-
   res.send(resp.oauth_attach_token);
+});
+
+// creates blockchain identities for user on authentication
+// session already created for user on FE
+app.post("/auth/crypto", async (req, res) => {
+  const session_token = req.cookies["stytch_session"];
+  const sessionData = await stytchClient.sessions.authenticate({ session_token });
+
+  if (!session_token) res.status(401).send();
+
+  // create blockchain identities if they don't already exist
+  await createBlockchainIdentities(res.locals.user, sessionData.user.crypto_wallets);
+
+  res.status(200).send();
+});
+
+// creates email identities for user on authentication
+// session already created for user on FE
+app.post("/auth/password", async (req, res) => {
+  const session_token = req.cookies["stytch_session"];
+  const sessionData = await stytchClient.sessions.authenticate({ session_token });
+  const sessionToken = sessionData.session_token;
+
+  if (!session_token) {
+    res.status(401).send();
+  }
+
+  // create email identities if they don't already exist
+  await createEmailIdentities(res.locals.user, sessionData.user.emails);
+  res.cookie("stytch_session", sessionToken);
+
+  // res.status(200).send();
+  redirectAtLogin({ req, res });
 });
 
 app.use(session(sessionValue));
@@ -203,7 +153,7 @@ const server = new ApolloServer<GraphqlRequestContext>({
 });
 
 server.start().then(() => {
-  app.use(authenticate);
+  app.use(authenticateSession);
   app.use(
     "/graphql",
     cors<cors.CorsRequest>({

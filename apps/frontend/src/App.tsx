@@ -13,25 +13,22 @@ import { SnackbarProvider } from "./contexts/SnackbarContext";
 import { router } from "./routers/router";
 import GlobalStyles from "./style/global";
 import muiTheme from "./style/muiTheme";
-import TokenAuthenticator from "./components/shared/Auth/TokenAuthenticator";
 
 function App() {
   return (
     <StytchProvider stytch={stytchClient}>
-      <TokenAuthenticator>
-        <ApolloProvider client={apolloClient}>
-          <HelmetProvider>
-            <Global styles={GlobalStyles} />
-            <ThemeProvider theme={muiTheme}>
-              <CurrentUserProvider>
-                <SnackbarProvider>
-                  <RouterProvider router={router} />
-                </SnackbarProvider>
-              </CurrentUserProvider>
-            </ThemeProvider>
-          </HelmetProvider>
-        </ApolloProvider>
-      </TokenAuthenticator>
+      <ApolloProvider client={apolloClient}>
+        <HelmetProvider>
+          <Global styles={GlobalStyles} />
+          <ThemeProvider theme={muiTheme}>
+            <CurrentUserProvider>
+              <SnackbarProvider>
+                <RouterProvider router={router} />
+              </SnackbarProvider>
+            </CurrentUserProvider>
+          </ThemeProvider>
+        </HelmetProvider>
+      </ApolloProvider>
     </StytchProvider>
   );
 }
