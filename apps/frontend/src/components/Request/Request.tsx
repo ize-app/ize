@@ -145,10 +145,7 @@ export const Request = () => {
             </Box>
             <Box sx={{ display: "flex", gap: ".3rem" }}>
               <Typography variant="body1"> Requested by </Typography>{" "}
-              <NameWithPopper
-                agents={[request.creator as AgentSummaryPartsFragment]}
-                name={request.creator.name}
-              />
+              <NameWithPopper agents={[request.creator]} name={request.creator.name} />
             </Box>
           </Box>
         </Box>

@@ -1,5 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import { Prisma } from "@prisma/client";
+import { decrypt } from "@/encrypt";
+import { MePrismaType } from "@/utils/formatUser";
 import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 
 type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
@@ -10,13 +11,10 @@ export class DiscordApi {
     private readonly isBot: boolean = false,
   ) {}
 
-  static forUser(
-    user: Prisma.UserGetPayload<{
-      include: { discordOauth: true; discordData: true };
-    }>,
-  ) {
-    if (!user?.discordOauth?.accessToken) throw Error("ERROR No Discord access token for user.");
-    return new DiscordApi(user.discordOauth.accessToken, false);
+  static forUser(user: MePrismaType) {
+    const discordAuth = user.Oauths.find((oauth) => oauth.type === "Discord");
+    if (!discordAuth) return undefined;
+    else return new DiscordApi(decrypt(discordAuth.accessToken), false);
   }
 
   static forBotUser() {

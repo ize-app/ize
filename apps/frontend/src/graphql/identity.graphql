@@ -1,0 +1,40 @@
+fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
+  id
+  address
+}
+
+fragment IdentityEmailSummaryParts on IdentityEmail {
+  id
+  email
+  icon
+}
+
+fragment IdentityDiscordSummaryParts on IdentityDiscord {
+  id
+  username
+  discordUserId
+  avatar
+}
+
+fragment IdentityTypesSummaryParts on IdentityType {
+  __typename
+  ... on IdentityBlockchain {
+    ...IdentityBlockchainSummaryParts
+  }
+  ... on IdentityEmail {
+    ...IdentityEmailSummaryParts
+  }
+  ... on IdentityDiscord {
+    ...IdentityDiscordSummaryParts
+  }
+}
+
+fragment IdentitySummaryParts on Identity {
+  __typename
+  id
+  name
+  icon
+  identityType {
+    ...IdentityTypesSummaryParts
+  }
+}

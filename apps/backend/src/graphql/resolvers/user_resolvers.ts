@@ -1,14 +1,9 @@
-import { User } from "@prisma/client";
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
-import { Me } from "@graphql/generated/resolver-types";
+import { Me, Identity } from "@graphql/generated/resolver-types";
 import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
-import { userInclude, formatUser } from "backend/src/utils/formatUser";
-
-const users = async (): Promise<User[]> => {
-  const users = await prisma.user.findMany();
-  return users;
-};
+import { userInclude, formatUser } from "@utils/formatUser";
+import { formatIdentity } from "@/utils/formatIdentity";
 
 const me = async (
   root: unknown,
@@ -18,6 +13,10 @@ const me = async (
   if (!contextValue.currentUser) return null;
 
   const groupIds = await getGroupIdsOfUserService(contextValue);
+  const identities: Identity[] = contextValue.currentUser.Identities.map((identity) => {
+    return formatIdentity(identity, contextValue.currentUser);
+  });
+
   const userData = await prisma.user.findFirstOrThrow({
     include: userInclude,
     where: { id: contextValue.currentUser.id },
@@ -27,10 +26,10 @@ const me = async (
   return {
     user,
     groupIds,
+    identities: [...identities],
   };
 };
 
 export const userQueries = {
-  users,
   me,
 };

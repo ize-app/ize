@@ -121,7 +121,7 @@ export const Process = () => {
               <>
                 <Button
                   variant="contained"
-                  disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
+                  disabled={!hasPermission(process.roles.request)}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",
@@ -145,9 +145,7 @@ export const Process = () => {
                       }),
                     );
                   }}
-                  disabled={
-                    !hasPermission(me?.user.id, me?.groupIds, process.evolve?.roles.request)
-                  }
+                  disabled={!hasPermission(process.evolve?.roles.request)}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",
@@ -166,7 +164,7 @@ export const Process = () => {
                     }),
                   );
                 }}
-                disabled={!hasPermission(me?.user.id, me?.groupIds, process.roles.request)}
+                disabled={!hasPermission(process.roles.request)}
                 sx={{
                   width: "140px",
                   display: !me ? "none" : "flex",

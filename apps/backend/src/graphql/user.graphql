@@ -1,11 +1,11 @@
 type Query {
-  users: [User]
   me: Me
 }
 
 type Me {
   user: User!
   groupIds: [String!]!
+  identities: [Identity!]!
 }
 
 type User {
@@ -13,5 +13,4 @@ type User {
   name: String!
   icon: String
   createdAt: String!
-  discordData: DiscordData!
 }

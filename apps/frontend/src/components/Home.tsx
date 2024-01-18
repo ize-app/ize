@@ -3,8 +3,8 @@ import Button from "@mui/material/Button";
 import { useContext } from "react";
 
 import Dashboard from "./Dashboard/Dashboard";
-import { ConnectToDiscord } from "./shared/ConnectToDiscord";
 import { CurrentUserContext } from "../contexts/current_user_context";
+import Login from "./shared/Auth/Login";
 
 const UnauthenticatedHome = () => {
   return (
@@ -38,10 +38,10 @@ const UnauthenticatedHome = () => {
           },
         })}
       >
-        <Button variant="contained" color="primary" href="/api/auth/discord/login">
+        <Button variant="contained" color="primary" href="/">
           Join Alpha Waitlist
         </Button>
-        <ConnectToDiscord />
+        <Login />
       </Box>
     </Box>
   );

@@ -14,20 +14,13 @@ import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { ExpandedRequest } from "./ExpandedRequest";
-import { reformatAgentForAvatar } from "../../Avatar";
 import { AvatarsCell, StatusCell, TableCellHideable, TwoTierCell } from "../TableCells";
 
-import {
-  AgentSummaryPartsFragment,
-  RequestSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
+import { RequestSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { hasPermission } from "@/utils/hasPermissions";
 
 function RequestRow(props: { request: RequestSummaryPartsFragment }) {
-  const { me } = React.useContext(CurrentUserContext);
   const { request } = props;
   const [open, setOpen] = React.useState(false);
 
@@ -65,11 +58,7 @@ function RequestRow(props: { request: RequestSummaryPartsFragment }) {
           component="th"
           scope="row"
         />
-        <AvatarsCell
-          align="center"
-          avatars={[reformatAgentForAvatar(request.creator as AgentSummaryPartsFragment)]}
-          hideOnSmallScreen={true}
-        />
+        <AvatarsCell align="center" avatars={[request.creator]} hideOnSmallScreen={true} />
         <StatusCell
           align="center"
           hideOnSmallScreen={true}

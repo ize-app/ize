@@ -8,7 +8,8 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { AgentType, InputDataType } from "@/graphql/generated/graphql";
+import { InputDataType, NewAgentTypes } from "@/graphql/generated/graphql";
+import { ethers } from "ethers";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -89,18 +90,57 @@ const inputTemplateFormSchema = z.object({
 export const createInputTemplatesFormSchema = (fieldArrayName: string) =>
   z.object({ [fieldArrayName]: z.array(inputTemplateFormSchema) });
 
-const organizationFormSchema = z.object({
-  name: z.string(),
-  avatarUrl: z.string().optional().nullable(),
-});
-
-const userGroupFormSchema = z.object({
+const agentFormSchema = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.nativeEnum(AgentType),
-  avatarUrl: z.string().url().optional().nullable(),
-  backgroundColor: z.string().optional().nullable(),
-  parent: organizationFormSchema.optional().nullable(),
+  icon: z.string().optional().nullable(),
+  __typename: z.string(),
+  identityType: z.object({
+    __typename: z.any(),
+  }),
+});
+
+export const newAgentFormSchema = z.object({
+  type: z.nativeEnum(NewAgentTypes),
+  ethAddress: z
+    .string()
+    .trim()
+    .transform<string[]>((str, ctx) => {
+      const parsed = z
+        .array(
+          z
+            .string()
+            .trim()
+            .refine((value) => ethers.isAddress(value), {
+              message: "Provided address is invalid. Please insure you have typed correctly.",
+            }),
+        )
+        .safeParse(str.split(","));
+
+      if (!parsed.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: parsed.error.issues[0].message,
+        });
+        return z.NEVER;
+      } else {
+        return parsed.data;
+      }
+    })
+    .optional(),
+  emailAddress: z
+    .string()
+    .trim()
+    .transform<string[]>((str, ctx) => {
+      try {
+        const parsed = z.array(z.string().trim().email()).parse(str.split(","));
+        return parsed;
+      } catch (e) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid email(s)" });
+        return [];
+      }
+    })
+    .optional(),
 });
 
 const absoluteDecisionFormSchema = z.object({
@@ -112,12 +152,10 @@ const percentageDecisionFormSchema = z.object({
   quorum: z.coerce.number(),
 });
 
-const rolesFormSchemaUnrefined = z.object({
+const decisionFormSchemaUnrefined = z.object({
   rights: z.object({
-    request: z.array(userGroupFormSchema).min(1, "Please select at least one group or individual."),
-    response: z
-      .array(userGroupFormSchema)
-      .min(1, "Please select at least one group or individual."),
+    request: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
+    response: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
   }),
   decision: z.object({
     type: z.nativeEnum(DecisionType),
@@ -127,7 +165,7 @@ const rolesFormSchemaUnrefined = z.object({
   }),
 });
 
-const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
+const refineExtendedSharedSchema = (schema: typeof decisionFormSchemaUnrefined) =>
   schema
     .refine(
       (data) => {
@@ -157,10 +195,10 @@ const refineExtendedSharedSchema = (schema: typeof rolesFormSchemaUnrefined) =>
       },
     );
 
-export const rolesFormSchema = refineExtendedSharedSchema(rolesFormSchemaUnrefined);
+export const rolesFormSchema = refineExtendedSharedSchema(decisionFormSchemaUnrefined);
 
 export const evolveProcessFormSchema = z.object({
-  evolve: rolesFormSchemaUnrefined.extend({
+  evolve: decisionFormSchemaUnrefined.extend({
     evolveDefaults: z.nativeEnum(DefaultEvolveProcessOptions),
   }),
 });

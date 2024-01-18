@@ -8,8 +8,9 @@ const link = createHttpLink({
 export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     possibleTypes: {
-      Agent: ["User", "Group"],
+      Agent: ["Identity", "Group"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
+      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
     },
   }),
   link,

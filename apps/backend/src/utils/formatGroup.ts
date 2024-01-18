@@ -8,7 +8,7 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
     include: userInclude,
   },
-  discordRoleGroup: {
+  GroupDiscordRole: {
     include: {
       discordServer: true,
     },
@@ -20,34 +20,34 @@ export type GroupPrismaType = Prisma.GroupGetPayload<{
 }>;
 
 export const formatGroup = (group: GroupPrismaType): Group => {
-  if (!group.discordRoleGroup) throw Error("ERROR formatGroup: No Discord role group");
+  if (!group.GroupDiscordRole) throw Error("ERROR formatGroup: No Discord role group");
   const obj: Group = {
     ...group,
     __typename: "Group",
     creator: formatUser(group.creator),
     // discord only includes the @sign for @everyone
     name:
-      group.discordRoleGroup.name !== "@everyone"
-        ? "@" + group.discordRoleGroup.name
-        : group.discordRoleGroup.name,
-    icon: group.discordRoleGroup.icon
+      group.GroupDiscordRole.name !== "@everyone"
+        ? "@" + group.GroupDiscordRole.name
+        : group.GroupDiscordRole.name,
+    icon: group.GroupDiscordRole.icon
       ? DiscordApi.createRoleIconURL(
-          group.discordRoleGroup.discordRoleId,
-          group.discordRoleGroup.icon,
+          group.GroupDiscordRole.discordRoleId,
+          group.GroupDiscordRole.icon,
         )
       : null,
     // Discord uses 0 to mean "no color", though we want to represent that with null instead
     color:
-      group.discordRoleGroup.color === 0
+      group.GroupDiscordRole.color === 0
         ? null
-        : DiscordApi.colorIntToHex(group.discordRoleGroup.color),
-    memberCount: group.discordRoleGroup.memberCount,
+        : DiscordApi.colorIntToHex(group.GroupDiscordRole.color),
+    memberCount: group.GroupDiscordRole.memberCount,
     organization: {
-      name: group.discordRoleGroup.discordServer.name,
-      icon: group.discordRoleGroup.discordServer.icon
+      name: group.GroupDiscordRole.discordServer.name,
+      icon: group.GroupDiscordRole.discordServer.icon
         ? DiscordApi.createServerIconURL(
-            group.discordRoleGroup.discordServer.discordServerId,
-            group.discordRoleGroup.discordServer.icon,
+            group.GroupDiscordRole.discordServer.discordServerId,
+            group.GroupDiscordRole.discordServer.icon,
           )
         : null,
     },

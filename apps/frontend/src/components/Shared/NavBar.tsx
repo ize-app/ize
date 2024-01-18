@@ -1,24 +1,24 @@
-import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Home from "@mui/icons-material/Home";
 import Logout from "@mui/icons-material/Logout";
 import Box from "@mui/material/Box";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import SettingsIcon from "@mui/icons-material/Settings";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { Avatar } from "./Avatar";
-import { ConnectToDiscord } from "./ConnectToDiscord";
-import { CurrentUserContext } from "../../contexts/current_user_context";
-import { LogOutDocument } from "../../graphql/generated/graphql";
-import { Route } from "../../routers/routes";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 import { colors } from "../../style/style";
+import Login from "./Auth/Login";
+import { useStytch } from "@stytch/react";
+import { Route } from "@/routers/routes";
 
 interface NavLinkProps {
   title: string;
@@ -65,15 +65,7 @@ const UserDropDownContainer = styled.li`
 const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
-  const [logOut] = useMutation(LogOutDocument, {
-    onCompleted: () => navigate(Route.Home),
-    update: (cache) =>
-      cache.evict({
-        id: "ROOT_QUERY",
-        fieldName: "me",
-      }),
-  });
+  const stytch = useStytch();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -82,7 +74,7 @@ const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element =
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    logOut();
+    stytch.session.revoke();
     handleClose();
   };
 
@@ -112,6 +104,12 @@ const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element =
             <Home fontSize="small" />
           </ListItemIcon>
           <Link to={"/"}>Dashboard</Link>
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <Link to={Route.UserSettings}>Settings</Link>
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
@@ -143,6 +141,7 @@ const NavControlContainer = styled.ol`
 export const NavBar: React.FC = () => {
   const { me } = useContext(CurrentUserContext);
   const location = useLocation();
+
   const isHomePage = location.pathname === "/";
 
   const theme = useTheme();
@@ -158,7 +157,9 @@ export const NavBar: React.FC = () => {
 
       <NavControlContainer>
         {me == null ? (
-          <ConnectToDiscord />
+          <>
+            <Login />
+          </>
         ) : (
           <>
             {isOverSmScreen ? <NavLink title="Dashboard" url="/" /> : null}

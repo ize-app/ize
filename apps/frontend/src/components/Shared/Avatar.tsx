@@ -9,7 +9,11 @@ import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { AgentSummaryPartsFragment, AgentType } from "../../graphql/generated/graphql";
+import {
+  AgentSummaryPartsFragment,
+  AgentType,
+  UserSummaryPartsFragment,
+} from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
 
 export interface AvatarWithNameProps {
@@ -35,23 +39,39 @@ export interface AvatarProps extends MuiAvatarProps {
   backgroundColor?: string | null | undefined;
 }
 
-export const reformatAgentForAvatar = (agent: AgentSummaryPartsFragment): AvatarProps => {
-  const parent =
-    agent.__typename === "Group"
-      ? {
-          name: agent.organization.name,
-          avatarUrl: agent.organization.icon,
-        }
-      : undefined;
+export const reformatAgentForAvatar = (
+  agent: AgentSummaryPartsFragment | UserSummaryPartsFragment,
+): AvatarProps => {
+  switch (agent.__typename) {
+    case "Group":
+      return {
+        id: agent.id,
+        name: agent.name,
+        type: AgentType.Group,
+        avatarUrl: agent.icon,
+        backgroundColor: agent.color,
+      };
 
-  return {
-    id: agent.id,
-    type: agent.__typename === "Group" ? AgentType.Group : AgentType.User,
-    avatarUrl: agent.icon,
-    name: agent.name,
-    backgroundColor: agent.__typename === "Group" && agent.color ? agent.color : "",
-    parent: parent,
-  };
+    case "Identity":
+      return {
+        id: agent.id,
+        name: agent.name,
+        type: AgentType.Identity,
+        avatarUrl: agent.icon,
+        backgroundColor: null,
+      };
+    case "User":
+      return {
+        id: agent.id,
+        name: agent.name,
+        type: AgentType.Identity, // TODO: Make an "AvatarType" enum that includes "User"
+        avatarUrl: agent.icon,
+        backgroundColor: null,
+      };
+    default: {
+      throw Error("ERROR: Unknown agent type for avatar (reformatAgentForAvatar)");
+    }
+  }
 };
 
 export const Avatar = ({
@@ -110,6 +130,7 @@ export const AvatarWithName = ({
   id,
   name,
   avatarUrl: url,
+  type,
   parent,
   color,
 }: AvatarWithNameProps): JSX.Element => {
@@ -125,10 +146,9 @@ export const AvatarWithName = ({
       }}
     >
       {
-        // TODO: Going to rebuild this avatar component soon, so holding off onfixing this ts error
-        //@ts-ignore
         <Avatar
           id={id}
+          type={type}
           avatarUrl={url}
           name={name}
           backgroundColor={color}
@@ -180,7 +200,7 @@ const AvatarPopper = ({
           }}
           elevation={4}
         >
-          {users.map((user) => (
+          {users.map((user: AvatarProps) => (
             <AvatarWithName
               id={user.id}
               type={user.type}
@@ -196,7 +216,12 @@ const AvatarPopper = ({
     )}
   </Popper>
 );
-export const AvatarGroup = ({ agents }: { agents: AvatarProps[] }): JSX.Element => {
+export const AvatarGroup = ({
+  agents,
+}: {
+  agents: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
+}): JSX.Element => {
+  const avatars: AvatarProps[] = agents.map((agent) => reformatAgentForAvatar(agent));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -220,7 +245,7 @@ export const AvatarGroup = ({ agents }: { agents: AvatarProps[] }): JSX.Element 
         onMouseEnter={handlePopperOpen}
         onMouseLeave={handlePopperClose}
       >
-        {agents.map((a) => (
+        {avatars.map((a) => (
           <Avatar
             id={a.id}
             key={a.id}
@@ -232,7 +257,7 @@ export const AvatarGroup = ({ agents }: { agents: AvatarProps[] }): JSX.Element 
           />
         ))}
       </MuiAvatarGroup>
-      <AvatarPopper users={agents} anchorEl={anchorEl} open={open} />
+      <AvatarPopper users={avatars} anchorEl={anchorEl} open={open} />
     </>
   );
 };
@@ -242,7 +267,7 @@ export const NameWithPopper = ({
   agents,
 }: {
   name: string;
-  agents: AgentSummaryPartsFragment[];
+  agents: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
 }) => {
   const agentsFormatted: AvatarProps[] = agents.map((agent) => reformatAgentForAvatar(agent));
 

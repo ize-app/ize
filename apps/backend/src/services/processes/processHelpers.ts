@@ -132,15 +132,15 @@ export const createRoleSet = async ({
 }) => {
   return await transaction.roleSet.create({
     data: {
-      roleGroups: {
+      RoleGroups: {
         create: roles
-          .filter((roles) => roles.agentType === "Group")
+          .filter((role) => role.agentType === "Group")
           .map((role) => ({ groupId: role.id, type: role.type })),
       },
-      roleUsers: {
+      RoleIdentities: {
         create: roles
-          .filter((roles) => roles.agentType === "User")
-          .map((role) => ({ userId: role.id, type: role.type })),
+          .filter((role) => role.agentType === "Identity")
+          .map((role) => ({ identityId: role.id, type: role.type })),
       },
     },
   });

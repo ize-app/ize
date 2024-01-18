@@ -13,8 +13,14 @@ import {
   AgentSummaryPartsFragment,
   GroupsAndUsersEliglbeForRoleDocument,
 } from "@/graphql/generated/graphql";
+import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 
-type FormFields = z.infer<typeof rolesFormSchema>;
+import { DevTool } from "@hookform/devtools";
+
+export type RoleFormFields = z.infer<typeof rolesFormSchema>;
+
+export type SetFieldValue = UseFormSetValue<RoleFormFields>;
+export type GetFieldValues = UseFormGetValues<RoleFormFields>;
 
 export const Roles = () => {
   const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
@@ -23,7 +29,13 @@ export const Roles = () => {
 
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
-  const { control, handleSubmit, watch } = useForm<FormFields>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue: setFieldValue,
+    getValues: getFieldValues,
+  } = useForm<RoleFormFields>({
     defaultValues: {
       rights: {
         request: formState.rights?.request ?? [],
@@ -47,7 +59,7 @@ export const Roles = () => {
 
   const isPercentageThreshold = watch("decision.type") === DecisionType.Percentage;
 
-  const onSubmit = (data: FormFields) => {
+  const onSubmit = (data: RoleFormFields) => {
     // Going to rebuild the role selection so going to ignore this error for now
     //@ts-ignore
     setFormState((prev) => ({
@@ -72,11 +84,14 @@ export const Roles = () => {
             gap: "20px",
           }}
         >
+          <DevTool control={control} placement="bottom-left" />
           <RolesAndDecisionSystem
             //@ts-ignore
             control={control}
             agents={agents}
             isPercentageThreshold={isPercentageThreshold}
+            setFieldValue={setFieldValue}
+            getFieldValues={getFieldValues}
           />
         </form>
       </WizardBody>

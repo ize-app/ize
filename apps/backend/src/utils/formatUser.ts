@@ -1,25 +1,31 @@
-import { DiscordApi } from "@discord/api";
 import { Prisma } from "@prisma/client";
 import { User } from "@graphql/generated/resolver-types";
 
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
-  discordData: true,
+  Identities: {
+    include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
+  },
 });
 
-type UserPrismaType = Prisma.UserGetPayload<{
+export const meInclude = Prisma.validator<Prisma.UserInclude>()({
+  Oauths: true,
+  Identities: {
+    include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
+  },
+});
+
+export type UserPrismaType = Prisma.UserGetPayload<{
   include: typeof userInclude;
 }>;
 
+export type MePrismaType = Prisma.UserGetPayload<{
+  include: typeof meInclude;
+}>;
+
 export const formatUser = (user: UserPrismaType): User => {
-  if (!user.discordData) throw Error("ERROR: User does not have discord data");
   return {
-    __typename: "User",
     id: user.id,
-    name: user.discordData.username,
-    icon:
-      user.discordData.avatar &&
-      DiscordApi.createAvatarURL(user.discordData.discordId, user.discordData.avatar),
+    name: user.firstName ? user.firstName + " " + user.lastName : "User",
     createdAt: user.createdAt.toString(),
-    discordData: user.discordData,
   };
 };

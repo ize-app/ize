@@ -1,9 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
-import { discordServers } from "./discord_resolvers";
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
-import { formatUser, userInclude } from "backend/src/utils/formatUser";
+import { formatProcess, processInclude } from "@utils/formatProcess";
+import { getGroupsAndUsersEliglbeForRole } from "@/services/processes/getGroupsAndUsersEligibleForRole";
 
 import {
   Group,
@@ -11,12 +9,16 @@ import {
   User,
   MutationNewProcessArgs,
   MutationNewEditProcessRequestArgs,
+  MutationNewAgentsArgs,
   QueryProcessArgs,
   QueryProcessesForCurrentUserArgs,
   QueryProcessesForGroupArgs,
+  Agent,
+  NewAgentTypes,
+  // Agent,
 } from "@graphql/generated/resolver-types";
 
-import { newCustomProcess } from "../../services/processes/newProcess";
+import { newCustomProcess } from "@services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
 
@@ -36,7 +38,11 @@ const newEditProcessRequest = async (
   return await newEditRequestService({ args: args.inputs }, context);
 };
 
-const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> => {
+const process = async (
+  root: unknown,
+  args: QueryProcessArgs,
+  context: GraphqlRequestContext,
+): Promise<Process> => {
   const processData = await prisma.process.findFirstOrThrow({
     include: processInclude,
     where: {
@@ -44,7 +50,71 @@ const process = async (root: unknown, args: QueryProcessArgs): Promise<Process> 
     },
   });
 
-  return formatProcess(processData);
+  return formatProcess(processData, context.currentUser);
+};
+
+const newAgents = async (
+  root: unknown,
+  args: MutationNewAgentsArgs,
+  context: GraphqlRequestContext,
+): Promise<Agent[]> => {
+  // ): Promise<Agent[]> => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+  const agents = await Promise.all(
+    args.agents.map(async (a) => {
+      switch (a.type) {
+        case NewAgentTypes.IdentityBlockchain: {
+          const res = await prisma.identityBlockchain.upsert({
+            where: {
+              address: a.value,
+            },
+            update: {},
+            create: {
+              address: a.value,
+              Identity: {
+                create: {},
+              },
+            },
+          });
+          return {
+            __typename: "Identity",
+            identityType: {
+              __typename: "IdentityBlockchain",
+              ...res,
+            },
+            id: res.identityId,
+            name: res.address,
+          } as Agent;
+        }
+        case NewAgentTypes.IdentityEmail: {
+          const res = await prisma.identityEmail.upsert({
+            where: {
+              email: a.value,
+            },
+            update: {},
+            create: {
+              email: a.value,
+              Identity: {
+                create: {},
+              },
+            },
+          });
+          return {
+            __typename: "Identity",
+            identityType: {
+              __typename: "IdentityEmail",
+              ...res,
+            },
+            id: res.identityId,
+            name: res.email,
+          } as Agent;
+        }
+        default:
+          throw Error("ERROR unknown new agent type");
+      }
+    }),
+  );
+  return agents;
 };
 
 const processesForCurrentUser = async (
@@ -64,6 +134,7 @@ Note: In the process table UI, "evolve processes" are not shown by themselves, o
 const processesForGroup = async (
   root: unknown,
   args: QueryProcessesForGroupArgs,
+  context: GraphqlRequestContext,
 ): Promise<Process[]> => {
   const processes = await prisma.process.findMany({
     where: {
@@ -71,7 +142,7 @@ const processesForGroup = async (
         {
           currentProcessVersion: {
             roleSet: {
-              roleGroups: { some: { groupId: args.groupId } },
+              RoleGroups: { some: { groupId: args.groupId } },
             },
           },
         },
@@ -80,7 +151,7 @@ const processesForGroup = async (
             evolveProcess: {
               currentProcessVersion: {
                 roleSet: {
-                  roleGroups: { some: { groupId: args.groupId, type: "Request" } },
+                  RoleGroups: { some: { groupId: args.groupId, type: "Request" } },
                 },
               },
             },
@@ -92,7 +163,9 @@ const processesForGroup = async (
     include: processInclude,
   });
 
-  const formattedProcesses = processes.map((process) => formatProcess(process));
+  const formattedProcesses = processes.map((process) =>
+    formatProcess(process, context.currentUser),
+  );
 
   return formattedProcesses;
 };
@@ -102,34 +175,7 @@ const groupsAndUsersEliglbeForRole = async (
   args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<(User | Group)[]> => {
-  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
-
-  const servers = await discordServers(root, {}, context);
-  const serverIds = await servers.map((server) => server.id);
-  const arr: (User | Group)[] = [];
-
-  const groups = await prisma.group.findMany({
-    where: {
-      discordRoleGroup: {
-        discordServer: {
-          discordServerId: { in: serverIds },
-        },
-      },
-    },
-    include: groupInclude,
-  });
-  const formattedGroups = groups.map((group) => formatGroup(group));
-
-  const user = await prisma.user.findFirstOrThrow({
-    where: {
-      id: context.currentUser.id,
-    },
-    include: userInclude,
-  });
-  const formattedUser = formatUser(user);
-
-  const res: (User | Group)[] = arr.concat(formattedGroups, formattedUser);
-  return res;
+  return await getGroupsAndUsersEliglbeForRole(root, args, context);
 };
 
 export const processQueries = {
@@ -139,4 +185,4 @@ export const processQueries = {
   groupsAndUsersEliglbeForRole,
 };
 
-export const processMutations = { newProcess, newEditProcessRequest };
+export const processMutations = { newProcess, newEditProcessRequest, newAgents };

@@ -5,8 +5,9 @@ import {
   ActionType as PrismaActionType,
   WebhookAction,
 } from "@prisma/client";
-import { groupInclude, formatGroup } from "backend/src/utils/formatGroup";
-import { userInclude, formatUser } from "backend/src/utils/formatUser";
+import { groupInclude, formatGroup } from "@utils/formatGroup";
+import { userInclude, formatUser, MePrismaType } from "@utils/formatUser";
+import { identityInclude, formatIdentity } from "./formatIdentity";
 
 import {
   Action,
@@ -28,17 +29,17 @@ export interface ProcessVersion
   extends Omit<Process, "id" | "createdAt" | "currentProcessVersionId" | "type"> {}
 
 export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
-  roleGroups: {
+  RoleGroups: {
     include: {
-      group: {
+      Group: {
         include: groupInclude,
       },
     },
   },
-  roleUsers: {
+  RoleIdentities: {
     include: {
-      user: {
-        include: userInclude,
+      Identity: {
+        include: identityInclude,
       },
     },
   },
@@ -155,7 +156,10 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
 }>;
 
 // Used to format all processes, except for evolve processes
-export const formatProcess = (processData: ProcessPrismaType): Process => {
+export const formatProcess = (
+  processData: ProcessPrismaType,
+  user: MePrismaType | undefined | null,
+): Process => {
   const { currentProcessVersion } = processData;
 
   if (!currentProcessVersion)
@@ -165,7 +169,7 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
   if (!currentProcessVersion.evolveProcess)
     throw Error("ERROR formatProcess: Can't find evolve process of process id:" + processData.id);
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
 
   const data: Process = {
     id: processData.id,
@@ -175,13 +179,16 @@ export const formatProcess = (processData: ProcessPrismaType): Process => {
     evolve:
       processData.type === ProcessType.Evolve
         ? null
-        : formatEvolveProcess(currentProcessVersion.evolveProcess),
+        : formatEvolveProcess(currentProcessVersion.evolveProcess, user),
     ...formattedProcessVersion,
   };
   return data;
 };
 
-export const formatEvolveProcess = (processData: EditProcessPrismaType): Process => {
+export const formatEvolveProcess = (
+  processData: EditProcessPrismaType,
+  user: MePrismaType | undefined | null,
+): Process => {
   const { currentProcessVersion } = processData;
 
   if (!currentProcessVersion)
@@ -189,7 +196,7 @@ export const formatEvolveProcess = (processData: EditProcessPrismaType): Process
       "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
     );
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
 
   const data: Process = {
     id: processData.id,
@@ -201,7 +208,10 @@ export const formatEvolveProcess = (processData: EditProcessPrismaType): Process
   return data;
 };
 
-export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): ProcessVersion => {
+export const formatProcessVersion = (
+  processVersion: ProcessVersionPrismaType,
+  user: MePrismaType | undefined | null,
+): ProcessVersion => {
   const { creator, optionSystem, inputTemplateSet, decisionSystem, action, roleSet } =
     processVersion;
 
@@ -231,7 +241,7 @@ export const formatProcessVersion = (processVersion: ProcessVersionPrismaType): 
       ),
     action: action ? formatAction(action, options) : undefined,
     parent: formatParent(processVersion.parentProcess),
-    roles: formatRoles(roleSet),
+    roles: formatRoles(roleSet, user),
   };
 
   return data;
@@ -243,16 +253,17 @@ const formatName = (name: string, type: PrismaProcessType, parent: ParentPrismaT
   } else return name;
 };
 
-const formatRoles = (roleSet: RoleSetPrismaType): Roles => {
+const formatRoles = (roleSet: RoleSetPrismaType, user: MePrismaType | undefined | null): Roles => {
   const roles: Roles = { request: [], respond: [], edit: undefined };
-  roleSet.roleGroups.forEach((role) => {
-    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.group));
-    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.group));
+  roleSet.RoleGroups.forEach((role) => {
+    if (role.type === RoleType.Request) roles.request.push(formatGroup(role.Group));
+    else if (role.type === RoleType.Respond) roles.respond.push(formatGroup(role.Group));
   });
 
-  roleSet.roleUsers.forEach((role) => {
-    if (role.type === RoleType.Request) roles.request.push(formatUser(role.user));
-    else if (role.type === RoleType.Respond) roles.respond.push(formatUser(role.user));
+  roleSet.RoleIdentities.forEach((role) => {
+    if (role.type === RoleType.Request) roles.request.push(formatIdentity(role.Identity, user));
+    else if (role.type === RoleType.Respond)
+      roles.respond.push(formatIdentity(role.Identity, user));
   });
 
   return roles;

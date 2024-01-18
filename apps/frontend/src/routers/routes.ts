@@ -1,5 +1,7 @@
 export enum Route {
   Home = "/",
+  UserSettings = "/settings",
+  ResetPassword = "/resetpassword",
   NewProcess = "/create/process",
   NewServerGroup = "/create/group",
   NewRequest = "/create/request",

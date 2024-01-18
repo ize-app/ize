@@ -1,0 +1,46 @@
+import { prisma } from "@/prisma/client";
+import { UserPrismaType } from "@/utils/formatUser";
+import { CryptoWallet } from "stytch";
+
+// creates blockchain identities in db if they don't exist yet
+export const createBlockchainIdentities = async (
+  user: UserPrismaType,
+  stytchWallets: CryptoWallet[],
+) => {
+  stytchWallets.forEach(async (wallet) => {
+    const userWallet = user.Identities.find((identity) => {
+      identity.IdentityBlockchain?.address === wallet.crypto_wallet_address;
+    });
+
+    if (!userWallet) {
+      const existingIdentity = await prisma.identityBlockchain.findFirst({
+        where: {
+          address: wallet.crypto_wallet_address,
+        },
+      });
+      if (!existingIdentity) {
+        // if there isn't an existing identity for this address, create it
+        await prisma.identity.create({
+          data: {
+            userId: user.id,
+            IdentityBlockchain: {
+              create: {
+                address: wallet.crypto_wallet_address,
+              },
+            },
+          },
+        });
+      } else {
+        // otherwise associate existing identity with this user
+        await prisma.identity.update({
+          where: {
+            id: existingIdentity.identityId,
+          },
+          data: {
+            userId: user.id,
+          },
+        });
+      }
+    }
+  });
+};

@@ -12,49 +12,96 @@ datasource db {
 
 model User {
   id             String           @id @default(uuid()) @db.Uuid
-  name           String?
+  stytchId       String           @unique @map("stytch_id")
+  firstName      String?
+  lastName       String?
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  discordOauth   DiscordOauth?
-  discordData    DiscordData?
   Group          Group[]
   createdProcess ProcessVersion[]
-  roleUsers      RoleUser[]
   requests       Request[]
   responses      Response[]
+  Identities     Identity[]
+  Oauths         Oauths[]
 
   @@map("users")
 }
 
-model DiscordData {
+model Identity {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  User               User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  IdentityEmail      IdentityEmail?
+  IdentityBlockchain IdentityBlockchain?
+  IdentityDiscord    IdentityDiscord?
+  RoleIdentity       RoleIdentity[]
+
+  @@map("identities")
+}
+
+model IdentityEmail {
+  id         String   @id @default(uuid()) @db.Uuid
+  identityId String   @unique @map("identity_id") @db.Uuid
+  email      String   @unique
+  icon       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@map("identities_email")
+}
+
+model IdentityBlockchain {
+  id         String   @id @default(uuid()) @db.Uuid
+  identityId String   @unique @map("identity_id") @db.Uuid
+  address    String   @unique
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@map("identities_blockchain")
+}
+
+model IdentityDiscord {
   id            String   @id @default(uuid()) @db.Uuid
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @unique @map("user_id") @db.Uuid
-  discordId     String   @map("discord_id")
+  identityId    String   @unique @map("identity_id") @db.Uuid
+  discordUserId String   @map("discord_user_id")
   username      String
   discriminator String
   avatar        String?
-  email         String?
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@map("discord_data")
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@map("identities_discord")
 }
 
-model DiscordOauth {
-  id           String   @id @default(uuid()) @db.Uuid
-  discordId    String   @map("discord_id")
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String   @unique @map("user_id") @db.Uuid
-  accessToken  String   @map("access_token")
-  refreshToken String   @map("refresh_token")
-  expiresIn    Int      @map("expires_in")
-  scope        String
-  tokenType    String   @map("token_type")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+enum OauthTypes {
+  Discord
+  Google
+}
 
-  @@map("discord_oauths")
+model Oauths {
+  userId       String     @map("user_id") @db.Uuid
+  type         OauthTypes
+  accessToken  String     @map("access_token")
+  refreshToken String     @map("refresh_token")
+  idToken      String?    @map("id_token")
+  scopes       Json[]
+  expiresAt    DateTime?  @map("expires_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id(name: "id", [userId, type])
+  @@map("oauths")
 }
 
 model Group {
@@ -65,14 +112,14 @@ model Group {
   updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
   activeAt         DateTime?
   deactivatedat    DateTime?
-  discordRoleGroup DiscordRoleGroup?
+  GroupDiscordRole GroupDiscordRole?
   process          Process[]
-  roleUsers        RoleGroup[]
+  RoleGroups       RoleGroup[]
 
   @@map("groups")
 }
 
-model DiscordRoleGroup {
+model GroupDiscordRole {
   id              String        @id @default(uuid()) @db.Uuid
   discordRoleId   String        @map("discord_role_id")
   group           Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -98,7 +145,7 @@ model DiscordServer {
   banner           String?
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
-  DiscordRoleGroup DiscordRoleGroup[]
+  GroupDiscordRole GroupDiscordRole[]
 
   @@map("discord_servers")
 }
@@ -155,7 +202,7 @@ model ProcessVersion {
 
   /// Parent process for this process version 
   process                  Process          @relation("Process", fields: [processId], references: [id], onDelete: Cascade)
-  creator                  User             @relation(fields: [creatorId], references: [id])
+  creator                  User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   /// Process defined response options that are included on every request created by this process version
   optionSystem             OptionSystem     @relation(fields: [optionSystemId], references: [id], onDelete: Cascade)
   /// Template for the inputs that will be required on each new request created by this process version
@@ -337,23 +384,23 @@ model RoleSet {
   id             String           @id @default(uuid()) @db.Uuid
   createdAt      DateTime         @default(now()) @map("created_at")
   processVersion ProcessVersion[]
-  roleUsers      RoleUser[]
-  roleGroups     RoleGroup[]
+  RoleIdentities RoleIdentity[]
+  RoleGroups     RoleGroup[]
 
   @@map("role_sets")
 }
 
-model RoleUser {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  roleSetId String   @map("role_set_id") @db.Uuid
-  type      RoleType
-  createdAt DateTime @default(now()) @map("created_at")
+model RoleIdentity {
+  id         String   @id @default(uuid()) @db.Uuid
+  identityId String   @map("user_id") @db.Uuid
+  roleSetId  String   @map("role_set_id") @db.Uuid
+  type       RoleType
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  user    User    @relation(fields: [userId], references: [id])
-  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  RoleSet  RoleSet  @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
-  @@map("role_users")
+  @@map("role_identities")
 }
 
 model RoleGroup {
@@ -363,8 +410,8 @@ model RoleGroup {
   type      RoleType
   createdAt DateTime @default(now()) @map("created_at")
 
-  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  roleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
+  Group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  RoleSet RoleSet @relation(fields: [roleSetId], references: [id], onDelete: Cascade)
 
   @@map("role_groups")
 }

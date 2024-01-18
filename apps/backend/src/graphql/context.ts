@@ -1,8 +1,7 @@
 import { DiscordApi } from "@discord/api";
-import { User } from "@prisma/client";
+import { MePrismaType } from "@/utils/formatUser";
 
 export type GraphqlRequestContext = {
-  currentUser?: User | null;
+  currentUser?: MePrismaType | null;
   discordApi?: DiscordApi;
-  clearCookie: (name: string) => void;
 };

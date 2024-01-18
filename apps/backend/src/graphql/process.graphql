@@ -1,6 +1,7 @@
 type Mutation {
   newProcess(process: newProcessArgs!): String!
   newEditProcessRequest(inputs: newEditProcessRequestArgs!): String!
+  newAgents(agents: [NewAgentArgs!]!): [Agent!]!
 }
 
 type Query {
@@ -19,6 +20,18 @@ input newProcessArgs {
   roles: [RoleArgs!]!
   action: ActionArgs
   evolve: EvolveArgs!
+}
+
+input NewAgentArgs {
+  type: NewAgentTypes!
+  value: String! # unique identifier of entity
+}
+
+enum NewAgentTypes {
+  IdentityBlockchain
+  IdentityDiscord
+  IdentityEmail
+  GroupDiscord
 }
 
 input ActionArgs {
@@ -142,7 +155,7 @@ input RoleArgs {
   id: String!
 }
 
-union Agent = User | Group
+union Agent = Identity | Group
 
 type Roles {
   request: [Agent!]!
@@ -156,8 +169,8 @@ enum RoleType {
 }
 
 enum AgentType {
-  User
   Group
+  Identity
 }
 
 union DecisionTypes = AbsoluteDecision | PercentageDecision

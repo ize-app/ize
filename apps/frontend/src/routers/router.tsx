@@ -14,6 +14,8 @@ import * as ProcessForm from "@/components/shared/Form/ProcessForm/wizardScreens
 import { DefaultLayout } from "@/layout/default";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
+import { ResetPassword } from "@/components/shared/Auth/ResetPassword";
+import { UserSettings } from "@/components/Settings/UserSettings";
 
 export const router = createBrowserRouter([
   {
@@ -158,6 +160,20 @@ export const router = createBrowserRouter([
         path: Routes.Route.Process,
         errorElement: <ErrorBoundary />,
         element: <Process />,
+      },
+      {
+        path: Routes.Route.UserSettings,
+        errorElement: <ErrorBoundary />,
+        element: (
+          <AuthRoute>
+            <UserSettings />
+          </AuthRoute>
+        ),
+      },
+      {
+        path: Routes.Route.ResetPassword,
+        errorElement: <ErrorBoundary />,
+        element: <ResetPassword />,
       },
       {
         path: "*",

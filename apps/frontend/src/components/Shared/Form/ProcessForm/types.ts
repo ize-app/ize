@@ -4,8 +4,8 @@ import {
   PercentageDecisionArgs,
   InputTemplateArgs,
   InputDataType,
+  AgentSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
-import { AvatarProps } from "@/components/shared/Avatar";
 
 export interface ProcessForm {
   name?: string;
@@ -30,8 +30,8 @@ export enum DecisionType {
 }
 
 export interface ProcessRights {
-  request: AvatarProps[];
-  response: AvatarProps[];
+  request: AgentSummaryPartsFragment[];
+  response: AgentSummaryPartsFragment[];
 }
 
 export interface ActionForm {

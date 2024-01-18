@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { formatProcess, processInclude } from "backend/src/utils/formatProcess";
+import { formatProcess, processInclude } from "@utils/formatProcess";
 import { Process, QueryProcessesForCurrentUserArgs } from "@graphql/generated/resolver-types";
 
 /* 
@@ -15,6 +15,8 @@ export const processesForUserService = async (
 ): Promise<Process[]> => {
   if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
 
+  const identityIds = context.currentUser.Identities.map((identity) => identity.id);
+
   const processes = await prisma.process.findMany({
     where: {
       OR: [
@@ -23,7 +25,7 @@ export const processesForUserService = async (
             roleSet: {
               OR: [
                 {
-                  roleGroups: {
+                  RoleGroups: {
                     some: {
                       AND: [
                         { groupId: { in: args.groupIds ?? [] } },
@@ -37,10 +39,10 @@ export const processesForUserService = async (
                   },
                 },
                 {
-                  roleUsers: {
+                  RoleIdentities: {
                     some: {
                       AND: [
-                        { userId: context.currentUser.id },
+                        { identityId: { in: identityIds } },
                         {
                           type: {
                             in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
@@ -61,7 +63,7 @@ export const processesForUserService = async (
                 roleSet: {
                   OR: [
                     {
-                      roleGroups: {
+                      RoleGroups: {
                         some: {
                           AND: [
                             { groupId: { in: args.groupIds ?? [] } },
@@ -73,10 +75,10 @@ export const processesForUserService = async (
                       },
                     },
                     {
-                      roleUsers: {
+                      RoleIdentities: {
                         some: {
                           AND: [
-                            { userId: context.currentUser.id },
+                            { identityId: { in: identityIds } },
                             {
                               type: "Request",
                             },
@@ -95,7 +97,9 @@ export const processesForUserService = async (
     },
     include: processInclude,
   });
-  const formattedProcesses = processes.map((process) => formatProcess(process));
+  const formattedProcesses = processes.map((process) =>
+    formatProcess(process, context.currentUser),
+  );
 
   return formattedProcesses;
 };

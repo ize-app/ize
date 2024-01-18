@@ -8,7 +8,6 @@ import TableRow, { tableRowClasses } from "@mui/material/TableRow";
 import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 import { summarizeDecisionSystem } from "../shared/Process/summarizeDecisionSystem";
-import { reformatAgentForAvatar } from "../shared/Avatar";
 import { AvatarsCell } from "../shared/Tables/TableCells";
 
 export const DecisionSystemSummaryTable = ({
@@ -37,10 +36,7 @@ export const DecisionSystemSummaryTable = ({
                 trigger this process */}
               </Typography>
             </TableCell>
-            <AvatarsCell
-              align="left"
-              avatars={process.roles.request.map((agent) => reformatAgentForAvatar(agent))}
-            />
+            <AvatarsCell align="left" avatars={process.roles.request} />
           </TableRow>
           <TableRow id={"community-roles-row-2"}>
             <TableCell>
@@ -50,10 +46,7 @@ export const DecisionSystemSummaryTable = ({
                 respond to requests made by this process */}
               </Typography>
             </TableCell>
-            <AvatarsCell
-              align="left"
-              avatars={process.roles.respond.map((agent) => reformatAgentForAvatar(agent))}
-            />
+            <AvatarsCell align="left" avatars={process.roles.respond} />
           </TableRow>
           <TableRow id={"decision-summary-row-1"}>
             <TableCell

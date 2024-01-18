@@ -19,6 +19,8 @@ export const newRequestService = async (
 ) => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
+  const identityIds = context.currentUser.Identities.map((identity) => identity.id);
+
   const { processId, requestInputs } = args;
 
   const groupIds = await getGroupIdsOfUserService(context);
@@ -51,7 +53,7 @@ export const newRequestService = async (
   )
     throw Error("ERROR New Request: Invalid request inputs");
 
-  const hasGroupPermission = process.currentProcessVersion?.roleSet.roleGroups.reduce(
+  const hasGroupPermission = process.currentProcessVersion?.roleSet.RoleGroups.reduce(
     (acc, curr) => {
       if (groupIds.includes(curr.groupId)) acc = true;
       return acc;
@@ -59,11 +61,15 @@ export const newRequestService = async (
     false,
   );
 
-  const hasUserPermission = process.currentProcessVersion?.roleSet.roleUsers
-    .map((user) => user.userId)
-    .includes(context.currentUser.id);
+  const hasIdentityPermission = process.currentProcessVersion?.roleSet.RoleIdentities.reduce(
+    (acc, curr) => {
+      if (identityIds.includes(curr.identityId)) acc = true;
+      return acc;
+    },
+    false,
+  );
 
-  if (!(hasGroupPermission || hasUserPermission))
+  if (!(hasGroupPermission || hasIdentityPermission))
     throw Error("Invalid permissions for creating request");
 
   const request = await transaction.request.create({

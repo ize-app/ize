@@ -86,3 +86,17 @@ export const shortUUIDToFull = (shortenedUUID: string): string => {
   const translator = short();
   return translator.toUUID(shortenedUUID);
 };
+
+interface ObjectWithId {
+  id: string;
+}
+
+export const deduplicateArrayById = (inputArray: ObjectWithId[]) => {
+  const uniqueMap = new Map();
+
+  for (const obj of inputArray) {
+    uniqueMap.set(obj.id, obj);
+  }
+
+  return Array.from(uniqueMap.values());
+};

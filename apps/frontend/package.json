@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
@@ -16,7 +16,10 @@
     "@hookform/resolvers": "^3.3.1",
     "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.7",
+    "@stytch/react": "^12.0.0",
+    "@stytch/vanilla-js": "^3.2.5",
     "deep-object-diff": "^1.1.9",
+    "ethers": "^6.9.2",
     "graphql": "^16.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,6 +31,8 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.3.1",
+    "@metamask/providers": "^14.0.2",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@vitejs/plugin-react": "^4.0.1",

@@ -65,7 +65,7 @@ const newResponse = async (
     },
   });
 
-  await determineDecision({ requestId: args.requestId });
+  await determineDecision({ requestId: args.requestId, user: context.currentUser });
 
   return response.id;
 };
@@ -82,7 +82,7 @@ const request = async (
     },
   });
 
-  return await formatRequest(req, context.currentUser?.id);
+  return await formatRequest(req, context.currentUser);
 };
 
 const requestsForCurrentUser = async (
@@ -92,6 +92,8 @@ const requestsForCurrentUser = async (
 ): Promise<Promise<Request>[]> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
+  const identityIds = context.currentUser.Identities.map((identity) => identity.id);
+
   const requests = await prisma.request.findMany({
     include: requestInclude,
     where: {
@@ -99,7 +101,7 @@ const requestsForCurrentUser = async (
         roleSet: {
           OR: [
             {
-              roleGroups: {
+              RoleGroups: {
                 some: {
                   AND: [
                     { groupId: { in: args.groupIds } },
@@ -111,10 +113,10 @@ const requestsForCurrentUser = async (
               },
             },
             {
-              roleUsers: {
+              RoleIdentities: {
                 some: {
                   AND: [
-                    { userId: context.currentUser.id },
+                    { identityId: { in: identityIds } },
                     {
                       type: "Request",
                     },
@@ -128,7 +130,7 @@ const requestsForCurrentUser = async (
     },
   });
 
-  return requests.map((request) => formatRequest(request, context.currentUser?.id));
+  return requests.map((request) => formatRequest(request, context.currentUser));
 };
 
 const requestsForGroup = async (
@@ -141,7 +143,7 @@ const requestsForGroup = async (
     where: {
       processVersion: {
         roleSet: {
-          roleGroups: {
+          RoleGroups: {
             some: {
               groupId: args.groupId,
             },
@@ -151,9 +153,7 @@ const requestsForGroup = async (
     },
   });
 
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-
-  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser)));
 };
 
 const requestsForProcess = async (
@@ -170,7 +170,7 @@ const requestsForProcess = async (
     },
   });
 
-  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser?.id)));
+  return Promise.all(requests.map((request) => formatRequest(request, context.currentUser)));
 };
 
 export const requestQueries = {
