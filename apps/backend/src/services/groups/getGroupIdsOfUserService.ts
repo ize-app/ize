@@ -31,7 +31,9 @@ const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<strin
   );
 
   // converting to Set to remove many duplicate "undefined" roleIds
-  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())];
+  const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())].filter(
+    (val) => !!val,
+  );
 
   // Get groups that the user is in a server, role or has created.
   const groups = await prisma.group.findMany({

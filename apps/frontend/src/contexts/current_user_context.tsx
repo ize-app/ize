@@ -33,7 +33,6 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const { data, loading: meLoading, refetch } = useQuery(MeDocument);
   const me = data?.me;
-
   useEffect(() => {
     refetch();
   }, [user, refetch]);

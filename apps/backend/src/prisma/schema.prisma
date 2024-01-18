@@ -88,8 +88,7 @@ enum OauthTypes {
 }
 
 model Oauths {
-  id           String     @id @default(uuid()) @db.Uuid
-  userId       String     @unique @map("user_id") @db.Uuid
+  userId       String     @map("user_id") @db.Uuid
   type         OauthTypes
   accessToken  String     @map("access_token")
   refreshToken String     @map("refresh_token")
@@ -101,7 +100,7 @@ model Oauths {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, type])
+  @@id(name: "id", [userId, type])
   @@map("oauths")
 }
 
