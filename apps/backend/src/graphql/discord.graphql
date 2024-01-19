@@ -1,9 +1,15 @@
 type Query {
-  discordServers: [DiscordAPIServer!]!
+  discordServers: [DiscordServer!]!
   discordServerRoles(serverId: String!): [DiscordAPIServerRole!]!
 }
 
-type DiscordAPIServer {
+type DiscordServer {
+  id: String!
+  name: String!
+  hasCultsBot: Boolean!
+}
+
+type DiscordServerOnboarded {
   id: String!
   name: String!
 }

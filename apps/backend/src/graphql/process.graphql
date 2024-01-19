@@ -23,8 +23,27 @@ input newProcessArgs {
 }
 
 input NewAgentArgs {
-  type: NewAgentTypes!
-  value: String! # unique identifier of entity
+  identityBlockchain: IdentityBlockchainArgs
+  identityDiscord: IdentityDiscordArgs
+  identityEmail: IdentityEmailArgs
+  groupDiscordRole: GroupDiscordRoleArgs
+}
+
+input IdentityBlockchainArgs {
+  address: String!
+}
+
+input IdentityDiscordArgs {
+  discordUserId: String!
+}
+
+input IdentityEmailArgs {
+  email: String!
+}
+
+input GroupDiscordRoleArgs {
+  serverId: String!
+  roleId: String!
 }
 
 enum NewAgentTypes {

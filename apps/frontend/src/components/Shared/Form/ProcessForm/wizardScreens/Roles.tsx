@@ -15,8 +15,6 @@ import {
 } from "@/graphql/generated/graphql";
 import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 
-import { DevTool } from "@hookform/devtools";
-
 export type RoleFormFields = z.infer<typeof rolesFormSchema>;
 
 export type SetFieldValue = UseFormSetValue<RoleFormFields>;
@@ -84,7 +82,6 @@ export const Roles = () => {
             gap: "20px",
           }}
         >
-          <DevTool control={control} placement="bottom-left" />
           <RolesAndDecisionSystem
             //@ts-ignore
             control={control}

@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { discordServers } from "@/graphql/resolvers/discord_resolvers";
+import { discordServersWithBot } from "@/graphql/resolvers/discord_resolvers";
 import { groupInclude, formatGroup } from "@utils/formatGroup";
 
 import { Group, User } from "@graphql/generated/resolver-types";
@@ -22,7 +22,7 @@ const getDiscordGroupsEligibleForRole = async (
 ): Promise<(User | Group)[]> => {
   if (!context.discordApi) return [];
 
-  const servers = await discordServers(root, {}, context);
+  const servers = await discordServersWithBot(root, {}, context);
   const serverIds = await servers.map((server) => server.id);
 
   const groups = await prisma.group.findMany({

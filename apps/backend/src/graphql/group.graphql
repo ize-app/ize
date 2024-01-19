@@ -18,11 +18,14 @@ type Group {
   creator: User!
   color: String
   icon: String
-  memberCount: Int!
+  memberCount: Int
   organization: Organization!
   createdAt: String!
   discordRoleGroup: DiscordRoleGroup
+  groupType: GroupType!
 }
+
+union GroupType = DiscordRoleGroup
 
 type Organization {
   name: String!
@@ -34,9 +37,9 @@ type DiscordRoleGroup {
   name: String!
   color: Int
   icon: String
-  memberCount: Int!
+  memberCount: Int
   unicodeEmoji: String
-  discordRoleId: String!
+  discordRoleId: String
   discordServer: OnboardedDiscordServer!
 }
 

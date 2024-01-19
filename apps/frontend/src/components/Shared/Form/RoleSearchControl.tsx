@@ -65,151 +65,162 @@ export const RoleSearchControl = ({
 
   return (
     <>
-      <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} type={roleModalType} />
+      {<RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} type={roleModalType} />}
       <Controller
         name={name}
         control={control}
-        render={({ field, fieldState: { error } }) => (
-          <FormControl required>
-            <Autocomplete
-              includeInputInList={true}
-              multiple
-              id="tags-filled"
-              {...field}
-              {...props}
-              options={options}
-              getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
-              onChange={(_event, data) => field.onChange(data)}
-              isOptionEqualToValue={(
-                option: AgentSummaryPartsFragment,
-                value: AgentSummaryPartsFragment,
-              ) => {
-                return option.id === value.id;
-              }}
-              PaperComponent={({ children }) => {
-                return (
-                  <Paper>
-                    <Box
+        render={({ field, fieldState: { error } }) => {
+          return (
+            <FormControl required>
+              <Autocomplete
+                includeInputInList={true}
+                multiple
+                id="tags-filled"
+                {...field}
+                {...props}
+                options={options}
+                getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
+                onChange={(_event, data) => field.onChange(data)}
+                isOptionEqualToValue={(
+                  option: AgentSummaryPartsFragment,
+                  value: AgentSummaryPartsFragment,
+                ) => {
+                  return option.id === value.id;
+                }}
+                PaperComponent={({ children }) => {
+                  return (
+                    <Paper>
+                      <Box
+                        sx={{
+                          padding: "8px 12px",
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "8px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Button
+                          variant="outlined"
+                          startIcon={<MailOutline color="primary" />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.IdentityEmail);
+                            setOpen(true);
+                          }}
+                        >
+                          Email address
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<EthLogoSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.IdentityBlockchain);
+                            setOpen(true);
+                          }}
+                        >
+                          Eth address
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<DiscordLogoSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupDiscord);
+                            setOpen(true);
+                          }}
+                        >
+                          Discord @role
+                        </Button>
+                      </Box>
+                      {children}
+                    </Paper>
+                  );
+                }}
+                renderTags={(value: readonly AgentSummaryPartsFragment[], getTagProps) =>
+                  value.map((option: AgentSummaryPartsFragment, index: number) => {
+                    return (
+                      <Chip
+                        avatar={
+                          <Avatar
+                            id={option.id}
+                            backgroundColor={
+                              option.__typename === "Group" ? option.color : undefined
+                            }
+                            name={option.name}
+                            avatarUrl={
+                              option.__typename === "Group" && option.organization
+                                ? option.organization.icon
+                                : option.icon
+                            }
+                            type={option.__typename as AgentType}
+                          />
+                        }
+                        variant="filled"
+                        label={option.name}
+                        color="primary"
+                        {...getTagProps({ index })}
+                      />
+                    );
+                  })
+                }
+                renderOption={(props, option) => (
+                  <Box
+                    component="li"
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "left",
+                      alignItems: "center",
+                      gap: "16px",
+                      verticalAlign: "middle",
+                    }}
+                    {...props}
+                  >
+                    <Avatar
+                      id={option.id}
+                      avatarUrl={
+                        option.__typename === "Group" && option.organization
+                          ? option.organization.icon
+                          : option.icon
+                      }
+                      name={option.name}
+                      backgroundColor={option.__typename === "Group" ? option.color : undefined}
+                      type={option.__typename as AgentType}
+                    />
+                    <Typography
+                      variant="body1"
                       sx={{
-                        padding: "8px 12px",
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "8px",
-                        flexWrap: "wrap",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
-                      <Button
-                        variant="outlined"
-                        startIcon={<MailOutline color="primary" />}
-                        onMouseDown={() => {
-                          setRoleModalType(NewAgentTypes.IdentityEmail);
-                          setOpen(true);
-                        }}
-                      >
-                        Email address
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<EthLogoSvg />}
-                        onMouseDown={() => {
-                          setRoleModalType(NewAgentTypes.IdentityBlockchain);
-                          setOpen(true);
-                        }}
-                      >
-                        Eth address
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<DiscordLogoSvg />}
-                        onMouseDown={() => {
-                          setRoleModalType(NewAgentTypes.IdentityDiscord);
-                          setOpen(true);
-                        }}
-                      >
-                        Discord @role
-                      </Button>
-                    </Box>
-                    {children}
-                  </Paper>
-                );
-              }}
-              renderTags={(value: readonly AgentSummaryPartsFragment[], getTagProps) =>
-                value.map((option: AgentSummaryPartsFragment, index: number) => {
-                  return (
-                    <Chip
-                      avatar={
-                        <Avatar
-                          id={option.id}
-                          // backgroundColor={option.backgroundColor}
-                          name={option.name}
-                          avatarUrl={option.icon}
-                          type={option.__typename as AgentType}
-                        />
-                      }
-                      variant="filled"
-                      label={option.name}
-                      color="primary"
-                      {...getTagProps({ index })}
-                    />
-                  );
-                })
-              }
-              renderOption={(props, option) => (
-                <Box
-                  component="li"
-                  sx={{
-                    display: "flex",
-                    width: "100%",
-                    justifyContent: "left",
-                    alignItems: "center",
-                    gap: "16px",
-                    verticalAlign: "middle",
-                  }}
-                  {...props}
-                >
-                  <Avatar
-                    id={option.id}
-                    avatarUrl={option.icon}
-                    name={option.name}
-                    //   parent={option.parent}
-                    //   backgroundColor={option.backgroundColor}
-                    type={option.__typename as AgentType}
-                  />
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      {option.name}
+                    </Typography>
+                  </Box>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={label}
+                    variant="outlined"
+                    placeholder="Add a group or identity..."
+                    InputProps={{
+                      ...params.InputProps,
+                      type: "search",
                     }}
-                  >
-                    {option.name}
-                  </Typography>
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={label}
-                  variant="outlined"
-                  placeholder="Add a group or identity..."
-                  InputProps={{
-                    ...params.InputProps,
-                    type: "search",
-                  }}
-                  error={Boolean(error)}
-                />
-              )}
-            />
-            <FormHelperText
-              sx={{
-                color: "error.main",
-              }}
-            >
-              {error?.message ?? ""}
-            </FormHelperText>
-          </FormControl>
-        )}
+                    error={Boolean(error)}
+                  />
+                )}
+              />
+              <FormHelperText
+                sx={{
+                  color: "error.main",
+                }}
+              >
+                {error?.message ?? ""}
+              </FormHelperText>
+            </FormControl>
+          );
+        }}
       />
     </>
   );
