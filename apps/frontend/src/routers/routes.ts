@@ -3,7 +3,6 @@ export enum Route {
   UserSettings = "/settings",
   ResetPassword = "/resetpassword",
   NewProcess = "/create/process",
-  NewServerGroup = "/create/group",
   NewRequest = "/create/request",
   Groups = "/groups",
   Group = "/groups/:groupId",
@@ -17,13 +16,6 @@ export enum NewProcessRoute {
   Inputs = "/inputs",
   Decisions = "/decisions",
   Evolve = "/evolve",
-  Finish = "/finish",
-}
-
-export enum NewServerGroupRoute {
-  SelectServer = "",
-  HowCultsWorks = "/how-cults-works",
-  DefineProcess = "/define-process",
   Finish = "/finish",
 }
 
@@ -41,10 +33,6 @@ export enum EditProcessRoute {
   Evolve = "/evolve",
   Confirm = "/confirm",
 }
-
-export const newServerRoute = (route: NewServerGroupRoute) => {
-  return `${Route.NewServerGroup}${route}`;
-};
 
 export const newProcessRoute = (route: NewProcessRoute) => {
   return `${Route.NewProcess}${route}`;

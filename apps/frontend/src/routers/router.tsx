@@ -7,7 +7,6 @@ import { Group } from "@/components/Groups/Group";
 import { Home } from "@/components/Home";
 import NewProcess from "@/components/NewProcess/NewProcess";
 import * as NewRequest from "@/components/NewRequest";
-import * as NewServerGroup from "@/components/NewServerGroup";
 import { Process } from "@/components/Process/Process";
 import { Request } from "@/components/Request/Request";
 import * as ProcessForm from "@/components/shared/Form/ProcessForm/wizardScreens";
@@ -26,33 +25,6 @@ export const router = createBrowserRouter([
         path: Routes.Route.Home,
         element: <Home />,
         errorElement: <ErrorBoundary />,
-      },
-      {
-        element: (
-          <AuthRoute>
-            <NewServerGroup.default />
-          </AuthRoute>
-        ),
-        path: Routes.Route.NewServerGroup,
-        children: [
-          {
-            path: Routes.newServerRoute(Routes.NewServerGroupRoute.SelectServer),
-            element: <NewServerGroup.DiscordUserServers />,
-            index: true,
-          },
-          {
-            path: Routes.newServerRoute(Routes.NewServerGroupRoute.HowCultsWorks),
-            element: <NewServerGroup.HowCultsWorks />,
-          },
-          {
-            path: Routes.newServerRoute(Routes.NewServerGroupRoute.DefineProcess),
-            element: <NewServerGroup.DefineServerGroupProcesses />,
-          },
-          {
-            path: Routes.newServerRoute(Routes.NewServerGroupRoute.Finish),
-            element: <NewServerGroup.Finish />,
-          },
-        ],
       },
       {
         element: (

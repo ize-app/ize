@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
