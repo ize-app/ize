@@ -21,6 +21,8 @@ import { SelectControl } from "../..";
 import { useContext, useState } from "react";
 import { SelectOption } from "../../SelectControl";
 import { CurrentUserContext } from "@/contexts/current_user_context";
+import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
+import { DiscordLogoSvg } from "@/components/shared/icons";
 // import { DevTool } from "@hookform/devtools";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
@@ -46,6 +48,10 @@ interface RoleModalProps {
 
 export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   const { me } = useContext(CurrentUserContext);
+
+  const isConnectedToDiscord = me?.identities.find(
+    (id) => id.identityType.__typename === "IdentityDiscord",
+  );
 
   const serverOptions: SelectOption[] = (me as Me).discordServers.map((server) => ({
     name: server.name,
@@ -81,7 +87,6 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   });
 
   const createAgents = async (data: FormFields) => {
-    console.log("inside create agents for type", data.type);
     setDisableSubmit(true);
     const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
       switch (data.type) {
@@ -273,50 +278,68 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
           )}
           {inputType === NewAgentTypes.GroupDiscord && (
             <>
-              {!serverHasCultsBot && discordServerId && (
-                <Typography>
-                  To use all roles in this server, ask your admin to add the Discord bot
-                </Typography>
+              {!isConnectedToDiscord ? (
+                <>
+                  <Typography>
+                    Connect Discord to Cults to attach Discord roles to this process.
+                  </Typography>
+                  <Button
+                    onClick={attachDiscord}
+                    variant={"outlined"}
+                    sx={{ width: "200px" }}
+                    startIcon={<DiscordLogoSvg />}
+                  >
+                    Connect Discord
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {!serverHasCultsBot && discordServerId && (
+                    <Typography>
+                      To use all roles in this server, ask your admin to add the Discord bot
+                    </Typography>
+                  )}
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "16px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box sx={{ width: "300px" }}>
+                      <SelectControl
+                        name="discordRole.serverId"
+                        //@ts-ignore
+                        control={control}
+                        label="Server"
+                        selectOptions={serverOptions}
+                      />
+                    </Box>
+                    {discordServerId && (
+                      <>
+                        <SelectControl
+                          name="discordRole.roleId"
+                          //@ts-ignore
+                          control={control}
+                          label="Role"
+                          loading={roleLoading}
+                          selectOptions={discordServerRoles}
+                        />
+                        <Button
+                          type="submit"
+                          onClick={handleSubmit(createAgents)}
+                          variant="contained"
+                          disabled={disableSubmit}
+                        >
+                          Submit
+                        </Button>
+                      </>
+                    )}
+                  </Box>
+                </>
               )}
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "16px",
-                  alignItems: "center",
-                }}
-              >
-                <Box sx={{ width: "300px" }}>
-                  <SelectControl
-                    name="discordRole.serverId"
-                    //@ts-ignore
-                    control={control}
-                    label="Server"
-                    selectOptions={serverOptions}
-                  />
-                </Box>
-                {discordServerId && (
-                  <>
-                    <SelectControl
-                      name="discordRole.roleId"
-                      //@ts-ignore
-                      control={control}
-                      label="Role"
-                      loading={roleLoading}
-                      selectOptions={discordServerRoles}
-                    />
-                    <Button
-                      type="submit"
-                      onClick={handleSubmit(createAgents)}
-                      variant="contained"
-                      disabled={disableSubmit}
-                    >
-                      Submit
-                    </Button>
-                  </>
-                )}
-              </Box>
             </>
           )}
         </form>
