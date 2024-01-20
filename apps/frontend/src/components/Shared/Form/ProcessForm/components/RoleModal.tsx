@@ -23,7 +23,7 @@ import { SelectOption } from "../../SelectControl";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
 import { DiscordLogoSvg } from "@/components/shared/icons";
-// import { DevTool } from "@hookform/devtools";
+import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
 
@@ -334,7 +334,10 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                   </Box>
                   {!serverHasCultsBot && discordServerId && (
                     <Typography>
-                      To use all roles in this server, ask your admin to add the Cults Discord bot
+                      To use all roles in this server, ask your admin to{" "}
+                      <a href={botInviteUrl.toString()} target="_blank" rel="noopener noreferrer">
+                        add the Cults Discord bot
+                      </a>{" "}
                       to this server.
                     </Typography>
                   )}
