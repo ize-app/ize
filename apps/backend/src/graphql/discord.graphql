@@ -1,11 +1,10 @@
 type Query {
-  discordServers: [DiscordServer!]!
   discordServerRoles(serverId: String!): [DiscordAPIServerRole!]!
 }
-
 type DiscordServer {
   id: String!
   name: String!
+  icon: String
   hasCultsBot: Boolean!
 }
 

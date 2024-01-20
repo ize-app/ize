@@ -81,6 +81,7 @@ export type DiscordRoleGroup = {
 export type DiscordServer = {
   __typename?: 'DiscordServer';
   hasCultsBot: Scalars['Boolean']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
 };
@@ -198,6 +199,7 @@ export type InputTemplateArgs = {
 
 export type Me = {
   __typename?: 'Me';
+  discordServers: Array<DiscordServer>;
   groupIds: Array<Scalars['String']['output']>;
   identities: Array<Identity>;
   user: User;
@@ -343,7 +345,6 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
-  discordServers: Array<DiscordServer>;
   group: Group;
   groupsAndUsersEliglbeForRole: Array<Agent>;
   groupsForCurrentUser: Array<Group>;
@@ -786,6 +787,7 @@ export type DiscordRoleGroupResolvers<ContextType = GraphqlRequestContext, Paren
 
 export type DiscordServerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordServer'] = ResolversParentTypes['DiscordServer']> = {
   hasCultsBot?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -870,6 +872,7 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
+  discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   groupIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -946,7 +949,6 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
-  discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsAndUsersEliglbeForRole?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;

@@ -9,6 +9,9 @@ fragment MeParts on Me {
     ...UserSummaryParts
   }
   groupIds
+  discordServers {
+    ...DiscordServerParts
+  }
   identities {
     ...IdentitySummaryParts
   }
@@ -20,4 +23,3 @@ fragment UserSummaryParts on User {
   icon
   createdAt
 }
-

@@ -1,9 +1,3 @@
-query DiscordServers {
-  discordServers {
-    ...DiscordServerParts
-  }
-}
-
 query DiscordServerRoles($serverId: String!) {
   discordServerRoles(serverId: $serverId) {
     ...DiscordServerRoleParts

@@ -1,25 +1,6 @@
-import { useQuery } from "@apollo/client";
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-
-import { useNewServerGroupWizardState } from "./newServerWizard";
-import { DiscordServersDocument } from "../../graphql/generated/graphql";
+import { Box, Typography } from "@mui/material";
 
 export const DiscordUserServers = () => {
-  const { formState, setFormState } = useNewServerGroupWizardState();
-
-  const { data } = useQuery(DiscordServersDocument);
-
-  const servers = data?.discordServers;
-
-  if (!servers || servers.length === 0) {
-    return (
-      <div>
-        It looks you you don't have any servers with the Cults Bot. Please add the Cults bot to your
-        server and try again.
-      </div>
-    );
-  }
-
   return (
     <Box
       sx={{
@@ -29,34 +10,7 @@ export const DiscordUserServers = () => {
         alignItems: "flex-start",
       }}
     >
-      <Typography variant="body1">
-        Welcome! <br />
-        <br />
-        Select the server you want to create Cults groups for.
-      </Typography>
-
-      <FormControl sx={{ minWidth: "300px" }}>
-        <InputLabel id="select-server-label">Server</InputLabel>
-        <Select
-          labelId="select-server-label"
-          id="select-server"
-          value={formState.serverId ?? ""}
-          label="Server"
-          onChange={(event) => {
-            const serverId = event.target.value;
-            setFormState((prev) => ({
-              ...prev,
-              serverId: serverId ?? "",
-            }));
-          }}
-        >
-          {servers.map((server) => (
-            <MenuItem key={server.id} value={server.id} sx={{ width: "100%" }}>
-              {server.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Typography variant="body1">To delete</Typography>
     </Box>
   );
 };

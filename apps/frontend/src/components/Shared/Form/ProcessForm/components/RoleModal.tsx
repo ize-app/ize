@@ -5,8 +5,8 @@ import {
   NewAgentsDocument,
   MutationNewAgentsArgs,
   NewAgentTypes,
-  DiscordServersDocument,
   DiscordServerRolesDocument,
+  Me,
 } from "@/graphql/generated/graphql";
 import { Button, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
@@ -18,8 +18,9 @@ import { newAgentFormSchema } from "../formSchema";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { SelectControl } from "../..";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { SelectOption } from "../../SelectControl";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 // import { DevTool } from "@hookform/devtools";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
@@ -44,8 +45,9 @@ interface RoleModalProps {
 }
 
 export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
-  const { data: serverData, loading: serverLoading } = useQuery(DiscordServersDocument);
-  const serverOptions: SelectOption[] = (serverData?.discordServers ?? []).map((server) => ({
+  const { me } = useContext(CurrentUserContext);
+
+  const serverOptions: SelectOption[] = (me as Me).discordServers.map((server) => ({
     name: server.name,
     value: server.id,
   }));
@@ -130,7 +132,7 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   const inputType = watch("type");
   const discordServerId = watch("discordRole.serverId");
 
-  const serverHasCultsBot = (serverData?.discordServers ?? []).some(
+  const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
     (server) => server.id === discordServerId && server.hasCultsBot,
   );
 
@@ -291,7 +293,6 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                     //@ts-ignore
                     control={control}
                     label="Server"
-                    loading={serverLoading}
                     selectOptions={serverOptions}
                   />
                 </Box>

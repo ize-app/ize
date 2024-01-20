@@ -62,6 +62,5 @@ const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesAr
 };
 
 export const discordQueries = {
-  discordServers,
   discordServerRoles,
 };
