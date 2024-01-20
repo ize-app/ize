@@ -156,7 +156,6 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
         .map((role) => ({ name: role.name, value: role.id }))
     : defaultServerRoleOptions;
 
-  // const discordServerRoles = [{ name: "test", value: "test" }];
   return (
     <Modal
       open={open}
@@ -294,11 +293,6 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                 </>
               ) : (
                 <>
-                  {!serverHasCultsBot && discordServerId && (
-                    <Typography>
-                      To use all roles in this server, ask your admin to add the Discord bot
-                    </Typography>
-                  )}
                   <Box
                     sx={{
                       width: "100%",
@@ -338,6 +332,12 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                       </>
                     )}
                   </Box>
+                  {!serverHasCultsBot && discordServerId && (
+                    <Typography>
+                      To use all roles in this server, ask your admin to add the Cults Discord bot
+                      to this server.
+                    </Typography>
+                  )}
                 </>
               )}
             </>
