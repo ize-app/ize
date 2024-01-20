@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,10 +8,6 @@ import { rolesFormSchema } from "../formSchema";
 import { useNewProcessWizardState } from "@/components/NewProcess/newProcessWizard";
 import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import {
-  AgentSummaryPartsFragment,
-  GroupsAndUsersEliglbeForRoleDocument,
-} from "@/graphql/generated/graphql";
 import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 
 export type RoleFormFields = z.infer<typeof rolesFormSchema>;
@@ -21,10 +16,6 @@ export type SetFieldValue = UseFormSetValue<RoleFormFields>;
 export type GetFieldValues = UseFormGetValues<RoleFormFields>;
 
 export const Roles = () => {
-  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
-
-  const agents = data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
-
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
   const {
@@ -85,7 +76,6 @@ export const Roles = () => {
           <RolesAndDecisionSystem
             //@ts-ignore
             control={control}
-            agents={agents}
             isPercentageThreshold={isPercentageThreshold}
             setFieldValue={setFieldValue}
             getFieldValues={getFieldValues}

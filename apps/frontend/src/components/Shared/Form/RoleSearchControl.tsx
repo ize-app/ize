@@ -22,12 +22,12 @@ import { RoleModal } from "./ProcessForm/components/RoleModal";
 import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
 import { MailOutline } from "@mui/icons-material";
 import { DiscordLogoSvg, EthLogoSvg } from "../icons";
+import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
 
 interface RoleSearchControlProps {
   control: Control;
   name: string;
   label: string;
-  agents: AgentSummaryPartsFragment[] | undefined;
   setFieldValue: SetFieldValue;
   getFieldValues: GetFieldValues;
 }
@@ -36,26 +36,27 @@ export const RoleSearchControl = ({
   control,
   name,
   label,
-  agents,
   setFieldValue,
   getFieldValues,
   ...props
 }: RoleSearchControlProps) => {
   const { me } = useContext(CurrentUserContext);
-  const userIdentities = (me as Me).identities as AgentSummaryPartsFragment[];
+  const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
+  console.log("recent agents are", recentAgents);
 
-  const [options, setOptions] = useState<AgentSummaryPartsFragment[]>([
-    ...(agents ?? []),
-    ...userIdentities,
-  ]);
+  // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
+  const userIdentities = ((me as Me).identities as AgentSummaryPartsFragment[]).filter(
+    (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
+  );
+
+  const options = [...userIdentities, ...recentAgents];
 
   const [open, setOpen] = useState(false);
   const [roleModalType, setRoleModalType] = useState(NewAgentTypes.IdentityEmail);
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
-    setOptions((prev) => {
-      return [...prev, ...value];
-    });
+    setRecentAgents(value);
+
     //@ts-ignore
     const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
 

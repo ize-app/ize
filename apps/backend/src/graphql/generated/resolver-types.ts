@@ -346,7 +346,6 @@ export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
   group: Group;
-  groupsAndUsersEliglbeForRole: Array<Agent>;
   groupsForCurrentUser: Array<Group>;
   me?: Maybe<Me>;
   process: Process;
@@ -950,7 +949,6 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsAndUsersEliglbeForRole?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;

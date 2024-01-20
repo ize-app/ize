@@ -8,7 +8,6 @@ type Query {
   process(processId: String!): Process!
   processesForCurrentUser(requestRoleOnly: Boolean!, groupIds: [String!]!): [Process!]!
   processesForGroup(groupId: String!): [Process!]!
-  groupsAndUsersEliglbeForRole: [Agent!]!
 }
 
 input newProcessArgs {

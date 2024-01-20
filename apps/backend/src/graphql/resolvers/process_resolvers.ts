@@ -1,11 +1,8 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "@utils/formatProcess";
-import { getGroupsAndUsersEliglbeForRole } from "@/services/processes/getGroupsAndUsersEligibleForRole";
 import {
-  Group,
   Process,
-  User,
   MutationNewProcessArgs,
   MutationNewEditProcessRequestArgs,
   MutationNewAgentsArgs,
@@ -198,19 +195,10 @@ const processesForGroup = async (
   return formattedProcesses;
 };
 
-const groupsAndUsersEliglbeForRole = async (
-  root: unknown,
-  args: Record<string, never>,
-  context: GraphqlRequestContext,
-): Promise<(User | Group)[]> => {
-  return await getGroupsAndUsersEliglbeForRole(root, args, context);
-};
-
 export const processQueries = {
   process,
   processesForCurrentUser,
   processesForGroup,
-  groupsAndUsersEliglbeForRole,
 };
 
 export const processMutations = { newProcess, newEditProcessRequest, newAgents };

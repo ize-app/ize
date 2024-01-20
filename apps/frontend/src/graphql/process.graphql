@@ -36,12 +36,6 @@ query ProcessesForGroup($groupId: String!) {
   }
 }
 
-query GroupsAndUsersEliglbeForRole {
-  groupsAndUsersEliglbeForRole {
-    ...AgentSummaryParts
-  }
-}
-
 fragment BaseProcessSummaryParts on Process {
   id
   currentProcessVersionId

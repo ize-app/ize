@@ -24,16 +24,19 @@ fragment GroupSummaryParts on Group {
   memberCount
   color
   createdAt
-  # creator {
-  #   id
-  #   name
-  # }
+  groupType {
+    ...GroupTypeSummaryParts
+  }
   organization {
     ...OrganizationParts
   }
-  # discordRoleGroup {
-  #   ...DiscordRoleGroupParts
-  # }
+}
+
+fragment GroupTypeSummaryParts on GroupType {
+  __typename
+  ... on DiscordRoleGroup {
+    ...DiscordRoleGroupParts
+  }
 }
 
 fragment DiscordRoleGroupParts on DiscordRoleGroup {
