@@ -1,14 +1,38 @@
-import { IDiscordServer } from "@discord/server_types";
 import { GraphqlRequestContext } from "../context";
 import { APIGuild } from "discord.js";
 import { DiscordApi } from "@discord/api";
-import { QueryDiscordServerRolesArgs } from "@graphql/generated/resolver-types";
+import {
+  QueryDiscordServerRolesArgs,
+  DiscordServer,
+  DiscordServerOnboarded,
+} from "@graphql/generated/resolver-types";
 
+// Returns all of a users discord servers, regardless of whether they connected Cults bot
 export const discordServers = async (
   root: unknown,
   args: Record<string, never>,
   context: GraphqlRequestContext,
-): Promise<Array<IDiscordServer>> => {
+): Promise<Array<DiscordServer>> => {
+  const botApi = DiscordApi.forBotUser();
+  const botGuilds = await botApi.getDiscordServers();
+  if (!context.discordApi) throw Error("No Discord authentication data for user");
+  const userGuilds = await context.discordApi.getDiscordServers();
+
+  const servers = userGuilds.map((guild: APIGuild) => ({
+    id: guild.id,
+    name: guild.name,
+    hasCultsBot: botGuilds.some((botGuild: APIGuild) => botGuild.id === guild.id),
+  }));
+
+  return servers;
+};
+
+// returns only the discord servers with Bot attached
+export const discordServersWithBot = async (
+  root: unknown,
+  args: Record<string, never>,
+  context: GraphqlRequestContext,
+): Promise<Array<DiscordServerOnboarded>> => {
   const botApi = DiscordApi.forBotUser();
   const botGuilds = await botApi.getDiscordServers();
   if (!context.discordApi) throw Error("No Discord authentication data for user");
@@ -38,6 +62,5 @@ const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesAr
 };
 
 export const discordQueries = {
-  discordServers,
   discordServerRoles,
 };

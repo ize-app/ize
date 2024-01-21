@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -14,10 +13,6 @@ import {
   DefaultEvolveProcessOptions,
 } from "@/components/shared/Form/ProcessForm/types";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import {
-  AgentSummaryPartsFragment,
-  GroupsAndUsersEliglbeForRoleDocument,
-} from "@/graphql/generated/graphql";
 import { deduplicateArrayById } from "@/utils/inputs";
 
 type FormFields = z.infer<typeof evolveProcessFormSchema>;
@@ -25,10 +20,6 @@ type FormFields = z.infer<typeof evolveProcessFormSchema>;
 const namePrepend = "evolve.";
 
 export const Evolve = ({}) => {
-  const { data } = useQuery(GroupsAndUsersEliglbeForRoleDocument);
-
-  const agents = data?.groupsAndUsersEliglbeForRole as AgentSummaryPartsFragment[];
-
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
@@ -123,7 +114,6 @@ export const Evolve = ({}) => {
             <RolesAndDecisionSystem
               //@ts-ignore
               control={control}
-              agents={agents}
               isPercentageThreshold={isPercentageThreshold}
               namePrepend={namePrepend}
             />

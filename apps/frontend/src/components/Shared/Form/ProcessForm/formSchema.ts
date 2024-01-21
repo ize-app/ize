@@ -90,18 +90,46 @@ const inputTemplateFormSchema = z.object({
 export const createInputTemplatesFormSchema = (fieldArrayName: string) =>
   z.object({ [fieldArrayName]: z.array(inputTemplateFormSchema) });
 
-const agentFormSchema = z.object({
+const groupFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  icon: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
+  memberCount: z.number().optional().nullable(),
+  organization: z.object({
+    name: z.string(),
+    icon: z.string().optional().nullable(),
+  }),
+  __typename: z.string(),
+  groupType: z
+    .object({
+      __typename: z.any(),
+    })
+    .optional(),
+});
+
+const identityFormSchema = z.object({
   id: z.string(),
   name: z.string(),
   icon: z.string().optional().nullable(),
   __typename: z.string(),
-  identityType: z.object({
-    __typename: z.any(),
-  }),
+  identityType: z
+    .object({
+      __typename: z.any(),
+    })
+    .optional(),
 });
+
+const agentFormSchema = z.union([identityFormSchema, groupFormSchema]);
 
 export const newAgentFormSchema = z.object({
   type: z.nativeEnum(NewAgentTypes),
+  discordRole: z
+    .object({
+      serverId: z.string().trim().min(1, { message: "Select a server" }),
+      roleId: z.string().trim().min(1, { message: "Select a role" }),
+    })
+    .optional(),
   ethAddress: z
     .string()
     .trim()

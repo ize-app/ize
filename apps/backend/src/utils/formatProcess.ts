@@ -45,7 +45,7 @@ export const roleSetInclude = Prisma.validator<Prisma.RoleSetInclude>()({
   },
 });
 
-type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
+export type RoleSetPrismaType = Prisma.RoleSetGetPayload<{
   include: typeof roleSetInclude;
 }>;
 

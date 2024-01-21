@@ -50,6 +50,12 @@ export const reformatAgentForAvatar = (
         type: AgentType.Group,
         avatarUrl: agent.icon,
         backgroundColor: agent.color,
+        parent: agent.organization
+          ? {
+              avatarUrl: agent.organization.icon,
+              name: agent.organization.name,
+            }
+          : undefined,
       };
 
     case "Identity":
@@ -170,11 +176,11 @@ export const AvatarWithName = ({
 };
 
 const AvatarPopper = ({
-  users,
+  avatars,
   anchorEl,
   open,
 }: {
-  users: AvatarProps[];
+  avatars: AvatarProps[];
   anchorEl: HTMLElement | null;
   open: boolean;
 }) => (
@@ -196,19 +202,18 @@ const AvatarPopper = ({
             flexDirection: "column",
             alignItems: "left",
             gap: "8px",
-            maxWidth: "200px",
           }}
           elevation={4}
         >
-          {users.map((user: AvatarProps) => (
+          {avatars.map((a: AvatarProps) => (
             <AvatarWithName
-              id={user.id}
-              type={user.type}
-              key={user.id}
-              name={user.name}
-              avatarUrl={user.avatarUrl}
-              parent={user.parent}
-              color={user.backgroundColor}
+              id={a.id}
+              type={a.type}
+              key={a.id}
+              name={a.name + (a.parent ? ` (${a.parent.name})` : "")}
+              avatarUrl={a.avatarUrl ?? a.parent?.avatarUrl}
+              parent={undefined}
+              color={a.backgroundColor}
             />
           ))}
         </Paper>
@@ -245,19 +250,21 @@ export const AvatarGroup = ({
         onMouseEnter={handlePopperOpen}
         onMouseLeave={handlePopperClose}
       >
-        {avatars.map((a) => (
-          <Avatar
-            id={a.id}
-            key={a.id}
-            type={a.type}
-            avatarUrl={a.avatarUrl}
-            parent={a.parent}
-            name={a.name}
-            backgroundColor={a.backgroundColor}
-          />
-        ))}
+        {avatars.map((a) => {
+          return (
+            <Avatar
+              id={a.id}
+              key={a.id}
+              type={a.type}
+              avatarUrl={a.avatarUrl}
+              parent={a.parent}
+              name={a.name}
+              backgroundColor={a.backgroundColor}
+            />
+          );
+        })}
       </MuiAvatarGroup>
-      <AvatarPopper users={avatars} anchorEl={anchorEl} open={open} />
+      <AvatarPopper avatars={avatars} anchorEl={anchorEl} open={open} />
     </>
   );
 };
@@ -293,7 +300,7 @@ export const NameWithPopper = ({
       >
         {name}
       </Typography>
-      <AvatarPopper users={agentsFormatted} anchorEl={anchorEl} open={open} />
+      <AvatarPopper avatars={agentsFormatted} anchorEl={anchorEl} open={open} />
     </>
   );
 };

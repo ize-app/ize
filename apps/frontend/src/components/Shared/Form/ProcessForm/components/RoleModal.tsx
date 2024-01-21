@@ -5,11 +5,11 @@ import {
   NewAgentsDocument,
   MutationNewAgentsArgs,
   NewAgentTypes,
+  DiscordServerRolesDocument,
+  Me,
 } from "@/graphql/generated/graphql";
 import { Button, Typography } from "@mui/material";
-import { useMutation } from "@apollo/client";
-
-// import { NewAgentType } from "../types";
+import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -18,8 +18,12 @@ import { newAgentFormSchema } from "../formSchema";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { SelectControl } from "../..";
-import { useState } from "react";
-// import { DevTool } from "@hookform/devtools";
+import { useContext, useState } from "react";
+import { SelectOption } from "../../SelectControl";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
+import { DiscordLogoSvg } from "@/components/shared/icons";
+import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
 
@@ -43,6 +47,17 @@ interface RoleModalProps {
 }
 
 export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
+  const { me } = useContext(CurrentUserContext);
+
+  const isConnectedToDiscord = me?.identities.find(
+    (id) => id.identityType.__typename === "IdentityDiscord",
+  );
+
+  const serverOptions: SelectOption[] = (me as Me).discordServers.map((server) => ({
+    name: server.name,
+    value: server.id,
+  }));
+
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   const [mutate] = useMutation(NewAgentsDocument, {
@@ -62,6 +77,10 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
       type,
       ethAddress: [],
       emailAddress: [],
+      discordRole: {
+        serverId: "",
+        roleId: "",
+      },
     },
     resolver: zodResolver(newAgentFormSchema),
     shouldUnregister: true,
@@ -70,13 +89,44 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   const createAgents = async (data: FormFields) => {
     setDisableSubmit(true);
     const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
-      return {
-        agents: (data.emailAddress ?? data.ethAddress ?? []).map((val) => ({
-          type: inputType,
-          value: val,
-        })),
-      };
+      switch (data.type) {
+        case NewAgentTypes.IdentityBlockchain: {
+          return {
+            agents: (data.ethAddress ?? []).map((address) => ({
+              identityBlockchain: {
+                address: address,
+              },
+            })),
+          };
+        }
+        case NewAgentTypes.IdentityEmail: {
+          return {
+            agents: (data.emailAddress ?? []).map((email) => ({
+              identityEmail: {
+                email: email,
+              },
+            })),
+          };
+        }
+        case NewAgentTypes.GroupDiscord: {
+          return {
+            agents: data.discordRole
+              ? [
+                  {
+                    groupDiscordRole: {
+                      serverId: data.discordRole?.serverId,
+                      roleId: data.discordRole?.roleId,
+                    },
+                  },
+                ]
+              : [],
+          };
+        }
+        default:
+          return { agents: [] };
+      }
     };
+
     await mutate({
       variables: {
         agents: createNewAgentArgs(data).agents,
@@ -85,6 +135,26 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   };
 
   const inputType = watch("type");
+  const discordServerId = watch("discordRole.serverId");
+
+  const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
+    (server) => server.id === discordServerId && server.hasCultsBot,
+  );
+
+  const defaultServerRoleOptions: SelectOption[] = [{ name: "@everyone", value: "@everyone" }];
+
+  const { data: roleData, loading: roleLoading } = useQuery(DiscordServerRolesDocument, {
+    variables: {
+      serverId: discordServerId,
+    },
+    skip: !discordServerId || !serverHasCultsBot,
+  });
+
+  const discordServerRoles = serverHasCultsBot
+    ? (roleData?.discordServerRoles ?? [])
+        .filter((role) => !role.botRole)
+        .map((role) => ({ name: role.name, value: role.id }))
+    : defaultServerRoleOptions;
 
   return (
     <Modal
@@ -107,6 +177,7 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
             selectOptions={[
               { name: "Email address", value: NewAgentTypes.IdentityEmail },
               { name: "Eth address", value: NewAgentTypes.IdentityBlockchain },
+              { name: "Discord role", value: NewAgentTypes.GroupDiscord },
             ]}
           />
           {inputType === NewAgentTypes.IdentityBlockchain && (
@@ -171,25 +242,27 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                 <Controller
                   name={"emailAddress"}
                   control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <FormControl sx={{ width: "100%" }}>
-                      <TextField
-                        {...field}
-                        label={"Email addresses"}
-                        fullWidth
-                        required
-                        error={Boolean(error)}
-                        placeholder="Enter an email or list of emails seperated by commas"
-                      />
-                      <FormHelperText
-                        sx={{
-                          color: error?.message ? "error.main" : "black",
-                        }}
-                      >
-                        {error?.message ?? ""}
-                      </FormHelperText>
-                    </FormControl>
-                  )}
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <FormControl sx={{ width: "100%" }}>
+                        <TextField
+                          {...field}
+                          label={"Email addresses"}
+                          fullWidth
+                          required
+                          error={Boolean(error)}
+                          placeholder="Enter an email or list of emails seperated by commas"
+                        />
+                        <FormHelperText
+                          sx={{
+                            color: error?.message ? "error.main" : "black",
+                          }}
+                        >
+                          {error?.message ?? ""}
+                        </FormHelperText>
+                      </FormControl>
+                    );
+                  }}
                 />
                 <Button
                   type="submit"
@@ -200,6 +273,76 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                   Submit
                 </Button>
               </Box>
+            </>
+          )}
+          {inputType === NewAgentTypes.GroupDiscord && (
+            <>
+              {!isConnectedToDiscord ? (
+                <>
+                  <Typography>
+                    Connect Discord to Cults to attach Discord roles to this process.
+                  </Typography>
+                  <Button
+                    onClick={attachDiscord}
+                    variant={"outlined"}
+                    sx={{ width: "200px" }}
+                    startIcon={<DiscordLogoSvg />}
+                  >
+                    Connect Discord
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "16px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box sx={{ width: "300px" }}>
+                      <SelectControl
+                        name="discordRole.serverId"
+                        //@ts-ignore
+                        control={control}
+                        label="Server"
+                        selectOptions={serverOptions}
+                      />
+                    </Box>
+                    {discordServerId && (
+                      <>
+                        <SelectControl
+                          name="discordRole.roleId"
+                          //@ts-ignore
+                          control={control}
+                          label="Role"
+                          loading={roleLoading}
+                          selectOptions={discordServerRoles}
+                        />
+                        <Button
+                          type="submit"
+                          onClick={handleSubmit(createAgents)}
+                          variant="contained"
+                          disabled={disableSubmit}
+                        >
+                          Submit
+                        </Button>
+                      </>
+                    )}
+                  </Box>
+                  {!serverHasCultsBot && discordServerId && (
+                    <Typography>
+                      To use all roles in this server, ask your admin to{" "}
+                      <a href={botInviteUrl.toString()} target="_blank" rel="noopener noreferrer">
+                        add the Cults Discord bot
+                      </a>{" "}
+                      to this server.
+                    </Typography>
+                  )}
+                </>
+              )}
             </>
           )}
         </form>

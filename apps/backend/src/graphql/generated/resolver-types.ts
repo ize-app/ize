@@ -56,12 +56,6 @@ export type DecisionArgs = {
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
-export type DiscordApiServer = {
-  __typename?: 'DiscordAPIServer';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
 export type DiscordApiServerRole = {
   __typename?: 'DiscordAPIServerRole';
   botRole: Scalars['Boolean']['output'];
@@ -75,13 +69,27 @@ export type DiscordApiServerRole = {
 export type DiscordRoleGroup = {
   __typename?: 'DiscordRoleGroup';
   color?: Maybe<Scalars['Int']['output']>;
-  discordRoleId: Scalars['String']['output'];
+  discordRoleId?: Maybe<Scalars['String']['output']>;
   discordServer: OnboardedDiscordServer;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  memberCount: Scalars['Int']['output'];
+  memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   unicodeEmoji?: Maybe<Scalars['String']['output']>;
+};
+
+export type DiscordServer = {
+  __typename?: 'DiscordServer';
+  hasCultsBot: Scalars['Boolean']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type DiscordServerOnboarded = {
+  __typename?: 'DiscordServerOnboarded';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type EvolveArgs = {
@@ -107,12 +115,20 @@ export type Group = {
   createdAt: Scalars['String']['output'];
   creator: User;
   discordRoleGroup?: Maybe<DiscordRoleGroup>;
+  groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  memberCount: Scalars['Int']['output'];
+  memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   organization: Organization;
 };
+
+export type GroupDiscordRoleArgs = {
+  roleId: Scalars['String']['input'];
+  serverId: Scalars['String']['input'];
+};
+
+export type GroupType = DiscordRoleGroup;
 
 export type Identity = {
   __typename?: 'Identity';
@@ -128,6 +144,10 @@ export type IdentityBlockchain = {
   id: Scalars['String']['output'];
 };
 
+export type IdentityBlockchainArgs = {
+  address: Scalars['String']['input'];
+};
+
 export type IdentityDiscord = {
   __typename?: 'IdentityDiscord';
   avatar?: Maybe<Scalars['String']['output']>;
@@ -136,11 +156,19 @@ export type IdentityDiscord = {
   username: Scalars['String']['output'];
 };
 
+export type IdentityDiscordArgs = {
+  discordUserId: Scalars['String']['input'];
+};
+
 export type IdentityEmail = {
   __typename?: 'IdentityEmail';
   email: Scalars['String']['output'];
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+};
+
+export type IdentityEmailArgs = {
+  email: Scalars['String']['input'];
 };
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
@@ -171,6 +199,7 @@ export type InputTemplateArgs = {
 
 export type Me = {
   __typename?: 'Me';
+  discordServers: Array<DiscordServer>;
   groupIds: Array<Scalars['String']['output']>;
   identities: Array<Identity>;
   user: User;
@@ -219,8 +248,10 @@ export type MutationSetUpDiscordServerArgs = {
 };
 
 export type NewAgentArgs = {
-  type: NewAgentTypes;
-  value: Scalars['String']['input'];
+  groupDiscordRole?: InputMaybe<GroupDiscordRoleArgs>;
+  identityBlockchain?: InputMaybe<IdentityBlockchainArgs>;
+  identityDiscord?: InputMaybe<IdentityDiscordArgs>;
+  identityEmail?: InputMaybe<IdentityEmailArgs>;
 };
 
 export enum NewAgentTypes {
@@ -314,9 +345,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
-  discordServers: Array<DiscordApiServer>;
   group: Group;
-  groupsAndUsersEliglbeForRole: Array<Agent>;
   groupsForCurrentUser: Array<Group>;
   me?: Maybe<Me>;
   process: Process;
@@ -568,8 +597,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   ActionType: ( EvolveProcessAction ) | ( WebhookAction );
-  Agent: ( Group ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
+  Agent: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   DecisionTypes: ( AbsoluteDecision ) | ( PercentageDecision );
+  GroupType: ( DiscordRoleGroup );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
 };
 
@@ -586,18 +616,24 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
-  DiscordAPIServer: ResolverTypeWrapper<DiscordApiServer>;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
+  DiscordServer: ResolverTypeWrapper<DiscordServer>;
+  DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  Group: ResolverTypeWrapper<Group>;
+  Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
+  GroupDiscordRoleArgs: GroupDiscordRoleArgs;
+  GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
+  IdentityBlockchainArgs: IdentityBlockchainArgs;
   IdentityDiscord: ResolverTypeWrapper<IdentityDiscord>;
+  IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
+  IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   InputDataType: InputDataType;
   InputTemplate: ResolverTypeWrapper<InputTemplate>;
@@ -649,18 +685,24 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolversUnionTypes<ResolversParentTypes>['DecisionTypes'];
-  DiscordAPIServer: DiscordApiServer;
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
+  DiscordServer: DiscordServer;
+  DiscordServerOnboarded: DiscordServerOnboarded;
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: EvolveProcessAction;
   EvolveProcessesDiff: EvolveProcessesDiff;
   Float: Scalars['Float']['output'];
-  Group: Group;
+  Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
+  GroupDiscordRoleArgs: GroupDiscordRoleArgs;
+  GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
+  IdentityBlockchainArgs: IdentityBlockchainArgs;
   IdentityDiscord: IdentityDiscord;
+  IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: IdentityEmail;
+  IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   InputTemplate: InputTemplate;
   InputTemplateArgs: InputTemplateArgs;
@@ -720,12 +762,6 @@ export type DecisionTypesResolvers<ContextType = GraphqlRequestContext, ParentTy
   __resolveType: TypeResolveFn<'AbsoluteDecision' | 'PercentageDecision', ParentType, ContextType>;
 };
 
-export type DiscordApiServerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordAPIServer'] = ResolversParentTypes['DiscordAPIServer']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type DiscordApiServerRoleResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordAPIServerRole'] = ResolversParentTypes['DiscordAPIServerRole']> = {
   botRole?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -738,13 +774,27 @@ export type DiscordApiServerRoleResolvers<ContextType = GraphqlRequestContext, P
 
 export type DiscordRoleGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordRoleGroup'] = ResolversParentTypes['DiscordRoleGroup']> = {
   color?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  discordRoleId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discordRoleId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   discordServer?: Resolver<ResolversTypes['OnboardedDiscordServer'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  memberCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  memberCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   unicodeEmoji?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DiscordServerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordServer'] = ResolversParentTypes['DiscordServer']> = {
+  hasCultsBot?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DiscordServerOnboardedResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordServerOnboarded'] = ResolversParentTypes['DiscordServerOnboarded']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -765,12 +815,17 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   discordRoleGroup?: Resolver<Maybe<ResolversTypes['DiscordRoleGroup']>, ParentType, ContextType>;
+  groupType?: Resolver<ResolversTypes['GroupType'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  memberCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  memberCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organization?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupType'] = ResolversParentTypes['GroupType']> = {
+  __resolveType: TypeResolveFn<'DiscordRoleGroup', ParentType, ContextType>;
 };
 
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
@@ -816,6 +871,7 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
+  discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   groupIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -892,9 +948,7 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
-  discordServers?: Resolver<Array<ResolversTypes['DiscordAPIServer']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsAndUsersEliglbeForRole?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
@@ -989,12 +1043,14 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   ActionType?: ActionTypeResolvers<ContextType>;
   Agent?: AgentResolvers<ContextType>;
   DecisionTypes?: DecisionTypesResolvers<ContextType>;
-  DiscordAPIServer?: DiscordApiServerResolvers<ContextType>;
   DiscordAPIServerRole?: DiscordApiServerRoleResolvers<ContextType>;
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;
+  DiscordServer?: DiscordServerResolvers<ContextType>;
+  DiscordServerOnboarded?: DiscordServerOnboardedResolvers<ContextType>;
   EvolveProcessAction?: EvolveProcessActionResolvers<ContextType>;
   EvolveProcessesDiff?: EvolveProcessesDiffResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
+  GroupType?: GroupTypeResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;

@@ -4,28 +4,33 @@ import { Me, Identity } from "@graphql/generated/resolver-types";
 import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
 import { userInclude, formatUser } from "@utils/formatUser";
 import { formatIdentity } from "@/utils/formatIdentity";
+import { getDiscordServers } from "@/services/discord/getDiscordServers";
 
 const me = async (
   root: unknown,
   args: Record<string, never>,
-  contextValue: GraphqlRequestContext,
+  context: GraphqlRequestContext,
 ): Promise<Me | null> => {
-  if (!contextValue.currentUser) return null;
+  if (!context.currentUser) return null;
 
-  const groupIds = await getGroupIdsOfUserService(contextValue);
-  const identities: Identity[] = contextValue.currentUser.Identities.map((identity) => {
-    return formatIdentity(identity, contextValue.currentUser);
+  const discordServers = await getDiscordServers({ context });
+
+  const groupIds = await getGroupIdsOfUserService({ context, discordServers });
+
+  const identities: Identity[] = context.currentUser.Identities.map((identity) => {
+    return formatIdentity(identity, context.currentUser);
   });
 
   const userData = await prisma.user.findFirstOrThrow({
     include: userInclude,
-    where: { id: contextValue.currentUser.id },
+    where: { id: context.currentUser.id },
   });
   const user = formatUser(userData);
 
   return {
     user,
     groupIds,
+    discordServers,
     identities: [...identities],
   };
 };

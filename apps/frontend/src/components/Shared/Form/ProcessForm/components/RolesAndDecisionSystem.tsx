@@ -6,7 +6,6 @@ import { Control } from "react-hook-form";
 
 import { SelectControl, TextFieldControl } from "@/components/shared/Form";
 import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
-import { AgentSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { RoleSearchControl } from "../../RoleSearchControl";
 import { GetFieldValues, SetFieldValue } from "../wizardScreens/Roles";
 
@@ -34,14 +33,12 @@ const RolesContainer = ({ title, children }: { title: string; children: React.Re
 
 const RolesAndDecisionSystem = ({
   control,
-  agents,
   isPercentageThreshold,
   namePrepend = "",
   setFieldValue,
   getFieldValues,
 }: {
   control: Control;
-  agents: AgentSummaryPartsFragment[];
   isPercentageThreshold: boolean;
   namePrepend?: string;
   setFieldValue: SetFieldValue;
@@ -54,7 +51,6 @@ const RolesAndDecisionSystem = ({
           control={control}
           name={namePrepend + "rights.request"}
           label={"Who can create requests?"}
-          agents={agents}
           setFieldValue={setFieldValue}
           getFieldValues={getFieldValues}
         />
@@ -79,7 +75,6 @@ const RolesAndDecisionSystem = ({
           control={control}
           name={namePrepend + "rights.response"}
           label={"Who can respond to requests?"}
-          agents={agents}
           setFieldValue={setFieldValue}
           getFieldValues={getFieldValues}
         />

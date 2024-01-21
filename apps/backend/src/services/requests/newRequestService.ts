@@ -1,11 +1,11 @@
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
+import { MutationNewRequestArgs, RoleType } from "@graphql/generated/resolver-types";
 
 import { roleSetInclude } from "../../utils/formatProcess";
-import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
 import { validateRequestInputs } from "./validateRequestInputs";
+import hasRolePermission from "../processes/hasRolePermisssion";
 
 export const newRequestService = async (
   {
@@ -19,11 +19,7 @@ export const newRequestService = async (
 ) => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
-  const identityIds = context.currentUser.Identities.map((identity) => identity.id);
-
   const { processId, requestInputs } = args;
-
-  const groupIds = await getGroupIdsOfUserService(context);
 
   const process = await transaction.process.findFirstOrThrow({
     include: {
@@ -45,7 +41,7 @@ export const newRequestService = async (
     },
   });
 
-  if (!process.currentProcessVersion)
+  if (!process.currentProcessVersionId || !process.currentProcessVersion)
     throw Error("ERROR New Request: Can't find current process version");
 
   if (
@@ -53,23 +49,13 @@ export const newRequestService = async (
   )
     throw Error("ERROR New Request: Invalid request inputs");
 
-  const hasGroupPermission = process.currentProcessVersion?.roleSet.RoleGroups.reduce(
-    (acc, curr) => {
-      if (groupIds.includes(curr.groupId)) acc = true;
-      return acc;
-    },
-    false,
-  );
-
-  const hasIdentityPermission = process.currentProcessVersion?.roleSet.RoleIdentities.reduce(
-    (acc, curr) => {
-      if (identityIds.includes(curr.identityId)) acc = true;
-      return acc;
-    },
-    false,
-  );
-
-  if (!(hasGroupPermission || hasIdentityPermission))
+  if (
+    await !hasRolePermission({
+      roleType: RoleType.Request,
+      context,
+      processVersionId: process.currentProcessVersionId,
+    })
+  )
     throw Error("Invalid permissions for creating request");
 
   const request = await transaction.request.create({

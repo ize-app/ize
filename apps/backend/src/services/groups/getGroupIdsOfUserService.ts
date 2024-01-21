@@ -2,7 +2,29 @@ import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@discord/api";
 
-const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<string[]> => {
+import { DiscordServer } from "@/graphql/generated/resolver-types";
+
+export const getGroupIdsOfUserService = async ({
+  discordServers,
+  context,
+}: {
+  discordServers: DiscordServer[];
+  context: GraphqlRequestContext;
+}) => {
+  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  const discordGroupIds = await getDiscordGroupIds({ discordServers, context });
+
+  return discordGroupIds;
+};
+
+const getDiscordGroupIds = async ({
+  discordServers,
+  context,
+}: {
+  discordServers: DiscordServer[];
+  context: GraphqlRequestContext;
+}): Promise<string[]> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   if (!context.discordApi) return [];
 
@@ -16,44 +38,45 @@ const getDiscordGroupIds = async (context: GraphqlRequestContext): Promise<strin
 
   const botApi = DiscordApi.forBotUser();
 
-  // Get the servers for the user using the users' API token
-  const userGuilds = await context.discordApi.getDiscordServers();
-
   // Get the roles for the user in those servers
   // Only pulls roles that discord bot has access to (i.e. roles of servers that have bot installed)
   const userGuildMembers = await Promise.all(
-    userGuilds.map(async (guild) => {
-      return botApi.getDiscordGuildMember({
-        serverId: guild.id,
-        memberId: userDiscordData.discordUserId,
-      });
-    }),
+    discordServers
+      .filter((server) => server.hasCultsBot)
+      .map(async (server) => {
+        return botApi.getDiscordGuildMember({
+          serverId: server.id,
+          memberId: userDiscordData.discordUserId,
+        });
+      }),
   );
 
   // converting to Set to remove many duplicate "undefined" roleIds
+  // note: roleIds returned by Discord don't include the @everyone role
   const roleIds = [...new Set(userGuildMembers.map((member) => member.roles).flat())].filter(
     (val) => !!val,
   );
 
-  // Get groups that the user is in a server, role or has created.
+  const serverIds = discordServers.map((server) => server.id);
+
+  // Get groups where either
+  // 1) a user has roleId associated with that group (Cults only knows roleIds if server has Cults bot)
+  // 2) a user is part of that discord server, but the server doesn't have the Cults bot yet though
   const groups = await prisma.group.findMany({
     where: {
       OR: [
         { GroupDiscordRole: { discordRoleId: { in: roleIds } } },
-        // @everyone isn't part of roleIds returned from discord API
-        { GroupDiscordRole: { name: "@everyone" } },
-        { creatorId: context.currentUser.id },
+        {
+          GroupDiscordRole: {
+            AND: {
+              name: "@everyone",
+              discordServer: { discordServerId: { in: serverIds } },
+            },
+          },
+        },
       ],
     },
   });
 
   return groups.map((group) => group.id);
-};
-
-export const getGroupIdsOfUserService = async (context: GraphqlRequestContext) => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-
-  const discordGroupIds = await getDiscordGroupIds(context);
-
-  return discordGroupIds;
 };

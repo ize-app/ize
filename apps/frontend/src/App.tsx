@@ -13,6 +13,7 @@ import { SnackbarProvider } from "./contexts/SnackbarContext";
 import { router } from "./routers/router";
 import GlobalStyles from "./style/global";
 import muiTheme from "./style/muiTheme";
+import { RecentAgentsProvider } from "./contexts/RecentAgentContext";
 
 function App() {
   return (
@@ -23,7 +24,9 @@ function App() {
           <ThemeProvider theme={muiTheme}>
             <CurrentUserProvider>
               <SnackbarProvider>
-                <RouterProvider router={router} />
+                <RecentAgentsProvider>
+                  <RouterProvider router={router} />
+                </RecentAgentsProvider>
               </SnackbarProvider>
             </CurrentUserProvider>
           </ThemeProvider>

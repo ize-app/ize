@@ -1,18 +1,13 @@
-query DiscordServers {
-  discordServers {
-    ...DiscordServerParts
-  }
-}
-
 query DiscordServerRoles($serverId: String!) {
   discordServerRoles(serverId: $serverId) {
     ...DiscordServerRoleParts
   }
 }
 
-fragment DiscordServerParts on DiscordAPIServer {
+fragment DiscordServerParts on DiscordServer {
   id
   name
+  hasCultsBot
 }
 
 fragment DiscordServerRoleParts on DiscordAPIServerRole {
