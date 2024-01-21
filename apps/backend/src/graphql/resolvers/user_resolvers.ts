@@ -1,7 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 import { Me, Identity } from "@graphql/generated/resolver-types";
-// import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
+import { getGroupIdsOfUserService } from "@services/groups/getGroupIdsOfUserService";
 import { userInclude, formatUser } from "@utils/formatUser";
 import { formatIdentity } from "@/utils/formatIdentity";
 import { getDiscordServers } from "@/services/discord/getDiscordServers";
@@ -15,6 +15,8 @@ const me = async (
 
   const discordServers = await getDiscordServers({ context });
 
+  const groupIds = await getGroupIdsOfUserService({ context, discordServers });
+
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return formatIdentity(identity, context.currentUser);
   });
@@ -27,7 +29,7 @@ const me = async (
 
   return {
     user,
-    groupIds: [],
+    groupIds,
     discordServers,
     identities: [...identities],
   };

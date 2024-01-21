@@ -20,13 +20,15 @@ type ResponsePrismaType = Prisma.ResponseGetPayload<{
   include: typeof responseInclude;
 }>;
 
-const formatResponse = (response: ResponsePrismaType): Response => ({
-  optionId: response.optionId,
-  value: response.option.value,
-  type: response.option.type as OptionType,
-  createdAt: response.createdAt.toString(),
-  user: formatUser(response.creator),
-});
+const formatResponse = (response: ResponsePrismaType): Response => {
+  return {
+    optionId: response.optionId,
+    value: response.option.value,
+    type: response.option.type as OptionType,
+    createdAt: response.createdAt.toString(),
+    user: formatUser(response.creator),
+  };
+};
 
 export const formatResponses = (
   responses: ResponsePrismaType[],

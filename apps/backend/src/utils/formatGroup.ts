@@ -53,7 +53,7 @@ export const formatGroup = (group: GroupPrismaType): Group => {
         : null,
     },
     createdAt: group.createdAt.toString(),
-    groupType: group.GroupDiscordRole,
+    groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
   };
   return obj;
 };

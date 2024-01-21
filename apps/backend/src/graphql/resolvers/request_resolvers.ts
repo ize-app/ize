@@ -4,8 +4,6 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { newRequestService } from "@services/requests/newRequestService";
 import { formatRequest } from "../../utils/formatRequest";
 
-import determineDecision from "@services/decisions/determineDecision";
-
 import { requestInclude } from "../../utils/formatRequest";
 
 import {
@@ -17,7 +15,7 @@ import {
   QueryRequestsForCurrentUserArgs,
   Request,
 } from "@graphql/generated/resolver-types";
-import { resultInclude } from "../../utils/formatResult";
+import { newResponseService } from "@/services/requests/newResponseService";
 
 const newRequest = async (
   root: unknown,
@@ -34,40 +32,7 @@ const newResponse = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-
-  const existingResponse = await prisma.response.findFirst({
-    where: {
-      requestId: args.requestId,
-      creatorId: context.currentUser.id,
-    },
-  });
-
-  if (existingResponse) throw Error("ERROR User already responded to this request ");
-
-  const request = await prisma.request.findFirstOrThrow({
-    include: {
-      result: { include: resultInclude },
-    },
-    where: {
-      id: args.requestId,
-    },
-  });
-
-  if (request.expirationDate < new Date() || request.result)
-    throw Error("ERROR New Response: Request is no longer accepting responses");
-
-  const response = await prisma.response.create({
-    data: {
-      optionId: args.optionId,
-      requestId: args.requestId,
-      creatorId: context.currentUser.id,
-    },
-  });
-
-  await determineDecision({ requestId: args.requestId, user: context.currentUser });
-
-  return response.id;
+  return await newResponseService({ args, context });
 };
 
 const request = async (

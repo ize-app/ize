@@ -42,7 +42,6 @@ export const RoleSearchControl = ({
 }: RoleSearchControlProps) => {
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
-  console.log("recent agents are", recentAgents);
 
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
   const userIdentities = ((me as Me).identities as AgentSummaryPartsFragment[]).filter(
