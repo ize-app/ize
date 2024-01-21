@@ -1,8 +1,11 @@
-import { Alchemy, Network } from "alchemy-sdk";
+import { AlchemyMultichainClient } from "./AlchemyMultichainClient";
+import { Network } from "alchemy-sdk";
 
-const config = {
+const defaultConfig = {
   apiKey: process.env.ALCHEMY_API_KEY as string,
   network: Network.ETH_MAINNET,
 };
 
-export const alchemyClient = new Alchemy(config);
+const overrides = {};
+
+export const alchemyClient = new AlchemyMultichainClient(defaultConfig, overrides);
