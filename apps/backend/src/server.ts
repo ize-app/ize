@@ -15,7 +15,7 @@ import { authenticateSession } from "./auth/authenticateSession";
 import { GraphqlRequestContext } from "./graphql/context";
 import { DiscordApi } from "./discord/api";
 import { prisma } from "./prisma/client";
-import { stytchClient } from "./auth/authenticateSession";
+import { stytchClient } from "./auth/stytchClient";
 import { MePrismaType } from "./utils/formatUser";
 import { createBlockchainIdentities } from "./auth/createBlockchainIdentities";
 import { createEmailIdentities } from "./auth/createEmailIdentities";
