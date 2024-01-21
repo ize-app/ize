@@ -124,6 +124,16 @@ export const RoleSearchControl = ({
                         </Button>
                         <Button
                           variant="outlined"
+                          startIcon={<EthLogoSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupEns);
+                            setOpen(true);
+                          }}
+                        >
+                          ENS
+                        </Button>
+                        <Button
+                          variant="outlined"
                           startIcon={<DiscordLogoSvg />}
                           onMouseDown={() => {
                             setRoleModalType(NewAgentTypes.GroupDiscord);

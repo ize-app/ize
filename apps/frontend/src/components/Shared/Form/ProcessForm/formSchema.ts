@@ -144,7 +144,6 @@ export const newAgentFormSchema = z.object({
             }),
         )
         .safeParse(str.split(","));
-
       if (!parsed.success) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -152,6 +151,44 @@ export const newAgentFormSchema = z.object({
         });
         return z.NEVER;
       } else {
+        return parsed.data;
+      }
+    })
+    .optional(),
+  ensAddress: z
+    .string()
+    .trim()
+    .transform<string[]>((str, ctx) => {
+      const parsed = z
+        .array(
+          z
+            .string()
+            .trim()
+            .refine(
+              (value) => {
+                // TODO - this regex does not seem to be correct
+                const ensRegEx = new RegExp(
+                  "[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?",
+                  "ig",
+                );
+                const isValidRegex = !!value.match(ensRegEx);
+                return isValidRegex;
+              },
+              {
+                message: "ENS is invalid. Please insure you have typed correctly.",
+              },
+            ),
+        )
+        .safeParse(str.split(","));
+      if (!parsed.success) {
+        console.log("failure");
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: parsed.error.issues[0].message,
+        });
+        return z.NEVER;
+      } else {
+        console.log("sucess");
         return parsed.data;
       }
     })

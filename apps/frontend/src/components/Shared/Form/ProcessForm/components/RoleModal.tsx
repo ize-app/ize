@@ -75,6 +75,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       type: initialType,
+      ensAddress: [],
       ethAddress: [],
       emailAddress: [],
       discordRole: {
@@ -121,6 +122,14 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                 ]
               : [],
           };
+        }
+        case NewAgentTypes.GroupEns: {
+          // TODO add create mutation logic
+          return { agents: [] };
+        }
+        case NewAgentTypes.GroupNft: {
+          // TODO add create mutation logic
+          return { agents: [] };
         }
         default:
           return { agents: [] };
@@ -178,6 +187,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
             selectOptions={[
               { name: "Email address", value: NewAgentTypes.IdentityEmail },
               { name: "Eth address", value: NewAgentTypes.IdentityBlockchain },
+              { name: "ENS", value: NewAgentTypes.GroupEns },
               { name: "Discord role", value: NewAgentTypes.GroupDiscord },
               { name: "NFT", value: NewAgentTypes.GroupNft },
               { name: "Hat", value: NewAgentTypes.GroupHat },
@@ -346,6 +356,53 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                   )}
                 </>
               )}
+            </>
+          )}
+          {inputType === NewAgentTypes.GroupEns && (
+            <>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "24px",
+                }}
+              >
+                <Controller
+                  name={"ensAddress"}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <FormControl sx={{ width: "100%" }}>
+                        <TextField
+                          {...field}
+                          label={"ENS addresses"}
+                          fullWidth
+                          required
+                          error={Boolean(error)}
+                          placeholder="Enter an ENS address (or list of ENS addresses, seperated by commas)"
+                        />
+                        <FormHelperText
+                          sx={{
+                            color: error?.message ? "error.main" : "black",
+                          }}
+                        >
+                          {error?.message ?? ""}
+                        </FormHelperText>
+                      </FormControl>
+                    );
+                  }}
+                />
+                <Button
+                  type="submit"
+                  onClick={handleSubmit(createAgents)}
+                  variant="contained"
+                  disabled={disableSubmit}
+                >
+                  Submit
+                </Button>
+              </Box>
             </>
           )}
           {inputType === NewAgentTypes.GroupNft && (
