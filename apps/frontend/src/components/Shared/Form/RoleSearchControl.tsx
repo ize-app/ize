@@ -23,6 +23,7 @@ import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles
 import { MailOutline } from "@mui/icons-material";
 import { DiscordLogoSvg, EthLogoSvg } from "../icons";
 import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
+import NftSvg from "../icons/NftSvg";
 
 interface RoleSearchControlProps {
   control: Control;
@@ -65,7 +66,9 @@ export const RoleSearchControl = ({
 
   return (
     <>
-      {<RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} type={roleModalType} />}
+      {open && ( // unmounting the modal fully so that react hook form state clears
+        <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} initialType={roleModalType} />
+      )}
       <Controller
         name={name}
         control={control}
@@ -128,6 +131,26 @@ export const RoleSearchControl = ({
                           }}
                         >
                           Discord @role
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<NftSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupNft);
+                            setOpen(true);
+                          }}
+                        >
+                          NFT
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<NftSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupHat);
+                            setOpen(true);
+                          }}
+                        >
+                          Hat
                         </Button>
                       </Box>
                       {children}

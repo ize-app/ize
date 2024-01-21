@@ -256,6 +256,8 @@ export type NewAgentArgs = {
 
 export enum NewAgentTypes {
   GroupDiscord = 'GroupDiscord',
+  GroupHat = 'GroupHat',
+  GroupNft = 'GroupNft',
   IdentityBlockchain = 'IdentityBlockchain',
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'

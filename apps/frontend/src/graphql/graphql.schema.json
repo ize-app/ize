@@ -1974,6 +1974,18 @@
             "deprecationReason": null
           },
           {
+            "name": "GroupHat",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GroupNft",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "IdentityBlockchain",
             "description": null,
             "isDeprecated": false,

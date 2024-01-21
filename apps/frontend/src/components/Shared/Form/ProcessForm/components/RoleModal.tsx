@@ -43,10 +43,10 @@ interface RoleModalProps {
   open: boolean;
   setOpen: (x: boolean) => void;
   onSubmit: (value: AgentSummaryPartsFragment[]) => void;
-  type: NewAgentTypes;
+  initialType: NewAgentTypes;
 }
 
-export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
+export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalProps) {
   const { me } = useContext(CurrentUserContext);
 
   const isConnectedToDiscord = me?.identities.find(
@@ -74,7 +74,7 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
 
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
-      type,
+      type: initialType,
       ethAddress: [],
       emailAddress: [],
       discordRole: {
@@ -135,6 +135,7 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
   };
 
   const inputType = watch("type");
+
   const discordServerId = watch("discordRole.serverId");
 
   const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
@@ -178,6 +179,8 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
               { name: "Email address", value: NewAgentTypes.IdentityEmail },
               { name: "Eth address", value: NewAgentTypes.IdentityBlockchain },
               { name: "Discord role", value: NewAgentTypes.GroupDiscord },
+              { name: "NFT", value: NewAgentTypes.GroupNft },
+              { name: "Hat", value: NewAgentTypes.GroupHat },
             ]}
           />
           {inputType === NewAgentTypes.IdentityBlockchain && (
@@ -343,6 +346,16 @@ export function RoleModal({ open, setOpen, onSubmit, type }: RoleModalProps) {
                   )}
                 </>
               )}
+            </>
+          )}
+          {inputType === NewAgentTypes.GroupNft && (
+            <>
+              <div>NFT</div>
+            </>
+          )}
+          {inputType === NewAgentTypes.GroupHat && (
+            <>
+              <div>Hat</div>
             </>
           )}
         </form>

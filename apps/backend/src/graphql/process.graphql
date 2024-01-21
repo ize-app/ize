@@ -50,6 +50,8 @@ enum NewAgentTypes {
   IdentityDiscord
   IdentityEmail
   GroupDiscord
+  GroupNft
+  GroupHat
 }
 
 input ActionArgs {
