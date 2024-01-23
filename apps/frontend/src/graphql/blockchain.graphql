@@ -1,0 +1,34 @@
+query NftContract($address: String!, $chain: Blockchain!) {
+  nftContract(address: $address, chain: $chain) {
+    ...AlchemyApiNftContractParts
+  }
+}
+
+query NftToken($address: String!, $tokenId: String!, $chain: Blockchain!) {
+  nftToken(address: $address, tokenId: $tokenId, chain: $chain) {
+    ...AlchemyApiTokenParts
+  }
+}
+
+query SearchNftContracts($query: String!, $chain: Blockchain!) {
+  searchNftContracts(query: $query, chain: $chain) {
+    ...AlchemyApiNftContractParts
+  }
+}
+
+fragment AlchemyApiNftContractParts on AlchemyApiNftContract {
+  address
+  name
+  icon
+  chain
+  type
+}
+
+fragment AlchemyApiTokenParts on AlchemyApiNftToken {
+  tokenId
+  name
+  icon
+  contract {
+    ...AlchemyApiNftContractParts
+  }
+}

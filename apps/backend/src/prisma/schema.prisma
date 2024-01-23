@@ -115,6 +115,7 @@ model Group {
   GroupDiscordRole GroupDiscordRole?
   process          Process[]
   RoleGroups       RoleGroup[]
+  GroupNft         GroupNft?
 
   @@map("groups")
 }
@@ -137,6 +138,49 @@ model GroupDiscordRole {
   @@unique([discordServerId, discordRoleId])
   @@unique([discordServerId, name])
   @@map("discord_role_groups")
+}
+
+enum NftType {
+  ERC721
+  ERC1155
+}
+
+enum Blockchain {
+  Ethereum
+  Arbitrum
+  Optimism
+  Matic
+  Base
+}
+
+model GroupNft {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String?
+  icon         String?
+  groupId      String  @unique @map("group_id") @db.Uuid
+  collectionId String  @map("collection_id") @db.Uuid
+  tokenId      String? @map("token_id")
+  /// Whether the tokenId includes all tokens below it in the hats heirarchy
+  hatsBranch   Boolean @default(false) @map("hatsBranch")
+
+  Group         Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  NftCollection NftCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, hatsBranch, tokenId])
+  @@map("groups_nfts")
+}
+
+model NftCollection {
+  id       String     @id @default(uuid()) @db.Uuid
+  name     String?
+  icon     String?
+  chain    Blockchain
+  type     NftType
+  address  String
+  GroupNft GroupNft[]
+
+  @@unique([chain, address])
+  @@map("nft_collection")
 }
 
 model DiscordServer {

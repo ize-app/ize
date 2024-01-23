@@ -7,8 +7,9 @@ import {
   NewAgentTypes,
   DiscordServerRolesDocument,
   Me,
+  Blockchain,
 } from "@/graphql/generated/graphql";
-import { Button, Typography } from "@mui/material";
+import { Button, FormControlLabel, Switch, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormControl from "@mui/material/FormControl";
@@ -24,6 +25,7 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
 import { DiscordLogoSvg } from "@/components/shared/icons";
 import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
+import { NftCard } from "./NftCard";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
 
@@ -45,6 +47,85 @@ interface RoleModalProps {
   onSubmit: (value: AgentSummaryPartsFragment[]) => void;
   initialType: NewAgentTypes;
 }
+
+const chainOptions: SelectOption[] = [
+  { name: "Ethereum", value: Blockchain.Ethereum },
+  { name: "Optimism", value: Blockchain.Optimism },
+  { name: "Arbitrum", value: Blockchain.Arbitrum },
+  { name: "Matic", value: Blockchain.Matic },
+  { name: "Base", value: Blockchain.Base },
+];
+
+const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
+  switch (data.type) {
+    case NewAgentTypes.IdentityBlockchain: {
+      return {
+        agents: (data.ethAddress ?? []).map((address) => ({
+          identityBlockchain: {
+            address: address,
+          },
+        })),
+      };
+    }
+    case NewAgentTypes.IdentityEmail: {
+      return {
+        agents: (data.emailAddress ?? []).map((email) => ({
+          identityEmail: {
+            email: email,
+          },
+        })),
+      };
+    }
+    case NewAgentTypes.GroupDiscord: {
+      return {
+        agents: data.discordRole
+          ? [
+              {
+                groupDiscordRole: {
+                  serverId: data.discordRole?.serverId,
+                  roleId: data.discordRole?.roleId,
+                },
+              },
+            ]
+          : [],
+      };
+    }
+    case NewAgentTypes.GroupEns: {
+      return { agents: (data.ensAddress ?? []).map((ens) => ({ groupEns: { name: ens } })) };
+    }
+    case NewAgentTypes.GroupNft: {
+      return {
+        agents: data.nft
+          ? [
+              {
+                groupNft: {
+                  chain: data.nft.chain as Blockchain,
+                  address: data.nft.contractAddress as string,
+                  tokenId: data.nft.tokenId,
+                },
+              },
+            ]
+          : [],
+      };
+    }
+    case NewAgentTypes.GroupHat: {
+      return {
+        agents: data.hat
+          ? [
+              {
+                groupHat: {
+                  chain: data.hat.chain as Blockchain,
+                  tokenId: data.hat.tokenId,
+                },
+              },
+            ]
+          : [],
+      };
+    }
+    default:
+      return { agents: [] };
+  }
+};
 
 export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalProps) {
   const { me } = useContext(CurrentUserContext);
@@ -78,6 +159,16 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
       ensAddress: [],
       ethAddress: [],
       emailAddress: [],
+      nft: {
+        chain: Blockchain.Ethereum,
+        contractAddress: "",
+        tokenId: "",
+        allTokens: true,
+      },
+      hat: {
+        chain: Blockchain.Optimism,
+        tokenId: "",
+      },
       discordRole: {
         serverId: "",
         roleId: "",
@@ -89,52 +180,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
 
   const createAgents = async (data: FormFields) => {
     setDisableSubmit(true);
-    const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
-      switch (data.type) {
-        case NewAgentTypes.IdentityBlockchain: {
-          return {
-            agents: (data.ethAddress ?? []).map((address) => ({
-              identityBlockchain: {
-                address: address,
-              },
-            })),
-          };
-        }
-        case NewAgentTypes.IdentityEmail: {
-          return {
-            agents: (data.emailAddress ?? []).map((email) => ({
-              identityEmail: {
-                email: email,
-              },
-            })),
-          };
-        }
-        case NewAgentTypes.GroupDiscord: {
-          return {
-            agents: data.discordRole
-              ? [
-                  {
-                    groupDiscordRole: {
-                      serverId: data.discordRole?.serverId,
-                      roleId: data.discordRole?.roleId,
-                    },
-                  },
-                ]
-              : [],
-          };
-        }
-        case NewAgentTypes.GroupEns: {
-          // TODO add create mutation logic
-          return { agents: [] };
-        }
-        case NewAgentTypes.GroupNft: {
-          // TODO add create mutation logic
-          return { agents: [] };
-        }
-        default:
-          return { agents: [] };
-      }
-    };
 
     await mutate({
       variables: {
@@ -144,9 +189,13 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
   };
 
   const inputType = watch("type");
-
   const discordServerId = watch("discordRole.serverId");
+  const nftChain = watch("nft.chain");
+  const nftContractAddress = watch("nft.contractAddress");
+  const nftTokenId = watch("nft.tokenId");
+  const nftAllTokens = watch("nft.allTokens");
 
+  console.log("nftAllTokens", nftAllTokens);
   const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
     (server) => server.id === discordServerId && server.hasCultsBot,
   );
@@ -407,12 +456,163 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
           )}
           {inputType === NewAgentTypes.GroupNft && (
             <>
-              <div>NFT</div>
+              <div>
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    alignItems: "left",
+                  }}
+                >
+                  <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+                    <Box sx={{ width: "140px" }}>
+                      <SelectControl
+                        name="nft.chain"
+                        //@ts-ignore
+                        control={control}
+                        label="Chain"
+                        selectOptions={chainOptions}
+                      />
+                    </Box>
+                    <Controller
+                      name={"nft.contractAddress"}
+                      control={control}
+                      render={({ field, fieldState: { error } }) => {
+                        return (
+                          <FormControl sx={{ width: "100%" }}>
+                            <TextField
+                              {...field}
+                              label={"Contract Address"}
+                              fullWidth
+                              required
+                              error={Boolean(error)}
+                              placeholder="Address of this NFT contract"
+                            />
+                            <FormHelperText
+                              sx={{
+                                color: error?.message ? "error.main" : "black",
+                              }}
+                            >
+                              {error?.message ?? ""}
+                            </FormHelperText>
+                          </FormControl>
+                        );
+                      }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "16px",
+                    }}
+                  >
+                    <Controller
+                      name={"nft.allTokens"}
+                      control={control}
+                      render={({ field }) => {
+                        return (
+                          <FormControl>
+                            <FormControlLabel
+                              label="Include all token Ids"
+                              control={<Switch {...field} checked={field.value} />}
+                            />
+                          </FormControl>
+                        );
+                      }}
+                    />
+                    {!nftAllTokens && (
+                      <Controller
+                        name={"nft.tokenId"}
+                        control={control}
+                        render={({ field, fieldState: { error } }) => {
+                          console.log("error is ", error);
+                          return (
+                            <FormControl sx={{ width: "300px" }}>
+                              <TextField
+                                {...field}
+                                label={"Token Id"}
+                                fullWidth
+                                // required
+                                error={Boolean(error)}
+                                placeholder="Token Id"
+                              />
+                              <FormHelperText
+                                sx={{
+                                  color: error?.message ? "error.main" : "black",
+                                }}
+                              >
+                                {error?.message ?? ""}
+                              </FormHelperText>
+                            </FormControl>
+                          );
+                        }}
+                      />
+                    )}
+                  </Box>
+                  <NftCard address={nftContractAddress} tokenId={nftTokenId} chain={nftChain} />
+                  <Button
+                    onClick={handleSubmit(createAgents)}
+                    variant="contained"
+                    disabled={disableSubmit}
+                    sx={{ width: "200px" }}
+                  >
+                    Submit
+                  </Button>
+                </Box>
+              </div>
             </>
           )}
           {inputType === NewAgentTypes.GroupHat && (
             <>
-              <div>Hat</div>
+              <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+                <Box sx={{ width: "140px" }}>
+                  <SelectControl
+                    name="hat.chain"
+                    //@ts-ignore
+                    control={control}
+                    label="Chain"
+                    selectOptions={chainOptions}
+                  />
+                </Box>
+                <Controller
+                  name={"hat.tokenId"}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <FormControl sx={{ width: "100%" }}>
+                        <TextField
+                          {...field}
+                          label={"Hat Token Id"}
+                          fullWidth
+                          required
+                          error={Boolean(error)}
+                          placeholder="Address of this NFT contract"
+                        />
+                        <FormHelperText
+                          sx={{
+                            color: error?.message ? "error.main" : "black",
+                          }}
+                        >
+                          {error?.message ?? ""}
+                        </FormHelperText>
+                      </FormControl>
+                    );
+                  }}
+                />
+              </Box>
+              <Button
+                onClick={handleSubmit(createAgents)}
+                variant="contained"
+                disabled={disableSubmit}
+                sx={{ width: "200px" }}
+              >
+                Submit
+              </Button>
             </>
           )}
         </form>

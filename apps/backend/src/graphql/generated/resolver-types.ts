@@ -48,6 +48,31 @@ export enum AgentType {
   Identity = 'Identity'
 }
 
+export type AlchemyApiNftContract = {
+  __typename?: 'AlchemyApiNftContract';
+  address: Scalars['String']['output'];
+  chain: Blockchain;
+  icon?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  type: NftTypes;
+};
+
+export type AlchemyApiNftToken = {
+  __typename?: 'AlchemyApiNftToken';
+  contract: AlchemyApiNftContract;
+  icon?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  tokenId: Scalars['String']['output'];
+};
+
+export enum Blockchain {
+  Arbitrum = 'Arbitrum',
+  Base = 'Base',
+  Ethereum = 'Ethereum',
+  Matic = 'Matic',
+  Optimism = 'Optimism'
+}
+
 export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   expirationSeconds: Scalars['Int']['input'];
@@ -126,6 +151,21 @@ export type Group = {
 export type GroupDiscordRoleArgs = {
   roleId: Scalars['String']['input'];
   serverId: Scalars['String']['input'];
+};
+
+export type GroupEnsArgs = {
+  name: Scalars['String']['input'];
+};
+
+export type GroupHatArgs = {
+  chain: Blockchain;
+  tokenId: Scalars['String']['input'];
+};
+
+export type GroupNftArgs = {
+  address: Scalars['String']['input'];
+  chain: Blockchain;
+  tokenId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type GroupType = DiscordRoleGroup;
@@ -249,6 +289,9 @@ export type MutationSetUpDiscordServerArgs = {
 
 export type NewAgentArgs = {
   groupDiscordRole?: InputMaybe<GroupDiscordRoleArgs>;
+  groupEns?: InputMaybe<GroupEnsArgs>;
+  groupHat?: InputMaybe<GroupHatArgs>;
+  groupNft?: InputMaybe<GroupNftArgs>;
   identityBlockchain?: InputMaybe<IdentityBlockchainArgs>;
   identityDiscord?: InputMaybe<IdentityDiscordArgs>;
   identityEmail?: InputMaybe<IdentityEmailArgs>;
@@ -262,6 +305,11 @@ export enum NewAgentTypes {
   IdentityBlockchain = 'IdentityBlockchain',
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
+}
+
+export enum NftTypes {
+  Erc721 = 'ERC721',
+  Erc1155 = 'ERC1155'
 }
 
 export type OnboardedDiscordServer = {
@@ -351,6 +399,8 @@ export type Query = {
   group: Group;
   groupsForCurrentUser: Array<Group>;
   me?: Maybe<Me>;
+  nftContract?: Maybe<AlchemyApiNftContract>;
+  nftToken?: Maybe<AlchemyApiNftToken>;
   process: Process;
   processesForCurrentUser: Array<Process>;
   processesForGroup: Array<Process>;
@@ -358,6 +408,7 @@ export type Query = {
   requestsForCurrentUser: Array<Request>;
   requestsForGroup: Array<Request>;
   requestsForProcess: Array<Request>;
+  searchNftContracts: Array<AlchemyApiNftContract>;
 };
 
 
@@ -373,6 +424,19 @@ export type QueryGroupArgs = {
 
 export type QueryGroupsForCurrentUserArgs = {
   groupIds: Array<Scalars['String']['input']>;
+};
+
+
+export type QueryNftContractArgs = {
+  address: Scalars['String']['input'];
+  chain: Blockchain;
+};
+
+
+export type QueryNftTokenArgs = {
+  address: Scalars['String']['input'];
+  chain: Blockchain;
+  tokenId: Scalars['String']['input'];
 };
 
 
@@ -409,6 +473,12 @@ export type QueryRequestsForGroupArgs = {
 
 export type QueryRequestsForProcessArgs = {
   processId: Scalars['String']['input'];
+};
+
+
+export type QuerySearchNftContractsArgs = {
+  chain: Blockchain;
+  query: Scalars['String']['input'];
 };
 
 export type Request = {
@@ -616,6 +686,9 @@ export type ResolversTypes = {
   ActionType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionType']>;
   Agent: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Agent']>;
   AgentType: AgentType;
+  AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
+  AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
+  Blockchain: Blockchain;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
@@ -629,6 +702,9 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
+  GroupEnsArgs: GroupEnsArgs;
+  GroupHatArgs: GroupHatArgs;
+  GroupNftArgs: GroupNftArgs;
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
@@ -646,6 +722,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   NewAgentArgs: NewAgentArgs;
   NewAgentTypes: NewAgentTypes;
+  NftTypes: NftTypes;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
   OptionType: OptionType;
   Organization: ResolverTypeWrapper<Organization>;
@@ -685,6 +762,8 @@ export type ResolversParentTypes = {
   ActionArgs: ActionArgs;
   ActionType: ResolversUnionTypes<ResolversParentTypes>['ActionType'];
   Agent: ResolversUnionTypes<ResolversParentTypes>['Agent'];
+  AlchemyApiNftContract: AlchemyApiNftContract;
+  AlchemyApiNftToken: AlchemyApiNftToken;
   Boolean: Scalars['Boolean']['output'];
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolversUnionTypes<ResolversParentTypes>['DecisionTypes'];
@@ -698,6 +777,9 @@ export type ResolversParentTypes = {
   Float: Scalars['Float']['output'];
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
+  GroupEnsArgs: GroupEnsArgs;
+  GroupHatArgs: GroupHatArgs;
+  GroupNftArgs: GroupNftArgs;
   GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
@@ -759,6 +841,23 @@ export type ActionTypeResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type AgentResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Agent'] = ResolversParentTypes['Agent']> = {
   __resolveType: TypeResolveFn<'Group' | 'Identity', ParentType, ContextType>;
+};
+
+export type AlchemyApiNftContractResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftContract'] = ResolversParentTypes['AlchemyApiNftContract']> = {
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  chain?: Resolver<ResolversTypes['Blockchain'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['NftTypes'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AlchemyApiNftTokenResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftToken'] = ResolversParentTypes['AlchemyApiNftToken']> = {
+  contract?: Resolver<ResolversTypes['AlchemyApiNftContract'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tokenId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type DecisionTypesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DecisionTypes'] = ResolversParentTypes['DecisionTypes']> = {
@@ -954,6 +1053,8 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
+  nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
+  nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
   processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'groupIds' | 'requestRoleOnly'>>;
   processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
@@ -961,6 +1062,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groupIds'>>;
   requestsForGroup?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForGroupArgs, 'groupId'>>;
   requestsForProcess?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForProcessArgs, 'processId'>>;
+  searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
 };
 
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
@@ -1045,6 +1147,8 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Action?: ActionResolvers<ContextType>;
   ActionType?: ActionTypeResolvers<ContextType>;
   Agent?: AgentResolvers<ContextType>;
+  AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
+  AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   DecisionTypes?: DecisionTypesResolvers<ContextType>;
   DiscordAPIServerRole?: DiscordApiServerRoleResolvers<ContextType>;
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;

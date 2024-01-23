@@ -1,6 +1,7 @@
 type Query {
   discordServerRoles(serverId: String!): [DiscordAPIServerRole!]!
 }
+
 type DiscordServer {
   id: String!
   name: String!

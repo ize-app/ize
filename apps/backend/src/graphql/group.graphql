@@ -50,3 +50,4 @@ type OnboardedDiscordServer {
   icon: String
   banner: String
 }
+

@@ -7,6 +7,7 @@
 
 // export const alchemyClient = new Alchemy(config);
 
+import { Blockchain } from "@/graphql/generated/resolver-types";
 import { Alchemy, AlchemySettings, Network } from "alchemy-sdk";
 
 /**
@@ -46,8 +47,16 @@ export class AlchemyMultichainClient {
    *
    * @param network
    */
-  forNetwork(network: Network): Alchemy {
-    return this.loadInstance(network);
+  chainNetworkMap = new Map([
+    [Blockchain.Ethereum, Network.ETH_MAINNET],
+    [Blockchain.Optimism, Network.OPT_MAINNET],
+    [Blockchain.Matic, Network.MATIC_MAINNET],
+    [Blockchain.Arbitrum, Network.ARB_MAINNET],
+    [Blockchain.Base, Network.BASE_MAINNET],
+  ]);
+
+  forChain(chain: Blockchain): Alchemy {
+    return this.loadInstance(this.chainNetworkMap.get(chain) as Network);
   }
 
   /**
