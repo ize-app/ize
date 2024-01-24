@@ -10,7 +10,6 @@ import {
   QueryProcessesForCurrentUserArgs,
   QueryProcessesForGroupArgs,
   Agent,
-  // Agent,
 } from "@graphql/generated/resolver-types";
 
 import { newCustomProcess } from "@services/processes/newProcess";
@@ -19,6 +18,7 @@ import { processesForUserService } from "@services/processes/processesForUserSer
 import { refreshDiscordServerRoles } from "@/services/groups/refreshDiscordServerRoles";
 import { upsertDiscordEveryoneRole } from "@/services/groups/upsertDiscordEveryoneRole";
 import { formatGroup, groupInclude } from "@/utils/formatGroup";
+import { createHatsGroup, createNftGroup } from "@/services/groups/createNftGroup";
 
 const newProcess = async (
   root: unknown,
@@ -134,11 +134,26 @@ const newAgents = async (
           });
           return formatGroup(group);
         }
+      } else if (a.groupNft) {
+        return await createNftGroup({
+          context,
+          address: a.groupNft.address,
+          chain: a.groupNft.chain,
+          tokenId: a.groupNft.tokenId,
+        });
+      } else if (a.groupHat) {
+        await createHatsGroup({
+          chain: a.groupHat.chain,
+          tokenId: a.groupHat.tokenId,
+          includeHatsBranch: false,
+          context,
+        });
       } else {
         throw Error("ERROR unknown new agent type");
       }
     }),
   );
+  //@ts-ignore
   return agents;
 };
 

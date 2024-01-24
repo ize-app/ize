@@ -68,7 +68,6 @@ enum NewAgentTypes {
   IdentityDiscord
   IdentityEmail
   GroupDiscord
-  GroupEns
   GroupNft
   GroupHat
 }

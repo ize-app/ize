@@ -7,10 +7,10 @@ import {
   QuerySearchNftContractsArgs,
 } from "../generated/resolver-types";
 
-import { alchemyClient } from "@/alchemy/alchemyClient";
-import { formatNftContract } from "@/alchemy/formatNftContract";
-import { getNftContract } from "@/alchemy/getNftContract";
-import { getNftToken } from "@/alchemy/getNftToken";
+import { alchemyClient } from "@/blockchain/clients/alchemyClient";
+import { formatNftContract } from "@/blockchain/formatNftContract";
+import { getNftContract } from "@/blockchain/getNftContract";
+import { getNftToken } from "@/blockchain/getNftToken";
 
 const nftContract = async (
   root: unknown,

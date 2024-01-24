@@ -90,9 +90,6 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
           : [],
       };
     }
-    case NewAgentTypes.GroupEns: {
-      return { agents: (data.ensAddress ?? []).map((ens) => ({ groupEns: { name: ens } })) };
-    }
     case NewAgentTypes.GroupNft: {
       return {
         agents: data.nft
@@ -156,7 +153,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
   const { control, handleSubmit, watch } = useForm<FormFields>({
     defaultValues: {
       type: initialType,
-      ensAddress: [],
       ethAddress: [],
       emailAddress: [],
       nft: {
@@ -405,53 +401,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                   )}
                 </>
               )}
-            </>
-          )}
-          {inputType === NewAgentTypes.GroupEns && (
-            <>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "24px",
-                }}
-              >
-                <Controller
-                  name={"ensAddress"}
-                  control={control}
-                  render={({ field, fieldState: { error } }) => {
-                    return (
-                      <FormControl sx={{ width: "100%" }}>
-                        <TextField
-                          {...field}
-                          label={"ENS addresses"}
-                          fullWidth
-                          required
-                          error={Boolean(error)}
-                          placeholder="Enter an ENS address (or list of ENS addresses, seperated by commas)"
-                        />
-                        <FormHelperText
-                          sx={{
-                            color: error?.message ? "error.main" : "black",
-                          }}
-                        >
-                          {error?.message ?? ""}
-                        </FormHelperText>
-                      </FormControl>
-                    );
-                  }}
-                />
-                <Button
-                  type="submit"
-                  onClick={handleSubmit(createAgents)}
-                  variant="contained"
-                  disabled={disableSubmit}
-                >
-                  Submit
-                </Button>
-              </Box>
             </>
           )}
           {inputType === NewAgentTypes.GroupNft && (

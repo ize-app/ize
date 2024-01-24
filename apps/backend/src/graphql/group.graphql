@@ -12,6 +12,8 @@ type Query {
   groupsForCurrentUser(groupIds: [String!]!): [Group!]!
 }
 
+union GroupType = DiscordRoleGroup | GroupNft
+
 type Group {
   id: String!
   name: String!
@@ -21,15 +23,31 @@ type Group {
   memberCount: Int
   organization: Organization!
   createdAt: String!
-  discordRoleGroup: DiscordRoleGroup
   groupType: GroupType!
 }
-
-union GroupType = DiscordRoleGroup
 
 type Organization {
   name: String!
   icon: String
+}
+
+type GroupNft {
+  id: String!
+  name: String!
+  icon: String
+  tokenId: String
+  allTokens: Boolean!
+  hatsBranch: Boolean!
+  NftCollection: NftCollection!
+}
+
+type NftCollection {
+  id: String!
+  name: String
+  icon: String
+  chain: Blockchain!
+  type: NftTypes!
+  address: String!
 }
 
 type DiscordRoleGroup {
@@ -50,4 +68,3 @@ type OnboardedDiscordServer {
   icon: String
   banner: String
 }
-

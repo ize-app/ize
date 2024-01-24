@@ -140,7 +140,7 @@ model GroupDiscordRole {
   @@map("discord_role_groups")
 }
 
-enum NftType {
+enum NftTypes {
   ERC721
   ERC1155
 }
@@ -155,18 +155,20 @@ enum Blockchain {
 
 model GroupNft {
   id           String  @id @default(uuid()) @db.Uuid
-  name         String?
+  name         String
   icon         String?
   groupId      String  @unique @map("group_id") @db.Uuid
   collectionId String  @map("collection_id") @db.Uuid
-  tokenId      String? @map("token_id")
+  // prisma doesn't support uniqueness constraints for non-nullable fields so I'm using an empty string here instead
+  tokenId      String  @map("token_id")
+  allTokens    Boolean @map("all_tokens")
   /// Whether the tokenId includes all tokens below it in the hats heirarchy
   hatsBranch   Boolean @default(false) @map("hatsBranch")
 
   Group         Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
   NftCollection NftCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@unique([collectionId, hatsBranch, tokenId])
+  @@unique([collectionId, hatsBranch, tokenId, allTokens])
   @@map("groups_nfts")
 }
 
@@ -175,7 +177,7 @@ model NftCollection {
   name     String?
   icon     String?
   chain    Blockchain
-  type     NftType
+  type     NftTypes
   address  String
   GroupNft GroupNft[]
 

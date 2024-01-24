@@ -124,16 +124,6 @@ export const RoleSearchControl = ({
                         </Button>
                         <Button
                           variant="outlined"
-                          startIcon={<EthLogoSvg />}
-                          onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.GroupEns);
-                            setOpen(true);
-                          }}
-                        >
-                          ENS
-                        </Button>
-                        <Button
-                          variant="outlined"
                           startIcon={<DiscordLogoSvg />}
                           onMouseDown={() => {
                             setRoleModalType(NewAgentTypes.GroupDiscord);
@@ -180,7 +170,7 @@ export const RoleSearchControl = ({
                             name={option.name}
                             avatarUrl={
                               option.__typename === "Group" && option.organization
-                                ? option.organization.icon
+                                ? option.organization.icon ?? option.icon
                                 : option.icon
                             }
                             type={option.__typename as AgentType}
@@ -211,7 +201,7 @@ export const RoleSearchControl = ({
                       id={option.id}
                       avatarUrl={
                         option.__typename === "Group" && option.organization
-                          ? option.organization.icon
+                          ? option.organization.icon ?? option.icon
                           : option.icon
                       }
                       name={option.name}

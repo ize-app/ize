@@ -1,15 +1,6 @@
-// import { Alchemy, Network } from "alchemy-sdk";
-
-// const config = {
-//   apiKey: process.env.ALCHEMY_API_KEY as string,
-//   network: Network.ETH_MAINNET,
-// };
-
-// export const alchemyClient = new Alchemy(config);
-
 import { Blockchain } from "@/graphql/generated/resolver-types";
 import { Alchemy, AlchemySettings, Network } from "alchemy-sdk";
-
+import { chainMap } from "../chainMap";
 /**
  * This is a wrapper around the Alchemy class that allows you to use the same
  * Alchemy object to make requests to multiple networks using different
@@ -47,16 +38,9 @@ export class AlchemyMultichainClient {
    *
    * @param network
    */
-  chainNetworkMap = new Map([
-    [Blockchain.Ethereum, Network.ETH_MAINNET],
-    [Blockchain.Optimism, Network.OPT_MAINNET],
-    [Blockchain.Matic, Network.MATIC_MAINNET],
-    [Blockchain.Arbitrum, Network.ARB_MAINNET],
-    [Blockchain.Base, Network.BASE_MAINNET],
-  ]);
 
   forChain(chain: Blockchain): Alchemy {
-    return this.loadInstance(this.chainNetworkMap.get(chain) as Network);
+    return this.loadInstance(chainMap.get(chain)?.alchemy as Network);
   }
 
   /**

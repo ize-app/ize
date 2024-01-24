@@ -69,7 +69,7 @@ export const refreshDiscordServerRoles = async ({
         where: {
           discordServerId_discordRoleId: {
             discordServerId: serverRecord.id, // refers to internal db id
-            discordRoleId: role.id,
+            discordRoleId: role.id, // refers to Discord's own role id
           },
         },
         update: {

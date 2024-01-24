@@ -37,6 +37,9 @@ fragment GroupTypeSummaryParts on GroupType {
   ... on DiscordRoleGroup {
     ...DiscordRoleGroupParts
   }
+  ... on GroupNft {
+    ...GroupNftParts
+  }
 }
 
 fragment DiscordRoleGroupParts on DiscordRoleGroup {
@@ -48,6 +51,27 @@ fragment DiscordRoleGroupParts on DiscordRoleGroup {
   discordServer {
     ...OnboardedDiscordServerParts
   }
+}
+
+fragment GroupNftParts on GroupNft {
+  id
+  name
+  icon
+  tokenId
+  hatsBranch
+  allTokens
+  NftCollection {
+    ...NftCollectionParts
+  }
+}
+
+fragment NftCollectionParts on NftCollection {
+  id
+  name
+  icon
+  chain
+  type
+  address
 }
 
 fragment OrganizationParts on Organization {
