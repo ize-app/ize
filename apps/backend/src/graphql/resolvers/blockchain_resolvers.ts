@@ -2,6 +2,8 @@ import { GraphqlRequestContext } from "../context";
 import {
   AlchemyApiNftContract,
   AlchemyApiNftToken,
+  ApiHatToken,
+  QueryHatTokenArgs,
   QueryNftContractArgs,
   QueryNftTokenArgs,
   QuerySearchNftContractsArgs,
@@ -9,6 +11,7 @@ import {
 
 import { alchemyClient } from "@/blockchain/clients/alchemyClient";
 import { formatNftContract } from "@/blockchain/formatNftContract";
+import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
 import { getNftContract } from "@/blockchain/getNftContract";
 import { getNftToken } from "@/blockchain/getNftToken";
 
@@ -33,6 +36,14 @@ const nftToken = async (
   });
 };
 
+const hatToken = async (
+  root: unknown,
+  args: QueryHatTokenArgs,
+  context: GraphqlRequestContext,
+): Promise<ApiHatToken | null> => {
+  return await getHatToken({ tokenId: parseHatToken(args.tokenId), chain: args.chain });
+};
+
 // TODO: rate limit this
 const searchNftContracts = async (
   root: unknown,
@@ -41,14 +52,15 @@ const searchNftContracts = async (
 ): Promise<AlchemyApiNftContract[]> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   const results = await alchemyClient.forChain(args.chain).nft.searchContractMetadata(args.query);
-  const formattedReults = results.contracts
-    // .filter((contract) => contract.tokenType === (NftTokenType.ERC1155 || NftTokenType.ERC721))
-    .map((contract) => formatNftContract(contract, args.chain));
+  const formattedReults = results.contracts.map((contract) =>
+    formatNftContract(contract, args.chain),
+  );
   return formattedReults;
 };
 
 export const blockchainQueries = {
   nftContract,
   nftToken,
+  hatToken,
   searchNftContracts,
 };

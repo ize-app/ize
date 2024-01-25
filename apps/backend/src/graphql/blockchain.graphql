@@ -1,6 +1,7 @@
 type Query {
   nftContract(address: String!, chain: Blockchain!): AlchemyApiNftContract
   nftToken(address: String!, tokenId: String!, chain: Blockchain!): AlchemyApiNftToken
+  hatToken(chain: Blockchain!, tokenId: String!): ApiHatToken
   searchNftContracts(query: String!, chain: Blockchain!): [AlchemyApiNftContract!]!
 }
 
@@ -26,8 +27,20 @@ type AlchemyApiNftContract {
 }
 
 type AlchemyApiNftToken {
+  chain: Blockchain!
   tokenId: String!
   name: String
   icon: String
   contract: AlchemyApiNftContract!
+}
+
+type ApiHatToken {
+  chain: Blockchain!
+  tokenId: String!
+  readableTokenId: String!
+  name: String
+  description: String
+  icon: String
+  topHatName: String!
+  topHatIcon: String
 }

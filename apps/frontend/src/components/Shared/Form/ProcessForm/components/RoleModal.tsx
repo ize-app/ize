@@ -25,7 +25,7 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
 import { DiscordLogoSvg } from "@/components/shared/icons";
 import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
-import { NftCard } from "./NftCard";
+import { HatsTokenCard, NftCard } from "./NftCard";
 
 type FormFields = z.infer<typeof newAgentFormSchema>;
 
@@ -106,6 +106,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
       };
     }
     case NewAgentTypes.GroupHat: {
+      console.log("hat data is ", data.hat);
       return {
         agents: data.hat
           ? [
@@ -113,6 +114,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
                 groupHat: {
                   chain: data.hat.chain as Blockchain,
                   tokenId: data.hat.tokenId,
+                  inludeHatsBranch: false,
                 },
               },
             ]
@@ -164,6 +166,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
       hat: {
         chain: Blockchain.Optimism,
         tokenId: "",
+        includeHatsBranch: false,
       },
       discordRole: {
         serverId: "",
@@ -190,8 +193,9 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
   const nftContractAddress = watch("nft.contractAddress");
   const nftTokenId = watch("nft.tokenId");
   const nftAllTokens = watch("nft.allTokens");
+  const hatTokenId = watch("hat.tokenId");
+  const hatChain = watch("hat.chain");
 
-  console.log("nftAllTokens", nftAllTokens);
   const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
     (server) => server.id === discordServerId && server.hasCultsBot,
   );
@@ -232,7 +236,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
             selectOptions={[
               { name: "Email address", value: NewAgentTypes.IdentityEmail },
               { name: "Eth address", value: NewAgentTypes.IdentityBlockchain },
-              { name: "ENS", value: NewAgentTypes.GroupEns },
               { name: "Discord role", value: NewAgentTypes.GroupDiscord },
               { name: "NFT", value: NewAgentTypes.GroupNft },
               { name: "Hat", value: NewAgentTypes.GroupHat },
@@ -554,6 +557,21 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                   }}
                 />
               </Box>
+              <Controller
+                name={"hat.includeHatsBranch"}
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormControl>
+                      <FormControlLabel
+                        label="Include all hats that this hat manages?"
+                        control={<Switch {...field} checked={field.value} />}
+                      />
+                    </FormControl>
+                  );
+                }}
+              />
+              <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
               <Button
                 onClick={handleSubmit(createAgents)}
                 variant="contained"

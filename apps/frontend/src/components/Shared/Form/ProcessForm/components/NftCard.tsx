@@ -6,7 +6,9 @@ import { Box, debounce } from "@mui/material";
 import {
   AlchemyApiNftContract,
   AlchemyApiNftToken,
+  ApiHatToken,
   Blockchain,
+  HatTokenDocument,
   NftContractDocument,
   NftTokenDocument,
 } from "@/graphql/generated/graphql";
@@ -122,10 +124,6 @@ const NftTokenCard = ({
     },
     onError: (error) => {
       console.log("Error fetching token", error);
-      console.log("client error", error.clientErrors);
-      console.log("protocol error", error.protocolErrors);
-      console.log("graphql error", error.graphQLErrors);
-      console.log("extra info", error.extraInfo);
       setToken(null);
     },
   });
@@ -180,6 +178,93 @@ const NftTokenCard = ({
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ overflow: "hidden" }}>
             <a href="/">Token Id: {token.tokenId}</a>
+          </Typography>
+        </CardContent>
+      </Box>
+    </Card>
+  );
+};
+
+export const HatsTokenCard = ({ tokenId, chain }: { tokenId: string; chain: Blockchain }) => {
+  if (!tokenId || !chain) return null;
+
+  const [token, setToken] = useState<ApiHatToken | null>(null);
+  const [getToken, { loading }] = useLazyQuery(HatTokenDocument, {
+    variables: {
+      chain,
+      tokenId,
+    },
+    onCompleted: (data) => {
+      setToken(data.hatToken ?? null);
+    },
+    onError: (error) => {
+      console.log("Error fetching token", error);
+      setToken(null);
+    },
+  });
+
+  const getTokenMemoized = useMemo(
+    () =>
+      debounce(() => {
+        getToken();
+      }, 100),
+    [],
+  );
+
+  useEffect(() => {
+    getTokenMemoized();
+  }, [chain, tokenId]);
+
+  if (loading) return <Loading />;
+  else if (token === null) return <Typography>Cannot find this NFT</Typography>;
+
+  return (
+    <Card sx={{ maxWidth: "100%", margin: "16px 0px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
+      >
+        {token?.icon && (
+          <CardMedia
+            component="img"
+            sx={{
+              height: "120px",
+              width: "120px",
+            }}
+            image={token.icon}
+            alt="Nft contract logo"
+          />
+        )}
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography gutterBottom variant="h5" component="div" sx={{ overflow: "hidden" }}>
+            {token?.name}
+          </Typography>
+          {/* <Typography variant="body2" color="text.secondary" sx={{ overflow: "hidden" }}>
+            <a href="/">{token.topHatName}</a>
+          </Typography> */}
+          <Typography variant="body2" color="text.secondary" sx={{ overflow: "hidden" }}>
+            Token Id: {token.readableTokenId}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {token.description}
           </Typography>
         </CardContent>
       </Box>

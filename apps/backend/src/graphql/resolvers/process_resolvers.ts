@@ -142,10 +142,10 @@ const newAgents = async (
           tokenId: a.groupNft.tokenId,
         });
       } else if (a.groupHat) {
-        await createHatsGroup({
+        return await createHatsGroup({
           chain: a.groupHat.chain,
           tokenId: a.groupHat.tokenId,
-          includeHatsBranch: false,
+          includeHatsBranch: a.groupHat.inludeHatsBranch,
           context,
         });
       } else {

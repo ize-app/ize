@@ -10,6 +10,12 @@ query NftToken($address: String!, $tokenId: String!, $chain: Blockchain!) {
   }
 }
 
+query HatToken($tokenId: String!, $chain: Blockchain!) {
+  hatToken(tokenId: $tokenId, chain: $chain) {
+    ...AlchemyApiHatTokenParts
+  }
+}
+
 query SearchNftContracts($query: String!, $chain: Blockchain!) {
   searchNftContracts(query: $query, chain: $chain) {
     ...AlchemyApiNftContractParts
@@ -31,4 +37,15 @@ fragment AlchemyApiTokenParts on AlchemyApiNftToken {
   contract {
     ...AlchemyApiNftContractParts
   }
+}
+
+fragment AlchemyApiHatTokenParts on ApiHatToken {
+  chain
+  tokenId
+  readableTokenId
+  name
+  description
+  icon
+  topHatName
+  topHatIcon
 }

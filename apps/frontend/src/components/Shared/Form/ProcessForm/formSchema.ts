@@ -172,6 +172,7 @@ export const newAgentFormSchema = z.object({
     .object({
       chain: z.nativeEnum(Blockchain),
       tokenId: z.string(),
+      includeHatsBranch: z.boolean(),
     })
     .optional(),
   nft: z

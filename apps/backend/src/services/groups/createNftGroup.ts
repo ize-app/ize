@@ -5,11 +5,8 @@ import { Prisma } from "@prisma/client";
 import { getNftToken } from "@/blockchain/getNftToken";
 import { getNftContract } from "@/blockchain/getNftContract";
 import { formatGroup, groupInclude } from "@/utils/formatGroup";
-import { hatsClient } from "@/blockchain/clients/hatsClient";
-import { isHexString } from "alchemy-sdk/dist/src/api/utils";
-import { isBigIntString } from "@/blockchain/isBigIntSting";
-import { hatIdHexToDecimal } from "@hatsprotocol/sdk-v1-core";
-import { getIpfsUrl } from "@/blockchain/getIpfsUrl";
+import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
+import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
 
 export const createNftGroup = async ({
   chain,
@@ -53,39 +50,15 @@ export const createNftGroup = async ({
     type: nftToken?.contract.type ?? nftContract?.type,
   });
 
-  await transaction.groupNft.upsert({
-    where: {
-      collectionId_hatsBranch_tokenId_allTokens: {
-        collectionId: collectionRecord.id,
-        hatsBranch: false,
-        tokenId: tokenId ?? "",
-        allTokens: !!tokenId,
-      },
-    },
-    update: {
-      icon: nftToken?.icon,
-      name: nftToken
-        ? nftToken.name ?? "Token ID: " + tokenId
-        : nftContract?.name + " (All tokens)",
-    },
-    create: {
-      name: nftToken
-        ? nftToken.name ?? "Token ID: " + tokenId
-        : nftContract?.name + " (All tokens)",
-      allTokens: tokenId ? false : true,
-      tokenId: tokenId ?? "",
-      icon: nftToken?.icon,
-      Group: {
-        create: {
-          creatorId: context.currentUser?.id as string,
-        },
-      },
-      NftCollection: {
-        connect: {
-          id: collectionRecord.id,
-        },
-      },
-    },
+  await upsertNftTokenGroup({
+    tokenId,
+    tokenName: nftToken.name,
+    icon: nftToken.icon,
+    collectionName: collectionRecord.name,
+    collectionId: collectionRecord.id,
+    hatsBranch: false,
+    context,
+    transaction,
   });
 
   const group = await transaction.group.findFirstOrThrow({
@@ -139,6 +112,61 @@ const upsertNftCollection = async ({
   });
 };
 
+const upsertNftTokenGroup = async ({
+  tokenId,
+  tokenName,
+  collectionId,
+  collectionName,
+  icon,
+  hatsBranch = false,
+  transaction = prisma,
+  context,
+}: {
+  tokenId: string | null | undefined;
+  tokenName: string | null | undefined;
+  collectionId: string;
+  collectionName: string | null | undefined;
+  icon: string | null | undefined;
+  hatsBranch?: boolean;
+  context: GraphqlRequestContext;
+  transaction?: Prisma.TransactionClient;
+}) => {
+  await transaction.groupNft.upsert({
+    where: {
+      collectionId_hatsBranch_tokenId_allTokens: {
+        collectionId,
+        hatsBranch,
+        tokenId: tokenId ?? "",
+        allTokens: !!tokenId,
+      },
+    },
+    update: {
+      icon: icon,
+      name: tokenId
+        ? tokenName ?? "Token ID: " + tokenId
+        : (collectionName ?? "Unknown collection") + " (All tokens)",
+    },
+    create: {
+      name: tokenId
+        ? tokenName ?? "Token ID: " + tokenId
+        : (collectionName ?? "Unknown collection") + " (All tokens)",
+      allTokens: tokenId ? false : true,
+      tokenId: tokenId ?? "",
+      icon: icon,
+      Group: {
+        create: {
+          creatorId: context.currentUser?.id as string,
+        },
+      },
+      NftCollection: {
+        connect: {
+          id: collectionId,
+        },
+      },
+    },
+  });
+};
+
 export const createHatsGroup = async ({
   chain,
   tokenId,
@@ -151,45 +179,39 @@ export const createHatsGroup = async ({
   includeHatsBranch: boolean;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
-}): Promise<string> => {
-  // TODO: test if hex format
+}): Promise<Group> => {
+  const tokenIdBigInt = parseHatToken(tokenId);
+  const hat = await getHatToken({ tokenId: tokenIdBigInt, chain });
 
-  const isHex = isHexString(tokenId);
-  const isBigInt = isBigIntString(tokenId);
+  const collectionRecord = await upsertNftCollection({
+    chain,
+    address: HATS_V1,
+    name: "Hats Protocol v1",
+    icon: null,
+    type: NftTypes.Erc1155,
+  });
 
-  if (!isHex && !isBigInt)
-    throw Error("Error: Not valid token Id format. Must be hexadecimal or decimal");
+  await upsertNftTokenGroup({
+    tokenId: hat.tokenId,
+    tokenName: hat.name,
+    icon: hat.icon,
+    collectionName: collectionRecord.name,
+    collectionId: collectionRecord.id,
+    hatsBranch: includeHatsBranch,
+    context,
+    transaction,
+  });
 
-  const tokenBigInt = isHex ? hatIdHexToDecimal(tokenId) : BigInt(tokenId);
+  const group = await transaction.group.findFirstOrThrow({
+    include: groupInclude,
+    where: {
+      GroupNft: {
+        tokenId: tokenIdBigInt.toString(),
+        collectionId: collectionRecord.id,
+        hatsBranch: includeHatsBranch,
+      },
+    },
+  });
 
-  const hat = await hatsClient.forChain(chain).viewHat(tokenBigInt);
-  console.log("hat is ", hat);
-
-  const details = await fetch(getIpfsUrl(hat.details));
-
-  console.log("details are ", details);
-
-  const res = await fetch(
-    "https://ipfs.io/ipfs/bafkreidfbnrwqown67tjdzscww52gwhlflbhomhls63jmsic64i4j5adfq",
-  );
-
-  console.log("res is ", res);
-
-  //TODO
-  // strip off ipfs from beginning ipfs:// of the
-  // query that url and parse the json
-  // get the details.name field and imageUri
-  // strip off ipfs of imageUrI and construct that uri
-  // create upsert query for them both
-
-  // upsert for the hats contract
-
-  // abstract out the upsert token logic into it's own function
-  // upsert for the token itself
-
-  // TODO: seperate but I also need to make an endpoint for querying hats (hex or decimal)
-  // so I can probably move most of this into its own function
-
-  // TODO - do I need to do something with http?
-  return "";
+  return formatGroup(group);
 };
