@@ -80,7 +80,7 @@ const formatGroupNft = (group: GroupPrismaType): Group => {
     ...group,
     __typename: "Group",
     creator: formatUser(group.creator),
-    name: nft.name,
+    name: nft.name + (nft.hatsBranch && " (All hats in branch)"),
     icon: nft.icon,
     color: null,
     memberCount: null,

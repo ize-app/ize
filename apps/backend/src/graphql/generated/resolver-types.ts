@@ -75,7 +75,7 @@ export type ApiHatToken = {
   readableTokenId: Scalars['String']['output'];
   tokenId: Scalars['String']['output'];
   topHatIcon?: Maybe<Scalars['String']['output']>;
-  topHatName: Scalars['String']['output'];
+  topHatName?: Maybe<Scalars['String']['output']>;
 };
 
 export enum Blockchain {
@@ -915,7 +915,7 @@ export type ApiHatTokenResolvers<ContextType = GraphqlRequestContext, ParentType
   readableTokenId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tokenId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topHatIcon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  topHatName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  topHatName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

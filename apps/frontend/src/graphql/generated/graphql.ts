@@ -74,7 +74,7 @@ export type ApiHatToken = {
   readableTokenId: Scalars['String']['output'];
   tokenId: Scalars['String']['output'];
   topHatIcon?: Maybe<Scalars['String']['output']>;
-  topHatName: Scalars['String']['output'];
+  topHatName?: Maybe<Scalars['String']['output']>;
 };
 
 export enum Blockchain {
@@ -662,7 +662,7 @@ export type HatTokenQueryVariables = Exact<{
 }>;
 
 
-export type HatTokenQuery = { __typename?: 'Query', hatToken?: { __typename?: 'ApiHatToken', chain: Blockchain, tokenId: string, readableTokenId: string, name?: string | null, description?: string | null, icon?: string | null, topHatName: string, topHatIcon?: string | null } | null };
+export type HatTokenQuery = { __typename?: 'Query', hatToken?: { __typename?: 'ApiHatToken', chain: Blockchain, tokenId: string, readableTokenId: string, name?: string | null, description?: string | null, icon?: string | null, topHatName?: string | null, topHatIcon?: string | null } | null };
 
 export type SearchNftContractsQueryVariables = Exact<{
   query: Scalars['String']['input'];
@@ -676,7 +676,7 @@ export type AlchemyApiNftContractPartsFragment = { __typename?: 'AlchemyApiNftCo
 
 export type AlchemyApiTokenPartsFragment = { __typename?: 'AlchemyApiNftToken', tokenId: string, name?: string | null, icon?: string | null, contract: { __typename?: 'AlchemyApiNftContract', address: string, name?: string | null, icon?: string | null, chain: Blockchain, type: NftTypes } };
 
-export type AlchemyApiHatTokenPartsFragment = { __typename?: 'ApiHatToken', chain: Blockchain, tokenId: string, readableTokenId: string, name?: string | null, description?: string | null, icon?: string | null, topHatName: string, topHatIcon?: string | null };
+export type AlchemyApiHatTokenPartsFragment = { __typename?: 'ApiHatToken', chain: Blockchain, tokenId: string, readableTokenId: string, name?: string | null, description?: string | null, icon?: string | null, topHatName?: string | null, topHatIcon?: string | null };
 
 export type DiscordServerRolesQueryVariables = Exact<{
   serverId: Scalars['String']['input'];
@@ -1054,7 +1054,7 @@ export type ApiHatToken = {
   readableTokenId: Scalars['String']['output'];
   tokenId: Scalars['String']['output'];
   topHatIcon?: Maybe<Scalars['String']['output']>;
-  topHatName: Scalars['String']['output'];
+  topHatName?: Maybe<Scalars['String']['output']>;
 };
 
 export enum Blockchain {

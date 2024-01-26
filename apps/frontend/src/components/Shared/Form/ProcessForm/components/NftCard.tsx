@@ -45,10 +45,6 @@ const NftContractCard = ({ address, chain }: { address: string; chain: Blockchai
     },
     onError: (error) => {
       console.log("Error fetching contract: ", error);
-      console.log("client error", error.clientErrors);
-      console.log("protocol error", error.protocolErrors);
-      console.log("graphql error", error.graphQLErrors);
-      console.log("extra info", error.extraInfo);
       setContract(null);
     },
   });
@@ -195,6 +191,7 @@ export const HatsTokenCard = ({ tokenId, chain }: { tokenId: string; chain: Bloc
       tokenId,
     },
     onCompleted: (data) => {
+      console.log(data.hatToken);
       setToken(data.hatToken ?? null);
     },
     onError: (error) => {
@@ -248,20 +245,23 @@ export const HatsTokenCard = ({ tokenId, chain }: { tokenId: string; chain: Bloc
           <Typography gutterBottom variant="h5" component="div" sx={{ overflow: "hidden" }}>
             {token?.name}
           </Typography>
-          {/* <Typography variant="body2" color="text.secondary" sx={{ overflow: "hidden" }}>
-            <a href="/">{token.topHatName}</a>
-          </Typography> */}
-          <Typography variant="body2" color="text.secondary" sx={{ overflow: "hidden" }}>
-            Token Id: {token.readableTokenId}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ overflow: "hidden" }}
+            fontWeight={"bold"}
+          >
+            {token.readableTokenId}
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
+              marginRight: "8px",
             }}
           >
             {token.description}

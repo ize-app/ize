@@ -114,7 +114,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
                 groupHat: {
                   chain: data.hat.chain as Blockchain,
                   tokenId: data.hat.tokenId,
-                  inludeHatsBranch: false,
+                  inludeHatsBranch: data.hat.includeHatsBranch,
                 },
               },
             ]

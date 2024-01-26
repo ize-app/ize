@@ -22,7 +22,7 @@ import { RoleModal } from "./ProcessForm/components/RoleModal";
 import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
 import { MailOutline } from "@mui/icons-material";
 import { DiscordLogoSvg, EthLogoSvg } from "../icons";
-import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
+import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
 import NftSvg from "../icons/NftSvg";
 
 interface RoleSearchControlProps {
@@ -43,7 +43,6 @@ export const RoleSearchControl = ({
 }: RoleSearchControlProps) => {
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
-
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
   const userIdentities = ((me as Me).identities as AgentSummaryPartsFragment[]).filter(
     (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
@@ -56,12 +55,12 @@ export const RoleSearchControl = ({
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setRecentAgents(value);
-
     //@ts-ignore
     const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
+    const newAgents = dedupOptions([...currentState, ...value]);
 
     //@ts-ignore
-    setFieldValue(name, [...currentState, ...value]);
+    setFieldValue(name, newAgents);
   };
 
   return (

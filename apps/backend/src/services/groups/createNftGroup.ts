@@ -133,11 +133,10 @@ const upsertNftTokenGroup = async ({
 }) => {
   await transaction.groupNft.upsert({
     where: {
-      collectionId_hatsBranch_tokenId_allTokens: {
+      collectionId_tokenId_hatsBranch: {
         collectionId,
         hatsBranch,
         tokenId: tokenId ?? "",
-        allTokens: !!tokenId,
       },
     },
     update: {
@@ -152,6 +151,7 @@ const upsertNftTokenGroup = async ({
         : (collectionName ?? "Unknown collection") + " (All tokens)",
       allTokens: tokenId ? false : true,
       tokenId: tokenId ?? "",
+      hatsBranch: hatsBranch,
       icon: icon,
       Group: {
         create: {

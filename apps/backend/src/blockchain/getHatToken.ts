@@ -40,6 +40,15 @@ export const getHatToken = async ({
   const description = details.data.description;
   const icon = hat.imageUri ? getIpfsUrl(hat.imageUri) : null;
 
+  // This query is too slow, removing it for now
+  // const domain = await hatsClient.forChain(chain).getTopHatDomain(tokenId);
+  // const topHatTokenId = treeIdToTopHatId(domain);
+  // const topHat = await hatsClient.forChain(chain).viewHat(topHatTokenId);
+  // const resTopHat = await fetch(getIpfsUrl(topHat.details));
+  // const topHatDetails: HatIpfsDetails = await resTopHat.json();
+  // const topHatName = topHatDetails.data.name;
+  // const topHatIcon = topHat.imageUri ? getIpfsUrl(topHat.imageUri) : null;
+
   return {
     chain,
     tokenId: tokenId.toString(),
@@ -47,8 +56,7 @@ export const getHatToken = async ({
     name,
     description,
     icon,
-    // TODO: Add top hat info
     topHatName: "",
-    topHatIcon: "icon",
+    topHatIcon: "",
   };
 };

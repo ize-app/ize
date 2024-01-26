@@ -41,6 +41,6 @@ type ApiHatToken {
   name: String
   description: String
   icon: String
-  topHatName: String!
+  topHatName: String
   topHatIcon: String
 }
