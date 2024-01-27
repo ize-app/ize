@@ -3,10 +3,11 @@ import { Blockchain, RoleType } from "@/graphql/generated/resolver-types";
 import { roleSetInclude, RoleSetPrismaType } from "@/utils/formatProcess";
 import { GraphqlRequestContext } from "@graphql/context";
 import { Prisma } from "@prisma/client";
+import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
+
 import { prisma } from "../../prisma/client";
 import { DiscordApi } from "@/discord/api";
 import { alchemyClient } from "@/blockchain/clients/alchemyClient";
-import { viemClient } from "@/blockchain/clients/viemClient";
 import { GroupNftPrismaType } from "@/utils/formatGroup";
 import { hatsClient } from "@/blockchain/clients/hatsClient";
 
@@ -42,6 +43,9 @@ const hasRolePermission = async ({
     return true;
 
   if (await hasDiscordRoleGroupPermission({ roleType, context, roleSet: processVersion.roleSet }))
+    return true;
+
+  if (await hasNftRoleGroupPermission({ roleType, context, roleSet: processVersion.roleSet }))
     return true;
 
   return false;
@@ -159,6 +163,8 @@ const hasNftRoleGroupPermission = async ({
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   if (!context.discordApi) throw Error("No Discord authentication data for user");
 
+  let foundRole = false;
+
   const userAddress = context.currentUser.Identities.find((id) => !!id.IdentityBlockchain)
     ?.IdentityBlockchain?.address;
 
@@ -188,28 +194,44 @@ const hasNftRoleGroupPermission = async ({
 
   // get owners NFts by chain
   for (let [chain, nfts] of tokensByChain.entries()) {
+    if (foundRole === true) break;
+    // create unique list of collections that are assigned roles
     let contractAddresses = new Set<string>();
     nfts.forEach((nft) => contractAddresses.add(nft.NftCollection.address));
+    // get all of a user's nfts
     const { ownedNfts } = await alchemyClient.forChain(chain).nft.getNftsForOwner(userAddress, {
       omitMetadata: true,
       contractAddresses: Array.from(contractAddresses),
     });
+
     for (let i = 0; i <= nfts.length - 1; i++) {
       const nft = nfts[i];
+      // check whether user has permission depending on the type of the nft
+      // allTokens means that any token in collection has access to this role
       if (nft.allTokens) {
         if (ownedNfts.some((ownedNft) => ownedNft.contractAddress === nft.NftCollection.address))
           return true; // TODO: this is probebly not quite right
-      } else if (nft.hatsBranch) {
+      }
+      // hats tokens have special logic to determine 1) if the hat is active
+      // and 2) whether the role applies to tokens further down in the hats tree
+      else if (nft.NftCollection.address === HATS_V1) {
         if (!nft.tokenId) continue;
-        //TODO: confirm whether NFT is actually a hat
-
-        //TODO: check whether it's a child
-
-        const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
-          wearer: userAddress,
-          hatId: BigInt(nft.tokenId),
-        });
-      } else {
+        if (nft.hatsBranch) {
+          const isAdmin = await hatsClient.forChain(chain).isAdminOfHat({
+            user: userAddress as `0x${string}`,
+            hatId: BigInt(nft.tokenId),
+          });
+          if (isAdmin) foundRole = true;
+        } else {
+          const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
+            wearer: userAddress as `0x${string}`,
+            hatId: BigInt(nft.tokenId),
+          });
+          if (isWearer) foundRole = true;
+        }
+      }
+      // for all other nfts, it's just whether or not you have that particular token
+      else {
         if (
           ownedNfts.some(
             (ownedNft) =>
@@ -217,35 +239,11 @@ const hasNftRoleGroupPermission = async ({
               ownedNft.tokenId === nft.tokenId,
           )
         )
-          return true; // this is probebly not quite right
+          foundRole = true;
       }
+      if (foundRole === true) break;
     }
-
-    // const ownershipStatuses = await Promise.all(
-    //   nfts.map(async (nft): Promise<boolean> => {
-    //     // !tokenId means that the nft group is defined by ownership of any nft in that collection
-    //     if (!nft.tokenId) {
-    //       const res = await alchemyClient
-    //         .forChain(chain)
-    //         .nft.verifyNftOwnership(userAddress, nft.NftCollection.address);
-    //       return res;
-    //     }
-    //     // otherwise check whether user is among owners of that particular token
-    //     else {
-    //       const res = await alchemyClient
-    //         .forChain(chain)
-    //         .nft.getOwnersForNft(nft.NftCollection.address, nft.tokenId);
-    //       const isOwner = res.owners.some((address) => address === userAddress);
-    //       return res.owners.some((address) => address === userAddress);
-    //     }
-    //   }),
-    // );
-    // if (ownershipStatuses.includes(true)) return true;
   }
 
-  return false;
+  return foundRole;
 };
-
-// const checkHatBranchOwnership = (chain: Blockchain, tokenId: string) => {
-//   //
-// };
