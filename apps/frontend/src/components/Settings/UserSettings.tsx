@@ -33,7 +33,8 @@ export const UserSettings = () => {
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
-                avatarUrl={"./ethereum.svg"}
+                cryptoWallet={identity.identityType.address}
+                avatarUrl={null}
                 type={AgentType.Identity}
               />
             );

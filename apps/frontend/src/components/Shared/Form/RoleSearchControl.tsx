@@ -119,7 +119,7 @@ export const RoleSearchControl = ({
                             setOpen(true);
                           }}
                         >
-                          Eth address
+                          Eth Wallet
                         </Button>
                         <Button
                           variant="outlined"
@@ -173,6 +173,12 @@ export const RoleSearchControl = ({
                                 : option.icon
                             }
                             type={option.__typename as AgentType}
+                            cryptoWallet={
+                              option.__typename === "Identity" &&
+                              option.identityType.__typename === "IdentityBlockchain"
+                                ? option.identityType.address
+                                : null
+                            }
                           />
                         }
                         variant="filled"
@@ -206,6 +212,12 @@ export const RoleSearchControl = ({
                       name={option.name}
                       backgroundColor={option.__typename === "Group" ? option.color : undefined}
                       type={option.__typename as AgentType}
+                      cryptoWallet={
+                        option.__typename === "Identity" &&
+                        option.identityType.__typename === "IdentityBlockchain"
+                          ? option.identityType.address
+                          : null
+                      }
                     />
                     <Typography
                       variant="body1"

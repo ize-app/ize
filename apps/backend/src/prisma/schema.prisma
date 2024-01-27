@@ -59,6 +59,7 @@ model IdentityBlockchain {
   id         String   @id @default(uuid()) @db.Uuid
   identityId String   @unique @map("identity_id") @db.Uuid
   address    String   @unique
+  ens        String?
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 

@@ -15,10 +15,7 @@ import {
 import { newCustomProcess } from "@services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
-import { refreshDiscordServerRoles } from "@/services/groups/refreshDiscordServerRoles";
-import { upsertDiscordEveryoneRole } from "@/services/groups/upsertDiscordEveryoneRole";
-import { formatGroup, groupInclude } from "@/utils/formatGroup";
-import { createHatsGroup, createNftGroup } from "@/services/groups/createNftGroup";
+import { newAgents as newAgentsService } from "@/services/processes/newAgents";
 
 const newProcess = async (
   root: unknown,
@@ -56,105 +53,7 @@ const newAgents = async (
   args: MutationNewAgentsArgs,
   context: GraphqlRequestContext,
 ): Promise<Agent[]> => {
-  // ): Promise<Agent[]> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-  const agents = await Promise.all(
-    args.agents.map(async (a) => {
-      if (a.identityBlockchain) {
-        const res = await prisma.identityBlockchain.upsert({
-          where: {
-            address: a.identityBlockchain.address,
-          },
-          update: {},
-          create: {
-            address: a.identityBlockchain.address,
-            Identity: {
-              create: {},
-            },
-          },
-        });
-        return {
-          __typename: "Identity",
-          identityType: {
-            __typename: "IdentityBlockchain",
-            ...res,
-          },
-          id: res.identityId,
-          name: res.address,
-        } as Agent;
-      } else if (a.identityEmail) {
-        const res = await prisma.identityEmail.upsert({
-          where: {
-            email: a.identityEmail.email,
-          },
-          update: {},
-          create: {
-            email: a.identityEmail.email,
-            Identity: {
-              create: {},
-            },
-          },
-        });
-        return {
-          __typename: "Identity",
-          identityType: {
-            __typename: "IdentityEmail",
-            ...res,
-          },
-          id: res.identityId,
-          name: res.email,
-        } as Agent;
-      } else if (a.groupDiscordRole) {
-        if (a.groupDiscordRole.roleId === "@everyone") {
-          await upsertDiscordEveryoneRole({ serverId: a.groupDiscordRole.serverId, context });
-          const group = await prisma.group.findFirstOrThrow({
-            include: groupInclude,
-            where: {
-              GroupDiscordRole: {
-                discordServer: {
-                  discordServerId: a.groupDiscordRole.serverId,
-                },
-                name: "@everyone",
-              },
-            },
-          });
-          return formatGroup(group);
-        } else {
-          await refreshDiscordServerRoles({ serverId: a.groupDiscordRole.serverId, context });
-          const group = await prisma.group.findFirstOrThrow({
-            include: groupInclude,
-            where: {
-              GroupDiscordRole: {
-                discordServer: {
-                  discordServerId: a.groupDiscordRole.serverId,
-                },
-                discordRoleId: a.groupDiscordRole.roleId,
-              },
-            },
-          });
-          return formatGroup(group);
-        }
-      } else if (a.groupNft) {
-        return await createNftGroup({
-          context,
-          address: a.groupNft.address,
-          chain: a.groupNft.chain,
-          tokenId: a.groupNft.tokenId,
-        });
-      } else if (a.groupHat) {
-        return await createHatsGroup({
-          chain: a.groupHat.chain,
-          tokenId: a.groupHat.tokenId,
-          includeHatsBranch: a.groupHat.inludeHatsBranch,
-          context,
-        });
-      } else {
-        throw Error("ERROR unknown new agent type");
-      }
-    }),
-  );
-  //@ts-ignore
-  return agents;
+  return await newAgentsService(args, context);
 };
 
 const processesForCurrentUser = async (

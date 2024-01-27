@@ -22,7 +22,7 @@ export const formatIdentity = (
     return {
       __typename: "Identity",
       id: identity.id,
-      name: identity.IdentityBlockchain.address,
+      name: identity.IdentityBlockchain.ens ?? identity.IdentityBlockchain.address,
       // TODO: replace with avatar logo
       icon: null,
       identityType: { __typename: "IdentityBlockchain", ...identity.IdentityBlockchain },

@@ -139,9 +139,18 @@ export const newAgentFormSchema = z.object({
           z
             .string()
             .trim()
-            .refine((value) => ethers.isAddress(value), {
-              message: "Provided address is invalid. Please insure you have typed correctly.",
-            }),
+            .refine(
+              (value) => {
+                const isAddress = ethers.isAddress(value);
+                const ensRegex =
+                  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+                const isEns = !!value.match(ensRegex);
+                return isAddress || isEns;
+              },
+              {
+                message: "Provided wallet is invalid. Please insure you have typed correctly.",
+              },
+            ),
         )
         .safeParse(str.split(","));
       if (!parsed.success) {

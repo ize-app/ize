@@ -17,7 +17,7 @@ import { DiscordApi } from "./discord/api";
 import { prisma } from "./prisma/client";
 import { stytchClient } from "./auth/stytchClient";
 import { MePrismaType } from "./utils/formatUser";
-import { createBlockchainIdentities } from "./auth/createBlockchainIdentities";
+import { createBlockchainIdentitiesForUser } from "./auth/createBlockchainIdentities";
 import { createEmailIdentities } from "./auth/createEmailIdentities";
 import { upsertUser } from "./auth/upsertUser";
 import { upsertOauthToken } from "./auth/upsertOauthToken";
@@ -120,7 +120,7 @@ app.post("/auth/crypto", async (req, res) => {
   if (!session_token) res.status(401).send();
 
   // create blockchain identities if they don't already exist
-  await createBlockchainIdentities(res.locals.user, sessionData.user.crypto_wallets);
+  await createBlockchainIdentitiesForUser(res.locals.user, sessionData.user.crypto_wallets);
 
   res.status(200).send();
 });

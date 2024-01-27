@@ -106,7 +106,6 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
       };
     }
     case NewAgentTypes.GroupHat: {
-      console.log("hat data is ", data.hat);
       return {
         agents: data.hat
           ? [
@@ -145,6 +144,11 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
       setDisableSubmit(false);
       setOpen(false);
       onSubmit(data.newAgents);
+    },
+    onError: (error) => {
+      console.log("Error", error);
+      setDisableSubmit(false);
+      setOpen(false);
     },
   });
 
@@ -235,62 +239,69 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
             label=""
             selectOptions={[
               { name: "Email address", value: NewAgentTypes.IdentityEmail },
-              { name: "Eth address", value: NewAgentTypes.IdentityBlockchain },
+              { name: "Eth wallet", value: NewAgentTypes.IdentityBlockchain },
               { name: "Discord role", value: NewAgentTypes.GroupDiscord },
               { name: "NFT", value: NewAgentTypes.GroupNft },
               { name: "Hat", value: NewAgentTypes.GroupHat },
             ]}
           />
           {inputType === NewAgentTypes.IdentityBlockchain && (
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "24px",
-              }}
-            >
-              <Controller
-                name={"ethAddress"}
-                control={control}
-                render={({ field, fieldState: { error } }) => {
-                  return (
-                    <FormControl sx={{ width: "100%" }}>
-                      <TextField
-                        {...field}
-                        label={"ETH addresses"}
-                        fullWidth
-                        required
-                        error={Boolean(error)}
-                        placeholder="Enter an Eth address or list of addresses seperated by commas "
-                      />
-                      <FormHelperText
-                        sx={{
-                          color: error?.message ? "error.main" : "black",
-                        }}
-                      >
-                        {error?.message ?? ""}
-                      </FormHelperText>
-                    </FormControl>
-                  );
+            <Box>
+              <Typography>
+                Enter an Eth address or ENS address (or multiple seperated by commas).
+              </Typography>
+              <Box
+                sx={{
+                  marginTop: "8px",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "24px",
                 }}
-              />
-              <Button
-                onClick={handleSubmit(createAgents)}
-                variant="contained"
-                disabled={disableSubmit}
               >
-                Submit
-              </Button>
+                <Controller
+                  name={"ethAddress"}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <FormControl sx={{ width: "100%" }}>
+                        <TextField
+                          {...field}
+                          label={"ETH wallet or ENS"}
+                          fullWidth
+                          required
+                          error={Boolean(error)}
+                          placeholder=""
+                        />
+                        <FormHelperText
+                          sx={{
+                            color: error?.message ? "error.main" : "black",
+                          }}
+                        >
+                          {error?.message ?? ""}
+                        </FormHelperText>
+                      </FormControl>
+                    );
+                  }}
+                />
+                <Button
+                  onClick={handleSubmit(createAgents)}
+                  variant="contained"
+                  disabled={disableSubmit}
+                >
+                  Submit
+                </Button>
+              </Box>
             </Box>
           )}
           {inputType === NewAgentTypes.IdentityEmail && (
             <>
               <Typography>
-                Email addresses assigned to this process will be obscured to the public. For
-                example, alexander@example.com would be displayed as a***@example.com.
+                Enter an email address (or multiple seperated by commas). The full email address
+                will not be publicly visible.
               </Typography>
+
               <Box
                 sx={{
                   width: "100%",
@@ -312,7 +323,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                           fullWidth
                           required
                           error={Boolean(error)}
-                          placeholder="Enter an email or list of emails seperated by commas"
                         />
                         <FormHelperText
                           sx={{
