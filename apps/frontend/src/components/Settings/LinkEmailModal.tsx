@@ -66,7 +66,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
       setSuccess(true);
     } catch {
       setApiErrorMessage(
-        "There was an error submitting your request. Contact tyler@cults.app if you continue to have issues.",
+        "There was an error submitting your request. Contact tyler@ize.space if you continue to have issues.",
       );
     }
   };
@@ -88,7 +88,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
     >
       <Box sx={style}>
         <Typography variant="h2" sx={{ mb: "16px" }}>
-          Link email address with Cults
+          Link email address with Ize
         </Typography>
         <form style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
           <Box
@@ -129,7 +129,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
           </Box>
           {success && (
             <Typography>
-              Check your email! We've sent you a link to authenticate your email address with Cults.
+              Check your email! We've sent you a link to authenticate your email address with Ize.
             </Typography>
           )}
         </form>

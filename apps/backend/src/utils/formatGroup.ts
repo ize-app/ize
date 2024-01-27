@@ -2,7 +2,15 @@ import { DiscordApi } from "@discord/api";
 import { Prisma } from "@prisma/client";
 
 import { userInclude, formatUser } from "./formatUser";
-import { Group } from "@graphql/generated/resolver-types";
+import { Group, GroupType } from "@graphql/generated/resolver-types";
+
+export const groupNftInclude = Prisma.validator<Prisma.GroupNftInclude>()({
+  NftCollection: true,
+});
+
+export type GroupNftPrismaType = Prisma.GroupNftGetPayload<{
+  include: typeof groupNftInclude;
+}>;
 
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
@@ -13,6 +21,11 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
       discordServer: true,
     },
   },
+  GroupNft: {
+    include: {
+      NftCollection: true,
+    },
+  },
 });
 
 export type GroupPrismaType = Prisma.GroupGetPayload<{
@@ -20,8 +33,18 @@ export type GroupPrismaType = Prisma.GroupGetPayload<{
 }>;
 
 export const formatGroup = (group: GroupPrismaType): Group => {
+  if (group.GroupDiscordRole) {
+    return formatDiscordGroup(group);
+  } else if (group.GroupNft) {
+    return formatGroupNft(group);
+  } else {
+    throw Error("ERROR: Unrecognized group type");
+  }
+};
+
+const formatDiscordGroup = (group: GroupPrismaType): Group => {
   if (!group.GroupDiscordRole) throw Error("ERROR formatGroup: No Discord role group");
-  const obj: Group = {
+  const discordGroup: Group = {
     ...group,
     __typename: "Group",
     creator: formatUser(group.creator),
@@ -55,5 +78,26 @@ export const formatGroup = (group: GroupPrismaType): Group => {
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
   };
-  return obj;
+  return discordGroup;
+};
+
+const formatGroupNft = (group: GroupPrismaType): Group => {
+  if (!group.GroupNft) throw Error("ERROR formatGroup: No NFT Group");
+  const { GroupNft: nft } = group;
+  const discordGroup: Group = {
+    ...group,
+    __typename: "Group",
+    creator: formatUser(group.creator),
+    name: nft.name + (nft.hatsBranch && " (All hats in branch)"),
+    icon: nft.icon,
+    color: null,
+    memberCount: null,
+    organization: {
+      name: nft.NftCollection.name ?? "Unknown collection",
+      icon: nft.NftCollection.icon,
+    },
+    createdAt: group.createdAt.toString(),
+    groupType: { __typename: "GroupNft", ...nft } as GroupType,
+  };
+  return discordGroup;
 };

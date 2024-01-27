@@ -92,7 +92,7 @@ export const Evolve = ({}) => {
           }}
         >
           <Typography>
-            Everything in Cults happens through process, including how process evolves.
+            Everything in Ize happens through process, including how process evolves.
           </Typography>
           <RadioControl
             //@ts-ignore

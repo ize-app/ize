@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import Blockies from "react-blockies";
 
 import {
   AgentSummaryPartsFragment,
@@ -23,6 +24,7 @@ export interface AvatarWithNameProps {
   color?: string | null;
   parent?: ParentProps;
   type: AgentType;
+  cryptoWallet?: string | null | undefined;
 }
 
 export interface ParentProps {
@@ -37,6 +39,7 @@ export interface AvatarProps extends MuiAvatarProps {
   name: string;
   parent?: ParentProps;
   backgroundColor?: string | null | undefined;
+  cryptoWallet?: string | null | undefined;
 }
 
 export const reformatAgentForAvatar = (
@@ -65,6 +68,10 @@ export const reformatAgentForAvatar = (
         type: AgentType.Identity,
         avatarUrl: agent.icon,
         backgroundColor: null,
+        cryptoWallet:
+          agent.__typename === "Identity" && agent.identityType.__typename === "IdentityBlockchain"
+            ? agent.identityType.address
+            : null,
       };
     case "User":
       return {
@@ -86,6 +93,7 @@ export const Avatar = ({
   name,
   parent,
   backgroundColor,
+  cryptoWallet = null,
   ...props
 }: AvatarProps): JSX.Element => {
   const { sx } = props;
@@ -115,7 +123,9 @@ export const Avatar = ({
     >
       <MuiAvatar
         src={avatarUrl ?? ""}
-        children={avatarString(name.toUpperCase())}
+        children={
+          cryptoWallet ? <Blockies seed={cryptoWallet} /> : avatarString(name.toUpperCase())
+        }
         alt={name}
         {...props}
         sx={styles}
@@ -125,7 +135,7 @@ export const Avatar = ({
     <MuiAvatar
       src={avatarUrl ?? ""}
       alt={name}
-      children={avatarString(name.toUpperCase())}
+      children={cryptoWallet ? <Blockies seed={cryptoWallet} /> : avatarString(name.toUpperCase())}
       {...props}
       sx={styles}
     />
@@ -139,6 +149,7 @@ export const AvatarWithName = ({
   type,
   parent,
   color,
+  cryptoWallet,
 }: AvatarWithNameProps): JSX.Element => {
   return (
     <Box
@@ -159,6 +170,7 @@ export const AvatarWithName = ({
           name={name}
           backgroundColor={color}
           parent={parent ? { name: parent.name, avatarUrl: parent.avatarUrl } : undefined}
+          cryptoWallet={cryptoWallet}
         />
       }
       <Typography
@@ -214,6 +226,7 @@ const AvatarPopper = ({
               avatarUrl={a.avatarUrl ?? a.parent?.avatarUrl}
               parent={undefined}
               color={a.backgroundColor}
+              cryptoWallet={a.cryptoWallet}
             />
           ))}
         </Paper>
@@ -260,6 +273,7 @@ export const AvatarGroup = ({
               parent={a.parent}
               name={a.name}
               backgroundColor={a.backgroundColor}
+              cryptoWallet={a.cryptoWallet}
             />
           );
         })}

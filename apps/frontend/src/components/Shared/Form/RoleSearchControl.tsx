@@ -22,7 +22,8 @@ import { RoleModal } from "./ProcessForm/components/RoleModal";
 import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
 import { MailOutline } from "@mui/icons-material";
 import { DiscordLogoSvg, EthLogoSvg } from "../icons";
-import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
+import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
+import NftSvg from "../icons/NftSvg";
 
 interface RoleSearchControlProps {
   control: Control;
@@ -42,7 +43,6 @@ export const RoleSearchControl = ({
 }: RoleSearchControlProps) => {
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
-
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
   const userIdentities = ((me as Me).identities as AgentSummaryPartsFragment[]).filter(
     (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
@@ -55,17 +55,19 @@ export const RoleSearchControl = ({
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setRecentAgents(value);
-
     //@ts-ignore
     const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
+    const newAgents = dedupOptions([...currentState, ...value]);
 
     //@ts-ignore
-    setFieldValue(name, [...currentState, ...value]);
+    setFieldValue(name, newAgents);
   };
 
   return (
     <>
-      {<RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} type={roleModalType} />}
+      {open && ( // unmounting the modal fully so that react hook form state clears
+        <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} initialType={roleModalType} />
+      )}
       <Controller
         name={name}
         control={control}
@@ -117,7 +119,7 @@ export const RoleSearchControl = ({
                             setOpen(true);
                           }}
                         >
-                          Eth address
+                          Eth Wallet
                         </Button>
                         <Button
                           variant="outlined"
@@ -128,6 +130,26 @@ export const RoleSearchControl = ({
                           }}
                         >
                           Discord @role
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<NftSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupNft);
+                            setOpen(true);
+                          }}
+                        >
+                          NFT
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<NftSvg />}
+                          onMouseDown={() => {
+                            setRoleModalType(NewAgentTypes.GroupHat);
+                            setOpen(true);
+                          }}
+                        >
+                          Hat
                         </Button>
                       </Box>
                       {children}
@@ -147,10 +169,16 @@ export const RoleSearchControl = ({
                             name={option.name}
                             avatarUrl={
                               option.__typename === "Group" && option.organization
-                                ? option.organization.icon
+                                ? option.organization.icon ?? option.icon
                                 : option.icon
                             }
                             type={option.__typename as AgentType}
+                            cryptoWallet={
+                              option.__typename === "Identity" &&
+                              option.identityType.__typename === "IdentityBlockchain"
+                                ? option.identityType.address
+                                : null
+                            }
                           />
                         }
                         variant="filled"
@@ -178,12 +206,18 @@ export const RoleSearchControl = ({
                       id={option.id}
                       avatarUrl={
                         option.__typename === "Group" && option.organization
-                          ? option.organization.icon
+                          ? option.organization.icon ?? option.icon
                           : option.icon
                       }
                       name={option.name}
                       backgroundColor={option.__typename === "Group" ? option.color : undefined}
                       type={option.__typename as AgentType}
+                      cryptoWallet={
+                        option.__typename === "Identity" &&
+                        option.identityType.__typename === "IdentityBlockchain"
+                          ? option.identityType.address
+                          : null
+                      }
                     />
                     <Typography
                       variant="body1"

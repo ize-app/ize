@@ -8,7 +8,7 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { InputDataType, NewAgentTypes } from "@/graphql/generated/graphql";
+import { Blockchain, InputDataType, NewAgentTypes } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
 
 const webhookFormSchema = z.object({
@@ -139,12 +139,20 @@ export const newAgentFormSchema = z.object({
           z
             .string()
             .trim()
-            .refine((value) => ethers.isAddress(value), {
-              message: "Provided address is invalid. Please insure you have typed correctly.",
-            }),
+            .refine(
+              (value) => {
+                const isAddress = ethers.isAddress(value);
+                const ensRegex =
+                  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+                const isEns = !!value.match(ensRegex);
+                return isAddress || isEns;
+              },
+              {
+                message: "Provided wallet is invalid. Please insure you have typed correctly.",
+              },
+            ),
         )
         .safeParse(str.split(","));
-
       if (!parsed.success) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -168,6 +176,33 @@ export const newAgentFormSchema = z.object({
         return [];
       }
     })
+    .optional(),
+  hat: z
+    .object({
+      chain: z.nativeEnum(Blockchain),
+      tokenId: z.string(),
+      includeHatsBranch: z.boolean(),
+    })
+    .optional(),
+  nft: z
+    .object({
+      chain: z.nativeEnum(Blockchain),
+      contractAddress: z.string().refine((value) => ethers.isAddress(value), {
+        message: "Provided address is invalid. Please insure you have typed correctly.",
+      }),
+      allTokens: z.boolean(),
+      tokenId: z.string().max(64).nullable().optional(),
+    })
+    .refine(
+      (data) => {
+        if (!data?.allTokens && !data?.tokenId) return false;
+        else return true;
+      },
+      {
+        message: "Missing token Id",
+        path: ["tokenId"],
+      },
+    )
     .optional(),
 });
 

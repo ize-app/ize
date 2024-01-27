@@ -1,6 +1,23 @@
-# Cults
+# Ize
 
-## Running Cults for the first time
+## Concepts
+
+### Identities and Groups
+
+Users authenticate into Ize via Identities. Identities we currently support are:
+
+- Email
+- EVM address
+- Discord account
+
+Users can have multiple identities.
+
+Individual identities or "groups" can have roles (e.g. request/respond) on a process. When a group has a role on aprocess, Ize checks whether one of a given user's identities is part of that group. The current group types we support are:
+
+- Discord roles
+- NFT collections (721/1155 - including ENS/Hats, etc)
+
+## Running Ize for the first time
 
 Install Homebrew
 

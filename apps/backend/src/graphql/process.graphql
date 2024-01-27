@@ -26,6 +26,9 @@ input NewAgentArgs {
   identityDiscord: IdentityDiscordArgs
   identityEmail: IdentityEmailArgs
   groupDiscordRole: GroupDiscordRoleArgs
+  groupEns: GroupEnsArgs
+  groupHat: GroupHatArgs
+  groupNft: GroupNftArgs
 }
 
 input IdentityBlockchainArgs {
@@ -45,11 +48,29 @@ input GroupDiscordRoleArgs {
   roleId: String!
 }
 
+input GroupNftArgs {
+  chain: Blockchain!
+  address: String!
+  tokenId: String
+}
+
+input GroupEnsArgs {
+  name: String!
+}
+
+input GroupHatArgs {
+  chain: Blockchain!
+  tokenId: String!
+  inludeHatsBranch: Boolean!
+}
+
 enum NewAgentTypes {
   IdentityBlockchain
   IdentityDiscord
   IdentityEmail
   GroupDiscord
+  GroupNft
+  GroupHat
 }
 
 input ActionArgs {

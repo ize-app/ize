@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../prisma/client";
-import stytch, { Client as StytchClient, StytchError } from "stytch";
+import { StytchError } from "stytch";
 import { meInclude } from "../utils/formatUser";
 
-export const stytchClient: StytchClient = new stytch.Client({
-  project_id: process.env.STYTCH_PROJECT_ID as string,
-  secret: process.env.STYTCH_PROJECT_SECRET as string,
-});
+import { stytchClient } from "./stytchClient";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {

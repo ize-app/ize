@@ -1,6 +1,6 @@
 {
   "name": "cults",
-  "description": "Monorepo for the Cults app",
+  "description": "Monorepo for the Ize app",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

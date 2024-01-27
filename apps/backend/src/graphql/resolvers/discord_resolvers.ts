@@ -7,7 +7,7 @@ import {
   DiscordServerOnboarded,
 } from "@graphql/generated/resolver-types";
 
-// Returns all of a users discord servers, regardless of whether they connected Cults bot
+// Returns all of a users discord servers, regardless of whether they connected Ize bot
 export const discordServers = async (
   root: unknown,
   args: Record<string, never>,

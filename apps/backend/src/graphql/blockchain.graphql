@@ -1,0 +1,46 @@
+type Query {
+  nftContract(address: String!, chain: Blockchain!): AlchemyApiNftContract
+  nftToken(address: String!, tokenId: String!, chain: Blockchain!): AlchemyApiNftToken
+  hatToken(chain: Blockchain!, tokenId: String!): ApiHatToken
+  searchNftContracts(query: String!, chain: Blockchain!): [AlchemyApiNftContract!]!
+}
+
+enum Blockchain {
+  Ethereum
+  Arbitrum
+  Optimism
+  Matic
+  Base
+}
+
+enum NftTypes {
+  ERC721
+  ERC1155
+}
+
+type AlchemyApiNftContract {
+  address: String!
+  name: String
+  icon: String
+  chain: Blockchain!
+  type: NftTypes!
+}
+
+type AlchemyApiNftToken {
+  chain: Blockchain!
+  tokenId: String!
+  name: String
+  icon: String
+  contract: AlchemyApiNftContract!
+}
+
+type ApiHatToken {
+  chain: Blockchain!
+  tokenId: String!
+  readableTokenId: String!
+  name: String
+  description: String
+  icon: String
+  topHatName: String
+  topHatIcon: String
+}

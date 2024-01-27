@@ -14,7 +14,7 @@ import { attachDiscord } from "../shared/Auth/attachDiscord";
 
 export const UserSettings = () => {
   const stytchClient = useStytch();
-  const { me } = useContext(CurrentUserContext);
+  const { me, refetch } = useContext(CurrentUserContext);
 
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
@@ -33,7 +33,8 @@ export const UserSettings = () => {
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
-                avatarUrl={"./ethereum.svg"}
+                cryptoWallet={identity.identityType.address}
+                avatarUrl={null}
                 type={AgentType.Identity}
               />
             );
@@ -93,6 +94,11 @@ export const UserSettings = () => {
       signature: signature as string,
       session_duration_minutes: 60,
     });
+
+    await fetch("/api/auth/crypto", { method: "POST" });
+    if (refetch) {
+      await refetch();
+    }
   }, [stytchClient]);
 
   return (

@@ -14,6 +14,17 @@ export const RecentAgentsContext = createContext<RecentAgentsContextValue>({
   },
 });
 
+export const dedupOptions = (agents: AgentSummaryPartsFragment[]) => {
+  const uniqueIds: { [key: string]: boolean } = {};
+  return agents.filter((agent: AgentSummaryPartsFragment) => {
+    if (!uniqueIds[agent.id]) {
+      uniqueIds[agent.id] = true;
+      return true;
+    }
+    return false;
+  });
+};
+
 export const RecentAgentsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [recentAgents, set] = useState<AgentSummaryPartsFragment[]>([]);
 
@@ -21,7 +32,8 @@ export const RecentAgentsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // TODO: Dedup results
   const setRecentAgents = (agents: AgentSummaryPartsFragment[]) => {
     set((prev) => {
-      return [...prev, ...agents].slice(-20);
+      const newAgents = dedupOptions([...prev, ...agents]);
+      return newAgents.slice(-20);
     });
   };
 
