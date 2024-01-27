@@ -4,6 +4,14 @@ import { Prisma } from "@prisma/client";
 import { userInclude, formatUser } from "./formatUser";
 import { Group, GroupType } from "@graphql/generated/resolver-types";
 
+export const groupNftInclude = Prisma.validator<Prisma.GroupNftInclude>()({
+  NftCollection: true,
+});
+
+export type GroupNftPrismaType = Prisma.GroupNftGetPayload<{
+  include: typeof groupNftInclude;
+}>;
+
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
     include: userInclude,

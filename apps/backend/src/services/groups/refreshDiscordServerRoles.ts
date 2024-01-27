@@ -3,7 +3,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
 
-// this function is only called for servers that have added the Cults bot
+// this function is only called for servers that have added the Ize bot
 // which allows our API to see their roles
 export const refreshDiscordServerRoles = async ({
   serverId,
@@ -30,9 +30,9 @@ export const refreshDiscordServerRoles = async ({
   const everyoneRoleId = relevantRoles.find((role) => role.name === "@everyone")?.id;
   if (!everyoneRoleId) throw Error("ERROR: Cannot find @everyone role");
 
-  // before a server onboards the Cults bot (allowing our API to see their roles)
+  // before a server onboards the Ize bot (allowing our API to see their roles)
   // we allow users to assign a role to the "@everyone" role without yet knowing the discord role ID
-  // once the Cults bot is added, we need to add the role id to that role
+  // once the Ize bot is added, we need to add the role id to that role
 
   const serverRecord = await transaction.discordServer.upsert({
     where: {

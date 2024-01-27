@@ -60,8 +60,8 @@ const getDiscordGroupIds = async ({
   const serverIds = discordServers.map((server) => server.id);
 
   // Get groups where either
-  // 1) a user has roleId associated with that group (Cults only knows roleIds if server has Cults bot)
-  // 2) a user is part of that discord server, but the server doesn't have the Cults bot yet though
+  // 1) a user has roleId associated with that group (Ize only knows roleIds if server has Ize bot)
+  // 2) a user is part of that discord server, but the server doesn't have the Ize bot yet though
   const groups = await prisma.group.findMany({
     where: {
       OR: [

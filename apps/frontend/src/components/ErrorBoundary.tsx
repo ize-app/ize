@@ -28,7 +28,7 @@ export const ErrorBoundary = () => {
           😭 Uh oh... 😭
         </Typography>
         <Typography variant="body1">
-          Something has gone wrong. Message tyler@cults.app if you keep having the same issue.
+          Something has gone wrong. Message tyler@ize.space if you keep having the same issue.
         </Typography>
       </Box>
     </Box>

@@ -341,7 +341,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
               {!isConnectedToDiscord ? (
                 <>
                   <Typography>
-                    Connect Discord to Cults to attach Discord roles to this process.
+                    Connect Discord to Ize to attach Discord roles to this process.
                   </Typography>
                   <Button
                     onClick={attachDiscord}
@@ -397,7 +397,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                     <Typography>
                       To use all roles in this server, ask your admin to{" "}
                       <a href={botInviteUrl.toString()} target="_blank" rel="noopener noreferrer">
-                        add the Cults Discord bot
+                        add the Ize Discord bot
                       </a>{" "}
                       to this server.
                     </Typography>

@@ -23,7 +23,8 @@ export const _404 = () => (
         😭 404 😭
       </Typography>
       <Typography variant="body1">
-        This isn't a valid URL. Check your URL and try again :) If you keep having the same issue, feel free to message tyler@cults.app
+        This isn't a valid URL. Check your URL and try again :) If you keep having the same issue,
+        feel free to message tyler@ize.space
       </Typography>
     </Box>
   </Box>
