@@ -59,7 +59,6 @@ fragment GroupNftParts on GroupNft {
   icon
   tokenId
   hatsBranch
-  allTokens
   NftCollection {
     ...NftCollectionParts
   }

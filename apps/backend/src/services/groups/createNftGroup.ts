@@ -149,7 +149,6 @@ const upsertNftTokenGroup = async ({
       name: tokenId
         ? tokenName ?? "Token ID: " + tokenId
         : (collectionName ?? "Unknown collection") + " (All tokens)",
-      allTokens: tokenId ? false : true,
       tokenId: tokenId ?? "",
       hatsBranch: hatsBranch,
       icon: icon,

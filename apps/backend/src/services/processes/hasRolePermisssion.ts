@@ -208,14 +208,13 @@ const hasNftRoleGroupPermission = async ({
       const nft = nfts[i];
       // check whether user has permission depending on the type of the nft
       // allTokens means that any token in collection has access to this role
-      if (nft.allTokens) {
+      if (!nft.tokenId) {
         if (ownedNfts.some((ownedNft) => ownedNft.contractAddress === nft.NftCollection.address))
           return true; // TODO: this is probebly not quite right
       }
       // hats tokens have special logic to determine 1) if the hat is active
       // and 2) whether the role applies to tokens further down in the hats tree
       else if (nft.NftCollection.address === HATS_V1) {
-        if (!nft.tokenId) continue;
         if (nft.hatsBranch) {
           const isAdmin = await hatsClient.forChain(chain).isAdminOfHat({
             user: userAddress as `0x${string}`,
