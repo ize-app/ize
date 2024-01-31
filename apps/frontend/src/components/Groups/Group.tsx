@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client";
-import Groups from "@mui/icons-material/Groups";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
@@ -17,7 +16,6 @@ import {
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { colors } from "../../style/style";
 import { shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../shared/Loading";
 import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
@@ -91,10 +89,14 @@ export const Group = () => {
         avatarUrl={group.icon ?? ""}
         name={group.name}
         color={group.color}
-        parent={{
-          name: group?.organization?.name,
-          avatarUrl: group?.organization?.icon,
-        }}
+        parent={
+          group?.organization
+            ? {
+                name: group?.organization?.name,
+                avatarUrl: group?.organization?.icon,
+              }
+            : undefined
+        }
         id={group.id}
       />
       <PageContainer>
@@ -113,44 +115,7 @@ export const Group = () => {
               justifyContent: "space-between",
               flexWrap: "wrap",
             }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                gap: "8px",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  height: "1rem",
-                  width: "auto",
-                }}
-                component="img"
-                src="/discord-logo.png"
-              />
-              <Typography
-                variant="body1"
-                sx={{
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: "1",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                Discord role of{" "}
-                <Box component="span" sx={{ fontWeight: "bold", color: colors.primary }}>
-                  {group.organization.name}
-                </Box>
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", gap: "8px" }}>
-              <Groups color={"primary"} />
-              <Typography>{group.memberCount}</Typography>
-            </Box>
-          </Box>
+          ></Box>
         </Box>
         <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
         {tabs.map((tab: TabProps, index) => (

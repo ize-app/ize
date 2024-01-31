@@ -4,6 +4,10 @@ mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
   }
 }
 
+mutation NewCustomGroup($inputs: CustomGroupArgs!) {
+  newCustomGroup(inputs: $inputs)
+}
+
 query Group($id: String!) {
   group(id: $id) {
     ...GroupSummaryParts
@@ -40,6 +44,9 @@ fragment GroupTypeSummaryParts on GroupType {
   ... on GroupNft {
     ...GroupNftParts
   }
+  ... on GroupCustom {
+    ...GroupCustomParts
+  }
 }
 
 fragment DiscordRoleGroupParts on DiscordRoleGroup {
@@ -61,6 +68,11 @@ fragment GroupNftParts on GroupNft {
   NftCollection {
     ...NftCollectionParts
   }
+}
+
+fragment GroupCustomParts on GroupCustom {
+  id
+  name
 }
 
 fragment NftCollectionParts on NftCollection {

@@ -6,8 +6,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
+  NewCustomGroupRoute,
   NewProcessRoute,
   NewRequestRoute,
+  newCustomGroupRoute,
   newProcessRoute,
   newRequestRoute,
 } from "../../../routers/routes";
@@ -60,6 +62,9 @@ const CreateButton = (): JSX.Element => {
         </MenuItem>
         <MenuItem>
           <Link to={newProcessRoute(NewProcessRoute.Intro)}>New process</Link>
+        </MenuItem>
+        <MenuItem>
+          <Link to={newCustomGroupRoute(NewCustomGroupRoute.Setup)}>New group</Link>
         </MenuItem>
       </Menu>
     </>

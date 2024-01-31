@@ -26,6 +26,7 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
       NftCollection: true,
     },
   },
+  GroupCustom: true,
 });
 
 export type GroupPrismaType = Prisma.GroupGetPayload<{
@@ -37,6 +38,8 @@ export const formatGroup = (group: GroupPrismaType): Group => {
     return formatDiscordGroup(group);
   } else if (group.GroupNft) {
     return formatGroupNft(group);
+  } else if (group.GroupCustom) {
+    return formatGroupCustom(group);
   } else {
     throw Error("ERROR: Unrecognized group type");
   }
@@ -100,4 +103,16 @@ const formatGroupNft = (group: GroupPrismaType): Group => {
     groupType: { __typename: "GroupNft", ...nft } as GroupType,
   };
   return discordGroup;
+};
+
+const formatGroupCustom = (group: GroupPrismaType): Group => {
+  if (!group.GroupCustom) throw Error("ERROR formatGroup: No Custom Group");
+  const { GroupCustom: custom } = group;
+  return {
+    ...group,
+    creator: formatUser(group.creator),
+    name: custom.name,
+    createdAt: group.createdAt.toString(),
+    groupType: { __typename: "GroupCustom", ...custom } as GroupType,
+  };
 };

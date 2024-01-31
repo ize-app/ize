@@ -7,9 +7,11 @@ import { getGroupsOfUser } from "@/services/groups/getGroupsOfUser";
 
 import {
   Group,
+  MutationNewCustomGroupArgs,
   MutationSetUpDiscordServerArgs,
   QueryGroupArgs,
 } from "@graphql/generated/resolver-types";
+import { newCustomGroup as newCustomGroupService } from "@/services/groups/newCustomGroup";
 
 const setUpDiscordServer = async (
   root: unknown,
@@ -35,8 +37,17 @@ export const groupsForCurrentUser = async (
   return await getGroupsOfUser({ context });
 };
 
+export const newCustomGroup = async (
+  root: unknown,
+  args: MutationNewCustomGroupArgs,
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  return await newCustomGroupService({ args, context });
+};
+
 export const groupMutations = {
   setUpDiscordServer,
+  newCustomGroup,
 };
 
 export const groupQueries = {
