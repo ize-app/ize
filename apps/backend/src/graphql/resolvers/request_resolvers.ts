@@ -54,7 +54,7 @@ const requestsForCurrentUser = async (
   root: unknown,
   context: GraphqlRequestContext,
 ): Promise<Promise<Request>[]> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+  if (!context.currentUser) return [];
 
   const groupIds = await getGroupIdsOfUser({ user: context.currentUser });
 
