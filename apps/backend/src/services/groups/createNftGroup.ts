@@ -40,20 +40,20 @@ export const createNftGroup = async ({
         address,
       });
 
-  if (!nftContract || !nftToken) throw Error();
+  if (!nftContract && !nftToken) throw Error();
 
   const collectionRecord = await upsertNftCollection({
     chain,
     address,
     name: nftToken?.contract.name ?? nftContract?.name,
     icon: nftToken?.contract.icon ?? nftContract?.icon,
-    type: nftToken?.contract.type ?? nftContract?.type,
+    type: (nftToken?.contract.type ?? nftContract?.type) as NftTypes,
   });
 
   await upsertNftTokenGroup({
     tokenId,
-    tokenName: nftToken.name,
-    icon: nftToken.icon,
+    tokenName: nftToken?.name,
+    icon: nftToken?.icon,
     collectionName: collectionRecord.name,
     collectionId: collectionRecord.id,
     hatsBranch: false,
