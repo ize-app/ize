@@ -138,7 +138,7 @@ export const ExpandedRequest = ({
           onSubmit={() => {
             collapseRow();
           }}
-          respondRoles={request.process.roles.respond}
+          hasRespondRole={!!request.process.userRoles?.respond}
         />
       </Paper>
     </Box>

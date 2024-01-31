@@ -38,6 +38,7 @@ model Identity {
   IdentityBlockchain IdentityBlockchain?
   IdentityDiscord    IdentityDiscord?
   RoleIdentity       RoleIdentity[]
+  IdentitiesGroups   IdentityGroup[]
 
   @@map("identities")
 }
@@ -83,6 +84,20 @@ model IdentityDiscord {
   @@map("identities_discord")
 }
 
+model IdentityGroup {
+  identityId String   @map("identity_id") @db.Uuid
+  groupId    String   @map("group_id") @db.Uuid
+  active     Boolean
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  Group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([identityId, groupId])
+  @@map("identities_groups")
+}
+
 enum OauthTypes {
   Discord
   Google
@@ -117,6 +132,7 @@ model Group {
   process          Process[]
   RoleGroups       RoleGroup[]
   GroupNft         GroupNft?
+  IdentitiesGroups IdentityGroup[]
 
   @@map("groups")
 }

@@ -8,7 +8,6 @@ fragment MeParts on Me {
   user {
     ...UserSummaryParts
   }
-  groupIds
   discordServers {
     ...DiscordServerParts
   }

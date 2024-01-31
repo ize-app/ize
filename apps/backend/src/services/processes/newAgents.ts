@@ -2,10 +2,10 @@ import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { MutationNewAgentsArgs, Agent } from "@graphql/generated/resolver-types";
 
-import { refreshDiscordServerRoles } from "@/services/groups/refreshDiscordServerRoles";
-import { upsertDiscordEveryoneRole } from "@/services/groups/upsertDiscordEveryoneRole";
+import { refreshDiscordServerRoles } from "@/services/groups/upsertGroups/refreshDiscordServerRoles";
+import { upsertDiscordEveryoneRole } from "@/services/groups/upsertGroups/upsertDiscordEveryoneRole";
 import { formatGroup, groupInclude } from "@/utils/formatGroup";
-import { createHatsGroup, createNftGroup } from "@/services/groups/createNftGroup";
+import { createHatsGroup, createNftGroup } from "@/services/groups/upsertGroups/createNftGroup";
 import { upsertBlockchainIdentity } from "../identities/upsertBlockchainIdentity";
 import { upsertEmailIdentity } from "../identities/upsertEmailIdentity";
 

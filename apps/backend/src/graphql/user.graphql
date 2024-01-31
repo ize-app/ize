@@ -4,7 +4,6 @@ type Query {
 
 type Me {
   user: User!
-  groupIds: [String!]!
   identities: [Identity!]!
   discordServers: [DiscordServer!]!
 }

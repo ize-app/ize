@@ -9,7 +9,7 @@ type Mutation {
 
 type Query {
   group(id: String!): Group!
-  groupsForCurrentUser(groupIds: [String!]!): [Group!]!
+  groupsForCurrentUser: [Group!]!
 }
 
 union GroupType = DiscordRoleGroup | GroupNft

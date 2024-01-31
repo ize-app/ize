@@ -10,7 +10,11 @@ export const userInclude = Prisma.validator<Prisma.UserInclude>()({
 export const meInclude = Prisma.validator<Prisma.UserInclude>()({
   Oauths: true,
   Identities: {
-    include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
+    include: {
+      IdentityBlockchain: true,
+      IdentityDiscord: true,
+      IdentityEmail: true,
+    },
   },
 });
 

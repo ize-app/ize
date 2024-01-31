@@ -5,7 +5,7 @@ type Mutation {
 
 type Query {
   request(requestId: String!): Request!
-  requestsForCurrentUser(groupIds: [String!]!): [Request!]!
+  requestsForCurrentUser: [Request!]!
   requestsForGroup(groupId: String!): [Request!]!
   requestsForProcess(processId: String!): [Request!]!
 }

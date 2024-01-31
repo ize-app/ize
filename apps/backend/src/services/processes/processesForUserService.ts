@@ -1,7 +1,9 @@
-import { prisma } from "../../prisma/client";
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "@utils/formatProcess";
 import { Process, QueryProcessesForCurrentUserArgs } from "@graphql/generated/resolver-types";
+import { getGroupIdsOfUser } from "../groups/getGroupIdsOfUser";
 
 /* 
 Gets all processes that either 
@@ -9,13 +11,20 @@ Gets all processes that either
 2) have an evovle process with reqest permissions to that group/user 
 Note: In the process table UI, "evolve processes" are not shown by themselves, only as attached to their "parent" process
 */
-export const processesForUserService = async (
-  args: QueryProcessesForCurrentUserArgs,
-  context: GraphqlRequestContext,
-): Promise<Process[]> => {
+export const processesForUserService = async ({
+  args,
+  context,
+  transaction = prisma,
+}: {
+  args: QueryProcessesForCurrentUserArgs;
+  context: GraphqlRequestContext;
+  transaction?: Prisma.TransactionClient;
+}): Promise<Process[]> => {
   if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
 
   const identityIds = context.currentUser.Identities.map((identity) => identity.id);
+
+  const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
 
   const processes = await prisma.process.findMany({
     where: {
@@ -28,7 +37,7 @@ export const processesForUserService = async (
                   RoleGroups: {
                     some: {
                       AND: [
-                        { groupId: { in: args.groupIds ?? [] } },
+                        { groupId: { in: groupIds } },
                         {
                           type: {
                             in: args.requestRoleOnly ? ["Request"] : ["Request", "Respond"],
@@ -66,7 +75,7 @@ export const processesForUserService = async (
                       RoleGroups: {
                         some: {
                           AND: [
-                            { groupId: { in: args.groupIds ?? [] } },
+                            { groupId: { in: groupIds } },
                             {
                               type: "Request",
                             },
@@ -98,7 +107,7 @@ export const processesForUserService = async (
     include: processInclude,
   });
   const formattedProcesses = processes.map((process) =>
-    formatProcess(process, context.currentUser),
+    formatProcess(process, context.currentUser, groupIds),
   );
 
   return formattedProcesses;

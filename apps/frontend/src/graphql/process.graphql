@@ -18,14 +18,14 @@ query Process($processId: String!) {
   }
 }
 
-query Processes($groupIds: [String!]!) {
-  processesForCurrentUser(requestRoleOnly: false, groupIds: $groupIds) {
+query Processes {
+  processesForCurrentUser(requestRoleOnly: false) {
     ...ProcessSummaryParts
   }
 }
 
-query GetProcessesToCreateRequest($groupIds: [String!]!) {
-  processesForCurrentUser(requestRoleOnly: true, groupIds: $groupIds) {
+query GetProcessesToCreateRequest {
+  processesForCurrentUser(requestRoleOnly: true) {
     ...ProcessSummaryParts
   }
 }
@@ -61,6 +61,9 @@ fragment BaseProcessSummaryParts on Process {
   parent {
     ...ParentProcessSummaryParts
   }
+  userRoles {
+    ...UserRolesParts
+  }
   createdAt
 }
 
@@ -79,6 +82,11 @@ fragment AgentSummaryParts on Agent {
   ... on Identity {
     ...IdentitySummaryParts
   }
+}
+
+fragment UserRolesParts on UserRoles {
+  request
+  respond
 }
 
 fragment OptionSummaryParts on ProcessOption {

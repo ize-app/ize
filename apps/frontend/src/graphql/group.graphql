@@ -10,8 +10,8 @@ query Group($id: String!) {
   }
 }
 
-query Groups($groupIds: [String!]!) {
-  groupsForCurrentUser(groupIds: $groupIds) {
+query Groups {
+  groupsForCurrentUser {
     ...GroupSummaryParts
   }
 }

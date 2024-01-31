@@ -161,7 +161,6 @@ const hasNftRoleGroupPermission = async ({
   context: GraphqlRequestContext;
 }): Promise<boolean> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-  if (!context.discordApi) throw Error("No Discord authentication data for user");
 
   let foundRole = false;
 

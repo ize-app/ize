@@ -12,10 +12,10 @@ import {
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
-  QueryRequestsForCurrentUserArgs,
   Request,
 } from "@graphql/generated/resolver-types";
 import { newResponseService } from "@/services/requests/newResponseService";
+import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
 
 const newRequest = async (
   root: unknown,
@@ -52,10 +52,11 @@ const request = async (
 
 const requestsForCurrentUser = async (
   root: unknown,
-  args: QueryRequestsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Promise<Request>[]> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  const groupIds = await getGroupIdsOfUser({ user: context.currentUser });
 
   const identityIds = context.currentUser.Identities.map((identity) => identity.id);
 
@@ -69,7 +70,7 @@ const requestsForCurrentUser = async (
               RoleGroups: {
                 some: {
                   AND: [
-                    { groupId: { in: args.groupIds } },
+                    { groupId: { in: groupIds } },
                     {
                       type: "Request",
                     },

@@ -25,7 +25,6 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
-import { hasPermission } from "@/utils/hasPermissions";
 
 function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
   const { process } = props;
@@ -81,7 +80,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={!hasPermission(process.evolve?.roles.request)}
+                  disabled={!process.evolve?.userRoles?.request}
                   edge={"start"}
                 />
               </span>
@@ -100,7 +99,7 @@ function ProcessRow(props: { process: ProcessSummaryPartsFragment }) {
                   }}
                   color={"primary"}
                   // TODO - bring in user roles from db/cache
-                  disabled={!hasPermission(process.roles.request)}
+                  disabled={!process.userRoles?.request}
                 />
               </span>
             </Tooltip>

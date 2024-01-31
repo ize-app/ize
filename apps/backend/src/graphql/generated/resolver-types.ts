@@ -263,7 +263,6 @@ export type InputTemplateArgs = {
 export type Me = {
   __typename?: 'Me';
   discordServers: Array<DiscordServer>;
-  groupIds: Array<Scalars['String']['output']>;
   identities: Array<Identity>;
   user: User;
 };
@@ -400,6 +399,7 @@ export type Process = {
   parent?: Maybe<ParentProcess>;
   roles: Roles;
   type: ProcessType;
+  userRoles?: Maybe<UserRoles>;
 };
 
 export type ProcessOption = {
@@ -455,11 +455,6 @@ export type QueryGroupArgs = {
 };
 
 
-export type QueryGroupsForCurrentUserArgs = {
-  groupIds: Array<Scalars['String']['input']>;
-};
-
-
 export type QueryHatTokenArgs = {
   chain: Blockchain;
   tokenId: Scalars['String']['input'];
@@ -485,7 +480,6 @@ export type QueryProcessArgs = {
 
 
 export type QueryProcessesForCurrentUserArgs = {
-  groupIds: Array<Scalars['String']['input']>;
   requestRoleOnly: Scalars['Boolean']['input'];
 };
 
@@ -497,11 +491,6 @@ export type QueryProcessesForGroupArgs = {
 
 export type QueryRequestArgs = {
   requestId: Scalars['String']['input'];
-};
-
-
-export type QueryRequestsForCurrentUserArgs = {
-  groupIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -606,6 +595,12 @@ export type User = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type UserRoles = {
+  __typename?: 'UserRoles';
+  request: Scalars['Boolean']['output'];
+  respond: Scalars['Boolean']['output'];
 };
 
 export type WebhookAction = {
@@ -789,6 +784,7 @@ export type ResolversTypes = {
   Roles: ResolverTypeWrapper<Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversTypes['Agent']>, request: Array<ResolversTypes['Agent']>, respond: Array<ResolversTypes['Agent']> }>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
+  UserRoles: ResolverTypeWrapper<UserRoles>;
   WebhookAction: ResolverTypeWrapper<WebhookAction>;
   WebhookActionArgs: WebhookActionArgs;
   newEditProcessRequestArgs: NewEditProcessRequestArgs;
@@ -861,6 +857,7 @@ export type ResolversParentTypes = {
   Roles: Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversParentTypes['Agent']>, request: Array<ResolversParentTypes['Agent']>, respond: Array<ResolversParentTypes['Agent']> };
   String: Scalars['String']['output'];
   User: User;
+  UserRoles: UserRoles;
   WebhookAction: WebhookAction;
   WebhookActionArgs: WebhookActionArgs;
   newEditProcessRequestArgs: NewEditProcessRequestArgs;
@@ -1041,7 +1038,6 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
-  groupIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1109,6 +1105,7 @@ export type ProcessResolvers<ContextType = GraphqlRequestContext, ParentType ext
   parent?: Resolver<Maybe<ResolversTypes['ParentProcess']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['Roles'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ProcessType'], ParentType, ContextType>;
+  userRoles?: Resolver<Maybe<ResolversTypes['UserRoles']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1128,16 +1125,16 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'groupIds'>>;
+  groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
   nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
-  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'groupIds' | 'requestRoleOnly'>>;
+  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'requestRoleOnly'>>;
   processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
   request?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryRequestArgs, 'requestId'>>;
-  requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForCurrentUserArgs, 'groupIds'>>;
+  requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   requestsForGroup?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForGroupArgs, 'groupId'>>;
   requestsForProcess?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForProcessArgs, 'processId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
@@ -1215,6 +1212,12 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserRolesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserRoles'] = ResolversParentTypes['UserRoles']> = {
+  request?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  respond?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type WebhookActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookAction'] = ResolversParentTypes['WebhookAction']> = {
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1263,6 +1266,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Result?: ResultResolvers<ContextType>;
   Roles?: RolesResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserRoles?: UserRolesResolvers<ContextType>;
   WebhookAction?: WebhookActionResolvers<ContextType>;
 };
 
