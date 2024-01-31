@@ -171,14 +171,12 @@ export type GroupEnsArgs = {
 
 export type GroupHatArgs = {
   chain: Blockchain;
-  inludeHatsBranch: Scalars['Boolean']['input'];
   tokenId: Scalars['String']['input'];
 };
 
 export type GroupNft = {
   __typename?: 'GroupNft';
   NftCollection: NftCollection;
-  hatsBranch: Scalars['Boolean']['output'];
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -982,7 +980,6 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type GroupNftResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupNft'] = ResolversParentTypes['GroupNft']> = {
   NftCollection?: Resolver<ResolversTypes['NftCollection'], ParentType, ContextType>;
-  hatsBranch?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -58,7 +58,6 @@ fragment GroupNftParts on GroupNft {
   name
   icon
   tokenId
-  hatsBranch
   NftCollection {
     ...NftCollectionParts
   }

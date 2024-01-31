@@ -62,7 +62,6 @@ export const newAgents = async (
         return await createHatsGroup({
           chain: a.groupHat.chain,
           tokenId: a.groupHat.tokenId,
-          includeHatsBranch: a.groupHat.inludeHatsBranch,
           context,
         });
       } else {

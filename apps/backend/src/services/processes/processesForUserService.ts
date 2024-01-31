@@ -20,7 +20,7 @@ export const processesForUserService = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<Process[]> => {
-  if (!context.currentUser) throw Error("ERROR processesForCurrentUser: No user is authenticated");
+  if (!context.currentUser) return [];
 
   const identityIds = context.currentUser.Identities.map((identity) => identity.id);
 

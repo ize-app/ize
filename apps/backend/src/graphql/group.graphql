@@ -36,7 +36,6 @@ type GroupNft {
   name: String!
   icon: String
   tokenId: String
-  hatsBranch: Boolean!
   NftCollection: NftCollection!
 }
 

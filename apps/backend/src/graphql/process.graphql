@@ -61,7 +61,6 @@ input GroupEnsArgs {
 input GroupHatArgs {
   chain: Blockchain!
   tokenId: String!
-  inludeHatsBranch: Boolean!
 }
 
 enum NewAgentTypes {

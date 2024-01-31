@@ -12,6 +12,7 @@ export const getGroupsOfUser = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }) => {
+  if (!context.currentUser) return [];
   // Get groups that the user is in a server, role or has created.
   const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
 
