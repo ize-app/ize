@@ -33,12 +33,13 @@ model Identity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  User               User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  IdentityEmail      IdentityEmail?
-  IdentityBlockchain IdentityBlockchain?
-  IdentityDiscord    IdentityDiscord?
-  RoleIdentity       RoleIdentity[]
-  IdentitiesGroups   IdentityGroup[]
+  User                        User?                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  IdentityEmail               IdentityEmail?
+  IdentityBlockchain          IdentityBlockchain?
+  IdentityDiscord             IdentityDiscord?
+  RoleIdentity                RoleIdentity[]
+  IdentitiesGroups            IdentityGroup[]
+  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
 
   @@map("identities")
 }
@@ -121,18 +122,20 @@ model Oauths {
 }
 
 model Group {
-  id               String            @id @default(uuid()) @db.Uuid
-  creator          User              @relation(fields: [creatorId], references: [id])
-  creatorId        String            @map("creator_id") @db.Uuid
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
-  activeAt         DateTime?
-  deactivatedat    DateTime?
-  GroupDiscordRole GroupDiscordRole?
-  process          Process[]
-  RoleGroups       RoleGroup[]
-  GroupNft         GroupNft?
-  IdentitiesGroups IdentityGroup[]
+  id                      String                   @id @default(uuid()) @db.Uuid
+  creator                 User                     @relation(fields: [creatorId], references: [id])
+  creatorId               String                   @map("creator_id") @db.Uuid
+  createdAt               DateTime                 @default(now()) @map("created_at")
+  updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at")
+  activeAt                DateTime?
+  deactivatedat           DateTime?
+  GroupDiscordRole        GroupDiscordRole?
+  process                 Process[]
+  RoleGroups              RoleGroup[]
+  GroupNft                GroupNft?
+  IdentitiesGroups        IdentityGroup[]
+  CustomGroupMemberGroups CustomGroupMemberGroup[]
+  GroupCustom             GroupCustom?
 
   @@map("groups")
 }
@@ -168,6 +171,38 @@ enum Blockchain {
   Optimism
   Matic
   Base
+}
+
+model GroupCustom {
+  id      String @id @default(uuid()) @db.Uuid
+  name    String
+  groupId String @unique @map("group_id") @db.Uuid
+
+  group                       Group                       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
+  CustomGroupMemberGroups     CustomGroupMemberGroup[]
+
+  @@map("groups_custom")
+}
+
+model CustomGroupMemberGroup {
+  groupId       String      @map("group_id") @db.Uuid
+  groupCustomId String      @map("group_custom_id") @db.Uuid
+  Group         Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, groupCustomId])
+  @@map("custom_group_group_members")
+}
+
+model CustomGroupMemberIdentity {
+  identityId    String      @map("identity_id") @db.Uuid
+  groupCustomId String      @map("group_custom_id") @db.Uuid
+  Identity      Identity    @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
+
+  @@unique([identityId, groupCustomId])
+  @@map("custom_group_identity_members")
 }
 
 model GroupNft {
