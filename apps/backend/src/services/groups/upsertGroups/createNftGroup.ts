@@ -1,6 +1,6 @@
 import { Blockchain, Group, NftTypes } from "@/graphql/generated/resolver-types";
-import { GraphqlRequestContext } from "../../graphql/context";
-import { prisma } from "../../prisma/client";
+import { GraphqlRequestContext } from "../../../graphql/context";
+import { prisma } from "../../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { getNftToken } from "@/blockchain/getNftToken";
 import { getNftContract } from "@/blockchain/getNftContract";

@@ -27,7 +27,6 @@ import {
   newRequestRoute,
 } from "../../routers/routes";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { hasPermission } from "@/utils/hasPermissions";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
 import SummarizeAction from "../shared/Process/SummarizeAction";
@@ -121,7 +120,7 @@ export const Process = () => {
               <>
                 <Button
                   variant="contained"
-                  disabled={!hasPermission(process.roles.request)}
+                  disabled={!process.userRoles?.request}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",
@@ -145,7 +144,7 @@ export const Process = () => {
                       }),
                     );
                   }}
-                  disabled={!hasPermission(process.evolve?.roles.request)}
+                  disabled={!process.evolve?.userRoles?.request}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",
@@ -164,7 +163,7 @@ export const Process = () => {
                     }),
                   );
                 }}
-                disabled={!hasPermission(process.roles.request)}
+                disabled={!process.userRoles?.request}
                 sx={{
                   width: "140px",
                   display: !me ? "none" : "flex",

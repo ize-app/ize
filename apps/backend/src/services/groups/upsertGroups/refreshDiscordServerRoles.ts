@@ -1,5 +1,5 @@
 import { DiscordApi } from "@/discord/api";
-import { GraphqlRequestContext } from "../../graphql/context";
+import { GraphqlRequestContext } from "../../../graphql/context";
 import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
 

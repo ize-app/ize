@@ -15,6 +15,7 @@ import {
   EvolveProcessesDiff,
   ProcessType,
 } from "@graphql/generated/resolver-types";
+import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
 
 export const requestInputInclude = Prisma.validator<Prisma.RequestInputInclude>()({
   input: true,
@@ -50,9 +51,9 @@ export const formatRequest = async (
   requestData: RequestPrismaType,
   user: MePrismaType | undefined | null,
 ): Promise<Request> => {
-  user;
+  const groupIds = await getGroupIdsOfUser({ user });
   const process: Process = {
-    ...formatProcessVersion(requestData.processVersion, user),
+    ...formatProcessVersion(requestData.processVersion, user, groupIds),
     id: requestData.processVersion.process.id,
     createdAt: requestData.processVersion.process.createdAt.toString(),
     type: requestData.processVersion.process.type as ProcessType,
@@ -63,7 +64,7 @@ export const formatRequest = async (
 
   const evolveChanges =
     process.type === ProcessType.Evolve
-      ? await formatEvolveProcessChanges(inputs, requestData.id, user)
+      ? await formatEvolveProcessChanges(inputs, requestData.id, user, groupIds)
       : null;
 
   const req: Request = await {
@@ -112,6 +113,7 @@ const formatEvolveProcessChanges = async (
   inputs: RequestInput[],
   requestId: string,
   user: MePrismaType | undefined | null,
+  groupIds: string[],
 ): Promise<EvolveProcessesDiff[]> => {
   type ProcessIdChanges = [oldId: string, newId: string];
 
@@ -150,8 +152,8 @@ const formatEvolveProcessChanges = async (
     if (!currentProcessVersion || !proposedProcessVersion)
       throw Error("ERROR formatEvolveProcessChanges: Cannot find process versions");
 
-    const currentProcess = processVersionToProcess(currentProcessVersion, user);
-    const proposedProcess = processVersionToProcess(proposedProcessVersion, user);
+    const currentProcess = processVersionToProcess(currentProcessVersion, user, groupIds);
+    const proposedProcess = processVersionToProcess(proposedProcessVersion, user, groupIds);
     // adding suffic at end because apollo's caching
     proposedProcess.id = proposedProcess.id + "_proposed_" + requestId;
 
@@ -171,9 +173,10 @@ const formatEvolveProcessChanges = async (
 const processVersionToProcess = (
   processVersion: ProcessVersionPrismaType,
   user: MePrismaType | undefined | null,
+  groupIds: string[],
 ): Process => {
   return {
-    ...formatProcessVersion(processVersion, user),
+    ...formatProcessVersion(processVersion, user, groupIds),
     id: processVersion.process.id,
     createdAt: processVersion.process.createdAt.toString(),
     type: processVersion.process.type as ProcessType,

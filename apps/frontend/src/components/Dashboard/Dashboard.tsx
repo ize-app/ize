@@ -27,23 +27,14 @@ const Dashboard = () => {
   };
 
   const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
-    variables: {
-      groupIds: me?.groupIds ?? [],
-    },
     skip: !me,
   });
 
   const { data: processData, loading: processLoading } = useQuery(ProcessesDocument, {
-    variables: {
-      groupIds: me?.groupIds ?? [],
-    },
     skip: !me,
   });
 
   const { data: requestData, loading: requestLoading } = useQuery(RequestsForCurrentUserDocument, {
-    variables: {
-      groupIds: me?.groupIds ?? [],
-    },
     skip: !me,
   });
 

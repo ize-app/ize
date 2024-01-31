@@ -23,6 +23,8 @@ import {
   ProcessType,
   RoleType,
   DecisionTypes,
+  UserRoles,
+  Agent,
 } from "@graphql/generated/resolver-types";
 
 export interface ProcessVersion
@@ -159,6 +161,7 @@ type EditProcessPrismaType = Prisma.ProcessGetPayload<{
 export const formatProcess = (
   processData: ProcessPrismaType,
   user: MePrismaType | undefined | null,
+  groupIds: string[],
 ): Process => {
   const { currentProcessVersion } = processData;
 
@@ -169,7 +172,7 @@ export const formatProcess = (
   if (!currentProcessVersion.evolveProcess)
     throw Error("ERROR formatProcess: Can't find evolve process of process id:" + processData.id);
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user, groupIds);
 
   const data: Process = {
     id: processData.id,
@@ -179,7 +182,7 @@ export const formatProcess = (
     evolve:
       processData.type === ProcessType.Evolve
         ? null
-        : formatEvolveProcess(currentProcessVersion.evolveProcess, user),
+        : formatEvolveProcess(currentProcessVersion.evolveProcess, user, groupIds),
     ...formattedProcessVersion,
   };
   return data;
@@ -188,6 +191,7 @@ export const formatProcess = (
 export const formatEvolveProcess = (
   processData: EditProcessPrismaType,
   user: MePrismaType | undefined | null,
+  groupIds: string[],
 ): Process => {
   const { currentProcessVersion } = processData;
 
@@ -196,7 +200,7 @@ export const formatEvolveProcess = (
       "ERROR formatProcess: Can't find current process version of process id: " + processData.id,
     );
 
-  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user);
+  const formattedProcessVersion = formatProcessVersion(currentProcessVersion, user, groupIds);
 
   const data: Process = {
     id: processData.id,
@@ -211,11 +215,14 @@ export const formatEvolveProcess = (
 export const formatProcessVersion = (
   processVersion: ProcessVersionPrismaType,
   user: MePrismaType | undefined | null,
+  groupIds: string[],
 ): ProcessVersion => {
   const { creator, optionSystem, inputTemplateSet, decisionSystem, action, roleSet } =
     processVersion;
 
   const options = formatOptions(optionSystem);
+
+  const roles = formatRoles(roleSet, user);
 
   const data: ProcessVersion = {
     name: formatName(
@@ -226,7 +233,7 @@ export const formatProcessVersion = (
     description: processVersion.description,
     expirationSeconds: processVersion.expirationSeconds,
     creator: formatUser(creator),
-    options: options,
+    options,
     decisionSystem: formatDecisionSystem(decisionSystem),
     inputs: inputTemplateSet.inputTemplates
       .sort((a, b) => a.position - b.position)
@@ -241,7 +248,8 @@ export const formatProcessVersion = (
       ),
     action: action ? formatAction(action, options) : undefined,
     parent: formatParent(processVersion.parentProcess),
-    roles: formatRoles(roleSet, user),
+    roles,
+    userRoles: formatUserRoles(user, groupIds, roles),
   };
 
   return data;
@@ -329,4 +337,22 @@ export const formatParent = (parent: ParentPrismaType | null): ParentProcess | n
       name: parent.currentProcessVersion?.name,
     };
   else return null;
+};
+
+const hasRole = (agent: Agent, identityIds: string[], groupIds: string[]) => {
+  if (agent.__typename === "Group" && groupIds.includes(agent.id)) return true;
+  else if (agent.__typename === "Identity" && identityIds.includes(agent.id)) return true;
+  else return false;
+};
+
+const formatUserRoles = (
+  user: MePrismaType | undefined | null,
+  groupIds: string[],
+  roles: Roles,
+): UserRoles | null => {
+  if (!user) return null;
+  const identityIds = user.Identities.map((id) => id.id);
+  const request = roles.request.some((agent) => hasRole(agent, identityIds, groupIds));
+  const respond = roles.respond.some((agent) => hasRole(agent, identityIds, groupIds));
+  return { request, respond };
 };

@@ -10,14 +10,12 @@ import * as z from "zod";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import {
-  AgentSummaryPartsFragment,
   NewResponseDocument,
   ProcessOption,
   Response,
 } from "@/graphql/generated/graphql";
 import { RadioControl } from "../Form";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { hasPermission } from "@/utils/hasPermissions";
 
 const formSchema = z.object({
   option: z.string().trim().nonempty("Please select an option"),
@@ -31,19 +29,18 @@ export const SubmitResponse = ({
   onSubmit,
   userResponse,
   displayAsColumn,
-  respondRoles,
+  hasRespondRole,
 }: {
   requestId: string;
   options: ProcessOption[];
   onSubmit: () => void;
   userResponse: Response | null | undefined;
   displayAsColumn: boolean;
-  respondRoles: AgentSummaryPartsFragment[];
+  hasRespondRole: boolean;
 }) => {
   const { me } = useContext(CurrentUserContext);
 
   const userLoggedIn = !!me?.user;
-  const hasRespondRole = hasPermission(respondRoles);
   const [hasResponded, setHasResponded] = useState<boolean>(!!userResponse);
 
   const canRespond = userLoggedIn && hasRespondRole && !hasResponded;

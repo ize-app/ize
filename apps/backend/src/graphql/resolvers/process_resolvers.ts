@@ -16,6 +16,7 @@ import { newCustomProcess } from "@services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
 import { newAgents as newAgentsService } from "@/services/processes/newAgents";
+import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
 
 const newProcess = async (
   root: unknown,
@@ -45,7 +46,9 @@ const process = async (
     },
   });
 
-  return formatProcess(processData, context.currentUser);
+  const groupIds = await getGroupIdsOfUser({ user: context.currentUser });
+
+  return formatProcess(processData, context.currentUser, groupIds);
 };
 
 const newAgents = async (
@@ -61,7 +64,7 @@ const processesForCurrentUser = async (
   args: QueryProcessesForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Process[]> => {
-  return await processesForUserService(args, context);
+  return await processesForUserService({ args, context });
 };
 
 /* 
@@ -102,8 +105,10 @@ const processesForGroup = async (
     include: processInclude,
   });
 
+  const groupIds = await getGroupIdsOfUser({ user: context.currentUser });
+
   const formattedProcesses = processes.map((process) =>
-    formatProcess(process, context.currentUser),
+    formatProcess(process, context.currentUser, groupIds),
   );
 
   return formattedProcesses;

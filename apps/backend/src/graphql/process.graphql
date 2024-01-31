@@ -6,7 +6,7 @@ type Mutation {
 
 type Query {
   process(processId: String!): Process!
-  processesForCurrentUser(requestRoleOnly: Boolean!, groupIds: [String!]!): [Process!]!
+  processesForCurrentUser(requestRoleOnly: Boolean!): [Process!]!
   processesForGroup(groupId: String!): [Process!]!
 }
 
@@ -116,12 +116,18 @@ type Process {
   inputs: [InputTemplate!]!
   action: Action
   roles: Roles!
+  userRoles: UserRoles
   decisionSystem: DecisionTypes!
   # not making evolve required because the evolve process needs to leave out
   # it's own edit process to avoid infinite recursion
   evolve: Process
   parent: ParentProcess
   createdAt: String!
+}
+
+type UserRoles {
+  request: Boolean!
+  respond: Boolean!
 }
 
 enum ProcessType {

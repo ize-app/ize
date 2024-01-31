@@ -10,7 +10,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
-  AgentSummaryPartsFragment,
   ProcessSummaryPartsFragment,
   RequestDocument,
   RequestSummaryPartsFragment,
@@ -188,7 +187,7 @@ export const Request = () => {
                   onSubmit={() => {
                     return;
                   }}
-                  respondRoles={request.process.roles.respond}
+                  hasRespondRole={!!request.process.userRoles?.respond}
                 />
               </Accordion>
             )}
