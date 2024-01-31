@@ -13,13 +13,11 @@ export const createNftGroup = async ({
   address,
   tokenId,
   context,
-  includeHatsBranch = false,
   transaction = prisma,
 }: {
   chain: Blockchain;
   address: string;
   tokenId?: string | null | undefined;
-  includeHatsBranch?: boolean;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<Group> => {
@@ -56,7 +54,6 @@ export const createNftGroup = async ({
     icon: nftToken?.icon,
     collectionName: collectionRecord.name,
     collectionId: collectionRecord.id,
-    hatsBranch: false,
     context,
     transaction,
   });
@@ -67,7 +64,6 @@ export const createNftGroup = async ({
       GroupNft: {
         tokenId: tokenId ?? "",
         collectionId: collectionRecord.id,
-        hatsBranch: false,
       },
     },
   });
@@ -118,7 +114,6 @@ const upsertNftTokenGroup = async ({
   collectionId,
   collectionName,
   icon,
-  hatsBranch = false,
   transaction = prisma,
   context,
 }: {
@@ -127,15 +122,13 @@ const upsertNftTokenGroup = async ({
   collectionId: string;
   collectionName: string | null | undefined;
   icon: string | null | undefined;
-  hatsBranch?: boolean;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }) => {
   await transaction.groupNft.upsert({
     where: {
-      collectionId_tokenId_hatsBranch: {
+      collectionId_tokenId: {
         collectionId,
-        hatsBranch,
         tokenId: tokenId ?? "",
       },
     },
@@ -150,7 +143,6 @@ const upsertNftTokenGroup = async ({
         ? tokenName ?? "Token ID: " + tokenId
         : (collectionName ?? "Unknown collection") + " (All tokens)",
       tokenId: tokenId ?? "",
-      hatsBranch: hatsBranch,
       icon: icon,
       Group: {
         create: {
@@ -170,12 +162,10 @@ export const createHatsGroup = async ({
   chain,
   tokenId,
   context,
-  includeHatsBranch,
   transaction = prisma,
 }: {
   chain: Blockchain;
   tokenId: string;
-  includeHatsBranch: boolean;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<Group> => {
@@ -196,7 +186,6 @@ export const createHatsGroup = async ({
     icon: hat.icon,
     collectionName: collectionRecord.name,
     collectionId: collectionRecord.id,
-    hatsBranch: includeHatsBranch,
     context,
     transaction,
   });
@@ -207,7 +196,6 @@ export const createHatsGroup = async ({
       GroupNft: {
         tokenId: tokenIdBigInt.toString(),
         collectionId: collectionRecord.id,
-        hatsBranch: includeHatsBranch,
       },
     },
   });

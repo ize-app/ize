@@ -178,13 +178,11 @@ model GroupNft {
   collectionId String  @map("collection_id") @db.Uuid
   // null tokenId means that this group applies to all tokens in that collection
   tokenId      String? @map("token_id")
-  /// Whether the tokenId includes all tokens below it in the hats heirarchy
-  hatsBranch   Boolean @default(false) @map("hatsBranch")
 
   Group         Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
   NftCollection NftCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@unique([collectionId, tokenId, hatsBranch])
+  @@unique([collectionId, tokenId])
   @@map("groups_nft")
 }
 

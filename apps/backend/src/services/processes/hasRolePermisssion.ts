@@ -214,19 +214,11 @@ const hasNftRoleGroupPermission = async ({
       // hats tokens have special logic to determine 1) if the hat is active
       // and 2) whether the role applies to tokens further down in the hats tree
       else if (nft.NftCollection.address === HATS_V1) {
-        if (nft.hatsBranch) {
-          const isAdmin = await hatsClient.forChain(chain).isAdminOfHat({
-            user: userAddress as `0x${string}`,
-            hatId: BigInt(nft.tokenId),
-          });
-          if (isAdmin) foundRole = true;
-        } else {
-          const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
-            wearer: userAddress as `0x${string}`,
-            hatId: BigInt(nft.tokenId),
-          });
-          if (isWearer) foundRole = true;
-        }
+        const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
+          wearer: userAddress as `0x${string}`,
+          hatId: BigInt(nft.tokenId),
+        });
+        if (isWearer) foundRole = true;
       }
       // for all other nfts, it's just whether or not you have that particular token
       else {

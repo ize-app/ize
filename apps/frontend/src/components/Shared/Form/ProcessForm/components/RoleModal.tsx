@@ -113,7 +113,6 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
                 groupHat: {
                   chain: data.hat.chain as Blockchain,
                   tokenId: data.hat.tokenId,
-                  inludeHatsBranch: data.hat.includeHatsBranch,
                 },
               },
             ]
@@ -170,7 +169,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
       hat: {
         chain: Blockchain.Optimism,
         tokenId: "",
-        includeHatsBranch: false,
       },
       discordRole: {
         serverId: "",
@@ -567,20 +565,6 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                   }}
                 />
               </Box>
-              <Controller
-                name={"hat.includeHatsBranch"}
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControl>
-                      <FormControlLabel
-                        label="Include all hats that this hat manages?"
-                        control={<Switch {...field} checked={field.value} />}
-                      />
-                    </FormControl>
-                  );
-                }}
-              />
               <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
               <Button
                 onClick={handleSubmit(createAgents)}
