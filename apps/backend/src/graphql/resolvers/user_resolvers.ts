@@ -6,6 +6,7 @@ import { formatIdentity } from "@/utils/formatIdentity";
 import { getDiscordServers } from "@/services/discord/getDiscordServers";
 import { updateUserDiscordGroups } from "@/services/groups/updateIdentitiesGroups/updateUserDiscordGroups";
 import { updateUserNftGroups } from "@/services/groups/updateIdentitiesGroups/updateUserNftGroups";
+import { updateUserCustomGroups } from "@/services/groups/updateIdentitiesGroups/updateUserCustomGroups";
 
 const me = async (
   root: unknown,
@@ -17,6 +18,7 @@ const me = async (
   const discordServers = await getDiscordServers({ context });
   await updateUserDiscordGroups({ context, discordServers });
   await updateUserNftGroups({ context });
+  await updateUserCustomGroups({ context });
 
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return formatIdentity(identity, context.currentUser);
