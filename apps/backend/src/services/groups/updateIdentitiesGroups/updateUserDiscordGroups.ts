@@ -5,6 +5,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
 import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
+import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
 
 export const updateUserDiscordGroups = async ({
   context,
@@ -24,7 +25,7 @@ export const updateUserDiscordGroups = async ({
     if (!userDiscordIdentity?.IdentityDiscord?.discordUserId)
       throw Error("No authenticated Discord user");
 
-    const groupIds: string[] = [];
+    const discordRoleGroupIds: string[] = [];
 
     const botApi = DiscordApi.forBotUser();
 
@@ -53,16 +54,25 @@ export const updateUserDiscordGroups = async ({
         const roleGroup = userServersRoleGroups.find(
           (roleGroup) => roleGroup.GroupDiscordRole?.discordRoleId === role.id,
         );
-        if (roleGroup) groupIds.push(roleGroup.id);
+        if (roleGroup) discordRoleGroupIds.push(roleGroup.id);
       });
     });
 
     // finds all @everyone roles in all servers that are on Ize
     userServersRoleGroups
       .filter((roleGroup) => roleGroup.GroupDiscordRole?.name === "@everyone")
-      .forEach((roleGroup) => groupIds.push(roleGroup.id));
+      .forEach((roleGroup) => discordRoleGroupIds.push(roleGroup.id));
 
-    await updateIdentitiesGroups({ identityId: userDiscordIdentity.id, groupIds, transaction });
+    const customGroupIds = await getCustomGroupsForIdentity({
+      identityId: userDiscordIdentity.id,
+      groupIds: discordRoleGroupIds,
+    });
+
+    await updateIdentitiesGroups({
+      identityId: userDiscordIdentity.id,
+      groupIds: [...discordRoleGroupIds, ...customGroupIds],
+      transaction,
+    });
   } catch (e) {
     console.log("ERROR: ", e);
   }
