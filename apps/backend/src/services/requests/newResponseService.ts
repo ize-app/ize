@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { MutationNewResponseArgs, RoleType } from "@graphql/generated/resolver-types";
 
-import hasRolePermission from "../processes/hasRolePermisssion";
+import hasRolePermission from "../processes/permission/hasRolePermisssion";
 import { resultInclude } from "@/utils/formatResult";
 import determineDecision from "../decisions/determineDecision";
 
