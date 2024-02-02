@@ -26,10 +26,6 @@ const Dashboard = () => {
     setTabIndex(newValue);
   };
 
-  const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
-    skip: !me,
-  });
-
   const { data: processData, loading: processLoading } = useQuery(ProcessesDocument, {
     skip: !me,
   });
@@ -37,8 +33,6 @@ const Dashboard = () => {
   const { data: requestData, loading: requestLoading } = useQuery(RequestsForCurrentUserDocument, {
     skip: !me,
   });
-
-  const groups = (groupsData?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
 
   const processes = (processData?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 
@@ -55,7 +49,7 @@ const Dashboard = () => {
     },
     {
       title: "Groups",
-      content: <GroupTab groups={groups} loading={groupsLoading} />,
+      content: <GroupTab  />,
     },
   ];
 
