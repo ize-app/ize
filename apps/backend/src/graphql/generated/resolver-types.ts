@@ -86,6 +86,16 @@ export enum Blockchain {
   Optimism = 'Optimism'
 }
 
+export type CustomGroupArgs = {
+  members: Array<CustomGroupMembersArgs>;
+  name: Scalars['String']['input'];
+};
+
+export type CustomGroupMembersArgs = {
+  agentType: AgentType;
+  id: Scalars['String']['input'];
+};
+
 export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   expirationSeconds: Scalars['Int']['input'];
@@ -157,7 +167,13 @@ export type Group = {
   id: Scalars['String']['output'];
   memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
-  organization: Organization;
+  organization?: Maybe<Organization>;
+};
+
+export type GroupCustom = {
+  __typename?: 'GroupCustom';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type GroupDiscordRoleArgs = {
@@ -189,7 +205,7 @@ export type GroupNftArgs = {
   tokenId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type GroupType = DiscordRoleGroup | GroupNft;
+export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft;
 
 export type Identity = {
   __typename?: 'Identity';
@@ -268,6 +284,7 @@ export type Me = {
 export type Mutation = {
   __typename?: 'Mutation';
   newAgents: Array<Agent>;
+  newCustomGroup: Scalars['String']['output'];
   newEditProcessRequest: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
@@ -278,6 +295,11 @@ export type Mutation = {
 
 export type MutationNewAgentsArgs = {
   agents: Array<NewAgentArgs>;
+};
+
+
+export type MutationNewCustomGroupArgs = {
+  inputs: CustomGroupArgs;
 };
 
 
@@ -704,7 +726,7 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   ActionType: ( EvolveProcessAction ) | ( WebhookAction );
   Agent: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   DecisionTypes: ( AbsoluteDecision ) | ( PercentageDecision );
-  GroupType: ( DiscordRoleGroup ) | ( GroupNft );
+  GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
 };
 
@@ -723,6 +745,8 @@ export type ResolversTypes = {
   ApiHatToken: ResolverTypeWrapper<ApiHatToken>;
   Blockchain: Blockchain;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CustomGroupArgs: CustomGroupArgs;
+  CustomGroupMembersArgs: CustomGroupMembersArgs;
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
@@ -734,6 +758,7 @@ export type ResolversTypes = {
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
+  GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
   GroupHatArgs: GroupHatArgs;
@@ -802,6 +827,8 @@ export type ResolversParentTypes = {
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
   Boolean: Scalars['Boolean']['output'];
+  CustomGroupArgs: CustomGroupArgs;
+  CustomGroupMembersArgs: CustomGroupMembersArgs;
   DecisionArgs: DecisionArgs;
   DecisionTypes: ResolversUnionTypes<ResolversParentTypes>['DecisionTypes'];
   DiscordAPIServerRole: DiscordApiServerRole;
@@ -813,6 +840,7 @@ export type ResolversParentTypes = {
   EvolveProcessesDiff: EvolveProcessesDiff;
   Float: Scalars['Float']['output'];
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
+  GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
   GroupHatArgs: GroupHatArgs;
@@ -974,7 +1002,13 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   memberCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  organization?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
+  organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GroupCustomResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupCustom'] = ResolversParentTypes['GroupCustom']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -988,7 +1022,7 @@ export type GroupNftResolvers<ContextType = GraphqlRequestContext, ParentType ex
 };
 
 export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupType'] = ResolversParentTypes['GroupType']> = {
-  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupNft', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupCustom' | 'GroupNft', ParentType, ContextType>;
 };
 
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
@@ -1042,6 +1076,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   newAgents?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType, RequireFields<MutationNewAgentsArgs, 'agents'>>;
+  newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'processId'>>;
@@ -1236,6 +1271,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   EvolveProcessAction?: EvolveProcessActionResolvers<ContextType>;
   EvolveProcessesDiff?: EvolveProcessesDiffResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
+  GroupCustom?: GroupCustomResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;
   GroupType?: GroupTypeResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;

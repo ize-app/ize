@@ -15,6 +15,7 @@ import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
 import { ResetPassword } from "@/components/shared/Auth/ResetPassword";
 import { UserSettings } from "@/components/Settings/UserSettings";
+import * as NewCustomGroup from "@/components/NewCustomGroup";
 
 export const router = createBrowserRouter([
   {
@@ -82,6 +83,28 @@ export const router = createBrowserRouter([
           },
         ],
       },
+
+      {
+        element: (
+          <AuthRoute>
+            <NewCustomGroup.default />
+          </AuthRoute>
+        ),
+        path: Routes.Route.NewCustomGroup,
+        errorElement: <ErrorBoundary />,
+        children: [
+          {
+            path: Routes.newCustomGroupRoute(Routes.NewCustomGroupRoute.Setup),
+            element: <NewCustomGroup.Setup />,
+            index: true,
+          },
+          {
+            path: Routes.newCustomGroupRoute(Routes.NewCustomGroupRoute.Finish),
+            element: <NewCustomGroup.Confirm />,
+          },
+        ],
+      },
+
       {
         element: (
           <AuthRoute>

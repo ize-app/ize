@@ -1,22 +1,19 @@
 import Box from "@mui/material/Box";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 
 import GroupTable from "./GroupTable";
 import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
 import Search from "../Search";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
-const GroupTab = ({
-  groups,
-  loading,
-}: {
-  groups: GroupSummaryPartsFragment[];
-  loading: boolean;
-}) => {
+const GroupTab = ({}) => {
+  const { groups } = useContext(CurrentUserContext);
+
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredGroupData = groups?.filter((group) => {
+  const filteredGroupData = (groups.data?.groupsForCurrentUser ?? []).filter((group) => {
     const regExSearchQuery = new RegExp(searchQuery, "i");
     return group.name.search(regExSearchQuery) !== -1;
   });
@@ -57,7 +54,7 @@ const GroupTab = ({
         </Box>
         <CreateButton />
       </Box>
-      {loading ? <Loading /> : <GroupTable groups={filteredGroupData} />}
+      {groups.loading ? <Loading /> : <GroupTable groups={filteredGroupData} />}
     </Box>
   );
 };

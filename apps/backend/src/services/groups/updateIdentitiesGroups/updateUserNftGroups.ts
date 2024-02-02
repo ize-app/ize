@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../../prisma/client";
 import { chainMap } from "@/blockchain/chainMap";
 import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
+import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
 
 export const updateUserNftGroups = async ({
   context,
@@ -30,9 +31,18 @@ export const updateUserNftGroups = async ({
       ),
     );
 
-    const groupIds = res.flat(1);
+    const nftGroupIds = res.flat(1);
 
-    await updateIdentitiesGroups({ identityId: userBlockchainIdentity.id, groupIds, transaction });
+    const customGroupIds = await getCustomGroupsForIdentity({
+      identityId: userBlockchainIdentity.id,
+      groupIds: nftGroupIds,
+    });
+
+    await updateIdentitiesGroups({
+      identityId: userBlockchainIdentity.id,
+      groupIds: [...nftGroupIds, ...customGroupIds],
+      transaction,
+    });
   } catch (e) {
     console.log(e);
     return;

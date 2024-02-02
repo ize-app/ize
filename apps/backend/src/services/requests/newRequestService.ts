@@ -5,7 +5,7 @@ import { MutationNewRequestArgs, RoleType } from "@graphql/generated/resolver-ty
 
 import { roleSetInclude } from "../../utils/formatProcess";
 import { validateRequestInputs } from "./validateRequestInputs";
-import hasRolePermission from "../processes/hasRolePermisssion";
+import hasRolePermission from "../processes/permission/hasRolePermisssion";
 
 export const newRequestService = async (
   {

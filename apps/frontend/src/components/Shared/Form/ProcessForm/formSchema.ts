@@ -8,7 +8,7 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { Blockchain, InputDataType, NewAgentTypes } from "@/graphql/generated/graphql";
+import { Blockchain, InputDataType, NewAgentTypes, AgentType } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
 
 const webhookFormSchema = z.object({
@@ -100,7 +100,7 @@ const groupFormSchema = z.object({
     name: z.string(),
     icon: z.string().optional().nullable(),
   }),
-  __typename: z.string(),
+  __typename: z.nativeEnum(AgentType),
   groupType: z
     .object({
       __typename: z.any(),
@@ -112,7 +112,7 @@ const identityFormSchema = z.object({
   id: z.string(),
   name: z.string(),
   icon: z.string().optional().nullable(),
-  __typename: z.string(),
+  __typename: z.nativeEnum(AgentType),
   identityType: z
     .object({
       __typename: z.any(),
@@ -263,4 +263,9 @@ export const evolveProcessFormSchema = z.object({
   evolve: decisionFormSchemaUnrefined.extend({
     evolveDefaults: z.nativeEnum(DefaultEvolveProcessOptions),
   }),
+});
+
+export const newCustomGroupFormSchema = z.object({
+  name: z.string().min(1, "Please enter a name for the group"),
+  members: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
 });

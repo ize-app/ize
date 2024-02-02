@@ -5,6 +5,7 @@ input setUpDiscordServerInput {
 
 type Mutation {
   setUpDiscordServer(input: setUpDiscordServerInput!): Group!
+  newCustomGroup(inputs: CustomGroupArgs!): String!
 }
 
 type Query {
@@ -12,7 +13,17 @@ type Query {
   groupsForCurrentUser: [Group!]!
 }
 
-union GroupType = DiscordRoleGroup | GroupNft
+input CustomGroupArgs {
+  name: String!
+  members: [CustomGroupMembersArgs!]!
+}
+
+input CustomGroupMembersArgs {
+  id: String!
+  agentType: AgentType!
+}
+
+union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
 
 type Group {
   id: String!
@@ -21,7 +32,7 @@ type Group {
   color: String
   icon: String
   memberCount: Int
-  organization: Organization!
+  organization: Organization
   createdAt: String!
   groupType: GroupType!
 }
@@ -29,6 +40,11 @@ type Group {
 type Organization {
   name: String!
   icon: String
+}
+
+type GroupCustom {
+  id: String!
+  name: String!
 }
 
 type GroupNft {
