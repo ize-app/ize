@@ -11,6 +11,13 @@ export const NEW_PROCESS_PROGRESS_BAR_STEPS = ["Template", "Participate", "Evolv
 
 export const NEW_PROCESS_WIZARD_STEPS: WizardSteps<ProcessForm> = [
   {
+    path: newProcessRoute(NewProcessRoute.Setup),
+    title: "New Setup",
+    progressBarStep: 0,
+    canNext: () => true,
+    validWizardState: () => true,
+  },
+  {
     path: newProcessRoute(NewProcessRoute.Intro),
     title: "Request template",
     progressBarStep: 0,

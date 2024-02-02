@@ -37,6 +37,11 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         children: [
           {
+            path: Routes.newProcessRoute(Routes.NewProcessRoute.Setup),
+            element: <ProcessForm.Setup />,
+            index: true,
+          },
+          {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
             element: <ProcessForm.Template />,
             index: true,

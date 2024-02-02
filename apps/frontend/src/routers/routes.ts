@@ -13,7 +13,8 @@ export enum Route {
 }
 
 export enum NewProcessRoute {
-  Intro = "",
+  Setup = "",
+  Intro = "/old-intro",
   Inputs = "/inputs",
   Decisions = "/decisions",
   Evolve = "/evolve",
