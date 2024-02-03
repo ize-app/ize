@@ -73,7 +73,7 @@ export const RoleSearchControl = ({
         control={control}
         render={({ field, fieldState: { error } }) => {
           return (
-            <FormControl required>
+            <FormControl required fullWidth>
               <Autocomplete
                 includeInputInList={true}
                 multiple

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { agentFormSchema } from "./formSchema";
+import { agentFormSchema } from "../ProcessForm/formSchema";
 import {
   FreeTextDataType,
   FreeTextResponseType,
@@ -12,7 +12,7 @@ import {
   ResultSummaryType,
   ResultType,
   ActionType,
-} from "./typesNew";
+} from "./types";
 
 const requestInputSchema = z.object({
   id: z.string().min(1),
@@ -27,8 +27,11 @@ const optionSchema = z
   .min(1, "Add at least 1 option")
   .optional();
 
-const processSchema = z.object({
-  name: z.string().min(1),
+// TODO potentially reorganize this so it's more action oriented and less abstract
+const stepSchema = z.object({
+  name: z.string().min(1), // maybe remove and
+  type: z.any(), // TODO buy maybe it's 1) decide 2) get feedback
+  resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
   requestPermission: z.object({
     type: z.nativeEnum(RequestTriggerType),
     agents: z
@@ -96,4 +99,11 @@ const processSchema = z.object({
       name: z.string().min(1),
     }),
   }),
+});
+
+export const flowSchema = z.object({
+  name: z.string(),
+  reusable: z.boolean(),
+  steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
+  editStep: stepSchema, // TODO make this more specific to the edit step
 });

@@ -6,6 +6,7 @@ import EditProcess from "@/components/EditProcess/EditProcess";
 import { Group } from "@/components/Groups/Group";
 import { Home } from "@/components/Home";
 import NewProcess from "@/components/NewProcess/NewProcess";
+import * as NewFlow from "@/components/NewFlow";
 import * as NewRequest from "@/components/NewRequest";
 import { Process } from "@/components/Process/Process";
 import { Request } from "@/components/Request/Request";
@@ -30,17 +31,33 @@ export const router = createBrowserRouter([
       {
         element: (
           <AuthRoute>
+            <NewFlow.default />
+          </AuthRoute>
+        ),
+        path: Routes.Route.NewFlow,
+        errorElement: <ErrorBoundary />,
+        children: [
+          {
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.Setup),
+            element: <NewFlow.Setup />,
+            index: true,
+          },
+          {
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.Confirm),
+            element: <NewFlow.Confirm />,
+          },
+        ],
+      },
+
+      {
+        element: (
+          <AuthRoute>
             <NewProcess />
           </AuthRoute>
         ),
         path: Routes.Route.NewProcess,
         errorElement: <ErrorBoundary />,
         children: [
-          {
-            path: Routes.newProcessRoute(Routes.NewProcessRoute.Setup),
-            element: <ProcessForm.Setup />,
-            index: true,
-          },
           {
             path: Routes.newProcessRoute(Routes.NewProcessRoute.Intro),
             element: <ProcessForm.Template />,
