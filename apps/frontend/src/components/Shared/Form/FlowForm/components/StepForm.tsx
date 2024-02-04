@@ -49,57 +49,56 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
   const hasRequestInputs = (watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
   return (
     <StepContainer>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <StepComponentContainer label="Request">
-          <ResponsiveFormRow>
-            <Select
-              control={control}
-              width="300px"
-              name={`steps.${formIndex}.request.permission.type`}
-              selectOptions={[
-                { name: "Certain individuals and groups", value: RequestTriggerType.Agents },
-                { name: "Anyone", value: RequestTriggerType.Anyone },
-              ]}
-              label="Who can make requests?"
-            />
+      <StepComponentContainer label="Request">
+        <ResponsiveFormRow>
+          <Select
+            control={control}
+            width="300px"
+            name={`steps.${formIndex}.request.permission.type`}
+            selectOptions={[
+              { name: "Certain individuals and groups", value: RequestTriggerType.Agents },
+              { name: "Anyone", value: RequestTriggerType.Anyone },
+            ]}
+            label="Who can make requests?"
+          />
 
-            {isAgentRequestTrigger && (
-              <RoleSearch
-                ariaLabel={"Individuals and groups who can make requests"}
-                name={`steps.${formIndex}.request.permission.agents`}
-                control={control}
-                setFieldValue={setFieldValue}
-                getFieldValues={getFieldValues}
-              />
-            )}
-          </ResponsiveFormRow>
-          <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
-            {hasRequestInputs ? (
-              <RequestInputsForm
-                useFormMethods={useFormMethods}
-                formIndex={formIndex}
-                //@ts-ignore Not sure why the TS error - types are the same
-                requestInputFormMethods={requestInputFormMethods}
-              />
-            ) : (
-              <Button
-                variant={"outlined"}
-                onClick={() => {
-                  requestInputFormMethods.append({
-                    id: "new",
-                    name: "",
-                    required: true,
-                    dataType: RequestInputDataType.String,
-                  });
-                }}
-              >
-                Add request inputs
-              </Button>
-            )}
-          </Box>
-        </StepComponentContainer>
-        <StepComponentContainer label="Respond">
-          {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
+          {isAgentRequestTrigger && (
+            <RoleSearch
+              ariaLabel={"Individuals and groups who can make requests"}
+              name={`steps.${formIndex}.request.permission.agents`}
+              control={control}
+              setFieldValue={setFieldValue}
+              getFieldValues={getFieldValues}
+            />
+          )}
+        </ResponsiveFormRow>
+        <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
+          {hasRequestInputs ? (
+            <RequestInputsForm
+              useFormMethods={useFormMethods}
+              formIndex={formIndex}
+              //@ts-ignore Not sure why the TS error - types are the same
+              requestInputFormMethods={requestInputFormMethods}
+            />
+          ) : (
+            <Button
+              variant={"outlined"}
+              onClick={() => {
+                requestInputFormMethods.append({
+                  id: "new",
+                  name: "",
+                  required: true,
+                  dataType: RequestInputDataType.String,
+                });
+              }}
+            >
+              Add request inputs
+            </Button>
+          )}
+        </Box>
+      </StepComponentContainer>
+      <StepComponentContainer label="Respond">
+        {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
             <SelectControl
               //@ts-ignore
               control={control}
@@ -175,8 +174,8 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
               }}
             />
           </Box> */}
-        </StepComponentContainer>
-        {/* <ProcessStepComponentContainer label="Result">
+      </StepComponentContainer>
+      {/* <ProcessStepComponentContainer label="Result">
           <Box
             sx={{
               display: "flex",
@@ -244,7 +243,6 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
             )}
           </Box>
         </ProcessStepComponentContainer> */}
-      </Box>
     </StepContainer>
   );
 };

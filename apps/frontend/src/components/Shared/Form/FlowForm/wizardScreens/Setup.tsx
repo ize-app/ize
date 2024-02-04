@@ -32,7 +32,7 @@ export const Setup = () => {
   return (
     <>
       <WizardBody>
-        <form>
+        <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <TextField<NewFlowFormFields>
             name={"name"}
             control={useFormMethods.control}
@@ -41,7 +41,7 @@ export const Setup = () => {
             variant="standard"
           />
           <StepsForm useFormMethods={useFormMethods} />
-        </form>
+        </Box>
       </WizardBody>
       <WizardNav
         onNext={useFormMethods.handleSubmit(onSubmit)}
