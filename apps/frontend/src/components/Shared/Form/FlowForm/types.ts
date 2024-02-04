@@ -16,14 +16,6 @@ export enum ResponseInputs {
   Anyone = "Anyone",
 }
 
-export enum RequestInputDataType {
-  String = "String",
-  Number = "Number",
-  Uri = "Uri",
-  Date = "Date",
-  DateTime = "DateTime",
-}
-
 export enum RespondInputType {
   FreeInput = "FreeInput",
   SelectOption = "SelectOption",
@@ -31,7 +23,7 @@ export enum RespondInputType {
   GroupOptions = "GroupOptions",
 }
 
-export enum ResponseDataType {
+export enum InputDataType {
   String = "String",
   Number = "Number",
   Uri = "Uri",

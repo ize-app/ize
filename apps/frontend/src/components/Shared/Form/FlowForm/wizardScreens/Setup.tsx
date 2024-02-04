@@ -14,7 +14,7 @@ import {
   RequestPermissionType,
   RespondInputType,
   RespondPermissionType,
-  ResponseDataType,
+  InputDataType,
 } from "../types";
 
 export const Setup = () => {
@@ -31,7 +31,7 @@ export const Setup = () => {
             inputs: {
               type: null,
               options: {
-                dataType: ResponseDataType.String,
+                dataType: InputDataType.String,
                 creationType: OptionsCreationType.ProcessDefinedOptions,
                 options: [{ name: "✅" }, { name: "❌" }],
               },

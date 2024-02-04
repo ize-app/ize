@@ -26,11 +26,10 @@ import { StepContainer, StepComponentContainer } from "./StepContainer";
 import {
   FreeInputResponseType,
   OptionsCreationType,
-  RequestInputDataType,
+  InputDataType,
   RequestPermissionType,
   RespondInputType,
   RespondPermissionType,
-  ResponseDataType,
 } from "../types";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResponseOptionsForm } from "./ResponseOptionsForm";
@@ -41,7 +40,7 @@ interface StepFormProps {
 }
 
 export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
-  // console.log("form errors are ", useFormMethods.formState.errors);
+  console.log("form errors are ", useFormMethods.formState.errors);
   //   const makeFormFieldName = (index: number, fieldName: string): FieldPath<NewFlowFormFields> =>
   //     `steps.${index}.${fieldName}`;
   //     const preFix =
@@ -109,7 +108,7 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
                 requestInputFormMethods.append({
                   name: "",
                   required: true,
-                  dataType: RequestInputDataType.String,
+                  dataType: InputDataType.String,
                 });
               }}
             >
@@ -161,9 +160,9 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
                 width="200px"
                 name={`steps.${formIndex}.respond.inputs.freeInput.dataType`}
                 selectOptions={[
-                  { name: "Text", value: ResponseDataType.String },
-                  { name: "Number", value: ResponseDataType.Number },
-                  { name: "Uri", value: ResponseDataType.Uri },
+                  { name: "Text", value: InputDataType.String },
+                  { name: "Number", value: InputDataType.Number },
+                  { name: "Uri", value: InputDataType.Uri },
                 ]}
                 label="What type of input?"
               />
@@ -197,11 +196,11 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
                   width="200px"
                   name={`steps.${formIndex}.respond.inputs.options.dataType`}
                   selectOptions={[
-                    { name: "Text", value: ResponseDataType.String },
-                    { name: "Number", value: ResponseDataType.Number },
-                    { name: "Uri", value: ResponseDataType.Uri },
-                    { name: "Date", value: ResponseDataType.Date },
-                    { name: "DateTime", value: ResponseDataType.DateTime },
+                    { name: "Text", value: InputDataType.String },
+                    { name: "Number", value: InputDataType.Number },
+                    { name: "Uri", value: InputDataType.Uri },
+                    { name: "Date", value: InputDataType.Date },
+                    { name: "DateTime", value: InputDataType.DateTime },
                   ]}
                   label="Option type?"
                 />

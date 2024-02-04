@@ -11,7 +11,7 @@ import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 import * as z from "zod";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import { RequestInputDataType } from "../types";
+import { InputDataType } from "../types";
 import { Checkbox, Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 
@@ -89,11 +89,11 @@ export const RequestInputsForm = ({
                       name={`steps.${formIndex}.request.inputs.${inputIndex}.dataType`}
                       key={"dataType" + inputIndex.toString() + formIndex.toString()}
                       selectOptions={[
-                        { name: "Text", value: RequestInputDataType.String },
-                        { name: "Number", value: RequestInputDataType.Number },
-                        { name: "Url", value: RequestInputDataType.Uri },
-                        { name: "Date Time", value: RequestInputDataType.DateTime },
-                        { name: "Date", value: RequestInputDataType.Date },
+                        { name: "Text", value: InputDataType.String },
+                        { name: "Number", value: InputDataType.Number },
+                        { name: "Url", value: InputDataType.Uri },
+                        { name: "Date Time", value: InputDataType.DateTime },
+                        { name: "Date", value: InputDataType.Date },
                       ]}
                       label="Type"
                     />
@@ -131,7 +131,7 @@ export const RequestInputsForm = ({
           append({
             name: "",
             required: true,
-            dataType: RequestInputDataType.String,
+            dataType: InputDataType.String,
           } as RequestInputType);
         }}
       >

@@ -2,7 +2,7 @@ import * as z from "zod";
 import { agentFormSchema } from "../ProcessForm/formSchema";
 import {
   OptionsCreationType,
-  RequestInputDataType,
+  InputDataType,
   RequestPermissionType,
   RespondInputType,
   RespondPermissionType,
@@ -10,18 +10,69 @@ import {
   ResultSummaryType,
   ResultType,
   ActionType,
-  ResponseDataType,
 } from "./types";
 
 export const requestInputSchema = z.object({
   name: z.string().trim().min(1),
   required: z.boolean(),
-  dataType: z.nativeEnum(RequestInputDataType),
+  dataType: z.nativeEnum(InputDataType),
 });
 
 export const responseOptionSchema = z.object({
   name: z.string(),
 });
+
+const evaluateMultiTypeInput = (
+  value: string,
+  type: InputDataType,
+  errorPath: (string | number)[],
+  ctx: z.RefinementCtx,
+) => {
+  switch (type) {
+    case InputDataType.Uri:
+      if (!z.string().url().safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.invalid_string,
+          validation: "url",
+          message: "Invalid Url",
+          path: errorPath,
+        });
+      return;
+    case InputDataType.String:
+      return;
+    case InputDataType.Number:
+      if (!z.coerce.number().safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid number",
+          path: errorPath,
+        });
+      return;
+    case InputDataType.Date:
+      if (!z.coerce.date().safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid date",
+          path: errorPath,
+        });
+      return;
+    case InputDataType.DateTime:
+      if (!z.coerce.date().safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid datetime",
+          path: errorPath,
+        });
+      return;
+    default:
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Unknown option",
+        path: errorPath,
+      });
+      return;
+  }
+};
 
 // TODO potentially reorganize this so it's more action oriented and less abstract
 const stepSchema = z.object({
@@ -37,7 +88,20 @@ const stepSchema = z.object({
         .optional(),
       // processId: z.string().uuid().optional(),
     }),
-    inputs: z.array(requestInputSchema).optional(),
+    inputs: z
+      .array(requestInputSchema)
+      .superRefine((val, ctx) => {
+        console.log("inside super refine");
+        (val ?? []).forEach((input, index) => {
+          evaluateMultiTypeInput(
+            input.name,
+            input.dataType as InputDataType,
+            [index.toString(), "name"],
+            ctx,
+          );
+        });
+      })
+      .optional(),
   }),
   respond: z.object({
     permission: z.object({
@@ -52,14 +116,24 @@ const stepSchema = z.object({
       freeInput: z
         .object({
           // type: z.nativeEnum(FreeInputResponseType),
-          dataType: z.nativeEnum(ResponseDataType).optional(),
+          dataType: z.nativeEnum(InputDataType).optional(),
         })
         .optional(),
       options: z
         .object({
           creationType: z.nativeEnum(OptionsCreationType).optional(),
-          dataType: z.nativeEnum(ResponseDataType).optional(),
+          dataType: z.nativeEnum(InputDataType).optional(),
           options: z.array(responseOptionSchema).optional(),
+        })
+        .superRefine((val, ctx) => {
+          (val.options ?? []).forEach((option, index) => {
+            evaluateMultiTypeInput(
+              option.name,
+              val.dataType as InputDataType,
+              ["options", index.toString(), "name"],
+              ctx,
+            );
+          });
         })
         .optional(),
     }),

@@ -11,7 +11,7 @@ import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 import * as z from "zod";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import { RequestInputDataType, ResponseDataType } from "../types";
+import { InputDataType } from "../types";
 import { Checkbox, Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 
