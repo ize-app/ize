@@ -1,4 +1,4 @@
-import { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
+import { FieldPath, FieldValues, UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
@@ -14,16 +14,16 @@ import { useNewFlowWizardState, NewFlowFormFields } from "@/components/NewFlow/n
 import { RoleSearch, Select } from "@/components/shared/Form/FormFields";
 import { DecisionType, FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { Autocomplete, Chip, InputAdornment, Paper, Typography } from "@mui/material";
-import { RequestTemplateInputTable } from "../components/RequestInputTable";
+import { Autocomplete, Button, Chip, InputAdornment, Paper, Typography } from "@mui/material";
+import { RequestInputsForm } from "./RequestInputsForm";
 import { Accordion } from "@/components/shared/Accordion";
-import React from "react";
+import React, { useState } from "react";
 import { flowSchema } from "../formSchema";
 import { TextField as MuiTextField } from "@/components/shared/Form/FormFields/TextField";
 import { RoleFormFields } from "../../ProcessForm/wizardScreens/Roles";
 
 import { StepContainer, StepComponentContainer } from "./StepContainer";
-import { RequestTriggerType } from "../types";
+import { RequestInputDataType, RequestTriggerType } from "../types";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 
 interface StepFormProps {
@@ -38,8 +38,15 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
 
   const { control, setValue: setFieldValue, getValues: getFieldValues, watch } = useFormMethods;
 
+  const requestInputFormMethods = useFieldArray({
+    control,
+    name: `steps.${formIndex}.request.inputs`,
+  });
+
   const isAgentRequestTrigger =
     watch(`steps.${formIndex}.request.permission.type`) === RequestTriggerType.Agents;
+
+  const hasRequestInputs = (watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
   return (
     <StepContainer>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -67,7 +74,28 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
             )}
           </ResponsiveFormRow>
           <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
-            <RequestTemplateInputTable />
+            {hasRequestInputs ? (
+              <RequestInputsForm
+                useFormMethods={useFormMethods}
+                formIndex={formIndex}
+                //@ts-ignore Not sure why the TS error - types are the same
+                requestInputFormMethods={requestInputFormMethods}
+              />
+            ) : (
+              <Button
+                variant={"contained"}
+                onClick={() => {
+                  requestInputFormMethods.append({
+                    id: "new",
+                    name: "",
+                    required: true,
+                    dataType: RequestInputDataType.String,
+                  });
+                }}
+              >
+                Add request inputs
+              </Button>
+            )}
           </Box>
         </StepComponentContainer>
         {/* <ProcessStepComponentContainer label="Respond">

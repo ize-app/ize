@@ -20,7 +20,8 @@ export enum RequestInputDataType {
   String = "String",
   Number = "Number",
   Uri = "Uri",
-  Enum = "Enum",
+  Date = "Date",
+  DateTime = "DateTime",
 }
 
 export enum RespondInputType {

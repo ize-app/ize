@@ -41,7 +41,7 @@ const stepSchema = z.object({
         .optional(),
       // processId: z.string().uuid().optional(),
     }),
-    // inputs: z.array(requestInputSchema),
+    inputs: z.array(requestInputSchema),
   }),
   // respond: z.object({
   //   permission: z.object({

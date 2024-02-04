@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -8,57 +7,27 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import { useFieldArray, useForm } from "react-hook-form";
+import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
-import { CheckboxControl, SelectControl, TextFieldControl } from "../..";
-import { InputDataType, InputTemplateArgs } from "../../../../../graphql/generated/graphql";
-import { useNewProcessWizardState } from "../../../../NewProcess/newProcessWizard";
-import { WizardBody, WizardNav } from "../../../Wizard";
-import { createInputTemplatesFormSchema } from "../../ProcessForm/formSchema";
 import { Box } from "@mui/material";
+import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
+import { RequestInputDataType } from "../types";
+import { Checkbox, Select, TextField } from "../../FormFields";
 
-const fieldArrayName = "processInputs";
-
-const inputTemplatesFormSchema = createInputTemplatesFormSchema(fieldArrayName);
-
-interface FormFields {
-  processInputs: InputTemplateArgs[];
+interface RequestInputsFormProps {
+  useFormMethods: UseFormReturn<NewFlowFormFields>;
+  requestInputFormMethods: UseFieldArrayReturn<NewFlowFormFields>;
+  formIndex: number; // react-hook-form name
 }
 
-export const RequestTemplateInputTable = () => {
-  const { formState, setFormState, onNext, onPrev, nextLabel } = useNewProcessWizardState();
+export const RequestInputsForm = ({
+  useFormMethods,
+  formIndex,
+  requestInputFormMethods,
+}: RequestInputsFormProps) => {
+  const { control } = useFormMethods;
 
-  const { inputs } = formState;
-
-  const intitialFormState = inputs ? [...inputs] : [];
-  // if (intitialFormState.length === 0)
-  //   intitialFormState.push({
-  //     name: "Request title",
-  //     description: "Brief summary of request",
-  //     required: true,
-  //     type: InputDataType.Text,
-  //   });
-
-  const { control, handleSubmit } = useForm<FormFields>({
-    resolver: zodResolver(inputTemplatesFormSchema),
-    defaultValues: {
-      [fieldArrayName]: intitialFormState,
-    },
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: fieldArrayName,
-  });
-
-  const onSubmit = (data: FormFields) => {
-    setFormState((prev) => ({
-      ...prev,
-      inputs: [...data.processInputs],
-    }));
-    onNext();
-  };
+  const { fields, remove, append } = requestInputFormMethods;
 
   return (
     <Box
@@ -98,51 +67,52 @@ export const RequestTemplateInputTable = () => {
       </fieldset>
       <TableContainer sx={{ overflowX: "auto" }}>
         <Table aria-label="input table" stickyHeader={true}>
-          {/* <TableHead>
+          <TableHead>
             <TableRow>
               <TableCell>Input name</TableCell>
               <TableCell align="center">Input type</TableCell>
               <TableCell align="center">Required?</TableCell>
               <TableCell />
             </TableRow>
-          </TableHead> */}
+          </TableHead>
           <TableBody>
-            {fields.map((item, index) => {
-              const name = `${fieldArrayName}[${index}]`;
-              const noEdit = item.name === "Request title" ? true : false;
+            {fields.map((item, inputIndex) => {
+              const noEdit = false; //item.name === "Request title" ? true : false;
               return (
                 <TableRow key={item.id}>
                   <TableCell sx={{ minWidth: "150px" }}>
-                    <TextFieldControl
-                      name={`${name}.name`}
-                      key={"name" + index.toString()}
-                      fullWidth
-                      disabled={noEdit}
-                      label="Request Input #1"
-                      //@ts-ignore
+                    <TextField<NewFlowFormFields>
+                      name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
+                      key={"name" + inputIndex.toString() + formIndex.toString()}
                       control={control}
+                      placeholderText=""
+                      label="Request Input #1"
+                      variant="outlined"
+                      disabled={noEdit}
                     />
                   </TableCell>
                   <TableCell sx={{ width: "120px" }}>
-                    <SelectControl
-                      name={`${name}.type`}
-                      selectOptions={[
-                        { name: "Number", value: InputDataType.Float },
-                        { name: "Text", value: InputDataType.Text },
-                      ]}
-                      key={"type" + index.toString()}
-                      sx={{ width: "120px" }}
-                      disabled={noEdit}
-                      //@ts-ignore
+                    <Select<NewFlowFormFields>
                       control={control}
+                      width="400px"
+                      disabled={noEdit}
+                      name={`steps.${formIndex}.request.inputs.${inputIndex}.dataType`}
+                      key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                      selectOptions={[
+                        { name: "Text", value: RequestInputDataType.String },
+                        { name: "Number", value: RequestInputDataType.Number },
+                        { name: "Url", value: RequestInputDataType.Uri },
+                        { name: "Date Time", value: RequestInputDataType.DateTime },
+                        { name: "Date", value: RequestInputDataType.Date },
+                      ]}
+                      label="Type"
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <CheckboxControl
-                      name={`${name}.required`}
-                      key={"required" + index.toString()}
+                    <Checkbox<NewFlowFormFields>
+                      name={`steps.${formIndex}.request.inputs.${inputIndex}.required`}
+                      key={"required" + inputIndex.toString() + formIndex.toString()}
                       disabled={noEdit}
-                      //@ts-ignore
                       control={control}
                     />
                   </TableCell>
@@ -151,7 +121,7 @@ export const RequestTemplateInputTable = () => {
                       <IconButton
                         color="primary"
                         aria-label="Remove input option"
-                        onClick={() => remove(index)}
+                        onClick={() => remove(inputIndex)}
                       >
                         <HighlightOffOutlined />
                       </IconButton>
@@ -169,10 +139,10 @@ export const RequestTemplateInputTable = () => {
         variant="outlined"
         onClick={() => {
           append({
+            id: "new",
             name: "",
-            description: "",
             required: true,
-            type: InputDataType.Text,
+            dataType: RequestInputDataType.String,
           });
         }}
       >
