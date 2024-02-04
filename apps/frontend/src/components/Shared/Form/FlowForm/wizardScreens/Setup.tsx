@@ -9,7 +9,13 @@ import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import { flowSchema } from "../formSchema";
 import { TextField } from "@/components/shared/Form/FormFields/TextField";
 import { StepsForm } from "../components/StepsForm";
-import { RequestTriggerType } from "../types";
+import {
+  OptionsCreationType,
+  RequestPermissionType,
+  RespondInputType,
+  RespondPermissionType,
+  ResponseDataType,
+} from "../types";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -18,7 +24,20 @@ export const Setup = () => {
     defaultValues: {
       name: "",
       steps: [
-        { request: { permission: { type: RequestTriggerType.Agents, agents: [] }, inputs: [] } },
+        {
+          request: { permission: { type: RequestPermissionType.Anyone, agents: [] }, inputs: [] },
+          respond: {
+            permission: { type: RespondPermissionType.Anyone, agents: [] },
+            inputs: {
+              type: null,
+              options: {
+                dataType: ResponseDataType.String,
+                creationType: OptionsCreationType.ProcessDefinedOptions,
+                options: [{ name: "✅" }, { name: "❌" }],
+              },
+            },
+          },
+        },
       ],
     },
     resolver: zodResolver(flowSchema),
@@ -26,6 +45,7 @@ export const Setup = () => {
   });
 
   const onSubmit = (data: NewFlowFormFields) => {
+    console.log("data is ", data);
     onNext();
   };
 

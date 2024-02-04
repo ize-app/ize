@@ -9,6 +9,7 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   required?: boolean;
   showLabel?: boolean;
   placeholderText?: string;
+  size?: "small" | "medium";
 }
 
 export const TextField = <T extends FieldValues>({
@@ -18,6 +19,7 @@ export const TextField = <T extends FieldValues>({
   variant,
   showLabel = true,
   required = false,
+  size = "medium",
   placeholderText,
 }: TextFieldProps<T>) => {
   return (
@@ -33,6 +35,7 @@ export const TextField = <T extends FieldValues>({
             variant={variant}
             label={showLabel ? label : ""}
             required={required}
+            size={size}
             placeholder={placeholderText}
             error={Boolean(error)}
           />

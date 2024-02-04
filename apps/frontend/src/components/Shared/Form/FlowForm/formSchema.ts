@@ -1,31 +1,27 @@
 import * as z from "zod";
 import { agentFormSchema } from "../ProcessForm/formSchema";
 import {
-  FreeTextDataType,
-  FreeTextResponseType,
   OptionsCreationType,
   RequestInputDataType,
-  RequestTriggerType,
+  RequestPermissionType,
   RespondInputType,
-  RespondTriggerType,
+  RespondPermissionType,
   ResultSingleOptionType,
   ResultSummaryType,
   ResultType,
   ActionType,
+  ResponseDataType,
 } from "./types";
 
-const requestInputSchema = z.object({
-  id: z.string().min(1),
+export const requestInputSchema = z.object({
   name: z.string().trim().min(1),
   required: z.boolean(),
   dataType: z.nativeEnum(RequestInputDataType),
 });
 
-// TODO - add option Id to this - for action and result
-const optionSchema = z
-  .array(z.string({ invalid_type_error: "Please only include text options" }).trim())
-  .min(1, "Add at least 1 option")
-  .optional();
+export const responseOptionSchema = z.object({
+  name: z.string(),
+});
 
 // TODO potentially reorganize this so it's more action oriented and less abstract
 const stepSchema = z.object({
@@ -34,40 +30,40 @@ const stepSchema = z.object({
   // resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
   request: z.object({
     permission: z.object({
-      type: z.nativeEnum(RequestTriggerType),
+      type: z.nativeEnum(RequestPermissionType),
       agents: z
         .array(agentFormSchema)
         .min(1, "Please select at least one group or individual.")
         .optional(),
       // processId: z.string().uuid().optional(),
     }),
-    inputs: z.array(requestInputSchema),
+    inputs: z.array(requestInputSchema).optional(),
   }),
-  // respond: z.object({
-  //   permission: z.object({
-  //     // add something here for "pass through"
-  //     type: z.nativeEnum(RespondTriggerType),
-  //     agents: z
-  //       .array(agentFormSchema)
-  //       .min(1, "Please select at least one group or individual.")
-  //       .optional(),
-  //   }),
-  //   inputs: z.object({
-  //     type: z.nativeEnum(RespondInputType),
-  //     freeText: z.object({
-  //       type: z.nativeEnum(FreeTextResponseType),
-  //       dataType: z.nativeEnum(FreeTextDataType),
-  //     }),
-  //     selectOption: z.object({
-  //       type: z.nativeEnum(OptionsCreationType),
-  //       processDefinedOptions: optionSchema,
-  //     }),
-  //     rankedChoice: z.object({
-  //       type: z.nativeEnum(OptionsCreationType),
-  //       processDefinedOptions: optionSchema,
-  //     }),
-  //   }),
-  // }),
+  respond: z.object({
+    permission: z.object({
+      type: z.nativeEnum(RespondPermissionType),
+      agents: z
+        .array(agentFormSchema)
+        .min(1, "Please select at least one group or individual.")
+        .optional(),
+    }),
+    inputs: z.object({
+      type: z.nativeEnum(RespondInputType).nullable(),
+      freeInput: z
+        .object({
+          // type: z.nativeEnum(FreeInputResponseType),
+          dataType: z.nativeEnum(ResponseDataType).optional(),
+        })
+        .optional(),
+      options: z
+        .object({
+          creationType: z.nativeEnum(OptionsCreationType).optional(),
+          dataType: z.nativeEnum(ResponseDataType).optional(),
+          options: z.array(responseOptionSchema).optional(),
+        })
+        .optional(),
+    }),
+  }),
   // result: z.object({
   //   type: z.nativeEnum(ResultType),
   //   requestExpirationSeconds: z.number(),

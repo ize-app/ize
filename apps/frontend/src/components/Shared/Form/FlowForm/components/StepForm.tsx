@@ -23,8 +23,17 @@ import { TextField as MuiTextField } from "@/components/shared/Form/FormFields/T
 import { RoleFormFields } from "../../ProcessForm/wizardScreens/Roles";
 
 import { StepContainer, StepComponentContainer } from "./StepContainer";
-import { RequestInputDataType, RequestTriggerType } from "../types";
+import {
+  FreeInputResponseType,
+  OptionsCreationType,
+  RequestInputDataType,
+  RequestPermissionType,
+  RespondInputType,
+  RespondPermissionType,
+  ResponseDataType,
+} from "../types";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponseOptionsForm } from "./ResponseOptionsForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<NewFlowFormFields>;
@@ -32,6 +41,7 @@ interface StepFormProps {
 }
 
 export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
+  // console.log("form errors are ", useFormMethods.formState.errors);
   //   const makeFormFieldName = (index: number, fieldName: string): FieldPath<NewFlowFormFields> =>
   //     `steps.${index}.${fieldName}`;
   //     const preFix =
@@ -43,8 +53,20 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
     name: `steps.${formIndex}.request.inputs`,
   });
 
+  const responseOptionsFormMethods = useFieldArray({
+    control,
+    name: `steps.${formIndex}.respond.inputs.options.options`,
+  });
+
   const isAgentRequestTrigger =
-    watch(`steps.${formIndex}.request.permission.type`) === RequestTriggerType.Agents;
+    watch(`steps.${formIndex}.request.permission.type`) === RequestPermissionType.Agents;
+
+  const isAgentRespondTrigger =
+    watch(`steps.${formIndex}.respond.permission.type`) === RespondPermissionType.Agents;
+
+  const respondInputType = watch(`steps.${formIndex}.respond.inputs.type`);
+
+  const responseOptionsDataType = watch(`steps.${formIndex}.respond.inputs.options.options`);
 
   const hasRequestInputs = (watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
   return (
@@ -56,8 +78,8 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
             width="300px"
             name={`steps.${formIndex}.request.permission.type`}
             selectOptions={[
-              { name: "Certain individuals and groups", value: RequestTriggerType.Agents },
-              { name: "Anyone", value: RequestTriggerType.Anyone },
+              { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
+              { name: "Anyone", value: RequestPermissionType.Anyone },
             ]}
             label="Who can make requests?"
           />
@@ -85,50 +107,115 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
               variant={"outlined"}
               onClick={() => {
                 requestInputFormMethods.append({
-                  id: "new",
                   name: "",
                   required: true,
                   dataType: RequestInputDataType.String,
                 });
               }}
             >
-              Add request inputs
+              Add required inputs to make a request
             </Button>
           )}
         </Box>
       </StepComponentContainer>
       <StepComponentContainer label="Respond">
-        {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
-            <SelectControl
-              //@ts-ignore
+        <ResponsiveFormRow>
+          <Select
+            control={control}
+            width="300px"
+            name={`steps.${formIndex}.respond.permission.type`}
+            selectOptions={[
+              { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
+              { name: "Anyone", value: RequestPermissionType.Anyone },
+            ]}
+            label="Who can respond?"
+          />
+
+          {isAgentRespondTrigger && (
+            <RoleSearch
+              ariaLabel={"Individuals and groups who can respond"}
+              name={`steps.${formIndex}.respond.permission.agents`}
               control={control}
-              width="400px"
-              name={"decision.requestExpirationSeconds"}
-              selectOptions={[
-                { name: "Certain people", value: "Certain people" },
-                { name: "Anyone", value: "Anyone" },
-              ]}
-              label="Who can respond?"
+              setFieldValue={setFieldValue}
+              getFieldValues={getFieldValues}
             />
-            <RoleSearchControl
-              name="x"
-              //@ts-ignore
-              control={control}
-            />
-          </Box>
-          <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
-            <SelectControl
-              //@ts-ignore
-              control={control}
-              width="400px"
-              name={"decision.requestExpirationSeconds"}
-              selectOptions={[
-                { name: "A set list of options", value: "Certain people" },
-                { name: "Free text", value: "Anyone" },
-              ]}
-              label="How can they respond?"
-            />
-            <Controller
+          )}
+        </ResponsiveFormRow>
+        <ResponsiveFormRow>
+          <Select
+            control={control}
+            width="300px"
+            name={`steps.${formIndex}.respond.inputs.type`}
+            selectOptions={[
+              { name: "Free text input", value: RespondInputType.FreeInput },
+              { name: "Choose one option", value: RespondInputType.SelectOption },
+              { name: "Rank options", value: RespondInputType.RankOptions },
+              { name: "Group options", value: RespondInputType.GroupOptions },
+            ]}
+            label="What info does the respondant give?"
+          />
+          {respondInputType === RespondInputType.FreeInput && (
+            <>
+              <Select
+                control={control}
+                width="200px"
+                name={`steps.${formIndex}.respond.inputs.freeInput.dataType`}
+                selectOptions={[
+                  { name: "Text", value: ResponseDataType.String },
+                  { name: "Number", value: ResponseDataType.Number },
+                  { name: "Uri", value: ResponseDataType.Uri },
+                ]}
+                label="What type of input?"
+              />
+            </>
+          )}
+          {respondInputType &&
+            [
+              RespondInputType.GroupOptions,
+              RespondInputType.RankOptions,
+              RespondInputType.SelectOption,
+            ].includes(respondInputType) && (
+              <>
+                <Select
+                  control={control}
+                  width="300px"
+                  name={`steps.${formIndex}.respond.inputs.options.creationType`}
+                  selectOptions={[
+                    {
+                      name: "The process",
+                      value: OptionsCreationType.ProcessDefinedOptions,
+                    },
+                    {
+                      name: "The requestor",
+                      value: OptionsCreationType.RequestDefinedOptions,
+                    },
+                  ]}
+                  label="Who defines the options?"
+                />
+                <Select
+                  control={control}
+                  width="200px"
+                  name={`steps.${formIndex}.respond.inputs.options.dataType`}
+                  selectOptions={[
+                    { name: "Text", value: ResponseDataType.String },
+                    { name: "Number", value: ResponseDataType.Number },
+                    { name: "Uri", value: ResponseDataType.Uri },
+                    { name: "Date", value: ResponseDataType.Date },
+                    { name: "DateTime", value: ResponseDataType.DateTime },
+                  ]}
+                  label="Option type?"
+                />
+                <ResponseOptionsForm
+                  useFormMethods={useFormMethods}
+                  //@ts-ignore Not sure why the TS error - types are the same
+                  responseOptionsFormMethods={responseOptionsFormMethods}
+                  formIndex={formIndex}
+                />
+              </>
+            )}
+        </ResponsiveFormRow>
+        {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}> */}
+        {/*         <Controller
               name="customOptions"
               control={control}
               render={({ field, fieldState: { error } }) => {
@@ -172,8 +259,8 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
                   </FormControl>
                 );
               }}
-            />
-          </Box> */}
+            /> */}
+        {/* </Box> */}
       </StepComponentContainer>
       {/* <ProcessStepComponentContainer label="Result">
           <Box

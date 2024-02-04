@@ -19,6 +19,7 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   width: string;
   required?: boolean;
   loading?: boolean;
+  size?: "small" | "medium";
 }
 
 export const Select = <T extends FieldValues>({
@@ -30,6 +31,7 @@ export const Select = <T extends FieldValues>({
   displayLabel = true,
   required = false,
   loading = false,
+  size = "medium",
   ...props
 }: SelectProps<T>): JSX.Element => (
   <Controller
@@ -37,11 +39,7 @@ export const Select = <T extends FieldValues>({
     control={control}
     render={({ field, fieldState: { error } }) => {
       return (
-        <FormControl
-          sx={{ width, textAlign: "left" }}
-          error={Boolean(error)}
-          required={required}
-        >
+        <FormControl sx={{ width, textAlign: "left" }} error={Boolean(error)} required={required}>
           <InputLabel id={`select-${name}`}>{displayLabel ? label : ""}</InputLabel>
           <MuiSelect
             {...props}
@@ -49,6 +47,7 @@ export const Select = <T extends FieldValues>({
             {...field}
             label={displayLabel ? label : ""}
             aria-label={label}
+            size={size}
           >
             {loading ? (
               <Loading />

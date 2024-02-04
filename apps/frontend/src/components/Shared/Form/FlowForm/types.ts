@@ -1,12 +1,12 @@
 // TODO: convert all of these into graphql types
 
-export enum RequestTriggerType {
+export enum RequestPermissionType {
   Agents = "Agents",
   Anyone = "Anyone",
   Process = "Process",
 }
 
-export enum RespondTriggerType {
+export enum RespondPermissionType {
   Agents = "Agents",
   Anyone = "Anyone",
 }
@@ -25,12 +25,21 @@ export enum RequestInputDataType {
 }
 
 export enum RespondInputType {
-  FreeText = "FreeText",
+  FreeInput = "FreeInput",
   SelectOption = "SelectOption",
-  RankedChoice = "RankedChoice",
+  RankOptions = "RankOptions",
+  GroupOptions = "GroupOptions",
 }
 
-export enum FreeTextDataType {
+export enum ResponseDataType {
+  String = "String",
+  Number = "Number",
+  Uri = "Uri",
+  Date = "Date",
+  DateTime = "DateTime",
+}
+
+export enum OptionDataType {
   String = "String",
   Number = "Number",
   Uri = "Uri",
@@ -54,7 +63,7 @@ export enum ResultSingleOptionType {
   RankChoiceVote = "RankChoiceVote",
 }
 
-export enum FreeTextResponseType {
+export enum FreeInputResponseType {
   AiSummary = "AiSummary",
   ThresholdVote = "ThresholdVote",
   Normal = "Normal",
