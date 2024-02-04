@@ -40,10 +40,6 @@ interface StepFormProps {
 }
 
 export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
-  console.log("form errors are ", useFormMethods.formState.errors);
-  //   const makeFormFieldName = (index: number, fieldName: string): FieldPath<NewFlowFormFields> =>
-  //     `steps.${index}.${fieldName}`;
-  //     const preFix =
 
   const { control, setValue: setFieldValue, getValues: getFieldValues, watch } = useFormMethods;
 

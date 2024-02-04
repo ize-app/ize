@@ -12,7 +12,7 @@ import * as z from "zod";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { InputDataType } from "../types";
-import { Checkbox, Select, TextField } from "../../FormFields";
+import { Checkbox, DatePicker, DateTimePicker, Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 
 import { responseOptionSchema } from "../formSchema";
@@ -32,6 +32,46 @@ export const ResponseOptionsForm = ({
 }: RequestInputsFormProps) => {
   const { control } = useFormMethods;
   const { fields, remove, append } = responseOptionsFormMethods;
+  const dataType = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.dataType`);
+
+  const renderInput = (inputIndex: number, disabled: boolean) => {
+    switch (dataType) {
+      case InputDataType.Date:
+        return (
+          <DatePicker<NewFlowFormFields>
+            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Option #${inputIndex + 1}`}
+          />
+        );
+      case InputDataType.DateTime:
+        return (
+          <DateTimePicker<NewFlowFormFields>
+            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Option #${inputIndex + 1}`}
+          />
+        );
+      default:
+        return (
+          <TextField<NewFlowFormFields>
+            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            placeholderText={`Option #${inputIndex + 1}`}
+            showLabel={false}
+            label={`Option #${inputIndex + 1}`}
+            variant="outlined"
+            disabled={disabled}
+            size="small"
+          />
+        );
+    }
+  };
 
   return (
     <LabeledGroupedInputs label="Options">
@@ -53,18 +93,7 @@ export const ResponseOptionsForm = ({
 
               return (
                 <TableRow key={item.id}>
-                  <TableCell sx={{ minWidth: "150px" }}>
-                    <TextField<NewFlowFormFields>
-                      name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
-                      key={item.id}
-                      control={control}
-                      placeholderText={`Option #${inputIndex + 1}`}
-                      showLabel={false}
-                      label={`Option #${inputIndex + 1}`}
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
+                  <TableCell sx={{ minWidth: "150px" }}>{renderInput(inputIndex, false)}</TableCell>
                   <TableCell>
                     {cannotDelete ? null : (
                       <IconButton

@@ -1,13 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
 import { useForm } from "react-hook-form";
 import { useNewFlowWizardState, NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import { flowSchema } from "../formSchema";
-import { TextField } from "@/components/shared/Form/FormFields/TextField";
 import { StepsForm } from "../components/StepsForm";
 import {
   OptionsCreationType,
@@ -16,6 +13,7 @@ import {
   RespondPermissionType,
   InputDataType,
 } from "../types";
+import { TextField } from "../../FormFields";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -43,7 +41,6 @@ export const Setup = () => {
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,
   });
-
   const onSubmit = (data: NewFlowFormFields) => {
     console.log("data is ", data);
     onNext();

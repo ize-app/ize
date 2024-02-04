@@ -11,15 +11,24 @@ import {
   ResultType,
   ActionType,
 } from "./types";
+import dayjs, { Dayjs } from "dayjs";
+
+const zodDay = z.custom<Dayjs>((val) => {
+  if (val instanceof dayjs) {
+    const date = val as Dayjs;
+    return date.isValid();
+  }
+  return false;
+}, "Invalid date");
 
 export const requestInputSchema = z.object({
-  name: z.string().trim().min(1),
+  name: z.any(),
   required: z.boolean(),
   dataType: z.nativeEnum(InputDataType),
 });
 
 export const responseOptionSchema = z.object({
-  name: z.string(),
+  name: z.any(),
 });
 
 const evaluateMultiTypeInput = (
@@ -49,7 +58,7 @@ const evaluateMultiTypeInput = (
         });
       return;
     case InputDataType.Date:
-      if (!z.coerce.date().safeParse(value).success)
+      if (!zodDay.safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid date",
@@ -57,7 +66,7 @@ const evaluateMultiTypeInput = (
         });
       return;
     case InputDataType.DateTime:
-      if (!z.coerce.date().safeParse(value).success)
+      if (!zodDay.safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid datetime",
@@ -91,7 +100,6 @@ const stepSchema = z.object({
     inputs: z
       .array(requestInputSchema)
       .superRefine((val, ctx) => {
-        console.log("inside super refine");
         (val ?? []).forEach((input, index) => {
           evaluateMultiTypeInput(
             input.name,
@@ -178,6 +186,7 @@ const stepSchema = z.object({
 
 export const flowSchema = z.object({
   name: z.string().min(1, "Enter a name"),
+
   // reusable: z.boolean(),
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   // editStep: stepSchema, // TODO make this more specific to the edit step

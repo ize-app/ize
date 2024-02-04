@@ -12,7 +12,7 @@ import * as z from "zod";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { InputDataType } from "../types";
-import { Checkbox, Select, TextField } from "../../FormFields";
+import { Checkbox, DatePicker, DateTimePicker, Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 
 import { requestInputSchema, responseOptionSchema } from "../formSchema";
@@ -33,6 +33,49 @@ export const RequestInputsForm = ({
   const { control } = useFormMethods;
 
   const { fields, remove, append } = requestInputFormMethods;
+
+  const renderInput = (inputIndex: number, disabled: boolean) => {
+    const dataType = useFormMethods.getValues(
+      `steps.${formIndex}.request.inputs.${inputIndex}.dataType`,
+    );
+
+    switch (dataType) {
+      case InputDataType.Date:
+        return (
+          <DatePicker<NewFlowFormFields>
+            name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Request Input #${inputIndex + 1}`}
+          />
+        );
+      case InputDataType.DateTime:
+        return (
+          <DateTimePicker<NewFlowFormFields>
+            name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Request Input #${inputIndex + 1}`}
+          />
+        );
+      default:
+        return (
+          <TextField<NewFlowFormFields>
+            name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
+            key={"name" + inputIndex.toString() + formIndex.toString()}
+            control={control}
+            placeholderText={`Request Input #${inputIndex + 1}`}
+            showLabel={false}
+            label={`Request Input #${inputIndex + 1}`}
+            variant="outlined"
+            disabled={disabled}
+            size="small"
+          />
+        );
+    }
+  };
 
   return (
     <LabeledGroupedInputs label="Request inputs">
@@ -62,17 +105,7 @@ export const RequestInputsForm = ({
               return (
                 <TableRow key={item.id}>
                   <TableCell sx={{ minWidth: "150px" }}>
-                    <TextField<NewFlowFormFields>
-                      name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
-                      key={"name" + inputIndex.toString() + formIndex.toString()}
-                      control={control}
-                      placeholderText={`Request Input #${inputIndex + 1}`}
-                      showLabel={false}
-                      label={`Request Input #${inputIndex + 1}`}
-                      variant="outlined"
-                      disabled={noEdit}
-                      size="small"
-                    />
+                    {renderInput(inputIndex, noEdit)}
                   </TableCell>
                   <TableCell
                     align="center"
