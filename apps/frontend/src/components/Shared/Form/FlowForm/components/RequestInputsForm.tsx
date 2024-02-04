@@ -36,41 +36,49 @@ export const RequestInputsForm = ({
         border: "solid 1px",
         borderColor: "rgba(0, 0, 0, 0.23)",
         borderRadius: "4px",
+        position: "relative",
       }}
     >
       <fieldset
         style={{
-          position: "relative",
+          position: "absolute",
           left: 0,
           bottom: 0,
           right: 0,
           top: "-12px",
           border: "none",
-          lineHeight: "23px",
-          minWidth: "0%",
         }}
       >
         <legend>
           <span
             style={{
-              padding: "0px 5px",
               backgroundColor: "white",
               fontWeight: "400",
               fontFamily: "roboto",
               color: "rgba(0, 0, 0, 0.6)",
-              fontSize: "1rem",
+              fontSize: ".75rem",
             }}
           >
-            Request options
+            Request inputs
           </span>
         </legend>
       </fieldset>
-      <TableContainer sx={{ overflowX: "auto" }}>
-        <Table aria-label="input table" stickyHeader={true}>
+      <TableContainer
+        sx={{
+          overflowX: "auto",
+          maxWidth: "1000px",
+          padding: "20px 16px 16px",
+          "& .MuiTableCell-root": {
+            padding: "4px",
+            border: "none",
+          },
+        }}
+      >
+        <Table aria-label="Request input table" stickyHeader={true}>
           <TableHead>
             <TableRow>
               <TableCell>Input name</TableCell>
-              <TableCell align="center">Input type</TableCell>
+              <TableCell align="center">Type</TableCell>
               <TableCell align="center">Required?</TableCell>
               <TableCell />
             </TableRow>
@@ -85,16 +93,23 @@ export const RequestInputsForm = ({
                       name={`steps.${formIndex}.request.inputs.${inputIndex}.name`}
                       key={"name" + inputIndex.toString() + formIndex.toString()}
                       control={control}
-                      placeholderText=""
+                      placeholderText={`Request Input #${inputIndex + 1}`}
+                      showLabel={false}
                       label="Request Input #1"
                       variant="outlined"
                       disabled={noEdit}
                     />
                   </TableCell>
-                  <TableCell sx={{ width: "120px" }}>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      width: "160px",
+                    }}
+                  >
                     <Select<NewFlowFormFields>
                       control={control}
-                      width="400px"
+                      width="120px"
+                      displayLabel={false}
                       disabled={noEdit}
                       name={`steps.${formIndex}.request.inputs.${inputIndex}.dataType`}
                       key={"dataType" + inputIndex.toString() + formIndex.toString()}
@@ -108,7 +123,7 @@ export const RequestInputsForm = ({
                       label="Type"
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" sx={{ width: "140px" }}>
                     <Checkbox<NewFlowFormFields>
                       name={`steps.${formIndex}.request.inputs.${inputIndex}.required`}
                       key={"required" + inputIndex.toString() + formIndex.toString()}
@@ -135,7 +150,7 @@ export const RequestInputsForm = ({
       </TableContainer>
 
       <Button
-        sx={{ marginTop: "16px", marginLeft: "16px" }}
+        sx={{ margin: "0px 0px 8px 16px", position: "relative", bottom: "8px" }}
         variant="outlined"
         onClick={() => {
           append({

@@ -54,7 +54,7 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
           <ResponsiveFormRow>
             <Select
               control={control}
-              width="400px"
+              width="300px"
               name={`steps.${formIndex}.request.permission.type`}
               selectOptions={[
                 { name: "Certain individuals and groups", value: RequestTriggerType.Agents },
@@ -83,7 +83,7 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
               />
             ) : (
               <Button
-                variant={"contained"}
+                variant={"outlined"}
                 onClick={() => {
                   requestInputFormMethods.append({
                     id: "new",
@@ -98,8 +98,8 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
             )}
           </Box>
         </StepComponentContainer>
-        {/* <ProcessStepComponentContainer label="Respond">
-          <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
+        <StepComponentContainer label="Respond">
+          {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
             <SelectControl
               //@ts-ignore
               control={control}
@@ -174,9 +174,9 @@ export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
                 );
               }}
             />
-          </Box>
-        </ProcessStepComponentContainer>
-        <ProcessStepComponentContainer label="Result">
+          </Box> */}
+        </StepComponentContainer>
+        {/* <ProcessStepComponentContainer label="Result">
           <Box
             sx={{
               display: "flex",

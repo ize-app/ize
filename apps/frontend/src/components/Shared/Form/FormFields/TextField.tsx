@@ -7,6 +7,7 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
   variant: TextFieldVariants;
   required?: boolean;
+  showLabel?: boolean;
   placeholderText?: string;
 }
 
@@ -15,6 +16,7 @@ export const TextField = <T extends FieldValues>({
   name,
   control,
   variant,
+  showLabel = true,
   required = false,
   placeholderText,
 }: TextFieldProps<T>) => {
@@ -29,7 +31,7 @@ export const TextField = <T extends FieldValues>({
             {...field}
             aria-label={label}
             variant={variant}
-            label={label}
+            label={showLabel ? label : ""}
             required={required}
             placeholder={placeholderText}
             error={Boolean(error)}

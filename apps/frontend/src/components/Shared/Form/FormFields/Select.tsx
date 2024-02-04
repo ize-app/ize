@@ -14,6 +14,7 @@ export interface SelectOption {
 
 interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
+  displayLabel?: boolean;
   selectOptions: SelectOption[];
   width: string;
   required?: boolean;
@@ -26,6 +27,7 @@ export const Select = <T extends FieldValues>({
   label,
   width,
   selectOptions,
+  displayLabel = true,
   required = false,
   loading = false,
   ...props
@@ -36,13 +38,18 @@ export const Select = <T extends FieldValues>({
     render={({ field, fieldState: { error } }) => {
       return (
         <FormControl
-          // sx={{ flexGrow: 1, flexBasis: "300px" }}
-          sx={{ width: "300px" }}
+          sx={{ width, textAlign: "left" }}
           error={Boolean(error)}
           required={required}
         >
-          <InputLabel id={`select-${name}`}>{label}</InputLabel>
-          <MuiSelect {...props} autoWidth={true} {...field} label={label}>
+          <InputLabel id={`select-${name}`}>{displayLabel ? label : ""}</InputLabel>
+          <MuiSelect
+            {...props}
+            autoWidth={true}
+            {...field}
+            label={displayLabel ? label : ""}
+            aria-label={label}
+          >
             {loading ? (
               <Loading />
             ) : (
