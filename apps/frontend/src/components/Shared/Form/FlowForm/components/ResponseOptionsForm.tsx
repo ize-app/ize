@@ -33,6 +33,7 @@ export const ResponseOptionsForm = ({
   const { control } = useFormMethods;
   const { fields, remove, append } = responseOptionsFormMethods;
   const dataType = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.dataType`);
+  const options = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.options`);
 
   const renderInput = (inputIndex: number, disabled: boolean) => {
     switch (dataType) {
@@ -93,6 +94,48 @@ export const ResponseOptionsForm = ({
 
               return (
                 <TableRow key={item.id}>
+                  {/* Need to add a hidden option ID text field so that default values propogate correctly */}
+                  <TableCell
+                    align="center"
+                    sx={{
+                      width: "160px",
+                      display: "none",
+                    }}
+                  >
+                    <TextField<NewFlowFormFields>
+                      name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.optionId`}
+                      key={"optionId" + inputIndex.toString() + formIndex.toString()}
+                      control={control}
+                      showLabel={false}
+                      label={`Option ID - ignore`}
+                      variant="outlined"
+                      disabled={true}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      width: "160px",
+                    }}
+                  >
+                    <Select<NewFlowFormFields>
+                      control={control}
+                      width="120px"
+                      displayLabel={false}
+                      size={"small"}
+                      name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.dataType`}
+                      key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                      selectOptions={[
+                        { name: "Text", value: InputDataType.String },
+                        { name: "Number", value: InputDataType.Number },
+                        { name: "Url", value: InputDataType.Uri },
+                        { name: "Date Time", value: InputDataType.DateTime },
+                        { name: "Date", value: InputDataType.Date },
+                      ]}
+                      label="Type"
+                    />
+                  </TableCell>
                   <TableCell sx={{ minWidth: "150px" }}>{renderInput(inputIndex, false)}</TableCell>
                   <TableCell>
                     {cannotDelete ? null : (
@@ -117,11 +160,13 @@ export const ResponseOptionsForm = ({
         variant="outlined"
         onClick={() => {
           append({
+            optionId: "newOption." + (options ?? []).length,
             name: "",
+            dataType: InputDataType.String,
           } as ResponseOptionType);
         }}
       >
-        Add input
+        Add option
       </Button>
     </LabeledGroupedInputs>
   );

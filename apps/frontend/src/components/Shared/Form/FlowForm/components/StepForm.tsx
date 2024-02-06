@@ -4,22 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import TextField from "@mui/material/TextField";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { requestTemplateFormSchema } from "../../ProcessForm/formSchema";
 
 import { useNewFlowWizardState, NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import { RoleSearch, Select } from "@/components/shared/Form/FormFields";
+import { RoleSearch, Select, Switch, TextField } from "@/components/shared/Form/FormFields";
 import { DecisionType, FormOptionChoice } from "@/components/shared/Form/ProcessForm/types";
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { Autocomplete, Button, Chip, InputAdornment, Paper, Typography } from "@mui/material";
+import { Autocomplete, Button, Chip, InputAdornment, Paper, Step, Typography } from "@mui/material";
 import { RequestInputsForm } from "./RequestInputsForm";
 import { Accordion } from "@/components/shared/Accordion";
 import React, { useState } from "react";
 import { flowSchema } from "../formSchema";
-import { TextField as MuiTextField } from "@/components/shared/Form/FormFields/TextField";
 import { RoleFormFields } from "../../ProcessForm/wizardScreens/Roles";
 
 import { StepContainer, StepComponentContainer } from "./StepContainer";
@@ -28,11 +26,16 @@ import {
   OptionsCreationType,
   InputDataType,
   RequestPermissionType,
-  RespondInputType,
+  StepType,
   RespondPermissionType,
+  OptionSelectionType,
+  ResultDecisionType,
 } from "../types";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResponseOptionsForm } from "./ResponseOptionsForm";
+import { ResponseInputsForm } from "./ResponseInputsForm";
+import { ResponsePermissionsForm } from "./ResponsePermissionsForm";
+// import { RespondInputsForm } from "./RespondInputsForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<NewFlowFormFields>;
@@ -40,291 +43,176 @@ interface StepFormProps {
 }
 
 export const StepForm = ({ useFormMethods, formIndex }: StepFormProps) => {
-
-  const { control, setValue: setFieldValue, getValues: getFieldValues, watch } = useFormMethods;
-
-  const requestInputFormMethods = useFieldArray({
+  const {
     control,
-    name: `steps.${formIndex}.request.inputs`,
-  });
+    setValue: setFieldValue,
+    getValues: getFieldValues,
+    watch,
+    getFieldState,
+  } = useFormMethods;
+
+  console.log("errors are ", useFormMethods.formState.errors);
+
+  // const requestInputFormMethods = useFieldArray({
+  //   control,
+  //   name: `steps.${formIndex}.request.inputs`,
+  // });
 
   const responseOptionsFormMethods = useFieldArray({
     control,
     name: `steps.${formIndex}.respond.inputs.options.options`,
   });
+  // const isAgentRequestTrigger =
+  //   watch(`steps.${formIndex}.request.permission.type`) === RequestPermissionType.Agents;
+  // const isAgentRespondTrigger =
+  //   watch(`steps.${formIndex}.respond.permission.type`) === RespondPermissionType.Agents;
+  const stepType = watch(`steps.${formIndex}.respond.inputs.type`);
+  const isMultiSelect =
+    watch(`steps.${formIndex}.respond.inputs.options.selectionType`) ===
+    OptionSelectionType.MultiSelect;
+  const optionCreationType = watch(`steps.${formIndex}.respond.inputs.options.creationType`);
 
-  const isAgentRequestTrigger =
-    watch(`steps.${formIndex}.request.permission.type`) === RequestPermissionType.Agents;
+  const getInputStepHeader = (stepType: StepType) => {
+    switch (stepType) {
+      case StepType.Decide:
+        return "What options are being decided on?";
+      case StepType.Prioritize:
+        return "What options are being prioritized?";
+      case StepType.GetInput:
+        return "What kind of information are you asking for?";
+    }
+  };
 
-  const isAgentRespondTrigger =
-    watch(`steps.${formIndex}.respond.permission.type`) === RespondPermissionType.Agents;
-
-  const respondInputType = watch(`steps.${formIndex}.respond.inputs.type`);
-
-  const responseOptionsDataType = watch(`steps.${formIndex}.respond.inputs.options.options`);
-
-  const hasRequestInputs = (watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
+  // const hasRequestInputs = (watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
   return (
     <StepContainer>
-      <StepComponentContainer label="Request">
-        <ResponsiveFormRow>
-          <Select
-            control={control}
-            width="300px"
-            name={`steps.${formIndex}.request.permission.type`}
-            selectOptions={[
-              { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
-              { name: "Anyone", value: RequestPermissionType.Anyone },
-            ]}
-            label="Who can make requests?"
-          />
-
-          {isAgentRequestTrigger && (
-            <RoleSearch
-              ariaLabel={"Individuals and groups who can make requests"}
-              name={`steps.${formIndex}.request.permission.agents`}
-              control={control}
-              setFieldValue={setFieldValue}
-              getFieldValues={getFieldValues}
-            />
-          )}
-        </ResponsiveFormRow>
-        <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
-          {hasRequestInputs ? (
-            <RequestInputsForm
-              useFormMethods={useFormMethods}
-              formIndex={formIndex}
-              //@ts-ignore Not sure why the TS error - types are the same
-              requestInputFormMethods={requestInputFormMethods}
-            />
-          ) : (
-            <Button
-              variant={"outlined"}
-              onClick={() => {
-                requestInputFormMethods.append({
-                  name: "",
-                  required: true,
-                  dataType: InputDataType.String,
-                });
-              }}
-            >
-              Add required inputs to make a request
-            </Button>
-          )}
-        </Box>
+      <StepComponentContainer>
+        <Select
+          control={control}
+          label="Purpose of this step"
+          name={`steps.${formIndex}.respond.inputs.type`}
+          width="300px"
+          selectOptions={[
+            { name: "Decide", value: StepType.Decide },
+            { name: "Get ideas and feedback", value: StepType.GetInput },
+            { name: "Prioritize", value: StepType.Prioritize },
+          ]}
+        />
       </StepComponentContainer>
-      <StepComponentContainer label="Respond">
-        <ResponsiveFormRow>
-          <Select
-            control={control}
-            width="300px"
-            name={`steps.${formIndex}.respond.permission.type`}
-            selectOptions={[
-              { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
-              { name: "Anyone", value: RequestPermissionType.Anyone },
-            ]}
-            label="Who can respond?"
-          />
-
-          {isAgentRespondTrigger && (
-            <RoleSearch
-              ariaLabel={"Individuals and groups who can respond"}
-              name={`steps.${formIndex}.respond.permission.agents`}
-              control={control}
-              setFieldValue={setFieldValue}
-              getFieldValues={getFieldValues}
-            />
-          )}
-        </ResponsiveFormRow>
-        <ResponsiveFormRow>
-          <Select
-            control={control}
-            width="300px"
-            name={`steps.${formIndex}.respond.inputs.type`}
-            selectOptions={[
-              { name: "Free text input", value: RespondInputType.FreeInput },
-              { name: "Choose one option", value: RespondInputType.SelectOption },
-              { name: "Rank options", value: RespondInputType.RankOptions },
-              { name: "Group options", value: RespondInputType.GroupOptions },
-            ]}
-            label="What info does the respondant give?"
-          />
-          {respondInputType === RespondInputType.FreeInput && (
-            <>
+      <ResponseInputsForm
+        formMethods={useFormMethods}
+        //@ts-ignore
+        responseOptionsFormMethods={responseOptionsFormMethods}
+        formIndex={formIndex}
+      />
+      <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} />
+      {/* <RespondInputsForm stepType={stepType} /> */}
+      {/* {stepPurpose && (
+        <>
+          <StepComponentContainer label="Request">
+            <ResponsiveFormRow>
               <Select
                 control={control}
-                width="200px"
-                name={`steps.${formIndex}.respond.inputs.freeInput.dataType`}
+                width="300px"
+                name={`steps.${formIndex}.request.permission.type`}
                 selectOptions={[
-                  { name: "Text", value: InputDataType.String },
-                  { name: "Number", value: InputDataType.Number },
-                  { name: "Uri", value: InputDataType.Uri },
+                  { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
+                  { name: "Anyone", value: RequestPermissionType.Anyone },
                 ]}
-                label="What type of input?"
+                label="Who can make requests?"
               />
-            </>
-          )}
-          {respondInputType &&
-            [
-              RespondInputType.GroupOptions,
-              RespondInputType.RankOptions,
-              RespondInputType.SelectOption,
-            ].includes(respondInputType) && (
-              <>
-                <Select
+
+              {isAgentRequestTrigger && (
+                <RoleSearch
+                  ariaLabel={"Individuals and groups who can make requests"}
+                  name={`steps.${formIndex}.request.permission.agents`}
                   control={control}
-                  width="300px"
-                  name={`steps.${formIndex}.respond.inputs.options.creationType`}
-                  selectOptions={[
-                    {
-                      name: "The process",
-                      value: OptionsCreationType.ProcessDefinedOptions,
-                    },
-                    {
-                      name: "The requestor",
-                      value: OptionsCreationType.RequestDefinedOptions,
-                    },
-                  ]}
-                  label="Who defines the options?"
+                  setFieldValue={setFieldValue}
+                  getFieldValues={getFieldValues}
                 />
-                <Select
-                  control={control}
-                  width="200px"
-                  name={`steps.${formIndex}.respond.inputs.options.dataType`}
-                  selectOptions={[
-                    { name: "Text", value: InputDataType.String },
-                    { name: "Number", value: InputDataType.Number },
-                    { name: "Uri", value: InputDataType.Uri },
-                    { name: "Date", value: InputDataType.Date },
-                    { name: "DateTime", value: InputDataType.DateTime },
-                  ]}
-                  label="Option type?"
-                />
-                <ResponseOptionsForm
+              )}
+            </ResponsiveFormRow>
+            <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
+              {hasRequestInputs ? (
+                <RequestInputsForm
                   useFormMethods={useFormMethods}
-                  //@ts-ignore Not sure why the TS error - types are the same
-                  responseOptionsFormMethods={responseOptionsFormMethods}
                   formIndex={formIndex}
+                  //@ts-ignore Not sure why the TS error - types are the same
+                  requestInputFormMethods={requestInputFormMethods}
                 />
-              </>
-            )}
-        </ResponsiveFormRow>
-        {/* <Box sx={{ width: "100%", display: "flex", gap: "24px" }}> */}
-        {/*         <Controller
-              name="customOptions"
-              control={control}
-              render={({ field, fieldState: { error } }) => {
-                return (
-                  <FormControl required sx={{ width: "100%" }}>
-                    <Autocomplete
-                      {...field}
-                      freeSolo
-                      multiple
-                      autoComplete={false}
-                      id="tags-filled"
-                      options={[]}
-                      getOptionLabel={(option: string) => option}
-                      onChange={(_event, data) => field.onChange(data)}
-                      renderTags={(value: readonly string[], getTagProps) =>
-                        value.map((option: string, index: number) => (
-                          <Chip
-                            variant="filled"
-                            label={option}
-                            color="primary"
-                            {...getTagProps({ index })}
-                          />
-                        ))
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          placeholder="Add custom options here..."
-                          error={Boolean(error)}
-                        />
-                      )}
-                    />
-                    <FormHelperText
-                      sx={{
-                        color: "error.main",
-                      }}
-                    >
-                      {error?.message}
-                    </FormHelperText>
-                  </FormControl>
-                );
-              }}
-            /> */}
-        {/* </Box> */}
-      </StepComponentContainer>
-      {/* <ProcessStepComponentContainer label="Result">
-          <Box
-            sx={{
-              display: "flex",
-              gap: "24px",
-              justifyContent: "flex-start",
-              flexWrap: "wrap",
-            }}
-          >
-            <Box sx={{}}>
-              <SelectControl
-                //@ts-ignore
-                control={control}
-                name={"decision.type"}
-                sx={{ width: "300px" }}
-                selectOptions={[
-                  {
-                    value: DecisionType.Absolute,
-                    name: "Threshold vote",
-                  },
-                  {
-                    value: DecisionType.Percentage,
-                    name: "Percentage vote",
-                  },
-                ]}
-                label="When is there a final result?"
-              />
+              ) : (
+                <Button
+                  variant={"outlined"}
+                  onClick={() => {
+                    requestInputFormMethods.append({
+                      name: "",
+                      required: true,
+                      dataType: InputDataType.String,
+                    });
+                  }}
+                >
+                  Add required inputs to make a request
+                </Button>
+              )}
             </Box>
-            {false ? (
-              <>
-                <Box>
-                  <TextFieldControl
-                    //@ts-ignore
+          </StepComponentContainer>
+          <StepComponentContainer label="Respond">
+
+          </StepComponentContainer>
+          <StepComponentContainer label="Result">
+            <ResponsiveFormRow>
+              {stepPurpose === StepType.Decide && (
+                <>
+                  <Select<NewFlowFormFields>
                     control={control}
-                    name={"decision.percentageDecision.percentage"}
-                    label={`Option becomes final result when it has:`}
-                    endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
-                    sx={{ width: "300px" }}
-                    required
+                    label="How do we determine the final result?"
+                    width="300px"
+                    selectOptions={[
+                      { name: "Theshold count", value: ResultDecisionType.ThresholdVote },
+                      { name: "Percentage threshold", value: ResultDecisionType.PercentageVote },
+                      { name: "Optimistic vote", value: ResultDecisionType.OptimisticVote },
+                    ]}
+                    name={`steps.${formIndex}.result.decide.type`}
                   />
-                </Box>
-                <Box>
-                  <TextFieldControl
-                    //@ts-ignore
+
+                  <TextField<NewFlowFormFields>
                     control={control}
-                    name={"decision.percentageDecision.quorum"}
-                    label={`Quorum (min # of responses for a result)`}
-                    endAdornment={<InputAdornment position="end">total responses</InputAdornment>}
-                    sx={{ width: "300px" }}
-                    required
+                    width="300px"
+                    label="Threshold votes"
+                    variant="outlined"
+                    name={`steps.${formIndex}.result.decide.threshold.decisionThresholdCount`}
                   />
-                </Box>
-              </>
-            ) : (
-              <Box>
-                <TextFieldControl
-                  //@ts-ignore
-                  control={control}
-                  name={"decision.absoluteDecision.threshold"}
-                  label={"Option is selected once it has:"}
-                  sx={{ width: "300px" }}
-                  endAdornment={<InputAdornment position="end">responses</InputAdornment>}
-                  required
-                />
-              </Box>
-            )}
-          </Box>
-        </ProcessStepComponentContainer> */}
+                  <TextField<NewFlowFormFields>
+                    control={control}
+                    width="300px"
+                    label="Percentage threshold"
+                    variant="outlined"
+                    name={`steps.${formIndex}.result.decide.percentage.decisionThresholdPercentage`}
+                  />
+                  <TextField<NewFlowFormFields>
+                    control={control}
+                    width="300px"
+                    label="Threshold votes to choose another option"
+                    variant="outlined"
+                    name={`steps.${formIndex}.result.decide.optimistic.decisionThresholdCount`}
+                  />
+                  <Select<NewFlowFormFields>
+                    control={control}
+                    label="Default option"
+                    width="300px"
+                    selectOptions={[
+                      { name: "Theshold count", value: ResultDecisionType.ThresholdVote },
+                      { name: "Percentage threshold", value: ResultDecisionType.PercentageVote },
+                      { name: "Optimistic vote", value: ResultDecisionType.OptimisticVote },
+                    ]}
+                    name={`steps.${formIndex}.result.decide.optimistic.defaultOptionId`}
+                  />
+                </>
+              )}
+            </ResponsiveFormRow>
+          </StepComponentContainer> */}
+      {/* </> */}
+      {/* )} */}
     </StepContainer>
   );
 };

@@ -4,12 +4,10 @@ import {
   OptionsCreationType,
   InputDataType,
   RequestPermissionType,
-  RespondInputType,
+  StepType,
   RespondPermissionType,
-  ResultSingleOptionType,
-  ResultSummaryType,
-  ResultType,
-  ActionType,
+  ResultDecisionType,
+  OptionSelectionType,
 } from "./types";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -22,14 +20,21 @@ const zodDay = z.custom<Dayjs>((val) => {
 }, "Invalid date");
 
 export const requestInputSchema = z.object({
+  inputId: z.string(),
   name: z.any(),
   required: z.boolean(),
   dataType: z.nativeEnum(InputDataType),
 });
 
-export const responseOptionSchema = z.object({
-  name: z.any(),
-});
+export const responseOptionSchema = z
+  .object({
+    optionId: z.string(),
+    name: z.any(),
+    dataType: z.nativeEnum(InputDataType),
+  })
+  .superRefine((option, ctx) => {
+    evaluateMultiTypeInput(option.name, option.dataType as InputDataType, ["name"], ctx);
+  });
 
 const evaluateMultiTypeInput = (
   value: string,
@@ -48,9 +53,17 @@ const evaluateMultiTypeInput = (
         });
       return;
     case InputDataType.String:
+      if (!z.string().min(1).safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.invalid_string,
+          validation: "url",
+          message: "Invalid text",
+          path: errorPath,
+        });
       return;
     case InputDataType.Number:
-      if (!z.coerce.number().safeParse(value).success)
+      console.log();
+      if (!z.number().or(z.string().min(1)).pipe(z.coerce.number()).safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid number",
@@ -83,34 +96,133 @@ const evaluateMultiTypeInput = (
   }
 };
 
+const defaultOptionSchema = z
+  .object({
+    hasDefault: z.boolean(),
+    optionId: z.string().optional(),
+  })
+  .refine(
+    (defaultConfig) => {
+      if (defaultConfig.hasDefault && !defaultConfig.optionId) return false;
+      return true;
+    },
+    { path: ["optionId"], message: "Add a default option" },
+  );
+
+const decisionSchema = z
+  .discriminatedUnion("type", [
+    z.object({
+      type: z.literal(ResultDecisionType.ThresholdVote),
+      defaultOption: defaultOptionSchema,
+      threshold: z.object({
+        decisionThresholdCount: z.coerce.number().int().positive(),
+      }),
+    }),
+    z.object({
+      type: z.literal(ResultDecisionType.PercentageVote),
+      defaultOption: defaultOptionSchema,
+      percentage: z.object({
+        decisionThresholdPercentage: z.coerce.number().int().min(51).max(100),
+      }),
+    }),
+  ])
+  .optional();
+
+const responseOptionsSchema = z
+  .object({
+    creationType: z.nativeEnum(OptionsCreationType),
+    selectionType: z.nativeEnum(OptionSelectionType),
+    maxSelectableOptions: z.coerce.number().optional(),
+    dataType: z.nativeEnum(InputDataType).optional(), // refers only to request created options
+    options: z.array(responseOptionSchema).optional(),
+  })
+  .refine(
+    (options) => {
+      if (
+        options.selectionType === OptionSelectionType.MultiSelect &&
+        !options.maxSelectableOptions
+      )
+        return false;
+      return true;
+    },
+    { path: ["maxSelectableOptions"], message: "Required" },
+  )
+  .refine(
+    (options) => {
+      if (
+        options.creationType === OptionsCreationType.ProcessDefinedOptions &&
+        (options.options ?? []).length < 1
+      )
+        return false;
+      return true;
+    },
+    { path: ["creationType"], message: "Add options below" },
+  )
+  .refine(
+    (options) => {
+      if (options.creationType === OptionsCreationType.RequestDefinedOptions && !options.dataType)
+        return false;
+      return true;
+    },
+    { path: ["dataType"], message: "Required" },
+  );
+// .superRefine((options, ctx) => {
+//   (options.options ?? []).forEach((option, index) => {
+//     evaluateMultiTypeInput(
+//       option.name,
+//       options.dataType as InputDataType,
+//       ["options", index.toString(), "name"],
+//       ctx,
+//     );
+//   });
+// });
+
+export const respondInputsSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal(StepType.GetInput),
+    freeInput: z.object({
+      dataType: z.nativeEnum(InputDataType),
+    }),
+  }),
+  z.object({
+    type: z.literal(StepType.Decide),
+    options: responseOptionsSchema,
+  }),
+  z.object({
+    type: z.literal(StepType.Prioritize),
+    options: responseOptionsSchema,
+  }),
+]);
+
 // TODO potentially reorganize this so it's more action oriented and less abstract
 const stepSchema = z.object({
   // name: z.string().min(1), // maybe remove and
   // type: z.any(), // TODO buy maybe it's 1) decide 2) get feedback
   // resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
-  request: z.object({
-    permission: z.object({
-      type: z.nativeEnum(RequestPermissionType),
-      agents: z
-        .array(agentFormSchema)
-        .min(1, "Please select at least one group or individual.")
-        .optional(),
-      // processId: z.string().uuid().optional(),
-    }),
-    inputs: z
-      .array(requestInputSchema)
-      .superRefine((val, ctx) => {
-        (val ?? []).forEach((input, index) => {
-          evaluateMultiTypeInput(
-            input.name,
-            input.dataType as InputDataType,
-            [index.toString(), "name"],
-            ctx,
-          );
-        });
-      })
-      .optional(),
-  }),
+  // type: z.nativeEnum(StepType).nullable(),
+  // request: z.object({
+  //   permission: z.object({
+  //     type: z.nativeEnum(RequestPermissionType),
+  //     agents: z
+  //       .array(agentFormSchema)
+  //       .min(1, "Please select at least one group or individual.")
+  //       .optional(),
+  //     // processId: z.string().uuid().optional(),
+  //   }),
+  //   inputs: z
+  //     .array(requestInputSchema)
+  //     .superRefine((val, ctx) => {
+  //       (val ?? []).forEach((input, index) => {
+  //         evaluateMultiTypeInput(
+  //           input.name,
+  //           input.dataType as InputDataType,
+  //           [index.toString(), "name"],
+  //           ctx,
+  //         );
+  //       });
+  //     })
+  //     .optional(),
+  // }),
   respond: z.object({
     permission: z.object({
       type: z.nativeEnum(RespondPermissionType),
@@ -119,55 +231,19 @@ const stepSchema = z.object({
         .min(1, "Please select at least one group or individual.")
         .optional(),
     }),
-    inputs: z.object({
-      type: z.nativeEnum(RespondInputType).nullable(),
-      freeInput: z
-        .object({
-          // type: z.nativeEnum(FreeInputResponseType),
-          dataType: z.nativeEnum(InputDataType).optional(),
-        })
-        .optional(),
-      options: z
-        .object({
-          creationType: z.nativeEnum(OptionsCreationType).optional(),
-          dataType: z.nativeEnum(InputDataType).optional(),
-          options: z.array(responseOptionSchema).optional(),
-        })
-        .superRefine((val, ctx) => {
-          (val.options ?? []).forEach((option, index) => {
-            evaluateMultiTypeInput(
-              option.name,
-              val.dataType as InputDataType,
-              ["options", index.toString(), "name"],
-              ctx,
-            );
-          });
-        })
-        .optional(),
-    }),
+    inputs: respondInputsSchema,
   }),
-  // result: z.object({
-  //   type: z.nativeEnum(ResultType),
-  //   requestExpirationSeconds: z.number(),
-  //   minimumResponses: z.number(),
-  //   rawResponses: z.object({}),
-  //   singleOption: z.object({
-  //     type: z.nativeEnum(ResultSingleOptionType),
-  //     percentageVote: z.object({ percentage: z.coerce.number() }),
-  //     thresholdVote: z.object({ threshold: z.coerce.number() }),
-  //     optimisticVote: z.object({ threshold: z.coerce.number(), defaultOptionId: z.string() }),
-  //     // rankChoiceVote: z.object({}), // might not be anything to do here
-  //   }),
-  //   summary: z.object({
-  //     type: z.nativeEnum(ResultSummaryType),
-  //     aiTextSummary: z.object({
-  //       prompt: z.string(),
-  //     }),
-  //     weightedRanking: z.object({}),
-  //     average: z.object({}),
-  //     sum: z.object({}),
-  //   }),
-  // }),
+  result: z.object({
+    // type: z.nativeEnum(ResultType), // maybe delete
+    requestExpirationSeconds: z.coerce.number(),
+    minimumResponses: z.coerce.number(),
+    decision: decisionSchema,
+    // summary: z.object({
+    //   aiTextSummary: z.object({
+    //     prompt: z.string(),
+    //   }),
+    // }),
+  }),
   // action: z.object({
   //   type: z.nativeEnum(ActionType),
   //   filter: z.object({

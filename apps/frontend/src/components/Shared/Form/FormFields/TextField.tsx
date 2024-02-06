@@ -1,6 +1,7 @@
-import { TextField as MuiTextField, TextFieldVariants } from "@mui/material";
+import { InputAdornment, TextField as MuiTextField, TextFieldVariants } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import { ReactNode } from "react";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
 interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
@@ -8,7 +9,9 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   variant: TextFieldVariants;
   required?: boolean;
   showLabel?: boolean;
+  width?: string;
   placeholderText?: string;
+  endAdornment?: ReactNode;
   size?: "small" | "medium";
 }
 
@@ -17,9 +20,11 @@ export const TextField = <T extends FieldValues>({
   name,
   control,
   variant,
+  width = "100%",
   showLabel = true,
   required = false,
   size = "medium",
+  endAdornment,
   placeholderText,
 }: TextFieldProps<T>) => {
   return (
@@ -27,7 +32,7 @@ export const TextField = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl fullWidth error={Boolean(error)} required={required}>
+        <FormControl sx={{ width }} error={Boolean(error)} required={required}>
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
           <MuiTextField
             {...field}
@@ -38,6 +43,9 @@ export const TextField = <T extends FieldValues>({
             size={size}
             placeholder={placeholderText}
             error={Boolean(error)}
+            InputProps={{
+              endAdornment,
+            }}
           />
           <FormHelperText
             sx={{

@@ -8,10 +8,10 @@ import { flowSchema } from "../formSchema";
 import { StepsForm } from "../components/StepsForm";
 import {
   OptionsCreationType,
-  RequestPermissionType,
-  RespondInputType,
   RespondPermissionType,
   InputDataType,
+  OptionSelectionType,
+  ResultDecisionType,
 } from "../types";
 import { TextField } from "../../FormFields";
 
@@ -23,15 +23,42 @@ export const Setup = () => {
       name: "",
       steps: [
         {
-          request: { permission: { type: RequestPermissionType.Anyone, agents: [] }, inputs: [] },
+          // request: { permission: { type: RequestPermissionType.Anyone, agents: [] }, inputs: [] },
           respond: {
-            permission: { type: RespondPermissionType.Anyone, agents: [] },
+            // permission: { type: RespondPermissionType.Anyone, agents: [] },
             inputs: {
-              type: null,
+              type: undefined,
+              freeInput: {
+                dataType: InputDataType.String,
+              },
               options: {
+                selectionType: OptionSelectionType.SingleSelect,
                 dataType: InputDataType.String,
                 creationType: OptionsCreationType.ProcessDefinedOptions,
-                options: [{ name: "✅" }, { name: "❌" }],
+                maxSelectableOptions: 1,
+                options: [
+                  {
+                    optionId: "newOption.0",
+                    name: "✅",
+                    dataType: InputDataType.String,
+                  },
+                  {
+                    optionId: "newOption.1",
+                    name: "❌",
+                    dataType: InputDataType.String,
+                  },
+                ],
+              },
+            },
+            permission: { type: RespondPermissionType.Anyone, agents: [] },
+          },
+          result: {
+            minimumResponses: 1,
+            requestExpirationSeconds: 259200,
+            decision: {
+              type: ResultDecisionType.ThresholdVote,
+              defaultOption: {
+                hasDefault: false,
               },
             },
           },
@@ -49,7 +76,16 @@ export const Setup = () => {
   return (
     <>
       <WizardBody>
-        <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <Box
+          component="form"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            maxWidth: "1000px",
+            width: "100%",
+          }}
+        >
           <TextField<NewFlowFormFields>
             name={"name"}
             control={useFormMethods.control}

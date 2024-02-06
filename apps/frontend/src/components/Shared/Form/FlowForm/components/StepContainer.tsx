@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 
 export const StepContainer = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Paper sx={{ padding: "16px 0px", display: "flex", flexDirection: "column", gap: "20px" }}>
+    <Paper sx={{ padding: "16px 0px", display: "flex", flexDirection: "column", gap: "40px" }}>
       {children}
     </Paper>
   );
@@ -14,14 +14,16 @@ export const StepComponentContainer = ({
   label,
   children,
 }: {
-  label: string;
+  label?: string;
   children: React.ReactNode;
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", margin: "0px 16px" }}>
-      <Typography color="primary" fontWeight={"500"} marginBottom="16px">
-        {label}
-      </Typography>
+      {label && (
+        <Typography color="primary" fontWeight={"500"} marginBottom="16px" fontSize="1rem">
+          {label}
+        </Typography>
+      )}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>{children}</Box>
     </Box>
   );
