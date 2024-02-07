@@ -32,15 +32,17 @@ export const ResponseOptionsForm = ({
 }: RequestInputsFormProps) => {
   const { control } = useFormMethods;
   const { fields, remove, append } = responseOptionsFormMethods;
-  const dataType = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.dataType`);
-  const options = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.options`);
+  const options = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.stepOptions`);
 
   const renderInput = (inputIndex: number, disabled: boolean) => {
+    const dataType = useFormMethods.getValues(
+      `steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.dataType`,
+    );
     switch (dataType) {
       case InputDataType.Date:
         return (
           <DatePicker<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             showLabel={false}
@@ -50,7 +52,7 @@ export const ResponseOptionsForm = ({
       case InputDataType.DateTime:
         return (
           <DateTimePicker<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             showLabel={false}
@@ -60,7 +62,7 @@ export const ResponseOptionsForm = ({
       default:
         return (
           <TextField<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.name`}
+            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             placeholderText={`Option #${inputIndex + 1}`}
@@ -90,8 +92,6 @@ export const ResponseOptionsForm = ({
         <Table aria-label="Response options table" stickyHeader={true}>
           <TableBody>
             {fields.map((item, inputIndex) => {
-              const cannotDelete = inputIndex < 2;
-
               return (
                 <TableRow key={item.id}>
                   {/* Need to add a hidden option ID text field so that default values propogate correctly */}
@@ -103,7 +103,7 @@ export const ResponseOptionsForm = ({
                     }}
                   >
                     <TextField<NewFlowFormFields>
-                      name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.optionId`}
+                      name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.optionId`}
                       key={"optionId" + inputIndex.toString() + formIndex.toString()}
                       control={control}
                       showLabel={false}
@@ -124,7 +124,7 @@ export const ResponseOptionsForm = ({
                       width="120px"
                       displayLabel={false}
                       size={"small"}
-                      name={`steps.${formIndex}.respond.inputs.options.options.${inputIndex}.dataType`}
+                      name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.dataType`}
                       key={"dataType" + inputIndex.toString() + formIndex.toString()}
                       selectOptions={[
                         { name: "Text", value: InputDataType.String },
@@ -138,15 +138,13 @@ export const ResponseOptionsForm = ({
                   </TableCell>
                   <TableCell sx={{ minWidth: "150px" }}>{renderInput(inputIndex, false)}</TableCell>
                   <TableCell>
-                    {cannotDelete ? null : (
-                      <IconButton
-                        color="primary"
-                        aria-label="Remove option"
-                        onClick={() => remove(inputIndex)}
-                      >
-                        <HighlightOffOutlined />
-                      </IconButton>
-                    )}
+                    <IconButton
+                      color="primary"
+                      aria-label="Remove option"
+                      onClick={() => remove(inputIndex)}
+                    >
+                      <HighlightOffOutlined />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               );

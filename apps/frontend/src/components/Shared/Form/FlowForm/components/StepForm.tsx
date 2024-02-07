@@ -33,11 +33,6 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
 
   console.log("errors are ", useFormMethods.formState.errors);
 
-  const responseOptionsFormMethods = useFieldArray({
-    control,
-    name: `steps.${formIndex}.respond.inputs.options.options`,
-  });
-
   const stepType = watch(`steps.${formIndex}.respond.inputs.type`);
 
   return (
@@ -64,8 +59,6 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
           <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
           <ResponseInputsForm
             formMethods={useFormMethods}
-            //@ts-ignore
-            responseOptionsFormMethods={responseOptionsFormMethods}
             formIndex={formIndex}
           />
           <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} />

@@ -45,7 +45,7 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
   const isAgentRespondTrigger =
     formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
     RespondPermissionType.Agents;
-
+    
   return (
     <StepComponentContainer label={getInputStepHeader(stepType)}>
       {stepType && (

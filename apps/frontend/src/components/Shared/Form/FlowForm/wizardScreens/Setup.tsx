@@ -88,7 +88,7 @@ export const Setup = () => {
           <TextField<NewFlowFormFields>
             name={"name"}
             control={useFormMethods.control}
-            placeholderText=""
+            placeholderText="What's the purpose of this flow? (e.g. 'Create event on shared calendar')"
             label="Flow name"
             variant="standard"
           />

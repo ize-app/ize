@@ -130,11 +130,23 @@ const decisionSchema = z.discriminatedUnion("type", [
 
 const responseOptionsSchema = z
   .object({
-    creationType: z.nativeEnum(OptionsCreationType),
+    requestOptions: z
+      .object({
+        requestCanCreateOptions: z.boolean().default(false).optional(),
+        dataType: z.nativeEnum(InputDataType).optional(), // refers only to request created options
+      })
+      .refine(
+        (requestOptions) => {
+          if (requestOptions.requestCanCreateOptions && !requestOptions.dataType) {
+            return false;
+          }
+          return true;
+        },
+        { path: ["dataType"], message: "Select a data type" },
+      ),
     selectionType: z.nativeEnum(OptionSelectionType),
     maxSelectableOptions: z.coerce.number().optional(),
-    dataType: z.nativeEnum(InputDataType).optional(), // refers only to request created options
-    options: z.array(responseOptionSchema).optional(),
+    stepOptions: z.array(responseOptionSchema).optional(),
   })
   .refine(
     (options) => {
@@ -146,53 +158,37 @@ const responseOptionsSchema = z
       return true;
     },
     { path: ["maxSelectableOptions"], message: "Required" },
-  )
+  );
+
+export const respondInputsSchema = z
+  .discriminatedUnion("type", [
+    z.object({
+      type: z.literal(StepType.GetInput),
+      freeInput: z.object({
+        dataType: z.nativeEnum(InputDataType),
+      }),
+    }),
+    z.object({
+      type: z.literal(StepType.Decide),
+      options: responseOptionsSchema,
+    }),
+    z.object({
+      type: z.literal(StepType.Prioritize),
+      options: responseOptionsSchema,
+    }),
+  ])
   .refine(
-    (options) => {
+    (inputs) => {
       if (
-        options.creationType === OptionsCreationType.ProcessDefinedOptions &&
-        (options.options ?? []).length < 1
+        (inputs.type === StepType.Prioritize || inputs.type === StepType.Decide) &&
+        (inputs.options.stepOptions ?? []).length === 0 &&
+        !inputs.options.requestOptions.requestCanCreateOptions
       )
         return false;
       return true;
     },
-    { path: ["creationType"], message: "Add options below" },
-  )
-  .refine(
-    (options) => {
-      if (options.creationType === OptionsCreationType.RequestDefinedOptions && !options.dataType)
-        return false;
-      return true;
-    },
-    { path: ["dataType"], message: "Required" },
+    { path: [""], message: "Add options" },
   );
-// .superRefine((options, ctx) => {
-//   (options.options ?? []).forEach((option, index) => {
-//     evaluateMultiTypeInput(
-//       option.name,
-//       options.dataType as InputDataType,
-//       ["options", index.toString(), "name"],
-//       ctx,
-//     );
-//   });
-// });
-
-export const respondInputsSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(StepType.GetInput),
-    freeInput: z.object({
-      dataType: z.nativeEnum(InputDataType),
-    }),
-  }),
-  z.object({
-    type: z.literal(StepType.Decide),
-    options: responseOptionsSchema,
-  }),
-  z.object({
-    type: z.literal(StepType.Prioritize),
-    options: responseOptionsSchema,
-  }),
-]);
 
 // export const resultSchema = z.discriminatedUnion("type",[z.object({})])
 
