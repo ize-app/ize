@@ -39,7 +39,7 @@ export const ResultForm = ({ formMethods, formIndex }: ResultFormProps) => {
   const isFreeTextAiSummary =
     formMethods.watch(`steps.${formIndex}.result.freeText.type`) === ResultFreeText.AiSummary;
 
-  const options = formMethods.watch(`steps.${formIndex}.respond.inputs.options.options`);
+  const options = formMethods.watch(`steps.${formIndex}.respond.inputs.options.stepOptions`);
 
   const onlyIncludePrioritizedTopOptions = formMethods.watch(
     `steps.${formIndex}.result.priority.onlyIncludeTopOptions`,

@@ -130,6 +130,7 @@ const decisionSchema = z.discriminatedUnion("type", [
 
 const responseOptionsSchema = z
   .object({
+    previousStepOptions: z.boolean().optional(),
     requestOptions: z
       .object({
         requestCanCreateOptions: z.boolean().default(false).optional(),
@@ -143,7 +144,8 @@ const responseOptionsSchema = z
           return true;
         },
         { path: ["dataType"], message: "Select a data type" },
-      ),
+      )
+      .optional(),
     selectionType: z.nativeEnum(OptionSelectionType),
     maxSelectableOptions: z.coerce.number().optional(),
     stepOptions: z.array(responseOptionSchema).optional(),
@@ -181,8 +183,9 @@ export const respondInputsSchema = z
     (inputs) => {
       if (
         (inputs.type === StepType.Prioritize || inputs.type === StepType.Decide) &&
-        (inputs.options.stepOptions ?? []).length === 0 &&
-        !inputs.options.requestOptions.requestCanCreateOptions
+        ((inputs.options.stepOptions ?? []).length === 0 &&
+          inputs.options.requestOptions?.requestCanCreateOptions &&
+          inputs.options.previousStepOptions)
       )
         return false;
       return true;
@@ -194,7 +197,7 @@ export const respondInputsSchema = z
 
 // TODO potentially reorganize this so it's more action oriented and less abstract
 const stepSchema = z.object({
-  // name: z.string().min(1), // maybe remove and
+  name: z.string().min(1), // maybe remove and
   // type: z.any(), // TODO buy maybe it's 1) decide 2) get feedback
   // resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
   // type: z.nativeEnum(StepType).nullable(),
@@ -291,26 +294,25 @@ const stepSchema = z.object({
   }),
 });
 
-export const flowSchema = z
-  .object({
-    name: z.string().min(1, "Enter a name"),
-    reusable: z.boolean().default(false).optional(),
-    steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-    // editStep: stepSchema, // TODO make this more specific to the edit step
-  })
-  // .superRefine((flow, ctx) => {
-  //   if (flow.reusable) {
-  //     flow.steps.map((step, index) => {
-  //       if (!step.request) {
-  //         ctx.addIssue({
-  //           code: z.ZodIssueCode.invalid_string,
-  //           validation: "url",
-  //           message: "Invalid Url",
-  //           path: ["steps", index.request.],
-  //         });
-  //       }
-  //     });
-  //   }
+export const flowSchema = z.object({
+  name: z.string().min(1, "Enter a name"),
+  reusable: z.boolean().default(false).optional(),
+  steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
+  // editStep: stepSchema, // TODO make this more specific to the edit step
+});
+// .superRefine((flow, ctx) => {
+//   if (flow.reusable) {
+//     flow.steps.map((step, index) => {
+//       if (!step.request) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.invalid_string,
+//           validation: "url",
+//           message: "Invalid Url",
+//           path: ["steps", index.request.],
+//         });
+//       }
+//     });
+//   }
 
-  //   return true;
-  // });
+//   return true;
+// });

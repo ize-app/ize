@@ -27,6 +27,7 @@ export const defaultStep = {
         dataType: InputDataType.String,
       },
       options: {
+        previousStepOptions: true,
         selectionType: OptionSelectionType.SingleSelect,
         dataType: InputDataType.String,
         creationType: OptionsCreationType.ProcessDefinedOptions,

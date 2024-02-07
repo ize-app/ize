@@ -82,3 +82,9 @@ export enum ResultFreeText {
   AiSummary = "AiSummary",
   RawResponses = "RawResponses",
 }
+
+export interface PreviousStepResult {
+  stepName: string;
+  isAiSummary: boolean;
+  stepType: string;
+}

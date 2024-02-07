@@ -1,11 +1,7 @@
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import {
-  InputDataType,
-  OptionSelectionType,
-  StepType,
-} from "../types";
+import { InputDataType, OptionSelectionType, PreviousStepResult, StepType } from "../types";
 import { Select, Switch, TextField } from "../../FormFields";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
@@ -15,6 +11,7 @@ import { Button, FormHelperText } from "@mui/material";
 interface ResponseInputsFormProps {
   formMethods: UseFormReturn<NewFlowFormFields>;
   formIndex: number; // react-hook-form name
+  previousStepResult: PreviousStepResult | null;
 }
 
 const getInputStepHeader = (stepType: StepType) => {
@@ -28,7 +25,11 @@ const getInputStepHeader = (stepType: StepType) => {
   }
 };
 
-export const ResponseInputsForm = ({ formMethods, formIndex }: ResponseInputsFormProps) => {
+export const ResponseInputsForm = ({
+  formMethods,
+  formIndex,
+  previousStepResult,
+}: ResponseInputsFormProps) => {
   const responseOptionsFormMethods = useFieldArray({
     control: formMethods.control,
     name: `steps.${formIndex}.respond.inputs.options.stepOptions`,
@@ -43,32 +44,11 @@ export const ResponseInputsForm = ({ formMethods, formIndex }: ResponseInputsFor
     `steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`,
   );
 
-  const createOptionSelectionTypeOptions = (stepPurpose: StepType) => {
-    const options = [
-      {
-        name: "Select one",
-        value: OptionSelectionType.SingleSelect,
-      },
-      {
-        name: "Rank options",
-        value: OptionSelectionType.Rank,
-      },
-    ];
-    if (stepPurpose === StepType.Prioritize)
-      options.push({
-        name: "Select multiple",
-        value: OptionSelectionType.MultiSelect,
-      });
-
-    return options;
-  };
-  const isMultiSelect =
-    formMethods.watch(`steps.${formIndex}.respond.inputs.options.selectionType`) ===
-    OptionSelectionType.MultiSelect;
-
   const inputsGlobalError = formMethods.formState?.errors?.steps
     ? formMethods.formState?.errors?.steps[formIndex]?.respond?.inputs?.message
     : "";
+
+  console.log("previous step", previousStepResult);
 
   return (
     <StepComponentContainer label={getInputStepHeader(stepType)}>
@@ -93,48 +73,63 @@ export const ResponseInputsForm = ({ formMethods, formIndex }: ResponseInputsFor
           )}
           {[StepType.Decide, StepType.Prioritize].includes(stepType) && (
             <>
-              <ResponsiveFormRow>
-                <>
-                  <Select
+              {previousStepResult && !previousStepResult.isAiSummary && (
+                <ResponsiveFormRow>
+                  <Switch<NewFlowFormFields>
+                    name={`steps.${formIndex}.respond.inputs.options.previousStepOptions`}
                     control={formMethods.control}
-                    width="300px"
-                    name={`steps.${formIndex}.respond.inputs.options.selectionType`}
-                    selectOptions={createOptionSelectionTypeOptions(stepType)}
-                    label="How do users select options?"
+                    width="100%"
+                    label={(() => {
+                      switch (previousStepResult.stepType) {
+                        case StepType.Decide:
+                          return `Use decision from last step, ${
+                            previousStepResult.stepName
+                              ? previousStepResult.stepName
+                              : "Step " + formIndex
+                          }, as option in this step`;
+                        case StepType.GetInput:
+                          return `Use responses from last step, ${
+                            previousStepResult.stepName
+                              ? previousStepResult.stepName
+                              : "Step " + formIndex
+                          }, as options in this step`;
+                        case StepType.Prioritize:
+                          return `Use prioritized options from last step, ${
+                            previousStepResult.stepName
+                              ? previousStepResult.stepName
+                              : "Step " + formIndex
+                          }, as options in this step`;
+                        default:
+                          return "Use result from last step as options";
+                      }
+                    })()}
                   />
-                  {isMultiSelect && (
-                    <TextField<NewFlowFormFields>
+                </ResponsiveFormRow>
+              )}
+              {formIndex === 0 && (
+                <ResponsiveFormRow>
+                  <Switch<NewFlowFormFields>
+                    name={`steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`}
+                    control={formMethods.control}
+                    label="Requestor defines options"
+                  />
+                  {hasRequestDefinedOptions && (
+                    <Select
                       control={formMethods.control}
-                      width="300px"
-                      label="How many can they select?"
-                      variant="outlined"
-                      name={`steps.${formIndex}.respond.inputs.options.maxSelectableOptions`}
+                      width="150px"
+                      name={`steps.${formIndex}.respond.inputs.options.requestOptions.dataType`}
+                      selectOptions={[
+                        { name: "Text", value: InputDataType.String },
+                        { name: "Number", value: InputDataType.Number },
+                        { name: "Uri", value: InputDataType.Uri },
+                        { name: "Date", value: InputDataType.Date },
+                        { name: "DateTime", value: InputDataType.DateTime },
+                      ]}
+                      label="Option type"
                     />
                   )}
-                </>
-              </ResponsiveFormRow>
-              <ResponsiveFormRow>
-                <Switch<NewFlowFormFields>
-                  name={`steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`}
-                  control={formMethods.control}
-                  label="Requestor defines options"
-                />
-                {hasRequestDefinedOptions && (
-                  <Select
-                    control={formMethods.control}
-                    width="150px"
-                    name={`steps.${formIndex}.respond.inputs.options.requestOptions.dataType`}
-                    selectOptions={[
-                      { name: "Text", value: InputDataType.String },
-                      { name: "Number", value: InputDataType.Number },
-                      { name: "Uri", value: InputDataType.Uri },
-                      { name: "Date", value: InputDataType.Date },
-                      { name: "DateTime", value: InputDataType.DateTime },
-                    ]}
-                    label="Option type"
-                  />
-                )}
-              </ResponsiveFormRow>
+                </ResponsiveFormRow>
+              )}
               <ResponsiveFormRow>
                 {stepDefinedOptions.length > 0 ? (
                   <ResponseOptionsForm

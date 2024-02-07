@@ -45,7 +45,30 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
   const isAgentRespondTrigger =
     formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
     RespondPermissionType.Agents;
-    
+
+  const createOptionSelectionTypeOptions = (stepPurpose: StepType) => {
+    const options = [
+      {
+        name: "Select one",
+        value: OptionSelectionType.SingleSelect,
+      },
+      {
+        name: "Rank options",
+        value: OptionSelectionType.Rank,
+      },
+    ];
+    if (stepPurpose === StepType.Prioritize)
+      options.push({
+        name: "Select multiple",
+        value: OptionSelectionType.MultiSelect,
+      });
+
+    return options;
+  };
+  const isMultiSelect =
+    formMethods.watch(`steps.${formIndex}.respond.inputs.options.selectionType`) ===
+    OptionSelectionType.MultiSelect;
+
   return (
     <StepComponentContainer label={getInputStepHeader(stepType)}>
       {stepType && (
@@ -72,6 +95,28 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
               />
             )}
           </ResponsiveFormRow>
+          {(stepType === StepType.Decide || stepType === StepType.Prioritize) && (
+            <ResponsiveFormRow>
+              <>
+                <Select
+                  control={formMethods.control}
+                  width="300px"
+                  name={`steps.${formIndex}.respond.inputs.options.selectionType`}
+                  selectOptions={createOptionSelectionTypeOptions(stepType)}
+                  label="How do participants select options?"
+                />
+                {isMultiSelect && (
+                  <TextField<NewFlowFormFields>
+                    control={formMethods.control}
+                    width="300px"
+                    label="How many can they select?"
+                    variant="outlined"
+                    name={`steps.${formIndex}.respond.inputs.options.maxSelectableOptions`}
+                  />
+                )}
+              </>
+            </ResponsiveFormRow>
+          )}
           <ResponsiveFormRow>
             <Select<NewFlowFormFields>
               control={formMethods.control}
