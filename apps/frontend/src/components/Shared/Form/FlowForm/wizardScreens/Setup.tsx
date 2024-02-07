@@ -12,8 +12,49 @@ import {
   InputDataType,
   OptionSelectionType,
   ResultDecisionType,
+  ActionType,
+  RequestPermissionType,
 } from "../types";
 import { TextField } from "../../FormFields";
+
+export const defaultStep = {
+  request: { permission: { type: RequestPermissionType.Anyone }, inputs: [] },
+  respond: {
+    permission: { type: RespondPermissionType.Anyone },
+    inputs: {
+      type: undefined,
+      freeInput: {
+        dataType: InputDataType.String,
+      },
+      options: {
+        selectionType: OptionSelectionType.SingleSelect,
+        dataType: InputDataType.String,
+        creationType: OptionsCreationType.ProcessDefinedOptions,
+        maxSelectableOptions: 1,
+        options: [
+          // {
+          //   optionId: "newOption.0",
+          //   name: "✅",
+          //   dataType: InputDataType.String,
+          // },
+          // {
+          //   optionId: "newOption.1",
+          //   name: "❌",
+          //   dataType: InputDataType.String,
+          // },
+        ],
+      },
+    },
+  },
+  result: {
+    minimumResponses: 1,
+    requestExpirationSeconds: 259200,
+    decision: {
+      type: ResultDecisionType.ThresholdVote,
+    },
+  },
+  actions: { type: ActionType.None, filter: { allOptions: true } },
+};
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -21,49 +62,7 @@ export const Setup = () => {
   const useFormMethods = useForm<NewFlowFormFields>({
     defaultValues: {
       name: "",
-      steps: [
-        {
-          // request: { permission: { type: RequestPermissionType.Anyone, agents: [] }, inputs: [] },
-          respond: {
-            // permission: { type: RespondPermissionType.Anyone, agents: [] },
-            inputs: {
-              type: undefined,
-              freeInput: {
-                dataType: InputDataType.String,
-              },
-              options: {
-                selectionType: OptionSelectionType.SingleSelect,
-                dataType: InputDataType.String,
-                creationType: OptionsCreationType.ProcessDefinedOptions,
-                maxSelectableOptions: 1,
-                options: [
-                  {
-                    optionId: "newOption.0",
-                    name: "✅",
-                    dataType: InputDataType.String,
-                  },
-                  {
-                    optionId: "newOption.1",
-                    name: "❌",
-                    dataType: InputDataType.String,
-                  },
-                ],
-              },
-            },
-            permission: { type: RespondPermissionType.Anyone, agents: [] },
-          },
-          result: {
-            minimumResponses: 1,
-            requestExpirationSeconds: 259200,
-            decision: {
-              type: ResultDecisionType.ThresholdVote,
-              defaultOption: {
-                hasDefault: false,
-              },
-            },
-          },
-        },
-      ],
+      steps: [defaultStep],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,

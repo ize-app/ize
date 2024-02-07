@@ -1,5 +1,5 @@
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import { useFormControl } from "@mui/material";
+import { Box, useFormControl } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepForm } from "./StepForm";
 
@@ -10,22 +10,25 @@ interface StepFormProps {
 export const StepsForm = ({ useFormMethods }: StepFormProps) => {
   const fieldArrayName = "steps";
 
-  const { fields, append, remove } = useFieldArray({
+  const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
     name: fieldArrayName,
   });
+
   return (
-    <div>
-      {fields.map((item, index) => {
-        // const name = `${fieldArrayName}[${index}]`;
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "36px" }}>
+      {stepsArrayMethods.fields.map((item, index) => {
         return (
           <StepForm
+            id={item.id}
             useFormMethods={useFormMethods}
             formIndex={index}
-            key={"name" + index.toString()}
+            //@ts-ignore
+            stepsArrayMethods={stepsArrayMethods}
+            key={"step" + index.toString()}
           />
         );
       })}
-    </div>
+    </Box>
   );
 };

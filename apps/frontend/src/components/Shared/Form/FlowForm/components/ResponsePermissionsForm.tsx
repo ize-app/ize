@@ -32,11 +32,11 @@ interface ResponsePermissionsForm {
 const getInputStepHeader = (stepType: StepType) => {
   switch (stepType) {
     case StepType.Decide:
-      return "How is a decision reached?";
+      return "Who participates in the decision?";
     case StepType.Prioritize:
-      return "How is the prioritization determined?";
+      return "Who participates in the prioritization?";
     case StepType.GetInput:
-      return "How is final output created?";
+      return "How gets to give input?";
   }
 };
 
@@ -45,13 +45,6 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
   const isAgentRespondTrigger =
     formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
     RespondPermissionType.Agents;
-
-  const decisionType = formMethods.watch(`steps.${formIndex}.result.decision.type`);
-  const hasDefaultOption = formMethods.watch(
-    `steps.${formIndex}.result.decision.defaultOption.hasDefault`,
-  );
-
-  const options = formMethods.watch(`steps.${formIndex}.respond.inputs.options.options`);
 
   return (
     <StepComponentContainer label={getInputStepHeader(stepType)}>
@@ -80,48 +73,6 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
             )}
           </ResponsiveFormRow>
           <ResponsiveFormRow>
-            {stepType === StepType.Decide && (
-              <>
-                <Select<NewFlowFormFields>
-                  control={formMethods.control}
-                  label="How do we determine the final result?"
-                  width="300px"
-                  selectOptions={[
-                    {
-                      name: "An option gets X # of votes",
-                      value: ResultDecisionType.ThresholdVote,
-                    },
-                    {
-                      name: "An option gets X % of votes",
-                      value: ResultDecisionType.PercentageVote,
-                    },
-                  ]}
-                  name={`steps.${formIndex}.result.decision.type`}
-                />
-
-                {decisionType === ResultDecisionType.ThresholdVote && (
-                  <TextField<NewFlowFormFields>
-                    control={formMethods.control}
-                    width="300px"
-                    label="Threshold votes"
-                    variant="outlined"
-                    name={`steps.${formIndex}.result.decision.threshold.decisionThresholdCount`}
-                  />
-                )}
-                {decisionType === ResultDecisionType.PercentageVote && (
-                  <TextField<NewFlowFormFields>
-                    control={formMethods.control}
-                    width="300px"
-                    label="Option selected with"
-                    variant="outlined"
-                    name={`steps.${formIndex}.result.decision.percentage.decisionThresholdPercentage`}
-                    endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
-                  />
-                )}
-              </>
-            )}
-          </ResponsiveFormRow>
-          <ResponsiveFormRow>
             <Select<NewFlowFormFields>
               control={formMethods.control}
               label="How long do people have to respond?"
@@ -145,31 +96,6 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
               name={`steps.${formIndex}.result.minimumResponses`}
             />
           </ResponsiveFormRow>
-          <ResponsiveFormRow>
-            {(options ?? []).length > 1 && stepType === StepType.Decide && (
-              <Switch<NewFlowFormFields>
-                name={`steps.${formIndex}.result.decision.defaultOption.hasDefault`}
-                control={formMethods.control}
-                label="Choose default option if no result before expiration"
-              />
-            )}
-            {hasDefaultOption && (
-              <Select<NewFlowFormFields>
-                control={formMethods.control}
-                label="Default option"
-                width="300px"
-                selectOptions={(options ?? []).map((option) => {
-                  console.log("option is ", option);
-                  return {
-                    name: option.name,
-                    value: option.optionId,
-                  };
-                })}
-                name={`steps.${formIndex}.result.decision.defaultOption.optionId`}
-              />
-            )}
-          </ResponsiveFormRow>
-          {/* <ResponsiveFormRow></ResponsiveFormRow> */}
         </>
       )}
     </StepComponentContainer>

@@ -75,5 +75,10 @@ export enum FreeInputResponseType {
 export enum ActionType {
   None = "None",
   CallWebhook = "CallWebhook",
-  TriggerProcess = "TriggerProcess",
+  TriggerStep = "TriggerStep",
+}
+
+export enum ResultFreeText {
+  AiSummary = "AiSummary",
+  RawResponses = "RawResponses",
 }
