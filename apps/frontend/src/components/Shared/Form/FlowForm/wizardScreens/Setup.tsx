@@ -15,7 +15,7 @@ import {
   ActionType,
   RequestPermissionType,
 } from "../types";
-import { TextField } from "../../FormFields";
+import { Switch, TextField } from "../../FormFields";
 
 export const defaultStep = {
   request: { permission: { type: RequestPermissionType.Anyone }, inputs: [] },
@@ -91,6 +91,11 @@ export const Setup = () => {
             placeholderText="What's the purpose of this flow? (e.g. 'Create event on shared calendar')"
             label="Flow name"
             variant="standard"
+          />
+          <Switch<NewFlowFormFields>
+            name={`reusable`}
+            control={useFormMethods.control}
+            label="Reusable flow"
           />
           <StepsForm useFormMethods={useFormMethods} />
         </Box>

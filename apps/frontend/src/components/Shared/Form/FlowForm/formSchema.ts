@@ -198,29 +198,31 @@ const stepSchema = z.object({
   // type: z.any(), // TODO buy maybe it's 1) decide 2) get feedback
   // resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
   // type: z.nativeEnum(StepType).nullable(),
-  request: z.object({
-    permission: z.object({
-      type: z.nativeEnum(RequestPermissionType),
-      agents: z
-        .array(agentFormSchema)
-        .min(1, "Please select at least one group or individual.")
+  request: z
+    .object({
+      permission: z.object({
+        type: z.nativeEnum(RequestPermissionType),
+        agents: z
+          .array(agentFormSchema)
+          .min(1, "Please select at least one group or individual.")
+          .optional(),
+        // processId: z.string().uuid().optional(),
+      }),
+      inputs: z
+        .array(requestInputSchema)
+        .superRefine((val, ctx) => {
+          (val ?? []).forEach((input, index) => {
+            evaluateMultiTypeInput(
+              input.name,
+              input.dataType as InputDataType,
+              [index.toString(), "name"],
+              ctx,
+            );
+          });
+        })
         .optional(),
-      // processId: z.string().uuid().optional(),
-    }),
-    inputs: z
-      .array(requestInputSchema)
-      .superRefine((val, ctx) => {
-        (val ?? []).forEach((input, index) => {
-          evaluateMultiTypeInput(
-            input.name,
-            input.dataType as InputDataType,
-            [index.toString(), "name"],
-            ctx,
-          );
-        });
-      })
-      .optional(),
-  }),
+    })
+    .optional(),
   respond: z.object({
     permission: z.object({
       type: z.nativeEnum(RespondPermissionType),
@@ -289,10 +291,26 @@ const stepSchema = z.object({
   }),
 });
 
-export const flowSchema = z.object({
-  name: z.string().min(1, "Enter a name"),
+export const flowSchema = z
+  .object({
+    name: z.string().min(1, "Enter a name"),
+    reusable: z.boolean().default(false).optional(),
+    steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
+    // editStep: stepSchema, // TODO make this more specific to the edit step
+  })
+  // .superRefine((flow, ctx) => {
+  //   if (flow.reusable) {
+  //     flow.steps.map((step, index) => {
+  //       if (!step.request) {
+  //         ctx.addIssue({
+  //           code: z.ZodIssueCode.invalid_string,
+  //           validation: "url",
+  //           message: "Invalid Url",
+  //           path: ["steps", index.request.],
+  //         });
+  //       }
+  //     });
+  //   }
 
-  // reusable: z.boolean(),
-  steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-  // editStep: stepSchema, // TODO make this more specific to the edit step
-});
+  //   return true;
+  // });

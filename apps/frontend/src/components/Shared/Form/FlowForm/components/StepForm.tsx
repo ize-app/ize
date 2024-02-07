@@ -34,6 +34,7 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
   console.log("errors are ", useFormMethods.formState.errors);
 
   const stepType = watch(`steps.${formIndex}.respond.inputs.type`);
+  const isReusable = watch("reusable");
 
   return (
     <StepContainer>
@@ -56,11 +57,8 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
       </StepComponentContainer>
       {stepType && (
         <>
-          <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
-          <ResponseInputsForm
-            formMethods={useFormMethods}
-            formIndex={formIndex}
-          />
+          {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
+          <ResponseInputsForm formMethods={useFormMethods} formIndex={formIndex} />
           <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} />
           <ResultForm formMethods={useFormMethods} formIndex={formIndex} />
           <ActionsForm

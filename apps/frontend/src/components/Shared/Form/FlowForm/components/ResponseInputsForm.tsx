@@ -1,11 +1,9 @@
-import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import {
   InputDataType,
   OptionSelectionType,
-  OptionsCreationType,
-  RespondPermissionType,
   StepType,
 } from "../types";
 import { Select, Switch, TextField } from "../../FormFields";
@@ -116,22 +114,6 @@ export const ResponseInputsForm = ({ formMethods, formIndex }: ResponseInputsFor
                 </>
               </ResponsiveFormRow>
               <ResponsiveFormRow>
-                {/* <Select
-                  control={formMethods.control}
-                  width="300px"
-                  name={`steps.${formIndex}.respond.inputs.options.creationType`}
-                  selectOptions={[
-                    {
-                      name: "Same options for every request",
-                      value: OptionsCreationType.ProcessDefinedOptions,
-                    },
-                    {
-                      name: "Requestor creates their own options",
-                      value: OptionsCreationType.RequestDefinedOptions,
-                    },
-                  ]}
-                  label="Who defines the options?"
-                /> */}
                 <Switch<NewFlowFormFields>
                   name={`steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`}
                   control={formMethods.control}
