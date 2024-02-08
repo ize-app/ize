@@ -80,7 +80,7 @@ export const requestTemplateFormSchema = z
     },
   );
 
-const inputTemplateFormSchema = z.object({
+export const inputTemplateFormSchema = z.object({
   name: z.string().trim().min(1),
   description: z.string().trim(),
   required: z.boolean(),
@@ -120,7 +120,7 @@ const identityFormSchema = z.object({
     .optional(),
 });
 
-const agentFormSchema = z.union([identityFormSchema, groupFormSchema]);
+export const agentFormSchema = z.union([identityFormSchema, groupFormSchema]);
 
 export const newAgentFormSchema = z.object({
   type: z.nativeEnum(NewAgentTypes),

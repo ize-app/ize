@@ -4,9 +4,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Control } from "react-hook-form";
 
-import { SelectControl, TextFieldControl } from "@/components/shared/Form";
+import { RoleSearchControl, SelectControl, TextFieldControl } from "@/components/shared/Form";
 import { DecisionType } from "@/components/shared/Form/ProcessForm/types";
-import { RoleSearchControl } from "../../RoleSearchControl";
 import { GetFieldValues, SetFieldValue } from "../wizardScreens/Roles";
 
 const RolesContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (

@@ -3,6 +3,7 @@ export enum Route {
   UserSettings = "/settings",
   ResetPassword = "/resetpassword",
   NewProcess = "/create/process",
+  NewFlow = "/create/flow",
   NewRequest = "/create/request",
   NewCustomGroup = "/create/group",
   Groups = "/groups",
@@ -13,7 +14,8 @@ export enum Route {
 }
 
 export enum NewProcessRoute {
-  Intro = "",
+  Setup = "",
+  Intro = "/old-intro",
   Inputs = "/inputs",
   Decisions = "/decisions",
   Evolve = "/evolve",
@@ -24,6 +26,11 @@ export enum NewRequestRoute {
   SelectProcess = "",
   CreateRequest = "/:processId",
   Confirm = "/:processId/confirm",
+}
+
+export enum NewFlowRoute {
+  Setup = "",
+  Confirm = "/confirm",
 }
 
 export enum NewCustomGroupRoute {
@@ -42,6 +49,10 @@ export enum EditProcessRoute {
 
 export const newProcessRoute = (route: NewProcessRoute) => {
   return `${Route.NewProcess}${route}`;
+};
+
+export const newFlowRoute = (route: NewFlowRoute) => {
+  return `${Route.NewFlow}${route}`;
 };
 
 export const newRequestRoute = (route: NewRequestRoute) => {

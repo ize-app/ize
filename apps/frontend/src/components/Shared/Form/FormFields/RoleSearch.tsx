@@ -7,7 +7,14 @@ import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Control, Controller } from "react-hook-form";
+import { MailOutline } from "@mui/icons-material";
+import {
+  Controller,
+  FieldValues,
+  UseControllerProps,
+  UseFormGetValues,
+  UseFormSetValue,
+} from "react-hook-form";
 import { useContext, useState } from "react";
 
 import {
@@ -15,32 +22,31 @@ import {
   AgentType,
   Me,
   NewAgentTypes,
-} from "../../../graphql/generated/graphql";
-import { Avatar } from "../Avatar";
+} from "../../../../graphql/generated/graphql";
+import { Avatar } from "../../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { RoleModal } from "./ProcessForm/components/RoleModal";
-import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
-import { MailOutline } from "@mui/icons-material";
-import { DiscordLogoSvg, EthLogoSvg } from "../icons";
+import { RoleModal } from "../ProcessForm/components/RoleModal";
+import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
 import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
-import NftSvg from "../icons/NftSvg";
+import NftSvg from "../../icons/NftSvg";
 
-interface RoleSearchControlProps {
-  control: Control;
-  name: string;
-  label: string;
-  setFieldValue: SetFieldValue;
-  getFieldValues: GetFieldValues;
+interface RoleSearchProps<T extends FieldValues> extends UseControllerProps<T> {
+  label?: string;
+  ariaLabel: string;
+  placeholderText?: string;
+  setFieldValue: UseFormSetValue<T>;
+  getFieldValues: UseFormGetValues<T>;
 }
 
-export const RoleSearchControl = ({
+export const RoleSearch = <T extends FieldValues>({
   control,
   name,
   label,
+  ariaLabel,
   setFieldValue,
   getFieldValues,
   ...props
-}: RoleSearchControlProps) => {
+}: RoleSearchProps<T>) => {
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
@@ -55,7 +61,7 @@ export const RoleSearchControl = ({
 
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setRecentAgents(value);
-    //@ts-ignore
+
     const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
     const newAgents = dedupOptions([...currentState, ...value]);
 
@@ -73,10 +79,11 @@ export const RoleSearchControl = ({
         control={control}
         render={({ field, fieldState: { error } }) => {
           return (
-            <FormControl required fullWidth>
+            <FormControl required sx={{ flexGrow: 1, flexBasis: "300px" }}>
               <Autocomplete
                 includeInputInList={true}
                 multiple
+                aria-label={ariaLabel}
                 id="tags-filled"
                 {...field}
                 {...props}
