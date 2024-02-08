@@ -281,11 +281,6 @@ const stepSchema = z.object({
         { path: ["optionId"], message: "Select an option" },
       )
       .optional(),
-    // triggerProcess: z
-    //   .object({
-    //     processId: z.string(),
-    //   })
-    //   .optional(),
     callWebhook: z
       .object({
         uri: z.string().url(),
@@ -301,19 +296,3 @@ export const flowSchema = z.object({
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   // editStep: stepSchema, // TODO make this more specific to the edit step
 });
-// .superRefine((flow, ctx) => {
-//   if (flow.reusable) {
-//     flow.steps.map((step, index) => {
-//       if (!step.request) {
-//         ctx.addIssue({
-//           code: z.ZodIssueCode.invalid_string,
-//           validation: "url",
-//           message: "Invalid Url",
-//           path: ["steps", index.request.],
-//         });
-//       }
-//     });
-//   }
-
-//   return true;
-// });

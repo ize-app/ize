@@ -51,7 +51,11 @@ export const defaultStep = {
     minimumResponses: 1,
     requestExpirationSeconds: 259200,
     decision: {
-      type: ResultDecisionType.ThresholdVote,
+      // type: ResultDecisionType.ThresholdVote,
+      // threshold: 1,
+      // defaultOption: {
+      //   hasDefault: false,
+      // },
     },
   },
   actions: { type: ActionType.None, filter: { allOptions: true } },
