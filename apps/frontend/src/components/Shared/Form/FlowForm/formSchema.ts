@@ -115,9 +115,10 @@ const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultDecisionType.ThresholdVote),
     defaultOption: defaultOptionSchema.optional(),
-    threshold: z.object({
-      decisionThresholdCount: z.coerce.number().int().positive(),
-    }),
+    threshold: z
+      .object({
+        decisionThresholdCount: z.coerce.number().int().positive(),
+      })
   }),
   z.object({
     type: z.literal(ResultDecisionType.PercentageVote),
@@ -183,9 +184,9 @@ export const respondInputsSchema = z
     (inputs) => {
       if (
         (inputs.type === StepType.Prioritize || inputs.type === StepType.Decide) &&
-        ((inputs.options.stepOptions ?? []).length === 0 &&
-          inputs.options.requestOptions?.requestCanCreateOptions &&
-          inputs.options.previousStepOptions)
+        (inputs.options.stepOptions ?? []).length === 0 &&
+        inputs.options.requestOptions?.requestCanCreateOptions &&
+        inputs.options.previousStepOptions
       )
         return false;
       return true;

@@ -62,19 +62,21 @@ export const Setup = () => {
 
   const useFormMethods = useForm<NewFlowFormFields>({
     defaultValues: {
-      name: "",
-      steps: [defaultStep],
+      name: formState.name ?? "",
+      reusable: formState.reusable ?? false,
+      steps: formState.steps ? [...formState.steps] : [defaultStep],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,
   });
   const onSubmit = (data: NewFlowFormFields) => {
     console.log("data is ", data);
+    setFormState({ ...data });
     onNext();
   };
 
   return (
-    <>
+    <form>
       <WizardBody>
         <Box
           component="form"
@@ -106,6 +108,6 @@ export const Setup = () => {
         onPrev={onPrev}
         nextLabel={nextLabel}
       />
-    </>
+    </form>
   );
 };

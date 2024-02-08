@@ -1,22 +1,22 @@
-import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from "react-hook-form";
+import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { Select, TextField } from "@/components/shared/Form/FormFields";
 
-import { StepContainer, StepComponentContainer } from "./StepContainer";
+import { StepContainer } from "./StepContainer";
 import { PreviousStepResult, ResultFreeText, StepType } from "../types";
 import { ResponseInputsForm } from "./ResponseInputsForm";
 import { ResponsePermissionsForm } from "./ResponsePermissionsForm";
 import { ResultForm } from "./ResultForm";
 import { ActionsForm } from "./ActionsForm";
-import { useEffect } from "react";
-import { Typography } from "@mui/material";
 import { RequestForm } from "./RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<NewFlowFormFields>;
   stepsArrayMethods: UseFieldArrayReturn<NewFlowFormFields>;
+  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
+  expandedStep: number | false;
   formIndex: number; // react-hook-form name
 }
 
@@ -42,7 +42,13 @@ const createStepTitle = (stepType: StepType) => {
   }
 };
 
-export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepFormProps) => {
+export const StepForm = ({
+  useFormMethods,
+  formIndex,
+  stepsArrayMethods,
+  handleStepExpansion,
+  expandedStep,
+}: StepFormProps) => {
   const {
     control,
     setValue: setFieldValue,
@@ -55,6 +61,13 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
   console.log("errors are ", useFormMethods.formState.errors);
+
+  // const [sectionExpanded, setSectionExpanded] = useState<string | false>(false);
+
+  // const handleSectionExpansion =
+  //   (sectionName: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
+  //     setSectionExpanded(newExpanded ? sectionName : false);
+  //   };
 
   const stepType = watch(`steps.${formIndex}.respond.inputs.type`);
   const stepName = watch(`steps.${formIndex}.name`);
@@ -75,38 +88,39 @@ export const StepForm = ({ useFormMethods, formIndex, stepsArrayMethods }: StepF
   const stepTitle = createStepTitle(stepType);
 
   return (
-    <StepContainer>
-      <Typography variant="h3">
-        {/* <span style={{ fontWeight: "500" }}> */}
-        Step {formIndex + 1}
-        {/* </span> */}
-        {stepTitle ? " " + stepTitle + (stepName ? ": " + stepName : "") : ""}
-      </Typography>
-      <StepComponentContainer>
-        <ResponsiveFormRow>
-          <Select
-            control={control}
-            label="Purpose of this step"
-            name={`steps.${formIndex}.respond.inputs.type`}
-            width="300px"
-            selectOptions={[
-              { name: "Decide", value: StepType.Decide },
-              { name: "Get ideas and feedback", value: StepType.GetInput },
-              { name: "Prioritize", value: StepType.Prioritize },
-            ]}
+    <StepContainer
+      expandedStep={expandedStep}
+      handleStepExpansion={handleStepExpansion}
+      stepIndex={formIndex}
+      title={` Step ${formIndex + 1} ${
+        stepTitle ? stepTitle + (stepName ? ": " + stepName : "") : ""
+      }`}
+    >
+      {/* <StepComponentContainer> */}
+      <ResponsiveFormRow>
+        <Select
+          control={control}
+          label="Purpose of this step"
+          name={`steps.${formIndex}.respond.inputs.type`}
+          width="300px"
+          selectOptions={[
+            { name: "Decide", value: StepType.Decide },
+            { name: "Get ideas and feedback", value: StepType.GetInput },
+            { name: "Prioritize", value: StepType.Prioritize },
+          ]}
+        />
+        {stepType && (
+          <TextField<NewFlowFormFields>
+            name={`steps.${formIndex}.name`}
+            control={useFormMethods.control}
+            placeholderText={stepNameLabel.placeholder}
+            label={stepNameLabel.label}
+            variant="standard"
+            width="400px"
           />
-          {stepType && (
-            <TextField<NewFlowFormFields>
-              name={`steps.${formIndex}.name`}
-              control={useFormMethods.control}
-              placeholderText={stepNameLabel.placeholder}
-              label={stepNameLabel.label}
-              variant="standard"
-              width="400px"
-            />
-          )}
-        </ResponsiveFormRow>
-      </StepComponentContainer>
+        )}
+      </ResponsiveFormRow>
+      {/* </StepComponentContainer> */}
       {stepType && (
         <>
           {isReusable && (

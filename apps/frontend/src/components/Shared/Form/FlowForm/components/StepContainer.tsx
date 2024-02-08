@@ -2,11 +2,44 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-export const StepContainer = ({ children }: { children: React.ReactNode }) => {
+import Accordion, { AccordionProps } from "@mui/material/Accordion";
+import AccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+
+export const StepContainer = ({
+  children,
+  expandedStep,
+  stepIndex,
+  title,
+  handleStepExpansion,
+}: {
+  children: React.ReactNode;
+  expandedStep: number | false;
+  stepIndex: number;
+  title: string;
+  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
+}) => {
   return (
-    <Paper sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "20px" }}>
-      {children}
-    </Paper>
+    <Accordion expanded={expandedStep === stepIndex} disableGutters onChange={handleStepExpansion} sx={{}}>
+      <AccordionSummary
+        sx={{
+          "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+            transform: "rotate(90deg)",
+          },
+        }}
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+      >
+        <Typography variant="h3" fontWeight={400}>
+          {title}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails
+        sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "20px" }}
+      >
+        {children}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
