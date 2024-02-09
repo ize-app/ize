@@ -19,9 +19,9 @@ interface RequestFormProps {
   previousStepResult: PreviousStepResult | null;
 }
 export const RequestForm = ({ formMethods, formIndex, previousStepResult }: RequestFormProps) => {
-  const isAgentRespondTrigger =
-    formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
-    RespondPermissionType.Agents;
+  const isAgentRequestTrigger =
+    formMethods.watch(`steps.${formIndex}.request.permission.type`) ===
+    RequestPermissionType.Agents;
 
   const requestInputFormMethods = useFieldArray({
     control: formMethods.control,
@@ -48,8 +48,9 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
               label="Who can make requests?"
             />
 
-            {isAgentRespondTrigger && (
+            {isAgentRequestTrigger && (
               <RoleSearch
+                key="requestRoleSearch"
                 ariaLabel={"Individuals and groups who can make requests"}
                 name={`steps.${formIndex}.request.permission.agents`}
                 control={formMethods.control}

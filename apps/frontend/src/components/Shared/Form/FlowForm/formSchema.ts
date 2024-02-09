@@ -115,10 +115,9 @@ const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultDecisionType.ThresholdVote),
     defaultOption: defaultOptionSchema.optional(),
-    threshold: z
-      .object({
-        decisionThresholdCount: z.coerce.number().int().positive(),
-      })
+    threshold: z.object({
+      decisionThresholdCount: z.coerce.number().int().positive(),
+    }),
   }),
   z.object({
     type: z.literal(ResultDecisionType.PercentageVote),

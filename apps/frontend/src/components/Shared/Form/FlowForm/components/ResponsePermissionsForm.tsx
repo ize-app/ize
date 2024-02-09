@@ -87,6 +87,7 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
 
             {isAgentRespondTrigger && (
               <RoleSearch<NewFlowFormFields>
+                key="responseRoleSearch"
                 ariaLabel={"Individuals and groups who can respond"}
                 name={`steps.${formIndex}.respond.permission.agents`}
                 control={formMethods.control}

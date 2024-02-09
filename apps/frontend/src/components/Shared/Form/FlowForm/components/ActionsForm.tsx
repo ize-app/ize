@@ -20,7 +20,7 @@ export const ActionsForm = ({ formMethods, formIndex, stepsArrayMethods }: Actio
 
   const stepType = formMethods.watch(`steps.${formIndex}.respond.inputs.type`);
   const actionType = formMethods.watch(`steps.${formIndex}.actions.type`);
-  const options = formMethods.watch(`steps.${formIndex}.respond.inputs.options.options`);
+  const options = formMethods.watch(`steps.${formIndex}.respond.inputs.options.stepOptions`);
   const actionAllOptions = formMethods.watch(`steps.${formIndex}.actions.filter.allOptions`);
 
   useEffect(() => {
@@ -59,28 +59,19 @@ export const ActionsForm = ({ formMethods, formIndex, stepsArrayMethods }: Actio
                 width="300px"
                 label="Url"
                 variant="outlined"
-                endAdornment={<InputAdornment position="end">total responses</InputAdornment>}
                 name={`steps.${formIndex}.actions.callWebhook.uri`}
               />
               <TextField<NewFlowFormFields>
                 control={formMethods.control}
                 width="300px"
-                label="What does this webhook do"
+                label="What does this webhook do?"
+                placeholderText="e.g. 'Creates invite on shared calendar'"
                 variant="outlined"
-                endAdornment={<InputAdornment position="end">total responses</InputAdornment>}
                 name={`steps.${formIndex}.actions.callWebhook.name`}
-              />
-              <TextField<NewFlowFormFields>
-                control={formMethods.control}
-                width="300px"
-                label="Minimum # of responses for a result"
-                variant="outlined"
-                endAdornment={<InputAdornment position="end">total responses</InputAdornment>}
-                name={`steps.${formIndex}.result.minimumResponses`}
               />
             </ResponsiveFormRow>
           )}
-          {actionType !== ActionType.None && options && (
+          {actionType !== ActionType.None && (options ?? []).length > 0 && (
             <ResponsiveFormRow>
               <Switch<NewFlowFormFields>
                 name={`steps.${formIndex}.actions.filter.allOptions`}
