@@ -156,6 +156,49 @@ export type EvolveProcessesDiff = {
   processName: Scalars['String']['output'];
 };
 
+export type FieldArgs = {
+  fieldId: Scalars['String']['input'];
+  freeInputDataType?: InputMaybe<FieldDataType>;
+  name: Scalars['String']['input'];
+  optionsConfig?: InputMaybe<FieldOptionsConfigArgs>;
+  required: Scalars['Boolean']['input'];
+  type: FieldType;
+};
+
+export enum FieldDataType {
+  Date = 'Date',
+  DateTime = 'DateTime',
+  Number = 'Number',
+  String = 'String',
+  Uri = 'Uri'
+}
+
+export type FieldOptionArgs = {
+  dataType: FieldDataType;
+  name: Scalars['String']['input'];
+  optionId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type FieldOptionsConfigArgs = {
+  hasRequestOptions: Scalars['Boolean']['input'];
+  maxSelections: Scalars['Int']['input'];
+  options: Array<FieldOptionArgs>;
+  previousStepOptions: Scalars['Boolean']['input'];
+  requestOptionsDataType?: InputMaybe<FieldDataType>;
+  selectionType: FieldOptionsSelectionType;
+};
+
+export enum FieldOptionsSelectionType {
+  MultiSelect = 'MultiSelect',
+  Rank = 'Rank',
+  Select = 'Select'
+}
+
+export enum FieldType {
+  FreeInput = 'FreeInput',
+  Options = 'Options'
+}
+
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -285,6 +328,7 @@ export type Mutation = {
   newAgents: Array<Agent>;
   newCustomGroup: Scalars['String']['output'];
   newEditProcessRequest: Scalars['String']['output'];
+  newFlow: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
@@ -304,6 +348,11 @@ export type MutationNewCustomGroupArgs = {
 
 export type MutationNewEditProcessRequestArgs = {
   inputs: NewEditProcessRequestArgs;
+};
+
+
+export type MutationNewFlowArgs = {
+  flow: NewFlowArgs;
 };
 
 
@@ -346,6 +395,15 @@ export enum NewAgentTypes {
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
 }
+
+export type NewFlowArgs = {
+  steps: Array<NewStepArgs>;
+};
+
+export type NewStepArgs = {
+  request: StepRequestArgs;
+  response: StepResponseArgs;
+};
 
 export type NftCollection = {
   __typename?: 'NftCollection';
@@ -447,6 +505,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
+  flow: Process;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -466,6 +525,11 @@ export type Query = {
 
 export type QueryDiscordServerRolesArgs = {
   serverId: Scalars['String']['input'];
+};
+
+
+export type QueryFlowArgs = {
+  processId: Scalars['String']['input'];
 };
 
 
@@ -608,6 +672,14 @@ export type Roles = {
   respond: Array<Agent>;
 };
 
+export type StepRequestArgs = {
+  fields: Array<FieldArgs>;
+};
+
+export type StepResponseArgs = {
+  fields: Array<FieldArgs>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -702,6 +774,13 @@ export type DiscordServerRolesQuery = { __typename?: 'Query', discordServerRoles
 export type DiscordServerPartsFragment = { __typename?: 'DiscordServer', id: string, name: string, hasCultsBot: boolean };
 
 export type DiscordServerRolePartsFragment = { __typename?: 'DiscordAPIServerRole', id: string, name: string, botRole: boolean };
+
+export type NewFlowMutationVariables = Exact<{
+  flow: NewFlowArgs;
+}>;
+
+
+export type NewFlowMutation = { __typename?: 'Mutation', newFlow: string };
 
 export type SetUpDiscordServerGroupMutationVariables = Exact<{
   input: SetUpDiscordServerInput;
@@ -959,6 +1038,7 @@ export const NftTokenDocument = {"kind":"Document","definitions":[{"kind":"Opera
 export const HatTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HatToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Blockchain"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hatToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tokenId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}}},{"kind":"Argument","name":{"kind":"Name","value":"chain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiHatTokenParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiHatTokenParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiHatToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"readableTokenId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"topHatName"}},{"kind":"Field","name":{"kind":"Name","value":"topHatIcon"}}]}}]} as unknown as DocumentNode<HatTokenQuery, HatTokenQueryVariables>;
 export const SearchNftContractsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchNftContracts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Blockchain"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchNftContracts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"chain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiNftContractParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiNftContractParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AlchemyApiNftContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]} as unknown as DocumentNode<SearchNftContractsQuery, SearchNftContractsQueryVariables>;
 export const DiscordServerRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DiscordServerRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discordServerRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"serverId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"serverId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerRoleParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerRoleParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordAPIServerRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"botRole"}}]}}]} as unknown as DocumentNode<DiscordServerRolesQuery, DiscordServerRolesQueryVariables>;
+export const NewFlowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NewFlow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"flow"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NewFlowArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newFlow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"flow"},"value":{"kind":"Variable","name":{"kind":"Name","value":"flow"}}}]}]}}]} as unknown as DocumentNode<NewFlowMutation, NewFlowMutationVariables>;
 export const SetUpDiscordServerGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"setUpDiscordServerGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"setUpDiscordServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setUpDiscordServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SetUpDiscordServerGroupMutation, SetUpDiscordServerGroupMutationVariables>;
 export const NewCustomGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"NewCustomGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CustomGroupArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"newCustomGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}]}]}}]} as unknown as DocumentNode<NewCustomGroupMutation, NewCustomGroupMutationVariables>;
 export const GroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Group"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NftCollectionParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NftCollection"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupNftParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupNft"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"NftCollection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"NftCollectionParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupCustomParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupCustom"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupTypeSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupNft"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupNftParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupCustom"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupCustomParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"groupType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupTypeSummaryParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}}]} as unknown as DocumentNode<GroupQuery, GroupQueryVariables>;
@@ -1159,6 +1239,49 @@ export type EvolveProcessesDiff = {
   processName: Scalars['String']['output'];
 };
 
+export type FieldArgs = {
+  fieldId: Scalars['String']['input'];
+  freeInputDataType?: InputMaybe<FieldDataType>;
+  name: Scalars['String']['input'];
+  optionsConfig?: InputMaybe<FieldOptionsConfigArgs>;
+  required: Scalars['Boolean']['input'];
+  type: FieldType;
+};
+
+export enum FieldDataType {
+  Date = 'Date',
+  DateTime = 'DateTime',
+  Number = 'Number',
+  String = 'String',
+  Uri = 'Uri'
+}
+
+export type FieldOptionArgs = {
+  dataType: FieldDataType;
+  name: Scalars['String']['input'];
+  optionId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type FieldOptionsConfigArgs = {
+  hasRequestOptions: Scalars['Boolean']['input'];
+  maxSelections: Scalars['Int']['input'];
+  options: Array<FieldOptionArgs>;
+  previousStepOptions: Scalars['Boolean']['input'];
+  requestOptionsDataType?: InputMaybe<FieldDataType>;
+  selectionType: FieldOptionsSelectionType;
+};
+
+export enum FieldOptionsSelectionType {
+  MultiSelect = 'MultiSelect',
+  Rank = 'Rank',
+  Select = 'Select'
+}
+
+export enum FieldType {
+  FreeInput = 'FreeInput',
+  Options = 'Options'
+}
+
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -1288,6 +1411,7 @@ export type Mutation = {
   newAgents: Array<Agent>;
   newCustomGroup: Scalars['String']['output'];
   newEditProcessRequest: Scalars['String']['output'];
+  newFlow: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
@@ -1307,6 +1431,11 @@ export type MutationNewCustomGroupArgs = {
 
 export type MutationNewEditProcessRequestArgs = {
   inputs: NewEditProcessRequestArgs;
+};
+
+
+export type MutationNewFlowArgs = {
+  flow: NewFlowArgs;
 };
 
 
@@ -1349,6 +1478,15 @@ export enum NewAgentTypes {
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
 }
+
+export type NewFlowArgs = {
+  steps: Array<NewStepArgs>;
+};
+
+export type NewStepArgs = {
+  request: StepRequestArgs;
+  response: StepResponseArgs;
+};
 
 export type NftCollection = {
   __typename?: 'NftCollection';
@@ -1450,6 +1588,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
+  flow: Process;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -1469,6 +1608,11 @@ export type Query = {
 
 export type QueryDiscordServerRolesArgs = {
   serverId: Scalars['String']['input'];
+};
+
+
+export type QueryFlowArgs = {
+  processId: Scalars['String']['input'];
 };
 
 
@@ -1609,6 +1753,14 @@ export type Roles = {
   edit?: Maybe<Agent>;
   request: Array<Agent>;
   respond: Array<Agent>;
+};
+
+export type StepRequestArgs = {
+  fields: Array<FieldArgs>;
+};
+
+export type StepResponseArgs = {
+  fields: Array<FieldArgs>;
 };
 
 export type User = {

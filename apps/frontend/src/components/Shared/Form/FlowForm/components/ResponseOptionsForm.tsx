@@ -15,9 +15,14 @@ import { InputDataType } from "../types";
 import { Checkbox, DatePicker, DateTimePicker, Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 
-import { responseOptionSchema } from "../formSchema";
+import { FieldOptionSchemaType } from "../formValidation/fields";
+import { FieldDataType } from "@/graphql/generated/graphql";
 
-type ResponseOptionType = z.infer<typeof responseOptionSchema>;
+export const defaultOption: FieldOptionSchemaType = {
+  optionId: "",
+  name: "",
+  dataType: FieldDataType.String,
+};
 
 interface RequestInputsFormProps {
   useFormMethods: UseFormReturn<NewFlowFormFields>;
@@ -32,27 +37,28 @@ export const ResponseOptionsForm = ({
 }: RequestInputsFormProps) => {
   const { control } = useFormMethods;
   const { fields, remove, append } = responseOptionsFormMethods;
-  const options = useFormMethods.watch(`steps.${formIndex}.respond.inputs.options.stepOptions`);
+  const options = useFormMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
 
   const renderInput = (inputIndex: number, disabled: boolean) => {
     const dataType = useFormMethods.getValues(
-      `steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.dataType`,
+      `steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.dataType`,
     );
+
     switch (dataType) {
-      case InputDataType.Date:
+      case FieldDataType.Date:
         return (
           <DatePicker<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
+            name={`steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             showLabel={false}
             label={`Option #${inputIndex + 1}`}
           />
         );
-      case InputDataType.DateTime:
+      case FieldDataType.DateTime:
         return (
           <DateTimePicker<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
+            name={`steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             showLabel={false}
@@ -62,7 +68,7 @@ export const ResponseOptionsForm = ({
       default:
         return (
           <TextField<NewFlowFormFields>
-            name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.name`}
+            name={`steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             placeholderText={`Option #${inputIndex + 1}`}
@@ -98,12 +104,11 @@ export const ResponseOptionsForm = ({
                   <TableCell
                     align="center"
                     sx={{
-                      width: "160px",
                       display: "none",
                     }}
                   >
                     <TextField<NewFlowFormFields>
-                      name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.optionId`}
+                      name={`steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.optionId`}
                       key={"optionId" + inputIndex.toString() + formIndex.toString()}
                       control={control}
                       showLabel={false}
@@ -124,7 +129,7 @@ export const ResponseOptionsForm = ({
                       width="120px"
                       displayLabel={false}
                       size={"small"}
-                      name={`steps.${formIndex}.respond.inputs.options.stepOptions.${inputIndex}.dataType`}
+                      name={`steps.${formIndex}.response.field.optionsConfig.options.${inputIndex}.dataType`}
                       key={"dataType" + inputIndex.toString() + formIndex.toString()}
                       selectOptions={[
                         { name: "Text", value: InputDataType.String },
@@ -157,11 +162,7 @@ export const ResponseOptionsForm = ({
         sx={{ margin: "0px 0px 8px 16px", position: "relative", bottom: "8px" }}
         variant="outlined"
         onClick={() => {
-          append({
-            optionId: "newOption." + (options ?? []).length,
-            name: "",
-            dataType: InputDataType.String,
-          } as ResponseOptionType);
+          append(defaultOption);
         }}
       >
         Add option

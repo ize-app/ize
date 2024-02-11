@@ -1,0 +1,43 @@
+# Should match prisma enum by same name
+enum FieldDataType {
+  String
+  Number
+  Uri
+  Date
+  DateTime
+}
+
+enum FieldType {
+  Options
+  FreeInput
+}
+
+enum FieldOptionsSelectionType {
+  Rank
+  MultiSelect
+  Select
+}
+
+input FieldArgs {
+  fieldId: String!
+  type: FieldType!
+  name: String!
+  required: Boolean!
+  freeInputDataType: FieldDataType
+  optionsConfig: FieldOptionsConfigArgs
+}
+
+input FieldOptionsConfigArgs {
+  previousStepOptions: Boolean!
+  requestOptionsDataType: FieldDataType
+  hasRequestOptions: Boolean!
+  maxSelections: Int!
+  selectionType: FieldOptionsSelectionType!
+  options: [FieldOptionArgs!]!
+}
+
+input FieldOptionArgs {
+  optionId: String
+  dataType: FieldDataType!
+  name: String!
+}

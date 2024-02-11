@@ -1,0 +1,24 @@
+type Mutation {
+  newFlow(flow: NewFlowArgs!): String!
+}
+
+type Query {
+  flow(processId: String!): Process!
+}
+
+input NewFlowArgs {
+  steps: [NewStepArgs!]!
+}
+
+input NewStepArgs {
+  request: StepRequestArgs!
+  response: StepResponseArgs!
+}
+
+input StepRequestArgs {
+  fields: [FieldArgs!]!
+}
+
+input StepResponseArgs {
+  fields: [FieldArgs!]!
+}

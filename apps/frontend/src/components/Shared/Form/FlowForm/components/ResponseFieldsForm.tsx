@@ -5,13 +5,14 @@ import { InputDataType, OptionSelectionType, PreviousStepResult, StepType } from
 import { Select, Switch, TextField } from "../../FormFields";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
-import { ResponseOptionsForm } from "./ResponseOptionsForm";
-import { Button, FormHelperText } from "@mui/material";
+import { ResponseOptionsForm, defaultOption } from "./ResponseOptionsForm";
+import { Box, Button, FormHelperText } from "@mui/material";
 
-interface ResponseInputsFormProps {
+interface ResponseFieldsFormProps {
   formMethods: UseFormReturn<NewFlowFormFields>;
   formIndex: number; // react-hook-form name
   previousStepResult: PreviousStepResult | null;
+  stepType: StepType;
 }
 
 const getInputStepHeader = (stepType: StepType) => {
@@ -25,27 +26,26 @@ const getInputStepHeader = (stepType: StepType) => {
   }
 };
 
-export const ResponseInputsForm = ({
+export const ResponseFieldsForm = ({
   formMethods,
   formIndex,
   previousStepResult,
-}: ResponseInputsFormProps) => {
+  stepType,
+}: ResponseFieldsFormProps) => {
   const responseOptionsFormMethods = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.respond.inputs.options.stepOptions`,
+    name: `steps.${formIndex}.response.field.optionsConfig.options`,
   });
 
-  const stepType = formMethods.watch(`steps.${formIndex}.respond.inputs.type`);
-
   const stepDefinedOptions =
-    formMethods.watch(`steps.${formIndex}.respond.inputs.options.stepOptions`) ?? [];
+    formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`) ?? [];
 
   const hasRequestDefinedOptions = formMethods.watch(
-    `steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`,
+    `steps.${formIndex}.response.field.optionsConfig.hasRequestOptions`,
   );
 
   const inputsGlobalError = formMethods.formState?.errors?.steps
-    ? formMethods.formState?.errors?.steps[formIndex]?.respond?.inputs?.message
+    ? formMethods.formState?.errors?.steps[formIndex]?.response?.field?.message
     : "";
 
   console.log("previous step", previousStepResult);
@@ -54,12 +54,35 @@ export const ResponseInputsForm = ({
     <StepComponentContainer label={getInputStepHeader(stepType)}>
       {stepType && (
         <>
+          <Box sx={{ display: "none" }}>
+            <TextField<NewFlowFormFields>
+              name={`steps.${formIndex}.response.field.type`}
+              control={formMethods.control}
+              label={`Field Type`}
+              variant="outlined"
+              disabled={true}
+            />
+            <TextField<NewFlowFormFields>
+              name={`steps.${formIndex}.response.field.fieldId`}
+              control={formMethods.control}
+              label={`Field ID`}
+              variant="outlined"
+              disabled={true}
+            />
+            <TextField<NewFlowFormFields>
+              name={`steps.${formIndex}.response.field.name`}
+              control={formMethods.control}
+              label={`Field ID`}
+              variant="outlined"
+              disabled={true}
+            />
+          </Box>
           {[StepType.GetInput].includes(stepType) && (
             <ResponsiveFormRow>
               <Select
                 control={formMethods.control}
                 width="300px"
-                name={`steps.${formIndex}.respond.inputs.freeInput.dataType`}
+                name={`steps.${formIndex}.response.field.freeInputDataType`}
                 selectOptions={[
                   { name: "Text", value: InputDataType.String },
                   { name: "Number", value: InputDataType.Number },
@@ -76,7 +99,7 @@ export const ResponseInputsForm = ({
               {previousStepResult && !previousStepResult.isAiSummary && (
                 <ResponsiveFormRow>
                   <Switch<NewFlowFormFields>
-                    name={`steps.${formIndex}.respond.inputs.options.previousStepOptions`}
+                    name={`steps.${formIndex}.response.field.optionsConfig.previousStepOptions`}
                     control={formMethods.control}
                     width="100%"
                     label={(() => {
@@ -109,7 +132,7 @@ export const ResponseInputsForm = ({
               {formIndex === 0 && (
                 <ResponsiveFormRow>
                   <Switch<NewFlowFormFields>
-                    name={`steps.${formIndex}.respond.inputs.options.requestOptions.requestCanCreateOptions`}
+                    name={`steps.${formIndex}.response.field.optionsConfig.hasRequestOptions`}
                     control={formMethods.control}
                     label="Requestor defines options"
                   />
@@ -117,7 +140,7 @@ export const ResponseInputsForm = ({
                     <Select
                       control={formMethods.control}
                       width="150px"
-                      name={`steps.${formIndex}.respond.inputs.options.requestOptions.dataType`}
+                      name={`steps.${formIndex}.response.field.optionsConfig.requestOptionsDataType`}
                       selectOptions={[
                         { name: "Text", value: InputDataType.String },
                         { name: "Number", value: InputDataType.Number },
@@ -142,11 +165,7 @@ export const ResponseInputsForm = ({
                   <Button
                     variant={"outlined"}
                     onClick={() => {
-                      responseOptionsFormMethods.append({
-                        optionId: "newOption." + stepDefinedOptions.length,
-                        name: "",
-                        dataType: InputDataType.String,
-                      });
+                      responseOptionsFormMethods.append(defaultOption);
                     }}
                   >
                     Add options that will be on every request

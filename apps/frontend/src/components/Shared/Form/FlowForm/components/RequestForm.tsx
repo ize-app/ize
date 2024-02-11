@@ -11,13 +11,24 @@ import {
   StepType,
 } from "../types";
 import { Box, Button } from "@mui/material";
-import { RequestInputsForm } from "./RequestInputsForm";
+import { RequestFieldsForm } from "./RequestFieldsForm";
+import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
+import { FieldSchemaType } from "../formValidation/fields";
 
 interface RequestFormProps {
   formMethods: UseFormReturn<NewFlowFormFields>;
   formIndex: number; // react-hook-form name
   previousStepResult: PreviousStepResult | null;
 }
+
+export const defaultRequestField = {
+  fieldId: "",
+  type: FieldType.FreeInput,
+  name: "",
+  required: true,
+  freeInputDataType: FieldDataType.String,
+} as FieldSchemaType;
+
 export const RequestForm = ({ formMethods, formIndex, previousStepResult }: RequestFormProps) => {
   const isAgentRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) ===
@@ -25,13 +36,13 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
 
   const requestInputFormMethods = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.request.inputs`,
+    name: `steps.${formIndex}.request.fields`,
   });
 
-  const inputs = formMethods.watch(`steps.${formIndex}.request.inputs`);
+  const inputs = formMethods.watch(`steps.${formIndex}.request.fields`);
 
   const hasRequestInputs =
-    (formMethods.watch(`steps.${formIndex}.request.inputs`) ?? []).length > 0;
+    (formMethods.watch(`steps.${formIndex}.request.fields`) ?? []).length > 0;
   return (
     <StepComponentContainer label="How does this flow get triggered??">
       {formIndex === 0 && (
@@ -61,7 +72,7 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
           </ResponsiveFormRow>
           <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
             {hasRequestInputs ? (
-              <RequestInputsForm
+              <RequestFieldsForm
                 useFormMethods={formMethods}
                 formIndex={formIndex}
                 //@ts-ignore Not sure why the TS error - types are the same
@@ -71,12 +82,7 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
               <Button
                 variant={"outlined"}
                 onClick={() => {
-                  requestInputFormMethods.append({
-                    inputId: "newInput." + (inputs ?? []).length,
-                    name: "",
-                    required: true,
-                    dataType: InputDataType.String,
-                  });
+                  requestInputFormMethods.append(defaultRequestField);
                 }}
               >
                 Add required inputs to make a request

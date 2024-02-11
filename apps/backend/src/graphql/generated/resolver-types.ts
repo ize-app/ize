@@ -157,6 +157,49 @@ export type EvolveProcessesDiff = {
   processName: Scalars['String']['output'];
 };
 
+export type FieldArgs = {
+  fieldId: Scalars['String']['input'];
+  freeInputDataType?: InputMaybe<FieldDataType>;
+  name: Scalars['String']['input'];
+  optionsConfig?: InputMaybe<FieldOptionsConfigArgs>;
+  required: Scalars['Boolean']['input'];
+  type: FieldType;
+};
+
+export enum FieldDataType {
+  Date = 'Date',
+  DateTime = 'DateTime',
+  Number = 'Number',
+  String = 'String',
+  Uri = 'Uri'
+}
+
+export type FieldOptionArgs = {
+  dataType: FieldDataType;
+  name: Scalars['String']['input'];
+  optionId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type FieldOptionsConfigArgs = {
+  hasRequestOptions: Scalars['Boolean']['input'];
+  maxSelections: Scalars['Int']['input'];
+  options: Array<FieldOptionArgs>;
+  previousStepOptions: Scalars['Boolean']['input'];
+  requestOptionsDataType?: InputMaybe<FieldDataType>;
+  selectionType: FieldOptionsSelectionType;
+};
+
+export enum FieldOptionsSelectionType {
+  MultiSelect = 'MultiSelect',
+  Rank = 'Rank',
+  Select = 'Select'
+}
+
+export enum FieldType {
+  FreeInput = 'FreeInput',
+  Options = 'Options'
+}
+
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -286,6 +329,7 @@ export type Mutation = {
   newAgents: Array<Agent>;
   newCustomGroup: Scalars['String']['output'];
   newEditProcessRequest: Scalars['String']['output'];
+  newFlow: Scalars['String']['output'];
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
@@ -305,6 +349,11 @@ export type MutationNewCustomGroupArgs = {
 
 export type MutationNewEditProcessRequestArgs = {
   inputs: NewEditProcessRequestArgs;
+};
+
+
+export type MutationNewFlowArgs = {
+  flow: NewFlowArgs;
 };
 
 
@@ -347,6 +396,15 @@ export enum NewAgentTypes {
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
 }
+
+export type NewFlowArgs = {
+  steps: Array<NewStepArgs>;
+};
+
+export type NewStepArgs = {
+  request: StepRequestArgs;
+  response: StepResponseArgs;
+};
 
 export type NftCollection = {
   __typename?: 'NftCollection';
@@ -448,6 +506,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
+  flow: Process;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -467,6 +526,11 @@ export type Query = {
 
 export type QueryDiscordServerRolesArgs = {
   serverId: Scalars['String']['input'];
+};
+
+
+export type QueryFlowArgs = {
+  processId: Scalars['String']['input'];
 };
 
 
@@ -607,6 +671,14 @@ export type Roles = {
   edit?: Maybe<Agent>;
   request: Array<Agent>;
   respond: Array<Agent>;
+};
+
+export type StepRequestArgs = {
+  fields: Array<FieldArgs>;
+};
+
+export type StepResponseArgs = {
+  fields: Array<FieldArgs>;
 };
 
 export type User = {
@@ -756,6 +828,12 @@ export type ResolversTypes = {
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
+  FieldArgs: FieldArgs;
+  FieldDataType: FieldDataType;
+  FieldOptionArgs: FieldOptionArgs;
+  FieldOptionsConfigArgs: FieldOptionsConfigArgs;
+  FieldOptionsSelectionType: FieldOptionsSelectionType;
+  FieldType: FieldType;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
@@ -781,6 +859,8 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   NewAgentArgs: NewAgentArgs;
   NewAgentTypes: NewAgentTypes;
+  NewFlowArgs: NewFlowArgs;
+  NewStepArgs: NewStepArgs;
   NftCollection: ResolverTypeWrapper<NftCollection>;
   NftTypes: NftTypes;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
@@ -805,6 +885,8 @@ export type ResolversTypes = {
   RoleArgs: RoleArgs;
   RoleType: RoleType;
   Roles: ResolverTypeWrapper<Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversTypes['Agent']>, request: Array<ResolversTypes['Agent']>, respond: Array<ResolversTypes['Agent']> }>;
+  StepRequestArgs: StepRequestArgs;
+  StepResponseArgs: StepResponseArgs;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
   UserRoles: ResolverTypeWrapper<UserRoles>;
@@ -838,6 +920,9 @@ export type ResolversParentTypes = {
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: EvolveProcessAction;
   EvolveProcessesDiff: EvolveProcessesDiff;
+  FieldArgs: FieldArgs;
+  FieldOptionArgs: FieldOptionArgs;
+  FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   Float: Scalars['Float']['output'];
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupCustom: GroupCustom;
@@ -861,6 +946,8 @@ export type ResolversParentTypes = {
   Me: Me;
   Mutation: {};
   NewAgentArgs: NewAgentArgs;
+  NewFlowArgs: NewFlowArgs;
+  NewStepArgs: NewStepArgs;
   NftCollection: NftCollection;
   OnboardedDiscordServer: OnboardedDiscordServer;
   Organization: Organization;
@@ -881,6 +968,8 @@ export type ResolversParentTypes = {
   Result: Result;
   RoleArgs: RoleArgs;
   Roles: Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversParentTypes['Agent']>, request: Array<ResolversParentTypes['Agent']>, respond: Array<ResolversParentTypes['Agent']> };
+  StepRequestArgs: StepRequestArgs;
+  StepResponseArgs: StepResponseArgs;
   String: Scalars['String']['output'];
   User: User;
   UserRoles: UserRoles;
@@ -1078,6 +1167,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newAgents?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType, RequireFields<MutationNewAgentsArgs, 'agents'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
+  newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'processId'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'optionId' | 'requestId'>>;
@@ -1156,6 +1246,7 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
+  flow?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryFlowArgs, 'processId'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;

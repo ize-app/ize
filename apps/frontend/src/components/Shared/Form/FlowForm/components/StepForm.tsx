@@ -5,7 +5,7 @@ import { Select, TextField } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
 import { PreviousStepResult, ResultFreeText, StepType } from "../types";
-import { ResponseInputsForm } from "./ResponseInputsForm";
+import { ResponseFieldsForm } from "./ResponseFieldsForm";
 import { ResponsePermissionsForm } from "./ResponsePermissionsForm";
 import { ResultForm } from "./ResultForm";
 import { ActionsForm } from "./ActionsForm";
@@ -69,14 +69,14 @@ export const StepForm = ({
   //     setSectionExpanded(newExpanded ? sectionName : false);
   //   };
 
-  const stepType = watch(`steps.${formIndex}.respond.inputs.type`);
+  const stepType = watch(`steps.${formIndex}.type`);
   const stepName = watch(`steps.${formIndex}.name`);
 
   const previousStepResult: PreviousStepResult | null =
     formIndex > 0
       ? {
-          stepName: watch(`steps.${formIndex - 1}.name`),
-          stepType: watch(`steps.${formIndex - 1}.respond.inputs.type`),
+          stepName: watch(`steps.${formIndex - 1}.name`) ?? "",
+          stepType: watch(`steps.${formIndex - 1}.type`),
           isAiSummary:
             watch(`steps.${formIndex - 1}.result.freeText.type`) === ResultFreeText.AiSummary,
         }
@@ -84,8 +84,8 @@ export const StepForm = ({
 
   const isReusable = watch("reusable");
 
-  const stepNameLabel = createStepNameLabel(stepType);
-  const stepTitle = createStepTitle(stepType);
+  const stepNameLabel = createStepNameLabel(stepType as StepType);
+  const stepTitle = createStepTitle(stepType as StepType);
 
   return (
     <StepContainer
@@ -101,7 +101,7 @@ export const StepForm = ({
         <Select
           control={control}
           label="Purpose of this step"
-          name={`steps.${formIndex}.respond.inputs.type`}
+          name={`steps.${formIndex}.type`}
           width="300px"
           selectOptions={[
             { name: "Decide", value: StepType.Decide },
@@ -130,12 +130,17 @@ export const StepForm = ({
               previousStepResult={previousStepResult}
             />
           )}
-          <ResponseInputsForm
+          <ResponseFieldsForm
+            stepType={stepType}
             formMethods={useFormMethods}
             formIndex={formIndex}
             previousStepResult={previousStepResult}
           />
-          <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} />
+          <ResponsePermissionsForm
+            formMethods={useFormMethods}
+            formIndex={formIndex}
+            stepType={stepType}
+          />
           <ResultForm formMethods={useFormMethods} formIndex={formIndex} />
           <ActionsForm
             formMethods={useFormMethods}

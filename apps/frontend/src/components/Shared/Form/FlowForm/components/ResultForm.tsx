@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { ResultDecisionType, ResultFreeText, StepType } from "../types";
 import { Select, Switch, TextField } from "../../FormFields";
-import { responseOptionSchema } from "../formSchema";
+import { responseOptionSchema } from "../formValidation/flow";
 
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";

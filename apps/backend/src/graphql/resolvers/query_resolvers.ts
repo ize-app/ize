@@ -4,6 +4,7 @@ import { groupMutations, groupQueries } from "./group_resolvers";
 import { userQueries } from "./user_resolvers";
 import { processMutations, processQueries } from "./process_resolvers";
 import { requestMutations, requestQueries } from "./request_resolvers";
+import { flowMutations, flowQueries } from "./flowResolvers";
 
 export const resolvers = {
   Query: {
@@ -13,10 +14,12 @@ export const resolvers = {
     ...groupQueries,
     ...processQueries,
     ...requestQueries,
+    ...flowQueries,
   },
   Mutation: {
     ...groupMutations,
     ...processMutations,
     ...requestMutations,
+    ...flowMutations,
   },
 };

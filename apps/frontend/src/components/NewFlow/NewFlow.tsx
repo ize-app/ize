@@ -15,25 +15,28 @@ import {
   NewFlowFormFields,
   useNewFlowWizardState,
 } from "./newFlowWizard";
+import { NewFlowDocument } from "@/graphql/generated/graphql";
+import { useMutation } from "@apollo/client";
+import { createNewFlowArgs } from "../shared/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 
 export const NewFlow = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
 
-  // const [mutate] = useMutation(NewProcessDocument, {
-  //   onCompleted: (data) => {
-  //     const { newProcess: newProcessId } = data;
-  //     navigate(`/processes/${fullUUIDToShort(newProcessId)}`);
-  //   },
-  // });
+  const [mutate] = useMutation(NewFlowDocument, {
+    onCompleted: (data) => {
+      const { newFlow: newFlowId } = data;
+      // navigate(`/flow/${fullUUIDToShort(newProcessId)}`);
+    },
+  });
 
   const onComplete = async () => {
     try {
-      // await mutate({
-      //   variables: {
-      //     process: createProcessMutation(formState),
-      //   },
-      // });
+      await mutate({
+        variables: {
+          flow: createNewFlowArgs(formState),
+        },
+      });
       setSnackbarData({
         ...snackbarData,
         message: "Flow created!",

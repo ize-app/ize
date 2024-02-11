@@ -1,0 +1,3 @@
+mutation NewFlow($flow: NewFlowArgs!) {
+  newFlow(flow: $flow)
+}

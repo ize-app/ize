@@ -23,10 +23,12 @@ import { LabeledGroupedInputs } from "./LabeledGroupedInputs";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { InputAdornment } from "@mui/material";
+import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
 interface ResponsePermissionsForm {
   formMethods: UseFormReturn<NewFlowFormFields>;
   formIndex: number; // react-hook-form name
+  stepType: StepType;
 }
 
 const getInputStepHeader = (stepType: StepType) => {
@@ -40,34 +42,39 @@ const getInputStepHeader = (stepType: StepType) => {
   }
 };
 
-export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePermissionsForm) => {
-  const stepType = formMethods.watch(`steps.${formIndex}.respond.inputs.type`);
+export const ResponsePermissionsForm = ({
+  formMethods,
+  formIndex,
+  stepType,
+}: ResponsePermissionsForm) => {
   const isAgentRespondTrigger =
     formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
     RespondPermissionType.Agents;
 
-  const createOptionSelectionTypeOptions = (stepPurpose: StepType) => {
+  const createOptionSelectionTypeOptions = (
+    stepPurpose: StepType,
+  ): { name: string; value: FieldOptionsSelectionType }[] => {
     const options = [
       {
         name: "Select one",
-        value: OptionSelectionType.SingleSelect,
+        value: FieldOptionsSelectionType.Select,
       },
       {
         name: "Rank options",
-        value: OptionSelectionType.Rank,
+        value: FieldOptionsSelectionType.Rank,
       },
     ];
     if (stepPurpose === StepType.Prioritize)
       options.push({
         name: "Select multiple",
-        value: OptionSelectionType.MultiSelect,
+        value: FieldOptionsSelectionType.MultiSelect,
       });
 
     return options;
   };
   const isMultiSelect =
-    formMethods.watch(`steps.${formIndex}.respond.inputs.options.selectionType`) ===
-    OptionSelectionType.MultiSelect;
+    formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.selectionType`) ===
+    FieldOptionsSelectionType.MultiSelect;
 
   return (
     <StepComponentContainer label={getInputStepHeader(stepType)}>
@@ -102,7 +109,7 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
                 <Select
                   control={formMethods.control}
                   width="300px"
-                  name={`steps.${formIndex}.respond.inputs.options.selectionType`}
+                  name={`steps.${formIndex}.response.field.optionsConfig.selectionType`}
                   selectOptions={createOptionSelectionTypeOptions(stepType)}
                   label="How do participants select options?"
                 />
@@ -112,7 +119,7 @@ export const ResponsePermissionsForm = ({ formMethods, formIndex }: ResponsePerm
                     width="300px"
                     label="How many can they select?"
                     variant="outlined"
-                    name={`steps.${formIndex}.respond.inputs.options.maxSelectableOptions`}
+                    name={`steps.${formIndex}.response.field.optionsConfig.maxSelections`}
                   />
                 )}
               </>

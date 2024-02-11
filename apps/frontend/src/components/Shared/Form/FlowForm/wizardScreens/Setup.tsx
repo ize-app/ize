@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNewFlowWizardState, NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { flowSchema } from "../formSchema";
+import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
 import {
   OptionsCreationType,
@@ -16,35 +16,16 @@ import {
   RequestPermissionType,
 } from "../types";
 import { Switch, TextField } from "../../FormFields";
+import { FieldType } from "@/graphql/generated/graphql";
 
 export const defaultStep = {
-  request: { permission: { type: RequestPermissionType.Anyone }, inputs: [] },
-  respond: {
+  request: { permission: { type: RequestPermissionType.Anyone }, fields: [] },
+  response: {
     permission: { type: RespondPermissionType.Anyone },
-    inputs: {
-      type: undefined,
-      freeInput: {
-        dataType: InputDataType.String,
-      },
-      options: {
-        previousStepOptions: true,
-        selectionType: OptionSelectionType.SingleSelect,
-        dataType: InputDataType.String,
-        creationType: OptionsCreationType.ProcessDefinedOptions,
-        maxSelectableOptions: 1,
-        options: [
-          // {
-          //   optionId: "newOption.0",
-          //   name: "✅",
-          //   dataType: InputDataType.String,
-          // },
-          // {
-          //   optionId: "newOption.1",
-          //   name: "❌",
-          //   dataType: InputDataType.String,
-          // },
-        ],
-      },
+    field: {
+      fieldId: "",
+      type: FieldType.Options,
+      name: "temp",
     },
   },
   result: {
@@ -58,6 +39,7 @@ export const defaultStep = {
       // },
     },
   },
+
   actions: { type: ActionType.None, filter: { allOptions: true } },
 };
 
