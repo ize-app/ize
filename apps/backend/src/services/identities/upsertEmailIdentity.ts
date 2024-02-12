@@ -31,7 +31,9 @@ export const upsertEmailIdentity = async ({
     create: {
       email: newAgent.identityEmail.email,
       Identity: {
-        create: {},
+        create: {
+          Entity: { create: {} },
+        },
       },
     },
   });

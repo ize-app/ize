@@ -125,37 +125,52 @@ const upsertNftTokenGroup = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }) => {
-  await transaction.groupNft.upsert({
+  const existingGroup = await transaction.groupNft.findUnique({
     where: {
       collectionId_tokenId: {
         collectionId,
         tokenId: tokenId ?? "",
       },
     },
-    update: {
-      icon: icon,
-      name: tokenId
-        ? tokenName ?? "Token ID: " + tokenId
-        : (collectionName ?? "Unknown collection") + " (All tokens)",
-    },
-    create: {
-      name: tokenId
-        ? tokenName ?? "Token ID: " + tokenId
-        : (collectionName ?? "Unknown collection") + " (All tokens)",
-      tokenId: tokenId ?? "",
-      icon: icon,
-      Group: {
-        create: {
-          creatorId: context.currentUser?.id as string,
-        },
-      },
-      NftCollection: {
-        connect: {
-          id: collectionId,
-        },
-      },
-    },
   });
+
+  if (existingGroup) {
+    await transaction.groupNft.update({
+      where: {
+        id: existingGroup.id,
+      },
+      data: {
+        icon: icon,
+        name: tokenId
+          ? tokenName ?? "Token ID: " + tokenId
+          : (collectionName ?? "Unknown collection") + " (All tokens)",
+      },
+    });
+  } else {
+    await transaction.entity.create({
+      data: {
+        Group: {
+          create: {
+            creatorId: context.currentUser?.id as string,
+            GroupNft: {
+              create: {
+                name: tokenId
+                  ? tokenName ?? "Token ID: " + tokenId
+                  : (collectionName ?? "Unknown collection") + " (All tokens)",
+                tokenId: tokenId ?? "",
+                icon: icon,
+                NftCollection: {
+                  connect: {
+                    id: collectionId,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 };
 
 export const createHatsGroup = async ({

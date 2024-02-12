@@ -22,7 +22,14 @@ export const createBlockchainIdentitiesForUser = async (
         // if there isn't an existing identity for this address, create it
         await prisma.identity.create({
           data: {
-            userId: user.id,
+            User: {
+              connect: {
+                id: user.id,
+              },
+            },
+            Entity: {
+              create: {},
+            },
             IdentityBlockchain: {
               create: {
                 address: wallet.crypto_wallet_address.toLowerCase(),

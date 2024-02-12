@@ -7,6 +7,8 @@ import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResponseOptionsForm, defaultOption } from "./ResponseOptionsForm";
 import { Box, Button, FormHelperText } from "@mui/material";
+import { FieldType } from "@/graphql/generated/graphql";
+import { useEffect } from "react";
 
 interface ResponseFieldsFormProps {
   formMethods: UseFormReturn<NewFlowFormFields>;
@@ -37,6 +39,8 @@ export const ResponseFieldsForm = ({
     name: `steps.${formIndex}.response.field.optionsConfig.options`,
   });
 
+  formMethods.setValue(`steps.${formIndex}.response.field.type`, FieldType.FreeInput);
+
   const stepDefinedOptions =
     formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`) ?? [];
 
@@ -48,6 +52,12 @@ export const ResponseFieldsForm = ({
     ? formMethods.formState?.errors?.steps[formIndex]?.response?.field?.message
     : "";
 
+  useEffect(() => {
+    if (stepType === StepType.GetInput)
+      formMethods.setValue(`steps.${formIndex}.response.field.type`, FieldType.FreeInput);
+    else formMethods.setValue(`steps.${formIndex}.response.field.type`, FieldType.Options);
+  }, [stepType]);
+
   console.log("previous step", previousStepResult);
 
   return (
@@ -55,13 +65,6 @@ export const ResponseFieldsForm = ({
       {stepType && (
         <>
           <Box sx={{ display: "none" }}>
-            <TextField<NewFlowFormFields>
-              name={`steps.${formIndex}.response.field.type`}
-              control={formMethods.control}
-              label={`Field Type`}
-              variant="outlined"
-              disabled={true}
-            />
             <TextField<NewFlowFormFields>
               name={`steps.${formIndex}.response.field.fieldId`}
               control={formMethods.control}

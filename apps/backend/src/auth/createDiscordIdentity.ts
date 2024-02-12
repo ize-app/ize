@@ -45,7 +45,12 @@ export const createDiscordIdentity = async ({
   } else {
     await prisma.identity.create({
       data: {
-        userId: userId,
+        Entity: {
+          create: {},
+        },
+        User: {
+          connect: { id: userId },
+        },
         IdentityDiscord: {
           create: {
             discordUserId: id,

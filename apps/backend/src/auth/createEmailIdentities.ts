@@ -25,7 +25,14 @@ export const createEmailIdentities = async (
         // if there isn't an existing identity for this address, create it
         await prisma.identity.create({
           data: {
-            userId: user.id,
+            User: {
+              connect: {
+                id: user.id,
+              },
+            },
+            Entity: {
+              create: {},
+            },
             IdentityEmail: {
               create: {
                 email: email.email,

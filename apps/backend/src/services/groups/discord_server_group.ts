@@ -58,8 +58,15 @@ export async function setUpDiscordServerService(
       relevantGroups.map((group) => {
         return transaction.group.create({
           data: {
-            creatorId: context?.currentUser?.id as string,
+            creator: {
+              connect: {
+                id: context?.currentUser?.id as string,
+              },
+            },
             activeAt: new Date(),
+            Entity: {
+              create: {},
+            },
             GroupDiscordRole: {
               create: {
                 discordRoleId: group.id,

@@ -47,9 +47,14 @@ export const upsertDiscordEveryoneRole = async ({
     update: {},
     create: {
       name: "@everyone",
-      group: {
+      Group: {
         create: {
-          creatorId: context.currentUser?.id as string,
+          Entity: { create: {} },
+          creator: {
+            connect: {
+              id: context.currentUser?.id as string,
+            },
+          },
         },
       },
       discordServer: {

@@ -62,7 +62,7 @@ export const RoleSearch = <T extends FieldValues>({
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
+    const currentState = (getFieldValues(name) ?? []) as AgentSummaryPartsFragment[];
     const newAgents = dedupOptions([...currentState, ...value]);
 
     //@ts-ignore

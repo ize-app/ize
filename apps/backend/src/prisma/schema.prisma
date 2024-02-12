@@ -35,7 +35,7 @@ model Identity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   // TODO make this field required
-  entityId  String?  @unique @map("entity_id") @db.Uuid
+  entityId  String   @unique @map("entity_id") @db.Uuid
 
   User                        User?                       @relation(fields: [userId], references: [id], onDelete: Cascade)
   IdentityEmail               IdentityEmail?
@@ -44,7 +44,7 @@ model Identity {
   RoleIdentity                RoleIdentity[]
   IdentitiesGroups            IdentityGroup[]
   CustomGroupMemberIdentities CustomGroupMemberIdentity[]
-  Entity                      Entity?                     @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Entity                      Entity                      @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("identities")
 }
@@ -128,15 +128,14 @@ model Oauths {
 
 model Group {
   id                      String                   @id @default(uuid()) @db.Uuid
-  creator                 User                     @relation(fields: [creatorId], references: [id])
-  creatorId               String                   @map("creator_id") @db.Uuid
-  // TODO make this field required
-  entityId                String?                  @unique @map("entity_id") @db.Uuid
+  creator                 User                    @relation(fields: [creatorId], references: [id])
+  creatorId               String                  @map("creator_id") @db.Uuid
+  entityId                String                   @unique @map("entity_id") @db.Uuid
   createdAt               DateTime                 @default(now()) @map("created_at")
   updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at")
   activeAt                DateTime?
   deactivatedat           DateTime?
-  Entity                  Entity?                  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Entity                  Entity                   @relation(fields: [entityId], references: [id], onDelete: Cascade)
   GroupDiscordRole        GroupDiscordRole?
   process                 Process[]
   RoleGroups              RoleGroup[]
@@ -151,7 +150,7 @@ model Group {
 model GroupDiscordRole {
   id              String        @id @default(uuid()) @db.Uuid
   discordRoleId   String?       @map("discord_role_id")
-  group           Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Group           Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String        @unique @map("group_id") @db.Uuid
   discordServer   DiscordServer @relation(fields: [discordServerId], references: [id], onDelete: Cascade)
   discordServerId String        @map("discord_server_id") @db.Uuid
@@ -441,7 +440,7 @@ model Action {
   id        String     @id @default(uuid()) @db.Uuid
   type      ActionType
   /// Option Id here refers to whether execution of this action can only happen when a certain option is selected as the result
-  /// A null value means that there is no filter and action will be executed regardless of the result
+  /// A null value means thatfE there is no filter and action will be executed regardless of the result
   optionId  String?    @map("option_id") @db.Uuid
   createdAt DateTime   @default(now()) @map("created_at")
 

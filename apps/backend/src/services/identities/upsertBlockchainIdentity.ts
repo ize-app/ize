@@ -50,7 +50,9 @@ export const upsertBlockchainIdentity = async ({
       address: wallet,
       ens: isEns ? newAgent.identityBlockchain.address.toLowerCase() : null,
       Identity: {
-        create: {},
+        create: {
+          Entity: { create: {} },
+        },
       },
     },
   });
