@@ -128,8 +128,8 @@ model Oauths {
 
 model Group {
   id                      String                   @id @default(uuid()) @db.Uuid
-  creator                 User                    @relation(fields: [creatorId], references: [id])
-  creatorId               String                  @map("creator_id") @db.Uuid
+  creator                 User                     @relation(fields: [creatorId], references: [id])
+  creatorId               String                   @map("creator_id") @db.Uuid
   entityId                String                   @unique @map("entity_id") @db.Uuid
   createdAt               DateTime                 @default(now()) @map("created_at")
   updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at")
@@ -685,37 +685,37 @@ model Step {
   actionId              String   @map("action_id") @db.Uuid
   createdAt             DateTime @default(now()) @map("created_at")
 
-  RequestPermissions     Permissions   @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
-  RequestFieldSet        FieldSet      @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
-  ResponseFieldSet       FieldSet      @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
-  ResponsePermissions    Permissions   @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
-  TriggerStepPermissions Permissions[] @relation("TriggeringStepPermissions")
-  ResultConfig           ResultConfig  @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
-  ActionNew              ActionNew     @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
-  ActionTriggers         ActionNew[]   @relation("TriggerStep")
+  RequestPermissions     Permission   @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
+  RequestFieldSet        FieldSet     @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
+  ResponseFieldSet       FieldSet     @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
+  ResponsePermissions    Permission   @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
+  TriggerStepPermissions Permission[] @relation("TriggeringStepPermissions")
+  ResultConfig           ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
+  ActionNew              ActionNew    @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
+  ActionTriggers         ActionNew[]  @relation("TriggerStep")
 
   @@map("steps")
 }
 
-model Permissions {
+model Permission {
   id String @id @default(uuid()) @db.Uuid
 
-  entitySetId      String   @map("entity_set_id") @db.Uuid
+  entitySetId      String?  @map("entity_set_id") @db.Uuid
   triggeringStepId String?  @map("triggering_step_id") @db.Uuid
   anyone           Boolean  @default(false)
   createdAt        DateTime @default(now()) @map("created_at")
 
-  EntitySet                EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
-  RequestPermissionsSteps  Step[]    @relation("RequestPermissions")
-  ResponsePermissionsSteps Step[]    @relation("ResponsePermissions")
-  TriggeringStep           Step?     @relation("TriggeringStepPermissions", fields: [triggeringStepId], references: [id], onDelete: Cascade)
+  EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
+  RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
+  ResponsePermissionsSteps Step[]     @relation("ResponsePermissions")
+  TriggeringStep           Step?      @relation("TriggeringStepPermissions", fields: [triggeringStepId], references: [id], onDelete: Cascade)
 
   @@map("permissions")
 }
 
 model EntitySet {
   id                String              @id @default(uuid()) @db.Uuid
-  Permissions       Permissions[]
+  Permissions       Permission[]
   createdAt         DateTime            @default(now()) @map("created_at")
   EntitySetEntities EntitySetEntities[]
 

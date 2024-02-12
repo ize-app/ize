@@ -3,13 +3,7 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { RoleSearch, Select, Switch } from "../../FormFields";
-import {
-  InputDataType,
-  PreviousStepResult,
-  RequestPermissionType,
-  RespondPermissionType,
-  StepType,
-} from "../types";
+import { InputDataType, PreviousStepResult, PermissionType } from "../types";
 import { Box, Button } from "@mui/material";
 import { RequestFieldsForm } from "./RequestFieldsForm";
 import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
@@ -30,9 +24,8 @@ export const defaultRequestField = {
 } as FieldSchemaType;
 
 export const RequestForm = ({ formMethods, formIndex, previousStepResult }: RequestFormProps) => {
-  const isAgentRequestTrigger =
-    formMethods.watch(`steps.${formIndex}.request.permission.type`) ===
-    RequestPermissionType.Agents;
+  const isEntitiesRequestTrigger =
+    formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
   const requestInputFormMethods = useFieldArray({
     control: formMethods.control,
@@ -53,17 +46,17 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
               width="300px"
               name={`steps.${formIndex}.request.permission.type`}
               selectOptions={[
-                { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
-                { name: "Anyone", value: RequestPermissionType.Anyone },
+                { name: "Certain individuals and groups", value: PermissionType.Entities },
+                { name: "Anyone", value: PermissionType.Anyone },
               ]}
               label="Who can make requests?"
             />
 
-            {isAgentRequestTrigger && (
+            {isEntitiesRequestTrigger && (
               <RoleSearch
                 key="requestRoleSearch"
                 ariaLabel={"Individuals and groups who can make requests"}
-                name={`steps.${formIndex}.request.permission.agents`}
+                name={`steps.${formIndex}.request.permission.entities`}
                 control={formMethods.control}
                 setFieldValue={formMethods.setValue}
                 getFieldValues={formMethods.getValues}

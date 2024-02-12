@@ -6,14 +6,6 @@ import {
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 
-// edit fields
-// if an field doesn't change, fieldId shouldn't change
-// if an option doesn't change, optionId shouldn't change
-// mark whether option should be created new
-
-// if there's a field Id , just use that
-// if there's an optionId, just use that
-//
 export const newFieldSet = async ({
   fields,
   transaction,
@@ -56,7 +48,6 @@ export const newFieldSet = async ({
   return fieldSet.id;
 };
 
-// non-destructive. if optionSetId is passed, assume
 const createFieldOptionsConfig = async ({
   fieldOptionsConfigArgs,
   transaction = prisma,

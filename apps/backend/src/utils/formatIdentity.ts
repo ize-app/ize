@@ -22,6 +22,7 @@ export const formatIdentity = (
     return {
       __typename: "Identity",
       id: identity.id,
+      entityId: identity.entityId,
       name: identity.IdentityBlockchain.ens ?? identity.IdentityBlockchain.address,
       // TODO: replace with avatar logo
       icon: null,
@@ -32,6 +33,7 @@ export const formatIdentity = (
     return {
       __typename: "Identity",
       id: identity.id,
+      entityId: identity.entityId,
       // only show email address if it's user's own identity
       name:
         !obscure || isUserIdentity
@@ -44,6 +46,7 @@ export const formatIdentity = (
     return {
       __typename: "Identity",
       id: identity.id,
+      entityId: identity.entityId,
       name: identity.IdentityDiscord.username,
       icon: identity.IdentityDiscord.avatar
         ? DiscordApi.createAvatarURL(

@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
-import { newAgentFormSchema } from "../formSchema";
+import { newEntityFormSchema } from "../../FlowForm/formValidation/entity";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { SelectControl } from "../..";
@@ -27,7 +27,7 @@ import { DiscordLogoSvg } from "@/components/shared/icons";
 import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
 import { HatsTokenCard, NftCard } from "./NftCard";
 
-type FormFields = z.infer<typeof newAgentFormSchema>;
+type FormFields = z.infer<typeof newEntityFormSchema>;
 
 const style = {
   position: "absolute" as "absolute",
@@ -175,7 +175,7 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
         roleId: "",
       },
     },
-    resolver: zodResolver(newAgentFormSchema),
+    resolver: zodResolver(newEntityFormSchema),
     shouldUnregister: true,
   });
 

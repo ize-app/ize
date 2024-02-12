@@ -1,11 +1,10 @@
 import * as z from "zod";
-import { agentFormSchema } from "../../ProcessForm/formSchema";
+import { entityFormSchema } from "./entity";
 import {
   OptionsCreationType,
   InputDataType,
-  RequestPermissionType,
+  PermissionType,
   StepType,
-  RespondPermissionType,
   ResultDecisionType,
   OptionSelectionType,
   ResultFreeText,
@@ -13,6 +12,7 @@ import {
 } from "../types";
 import dayjs, { Dayjs } from "dayjs";
 import { fieldsSchema, fieldSchema } from "./fields";
+import { permissionSchema } from "./permission";
 
 const defaultOptionSchema = z
   .object({
@@ -52,27 +52,12 @@ const stepSchema = z.object({
   // type: z.any(), // TODO buy maybe it's 1) decide 2) get feedback
   // resultType: z.any(), // TODO but maybes its 1) webhook and 2) trigger new process step
   type: z.nativeEnum(StepType).nullable(),
-  request: z
-    .object({
-      // permission: z.object({
-      //   type: z.nativeEnum(RequestPermissionType),
-      //   agents: z
-      //     .array(agentFormSchema)
-      //     .min(1, "Please select at least one group or individual.")
-      //     .optional(),
-      //   // processId: z.string().uuid().optional(),
-      // }),
-      fields: fieldsSchema,
-    })
-    .optional(),
+  request: z.object({
+    permission: permissionSchema,
+    fields: fieldsSchema,
+  }),
   response: z.object({
-    // permission: z.object({
-    //   type: z.nativeEnum(RespondPermissionType),
-    //   agents: z
-    //     .array(agentFormSchema)
-    //     .min(1, "Please select at least one group or individual.")
-    //     .optional(),
-    // }),
+    permission: permissionSchema,
     field: fieldSchema,
   }),
   // result: z.object({

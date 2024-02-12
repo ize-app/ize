@@ -140,6 +140,10 @@ export type DiscordServerOnboarded = {
   name: Scalars['String']['output'];
 };
 
+export type EntityArgs = {
+  id: Scalars['String']['input'];
+};
+
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
@@ -205,6 +209,7 @@ export type Group = {
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
   creator: User;
+  entityId: Scalars['String']['output'];
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -252,6 +257,7 @@ export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft;
 
 export type Identity = {
   __typename?: 'Identity';
+  entityId: Scalars['String']['output'];
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   identityType: IdentityType;
@@ -458,6 +464,11 @@ export type PercentageDecision = {
 export type PercentageDecisionArgs = {
   percentage: Scalars['Float']['input'];
   quorum: Scalars['Int']['input'];
+};
+
+export type PermissionArgs = {
+  anyone: Scalars['Boolean']['input'];
+  entities?: InputMaybe<Array<EntityArgs>>;
 };
 
 export type Process = {
@@ -675,10 +686,12 @@ export type Roles = {
 
 export type StepRequestArgs = {
   fields: Array<FieldArgs>;
+  permission: PermissionArgs;
 };
 
 export type StepResponseArgs = {
   fields: Array<FieldArgs>;
+  permission: PermissionArgs;
 };
 
 export type User = {
@@ -825,6 +838,7 @@ export type ResolversTypes = {
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
   DiscordServer: ResolverTypeWrapper<DiscordServer>;
   DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
+  EntityArgs: EntityArgs;
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
@@ -869,6 +883,7 @@ export type ResolversTypes = {
   ParentProcess: ResolverTypeWrapper<ParentProcess>;
   PercentageDecision: ResolverTypeWrapper<PercentageDecision>;
   PercentageDecisionArgs: PercentageDecisionArgs;
+  PermissionArgs: PermissionArgs;
   Process: ResolverTypeWrapper<Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversTypes['DecisionTypes'] }>;
   ProcessOption: ResolverTypeWrapper<ProcessOption>;
   ProcessOptionArgs: ProcessOptionArgs;
@@ -917,6 +932,7 @@ export type ResolversParentTypes = {
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
   DiscordServerOnboarded: DiscordServerOnboarded;
+  EntityArgs: EntityArgs;
   EvolveArgs: EvolveArgs;
   EvolveProcessAction: EvolveProcessAction;
   EvolveProcessesDiff: EvolveProcessesDiff;
@@ -954,6 +970,7 @@ export type ResolversParentTypes = {
   ParentProcess: ParentProcess;
   PercentageDecision: PercentageDecision;
   PercentageDecisionArgs: PercentageDecisionArgs;
+  PermissionArgs: PermissionArgs;
   Process: Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversParentTypes['DecisionTypes'] };
   ProcessOption: ProcessOption;
   ProcessOptionArgs: ProcessOptionArgs;
@@ -1086,6 +1103,7 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  entityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   groupType?: Resolver<ResolversTypes['GroupType'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1115,6 +1133,7 @@ export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType e
 };
 
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
+  entityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   identityType?: Resolver<ResolversTypes['IdentityType'], ParentType, ContextType>;

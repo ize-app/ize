@@ -5,8 +5,7 @@ import {
   InputDataType,
   OptionSelectionType,
   OptionsCreationType,
-  RequestPermissionType,
-  RespondPermissionType,
+  PermissionType,
   ResultDecisionType,
   StepType,
 } from "../types";
@@ -47,9 +46,8 @@ export const ResponsePermissionsForm = ({
   formIndex,
   stepType,
 }: ResponsePermissionsForm) => {
-  const isAgentRespondTrigger =
-    formMethods.watch(`steps.${formIndex}.respond.permission.type`) ===
-    RespondPermissionType.Agents;
+  const isEntitiesRespondTrigger =
+    formMethods.watch(`steps.${formIndex}.response.permission.type`) === PermissionType.Entities;
 
   const createOptionSelectionTypeOptions = (
     stepPurpose: StepType,
@@ -84,19 +82,19 @@ export const ResponsePermissionsForm = ({
             <Select<NewFlowFormFields>
               control={formMethods.control}
               width="300px"
-              name={`steps.${formIndex}.respond.permission.type`}
+              name={`steps.${formIndex}.response.permission.type`}
               selectOptions={[
-                { name: "Certain individuals and groups", value: RequestPermissionType.Agents },
-                { name: "Anyone", value: RequestPermissionType.Anyone },
+                { name: "Certain individuals and groups", value: PermissionType.Entities },
+                { name: "Anyone", value: PermissionType.Anyone },
               ]}
               label="Who can respond?"
             />
 
-            {isAgentRespondTrigger && (
+            {isEntitiesRespondTrigger && (
               <RoleSearch<NewFlowFormFields>
                 key="responseRoleSearch"
                 ariaLabel={"Individuals and groups who can respond"}
-                name={`steps.${formIndex}.respond.permission.agents`}
+                name={`steps.${formIndex}.response.permission.entities`}
                 control={formMethods.control}
                 setFieldValue={formMethods.setValue}
                 getFieldValues={formMethods.getValues}

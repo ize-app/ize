@@ -39,8 +39,6 @@ export const ResponseFieldsForm = ({
     name: `steps.${formIndex}.response.field.optionsConfig.options`,
   });
 
-  formMethods.setValue(`steps.${formIndex}.response.field.type`, FieldType.FreeInput);
-
   const stepDefinedOptions =
     formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`) ?? [];
 

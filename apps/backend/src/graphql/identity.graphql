@@ -4,6 +4,7 @@ type Identity {
   id: String! # refers to id of Identity model
   name: String!
   icon: String
+  entityId: String!
   identityType: IdentityType!
 }
 

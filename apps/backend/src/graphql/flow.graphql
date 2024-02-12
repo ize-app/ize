@@ -17,8 +17,19 @@ input NewStepArgs {
 
 input StepRequestArgs {
   fields: [FieldArgs!]!
+  permission: PermissionArgs!
 }
 
 input StepResponseArgs {
   fields: [FieldArgs!]!
+  permission: PermissionArgs!
+}
+
+input PermissionArgs {
+  anyone: Boolean!
+  entities: [EntityArgs!]
+}
+
+input EntityArgs {
+  id: String!
 }

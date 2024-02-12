@@ -1,14 +1,9 @@
 // TODO: convert all of these into graphql types
 
-export enum RequestPermissionType {
-  Agents = "Agents",
+export enum PermissionType {
+  Entities = "Entities",
   Anyone = "Anyone",
   Process = "Process",
-}
-
-export enum RespondPermissionType {
-  Agents = "Agents",
-  Anyone = "Anyone",
 }
 
 export enum ResponseInputs {

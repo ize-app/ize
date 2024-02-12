@@ -8,20 +8,19 @@ import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
 import {
   OptionsCreationType,
-  RespondPermissionType,
   InputDataType,
   OptionSelectionType,
   ResultDecisionType,
   ActionType,
-  RequestPermissionType,
+  PermissionType,
 } from "../types";
 import { Switch, TextField } from "../../FormFields";
 import { FieldType } from "@/graphql/generated/graphql";
 
 export const defaultStep = {
-  request: { permission: { type: RequestPermissionType.Anyone }, fields: [] },
+  request: { permission: { type: PermissionType.Anyone }, fields: [] },
   response: {
-    permission: { type: RespondPermissionType.Anyone },
+    permission: { type: PermissionType.Anyone },
     field: {
       fieldId: "",
       type: FieldType.Options,
