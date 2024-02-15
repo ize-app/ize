@@ -4,6 +4,7 @@ import { permissionSchema } from "./permission";
 import { resultSchema } from "./result";
 import { actionSchema } from "./action";
 import { ResultType } from "@/graphql/generated/graphql";
+import { evolveFlowSchema } from "./evolve";
 
 export type FlowSchemaType = z.infer<typeof flowSchema>;
 export type StepSchemaType = z.infer<typeof stepSchema>;
@@ -38,7 +39,7 @@ export const flowSchema = z
     name: z.string().min(1, "Enter a name"),
     reusable: z.boolean().default(false).optional(),
     steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-    // editStep: stepSchema, // TODO make this more specific to the edit step
+    evolve: evolveFlowSchema.optional(),
   })
   .superRefine((flow, ctx) => {
     flow.steps.map((step, index) => {

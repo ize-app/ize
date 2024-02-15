@@ -1,28 +1,27 @@
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-import Accordion, { AccordionProps } from "@mui/material/Accordion";
-import AccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 
 export const StepContainer = ({
   children,
   expandedStep,
-  stepIndex,
+  stepIdentifier,
   title,
   handleStepExpansion,
 }: {
   children: React.ReactNode;
-  expandedStep: number | false;
-  stepIndex: number;
+  expandedStep: number | "EvolveStep" | false;
+  stepIdentifier: number | "EvolveStep";
   title: string;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
 }) => {
   return (
     <Accordion
-      expanded={expandedStep === stepIndex}
+      expanded={expandedStep === stepIdentifier}
       disableGutters
       onChange={handleStepExpansion}
       sx={{}}

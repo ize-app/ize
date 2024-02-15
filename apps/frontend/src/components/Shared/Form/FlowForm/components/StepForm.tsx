@@ -14,7 +14,7 @@ interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
   stepsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: number | false;
+  expandedStep: number | "EvolveStep" | false;
   formIndex: number; // react-hook-form name
 }
 
@@ -60,7 +60,7 @@ export const StepForm = ({
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
-      stepIndex={formIndex}
+      stepIdentifier={formIndex}
       title={` Step ${formIndex + 1}: ${stepTitle}`}
     >
       <ResponsiveFormRow>

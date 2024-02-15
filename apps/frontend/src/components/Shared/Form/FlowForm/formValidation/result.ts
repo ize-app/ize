@@ -8,7 +8,7 @@ export enum LlmSummaryType {
   AtTheEnd = "AtTheEnd",
 }
 
-const decisionSchema = z.discriminatedUnion("type", [
+export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
     defaultOptionId: z.string().nullable().default(null).optional(),
