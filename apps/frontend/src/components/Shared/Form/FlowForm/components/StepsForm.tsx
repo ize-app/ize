@@ -1,11 +1,11 @@
-import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { Box, useFormControl } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepForm } from "./StepForm";
 import { useState } from "react";
+import { FlowSchemaType } from "../formValidation/flow";
 
 interface StepFormProps {
-  useFormMethods: UseFormReturn<NewFlowFormFields>;
+  useFormMethods: UseFormReturn<FlowSchemaType>;
 }
 
 export const StepsForm = ({ useFormMethods }: StepFormProps) => {

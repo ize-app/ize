@@ -1,9 +1,9 @@
-import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
+import { FlowSchemaType } from "@/components/NewFlow/newFlowWizard";
 import { NewFlowArgs } from "@/graphql/generated/graphql";
 import { createFieldArgs, createFieldsArgs } from "./createFieldsArgs";
 import { createPermissionArgs } from "./createPermissionsArgs";
 
-export const createNewFlowArgs = (formState: NewFlowFormFields): NewFlowArgs => {
+export const createNewFlowArgs = (formState: FlowSchemaType): NewFlowArgs => {
   const args: NewFlowArgs = {
     steps: formState.steps.map((step) => {
       return {

@@ -39,6 +39,12 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export enum ActionNewType {
+  CallWebhook = 'CallWebhook',
+  None = 'None',
+  TriggerStep = 'TriggerStep'
+}
+
 export type ActionType = EvolveProcessAction | WebhookAction;
 
 export type Agent = Group | Identity;
@@ -101,6 +107,11 @@ export type DecisionArgs = {
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
 };
+
+export enum DecisionType {
+  NumberThreshold = 'NumberThreshold',
+  PercentageThreshold = 'PercentageThreshold'
+}
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
@@ -666,6 +677,14 @@ export type Result = {
   selectedOption: ProcessOption;
 };
 
+export enum ResultType {
+  AutoApprove = 'AutoApprove',
+  Decision = 'Decision',
+  LlmSummary = 'LlmSummary',
+  Prioritization = 'Prioritization',
+  Raw = 'Raw'
+}
+
 export type RoleArgs = {
   agentType: AgentType;
   id: Scalars['String']['input'];
@@ -822,6 +841,7 @@ export type ResolversTypes = {
   AbsoluteDecisionArgs: AbsoluteDecisionArgs;
   Action: ResolverTypeWrapper<Omit<Action, 'actionDetails'> & { actionDetails?: Maybe<ResolversTypes['ActionType']> }>;
   ActionArgs: ActionArgs;
+  ActionNewType: ActionNewType;
   ActionType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionType']>;
   Agent: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Agent']>;
   AgentType: AgentType;
@@ -833,6 +853,7 @@ export type ResolversTypes = {
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   DecisionArgs: DecisionArgs;
+  DecisionType: DecisionType;
   DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
@@ -897,6 +918,7 @@ export type ResolversTypes = {
   ResponseCount: ResolverTypeWrapper<ResponseCount>;
   Responses: ResolverTypeWrapper<Responses>;
   Result: ResolverTypeWrapper<Result>;
+  ResultType: ResultType;
   RoleArgs: RoleArgs;
   RoleType: RoleType;
   Roles: ResolverTypeWrapper<Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversTypes['Agent']>, request: Array<ResolversTypes['Agent']>, respond: Array<ResolversTypes['Agent']> }>;

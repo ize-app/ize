@@ -1,46 +1,34 @@
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
-import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
-import { Select, TextField } from "@/components/shared/Form/FormFields";
+import { FlowSchemaType } from "../formValidation/flow";
+import { Select } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
-import { PreviousStepResult, ResultFreeText, StepType } from "../types";
-import { ResponseFieldsForm } from "./ResponseFieldsForm";
-import { ResponsePermissionsForm } from "./ResponsePermissionsForm";
-import { ResultForm } from "./ResultForm";
-import { ActionsForm } from "./ActionsForm";
-import { RequestForm } from "./RequestForm";
+import { ResponseFieldsForm } from "./ResponseForm/ResponseFieldsForm";
+import { ResultForm } from "./ResultForm/ResultForm";
+import { RequestForm } from "./RequestForm/RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResultType } from "@/graphql/generated/graphql";
 
 interface StepFormProps {
-  useFormMethods: UseFormReturn<NewFlowFormFields>;
-  stepsArrayMethods: UseFieldArrayReturn<NewFlowFormFields>;
+  useFormMethods: UseFormReturn<FlowSchemaType>;
+  stepsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
   expandedStep: number | false;
   formIndex: number; // react-hook-form name
 }
 
-const createStepNameLabel = (stepType: StepType): { label: string; placeholder: string } => {
-  switch (stepType) {
-    case StepType.Decide:
-      return { label: "What are you deciding on?", placeholder: "" };
-    case StepType.Prioritize:
-      return { label: "What are you prioritizing?", placeholder: "" };
-    case StepType.GetInput:
-      return { label: "What are you asking for input on?", placeholder: "" };
-  }
-};
+export const stepNameLabels = new Map<ResultType, { stepTitle: string }>([
+  [ResultType.Decision, { stepTitle: "Decide" }],
+  [ResultType.Prioritization, { stepTitle: "Prioritize" }],
+  [ResultType.AutoApprove, { stepTitle: "Auto-approve request" }],
+  [ResultType.Raw, { stepTitle: "Get group's thoughts" }],
+  [ResultType.LlmSummary, { stepTitle: "Sensemaking with AI" }],
+]);
 
-const createStepTitle = (stepType: StepType) => {
-  switch (stepType) {
-    case StepType.Decide:
-      return "Decide";
-    case StepType.Prioritize:
-      return "Prioritize";
-    case StepType.GetInput:
-      return "Get input";
-  }
-};
+export interface PreviousStepResult {
+  resultType: ResultType;
+}
 
 export const StepForm = ({
   useFormMethods,
@@ -49,100 +37,62 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-  const {
-    control,
-    setValue: setFieldValue,
-    getValues: getFieldValues,
-    watch,
-    getFieldState,
-    formState,
-  } = useFormMethods;
+  const { control, getValues: getFieldValues, watch } = useFormMethods;
 
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
   console.log("errors are ", useFormMethods.formState.errors);
 
-  // const [sectionExpanded, setSectionExpanded] = useState<string | false>(false);
-
-  // const handleSectionExpansion =
-  //   (sectionName: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-  //     setSectionExpanded(newExpanded ? sectionName : false);
-  //   };
-
-  const stepType = watch(`steps.${formIndex}.type`);
-  const stepName = watch(`steps.${formIndex}.name`);
+  const resultType = watch(`steps.${formIndex}.result.type`);
 
   const previousStepResult: PreviousStepResult | null =
     formIndex > 0
       ? {
-          stepName: watch(`steps.${formIndex - 1}.name`) ?? "",
-          stepType: watch(`steps.${formIndex - 1}.type`),
-          isAiSummary:
-            watch(`steps.${formIndex - 1}.result.freeText.type`) === ResultFreeText.AiSummary,
+          resultType: watch(`steps.${formIndex - 1}.result.type`),
         }
       : null;
 
   const isReusable = watch("reusable");
 
-  const stepNameLabel = createStepNameLabel(stepType as StepType);
-  const stepTitle = createStepTitle(stepType as StepType);
+  const stepTitle = stepNameLabels.get(resultType)?.stepTitle;
 
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
       stepIndex={formIndex}
-      title={` Step ${formIndex + 1} ${
-        stepTitle ? stepTitle + (stepName ? ": " + stepName : "") : ""
-      }`}
+      title={` Step ${formIndex + 1}: ${stepTitle}`}
     >
-      {/* <StepComponentContainer> */}
       <ResponsiveFormRow>
         <Select
           control={control}
           label="Purpose of this step"
-          name={`steps.${formIndex}.type`}
+          name={`steps.${formIndex}.result.type`}
           width="300px"
+          size="small"
+          displayLabel={false}
           selectOptions={[
-            { name: "Decide", value: StepType.Decide },
-            { name: "Get ideas and feedback", value: StepType.GetInput },
-            { name: "Prioritize", value: StepType.Prioritize },
+            { name: "Decide", value: ResultType.Decision },
+            { name: "Get ideas, thoughts, or feedback", value: ResultType.Raw },
+            { name: "Prioritize", value: ResultType.Prioritization },
+            { name: "Co-create shared understanding with AI ", value: ResultType.LlmSummary },
+            { name: "Auto-approve a request", value: ResultType.AutoApprove },
           ]}
         />
-        {stepType && (
-          <TextField<NewFlowFormFields>
-            name={`steps.${formIndex}.name`}
-            control={useFormMethods.control}
-            placeholderText={stepNameLabel.placeholder}
-            label={stepNameLabel.label}
-            variant="standard"
-            width="400px"
-          />
-        )}
       </ResponsiveFormRow>
-      {/* </StepComponentContainer> */}
-      {stepType && (
+
+      {resultType && (
         <>
-          {isReusable && (
-            <RequestForm
+          {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
+          {resultType !== ResultType.AutoApprove && (
+            <ResponseFieldsForm
               formMethods={useFormMethods}
               formIndex={formIndex}
               previousStepResult={previousStepResult}
             />
           )}
-          <ResponseFieldsForm
-            stepType={stepType}
-            formMethods={useFormMethods}
-            formIndex={formIndex}
-            previousStepResult={previousStepResult}
-          />
-          <ResponsePermissionsForm
-            formMethods={useFormMethods}
-            formIndex={formIndex}
-            stepType={stepType}
-          />
-          <ResultForm formMethods={useFormMethods} formIndex={formIndex} />
-          <ActionsForm
+          {/* <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} /> */}
+          <ResultForm
             formMethods={useFormMethods}
             formIndex={formIndex}
             stepsArrayMethods={stepsArrayMethods}

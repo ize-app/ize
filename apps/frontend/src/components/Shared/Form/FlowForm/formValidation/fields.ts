@@ -42,7 +42,6 @@ export const evaluateMultiTypeInput = (
         });
       return;
     case FieldDataType.Number:
-      console.log();
       if (!z.number().or(z.string().min(1)).pipe(z.coerce.number()).safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

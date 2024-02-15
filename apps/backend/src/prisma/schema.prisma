@@ -912,8 +912,9 @@ model AnswerFreeInput {
 enum ResultType {
   Raw
   Decision
-  Rank
+  Prioritization
   LlmSummary
+  AutoApprove
 }
 
 // Describes how and when a final result is created
@@ -943,8 +944,8 @@ model ResultConfig {
 }
 
 enum DecisionType {
-  Threshold
-  Percentage
+  NumberThreshold
+  PercentageThreshold
 }
 
 model ResultConfigDecision {
@@ -982,8 +983,8 @@ model ResultConfigLlm {
 }
 
 enum ActionNewType {
-  Webook
-  TriggerProcess
+  CallWebhook
+  TriggerStep
 }
 
 model ActionNew {

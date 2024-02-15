@@ -1,11 +1,13 @@
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, PathValue, UseControllerProps } from "react-hook-form";
 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect from "@mui/material/Select";
 import Loading from "../../Loading";
+import { TextFieldVariants } from "@mui/material";
+import { ReactNode } from "react";
 
 export interface SelectOption {
   name: string;
@@ -19,6 +21,8 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   width: string;
   required?: boolean;
   loading?: boolean;
+  variant?: TextFieldVariants;
+  renderValue?: (value: PathValue<T, Path<T>>) => ReactNode;
   size?: "small" | "medium";
 }
 
@@ -28,10 +32,12 @@ export const Select = <T extends FieldValues>({
   label,
   width,
   selectOptions,
-  displayLabel = true,
+  renderValue,
+  displayLabel = false,
   required = false,
   loading = false,
-  size = "medium",
+  variant = "standard",
+  size = "small",
   ...props
 }: SelectProps<T>): JSX.Element => (
   <Controller
@@ -40,7 +46,7 @@ export const Select = <T extends FieldValues>({
     render={({ field, fieldState: { error } }) => {
       return (
         <FormControl sx={{ width, textAlign: "left" }} error={Boolean(error)} required={required}>
-          <InputLabel id={`select-${name}`}>{displayLabel ? label : ""}</InputLabel>
+          {displayLabel && <InputLabel id={`select-${name}`}>{label}</InputLabel>}
           <MuiSelect
             {...props}
             autoWidth={true}
@@ -48,6 +54,8 @@ export const Select = <T extends FieldValues>({
             label={displayLabel ? label : ""}
             aria-label={label}
             size={size}
+            renderValue={renderValue}
+            variant={variant}
           >
             {loading ? (
               <Loading />

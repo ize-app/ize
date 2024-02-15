@@ -9,7 +9,6 @@ export const newPermission = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   let entitySetId = undefined;
-  console.log("entities are ", args.entities);
 
   if (!!args.entities && args.entities.length > 0) {
     const entitySet = await transaction.entitySet.create({

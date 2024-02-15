@@ -21,7 +21,12 @@ export const StepContainer = ({
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
 }) => {
   return (
-    <Accordion expanded={expandedStep === stepIndex} disableGutters onChange={handleStepExpansion} sx={{}}>
+    <Accordion
+      expanded={expandedStep === stepIndex}
+      disableGutters
+      onChange={handleStepExpansion}
+      sx={{}}
+    >
       <AccordionSummary
         sx={{
           "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
@@ -53,7 +58,7 @@ export const StepComponentContainer = ({
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       {label && (
-        <Typography color="primary" fontWeight={"500"} marginBottom="16px" fontSize="1rem">
+        <Typography color="primary" fontWeight={"500"} marginBottom="16px" fontSize="1.25rem">
           {label}
         </Typography>
       )}

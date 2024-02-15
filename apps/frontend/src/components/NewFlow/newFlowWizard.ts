@@ -2,17 +2,15 @@ import * as z from "zod";
 
 import { NewFlowRoute, newFlowRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-import { flowSchema } from "../shared/Form/FlowForm/formValidation/flow";
-
-export type NewFlowFormFields = z.infer<typeof flowSchema>;
+import { FlowSchemaType } from "../shared/Form/FlowForm/formValidation/flow";
 
 export function useNewFlowWizardState() {
-  return useWizardFormState<NewFlowFormFields>();
+  return useWizardFormState<FlowSchemaType>();
 }
 
 export const NEW_FLOW_PROGRESS_BAR_STEPS = ["Setup", "Confirm"];
 
-export const NEW_FLOW_WIZARD_STEPS: WizardSteps<NewFlowFormFields> = [
+export const NEW_FLOW_WIZARD_STEPS: WizardSteps<FlowSchemaType> = [
   {
     path: newFlowRoute(NewFlowRoute.Setup),
     title: "New flow Setup",

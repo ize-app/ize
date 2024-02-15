@@ -19,8 +19,6 @@ interface NftContractSearchProp {
 export const NftContractSearch = ({ name, control, chain, watch }: NftContractSearchProp) => {
   //   const [searchNftContracts, { loading, data }] = useLazyQuery(SearchNftContractsDocument);
 
-  const val = watch(name);
-  console.log(val);
 
   //   const [value, setValue] = React.useState<PlaceType | null>(null);
   //   const [inputValue, setInputValue] = React.useState("");

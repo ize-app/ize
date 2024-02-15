@@ -1,0 +1,14 @@
+# mirrors Prisma type
+enum ResultType {
+  Raw
+  Decision
+  Prioritization
+  LlmSummary
+  AutoApprove
+}
+
+# mirrors Prisma type
+enum DecisionType {
+  NumberThreshold
+  PercentageThreshold
+}

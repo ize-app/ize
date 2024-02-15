@@ -38,6 +38,12 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export enum ActionNewType {
+  CallWebhook = 'CallWebhook',
+  None = 'None',
+  TriggerStep = 'TriggerStep'
+}
+
 export type ActionType = EvolveProcessAction | WebhookAction;
 
 export type Agent = Group | Identity;
@@ -100,6 +106,11 @@ export type DecisionArgs = {
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
 };
+
+export enum DecisionType {
+  NumberThreshold = 'NumberThreshold',
+  PercentageThreshold = 'PercentageThreshold'
+}
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
@@ -664,6 +675,14 @@ export type Result = {
   id: Scalars['String']['output'];
   selectedOption: ProcessOption;
 };
+
+export enum ResultType {
+  AutoApprove = 'AutoApprove',
+  Decision = 'Decision',
+  LlmSummary = 'LlmSummary',
+  Prioritization = 'Prioritization',
+  Raw = 'Raw'
+}
 
 export type RoleArgs = {
   agentType: AgentType;
@@ -1134,6 +1153,12 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export enum ActionNewType {
+  CallWebhook = 'CallWebhook',
+  None = 'None',
+  TriggerStep = 'TriggerStep'
+}
+
 export type ActionType = EvolveProcessAction | WebhookAction;
 
 export type Agent = Group | Identity;
@@ -1196,6 +1221,11 @@ export type DecisionArgs = {
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
 };
+
+export enum DecisionType {
+  NumberThreshold = 'NumberThreshold',
+  PercentageThreshold = 'PercentageThreshold'
+}
 
 export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
@@ -1760,6 +1790,14 @@ export type Result = {
   id: Scalars['String']['output'];
   selectedOption: ProcessOption;
 };
+
+export enum ResultType {
+  AutoApprove = 'AutoApprove',
+  Decision = 'Decision',
+  LlmSummary = 'LlmSummary',
+  Prioritization = 'Prioritization',
+  Raw = 'Raw'
+}
 
 export type RoleArgs = {
   agentType: AgentType;

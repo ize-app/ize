@@ -1,0 +1,6 @@
+# mirrors Prisma type + "None" type
+enum ActionNewType {
+  CallWebhook
+  TriggerStep
+  None
+}

@@ -12,7 +12,7 @@ import { Wizard, useWizard } from "@/utils/wizard";
 import {
   NEW_FLOW_PROGRESS_BAR_STEPS,
   NEW_FLOW_WIZARD_STEPS,
-  NewFlowFormFields,
+  FlowSchemaType,
   useNewFlowWizardState,
 } from "./newFlowWizard";
 import { NewFlowDocument } from "@/graphql/generated/graphql";
@@ -50,7 +50,7 @@ export const NewFlow = () => {
     }
   };
 
-  const newFlowWizard: Wizard<NewFlowFormFields> = {
+  const newFlowWizard: Wizard<FlowSchemaType> = {
     steps: NEW_FLOW_WIZARD_STEPS,
     onComplete,
     //@ts-ignore

@@ -1,8 +1,13 @@
 import * as z from "zod";
 import { entityFormSchema } from "./entity";
-import { PermissionType } from "../types";
 
 export type PermissionSchemaType = z.infer<typeof permissionSchema>;
+
+export enum PermissionType {
+  Entities = "Entities",
+  Anyone = "Anyone",
+  Process = "Process",
+}
 
 export const permissionSchema = z.object({
   type: z.nativeEnum(PermissionType),

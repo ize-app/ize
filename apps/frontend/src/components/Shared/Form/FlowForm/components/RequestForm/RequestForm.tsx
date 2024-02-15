@@ -1,18 +1,17 @@
-import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { StepComponentContainer } from "./StepContainer";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
-import { RoleSearch, Select, Switch } from "../../FormFields";
-import { InputDataType, PreviousStepResult, PermissionType } from "../types";
+import { StepComponentContainer } from "../StepContainer";
+import { ResponsiveFormRow } from "../ResponsiveFormRow";
+import { RoleSearch, Select, Switch } from "../../../FormFields";
+import { PermissionType } from "../../formValidation/permission";
 import { Box, Button } from "@mui/material";
 import { RequestFieldsForm } from "./RequestFieldsForm";
 import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
-import { FieldSchemaType } from "../formValidation/fields";
+import { FieldSchemaType } from "../../formValidation/fields";
+import { FlowSchemaType } from "../../formValidation/flow";
 
 interface RequestFormProps {
-  formMethods: UseFormReturn<NewFlowFormFields>;
+  formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
-  previousStepResult: PreviousStepResult | null;
 }
 
 export const defaultRequestField = {
@@ -23,7 +22,7 @@ export const defaultRequestField = {
   freeInputDataType: FieldDataType.String,
 } as FieldSchemaType;
 
-export const RequestForm = ({ formMethods, formIndex, previousStepResult }: RequestFormProps) => {
+export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
@@ -37,7 +36,7 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
   const hasRequestInputs =
     (formMethods.watch(`steps.${formIndex}.request.fields`) ?? []).length > 0;
   return (
-    <StepComponentContainer label="How does this flow get triggered??">
+    <StepComponentContainer label="Request">
       {formIndex === 0 && (
         <>
           <ResponsiveFormRow>
@@ -47,7 +46,7 @@ export const RequestForm = ({ formMethods, formIndex, previousStepResult }: Requ
               name={`steps.${formIndex}.request.permission.type`}
               selectOptions={[
                 { name: "Certain individuals and groups", value: PermissionType.Entities },
-                { name: "Anyone", value: PermissionType.Anyone },
+                { name: "Anyone can request", value: PermissionType.Anyone },
               ]}
               label="Who can make requests?"
             />
