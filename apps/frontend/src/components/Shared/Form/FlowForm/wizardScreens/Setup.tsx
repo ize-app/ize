@@ -11,57 +11,50 @@ import { PermissionType } from "../formValidation/permission";
 import { Switch, TextField } from "../../FormFields";
 import {
   ActionNewType,
+  AgentType,
   DecisionType,
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
   ResultType,
 } from "@/graphql/generated/graphql";
-
-export const defaultStep: StepSchemaType = {
-  request: {
-    permission: { type: PermissionType.Anyone },
-    fields: [],
-  },
-  response: {
-    permission: { type: PermissionType.Anyone },
-    field: {
-      fieldId: "",
-      type: FieldType.FreeInput,
-      name: "",
-      freeInputDataType: FieldDataType.String,
-      required: true,
-    },
-  },
-  result: {
-    type: ResultType.Decision,
-    minimumResponses: 1,
-    requestExpirationSeconds: 259200,
-    decision: {
-      type: DecisionType.NumberThreshold,
-      threshold: {
-        decisionThresholdCount: 2,
-      },
-      defaultOption: {
-        hasDefault: false,
-      },
-    },
-  },
-  action: { type: ActionNewType.None },
-};
+import { useContext, useEffect, useMemo, useState } from "react";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import {
+  defaultDecisionStepFormValues,
+  getDefaultFormValues,
+} from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
+
+  const { me } = useContext(CurrentUserContext);
 
   const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
       name: formState.name ?? "",
       reusable: formState.reusable ?? false,
-      steps: formState.steps ? [...formState.steps] : [defaultStep],
+      evolve: {
+        requestPermission: { type: PermissionType.Anyone },
+        responsePermission: {
+          type: PermissionType.Entities,
+          entities: me?.identities
+            ? [me.identities.map((id) => ({ ...id, __typename: "Identity" as AgentType }))[0]]
+            : [],
+        },
+        decision: {
+          type: DecisionType.NumberThreshold,
+          threshold: {
+            decisionThresholdCount: 1,
+          },
+        },
+      },
+      steps: formState.steps ? [...formState.steps] : [defaultDecisionStepFormValues],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,
   });
+
   const onSubmit = (data: FlowSchemaType) => {
     console.log("data is ", data);
     setFormState({ ...data });
@@ -81,6 +74,16 @@ export const Setup = () => {
             width: "100%",
           }}
         >
+          <TextField<FlowSchemaType>
+            control={useFormMethods.control}
+            width="300px"
+            label="What's the purpose of this form?"
+            placeholderText="What's the purpose of this form?"
+            variant="standard"
+            size="small"
+            showLabel={false}
+            name={`name`}
+          />
           <Switch<FlowSchemaType>
             name={`reusable`}
             control={useFormMethods.control}

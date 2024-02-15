@@ -9,6 +9,11 @@ import { ResultForm } from "./ResultForm/ResultForm";
 import { RequestForm } from "./RequestForm/RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResultType } from "@/graphql/generated/graphql";
+import { useEffect, useState } from "react";
+import {
+  defaultDecisionStepFormValues,
+  getDefaultFormValues,
+} from "../helpers/getDefaultFormValues";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
@@ -38,12 +43,22 @@ export const StepForm = ({
   expandedStep,
 }: StepFormProps) => {
   const { control, getValues: getFieldValues, watch } = useFormMethods;
+  // console.log("form state for ", formIndex, " is ", getFieldValues());
 
-  console.log("form state for ", formIndex, " is ", getFieldValues());
-
-  console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("errors are ", useFormMethods.formState.errors);
 
   const resultType = watch(`steps.${formIndex}.result.type`);
+  // const [lastResult, setLastResultType] = useState<ResultType | null>(null);
+
+  // useEffect(() => {
+  //   console.log("inside use effet for ", resultType);
+  //   if (!!resultType && lastResult !== resultType) {
+  //     useFormMethods.resetField(`steps.${formIndex}`, {
+  //       defaultValue: getDefaultFormValues(resultType),
+  //     });
+  //     setLastResultType(resultType);
+  //   }
+  // }, [resultType]);
 
   const previousStepResult: PreviousStepResult | null =
     formIndex > 0

@@ -4,7 +4,8 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { Select, TextField } from "../../../FormFields";
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
 import { useEffect, useState } from "react";
-import { defaultStep } from "../../wizardScreens/Setup";
+
+import { defaultDecisionStepFormValues } from "../../helpers/getDefaultFormValues";
 import { ActionNewType } from "@/graphql/generated/graphql";
 import { FieldOptionSchemaType } from "../../formValidation/fields";
 
@@ -36,7 +37,7 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
   useEffect(() => {
     if (actionType !== latestActionState) {
       if (actionType === ActionNewType.TriggerStep) {
-        stepsArrayMethods.append(defaultStep);
+        stepsArrayMethods.append(defaultDecisionStepFormValues);
       } else if (latestActionState === ActionNewType.TriggerStep) {
         stepsArrayMethods.remove(formIndex + 1);
       }
