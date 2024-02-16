@@ -35,7 +35,7 @@ export const Setup = () => {
       name: formState.name ?? "",
       reusable: formState.reusable ?? false,
       evolve: {
-        requestPermission: { type: PermissionType.Anyone },
+        requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
           type: PermissionType.Entities,
           entities: me?.identities

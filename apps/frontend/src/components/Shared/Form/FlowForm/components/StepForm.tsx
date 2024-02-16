@@ -43,9 +43,9 @@ export const StepForm = ({
   expandedStep,
 }: StepFormProps) => {
   const { control, getValues: getFieldValues, watch } = useFormMethods;
-  // console.log("form state for ", formIndex, " is ", getFieldValues());
+  console.log("form state for ", formIndex, " is ", getFieldValues());
 
-  // console.log("errors are ", useFormMethods.formState.errors);
+  console.log("errors are ", useFormMethods.formState.errors);
 
   const resultType = watch(`steps.${formIndex}.result.type`);
   // const [lastResult, setLastResultType] = useState<ResultType | null>(null);

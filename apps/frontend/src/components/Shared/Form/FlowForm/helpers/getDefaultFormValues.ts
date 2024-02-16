@@ -25,11 +25,11 @@ export const getDefaultFormValues = (resultType: ResultType | null): StepSchemaT
 
 export const defaultDecisionStepFormValues: StepSchemaType = {
   request: {
-    permission: { type: PermissionType.Anyone },
+    permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],
   },
   response: {
-    permission: { type: PermissionType.Anyone },
+    permission: { type: PermissionType.Anyone, entities: [] },
     field: {
       fieldId: "",
       type: FieldType.Options,
@@ -61,11 +61,11 @@ export const defaultDecisionStepFormValues: StepSchemaType = {
 
 export const defaultLlmSummaryStepFormValues: StepSchemaType = {
   request: {
-    permission: { type: PermissionType.Anyone },
+    permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],
   },
   response: {
-    permission: { type: PermissionType.Anyone },
+    permission: { type: PermissionType.Anyone, entities: [] },
     field: {
       fieldId: "",
       type: FieldType.FreeInput,
