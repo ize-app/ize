@@ -39,8 +39,15 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export type ActionNewArgs = {
+  callWebhook?: InputMaybe<CallWebhookArgs>;
+  filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  type: ActionNewType;
+};
+
 export enum ActionNewType {
   CallWebhook = 'CallWebhook',
+  EvolveFlow = 'EvolveFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -92,6 +99,11 @@ export enum Blockchain {
   Optimism = 'Optimism'
 }
 
+export type CallWebhookArgs = {
+  name: Scalars['String']['input'];
+  uri: Scalars['String']['input'];
+};
+
 export type CustomGroupArgs = {
   members: Array<CustomGroupMembersArgs>;
   name: Scalars['String']['input'];
@@ -106,6 +118,12 @@ export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+};
+
+export type DecisionNewArgs = {
+  defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  threshold: Scalars['Int']['input'];
+  type: DecisionType;
 };
 
 export enum DecisionType {
@@ -158,6 +176,12 @@ export type EntityArgs = {
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
+};
+
+export type EvolveFlowArgs = {
+  decision: DecisionNewArgs;
+  requestPermission: PermissionArgs;
+  responsePermission: PermissionArgs;
 };
 
 export type EvolveProcessAction = {
@@ -334,6 +358,16 @@ export type InputTemplateArgs = {
   type: InputDataType;
 };
 
+export type LlmSummaryArgs = {
+  prompt: Scalars['String']['input'];
+  type: LlmSummaryType;
+};
+
+export enum LlmSummaryType {
+  AfterEveryResponse = 'AfterEveryResponse',
+  AtTheEnd = 'AtTheEnd'
+}
+
 export type Me = {
   __typename?: 'Me';
   discordServers: Array<DiscordServer>;
@@ -415,12 +449,17 @@ export enum NewAgentTypes {
 }
 
 export type NewFlowArgs = {
+  evolve?: InputMaybe<EvolveFlowArgs>;
+  name: Scalars['String']['input'];
+  reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
 };
 
 export type NewStepArgs = {
-  request: StepRequestArgs;
-  response: StepResponseArgs;
+  action: ActionNewArgs;
+  request?: InputMaybe<StepRequestArgs>;
+  response?: InputMaybe<StepResponseArgs>;
+  result: ResultArgs;
 };
 
 export type NftCollection = {
@@ -480,6 +519,10 @@ export type PercentageDecisionArgs = {
 export type PermissionArgs = {
   anyone: Scalars['Boolean']['input'];
   entities?: InputMaybe<Array<EntityArgs>>;
+};
+
+export type PrioritizationArgs = {
+  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Process = {
@@ -677,6 +720,15 @@ export type Result = {
   selectedOption: ProcessOption;
 };
 
+export type ResultArgs = {
+  decision?: InputMaybe<DecisionNewArgs>;
+  llmSummary?: InputMaybe<LlmSummaryArgs>;
+  minimumResponses?: InputMaybe<Scalars['Int']['input']>;
+  prioritization?: InputMaybe<PrioritizationArgs>;
+  requestExpirationSeconds?: InputMaybe<Scalars['Int']['input']>;
+  type: ResultType;
+};
+
 export enum ResultType {
   AutoApprove = 'AutoApprove',
   Decision = 'Decision',
@@ -841,6 +893,7 @@ export type ResolversTypes = {
   AbsoluteDecisionArgs: AbsoluteDecisionArgs;
   Action: ResolverTypeWrapper<Omit<Action, 'actionDetails'> & { actionDetails?: Maybe<ResolversTypes['ActionType']> }>;
   ActionArgs: ActionArgs;
+  ActionNewArgs: ActionNewArgs;
   ActionNewType: ActionNewType;
   ActionType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionType']>;
   Agent: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Agent']>;
@@ -850,9 +903,11 @@ export type ResolversTypes = {
   ApiHatToken: ResolverTypeWrapper<ApiHatToken>;
   Blockchain: Blockchain;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   DecisionArgs: DecisionArgs;
+  DecisionNewArgs: DecisionNewArgs;
   DecisionType: DecisionType;
   DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
@@ -861,6 +916,7 @@ export type ResolversTypes = {
   DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
   EntityArgs: EntityArgs;
   EvolveArgs: EvolveArgs;
+  EvolveFlowArgs: EvolveFlowArgs;
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   FieldArgs: FieldArgs;
@@ -890,6 +946,8 @@ export type ResolversTypes = {
   InputTemplate: ResolverTypeWrapper<InputTemplate>;
   InputTemplateArgs: InputTemplateArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  LlmSummaryArgs: LlmSummaryArgs;
+  LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
   NewAgentArgs: NewAgentArgs;
@@ -905,6 +963,7 @@ export type ResolversTypes = {
   PercentageDecision: ResolverTypeWrapper<PercentageDecision>;
   PercentageDecisionArgs: PercentageDecisionArgs;
   PermissionArgs: PermissionArgs;
+  PrioritizationArgs: PrioritizationArgs;
   Process: ResolverTypeWrapper<Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversTypes['DecisionTypes'] }>;
   ProcessOption: ResolverTypeWrapper<ProcessOption>;
   ProcessOptionArgs: ProcessOptionArgs;
@@ -918,6 +977,7 @@ export type ResolversTypes = {
   ResponseCount: ResolverTypeWrapper<ResponseCount>;
   Responses: ResolverTypeWrapper<Responses>;
   Result: ResolverTypeWrapper<Result>;
+  ResultArgs: ResultArgs;
   ResultType: ResultType;
   RoleArgs: RoleArgs;
   RoleType: RoleType;
@@ -940,15 +1000,18 @@ export type ResolversParentTypes = {
   AbsoluteDecisionArgs: AbsoluteDecisionArgs;
   Action: Omit<Action, 'actionDetails'> & { actionDetails?: Maybe<ResolversParentTypes['ActionType']> };
   ActionArgs: ActionArgs;
+  ActionNewArgs: ActionNewArgs;
   ActionType: ResolversUnionTypes<ResolversParentTypes>['ActionType'];
   Agent: ResolversUnionTypes<ResolversParentTypes>['Agent'];
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
   Boolean: Scalars['Boolean']['output'];
+  CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   DecisionArgs: DecisionArgs;
+  DecisionNewArgs: DecisionNewArgs;
   DecisionTypes: ResolversUnionTypes<ResolversParentTypes>['DecisionTypes'];
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
@@ -956,6 +1019,7 @@ export type ResolversParentTypes = {
   DiscordServerOnboarded: DiscordServerOnboarded;
   EntityArgs: EntityArgs;
   EvolveArgs: EvolveArgs;
+  EvolveFlowArgs: EvolveFlowArgs;
   EvolveProcessAction: EvolveProcessAction;
   EvolveProcessesDiff: EvolveProcessesDiff;
   FieldArgs: FieldArgs;
@@ -981,6 +1045,7 @@ export type ResolversParentTypes = {
   InputTemplate: InputTemplate;
   InputTemplateArgs: InputTemplateArgs;
   Int: Scalars['Int']['output'];
+  LlmSummaryArgs: LlmSummaryArgs;
   Me: Me;
   Mutation: {};
   NewAgentArgs: NewAgentArgs;
@@ -993,6 +1058,7 @@ export type ResolversParentTypes = {
   PercentageDecision: PercentageDecision;
   PercentageDecisionArgs: PercentageDecisionArgs;
   PermissionArgs: PermissionArgs;
+  PrioritizationArgs: PrioritizationArgs;
   Process: Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversParentTypes['DecisionTypes'] };
   ProcessOption: ProcessOption;
   ProcessOptionArgs: ProcessOptionArgs;
@@ -1005,6 +1071,7 @@ export type ResolversParentTypes = {
   ResponseCount: ResponseCount;
   Responses: Responses;
   Result: Result;
+  ResultArgs: ResultArgs;
   RoleArgs: RoleArgs;
   Roles: Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversParentTypes['Agent']>, request: Array<ResolversParentTypes['Agent']>, respond: Array<ResolversParentTypes['Agent']> };
   StepRequestArgs: StepRequestArgs;

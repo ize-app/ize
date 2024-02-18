@@ -2,28 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import { useForm } from "react-hook-form";
 import { useNewFlowWizardState } from "@/components/NewFlow/newFlowWizard";
-import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
+import { FlowSchemaType } from "../formValidation/flow";
 
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
 import { PermissionType } from "../formValidation/permission";
 import { Switch, TextField } from "../../FormFields";
-import {
-  ActionNewType,
-  AgentType,
-  DecisionType,
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FieldType,
-  ResultType,
-} from "@/graphql/generated/graphql";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { AgentType, DecisionType } from "@/graphql/generated/graphql";
+import { useContext } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import {
-  defaultDecisionStepFormValues,
-  getDefaultFormValues,
-} from "../helpers/getDefaultFormValues";
+import { defaultDecisionStepFormValues } from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -44,9 +33,7 @@ export const Setup = () => {
         },
         decision: {
           type: DecisionType.NumberThreshold,
-          threshold: {
-            decisionThresholdCount: 1,
-          },
+          threshold: 1,
         },
       },
       steps: formState.steps ? [...formState.steps] : [defaultDecisionStepFormValues],

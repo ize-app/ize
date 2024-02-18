@@ -12,3 +12,32 @@ enum DecisionType {
   NumberThreshold
   PercentageThreshold
 }
+
+enum LlmSummaryType {
+  AfterEveryResponse
+  AtTheEnd
+}
+
+input ResultArgs {
+  type: ResultType!
+  requestExpirationSeconds: Int
+  minimumResponses: Int
+  decision: DecisionNewArgs
+  prioritization: PrioritizationArgs
+  llmSummary: LlmSummaryArgs
+}
+
+input DecisionNewArgs {
+  type: DecisionType!
+  defaultOptionIndex: Int
+  threshold: Int!
+}
+
+input PrioritizationArgs {
+  numOptionsToInclude: Int
+}
+
+input LlmSummaryArgs {
+  type: LlmSummaryType!
+  prompt: String!
+}

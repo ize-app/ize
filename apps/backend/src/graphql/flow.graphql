@@ -7,12 +7,23 @@ type Query {
 }
 
 input NewFlowArgs {
+  name: String!
+  reusable: Boolean!
   steps: [NewStepArgs!]!
+  evolve: EvolveFlowArgs
 }
 
 input NewStepArgs {
-  request: StepRequestArgs!
-  response: StepResponseArgs!
+  request: StepRequestArgs
+  response: StepResponseArgs
+  result: ResultArgs!
+  action: ActionNewArgs!
+}
+
+input EvolveFlowArgs {
+  requestPermission: PermissionArgs!
+  responsePermission: PermissionArgs!
+  decision: DecisionNewArgs!
 }
 
 input StepRequestArgs {

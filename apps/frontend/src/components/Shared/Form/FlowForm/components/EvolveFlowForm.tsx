@@ -114,7 +114,7 @@ export const EvolveProcessForm = ({
               control={formMethods.control}
               width="300px"
               label="Threshold votes"
-              name={`evolve.decision.threshold.decisionThresholdCount`}
+              name={`evolve.decision.threshold`}
               size="small"
               variant="standard"
               showLabel={false}
@@ -129,7 +129,7 @@ export const EvolveProcessForm = ({
               size="small"
               variant="standard"
               showLabel={false}
-              name={`evolve.decision.percentage.decisionThresholdPercentage`}
+              name={`evolve.decision.threshold`}
               endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
             />
           )}

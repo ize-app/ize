@@ -24,6 +24,7 @@ import { upsertOauthToken } from "./auth/upsertOauthToken";
 import { createDiscordIdentity } from "./auth/createDiscordIdentity";
 import { redirectAtLogin } from "./auth/redirectAtLogin";
 import { OAuthProvider } from "stytch";
+import { expressGloalErrorHandler } from "./error";
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -45,103 +46,119 @@ if (app.get("env") === "production") {
 
 // handles login / signup for all auth flows that user a access token (oauth / magiclink)
 // creates session and also creates appropriate identities for user
-app.get("/auth/token", async (req, res) => {
-  const { stytch_token_type, token } = req.query;
+app.get("/auth/token", async (req, res, next) => {
+  try {
+    const { stytch_token_type, token } = req.query;
 
-  let sessionToken: string | undefined;
-  await prisma.$transaction(async (transaction) => {
-    if (typeof token !== "string" || !token || !stytch_token_type)
-      throw Error("Missing authentication token");
+    let sessionToken: string | undefined;
+    await prisma.$transaction(async (transaction) => {
+      if (typeof token !== "string" || !token || !stytch_token_type)
+        throw Error("Missing authentication token");
 
-    if (stytch_token_type === "oauth") {
-      const stytchOAuthentication = await stytchClient.oauth.authenticate({
-        token: token,
-        session_duration_minutes: 60,
-      });
-
-      sessionToken = stytchOAuthentication.session_token;
-      const user = await upsertUser({ stytchUser: stytchOAuthentication.user, transaction });
-      await upsertOauthToken({ stytchOAuthentication, user });
-
-      // create Discord username identity (if it doesn't already exist) and tie it to that user
-      if (stytchOAuthentication.provider_type === "Discord") {
-        await createDiscordIdentity({
-          userId: user.id,
-          accessToken: stytchOAuthentication.provider_values.access_token,
-          transaction,
+      if (stytch_token_type === "oauth") {
+        const stytchOAuthentication = await stytchClient.oauth.authenticate({
+          token: token,
+          session_duration_minutes: 60,
         });
-      } else if (stytchOAuthentication.provider_type === "Google") {
-        const providerDetails: OAuthProvider | undefined =
-          stytchOAuthentication.user.providers.find((provider) => {
-            return (
-              provider.oauth_user_registration_id ===
-              stytchOAuthentication.oauth_user_registration_id
-            );
+
+        sessionToken = stytchOAuthentication.session_token;
+        const user = await upsertUser({ stytchUser: stytchOAuthentication.user, transaction });
+        await upsertOauthToken({ stytchOAuthentication, user });
+
+        // create Discord username identity (if it doesn't already exist) and tie it to that user
+        if (stytchOAuthentication.provider_type === "Discord") {
+          await createDiscordIdentity({
+            userId: user.id,
+            accessToken: stytchOAuthentication.provider_values.access_token,
+            transaction,
           });
-        await createEmailIdentities(
-          user,
-          stytchOAuthentication.user.emails,
-          providerDetails?.profile_picture_url,
-        );
+        } else if (stytchOAuthentication.provider_type === "Google") {
+          const providerDetails: OAuthProvider | undefined =
+            stytchOAuthentication.user.providers.find((provider) => {
+              return (
+                provider.oauth_user_registration_id ===
+                stytchOAuthentication.oauth_user_registration_id
+              );
+            });
+          await createEmailIdentities(
+            user,
+            stytchOAuthentication.user.emails,
+            providerDetails?.profile_picture_url,
+          );
+        }
+      } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
+        const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
+          token,
+          session_duration_minutes: 60,
+        });
+        sessionToken = stytchMagicAuthentication.session_token;
+        const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
+        await createEmailIdentities(user, stytchMagicAuthentication.user.emails);
       }
-    } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
-      const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
-        token,
-        session_duration_minutes: 60,
-      });
-      sessionToken = stytchMagicAuthentication.session_token;
-      const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
-      await createEmailIdentities(user, stytchMagicAuthentication.user.emails);
-    }
-  });
+    });
 
-  if (sessionToken) res.cookie("stytch_session", sessionToken);
+    if (sessionToken) res.cookie("stytch_session", sessionToken);
 
-  redirectAtLogin({ req, res });
+    redirectAtLogin({ req, res });
+  } catch (e) {
+    next(e);
+  }
 });
 
 // Attaches Discord login to an existing Stytch account
-app.post("/auth/attach-discord", async (req, res) => {
-  const session_token = req.cookies["stytch_session"];
-  if (!session_token) res.status(401).send();
-  const resp = await stytchClient.oauth.attach({
-    session_token,
-    provider: "discord",
-  });
-  res.send(resp.oauth_attach_token);
+app.post("/auth/attach-discord", async (req, res, next) => {
+  try {
+    const session_token = req.cookies["stytch_session"];
+    if (!session_token) res.status(401).send();
+    const resp = await stytchClient.oauth.attach({
+      session_token,
+      provider: "discord",
+    });
+    res.send(resp.oauth_attach_token);
+  } catch (e) {
+    next(e);
+  }
 });
 
 // creates blockchain identities for user on authentication
 // session already created for user on FE
-app.post("/auth/crypto", async (req, res) => {
-  const session_token = req.cookies["stytch_session"];
-  const sessionData = await stytchClient.sessions.authenticate({ session_token });
+app.post("/auth/crypto", async (req, res, next) => {
+  try {
+    const session_token = req.cookies["stytch_session"];
+    const sessionData = await stytchClient.sessions.authenticate({ session_token });
 
-  if (!session_token) res.status(401).send();
+    if (!session_token) res.status(401).send();
 
-  // create blockchain identities if they don't already exist
-  await createBlockchainIdentitiesForUser(res.locals.user, sessionData.user.crypto_wallets);
+    // create blockchain identities if they don't already exist
+    await createBlockchainIdentitiesForUser(res.locals.user, sessionData.user.crypto_wallets);
 
-  res.status(200).send();
+    res.status(200).send();
+  } catch (e) {
+    next(e);
+  }
 });
 
 // creates email identities for user on authentication
 // session already created for user on FE
-app.post("/auth/password", async (req, res) => {
-  const session_token = req.cookies["stytch_session"];
-  const sessionData = await stytchClient.sessions.authenticate({ session_token });
-  const sessionToken = sessionData.session_token;
+app.post("/auth/password", async (req, res, next) => {
+  try {
+    const session_token = req.cookies["stytch_session"];
+    const sessionData = await stytchClient.sessions.authenticate({ session_token });
+    const sessionToken = sessionData.session_token;
 
-  if (!session_token) {
-    res.status(401).send();
+    if (!session_token) {
+      res.status(401).send();
+    }
+
+    // create email identities if they don't already exist
+    await createEmailIdentities(res.locals.user, sessionData.user.emails);
+    res.cookie("stytch_session", sessionToken);
+
+    // res.status(200).send();
+    redirectAtLogin({ req, res });
+  } catch (e) {
+    next(e);
   }
-
-  // create email identities if they don't already exist
-  await createEmailIdentities(res.locals.user, sessionData.user.emails);
-  res.cookie("stytch_session", sessionToken);
-
-  // res.status(200).send();
-  redirectAtLogin({ req, res });
 });
 
 app.use(session(sessionValue));
@@ -163,6 +180,8 @@ const server = new ApolloServer<GraphqlRequestContext>({
     return formattedError;
   },
 });
+
+app.use(expressGloalErrorHandler);
 
 server.start().then(() => {
   app.use(authenticateSession);

@@ -38,8 +38,15 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export type ActionNewArgs = {
+  callWebhook?: InputMaybe<CallWebhookArgs>;
+  filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  type: ActionNewType;
+};
+
 export enum ActionNewType {
   CallWebhook = 'CallWebhook',
+  EvolveFlow = 'EvolveFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -91,6 +98,11 @@ export enum Blockchain {
   Optimism = 'Optimism'
 }
 
+export type CallWebhookArgs = {
+  name: Scalars['String']['input'];
+  uri: Scalars['String']['input'];
+};
+
 export type CustomGroupArgs = {
   members: Array<CustomGroupMembersArgs>;
   name: Scalars['String']['input'];
@@ -105,6 +117,12 @@ export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+};
+
+export type DecisionNewArgs = {
+  defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  threshold: Scalars['Int']['input'];
+  type: DecisionType;
 };
 
 export enum DecisionType {
@@ -157,6 +175,12 @@ export type EntityArgs = {
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
+};
+
+export type EvolveFlowArgs = {
+  decision: DecisionNewArgs;
+  requestPermission: PermissionArgs;
+  responsePermission: PermissionArgs;
 };
 
 export type EvolveProcessAction = {
@@ -333,6 +357,16 @@ export type InputTemplateArgs = {
   type: InputDataType;
 };
 
+export type LlmSummaryArgs = {
+  prompt: Scalars['String']['input'];
+  type: LlmSummaryType;
+};
+
+export enum LlmSummaryType {
+  AfterEveryResponse = 'AfterEveryResponse',
+  AtTheEnd = 'AtTheEnd'
+}
+
 export type Me = {
   __typename?: 'Me';
   discordServers: Array<DiscordServer>;
@@ -414,12 +448,17 @@ export enum NewAgentTypes {
 }
 
 export type NewFlowArgs = {
+  evolve?: InputMaybe<EvolveFlowArgs>;
+  name: Scalars['String']['input'];
+  reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
 };
 
 export type NewStepArgs = {
-  request: StepRequestArgs;
-  response: StepResponseArgs;
+  action: ActionNewArgs;
+  request?: InputMaybe<StepRequestArgs>;
+  response?: InputMaybe<StepResponseArgs>;
+  result: ResultArgs;
 };
 
 export type NftCollection = {
@@ -479,6 +518,10 @@ export type PercentageDecisionArgs = {
 export type PermissionArgs = {
   anyone: Scalars['Boolean']['input'];
   entities?: InputMaybe<Array<EntityArgs>>;
+};
+
+export type PrioritizationArgs = {
+  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Process = {
@@ -674,6 +717,15 @@ export type Result = {
   createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   selectedOption: ProcessOption;
+};
+
+export type ResultArgs = {
+  decision?: InputMaybe<DecisionNewArgs>;
+  llmSummary?: InputMaybe<LlmSummaryArgs>;
+  minimumResponses?: InputMaybe<Scalars['Int']['input']>;
+  prioritization?: InputMaybe<PrioritizationArgs>;
+  requestExpirationSeconds?: InputMaybe<Scalars['Int']['input']>;
+  type: ResultType;
 };
 
 export enum ResultType {
@@ -1153,8 +1205,15 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export type ActionNewArgs = {
+  callWebhook?: InputMaybe<CallWebhookArgs>;
+  filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  type: ActionNewType;
+};
+
 export enum ActionNewType {
   CallWebhook = 'CallWebhook',
+  EvolveFlow = 'EvolveFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -1206,6 +1265,11 @@ export enum Blockchain {
   Optimism = 'Optimism'
 }
 
+export type CallWebhookArgs = {
+  name: Scalars['String']['input'];
+  uri: Scalars['String']['input'];
+};
+
 export type CustomGroupArgs = {
   members: Array<CustomGroupMembersArgs>;
   name: Scalars['String']['input'];
@@ -1220,6 +1284,12 @@ export type DecisionArgs = {
   absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
   expirationSeconds: Scalars['Int']['input'];
   percentageDecision?: InputMaybe<PercentageDecisionArgs>;
+};
+
+export type DecisionNewArgs = {
+  defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  threshold: Scalars['Int']['input'];
+  type: DecisionType;
 };
 
 export enum DecisionType {
@@ -1272,6 +1342,12 @@ export type EntityArgs = {
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
+};
+
+export type EvolveFlowArgs = {
+  decision: DecisionNewArgs;
+  requestPermission: PermissionArgs;
+  responsePermission: PermissionArgs;
 };
 
 export type EvolveProcessAction = {
@@ -1448,6 +1524,16 @@ export type InputTemplateArgs = {
   type: InputDataType;
 };
 
+export type LlmSummaryArgs = {
+  prompt: Scalars['String']['input'];
+  type: LlmSummaryType;
+};
+
+export enum LlmSummaryType {
+  AfterEveryResponse = 'AfterEveryResponse',
+  AtTheEnd = 'AtTheEnd'
+}
+
 export type Me = {
   __typename?: 'Me';
   discordServers: Array<DiscordServer>;
@@ -1529,12 +1615,17 @@ export enum NewAgentTypes {
 }
 
 export type NewFlowArgs = {
+  evolve?: InputMaybe<EvolveFlowArgs>;
+  name: Scalars['String']['input'];
+  reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
 };
 
 export type NewStepArgs = {
-  request: StepRequestArgs;
-  response: StepResponseArgs;
+  action: ActionNewArgs;
+  request?: InputMaybe<StepRequestArgs>;
+  response?: InputMaybe<StepResponseArgs>;
+  result: ResultArgs;
 };
 
 export type NftCollection = {
@@ -1594,6 +1685,10 @@ export type PercentageDecisionArgs = {
 export type PermissionArgs = {
   anyone: Scalars['Boolean']['input'];
   entities?: InputMaybe<Array<EntityArgs>>;
+};
+
+export type PrioritizationArgs = {
+  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Process = {
@@ -1789,6 +1884,15 @@ export type Result = {
   createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   selectedOption: ProcessOption;
+};
+
+export type ResultArgs = {
+  decision?: InputMaybe<DecisionNewArgs>;
+  llmSummary?: InputMaybe<LlmSummaryArgs>;
+  minimumResponses?: InputMaybe<Scalars['Int']['input']>;
+  prioritization?: InputMaybe<PrioritizationArgs>;
+  requestExpirationSeconds?: InputMaybe<Scalars['Int']['input']>;
+  type: ResultType;
 };
 
 export enum ResultType {

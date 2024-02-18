@@ -12,9 +12,8 @@ import { Wizard, useWizard } from "@/utils/wizard";
 import {
   NEW_FLOW_PROGRESS_BAR_STEPS,
   NEW_FLOW_WIZARD_STEPS,
-  FlowSchemaType,
-  useNewFlowWizardState,
 } from "./newFlowWizard";
+import { FlowSchemaType } from "../shared/Form/FlowForm/formValidation/flow";
 import { NewFlowDocument } from "@/graphql/generated/graphql";
 import { useMutation } from "@apollo/client";
 import { createNewFlowArgs } from "../shared/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";

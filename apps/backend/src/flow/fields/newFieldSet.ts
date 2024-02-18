@@ -5,6 +5,7 @@ import {
 } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
+import { FieldSetPrismaType, fieldSetInclude } from "./types";
 
 export const newFieldSet = async ({
   fields,
@@ -12,7 +13,7 @@ export const newFieldSet = async ({
 }: {
   fields: FieldArgs[];
   transaction: Prisma.TransactionClient;
-}): Promise<string | null> => {
+}): Promise<FieldSetPrismaType | null> => {
   console.log("inside new field set");
   if (fields.length === 0) return null;
   const dbFields = await Promise.all(
@@ -40,12 +41,13 @@ export const newFieldSet = async ({
   );
 
   const fieldSet = await transaction.fieldSet.create({
+    include: fieldSetInclude,
     data: {
       FieldSetFields: { createMany: { data: dbFields.map((fieldId) => ({ fieldId: fieldId })) } },
     },
   });
 
-  return fieldSet.id;
+  return fieldSet;
 };
 
 const createFieldOptionsConfig = async ({
@@ -60,14 +62,14 @@ const createFieldOptionsConfig = async ({
     fieldOptionsConfigArgs;
 
   const dbOptions = await Promise.all(
-    options.map(async (option: FieldOptionArgs) => {
+    options.map(async (option: FieldOptionArgs, index) => {
       const res = await transaction.fieldOption.create({
         data: {
           value: option.name,
           dataType: option.dataType,
         },
       });
-      return { fieldOptionId: res.id };
+      return { fieldOptionId: res.id, index };
     }),
   );
 

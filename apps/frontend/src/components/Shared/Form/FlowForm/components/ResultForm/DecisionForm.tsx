@@ -62,7 +62,7 @@ export const DecisionForm = ({ formMethods, formIndex }: DecisionFormProps) => {
             control={formMethods.control}
             width="300px"
             label="Threshold votes"
-            name={`steps.${formIndex}.result.decision.threshold.decisionThresholdCount`}
+            name={`steps.${formIndex}.result.decision.threshold`}
             size="small"
             variant="standard"
             showLabel={false}
@@ -77,7 +77,7 @@ export const DecisionForm = ({ formMethods, formIndex }: DecisionFormProps) => {
             size="small"
             variant="standard"
             showLabel={false}
-            name={`steps.${formIndex}.result.decision.percentage.decisionThresholdPercentage`}
+            name={`steps.${formIndex}.result.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
           />
         )}

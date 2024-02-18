@@ -1,10 +1,10 @@
 import * as z from "zod";
 
-
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 import dayjs, { Dayjs } from "dayjs";
 
 export type FieldOptionSchemaType = z.infer<typeof fieldOptionSchema>;
+export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
 export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 

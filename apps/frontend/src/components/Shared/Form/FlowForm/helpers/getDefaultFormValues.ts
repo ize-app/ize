@@ -50,10 +50,8 @@ export const defaultDecisionStepFormValues: StepSchemaType = {
     requestExpirationSeconds: 259200,
     decision: {
       type: DecisionType.NumberThreshold,
-      threshold: {
-        decisionThresholdCount: 2,
-      },
-      defaultOptionId: "None",
+      threshold: 1,
+      defaultOptionId: "None"
     },
   },
   action: { type: ActionNewType.None },

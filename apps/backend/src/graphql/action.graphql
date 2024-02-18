@@ -2,5 +2,17 @@
 enum ActionNewType {
   CallWebhook
   TriggerStep
+  EvolveFlow
   None
+}
+
+input CallWebhookArgs {
+  uri: String!
+  name: String!
+}
+
+input ActionNewArgs {
+  type: ActionNewType!
+  filterOptionIndex: Int
+  callWebhook: CallWebhookArgs
 }
