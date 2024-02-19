@@ -1,21 +1,37 @@
 import { Prisma } from "@prisma/client";
 
-export const fieldInclude = Prisma.validator<Prisma.FieldInclude>()({
-  FieldOptionsConfigs: {
-    include: {
-      FieldOptionSet: {
-        include: {
-          FieldOptionSetFieldOptions: {
-            include: {
-              FieldOption: true
-            }
-          }
-        }
-      }
-    }
+export const resultConfigDecisionInclude = Prisma.validator<Prisma.ResultConfigDecisionInclude>()(
+  {},
+);
+
+export type ResultConfigDecisionPrismaType = Prisma.ResultConfigDecisionGetPayload<{
+  include: typeof resultConfigDecisionInclude;
+}>;
+
+export const resultConfigRankInclude = Prisma.validator<Prisma.ResultConfigRankInclude>()({});
+
+export type ResultConfigRankPrismaType = Prisma.ResultConfigRankGetPayload<{
+  include: typeof resultConfigRankInclude;
+}>;
+
+export const resultConfigLlmInclude = Prisma.validator<Prisma.ResultConfigLlmInclude>()({});
+
+export type ResultConfigLlmPrismaType = Prisma.ResultConfigLlmGetPayload<{
+  include: typeof resultConfigLlmInclude;
+}>;
+
+export const resultConfigInclude = Prisma.validator<Prisma.ResultConfigInclude>()({
+  ResultConfigDecision: {
+    include: resultConfigDecisionInclude,
+  },
+  ResultConfigRank: {
+    include: resultConfigRankInclude,
+  },
+  ResultConfigLlm: {
+    include: resultConfigLlmInclude,
   },
 });
 
-export type FieldPrismaType = Prisma.FieldGetPayload<{
-  include: typeof fieldInclude;
+export type ResultConfigPrismaType = Prisma.ResultConfigGetPayload<{
+  include: typeof resultConfigInclude;
 }>;

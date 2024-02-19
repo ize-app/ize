@@ -3,7 +3,37 @@ type Mutation {
 }
 
 type Query {
-  flow(processId: String!): Process!
+  getFlow(processId: String!): Flow!
+}
+
+type Flow {
+  type: FlowType!
+  name: String!
+  reusable: Boolean!
+  steps: [Step]!
+  evolve: Flow # TBD
+}
+
+enum FlowType {
+  Custom
+  Evolve
+}
+
+type Step {
+  request: RequestConfig!
+  response: ResponseConfig!
+  result: ResultConfig!
+  action: ActionNew
+}
+
+type RequestConfig {
+  permission: Permission
+  fields: [Field!]
+}
+
+type ResponseConfig {
+  permission: Permission
+  fields: [Field!]
 }
 
 input NewFlowArgs {

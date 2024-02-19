@@ -38,6 +38,8 @@ export type ActionArgs = {
   webhook?: InputMaybe<WebhookActionArgs>;
 };
 
+export type ActionNew = CallWebhook | EvolveFlow | TriggerStep;
+
 export type ActionNewArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
   filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
@@ -90,6 +92,11 @@ export type ApiHatToken = {
   topHatName?: Maybe<Scalars['String']['output']>;
 };
 
+export type AutoApprove = {
+  __typename?: 'AutoApprove';
+  _?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export enum Blockchain {
   Arbitrum = 'Arbitrum',
   Base = 'Base',
@@ -97,6 +104,13 @@ export enum Blockchain {
   Matic = 'Matic',
   Optimism = 'Optimism'
 }
+
+export type CallWebhook = {
+  __typename?: 'CallWebhook';
+  filterOption?: Maybe<Option>;
+  name?: Maybe<Scalars['String']['output']>;
+  uri: Scalars['String']['output'];
+};
 
 export type CallWebhookArgs = {
   name: Scalars['String']['input'];
@@ -111,6 +125,15 @@ export type CustomGroupArgs = {
 export type CustomGroupMembersArgs = {
   agentType: AgentType;
   id: Scalars['String']['input'];
+};
+
+export type Decision = {
+  __typename?: 'Decision';
+  defaultOption?: Maybe<Option>;
+  minimumAnswers: Scalars['Int']['output'];
+  requestExpirationSeconds: Scalars['Int']['output'];
+  threshold: Scalars['Int']['output'];
+  type: DecisionType;
 };
 
 export type DecisionArgs = {
@@ -168,6 +191,8 @@ export type DiscordServerOnboarded = {
   name: Scalars['String']['output'];
 };
 
+export type Entity = Group | Identity;
+
 export type EntityArgs = {
   id: Scalars['String']['input'];
 };
@@ -175,6 +200,11 @@ export type EntityArgs = {
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
+};
+
+export type EvolveFlow = {
+  __typename?: 'EvolveFlow';
+  filterOption?: Maybe<Option>;
 };
 
 export type EvolveFlowArgs = {
@@ -194,6 +224,8 @@ export type EvolveProcessesDiff = {
   processId: Scalars['String']['output'];
   processName: Scalars['String']['output'];
 };
+
+export type Field = FreeInput | Options;
 
 export type FieldArgs = {
   fieldId: Scalars['String']['input'];
@@ -237,6 +269,28 @@ export enum FieldType {
   FreeInput = 'FreeInput',
   Options = 'Options'
 }
+
+export type Flow = {
+  __typename?: 'Flow';
+  evolve?: Maybe<Flow>;
+  name: Scalars['String']['output'];
+  reusable: Scalars['Boolean']['output'];
+  steps: Array<Maybe<Step>>;
+  type: FlowType;
+};
+
+export enum FlowType {
+  Custom = 'Custom',
+  Evolve = 'Evolve'
+}
+
+export type FreeInput = {
+  __typename?: 'FreeInput';
+  dataType: FieldDataType;
+  fieldId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  required: Scalars['Boolean']['output'];
+};
 
 export type Group = {
   __typename?: 'Group';
@@ -355,6 +409,14 @@ export type InputTemplateArgs = {
   name: Scalars['String']['input'];
   required: Scalars['Boolean']['input'];
   type: InputDataType;
+};
+
+export type LlmSummary = {
+  __typename?: 'LlmSummary';
+  minimumAnswers: Scalars['Int']['output'];
+  prompt?: Maybe<Scalars['String']['output']>;
+  requestExpirationSeconds: Scalars['Int']['output'];
+  type: LlmSummaryType;
 };
 
 export type LlmSummaryArgs = {
@@ -485,12 +547,32 @@ export type OnboardedDiscordServer = {
   name: Scalars['String']['output'];
 };
 
+export type Option = {
+  __typename?: 'Option';
+  dataType: FieldDataType;
+  name: Scalars['String']['output'];
+  optionId: Scalars['String']['output'];
+};
+
 export enum OptionType {
   Float = 'Float',
   Int = 'Int',
   Text = 'Text',
   Uri = 'Uri'
 }
+
+export type Options = {
+  __typename?: 'Options';
+  fieldId: Scalars['String']['output'];
+  hasRequestOptions: Scalars['Boolean']['output'];
+  maxSelections: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  options: Array<Maybe<Option>>;
+  previousStepOptions: Scalars['Boolean']['output'];
+  requestOptionsDataType?: Maybe<FieldDataType>;
+  required: Scalars['Boolean']['output'];
+  selectionType: FieldOptionsSelectionType;
+};
 
 export type Organization = {
   __typename?: 'Organization';
@@ -513,6 +595,13 @@ export type PercentageDecision = {
 export type PercentageDecisionArgs = {
   percentage: Scalars['Float']['input'];
   quorum: Scalars['Int']['input'];
+};
+
+export type Permission = {
+  __typename?: 'Permission';
+  anyone: Scalars['Boolean']['output'];
+  entities?: Maybe<Array<Entity>>;
+  stepTriggered: Scalars['Boolean']['output'];
 };
 
 export type PermissionArgs = {
@@ -570,7 +659,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
-  flow: Process;
+  getFlow: Flow;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -593,7 +682,7 @@ export type QueryDiscordServerRolesArgs = {
 };
 
 
-export type QueryFlowArgs = {
+export type QueryGetFlowArgs = {
   processId: Scalars['String']['input'];
 };
 
@@ -657,6 +746,19 @@ export type QuerySearchNftContractsArgs = {
   query: Scalars['String']['input'];
 };
 
+export type Ranking = {
+  __typename?: 'Ranking';
+  minimumAnswers: Scalars['Int']['output'];
+  numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
+  requestExpirationSeconds: Scalars['Int']['output'];
+};
+
+export type Raw = {
+  __typename?: 'Raw';
+  minimumAnswers: Scalars['Int']['output'];
+  requestExpirationSeconds: Scalars['Int']['output'];
+};
+
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
@@ -669,6 +771,12 @@ export type Request = {
   process: Process;
   responses: Responses;
   result?: Maybe<Result>;
+};
+
+export type RequestConfig = {
+  __typename?: 'RequestConfig';
+  fields?: Maybe<Array<Field>>;
+  permission?: Maybe<Permission>;
 };
 
 export type RequestInput = {
@@ -694,6 +802,12 @@ export type Response = {
   type: OptionType;
   user: User;
   value: Scalars['String']['output'];
+};
+
+export type ResponseConfig = {
+  __typename?: 'ResponseConfig';
+  fields?: Maybe<Array<Field>>;
+  permission?: Maybe<Permission>;
 };
 
 export type ResponseCount = {
@@ -728,6 +842,8 @@ export type ResultArgs = {
   type: ResultType;
 };
 
+export type ResultConfig = AutoApprove | Decision | LlmSummary | Ranking | Raw;
+
 export enum ResultType {
   AutoApprove = 'AutoApprove',
   Decision = 'Decision',
@@ -754,6 +870,14 @@ export type Roles = {
   respond: Array<Agent>;
 };
 
+export type Step = {
+  __typename?: 'Step';
+  action?: Maybe<ActionNew>;
+  request: RequestConfig;
+  response: ResponseConfig;
+  result: ResultConfig;
+};
+
 export type StepRequestArgs = {
   fields: Array<FieldArgs>;
   permission: PermissionArgs;
@@ -762,6 +886,11 @@ export type StepRequestArgs = {
 export type StepResponseArgs = {
   fields: Array<FieldArgs>;
   permission: PermissionArgs;
+};
+
+export type TriggerStep = {
+  __typename?: 'TriggerStep';
+  filterOption?: Maybe<Option>;
 };
 
 export type User = {
@@ -1149,6 +1278,11 @@ export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDe
       }
       const result: PossibleTypesResultData = {
   "possibleTypes": {
+    "ActionNew": [
+      "CallWebhook",
+      "EvolveFlow",
+      "TriggerStep"
+    ],
     "ActionType": [
       "EvolveProcessAction",
       "WebhookAction"
@@ -1161,6 +1295,14 @@ export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDe
       "AbsoluteDecision",
       "PercentageDecision"
     ],
+    "Entity": [
+      "Group",
+      "Identity"
+    ],
+    "Field": [
+      "FreeInput",
+      "Options"
+    ],
     "GroupType": [
       "DiscordRoleGroup",
       "GroupCustom",
@@ -1170,6 +1312,13 @@ export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDe
       "IdentityBlockchain",
       "IdentityDiscord",
       "IdentityEmail"
+    ],
+    "ResultConfig": [
+      "AutoApprove",
+      "Decision",
+      "LlmSummary",
+      "Ranking",
+      "Raw"
     ]
   }
 };
@@ -1204,6 +1353,8 @@ export type ActionArgs = {
   optionTrigger?: InputMaybe<Scalars['String']['input']>;
   webhook?: InputMaybe<WebhookActionArgs>;
 };
+
+export type ActionNew = CallWebhook | EvolveFlow | TriggerStep;
 
 export type ActionNewArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
@@ -1257,6 +1408,11 @@ export type ApiHatToken = {
   topHatName?: Maybe<Scalars['String']['output']>;
 };
 
+export type AutoApprove = {
+  __typename?: 'AutoApprove';
+  _?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export enum Blockchain {
   Arbitrum = 'Arbitrum',
   Base = 'Base',
@@ -1264,6 +1420,13 @@ export enum Blockchain {
   Matic = 'Matic',
   Optimism = 'Optimism'
 }
+
+export type CallWebhook = {
+  __typename?: 'CallWebhook';
+  filterOption?: Maybe<Option>;
+  name?: Maybe<Scalars['String']['output']>;
+  uri: Scalars['String']['output'];
+};
 
 export type CallWebhookArgs = {
   name: Scalars['String']['input'];
@@ -1278,6 +1441,15 @@ export type CustomGroupArgs = {
 export type CustomGroupMembersArgs = {
   agentType: AgentType;
   id: Scalars['String']['input'];
+};
+
+export type Decision = {
+  __typename?: 'Decision';
+  defaultOption?: Maybe<Option>;
+  minimumAnswers: Scalars['Int']['output'];
+  requestExpirationSeconds: Scalars['Int']['output'];
+  threshold: Scalars['Int']['output'];
+  type: DecisionType;
 };
 
 export type DecisionArgs = {
@@ -1335,6 +1507,8 @@ export type DiscordServerOnboarded = {
   name: Scalars['String']['output'];
 };
 
+export type Entity = Group | Identity;
+
 export type EntityArgs = {
   id: Scalars['String']['input'];
 };
@@ -1342,6 +1516,11 @@ export type EntityArgs = {
 export type EvolveArgs = {
   decision: DecisionArgs;
   roles: Array<RoleArgs>;
+};
+
+export type EvolveFlow = {
+  __typename?: 'EvolveFlow';
+  filterOption?: Maybe<Option>;
 };
 
 export type EvolveFlowArgs = {
@@ -1361,6 +1540,8 @@ export type EvolveProcessesDiff = {
   processId: Scalars['String']['output'];
   processName: Scalars['String']['output'];
 };
+
+export type Field = FreeInput | Options;
 
 export type FieldArgs = {
   fieldId: Scalars['String']['input'];
@@ -1404,6 +1585,28 @@ export enum FieldType {
   FreeInput = 'FreeInput',
   Options = 'Options'
 }
+
+export type Flow = {
+  __typename?: 'Flow';
+  evolve?: Maybe<Flow>;
+  name: Scalars['String']['output'];
+  reusable: Scalars['Boolean']['output'];
+  steps: Array<Maybe<Step>>;
+  type: FlowType;
+};
+
+export enum FlowType {
+  Custom = 'Custom',
+  Evolve = 'Evolve'
+}
+
+export type FreeInput = {
+  __typename?: 'FreeInput';
+  dataType: FieldDataType;
+  fieldId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  required: Scalars['Boolean']['output'];
+};
 
 export type Group = {
   __typename?: 'Group';
@@ -1522,6 +1725,14 @@ export type InputTemplateArgs = {
   name: Scalars['String']['input'];
   required: Scalars['Boolean']['input'];
   type: InputDataType;
+};
+
+export type LlmSummary = {
+  __typename?: 'LlmSummary';
+  minimumAnswers: Scalars['Int']['output'];
+  prompt?: Maybe<Scalars['String']['output']>;
+  requestExpirationSeconds: Scalars['Int']['output'];
+  type: LlmSummaryType;
 };
 
 export type LlmSummaryArgs = {
@@ -1652,12 +1863,32 @@ export type OnboardedDiscordServer = {
   name: Scalars['String']['output'];
 };
 
+export type Option = {
+  __typename?: 'Option';
+  dataType: FieldDataType;
+  name: Scalars['String']['output'];
+  optionId: Scalars['String']['output'];
+};
+
 export enum OptionType {
   Float = 'Float',
   Int = 'Int',
   Text = 'Text',
   Uri = 'Uri'
 }
+
+export type Options = {
+  __typename?: 'Options';
+  fieldId: Scalars['String']['output'];
+  hasRequestOptions: Scalars['Boolean']['output'];
+  maxSelections: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  options: Array<Maybe<Option>>;
+  previousStepOptions: Scalars['Boolean']['output'];
+  requestOptionsDataType?: Maybe<FieldDataType>;
+  required: Scalars['Boolean']['output'];
+  selectionType: FieldOptionsSelectionType;
+};
 
 export type Organization = {
   __typename?: 'Organization';
@@ -1680,6 +1911,13 @@ export type PercentageDecision = {
 export type PercentageDecisionArgs = {
   percentage: Scalars['Float']['input'];
   quorum: Scalars['Int']['input'];
+};
+
+export type Permission = {
+  __typename?: 'Permission';
+  anyone: Scalars['Boolean']['output'];
+  entities?: Maybe<Array<Entity>>;
+  stepTriggered: Scalars['Boolean']['output'];
 };
 
 export type PermissionArgs = {
@@ -1737,7 +1975,7 @@ export type ProposedProcessEvolution = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
-  flow: Process;
+  getFlow: Flow;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -1760,7 +1998,7 @@ export type QueryDiscordServerRolesArgs = {
 };
 
 
-export type QueryFlowArgs = {
+export type QueryGetFlowArgs = {
   processId: Scalars['String']['input'];
 };
 
@@ -1824,6 +2062,19 @@ export type QuerySearchNftContractsArgs = {
   query: Scalars['String']['input'];
 };
 
+export type Ranking = {
+  __typename?: 'Ranking';
+  minimumAnswers: Scalars['Int']['output'];
+  numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
+  requestExpirationSeconds: Scalars['Int']['output'];
+};
+
+export type Raw = {
+  __typename?: 'Raw';
+  minimumAnswers: Scalars['Int']['output'];
+  requestExpirationSeconds: Scalars['Int']['output'];
+};
+
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
@@ -1836,6 +2087,12 @@ export type Request = {
   process: Process;
   responses: Responses;
   result?: Maybe<Result>;
+};
+
+export type RequestConfig = {
+  __typename?: 'RequestConfig';
+  fields?: Maybe<Array<Field>>;
+  permission?: Maybe<Permission>;
 };
 
 export type RequestInput = {
@@ -1861,6 +2118,12 @@ export type Response = {
   type: OptionType;
   user: User;
   value: Scalars['String']['output'];
+};
+
+export type ResponseConfig = {
+  __typename?: 'ResponseConfig';
+  fields?: Maybe<Array<Field>>;
+  permission?: Maybe<Permission>;
 };
 
 export type ResponseCount = {
@@ -1895,6 +2158,8 @@ export type ResultArgs = {
   type: ResultType;
 };
 
+export type ResultConfig = AutoApprove | Decision | LlmSummary | Ranking | Raw;
+
 export enum ResultType {
   AutoApprove = 'AutoApprove',
   Decision = 'Decision',
@@ -1921,6 +2186,14 @@ export type Roles = {
   respond: Array<Agent>;
 };
 
+export type Step = {
+  __typename?: 'Step';
+  action?: Maybe<ActionNew>;
+  request: RequestConfig;
+  response: ResponseConfig;
+  result: ResultConfig;
+};
+
 export type StepRequestArgs = {
   fields: Array<FieldArgs>;
   permission: PermissionArgs;
@@ -1929,6 +2202,11 @@ export type StepRequestArgs = {
 export type StepResponseArgs = {
   fields: Array<FieldArgs>;
   permission: PermissionArgs;
+};
+
+export type TriggerStep = {
+  __typename?: 'TriggerStep';
+  filterOption?: Maybe<Option>;
 };
 
 export type User = {

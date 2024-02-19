@@ -2,7 +2,7 @@ import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { newStep } from "./helpers/newStep";
 import { FlowType } from "@prisma/client";
-import { newEvolveFlow } from "./newEvolveFlow";
+import { newEvolveFlow } from "./helpers/newEvolveFlow";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newCustomFlow = async ({ args }: { args: MutationNewFlowArgs }): Promise<string> => {

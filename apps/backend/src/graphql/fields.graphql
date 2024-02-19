@@ -1,3 +1,30 @@
+union Field = Options | FreeInput
+
+type Options {
+  fieldId: String!
+  name: String!
+  required: Boolean!
+  previousStepOptions: Boolean!
+  hasRequestOptions: Boolean!
+  requestOptionsDataType: FieldDataType
+  selectionType: FieldOptionsSelectionType!
+  maxSelections: Int!
+  options: [Option]!
+}
+
+type FreeInput {
+  fieldId: String!
+  name: String!
+  required: Boolean!
+  dataType: FieldDataType!
+}
+
+type Option {
+  optionId: String!
+  name: String!
+  dataType: FieldDataType!
+}
+
 # Should match prisma enum by same name
 enum FieldDataType {
   String

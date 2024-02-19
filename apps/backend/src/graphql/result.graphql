@@ -1,3 +1,35 @@
+union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
+
+type Decision {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  type: DecisionType!
+  defaultOption: Option
+  treshold: Int!
+}
+
+type Ranking {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  numOptionsToInclude: Int
+}
+
+type LlmSummary {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  type: LlmSummaryType!
+  prompt: String
+}
+
+type Raw {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+}
+
+type AutoApprove {
+  _: Boolean
+}
+
 # mirrors Prisma type
 enum ResultType {
   Raw

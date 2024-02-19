@@ -1,13 +1,23 @@
 import { GraphqlRequestContext } from "@graphql/context";
-import { MutationNewFlowArgs } from "@graphql/generated/resolver-types";
+import {
+  MutationNewFlowArgs,
+  MutationResolvers,
+  QueryGetFlowArgs,
+  QueryResolvers,
+} from "@graphql/generated/resolver-types";
 import { newCustomFlow as newCustomFlowService } from "@/flow/flow/newCustomFlow";
+import { getFlow as getFlowService } from "@/flow/flow/getFlow";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
-// const getFlow = async (root: unknown, args: {}, context: GraphqlRequestContext) => {
-//   return "";
-// };
+const getFlow: QueryResolvers["getFlow"] = async (
+  root: unknown,
+  args: QueryGetFlowArgs,
+  context: GraphqlRequestContext,
+) => {
+  return await getFlowService({ args, user: context.currentUser });
+};
 
-const newFlow = async (
+const newFlow: MutationResolvers["newFlow"] = async (
   root: unknown,
   args: MutationNewFlowArgs,
   context: GraphqlRequestContext,
@@ -23,4 +33,6 @@ export const flowMutations = {
   newFlow,
 };
 
-export const flowQueries = {};
+export const flowQueries = {
+  getFlow,
+};

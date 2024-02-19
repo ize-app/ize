@@ -669,7 +669,7 @@ model FlowVersion {
   FlowForCurrentVersion Flow?  @relation("FlowToCurrentFlowVersion")
   Flow                  Flow   @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
   EvolveFlow            Flow?  @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
-  Step                  Step[]
+  Steps                 Step[]
 
   @@map("flow_versions")
 }
@@ -705,9 +705,10 @@ model Step {
 model Permission {
   id String @id @default(uuid()) @db.Uuid
 
-  entitySetId String?  @map("entity_set_id") @db.Uuid
-  anyone      Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
+  entitySetId   String?  @map("entity_set_id") @db.Uuid
+  stepTriggered Boolean  @map("step_triggered")
+  anyone        Boolean  @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
 
   EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
@@ -817,6 +818,7 @@ model FieldOptionsConfig {
   requestOptionsDataType FieldDataType?      @map("data_type")
   // Whether or not options are created by the requestor
   hasRequestOptions      Boolean             @default(false) @map("has_request_options")
+  previousStepOptions    Boolean             @default(false) @map("previous_step_options")
   // Whether option is single or multi-select
   maxSelections          Int                 @map("max_selections")
   // type single select / multi-select / etc
@@ -860,7 +862,7 @@ model FieldOptionSetsFieldOptions {
 model FieldOption {
   id        String        @id @default(uuid()) @db.Uuid
   dataType  FieldDataType @map("data_type")
-  value     String
+  name      String
   createdAt DateTime      @default(now()) @map("created_at")
 
   AnswerOptionSelections     AnswerOptionSelection[]
@@ -1006,9 +1008,9 @@ model ActionNew {
   filterOptionId String?       @map("filter_option_id") @db.Uuid
   createdAt      DateTime      @default(now()) @map("created_at")
 
-  Steps         Step[]       @relation("StepsWithAction")
-  FieldOption   FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
-  ActionWebhook Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  Steps       Step[]       @relation("StepsWithAction")
+  FieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
+  Webhook     Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   ActionAttemptsNew ActionAttemptNew[]
 

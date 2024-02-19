@@ -11,7 +11,7 @@ import {
   ResultType,
 } from "@/graphql/generated/resolver-types";
 import { FlowType, Prisma } from "@prisma/client";
-import { newStep } from "./helpers/newStep";
+import { newStep } from "./newStep";
 
 const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
   const requestFieldSetArgs: FieldArgs = {
