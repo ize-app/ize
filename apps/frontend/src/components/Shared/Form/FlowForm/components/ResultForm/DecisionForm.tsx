@@ -8,6 +8,8 @@ import { InputAdornment } from "@mui/material";
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 import { useEffect } from "react";
 import { FieldOptionSchemaType } from "../../formValidation/fields";
+import { SelectOption } from "../../../FormFields/Select";
+import { DefaultOptionSelection } from "../../formValidation/fields";
 
 interface DecisionFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -23,16 +25,18 @@ export const DecisionForm = ({ formMethods, formIndex }: DecisionFormProps) => {
 
   const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
 
-  const defaultOptionSelections = (options ?? []).map((option: FieldOptionSchemaType) => {
-    return {
-      name: option.name,
-      value: option.optionId,
-    };
-  });
+  const defaultOptionSelections: SelectOption[] = (options ?? []).map(
+    (option: FieldOptionSchemaType) => {
+      return {
+        name: option.name,
+        value: option.optionId,
+      };
+    },
+  );
 
   defaultOptionSelections.unshift({
     name: "No default option",
-    value: "None",
+    value: DefaultOptionSelection.None,
   });
 
   return (

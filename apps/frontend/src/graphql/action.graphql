@@ -1,0 +1,32 @@
+fragment ActionNew on ActionNew {
+  __typename
+  ... on CallWebhook {
+    ...CallWebhook
+  }
+  ... on EvolveFlow {
+    ...EvolveFlow
+  }
+  ... on TriggerStep {
+    ...TriggerStep
+  }
+}
+
+fragment CallWebhook on CallWebhook {
+  filterOption {
+    ...Option
+  }
+  uri
+  name
+}
+
+fragment EvolveFlow on EvolveFlow {
+  filterOption {
+    ...Option
+  }
+}
+
+fragment TriggerStep on TriggerStep {
+  filterOption {
+    ...Option
+  }
+}

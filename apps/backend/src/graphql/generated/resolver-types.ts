@@ -130,11 +130,11 @@ export type CustomGroupMembersArgs = {
 
 export type Decision = {
   __typename?: 'Decision';
+  decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
   minimumAnswers: Scalars['Int']['output'];
   requestExpirationSeconds: Scalars['Int']['output'];
   threshold: Scalars['Int']['output'];
-  type: DecisionType;
 };
 
 export type DecisionArgs = {
@@ -417,7 +417,7 @@ export type LlmSummary = {
   minimumAnswers: Scalars['Int']['output'];
   prompt?: Maybe<Scalars['String']['output']>;
   requestExpirationSeconds: Scalars['Int']['output'];
-  type: LlmSummaryType;
+  summaryType: LlmSummaryType;
 };
 
 export type LlmSummaryArgs = {
@@ -684,7 +684,7 @@ export type QueryDiscordServerRolesArgs = {
 
 
 export type QueryGetFlowArgs = {
-  processId: Scalars['String']['input'];
+  flowId: Scalars['String']['input'];
 };
 
 
@@ -877,6 +877,7 @@ export type Step = {
   request: RequestConfig;
   response: ResponseConfig;
   result: ResultConfig;
+  userPermission: UserPermission;
 };
 
 export type StepRequestArgs = {
@@ -900,6 +901,12 @@ export type User = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type UserPermission = {
+  __typename?: 'UserPermission';
+  request: Scalars['Boolean']['output'];
+  response: Scalars['Boolean']['output'];
 };
 
 export type UserRoles = {
@@ -1140,6 +1147,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   User: ResolverTypeWrapper<User>;
+  UserPermission: ResolverTypeWrapper<UserPermission>;
   UserRoles: ResolverTypeWrapper<UserRoles>;
   WebhookAction: ResolverTypeWrapper<WebhookAction>;
   WebhookActionArgs: WebhookActionArgs;
@@ -1252,6 +1260,7 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   TriggerStep: TriggerStep;
   User: User;
+  UserPermission: UserPermission;
   UserRoles: UserRoles;
   WebhookAction: WebhookAction;
   WebhookActionArgs: WebhookActionArgs;
@@ -1327,11 +1336,11 @@ export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Decision'] = ResolversParentTypes['Decision']> = {
+  decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1497,7 +1506,7 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   prompt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['LlmSummaryType'], ParentType, ContextType>;
+  summaryType?: Resolver<ResolversTypes['LlmSummaryType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1618,7 +1627,7 @@ export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContex
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
-  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'processId'>>;
+  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
@@ -1733,6 +1742,7 @@ export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extend
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;
   result?: Resolver<ResolversTypes['ResultConfig'], ParentType, ContextType>;
+  userPermission?: Resolver<ResolversTypes['UserPermission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1746,6 +1756,12 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserPermission'] = ResolversParentTypes['UserPermission']> = {
+  request?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  response?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1824,6 +1840,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserPermission?: UserPermissionResolvers<ContextType>;
   UserRoles?: UserRolesResolvers<ContextType>;
   WebhookAction?: WebhookActionResolvers<ContextType>;
 };

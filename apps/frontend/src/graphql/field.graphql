@@ -1,0 +1,36 @@
+fragment Field on Field {
+    __typename
+    ... on Options {
+        ...Options
+    }
+    ... on FreeInput {
+        ...FreeInput
+    }
+}
+
+fragment Options on Options {
+  fieldId
+  name
+  required
+  previousStepOptions
+  hasRequestOptions
+  requestOptionsDataType
+  selectionType
+  maxSelections
+  options {
+    ...Option
+  }
+}
+
+fragment FreeInput on FreeInput {
+  fieldId
+  name
+  required
+  dataType
+}
+
+fragment Option on Option {
+  optionId
+  name
+  dataType
+}

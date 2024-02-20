@@ -18,9 +18,9 @@ export const newFieldSet = async ({
   if (fields.length === 0) return null;
   const dbFields = await Promise.all(
     fields.map(async (field) => {
-      let optionsConfigId = null;
+      let fieldOptionsConfigId: string | null = null;
       if (field.optionsConfig) {
-        await createFieldOptionsConfig({
+        fieldOptionsConfigId = await createFieldOptionsConfig({
           fieldOptionsConfigArgs: field.optionsConfig,
           transaction,
         });
@@ -31,7 +31,7 @@ export const newFieldSet = async ({
           name: field.name,
           type: field.type,
           freeInputDataType: field.freeInputDataType,
-          fieldOptionsConfigId: optionsConfigId,
+          fieldOptionsConfigId,
           required: field.required,
         },
       });
@@ -65,7 +65,7 @@ const createFieldOptionsConfig = async ({
     options.map(async (option: FieldOptionArgs, index) => {
       const res = await transaction.fieldOption.create({
         data: {
-          value: option.name,
+          name: option.name,
           dataType: option.dataType,
         },
       });

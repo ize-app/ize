@@ -3,9 +3,9 @@ union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
 type Decision {
   requestExpirationSeconds: Int!
   minimumAnswers: Int!
-  type: DecisionType!
+  decisionType: DecisionType!
   defaultOption: Option
-  treshold: Int!
+  threshold: Int!
 }
 
 type Ranking {
@@ -17,7 +17,7 @@ type Ranking {
 type LlmSummary {
   requestExpirationSeconds: Int!
   minimumAnswers: Int!
-  type: LlmSummaryType!
+  summaryType: LlmSummaryType!
   prompt: String
 }
 

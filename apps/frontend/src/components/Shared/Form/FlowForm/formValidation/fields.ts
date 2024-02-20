@@ -8,6 +8,10 @@ export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
 export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 
+export enum DefaultOptionSelection {
+  None = "None",
+}
+
 const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
     const date = val as Dayjs;

@@ -1,0 +1,50 @@
+fragment ResultConfig on ResultConfig {
+  __typename
+  ... on Decision {
+    ...Decision
+  }
+  ... on Ranking {
+    ...Ranking
+  }
+  ... on LlmSummary {
+    ...LlmSummary
+  }
+  ... on Raw {
+    ...Raw
+  }
+  ... on AutoApprove {
+    ...AutoApprove
+  }
+}
+
+fragment Decision on Decision {
+  requestExpirationSeconds
+  minimumAnswers
+  decisionType
+  defaultOption {
+    ...Option
+  }
+  threshold
+}
+
+fragment Ranking on Ranking {
+  requestExpirationSeconds
+  minimumAnswers
+  numOptionsToInclude
+}
+
+fragment LlmSummary on LlmSummary {
+  requestExpirationSeconds
+  minimumAnswers
+  summaryType
+  prompt
+}
+
+fragment Raw on Raw {
+  requestExpirationSeconds
+  minimumAnswers
+}
+
+fragment AutoApprove on AutoApprove {
+  _
+}

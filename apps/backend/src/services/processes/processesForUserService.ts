@@ -3,7 +3,7 @@ import { prisma } from "@/prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { formatProcess, processInclude } from "@utils/formatProcess";
 import { Process, QueryProcessesForCurrentUserArgs } from "@graphql/generated/resolver-types";
-import { getGroupIdsOfUser } from "../groups/getGroupIdsOfUser";
+import { getGroupIdsOfUser } from "../../flow/group/getGroupIdsOfUser";
 
 /* 
 Gets all processes that either 

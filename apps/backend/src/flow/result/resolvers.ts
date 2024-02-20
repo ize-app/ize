@@ -62,7 +62,7 @@ const resultConfigDecisionResolver = (
     __typename: "Decision",
     minimumAnswers: resultConfig.minAnswers,
     requestExpirationSeconds: resultConfig.requestExpirationSeconds,
-    type: decConfig.type as DecisionType,
+    decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
   };
 };
@@ -91,7 +91,7 @@ const resultConfigLlmResolver = (resultConfig: ResultConfigPrismaType): LlmSumma
     __typename: "LlmSummary",
     minimumAnswers: resultConfig.minAnswers,
     requestExpirationSeconds: resultConfig.requestExpirationSeconds,
-    type: llmConfig.type as LlmSummaryType,
+    summaryType: llmConfig.type as LlmSummaryType,
     prompt: llmConfig.prompt,
   };
 };

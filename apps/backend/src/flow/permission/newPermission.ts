@@ -3,9 +3,11 @@ import { Prisma } from "@prisma/client";
 
 export const newPermission = async ({
   permission: args,
+  stepIndex,
   transaction,
 }: {
   permission: PermissionArgs;
+  stepIndex: number;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   let entitySetId = undefined;
@@ -26,6 +28,7 @@ export const newPermission = async ({
   const permission = await transaction.permission.create({
     data: {
       anyone: args.anyone,
+      stepTriggered: stepIndex > 0,
       entitySetId,
     },
   });

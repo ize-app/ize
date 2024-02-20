@@ -15,7 +15,7 @@ import {
   EvolveProcessesDiff,
   ProcessType,
 } from "@graphql/generated/resolver-types";
-import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
+import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
 
 export const requestInputInclude = Prisma.validator<Prisma.RequestInputInclude>()({
   input: true,

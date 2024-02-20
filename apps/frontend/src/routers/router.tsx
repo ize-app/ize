@@ -9,6 +9,7 @@ import NewProcess from "@/components/NewProcess/NewProcess";
 import * as NewFlow from "@/components/NewFlow";
 import * as NewRequest from "@/components/NewRequest";
 import { Process } from "@/components/Process/Process";
+import { Flow } from "@/components/Flow/Flow";
 import { Request } from "@/components/Request/Request";
 import * as ProcessForm from "@/components/shared/Form/ProcessForm/wizardScreens";
 import { DefaultLayout } from "@/layout/default";
@@ -177,6 +178,11 @@ export const router = createBrowserRouter([
         path: Routes.Route.Process,
         errorElement: <ErrorBoundary />,
         element: <Process />,
+      },
+      {
+        path: Routes.Route.Flow,
+        errorElement: <ErrorBoundary />,
+        element: <Flow />,
       },
       {
         path: Routes.Route.UserSettings,

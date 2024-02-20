@@ -3,7 +3,7 @@ type Mutation {
 }
 
 type Query {
-  getFlow(processId: String!): Flow!
+  getFlow(flowId: String!): Flow!
 }
 
 type Flow {
@@ -24,6 +24,7 @@ type Step {
   response: ResponseConfig!
   result: ResultConfig!
   action: ActionNew
+  userPermission: UserPermission!
 }
 
 type RequestConfig {
@@ -34,6 +35,11 @@ type RequestConfig {
 type ResponseConfig {
   permission: Permission
   fields: [Field!]
+}
+
+type UserPermission {
+  request: Boolean!
+  response: Boolean!
 }
 
 input NewFlowArgs {

@@ -10,6 +10,7 @@ export enum Route {
   Group = "/groups/:groupId",
   Request = "/requests/:requestId",
   Process = "/processes/:processId",
+  Flow = "/flow/:flowId",
   EditProcess = "/edit/:processId",
 }
 

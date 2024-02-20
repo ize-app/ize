@@ -9,6 +9,16 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     possibleTypes: {
       Agent: ["Identity", "Group"],
+      Entity: ["Identity", "Group"],
+      Field: ["Options", "FreeInput"],
+      ResultConfig: [
+        "DecisionConfig",
+        "RankingConfig",
+        "LlmSummaryConfig",
+        "RawConfig",
+        "AutoApproveConfig",
+      ],
+      ActionNew: ["CallWebhook", "EvolveFlow", "TriggerStep"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
     },

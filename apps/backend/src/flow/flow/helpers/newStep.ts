@@ -45,6 +45,7 @@ export const newStep = async ({
   const requestPermissionsId = args.request
     ? await newPermission({
         permission: args.request.permission,
+        stepIndex: index,
         transaction,
       })
     : null;
@@ -52,6 +53,7 @@ export const newStep = async ({
   const responsePermissionsId = args.response
     ? await newPermission({
         permission: args.response.permission,
+        stepIndex: index,
         transaction,
       })
     : null;

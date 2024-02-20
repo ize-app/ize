@@ -3,7 +3,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
 
 import { groupInclude, formatGroup } from "@utils/formatGroup";
-import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
+import { getGroupIdsOfUser } from "../../flow/group/getGroupIdsOfUser";
 
 export const getGroupsOfUser = async ({
   context,

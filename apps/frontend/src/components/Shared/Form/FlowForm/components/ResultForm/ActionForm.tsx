@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { defaultDecisionStepFormValues } from "../../helpers/getDefaultFormValues";
 import { ActionNewType } from "@/graphql/generated/graphql";
 import { FieldOptionSchemaType } from "../../formValidation/fields";
+import { DefaultOptionSelection } from "../../formValidation/fields";
+import { SelectOption } from "../../../FormFields/Select";
 
 interface ActionFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -22,16 +24,18 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
 
   const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
 
-  const defaultOptionSelections = (options ?? []).map((option: FieldOptionSchemaType) => {
-    return {
-      name: option.name,
-      value: option.optionId,
-    };
-  });
+  const defaultOptionSelections: SelectOption[] = (options ?? []).map(
+    (option: FieldOptionSchemaType) => {
+      return {
+        name: option.name,
+        value: option.optionId,
+      };
+    },
+  );
 
   defaultOptionSelections.unshift({
     name: "Action runs for every result",
-    value: "None",
+    value: DefaultOptionSelection.None,
   });
 
   useEffect(() => {

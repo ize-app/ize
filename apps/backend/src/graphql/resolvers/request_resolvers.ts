@@ -15,7 +15,7 @@ import {
   Request,
 } from "@graphql/generated/resolver-types";
 import { newResponseService } from "@/services/requests/newResponseService";
-import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
+import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
 
 const newRequest = async (
   root: unknown,

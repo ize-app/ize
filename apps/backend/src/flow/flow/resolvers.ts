@@ -5,17 +5,18 @@ import { permissionResolver } from "../permission/resolvers";
 import { fieldSetResolver } from "../fields/resolvers";
 import { actionResolver } from "../action/resolvers";
 import { resultConfigResolver } from "../result/resolvers";
-import { MePrismaType } from "@/utils/formatUser";
-import { response } from "express";
+import { hasReadPermission } from "../permission/hasReadPermission";
 
 export const flowResolver = ({
   flow,
   evolveFlow,
-  user,
+  userIdentityIds,
+  userGroupIds,
 }: {
   flow: FlowPrismaType;
   evolveFlow?: FlowPrismaType;
-  user: MePrismaType | undefined | null;
+  userIdentityIds: string[];
+  userGroupIds: string[];
 }): Flow => {
   if (!flow.CurrentFlowVersion)
     throw new GraphQLError("Flow does not have a a current version.", {
@@ -27,21 +28,24 @@ export const flowResolver = ({
     type: flow.type as FlowType,
     reusable: flow.CurrentFlowVersion?.reusable,
     name: flow.CurrentFlowVersion.name,
-    steps: flow.CurrentFlowVersion.Steps.map((step) => stepResolver({ step, user })),
-    evolve: evolveFlow ? flowResolver({ flow: evolveFlow, user }) : null,
+    steps: flow.CurrentFlowVersion.Steps.map((step) =>
+      stepResolver({ step, userIdentityIds, userGroupIds }),
+    ),
+    evolve: evolveFlow ? flowResolver({ flow: evolveFlow, userIdentityIds, userGroupIds }) : null,
   };
 };
 
 export const stepResolver = ({
   step,
-  user,
+  userIdentityIds,
+  userGroupIds,
 }: {
   step: StepPrismaType;
-  user: MePrismaType | undefined | null;
+  userIdentityIds: string[];
+  userGroupIds: string[];
 }): Step => {
   let responseOptions: Option[] | undefined = undefined;
 
-  const userIdentityIds = user ? user.Identities.map((id) => id.id) : [];
   const responseFields = step.ResponseFieldSet ? fieldSetResolver(step.ResponseFieldSet) : null;
   if (responseFields && responseFields[0].__typename === "Options") {
     responseOptions = responseFields[0].options as Option[];
@@ -61,5 +65,9 @@ export const stepResolver = ({
     },
     action: step.ActionNew ? actionResolver(step.ActionNew, responseOptions) : null,
     result: resultConfigResolver(step.ResultConfig, responseOptions),
+    userPermission: {
+      request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds),
+      response: hasReadPermission(step.ResponsePermissions, userIdentityIds, userGroupIds),
+    },
   };
 };

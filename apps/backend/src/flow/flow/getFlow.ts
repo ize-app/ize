@@ -3,8 +3,8 @@ import { prisma } from "../../prisma/client";
 import { flowInclude } from "./types";
 import { flowResolver } from "./resolvers";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { GraphqlRequestContext } from "@graphql/context";
 import { MePrismaType } from "@/utils/formatUser";
+import { getGroupIdsOfUser } from "../group/getGroupIdsOfUser";
 
 export const getFlow = async ({
   args,
@@ -16,7 +16,7 @@ export const getFlow = async ({
   const flow = await prisma.flow.findFirstOrThrow({
     include: flowInclude,
     where: {
-      id: args.processId,
+      id: args.flowId,
     },
   });
 
@@ -32,5 +32,9 @@ export const getFlow = async ({
     },
   });
 
-  return flowResolver({ flow, evolveFlow, user });
+  const userIdentityIds = user?.Identities.map((id) => id.id) ?? [];
+
+  const userGroupIds = await getGroupIdsOfUser({ user });
+
+  return flowResolver({ flow, evolveFlow, userIdentityIds, userGroupIds });
 };

@@ -9,14 +9,12 @@ import { SnackbarContext } from "../../contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { Wizard, useWizard } from "@/utils/wizard";
-import {
-  NEW_FLOW_PROGRESS_BAR_STEPS,
-  NEW_FLOW_WIZARD_STEPS,
-} from "./newFlowWizard";
+import { NEW_FLOW_PROGRESS_BAR_STEPS, NEW_FLOW_WIZARD_STEPS } from "./newFlowWizard";
 import { FlowSchemaType } from "../shared/Form/FlowForm/formValidation/flow";
 import { NewFlowDocument } from "@/graphql/generated/graphql";
 import { useMutation } from "@apollo/client";
 import { createNewFlowArgs } from "../shared/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
+import { fullUUIDToShort } from "@/utils/inputs";
 
 export const NewFlow = () => {
   const navigate = useNavigate();
@@ -24,12 +22,14 @@ export const NewFlow = () => {
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
+      console.log("inside onCompleted");
       const { newFlow: newFlowId } = data;
-      // navigate(`/flow/${fullUUIDToShort(newProcessId)}`);
+      navigate(`/flow/${fullUUIDToShort(newFlowId)}`);
     },
   });
 
   const onComplete = async () => {
+    console.log("about to make mutation");
     try {
       await mutate({
         variables: {
@@ -42,7 +42,8 @@ export const NewFlow = () => {
         type: "success",
       });
       setSnackbarOpen(true);
-    } catch {
+    } catch (e) {
+      console.log("Error creating mutation: ", e);
       navigate("/");
       setSnackbarOpen(true);
       setSnackbarData({ message: "Process creation failed", type: "error" });
