@@ -7,6 +7,7 @@ import { Group } from "@/components/Groups/Group";
 import { Home } from "@/components/Home";
 import NewProcess from "@/components/NewProcess/NewProcess";
 import * as NewFlow from "@/components/NewFlow";
+import { Setup as FlowSetup } from "@/components/shared/Form/FlowForm/wizardScreens/Setup";
 import * as NewRequest from "@/components/NewRequest";
 import { Process } from "@/components/Process/Process";
 import { Flow } from "@/components/Flow/Flow";
@@ -18,6 +19,7 @@ import * as Routes from "@/routers/routes";
 import { ResetPassword } from "@/components/shared/Auth/ResetPassword";
 import { UserSettings } from "@/components/Settings/UserSettings";
 import * as NewCustomGroup from "@/components/NewCustomGroup";
+import * as EvolveFlow from "@/components/EvolveFlow";
 
 export const router = createBrowserRouter([
   {
@@ -40,7 +42,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: Routes.newFlowRoute(Routes.NewFlowRoute.Setup),
-            element: <NewFlow.Setup />,
+            element: <FlowSetup />,
             index: true,
           },
           {
@@ -161,6 +163,26 @@ export const router = createBrowserRouter([
           {
             path: Routes.editProcessRoute(Routes.EditProcessRoute.Confirm),
             element: <ProcessForm.DiffConfirmation />,
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthRoute>
+            <EvolveFlow.default />
+          </AuthRoute>
+        ),
+        path: Routes.Route.EvolveFlow,
+        errorElement: <ErrorBoundary />,
+        children: [
+          {
+            path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Setup),
+            element: <FlowSetup />,
+            index: true,
+          },
+          {
+            path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Confirm),
+            element: <EvolveFlow.Confirm />,
           },
         ],
       },

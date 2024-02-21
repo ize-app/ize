@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
+import { DefaultOptionSelection } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 
@@ -11,12 +12,12 @@ export enum LlmSummaryType {
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
-    defaultOptionId: z.string().nullable().default(null).optional(),
+    defaultOptionId: z.string().default(DefaultOptionSelection.None),
     threshold: z.coerce.number().int().positive(),
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
-    defaultOptionId: z.string().nullable().default(null).optional(),
+    defaultOptionId: z.string().default(DefaultOptionSelection.None),
     threshold: z.coerce.number().int().min(51).max(100),
   }),
 ]);
@@ -27,7 +28,7 @@ const prioritizationSchema = z.object({
 
 const llmSchema = z.object({
   type: z.nativeEnum(LlmSummaryType),
-  prompt: z.string(),
+  prompt: z.string().optional(),
 });
 
 export const resultSchema = z.discriminatedUnion("type", [
@@ -38,7 +39,7 @@ export const resultSchema = z.discriminatedUnion("type", [
     decision: decisionSchema,
   }),
   z.object({
-    type: z.literal(ResultType.Prioritization),
+    type: z.literal(ResultType.Ranking),
     requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().default(1),
     prioritization: prioritizationSchema,

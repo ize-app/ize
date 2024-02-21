@@ -43,8 +43,7 @@ export const Setup = () => {
   });
 
   const onSubmit = (data: FlowSchemaType) => {
-    console.log("data is ", data);
-    setFormState({ ...data });
+    setFormState((prev) => ({ ...prev, ...data }));
     onNext();
   };
 

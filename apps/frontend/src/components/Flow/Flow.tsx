@@ -5,16 +5,17 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { FlowFragment, GetFlowDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
+import { EvolveFlowRoute, evolveFlowRoute } from "@/routers/routes";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -102,11 +103,11 @@ export const Flow = () => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  // navigate(
-                  //   generatePath(editProcessRoute(EditProcessRoute.Intro), {
-                  //     processId: fullUUIDToShort(flow.id),
-                  //   }),
-                  // );
+                  navigate(
+                    generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {
+                      flowId: fullUUIDToShort(flow.id),
+                    }),
+                  );
                 }}
                 disabled={!flow.evolve?.steps[0]?.request}
                 sx={{

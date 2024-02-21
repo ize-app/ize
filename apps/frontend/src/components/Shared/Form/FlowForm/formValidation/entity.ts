@@ -2,6 +2,8 @@ import * as z from "zod";
 import { Blockchain, NewAgentTypes, AgentType } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
 
+export type EntitySchemaType = z.infer<typeof entityFormSchema>;
+
 const groupFormSchema = z.object({
   id: z.string(),
   entityId: z.string(),

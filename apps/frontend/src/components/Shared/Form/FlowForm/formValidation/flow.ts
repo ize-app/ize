@@ -7,6 +7,7 @@ import { ResultType } from "@/graphql/generated/graphql";
 import { evolveFlowSchema } from "./evolve";
 
 export type FlowSchemaType = z.infer<typeof flowSchema>;
+export type EvolveExistingFlowSchemaType = z.infer<typeof evolveExistingFlowSchema>;
 export type StepSchemaType = z.infer<typeof stepSchema>;
 
 const stepSchema = z
@@ -34,21 +35,25 @@ const stepSchema = z
     { message: "Missing request", path: ["request"] },
   );
 
-export const flowSchema = z
-  .object({
-    name: z.string().min(1, "Enter a name"),
-    reusable: z.boolean().optional().default(false),
-    steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-    evolve: evolveFlowSchema.optional(),
-  })
-  .superRefine((flow, ctx) => {
-    flow.steps.map((step, index) => {
-      if (!step.request && flow.reusable) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Missing reuqest field",
-          path: ["steps", index],
-        });
-      }
-    });
-  });
+export const flowSchema = z.object({
+  name: z.string().min(1, "Enter a name"),
+  reusable: z.boolean().optional().default(false),
+  steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
+  evolve: evolveFlowSchema.optional(),
+});
+// TODO add this back
+// .superRefine((flow, ctx) => {
+//   flow.steps.map((step, index) => {
+//     if (!step.request && flow.reusable) {
+//       ctx.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         message: "Missing reuqest field",
+//         path: ["steps", index],
+//       });
+//     }
+//   });
+// });
+
+export const evolveExistingFlowSchema = flowSchema.extend({
+  currentFlow: flowSchema,
+});

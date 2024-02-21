@@ -7,6 +7,7 @@ type Query {
 }
 
 type Flow {
+  id: String!
   type: FlowType!
   name: String!
   reusable: Boolean!
@@ -28,13 +29,13 @@ type Step {
 }
 
 type RequestConfig {
-  permission: Permission
-  fields: [Field!]
+  permission: Permission!
+  fields: [Field!]!
 }
 
 type ResponseConfig {
-  permission: Permission
-  fields: [Field!]
+  permission: Permission!
+  fields: [Field!]!
 }
 
 type UserPermission {

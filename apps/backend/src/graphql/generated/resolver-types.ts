@@ -109,7 +109,7 @@ export enum Blockchain {
 export type CallWebhook = {
   __typename?: 'CallWebhook';
   filterOption?: Maybe<Option>;
-  name?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   uri: Scalars['String']['output'];
 };
 
@@ -274,6 +274,7 @@ export enum FieldType {
 export type Flow = {
   __typename?: 'Flow';
   evolve?: Maybe<Flow>;
+  id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Maybe<Step>>;
@@ -568,7 +569,7 @@ export type Options = {
   hasRequestOptions: Scalars['Boolean']['output'];
   maxSelections: Scalars['Int']['output'];
   name: Scalars['String']['output'];
-  options: Array<Maybe<Option>>;
+  options: Array<Option>;
   previousStepOptions: Scalars['Boolean']['output'];
   requestOptionsDataType?: Maybe<FieldDataType>;
   required: Scalars['Boolean']['output'];
@@ -601,7 +602,7 @@ export type PercentageDecisionArgs = {
 export type Permission = {
   __typename?: 'Permission';
   anyone: Scalars['Boolean']['output'];
-  entities?: Maybe<Array<Entity>>;
+  entities: Array<Entity>;
   stepTriggered: Scalars['Boolean']['output'];
 };
 
@@ -611,7 +612,7 @@ export type PermissionArgs = {
 };
 
 export type PrioritizationArgs = {
-  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
+  numOptionsToInclude: Scalars['Int']['input'];
 };
 
 export type Process = {
@@ -750,7 +751,7 @@ export type QuerySearchNftContractsArgs = {
 export type Ranking = {
   __typename?: 'Ranking';
   minimumAnswers: Scalars['Int']['output'];
-  numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
+  numOptionsToInclude: Scalars['Int']['output'];
   requestExpirationSeconds: Scalars['Int']['output'];
 };
 
@@ -776,8 +777,8 @@ export type Request = {
 
 export type RequestConfig = {
   __typename?: 'RequestConfig';
-  fields?: Maybe<Array<Field>>;
-  permission?: Maybe<Permission>;
+  fields: Array<Field>;
+  permission: Permission;
 };
 
 export type RequestInput = {
@@ -807,8 +808,8 @@ export type Response = {
 
 export type ResponseConfig = {
   __typename?: 'ResponseConfig';
-  fields?: Maybe<Array<Field>>;
-  permission?: Maybe<Permission>;
+  fields: Array<Field>;
+  permission: Permission;
 };
 
 export type ResponseCount = {
@@ -849,7 +850,7 @@ export enum ResultType {
   AutoApprove = 'AutoApprove',
   Decision = 'Decision',
   LlmSummary = 'LlmSummary',
-  Prioritization = 'Prioritization',
+  Ranking = 'Ranking',
   Raw = 'Raw'
 }
 
@@ -1115,7 +1116,7 @@ export type ResolversTypes = {
   ParentProcess: ResolverTypeWrapper<ParentProcess>;
   PercentageDecision: ResolverTypeWrapper<PercentageDecision>;
   PercentageDecisionArgs: PercentageDecisionArgs;
-  Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities?: Maybe<Array<ResolversTypes['Entity']>> }>;
+  Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
   Process: ResolverTypeWrapper<Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversTypes['DecisionTypes'] }>;
@@ -1127,11 +1128,11 @@ export type ResolversTypes = {
   Ranking: ResolverTypeWrapper<Ranking>;
   Raw: ResolverTypeWrapper<Raw>;
   Request: ResolverTypeWrapper<Request>;
-  RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields?: Maybe<Array<ResolversTypes['Field']>> }>;
+  RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   RequestInput: ResolverTypeWrapper<RequestInput>;
   RequestInputArgs: RequestInputArgs;
   Response: ResolverTypeWrapper<Response>;
-  ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields?: Maybe<Array<ResolversTypes['Field']>> }>;
+  ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   ResponseCount: ResolverTypeWrapper<ResponseCount>;
   Responses: ResolverTypeWrapper<Responses>;
   Result: ResolverTypeWrapper<Result>;
@@ -1231,7 +1232,7 @@ export type ResolversParentTypes = {
   ParentProcess: ParentProcess;
   PercentageDecision: PercentageDecision;
   PercentageDecisionArgs: PercentageDecisionArgs;
-  Permission: Omit<Permission, 'entities'> & { entities?: Maybe<Array<ResolversParentTypes['Entity']>> };
+  Permission: Omit<Permission, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
   Process: Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversParentTypes['DecisionTypes'] };
@@ -1242,11 +1243,11 @@ export type ResolversParentTypes = {
   Ranking: Ranking;
   Raw: Raw;
   Request: Request;
-  RequestConfig: Omit<RequestConfig, 'fields'> & { fields?: Maybe<Array<ResolversParentTypes['Field']>> };
+  RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   RequestInput: RequestInput;
   RequestInputArgs: RequestInputArgs;
   Response: Response;
-  ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields?: Maybe<Array<ResolversParentTypes['Field']>> };
+  ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResponseCount: ResponseCount;
   Responses: Responses;
   Result: Result;
@@ -1330,7 +1331,7 @@ export type AutoApproveResolvers<ContextType = GraphqlRequestContext, ParentType
 
 export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['CallWebhook'] = ResolversParentTypes['CallWebhook']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1411,6 +1412,7 @@ export type FieldResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;
@@ -1559,7 +1561,7 @@ export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType ext
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   maxSelections?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  options?: Resolver<Array<Maybe<ResolversTypes['Option']>>, ParentType, ContextType>;
+  options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
   previousStepOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   requestOptionsDataType?: Resolver<Maybe<ResolversTypes['FieldDataType']>, ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1587,7 +1589,7 @@ export type PercentageDecisionResolvers<ContextType = GraphqlRequestContext, Par
 
 export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Permission'] = ResolversParentTypes['Permission']> = {
   anyone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  entities?: Resolver<Maybe<Array<ResolversTypes['Entity']>>, ParentType, ContextType>;
+  entities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
   stepTriggered?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1646,7 +1648,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  numOptionsToInclude?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  numOptionsToInclude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1672,8 +1674,8 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
 };
 
 export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestConfig'] = ResolversParentTypes['RequestConfig']> = {
-  fields?: Resolver<Maybe<Array<ResolversTypes['Field']>>, ParentType, ContextType>;
-  permission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
+  fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
+  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1698,8 +1700,8 @@ export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType ex
 };
 
 export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseConfig'] = ResolversParentTypes['ResponseConfig']> = {
-  fields?: Resolver<Maybe<Array<ResolversTypes['Field']>>, ParentType, ContextType>;
-  permission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
+  fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
+  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

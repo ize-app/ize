@@ -9,7 +9,8 @@ import {
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { FieldSetPrismaType } from "./types";
 
-export const fieldSetResolver = (fieldSet: FieldSetPrismaType): Field[] => {
+export const fieldSetResolver = (fieldSet: FieldSetPrismaType | null): Field[] => {
+  if (!fieldSet) return [];
   return fieldSet.FieldSetFields.map((f) => {
     if (f.Field.type === FieldType.FreeInput) {
       const freeInput: FreeInput = {
@@ -20,7 +21,7 @@ export const fieldSetResolver = (fieldSet: FieldSetPrismaType): Field[] => {
         dataType: f.Field.freeInputDataType as FieldDataType,
       };
       return freeInput;
-    } else if (f.Field.type === FieldType.Options) {=
+    } else if (f.Field.type === FieldType.Options) {
       if (!f.Field.FieldOptionsConfigs)
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

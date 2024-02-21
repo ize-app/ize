@@ -36,5 +36,7 @@ export const getFlow = async ({
 
   const userGroupIds = await getGroupIdsOfUser({ user });
 
-  return flowResolver({ flow, evolveFlow, userIdentityIds, userGroupIds });
+  const res = flowResolver({ flow, evolveFlow, userIdentityIds, userGroupIds });
+
+  return res;
 };

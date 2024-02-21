@@ -35,7 +35,7 @@ const createOptionSelectionTypeOptions = (
       value: FieldOptionsSelectionType.Rank,
     },
   ];
-  if (stepPurpose === ResultType.Prioritization || stepPurpose === ResultType.Raw)
+  if (stepPurpose === ResultType.Ranking || stepPurpose === ResultType.Raw)
     options.push({
       name: "Select multiple",
       value: FieldOptionsSelectionType.MultiSelect,
@@ -44,7 +44,7 @@ const createOptionSelectionTypeOptions = (
   return options;
 };
 
-export const ResponseFieldsForm = ({
+export const ResponseForm = ({
   formMethods,
   formIndex,
   previousStepResult,
@@ -71,7 +71,7 @@ export const ResponseFieldsForm = ({
     : "";
 
   useEffect(() => {
-    if (resultType === ResultType.Decision || resultType === ResultType.Prioritization)
+    if (resultType === ResultType.Decision || resultType === ResultType.Ranking)
       formMethods.setValue(`steps.${formIndex}.response.field.type`, FieldType.Options);
   }, [resultType]);
 
@@ -116,9 +116,7 @@ export const ResponseFieldsForm = ({
               { name: "Free input", value: FieldType.FreeInput },
               { name: "Choose from set options", value: FieldType.Options },
             ]}
-            disabled={
-              resultType === ResultType.Decision || resultType === ResultType.Prioritization
-            }
+            disabled={resultType === ResultType.Decision || resultType === ResultType.Ranking}
             label="How do they respond?"
           />
           {fieldType === FieldType.Options && (

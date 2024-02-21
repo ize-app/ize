@@ -9,7 +9,7 @@ type Options {
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int!
-  options: [Option]!
+  options: [Option!]!
 }
 
 type FreeInput {

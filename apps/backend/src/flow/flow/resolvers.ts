@@ -25,6 +25,7 @@ export const flowResolver = ({
 
   return {
     __typename: "Flow",
+    id: flow.id,
     type: flow.type as FlowType,
     reusable: flow.CurrentFlowVersion?.reusable,
     name: flow.CurrentFlowVersion.name,
@@ -52,16 +53,12 @@ export const stepResolver = ({
   }
   return {
     request: {
-      permission: step.RequestPermissions
-        ? permissionResolver(step.RequestPermissions, userIdentityIds)
-        : null,
-      fields: step.RequestFieldSet ? fieldSetResolver(step.RequestFieldSet) : null,
+      permission: permissionResolver(step.RequestPermissions, userIdentityIds),
+      fields: fieldSetResolver(step.RequestFieldSet),
     },
     response: {
-      permission: step.ResponsePermissions
-        ? permissionResolver(step.ResponsePermissions, userIdentityIds)
-        : null,
-      fields: responseFields,
+      permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
+      fields: fieldSetResolver(step.ResponseFieldSet),
     },
     action: step.ActionNew ? actionResolver(step.ActionNew, responseOptions) : null,
     result: resultConfigResolver(step.ResultConfig, responseOptions),

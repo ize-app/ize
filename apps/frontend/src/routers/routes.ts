@@ -12,6 +12,7 @@ export enum Route {
   Process = "/processes/:processId",
   Flow = "/flow/:flowId",
   EditProcess = "/edit/:processId",
+  EvolveFlow = "/evolve/:flowId",
 }
 
 export enum NewProcessRoute {
@@ -48,12 +49,21 @@ export enum EditProcessRoute {
   Confirm = "/confirm",
 }
 
+export enum EvolveFlowRoute {
+  Setup = "",
+  Confirm = "/confirm",
+}
+
 export const newProcessRoute = (route: NewProcessRoute) => {
   return `${Route.NewProcess}${route}`;
 };
 
 export const newFlowRoute = (route: NewFlowRoute) => {
   return `${Route.NewFlow}${route}`;
+};
+
+export const evolveFlowRoute = (route: EvolveFlowRoute) => {
+  return `${Route.EvolveFlow}${route}`;
 };
 
 export const newRequestRoute = (route: NewRequestRoute) => {

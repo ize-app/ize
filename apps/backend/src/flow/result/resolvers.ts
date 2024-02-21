@@ -20,7 +20,7 @@ export const resultConfigResolver = (
   switch (resultConfig.resultType) {
     case ResultType.Decision:
       return resultConfigDecisionResolver(resultConfig, responseOptions);
-    case ResultType.Prioritization:
+    case ResultType.Ranking:
       return resultConfigRankResolver(resultConfig);
     case ResultType.LlmSummary:
       return resultConfigLlmResolver(resultConfig);
@@ -77,7 +77,7 @@ const resultConfigRankResolver = (resultConfig: ResultConfigPrismaType): Ranking
     __typename: "Ranking",
     minimumAnswers: resultConfig.minAnswers,
     requestExpirationSeconds: resultConfig.requestExpirationSeconds,
-    numOptionsToInclude: rankConfig.numOptions,
+    numOptionsToInclude: rankConfig.numOptionsToInclude,
   };
 };
 

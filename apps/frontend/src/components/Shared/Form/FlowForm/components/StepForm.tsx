@@ -4,7 +4,7 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { Select } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
-import { ResponseFieldsForm } from "./ResponseForm/ResponseFieldsForm";
+import { ResponseForm } from "./ResponseForm/ResponseForm";
 import { ResultForm } from "./ResultForm/ResultForm";
 import { RequestForm } from "./RequestForm/RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
@@ -25,7 +25,7 @@ interface StepFormProps {
 
 export const stepNameLabels = new Map<ResultType, { stepTitle: string }>([
   [ResultType.Decision, { stepTitle: "Decide" }],
-  [ResultType.Prioritization, { stepTitle: "Prioritize" }],
+  [ResultType.Ranking, { stepTitle: "Rank" }],
   [ResultType.AutoApprove, { stepTitle: "Auto-approve request" }],
   [ResultType.Raw, { stepTitle: "Get group's thoughts" }],
   [ResultType.LlmSummary, { stepTitle: "Sensemaking with AI" }],
@@ -89,7 +89,7 @@ export const StepForm = ({
           selectOptions={[
             { name: "Decide", value: ResultType.Decision },
             { name: "Get ideas, thoughts, or feedback", value: ResultType.Raw },
-            { name: "Prioritize", value: ResultType.Prioritization },
+            { name: "Rank", value: ResultType.Ranking },
             { name: "Co-create shared understanding with AI ", value: ResultType.LlmSummary },
             { name: "Auto-approve a request", value: ResultType.AutoApprove },
           ]}
@@ -100,7 +100,7 @@ export const StepForm = ({
         <>
           {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
           {resultType !== ResultType.AutoApprove && (
-            <ResponseFieldsForm
+            <ResponseForm
               formMethods={useFormMethods}
               formIndex={formIndex}
               previousStepResult={previousStepResult}

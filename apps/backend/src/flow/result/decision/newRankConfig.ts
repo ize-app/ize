@@ -19,7 +19,7 @@ export const newRankConfig = async ({
 
   const rankConfig = await transaction.resultConfigRank.create({
     data: {
-      numOptions: rankArgs.numOptionsToInclude,
+      numOptionsToInclude: rankArgs.numOptionsToInclude,
     },
   });
 

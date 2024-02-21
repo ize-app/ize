@@ -34,7 +34,7 @@ export const newResultConfig = async ({
         responseField: responseField as FieldPrismaType,
       });
       break;
-    case ResultType.Prioritization:
+    case ResultType.Ranking:
       if (!resultArgs.prioritization)
         throw new GraphQLError("Missing prioritization config.", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },

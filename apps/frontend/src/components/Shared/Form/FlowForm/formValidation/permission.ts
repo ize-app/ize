@@ -15,5 +15,4 @@ export const permissionSchema = z.object({
     .array(entityFormSchema)
     .min(1, "Please select at least one group or individual.")
     .optional(),
-  processId: z.string().uuid().optional(),
 });

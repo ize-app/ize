@@ -151,16 +151,4 @@ export const fieldSchema = z
     { path: [""], message: "Add options" },
   );
 
-export const fieldsSchema = z
-  .array(fieldSchema)
-  //   .superRefine((val, ctx) => {
-  //     (val ?? []).forEach((input, index) => {
-  //       evaluateMultiTypeInput(
-  //         input.name,
-  //         input.dataType as InputDataType,
-  //         [index.toString(), "name"],
-  //         ctx,
-  //       );
-  //     });
-  //   })
-  .optional();
+export const fieldsSchema = z.array(fieldSchema).default([]);

@@ -3,7 +3,7 @@ union ActionNew = CallWebhook | EvolveFlow | TriggerStep
 type CallWebhook {
   filterOption: Option
   uri: String!
-  name: String
+  name: String!
 }
 
 type EvolveFlow {
