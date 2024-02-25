@@ -1,27 +1,31 @@
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-import Accordion, { AccordionProps } from "@mui/material/Accordion";
-import AccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 
 export const StepContainer = ({
   children,
   expandedStep,
-  stepIndex,
+  stepIdentifier,
   title,
   handleStepExpansion,
 }: {
   children: React.ReactNode;
-  expandedStep: number | false;
-  stepIndex: number;
+  expandedStep: number | "EvolveStep" | false;
+  stepIdentifier: number | "EvolveStep";
   title: string;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
 }) => {
   return (
-    <Accordion expanded={expandedStep === stepIndex} disableGutters onChange={handleStepExpansion} sx={{}}>
+    <Accordion
+      expanded={expandedStep === stepIdentifier}
+      disableGutters
+      onChange={handleStepExpansion}
+      sx={{}}
+    >
       <AccordionSummary
         sx={{
           "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
@@ -53,7 +57,7 @@ export const StepComponentContainer = ({
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       {label && (
-        <Typography color="primary" fontWeight={"500"} marginBottom="16px" fontSize="1rem">
+        <Typography color="primary" fontWeight={"500"} marginBottom="16px" fontSize="1.25rem">
           {label}
         </Typography>
       )}

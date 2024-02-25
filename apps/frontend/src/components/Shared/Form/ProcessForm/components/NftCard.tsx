@@ -191,7 +191,6 @@ export const HatsTokenCard = ({ tokenId, chain }: { tokenId: string; chain: Bloc
       tokenId,
     },
     onCompleted: (data) => {
-      console.log(data.hatToken);
       setToken(data.hatToken ?? null);
     },
     onError: (error) => {

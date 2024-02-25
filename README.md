@@ -82,3 +82,8 @@ Next make a _frontend_ graphql file that will define your query. I.e `apps/front
 Next run this command from the _frontend_ directory: `npm run codegen`. This will generate all response types, query documents and input types for you.
 
 From there it's just react!
+
+
+## style
+
+- No default exports

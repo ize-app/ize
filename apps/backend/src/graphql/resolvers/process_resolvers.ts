@@ -16,7 +16,7 @@ import { newCustomProcess } from "@services/processes/newProcess";
 import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
 import { newAgents as newAgentsService } from "@/services/processes/newAgents";
-import { getGroupIdsOfUser } from "@/services/groups/getGroupIdsOfUser";
+import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
 
 const newProcess = async (
   root: unknown,

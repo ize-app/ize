@@ -27,6 +27,7 @@ union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
 
 type Group {
   id: String!
+  entityId: String!
   name: String!
   creator: User!
   color: String

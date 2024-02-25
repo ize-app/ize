@@ -1,0 +1,37 @@
+import { PermissionArgs } from "@/graphql/generated/resolver-types";
+import { Prisma } from "@prisma/client";
+
+export const newPermission = async ({
+  permission: args,
+  stepIndex,
+  transaction,
+}: {
+  permission: PermissionArgs;
+  stepIndex: number;
+  transaction: Prisma.TransactionClient;
+}): Promise<string | null> => {
+  let entitySetId = undefined;
+
+  if (!!args.entities && args.entities.length > 0) {
+    const entitySet = await transaction.entitySet.create({
+      data: {
+        EntitySetEntities: {
+          createMany: {
+            data: args.entities.map((entity) => ({ entityId: entity.id })),
+          },
+        },
+      },
+    });
+    entitySetId = entitySet.id;
+  }
+
+  const permission = await transaction.permission.create({
+    data: {
+      anyone: args.anyone,
+      stepTriggered: stepIndex > 0,
+      entitySetId,
+    },
+  });
+
+  return permission.id;
+};

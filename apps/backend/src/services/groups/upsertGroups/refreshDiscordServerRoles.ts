@@ -87,9 +87,14 @@ export const refreshDiscordServerRoles = async ({
           icon: role.icon,
           unicodeEmoji: role.unicode_emoji,
           memberCount: memberCount[role.id],
-          group: {
+          Group: {
             create: {
-              creatorId: context.currentUser?.id as string,
+              Entity: { create: {} },
+              creator: {
+                connect: {
+                  id: context.currentUser?.id as string,
+                },
+              },
             },
           },
           discordServer: {

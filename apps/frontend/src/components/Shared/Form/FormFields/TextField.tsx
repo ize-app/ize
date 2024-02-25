@@ -6,25 +6,29 @@ import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
 interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
-  variant: TextFieldVariants;
+  variant?: TextFieldVariants;
   required?: boolean;
   showLabel?: boolean;
   width?: string;
   placeholderText?: string;
   endAdornment?: ReactNode;
+  startAdornment?: ReactNode;
+  multiline?: boolean;
   size?: "small" | "medium";
 }
 
 export const TextField = <T extends FieldValues>({
   label,
   name,
-  control,
-  variant,
+  control, 
   width = "100%",
-  showLabel = true,
+  showLabel = false,
   required = false,
-  size = "medium",
+  size = "small",
+  multiline = false,
+  variant = "standard",
   endAdornment,
+  startAdornment,
   placeholderText,
 }: TextFieldProps<T>) => {
   return (
@@ -40,11 +44,13 @@ export const TextField = <T extends FieldValues>({
             variant={variant}
             label={showLabel ? label : ""}
             required={required}
+            multiline={multiline}
             size={size}
             placeholder={placeholderText}
             error={Boolean(error)}
             InputProps={{
               endAdornment,
+              startAdornment,
             }}
           />
           <FormHelperText

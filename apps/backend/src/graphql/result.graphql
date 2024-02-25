@@ -1,0 +1,75 @@
+union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
+
+type Decision {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  decisionType: DecisionType!
+  defaultOption: Option
+  threshold: Int!
+}
+
+type Ranking {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  numOptionsToInclude: Int!
+}
+
+type LlmSummary {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+  summaryType: LlmSummaryType!
+  prompt: String
+}
+
+type Raw {
+  requestExpirationSeconds: Int!
+  minimumAnswers: Int!
+}
+
+type AutoApprove {
+  _: Boolean
+}
+
+# mirrors Prisma type
+enum ResultType {
+  Raw
+  Decision
+  Ranking
+  LlmSummary
+  AutoApprove
+}
+
+# mirrors Prisma type
+enum DecisionType {
+  NumberThreshold
+  PercentageThreshold
+}
+
+enum LlmSummaryType {
+  AfterEveryResponse
+  AtTheEnd
+}
+
+input ResultArgs {
+  type: ResultType!
+  requestExpirationSeconds: Int
+  minimumResponses: Int
+  decision: DecisionNewArgs
+  prioritization: PrioritizationArgs
+  llmSummary: LlmSummaryArgs
+}
+
+input DecisionNewArgs {
+  type: DecisionType!
+  defaultOptionIndex: Int
+  threshold: Int!
+}
+
+input PrioritizationArgs {
+  numOptionsToInclude: Int!
+}
+
+input LlmSummaryArgs {
+  type: LlmSummaryType!
+  prompt: String!
+}

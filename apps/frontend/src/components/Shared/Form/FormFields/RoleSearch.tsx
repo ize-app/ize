@@ -62,7 +62,7 @@ export const RoleSearch = <T extends FieldValues>({
   const onSubmit = (value: AgentSummaryPartsFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = getFieldValues(name) as AgentSummaryPartsFragment[];
+    const currentState = (getFieldValues(name) ?? []) as AgentSummaryPartsFragment[];
     const newAgents = dedupOptions([...currentState, ...value]);
 
     //@ts-ignore
@@ -85,6 +85,7 @@ export const RoleSearch = <T extends FieldValues>({
                 multiple
                 aria-label={ariaLabel}
                 id="tags-filled"
+                size="small"
                 {...field}
                 {...props}
                 options={options}
@@ -242,12 +243,12 @@ export const RoleSearch = <T extends FieldValues>({
                   <TextField
                     {...params}
                     label={label}
-                    variant="outlined"
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,
                       type: "search",
                     }}
+                    variant="standard"
                     error={Boolean(error)}
                   />
                 )}

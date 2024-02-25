@@ -1,0 +1,34 @@
+union ActionNew = CallWebhook | EvolveFlow | TriggerStep
+
+type CallWebhook {
+  filterOption: Option
+  uri: String!
+  name: String!
+}
+
+type EvolveFlow {
+  filterOption: Option
+}
+
+type TriggerStep {
+  filterOption: Option
+}
+
+# mirrors Prisma type + "None" type
+enum ActionNewType {
+  CallWebhook
+  TriggerStep
+  EvolveFlow
+  None
+}
+
+input CallWebhookArgs {
+  uri: String!
+  name: String!
+}
+
+input ActionNewArgs {
+  type: ActionNewType!
+  filterOptionIndex: Int
+  callWebhook: CallWebhookArgs
+}

@@ -7,8 +7,13 @@ const link = createHttpLink({
 
 export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
+    // apollo client needs help understanding union types
     possibleTypes: {
       Agent: ["Identity", "Group"],
+      Entity: ["Identity", "Group"],
+      Field: ["Options", "FreeInput"],
+      ResultConfig: ["Decision", "Ranking", "LlmSummary", "Raw", "AutoApprove"],
+      ActionNew: ["CallWebhook", "EvolveFlow", "TriggerStep"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
     },

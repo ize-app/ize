@@ -1,0 +1,70 @@
+union Field = Options | FreeInput
+
+type Options {
+  fieldId: String!
+  name: String!
+  required: Boolean!
+  previousStepOptions: Boolean!
+  hasRequestOptions: Boolean!
+  requestOptionsDataType: FieldDataType
+  selectionType: FieldOptionsSelectionType!
+  maxSelections: Int!
+  options: [Option!]!
+}
+
+type FreeInput {
+  fieldId: String!
+  name: String!
+  required: Boolean!
+  dataType: FieldDataType!
+}
+
+type Option {
+  optionId: String!
+  name: String!
+  dataType: FieldDataType!
+}
+
+# Should match prisma enum by same name
+enum FieldDataType {
+  String
+  Number
+  Uri
+  Date
+  DateTime
+}
+
+enum FieldType {
+  Options
+  FreeInput
+}
+
+enum FieldOptionsSelectionType {
+  Rank
+  MultiSelect
+  Select
+}
+
+input FieldArgs {
+  fieldId: String!
+  type: FieldType!
+  name: String!
+  required: Boolean!
+  freeInputDataType: FieldDataType
+  optionsConfig: FieldOptionsConfigArgs
+}
+
+input FieldOptionsConfigArgs {
+  previousStepOptions: Boolean!
+  requestOptionsDataType: FieldDataType
+  hasRequestOptions: Boolean!
+  maxSelections: Int!
+  selectionType: FieldOptionsSelectionType!
+  options: [FieldOptionArgs!]!
+}
+
+input FieldOptionArgs {
+  optionId: String
+  dataType: FieldDataType!
+  name: String!
+}

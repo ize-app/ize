@@ -1,77 +1,49 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import { useForm } from "react-hook-form";
-import { useNewFlowWizardState, NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
+import { useNewFlowWizardState } from "@/components/NewFlow/newFlowWizard";
+import { FlowSchemaType } from "../formValidation/flow";
 
 import { WizardBody, WizardNav } from "@/components/shared/Wizard";
-import { flowSchema } from "../formSchema";
+import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
-import {
-  OptionsCreationType,
-  RespondPermissionType,
-  InputDataType,
-  OptionSelectionType,
-  ResultDecisionType,
-  ActionType,
-  RequestPermissionType,
-} from "../types";
+import { PermissionType } from "../formValidation/permission";
 import { Switch, TextField } from "../../FormFields";
-
-export const defaultStep = {
-  request: { permission: { type: RequestPermissionType.Anyone }, inputs: [] },
-  respond: {
-    permission: { type: RespondPermissionType.Anyone },
-    inputs: {
-      type: undefined,
-      freeInput: {
-        dataType: InputDataType.String,
-      },
-      options: {
-        previousStepOptions: true,
-        selectionType: OptionSelectionType.SingleSelect,
-        dataType: InputDataType.String,
-        creationType: OptionsCreationType.ProcessDefinedOptions,
-        maxSelectableOptions: 1,
-        options: [
-          // {
-          //   optionId: "newOption.0",
-          //   name: "✅",
-          //   dataType: InputDataType.String,
-          // },
-          // {
-          //   optionId: "newOption.1",
-          //   name: "❌",
-          //   dataType: InputDataType.String,
-          // },
-        ],
-      },
-    },
-  },
-  result: {
-    minimumResponses: 1,
-    requestExpirationSeconds: 259200,
-    decision: {
-      type: ResultDecisionType.ThresholdVote,
-    },
-  },
-  actions: { type: ActionType.None, filter: { allOptions: true } },
-};
+import { AgentType, DecisionType } from "@/graphql/generated/graphql";
+import { useContext } from "react";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { defaultDecisionStepFormValues } from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
 
-  const useFormMethods = useForm<NewFlowFormFields>({
+  const { me } = useContext(CurrentUserContext);
+
+  const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
       name: formState.name ?? "",
       reusable: formState.reusable ?? false,
-      steps: formState.steps ? [...formState.steps] : [defaultStep],
+      evolve: {
+        requestPermission: { type: PermissionType.Anyone, entities: [] },
+        responsePermission: {
+          type: PermissionType.Entities,
+          entities: me?.identities
+            ? [me.identities.map((id) => ({ ...id, __typename: "Identity" as AgentType }))[0]]
+            : [],
+        },
+        decision: {
+          type: DecisionType.NumberThreshold,
+          threshold: 1,
+        },
+      },
+      steps: formState.steps ? [...formState.steps] : [defaultDecisionStepFormValues],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,
   });
-  const onSubmit = (data: NewFlowFormFields) => {
-    console.log("data is ", data);
-    setFormState({ ...data });
+
+  const onSubmit = (data: FlowSchemaType) => {
+    setFormState((prev) => ({ ...prev, ...data }));
     onNext();
   };
 
@@ -84,18 +56,21 @@ export const Setup = () => {
             display: "flex",
             flexDirection: "column",
             gap: "24px",
-            maxWidth: "1000px",
+            maxWidth: "1200px",
             width: "100%",
           }}
         >
-          <TextField<NewFlowFormFields>
-            name={"name"}
+          <TextField<FlowSchemaType>
             control={useFormMethods.control}
-            placeholderText="What's the purpose of this flow? (e.g. 'Create event on shared calendar')"
-            label="Flow name"
+            width="300px"
+            label="What's the purpose of this form?"
+            placeholderText="What's the purpose of this form?"
             variant="standard"
+            size="small"
+            showLabel={false}
+            name={`name`}
           />
-          <Switch<NewFlowFormFields>
+          <Switch<FlowSchemaType>
             name={`reusable`}
             control={useFormMethods.control}
             label="Reusable flow"

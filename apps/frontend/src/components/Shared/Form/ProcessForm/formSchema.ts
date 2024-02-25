@@ -8,8 +8,8 @@ import {
   FormOptionChoice,
   HasCustomIntegration,
 } from "@/components/shared/Form/ProcessForm/types";
-import { Blockchain, InputDataType, NewAgentTypes, AgentType } from "@/graphql/generated/graphql";
-import { ethers } from "ethers";
+import { InputDataType } from "@/graphql/generated/graphql";
+import { entityFormSchema } from "../FlowForm/formValidation/entity";
 
 const webhookFormSchema = z.object({
   hasWebhook: z.string().nonempty(),
@@ -90,121 +90,6 @@ export const inputTemplateFormSchema = z.object({
 export const createInputTemplatesFormSchema = (fieldArrayName: string) =>
   z.object({ [fieldArrayName]: z.array(inputTemplateFormSchema) });
 
-const groupFormSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  icon: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
-  memberCount: z.number().optional().nullable(),
-  organization: z.object({
-    name: z.string(),
-    icon: z.string().optional().nullable(),
-  }),
-  __typename: z.nativeEnum(AgentType),
-  groupType: z
-    .object({
-      __typename: z.any(),
-    })
-    .optional(),
-});
-
-const identityFormSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  icon: z.string().optional().nullable(),
-  __typename: z.nativeEnum(AgentType),
-  identityType: z
-    .object({
-      __typename: z.any(),
-    })
-    .optional(),
-});
-
-export const agentFormSchema = z.union([identityFormSchema, groupFormSchema]);
-
-export const newAgentFormSchema = z.object({
-  type: z.nativeEnum(NewAgentTypes),
-  discordRole: z
-    .object({
-      serverId: z.string().trim().min(1, { message: "Select a server" }),
-      roleId: z.string().trim().min(1, { message: "Select a role" }),
-    })
-    .optional(),
-  ethAddress: z
-    .string()
-    .trim()
-    .transform<string[]>((str, ctx) => {
-      const parsed = z
-        .array(
-          z
-            .string()
-            .trim()
-            .refine(
-              (value) => {
-                const isAddress = ethers.isAddress(value);
-                const ensRegex =
-                  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-                const isEns = !!value.match(ensRegex);
-                return isAddress || isEns;
-              },
-              {
-                message: "Provided wallet is invalid. Please insure you have typed correctly.",
-              },
-            ),
-        )
-        .safeParse(str.split(","));
-      if (!parsed.success) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: parsed.error.issues[0].message,
-        });
-        return z.NEVER;
-      } else {
-        return parsed.data;
-      }
-    })
-    .optional(),
-  emailAddress: z
-    .string()
-    .trim()
-    .transform<string[]>((str, ctx) => {
-      try {
-        const parsed = z.array(z.string().trim().email()).parse(str.split(","));
-        return parsed;
-      } catch (e) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid email(s)" });
-        return [];
-      }
-    })
-    .optional(),
-  hat: z
-    .object({
-      chain: z.nativeEnum(Blockchain),
-      tokenId: z.string(),
-    })
-    .optional(),
-  nft: z
-    .object({
-      chain: z.nativeEnum(Blockchain),
-      contractAddress: z.string().refine((value) => ethers.isAddress(value), {
-        message: "Provided address is invalid. Please insure you have typed correctly.",
-      }),
-      allTokens: z.boolean(),
-      tokenId: z.string().max(64).nullable().optional(),
-    })
-    .refine(
-      (data) => {
-        if (!data?.allTokens && !data?.tokenId) return false;
-        else return true;
-      },
-      {
-        message: "Missing token Id",
-        path: ["tokenId"],
-      },
-    )
-    .optional(),
-});
-
 const absoluteDecisionFormSchema = z.object({
   threshold: z.coerce.number(),
 });
@@ -216,8 +101,8 @@ const percentageDecisionFormSchema = z.object({
 
 const decisionFormSchemaUnrefined = z.object({
   rights: z.object({
-    request: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
-    response: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
+    request: z.array(entityFormSchema).min(1, "Please select at least one group or individual."),
+    response: z.array(entityFormSchema).min(1, "Please select at least one group or individual."),
   }),
   decision: z.object({
     type: z.nativeEnum(DecisionType),
@@ -267,5 +152,5 @@ export const evolveProcessFormSchema = z.object({
 
 export const newCustomGroupFormSchema = z.object({
   name: z.string().min(1, "Please enter a name for the group"),
-  members: z.array(agentFormSchema).min(1, "Please select at least one group or individual."),
+  members: z.array(entityFormSchema).min(1, "Please select at least one group or individual."),
 });

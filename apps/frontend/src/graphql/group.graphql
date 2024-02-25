@@ -23,6 +23,7 @@ query Groups {
 fragment GroupSummaryParts on Group {
   __typename
   id
+  entityId
   name
   icon
   memberCount

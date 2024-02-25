@@ -1,0 +1,7 @@
+type Permission {
+  stepTriggered: Boolean!
+  anyone: Boolean!
+  entities: [Entity!]!
+}
+
+union Entity = Identity | Group

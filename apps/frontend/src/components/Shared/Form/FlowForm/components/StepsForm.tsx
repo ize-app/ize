@@ -1,11 +1,13 @@
-import { NewFlowFormFields } from "@/components/NewFlow/newFlowWizard";
 import { Box, useFormControl } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepForm } from "./StepForm";
 import { useState } from "react";
+import { FlowSchemaType } from "../formValidation/flow";
+import { EvolveProcessForm } from "./EvolveFlowForm";
 
 interface StepFormProps {
-  useFormMethods: UseFormReturn<NewFlowFormFields>;
+  useFormMethods: UseFormReturn<FlowSchemaType>;
+
 }
 
 export const StepsForm = ({ useFormMethods }: StepFormProps) => {
@@ -16,12 +18,16 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
     name: fieldArrayName,
   });
 
-  const [expanded, setExpanded] = useState<number | false>(0);
+  const [expanded, setExpanded] = useState<number | "EvolveStep" | false>(0);
 
   const handleStepExpansion =
-    (stepIndex: number) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? stepIndex : false);
+    (stepIdentifier: number | "EvolveStep") =>
+    (_event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? stepIdentifier : false);
     };
+
+  const isReusable = useFormMethods.watch(`reusable`);
+
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "36px" }}>
@@ -39,6 +45,13 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
           />
         );
       })}
+      {isReusable && (
+        <EvolveProcessForm
+          formMethods={useFormMethods}
+          expandedStep={expanded}
+          handleStepExpansion={handleStepExpansion("EvolveStep")}
+        />
+      )}
     </Box>
   );
 };

@@ -1,0 +1,67 @@
+mutation NewFlow($flow: NewFlowArgs!) {
+  newFlow(flow: $flow)
+}
+
+query GetFlow($flowId: String!) {
+  getFlow(flowId: $flowId) {
+    ...Flow
+  }
+}
+
+fragment Flow on Flow {
+  ...FlowFields
+  evolve {
+    ...FlowFields
+  }
+}
+
+fragment FlowFields on Flow {
+  id
+  type
+  name
+  reusable
+  steps {
+    ...Step
+  }
+}
+
+fragment Step on Step {
+  request {
+    ...RequestConfig
+  }
+  response {
+    ...ResponseConfig
+  }
+  result {
+    ...ResultConfig
+  }
+  action {
+    ...ActionNew
+  }
+  userPermission {
+    ...UserPermission
+  }
+}
+
+fragment RequestConfig on RequestConfig {
+  permission {
+    ...Permission
+  }
+  fields {
+    ...Field
+  }
+}
+
+fragment ResponseConfig on ResponseConfig {
+  permission {
+    ...Permission
+  }
+  fields {
+    ...Field
+  }
+}
+
+fragment UserPermission on UserPermission {
+  request
+  response
+}
