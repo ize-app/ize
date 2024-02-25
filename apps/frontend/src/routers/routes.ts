@@ -65,7 +65,6 @@ export const newFlowRoute = (route: NewFlowRoute) => {
 export const evolveFlowRoute = (route: EvolveFlowRoute) => {
   return `${Route.EvolveFlow}${route}`;
 };
-
 export const newRequestRoute = (route: NewRequestRoute) => {
   return `${Route.NewRequest}${route}`;
 };

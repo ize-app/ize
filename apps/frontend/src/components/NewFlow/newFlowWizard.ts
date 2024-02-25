@@ -4,6 +4,7 @@ import { FlowSchemaType } from "../shared/Form/FlowForm/formValidation/flow";
 
 export function useNewFlowWizardState() {
   return useWizardFormState<FlowSchemaType>();
+
 }
 
 export const NEW_FLOW_PROGRESS_BAR_STEPS = ["Setup", "Confirm"];

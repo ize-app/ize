@@ -42,6 +42,7 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
+
   const { control, getValues: getFieldValues, watch } = useFormMethods;
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
