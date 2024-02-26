@@ -12,12 +12,12 @@ export enum LlmSummaryType {
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().positive(),
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().min(51).max(100),
   }),
 ]);

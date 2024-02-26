@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
-import dayjs, { Dayjs } from "dayjs";
+import { zodDay } from "../../validation";
 
 export type FieldOptionSchemaType = z.infer<typeof fieldOptionSchema>;
 export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
@@ -11,14 +11,6 @@ export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 export enum DefaultOptionSelection {
   None = "None",
 }
-
-const zodDay = z.custom<Dayjs>((val) => {
-  if (val instanceof dayjs) {
-    const date = val as Dayjs;
-    return date.isValid();
-  }
-  return false;
-}, "Invalid date");
 
 export const evaluateMultiTypeInput = (
   value: string,

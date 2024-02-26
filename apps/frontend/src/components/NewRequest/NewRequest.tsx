@@ -26,8 +26,8 @@ export const NewRequest = () => {
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
-      const newProcessId = data.newRequest;
-      navigate(`/requests/${fullUUIDToShort(newProcessId)}`);
+      const newRequestId = data.newRequest;
+      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
     },
   });
 
@@ -42,7 +42,7 @@ export const NewRequest = () => {
 
       await mutate({
         variables: {
-          processId: formState.process?.id as string,
+          flowId: formState.flow?.id as string,
           requestInputs: inputs,
         },
       });

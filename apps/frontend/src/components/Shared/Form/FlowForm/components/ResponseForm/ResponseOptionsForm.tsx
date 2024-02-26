@@ -9,13 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
-import {
-  DatePicker,
-  DateTimePicker,
-  Select,
-  Switch,
-  TextField,
-} from "../../../FormFields";
+import { DatePicker, DateTimePicker, Select, Switch, TextField } from "../../../FormFields";
 import { LabeledGroupedInputs } from "../LabeledGroupedInputs";
 
 import { FieldOptionSchemaType } from "../../formValidation/fields";
@@ -43,7 +37,7 @@ const getResponseLabel = (prevResultType: ResultType) => {
       return "Make decision from last step an option";
     case ResultType.LlmSummary:
       return "Use LLM summary from last step an option";
-    case ResultType.Prioritization:
+    case ResultType.Ranking:
       return "Make prioritized options from last step options";
     case ResultType.Raw:
       return "Make responses from last step options";

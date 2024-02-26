@@ -94,7 +94,7 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         children: [
           {
-            path: Routes.newRequestRoute(Routes.NewRequestRoute.SelectProcess),
+            path: Routes.newRequestRoute(Routes.NewRequestRoute.SelectFlow),
             element: <NewRequest.SelectProcess />,
             index: true,
           },
