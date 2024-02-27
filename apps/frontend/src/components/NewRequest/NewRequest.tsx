@@ -11,7 +11,7 @@ import {
   NEW_REQUEST_PROGRESS_BAR_STEPS,
   NEW_REQUEST_WIZARD_STEPS,
   NewRequestState,
-  UserInputs,
+  RequestFields,
 } from "./newRequestWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { NewRequestDocument, RequestInputArgs } from "../../graphql/generated/graphql";
@@ -33,12 +33,12 @@ export const NewRequest = () => {
 
   const onComplete = async () => {
     try {
-      const inputs: RequestInputArgs[] = Object.entries(formState.userInputs as UserInputs).map(
-        (entry) => ({
-          inputId: entry[0],
-          value: entry[1].toString(),
-        }),
-      );
+      const inputs: RequestInputArgs[] = Object.entries(
+        formState.requestFields as RequestFields,
+      ).map((entry) => ({
+        inputId: entry[0],
+        value: entry[1].toString(),
+      }));
 
       await mutate({
         variables: {

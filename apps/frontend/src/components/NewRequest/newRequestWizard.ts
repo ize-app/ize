@@ -1,13 +1,15 @@
 import { Flow } from "../../graphql/generated/graphql";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+import { RequestFieldSchemaType, RequestDefinedOptionsType } from "./validation";
 
 export interface NewRequestState {
   flow?: Flow;
-  userInputs?: UserInputs;
+  requestFields?: RequestFieldSchemaType;
+  requestDefinedOptions?: RequestDefinedOptionsType;
 }
 
-export interface UserInputs {
+export interface RequestFields {
   [inputId: string]: string | number;
 }
 
@@ -38,7 +40,7 @@ export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestState> = [
     progressBarStep: 2,
     canNext: () => true,
     validWizardState: (formState: NewRequestState) => {
-      return !!formState.userInputs;
+      return !!formState.requestFields;
     },
   },
 ];

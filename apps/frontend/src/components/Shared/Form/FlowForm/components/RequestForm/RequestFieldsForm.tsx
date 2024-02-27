@@ -11,7 +11,7 @@ import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 import { Checkbox, Select, TextField } from "../../../FormFields";
-import { LabeledGroupedInputs } from "../LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../../../LabeledGroupedInputs";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 import { defaultRequestField } from "./RequestForm";

@@ -10,7 +10,7 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { DatePicker, DateTimePicker, Select, Switch, TextField } from "../../../FormFields";
-import { LabeledGroupedInputs } from "../LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../../../LabeledGroupedInputs";
 
 import { FieldOptionSchemaType } from "../../formValidation/fields";
 import { FieldDataType, ResultType } from "@/graphql/generated/graphql";
