@@ -80,7 +80,6 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     ? wizard.onComplete
     : nextStep
       ? () => {
-          console.log("params are ", params);
           navigate(generatePath(nextStep!.path, params));
         }
       : undefined;

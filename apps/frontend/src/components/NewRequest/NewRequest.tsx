@@ -32,20 +32,21 @@ export const NewRequest = () => {
   });
 
   const onComplete = async () => {
+    console.log("inside onComplete");
     try {
-      const inputs: RequestInputArgs[] = Object.entries(
-        formState.requestFields as RequestFields,
-      ).map((entry) => ({
-        inputId: entry[0],
-        value: entry[1].toString(),
-      }));
+      //     const inputs: RequestInputArgs[] = Object.entries(
+      //       formState.requestFields as RequestFields,
+      //     ).map((entry) => ({
+      //       inputId: entry[0],
+      //       value: entry[1].toString(),
+      //     }));
 
-      await mutate({
-        variables: {
-          flowId: formState.flow?.id as string,
-          requestInputs: inputs,
-        },
-      });
+      //     await mutate({
+      //       variables: {
+      //         flowId: formState.flow?.id as string,
+      //         requestInputs: inputs,
+      //       },
+      //     });
 
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request created!", type: "success" });

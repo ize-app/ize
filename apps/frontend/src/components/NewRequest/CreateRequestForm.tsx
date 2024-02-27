@@ -37,43 +37,11 @@ export const CreateRequestForm = () => {
   };
 
   const flow = data?.getFlow as Flow;
-  const step = flow.steps[0];
-
-  console.log("step is ", step);
-
-  // zod record with a data type,
-
-  const formMethods = useForm({
-    defaultValues: {
-      requestFields: formState.requestFields
-        ? formState.requestFields
-        : step
-          ? step.request.fields.reduce((acc, field) => {
-              if (field.__typename !== FieldType.FreeInput) throw Error("Invlid field type");
-              return {
-                ...acc,
-                [field.fieldId]: undefined, // field.dataType === FieldDataType.Date ? undefined : "",
-              };
-            }, {})
-          : {},
-    },
-    resolver: zodResolver(requestSchema),
-    shouldUnregister: true,
-  });
-
-  const onSubmit = (data: RequestSchemaType) => {
-    setFormState((prev) => ({
-      ...prev,
-      requestFields: data.requestFields,
-      requestDefinedOptions: [],
-    }));
-    onNext();
-    // navigate("confirm");
-  };
+  const step = flow ? flow.steps[0] : null;
 
   useEffect(() => {
-    setFormState({ flow: flow });
-    if (step) {
+    if (step && !loading) {
+      setFormState({ flow: flow });
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
           // @ts-ignore not sure why react hook forms isn't picking up on record type
@@ -83,9 +51,33 @@ export const CreateRequestForm = () => {
         }
       });
     }
-  }, [flow, setFormState]);
+  }, [step, loading, setFormState]);
+
+  const formMethods = useForm({
+    defaultValues: formState ?? {},
+    resolver: zodResolver(requestSchema),
+    shouldUnregister: true,
+  });
+
+  console.log("step is ", step);
+
+  // zod record with a data type,
+
+  const onSubmit = (data: RequestSchemaType) => {
+    console.log("inside onsubmit");
+    setFormState((prev) => ({
+      ...prev,
+      requestFields: data.requestFields ?? undefined,
+      requestDefinedOptions: data.requestDefinedOptions ?? [],
+    }));
+    onNext();
+  };
 
   if (error) onError();
+
+  if (!flow || loading) {
+    return <Loading />;
+  }
 
   return loading ? (
     <Loading />

@@ -33,6 +33,6 @@ export const requestDefinedOptionSchema = z
 export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
 
 export const requestSchema = z.object({
-  requestFields: requestFieldsSchema,
-  requestDefinedOptions: requestDefinedOptionsSchema,
+  requestFields: requestFieldsSchema.optional(),
+  requestDefinedOptions: requestDefinedOptionsSchema.optional(),
 });
