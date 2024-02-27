@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import * as z from "zod";
 
 import { useNewRequestWizardState } from "./newRequestWizard";
 import { FieldDataType, FieldType, Flow, GetFlowDocument } from "../../graphql/generated/graphql";
@@ -14,10 +13,10 @@ import { shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../shared/Loading";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 import { DatePicker, DateTimePicker, TextField } from "../shared/Form/FormFields";
-import { ResponseField } from "./ResponseField";
-import { requestDefinedOptionsSchema, requestFieldsSchema } from "./validation";
+import { CreateRequestResponseFieldForm } from "./CreateRequestResponseFieldForm";
+import { RequestSchemaType, requestSchema } from "./validation";
 
-export const CreateRequest = () => {
+export const CreateRequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
     useNewRequestWizardState();
   const { flowId: shortFlowId } = useParams();
@@ -42,20 +41,9 @@ export const CreateRequest = () => {
 
   console.log("step is ", step);
 
-  const formSchema = z.object({
-    requestFields: requestFieldsSchema,
-    requestDefinedOptions: requestDefinedOptionsSchema,
-  });
-
   // zod record with a data type,
 
-  type FormFields = z.infer<typeof formSchema>;
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    formState: reactHookFormState,
-  } = useForm({
+  const formMethods = useForm({
     defaultValues: {
       requestFields: formState.requestFields
         ? formState.requestFields
@@ -69,17 +57,15 @@ export const CreateRequest = () => {
             }, {})
           : {},
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(requestSchema),
     shouldUnregister: true,
   });
 
-  console.log("errors are ", reactHookFormState.errors);
-
-  const onSubmit = (data: FormFields) => {
+  const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       requestFields: data.requestFields,
-      requestDefinedOptions: {},
+      requestDefinedOptions: [],
     }));
     onNext();
     // navigate("confirm");
@@ -91,9 +77,9 @@ export const CreateRequest = () => {
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
           // @ts-ignore not sure why react hook forms isn't picking up on record type
-          setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
+          formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
           // @ts-ignore not sure why react hook forms isn't picking up on record type
-          setValue(`requestFields.${field.fieldId}.required`, field.required);
+          formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
         }
       });
     }
@@ -130,18 +116,17 @@ export const CreateRequest = () => {
               maxWidth: "800px",
             }}
           >
-            {//control ?
-            step?.request.fields.map((field) => {
+            {step?.request.fields.map((field) => {
               if (field.__typename !== FieldType.FreeInput) throw Error("Invlid field type");
               const { dataType, name, required, fieldId } = field;
 
               switch (dataType) {
                 case FieldDataType.Date:
                   return (
-                    <DatePicker<FormFields>
+                    <DatePicker<RequestSchemaType>
                       name={`requestFields.${field.fieldId}.value`}
                       key={fieldId}
-                      control={control}
+                      control={formMethods.control}
                       // showLabel={false}
 
                       label={name}
@@ -149,22 +134,22 @@ export const CreateRequest = () => {
                   );
                 case FieldDataType.DateTime:
                   return (
-                    <DateTimePicker<FormFields>
+                    <DateTimePicker<RequestSchemaType>
                       name={`requestFields.${field.fieldId}.value`}
                       key={fieldId}
-                      control={control}
+                      control={formMethods.control}
                       // showLabel={false}
                       label={name}
                     />
                   );
                 default:
                   return (
-                    <TextField<FormFields>
+                    <TextField<RequestSchemaType>
                       key={fieldId}
                       label={name}
                       variant="outlined"
                       showLabel={true}
-                      control={control}
+                      control={formMethods.control}
                       name={`requestFields.${field.fieldId}.value`}
                       required={required}
                       multiline
@@ -174,10 +159,17 @@ export const CreateRequest = () => {
             })}
           </Box>
           <Typography>How respondants will be able to respond:</Typography>
-          <ResponseField field={step?.response.fields[0]} />
+          <CreateRequestResponseFieldForm
+            field={step?.response.fields[0]}
+            formMethods={formMethods}
+          />
         </Box>
       </WizardBody>
-      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
+      <WizardNav
+        onNext={formMethods.handleSubmit(onSubmit)}
+        onPrev={onPrev}
+        nextLabel={nextLabel}
+      />
     </>
   );
 };

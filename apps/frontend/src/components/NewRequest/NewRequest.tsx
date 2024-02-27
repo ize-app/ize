@@ -10,7 +10,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import {
   NEW_REQUEST_PROGRESS_BAR_STEPS,
   NEW_REQUEST_WIZARD_STEPS,
-  NewRequestState,
+  NewRequestFormSchema,
   RequestFields,
 } from "./newRequestWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
@@ -56,7 +56,7 @@ export const NewRequest = () => {
     }
   };
 
-  const newRequestWizard: Wizard<NewRequestState> = {
+  const newRequestWizard: Wizard<NewRequestFormSchema> = {
     steps: NEW_REQUEST_WIZARD_STEPS,
     onComplete,
     initialFormState: {},
