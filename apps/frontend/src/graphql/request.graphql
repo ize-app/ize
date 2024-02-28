@@ -1,5 +1,5 @@
-mutation NewRequest($processId: String!, $requestInputs: [RequestInputArgs!]) {
-  newRequest(processId: $processId, requestInputs: $requestInputs)
+mutation NewRequest($request: NewRequestArgs!) {
+  newRequest(request: $request)
 }
 
 mutation NewResponse($requestId: String!, $optionId: String!) {

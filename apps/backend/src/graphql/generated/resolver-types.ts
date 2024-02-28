@@ -477,8 +477,7 @@ export type MutationNewProcessArgs = {
 
 
 export type MutationNewRequestArgs = {
-  processId: Scalars['String']['input'];
-  requestInputs?: InputMaybe<Array<RequestInputArgs>>;
+  request: NewRequestArgs;
 };
 
 
@@ -516,6 +515,12 @@ export type NewFlowArgs = {
   name: Scalars['String']['input'];
   reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
+};
+
+export type NewRequestArgs = {
+  flowId: Scalars['String']['input'];
+  requestDefinedOptions: Array<Scalars['String']['input']>;
+  requestFields: Array<RequestFieldArgs>;
 };
 
 export type NewStepArgs = {
@@ -781,6 +786,11 @@ export type RequestConfig = {
   permission: Permission;
 };
 
+export type RequestFieldArgs = {
+  inputId: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
 export type RequestInput = {
   __typename?: 'RequestInput';
   description?: Maybe<Scalars['String']['output']>;
@@ -790,11 +800,6 @@ export type RequestInput = {
   required: Scalars['Boolean']['output'];
   type: InputDataType;
   value: Scalars['String']['output'];
-};
-
-export type RequestInputArgs = {
-  inputId: Scalars['String']['input'];
-  value: Scalars['String']['input'];
 };
 
 export type Response = {
@@ -1105,6 +1110,7 @@ export type ResolversTypes = {
   NewAgentArgs: NewAgentArgs;
   NewAgentTypes: NewAgentTypes;
   NewFlowArgs: NewFlowArgs;
+  NewRequestArgs: NewRequestArgs;
   NewStepArgs: NewStepArgs;
   NftCollection: ResolverTypeWrapper<NftCollection>;
   NftTypes: NftTypes;
@@ -1129,8 +1135,8 @@ export type ResolversTypes = {
   Raw: ResolverTypeWrapper<Raw>;
   Request: ResolverTypeWrapper<Request>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
+  RequestFieldArgs: RequestFieldArgs;
   RequestInput: ResolverTypeWrapper<RequestInput>;
-  RequestInputArgs: RequestInputArgs;
   Response: ResolverTypeWrapper<Response>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   ResponseCount: ResolverTypeWrapper<ResponseCount>;
@@ -1223,6 +1229,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   NewAgentArgs: NewAgentArgs;
   NewFlowArgs: NewFlowArgs;
+  NewRequestArgs: NewRequestArgs;
   NewStepArgs: NewStepArgs;
   NftCollection: NftCollection;
   OnboardedDiscordServer: OnboardedDiscordServer;
@@ -1244,8 +1251,8 @@ export type ResolversParentTypes = {
   Raw: Raw;
   Request: Request;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
+  RequestFieldArgs: RequestFieldArgs;
   RequestInput: RequestInput;
-  RequestInputArgs: RequestInputArgs;
   Response: Response;
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResponseCount: ResponseCount;
@@ -1525,7 +1532,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
-  newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'processId'>>;
+  newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'optionId' | 'requestId'>>;
   setUpDiscordServer?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<MutationSetUpDiscordServerArgs, 'input'>>;
 };

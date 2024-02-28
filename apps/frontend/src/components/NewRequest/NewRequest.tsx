@@ -11,14 +11,14 @@ import {
   NEW_REQUEST_PROGRESS_BAR_STEPS,
   NEW_REQUEST_WIZARD_STEPS,
   NewRequestFormSchema,
-  RequestFields,
 } from "./newRequestWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { NewRequestDocument, RequestInputArgs } from "../../graphql/generated/graphql";
+import { NewRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
+import { createNewRequestMutationArgs } from "./createNewRequestMutationArgs";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
@@ -34,19 +34,9 @@ export const NewRequest = () => {
   const onComplete = async () => {
     console.log("inside onComplete");
     try {
-      //     const inputs: RequestInputArgs[] = Object.entries(
-      //       formState.requestFields as RequestFields,
-      //     ).map((entry) => ({
-      //       inputId: entry[0],
-      //       value: entry[1].toString(),
-      //     }));
-
-      //     await mutate({
-      //       variables: {
-      //         flowId: formState.flow?.id as string,
-      //         requestInputs: inputs,
-      //       },
-      //     });
+      await mutate({
+        variables: { request: createNewRequestMutationArgs(formState) },
+      });
 
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request created!", type: "success" });
