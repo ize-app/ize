@@ -2,7 +2,7 @@ import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "../../prisma/client";
 import { ActionType, Prisma } from "@prisma/client";
 import { NewEditProcessRequestArgs, NewProcessArgs } from "@graphql/generated/resolver-types";
-import { newRequestService } from "./newRequestService";
+import { newRequestService } from "./newRequestServiceOLD";
 import { diff } from "deep-object-diff";
 import {
   createAction,

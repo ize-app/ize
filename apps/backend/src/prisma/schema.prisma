@@ -683,7 +683,7 @@ model Step {
   id                    String   @id @default(uuid()) @db.Uuid
   flowVersionId         String   @map("flow_version_id") @db.Uuid
   index                 Int
-  requestPermissionsId  String?  @map("request_permissions_id") @db.Uuid
+  requestPermissionsId  String   @map("request_permissions_id") @db.Uuid
   responsePermissionsId String?  @map("response_permissions_id") @db.Uuid
   requestFieldSetId     String?  @map("request_field_set_id") @db.Uuid
   responseFieldSetId    String?  @map("response_field_set_id") @db.Uuid
@@ -692,7 +692,7 @@ model Step {
   createdAt             DateTime @default(now()) @map("created_at")
 
   FlowVersion         FlowVersion @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  RequestPermissions  Permission? @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
+  RequestPermissions  Permission  @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
   RequestFieldSet     FieldSet?   @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
   ResponseFieldSet    FieldSet?   @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
   ResponsePermissions Permission? @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)

@@ -1,5 +1,5 @@
 import { groupInclude } from "@/utils/formatGroup";
-import { identityInclude } from "@/utils/formatIdentity";
+import { identityInclude } from "../identity/types";
 import { Prisma } from "@prisma/client";
 
 export const permissionInclude = Prisma.validator<Prisma.PermissionInclude>()({
