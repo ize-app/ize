@@ -12,13 +12,13 @@ type Query {
 
 input NewRequestArgs {
   flowId: String!
-  requestFields: [RequestFieldArgs!]!
-  requestDefinedOptions: [String!]!
+  requestFields: [FieldAnswerArgs!]!
+  requestDefinedOptions: [RequestDefinedOptionsArgs!]!
 }
 
-input RequestFieldArgs {
-  inputId: String!
-  value: String!
+input RequestDefinedOptionsArgs {
+  fieldId: String!
+  options: [FieldOptionArgs!]!
 }
 
 type Request {

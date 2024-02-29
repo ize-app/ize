@@ -26,6 +26,7 @@ const stepSchema = z
       .optional(),
     result: resultSchema,
     action: actionSchema,
+    expirationSeconds: z.coerce.number().int().positive(),
   })
   .refine(
     (step) => {

@@ -51,8 +51,14 @@ const fieldOptionsSchema = z
       return true;
     },
     { path: ["maxSelectableOptions"], message: "Required" },
+  )
+  .refine(
+    (options) => {
+      if (options.hasRequestOptions && !options.requestOptionsDataType) return false;
+      return true;
+    },
+    { path: ["requestOptionsDataType"], message: "Required" },
   );
-
 export const fieldSchema = z
   .discriminatedUnion("type", [
     z.object({

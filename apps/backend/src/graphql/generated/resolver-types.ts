@@ -133,7 +133,6 @@ export type Decision = {
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
   minimumAnswers: Scalars['Int']['output'];
-  requestExpirationSeconds: Scalars['Int']['output'];
   threshold: Scalars['Int']['output'];
 };
 
@@ -227,6 +226,12 @@ export type EvolveProcessesDiff = {
 };
 
 export type Field = FreeInput | Options;
+
+export type FieldAnswerArgs = {
+  fieldId: Scalars['String']['input'];
+  optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
+  value?: InputMaybe<Scalars['String']['input']>;
+};
 
 export type FieldArgs = {
   fieldId: Scalars['String']['input'];
@@ -417,7 +422,6 @@ export type LlmSummary = {
   __typename?: 'LlmSummary';
   minimumAnswers: Scalars['Int']['output'];
   prompt?: Maybe<Scalars['String']['output']>;
-  requestExpirationSeconds: Scalars['Int']['output'];
   summaryType: LlmSummaryType;
 };
 
@@ -519,13 +523,14 @@ export type NewFlowArgs = {
 
 export type NewRequestArgs = {
   flowId: Scalars['String']['input'];
-  requestDefinedOptions: Array<Scalars['String']['input']>;
-  requestFields: Array<RequestFieldArgs>;
+  requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
+  requestFields: Array<FieldAnswerArgs>;
 };
 
 export type NewStepArgs = {
   action: ActionNewArgs;
-  request?: InputMaybe<StepRequestArgs>;
+  expirationSeconds: Scalars['Int']['input'];
+  request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
   result: ResultArgs;
 };
@@ -559,6 +564,11 @@ export type Option = {
   dataType: FieldDataType;
   name: Scalars['String']['output'];
   optionId: Scalars['String']['output'];
+};
+
+export type OptionSelectionArgs = {
+  optionId: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum OptionType {
@@ -613,7 +623,8 @@ export type Permission = {
 
 export type PermissionArgs = {
   anyone: Scalars['Boolean']['input'];
-  entities?: InputMaybe<Array<EntityArgs>>;
+  entities: Array<EntityArgs>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PrioritizationArgs = {
@@ -757,13 +768,11 @@ export type Ranking = {
   __typename?: 'Ranking';
   minimumAnswers: Scalars['Int']['output'];
   numOptionsToInclude: Scalars['Int']['output'];
-  requestExpirationSeconds: Scalars['Int']['output'];
 };
 
 export type Raw = {
   __typename?: 'Raw';
   minimumAnswers: Scalars['Int']['output'];
-  requestExpirationSeconds: Scalars['Int']['output'];
 };
 
 export type Request = {
@@ -786,9 +795,9 @@ export type RequestConfig = {
   permission: Permission;
 };
 
-export type RequestFieldArgs = {
-  inputId: Scalars['String']['input'];
-  value: Scalars['String']['input'];
+export type RequestDefinedOptionsArgs = {
+  fieldId: Scalars['String']['input'];
+  options: Array<FieldOptionArgs>;
 };
 
 export type RequestInput = {
@@ -845,7 +854,6 @@ export type ResultArgs = {
   llmSummary?: InputMaybe<LlmSummaryArgs>;
   minimumResponses?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
-  requestExpirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   type: ResultType;
 };
 
@@ -880,6 +888,7 @@ export type Roles = {
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<ActionNew>;
+  expirationSeconds: Scalars['Int']['output'];
   request: RequestConfig;
   response: ResponseConfig;
   result: ResultConfig;
@@ -1072,6 +1081,7 @@ export type ResolversTypes = {
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   Field: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Field']>;
+  FieldAnswerArgs: FieldAnswerArgs;
   FieldArgs: FieldArgs;
   FieldDataType: FieldDataType;
   FieldOptionArgs: FieldOptionArgs;
@@ -1116,6 +1126,7 @@ export type ResolversTypes = {
   NftTypes: NftTypes;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
   Option: ResolverTypeWrapper<Option>;
+  OptionSelectionArgs: OptionSelectionArgs;
   OptionType: OptionType;
   Options: ResolverTypeWrapper<Options>;
   Organization: ResolverTypeWrapper<Organization>;
@@ -1135,7 +1146,7 @@ export type ResolversTypes = {
   Raw: ResolverTypeWrapper<Raw>;
   Request: ResolverTypeWrapper<Request>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
-  RequestFieldArgs: RequestFieldArgs;
+  RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestInput: ResolverTypeWrapper<RequestInput>;
   Response: ResolverTypeWrapper<Response>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
@@ -1198,6 +1209,7 @@ export type ResolversParentTypes = {
   EvolveProcessAction: EvolveProcessAction;
   EvolveProcessesDiff: EvolveProcessesDiff;
   Field: ResolversUnionTypes<ResolversParentTypes>['Field'];
+  FieldAnswerArgs: FieldAnswerArgs;
   FieldArgs: FieldArgs;
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
@@ -1234,6 +1246,7 @@ export type ResolversParentTypes = {
   NftCollection: NftCollection;
   OnboardedDiscordServer: OnboardedDiscordServer;
   Option: Option;
+  OptionSelectionArgs: OptionSelectionArgs;
   Options: Options;
   Organization: Organization;
   ParentProcess: ParentProcess;
@@ -1251,7 +1264,7 @@ export type ResolversParentTypes = {
   Raw: Raw;
   Request: Request;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
-  RequestFieldArgs: RequestFieldArgs;
+  RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestInput: RequestInput;
   Response: Response;
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
@@ -1347,7 +1360,6 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1514,7 +1526,6 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   prompt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   summaryType?: Resolver<ResolversTypes['LlmSummaryType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1656,13 +1667,11 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   numOptionsToInclude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RawResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Raw'] = ResolversParentTypes['Raw']> = {
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  requestExpirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1748,6 +1757,7 @@ export type RolesResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['ActionNew']>, ParentType, ContextType>;
+  expirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;
   result?: Resolver<ResolversTypes['ResultConfig'], ParentType, ContextType>;

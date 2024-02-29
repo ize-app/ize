@@ -48,6 +48,7 @@ const createStepFormState = (step: Step): StepSchemaType => {
     },
     result: createResultFormState(step.result),
     action: createActionFormState(step.action),
+    expirationSeconds: step.expirationSeconds,
   };
 };
 
@@ -104,7 +105,6 @@ const createResultFormState = (result: ResultConfig): ResultSchemaType => {
     case ResultType.Decision:
       return {
         type: ResultType.Decision,
-        requestExpirationSeconds: result.requestExpirationSeconds,
         minimumResponses: result.minimumAnswers,
         decision: {
           type: result.decisionType,
@@ -115,7 +115,6 @@ const createResultFormState = (result: ResultConfig): ResultSchemaType => {
     case ResultType.Ranking:
       return {
         type: ResultType.Ranking,
-        requestExpirationSeconds: result.requestExpirationSeconds,
         minimumResponses: result.minimumAnswers,
         prioritization: {
           numOptionsToInclude: result.numOptionsToInclude,
@@ -124,7 +123,6 @@ const createResultFormState = (result: ResultConfig): ResultSchemaType => {
     case ResultType.LlmSummary:
       return {
         type: ResultType.LlmSummary,
-        requestExpirationSeconds: result.requestExpirationSeconds,
         minimumResponses: result.minimumAnswers,
         llmSummary: {
           type: result.summaryType,
@@ -138,7 +136,6 @@ const createResultFormState = (result: ResultConfig): ResultSchemaType => {
     case ResultType.Raw:
       return {
         type: ResultType.Raw,
-        requestExpirationSeconds: result.requestExpirationSeconds,
         minimumResponses: result.minimumAnswers,
       };
     default:

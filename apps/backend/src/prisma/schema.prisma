@@ -25,6 +25,7 @@ model User {
   Oauths         Oauths[]
   RequestNew     RequestNew[]
   ResponseNew    ResponseNew[]
+  Permission     Permission[]
 
   @@map("users")
 }
@@ -683,6 +684,7 @@ model Step {
   id                    String   @id @default(uuid()) @db.Uuid
   flowVersionId         String   @map("flow_version_id") @db.Uuid
   index                 Int
+  expirationSeconds     Int      @default(0) @map("request_expiration_seconds")
   requestPermissionsId  String   @map("request_permissions_id") @db.Uuid
   responsePermissionsId String?  @map("response_permissions_id") @db.Uuid
   requestFieldSetId     String?  @map("request_field_set_id") @db.Uuid
@@ -710,11 +712,14 @@ model Permission {
   entitySetId   String?  @map("entity_set_id") @db.Uuid
   stepTriggered Boolean  @map("step_triggered")
   anyone        Boolean  @default(false)
+  userId        String?  @map("user_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
   EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
   ResponsePermissionsSteps Step[]     @relation("ResponsePermissions")
+  // Refers to when a a particular Ize user's permission on a given flow
+  User                     User?      @relation(fields: [userId], references: [id])
 
   @@map("permissions")
 }
@@ -799,10 +804,11 @@ model Field {
   fieldOptionsConfigId String?        @map("field_options_config_id") @db.Uuid
   createdAt            DateTime       @default(now()) @map("created_at")
 
-  FieldOptionsConfigs FieldOptionsConfig? @relation(fields: [fieldOptionsConfigId], references: [id])
-  Answers             Answer[]
-  ResultConfig        ResultConfig[]
-  FieldSetFields      FieldSetsFields[]
+  FieldOptionsConfigs     FieldOptionsConfig?       @relation(fields: [fieldOptionsConfigId], references: [id])
+  Answers                 FieldAnswer[]
+  ResultConfig            ResultConfig[]
+  FieldSetFields          FieldSetsFields[]
+  RequestDefinedOptionSet RequestDefinedOptionSet[]
 
   @@map("fields")
 }
@@ -841,6 +847,7 @@ model FieldOptionSet {
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
   RequestNew                 RequestNew[]
   RequestStep                RequestStep[]
+  RequestDefinedOptionSet    RequestDefinedOptionSet[]
 
   @@map("field_option_sets")
 }
@@ -876,20 +883,20 @@ model FieldOption {
   @@map("field_options")
 }
 
-model Answer {
-  id                String    @id @default(uuid()) @db.Uuid
-  type              FieldType
-  responseId        String?   @map("response_id") @db.Uuid
-  requestStepId     String?   @map("request_step_id") @db.Uuid
-  fieldId           String    @map("field_id") @db.Uuid
-  answerFreeInputId String    @map("answer_free_input_id") @db.Uuid
-  createdAt         DateTime  @default(now()) @map("created_at")
+// An answer is either an array of free input responses or option selections for a given field
+model FieldAnswer {
+  id            String    @id @default(uuid()) @db.Uuid
+  type          FieldType
+  responseId    String?   @map("response_id") @db.Uuid
+  requestStepId String?   @map("request_step_id") @db.Uuid
+  fieldId       String    @map("field_id") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
 
   Field                  Field                   @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   Response               ResponseNew?            @relation(fields: [responseId], references: [id], onDelete: Cascade)
   Request                RequestStep?            @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   AnswerOptionSelections AnswerOptionSelection[]
-  AnswerFreeInput        AnswerFreeInput         @relation(fields: [answerFreeInputId], references: [id], onDelete: Cascade)
+  AnswerFreeInput        AnswerFreeInput[]
 
   @@map("answers")
 }
@@ -898,24 +905,25 @@ model AnswerOptionSelection {
   id                String   @id @default(uuid()) @db.Uuid
   fieldAnswerId     String   @map("field_answer_id") @db.Uuid
   fieldOptionId     String   @map("field_option_id") @db.Uuid
-  answerFreeInputId String   @map("answer_free_input_id") @db.Uuid
+  answerFreeInputId String?  @unique @map("answer_free_input_id") @db.Uuid
   createdAt         DateTime @default(now()) @map("created_at")
 
-  FieldOption     FieldOption     @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
-  Answer          Answer          @relation(fields: [fieldAnswerId], references: [id], onDelete: Cascade)
-  AnswerFreeInput AnswerFreeInput @relation(fields: [answerFreeInputId], references: [id], onDelete: Cascade)
+  FieldOption     FieldOption      @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
+  FieldAnswer     FieldAnswer      @relation(fields: [fieldAnswerId], references: [id], onDelete: Cascade)
+  AnswerFreeInput AnswerFreeInput? @relation(fields: [answerFreeInputId], references: [id], onDelete: Cascade)
 
   @@map("answer_option_selections")
 }
 
 model AnswerFreeInput {
-  id        String        @id @default(uuid()) @db.Uuid
-  dataType  FieldDataType @map("data_type")
-  value     String
-  createdAt DateTime      @default(now()) @map("created_at")
+  id            String        @id @default(uuid()) @db.Uuid
+  dataType      FieldDataType @map("data_type")
+  fieldAnswerId String        @map("field_answer_id") @db.Uuid
+  value         String
+  createdAt     DateTime      @default(now()) @map("created_at")
 
-  AnswerOptionSelections AnswerOptionSelection[]
-  Answer                 Answer[]
+  FieldAnswer           FieldAnswer            @relation(fields: [fieldAnswerId], references: [id], onDelete: Cascade)
+  AnswerOptionSelection AnswerOptionSelection?
 
   @@map("answer_free_inputs")
 }
@@ -930,13 +938,12 @@ enum ResultType {
 
 // Describes how and when a final result is created
 model ResultConfig {
-  id                       String     @id @default(uuid()) @db.Uuid
-  resultType               ResultType @map("result_type")
+  id         String     @id @default(uuid()) @db.Uuid
+  resultType ResultType @map("result_type")
   // Minimum answers for a result to be created
-  minAnswers               Int        @default(0) @map("min_answers")
-  requestExpirationSeconds Int        @default(0) @map("request_expiration_seconds")
+  minAnswers Int        @default(0) @map("min_answers")
   // whether output will be a single item or a list of items
-  createdAt                DateTime   @default(now()) @map("created_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
 
   fieldId    String? @map("field_id") @db.Uuid
   decisionId String? @map("decision_id") @db.Uuid
@@ -1045,16 +1052,15 @@ model ActionAttemptNew {
 model RequestNew {
   id                   String   @id @default(uuid()) @db.Uuid
   creatorId            String   @map("creator_id") @db.Uuid
-  expirationDate       DateTime @map("expiration_date")
   flowId               String   @map("flow_id") @db.Uuid
-  currentRequestStepId String   @unique @map("current_request_step_id") @db.Uuid
+  currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
   open                 Boolean  @default(true)
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Flow               Flow        @relation(fields: [flowId], references: [id])
-  User               User        @relation(fields: [creatorId], references: [id])
-  CurrentRequestStep RequestStep @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id])
+  Flow               Flow         @relation(fields: [flowId], references: [id])
+  User               User         @relation(fields: [creatorId], references: [id])
+  CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id])
 
   // For when the options are request are created by the requestor or the previous step
   RequestStep      RequestStep[]
@@ -1065,23 +1071,38 @@ model RequestNew {
 }
 
 model RequestStep {
-  id                 String @id @default(uuid()) @db.Uuid
-  requestId          String @map("request_id") @db.Uuid
-  stepId             String @map("step_id") @db.Uuid
-  requestOptionSetId String @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
+  requestId      String   @map("request_id") @db.Uuid
+  stepId         String   @map("step_id") @db.Uuid
+  expirationDate DateTime @map("expiration_date")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Request          RequestNew     @relation(fields: [requestId], references: [id])
-  Step             Step           @relation(fields: [stepId], references: [id])
-  RequestOptionSet FieldOptionSet @relation(fields: [requestOptionSetId], references: [id])
-  RequestNew       RequestNew?    @relation("CurrentRequestStep")
-  Answers          Answer[]
-  Results          Results[]
+  Request RequestNew @relation(fields: [requestId], references: [id])
+  Step    Step       @relation(fields: [stepId], references: [id])
+
+  CurrentStepParent       RequestNew?               @relation("CurrentRequestStep")
+  RequestFieldAnswers     FieldAnswer[]
+  Results                 Results[]
+  RequestDefinedOptionSet RequestDefinedOptionSet[]
+  FieldOptionSet          FieldOptionSet?           @relation(fields: [fieldOptionSetId], references: [id])
+  fieldOptionSetId        String?                   @db.Uuid
 
   @@unique([stepId, requestId])
   @@map("request_steps")
+}
+
+model RequestDefinedOptionSet {
+  id               String         @id @default(uuid()) @db.Uuid
+  requestStepId    String         @map("request_step_id") @db.Uuid
+  fieldId          String         @map("field_id") @db.Uuid
+  fieldOptionSetId String         @map("field_option_set_id") @db.Uuid
+  RequestStep      RequestStep    @relation(fields: [requestStepId], references: [id])
+  Field            Field          @relation(fields: [fieldId], references: [id])
+  FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id])
+
+  @@map("request_defined_option_sets")
 }
 
 model ResponseNew {
@@ -1089,8 +1110,8 @@ model ResponseNew {
   creatorId String   @map("creator_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  Answers Answer[]
-  User    User     @relation(fields: [creatorId], references: [id])
+  Answers FieldAnswer[]
+  User    User          @relation(fields: [creatorId], references: [id])
 
   @@map("responses_new")
 }
@@ -1104,7 +1125,6 @@ model Results {
 
   RequestStep  RequestStep  @relation(fields: [requestStepId], references: [id])
   ResultConfig ResultConfig @relation(fields: [resultConfigId], references: [id])
-  requestNewId String?      @db.Uuid
 
   @@map("results_new")
 }

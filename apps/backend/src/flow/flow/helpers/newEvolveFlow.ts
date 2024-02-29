@@ -43,7 +43,6 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
     type: ResultType.Decision,
     decision: { ...evolveArgs.decision },
     minimumResponses: 1,
-    requestExpirationSeconds: 259200,
   };
 
   const actionArgs: ActionNewArgs = {
@@ -60,6 +59,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       permission: evolveArgs.responsePermission,
       fields: [responseFieldSetArgs],
     },
+    expirationSeconds: 259200,
     result: resultArgs,
     action: actionArgs,
   };

@@ -18,7 +18,6 @@ fragment ResultConfig on ResultConfig {
 }
 
 fragment Decision on Decision {
-  requestExpirationSeconds
   minimumAnswers
   decisionType
   defaultOption {
@@ -28,20 +27,17 @@ fragment Decision on Decision {
 }
 
 fragment Ranking on Ranking {
-  requestExpirationSeconds
   minimumAnswers
   numOptionsToInclude
 }
 
 fragment LlmSummary on LlmSummary {
-  requestExpirationSeconds
   minimumAnswers
   summaryType
   prompt
 }
 
 fragment Raw on Raw {
-  requestExpirationSeconds
   minimumAnswers
 }
 

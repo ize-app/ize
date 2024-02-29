@@ -1,20 +1,23 @@
 import { FlowSchemaType } from "../../formValidation/flow";
-import { DecisionNewArgs, FieldType, NewFlowArgs } from "@/graphql/generated/graphql";
+import { DecisionNewArgs, NewFlowArgs } from "@/graphql/generated/graphql";
 import { createFieldArgs, createFieldsArgs } from "./createFieldsArgs";
 import { createPermissionArgs } from "./createPermissionsArgs";
 import { createActionArgs } from "./createActionArgs";
 import { createResultArgs } from "./createResultArgs";
 
-export const createNewFlowArgs = (formState: FlowSchemaType): NewFlowArgs => {
+export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): NewFlowArgs => {
   const args: NewFlowArgs = {
     name: formState.name,
     reusable: formState.reusable,
-    steps: formState.steps.map((step) => {
+    steps: formState.steps.map((step, index) => {
       return {
         ...step,
-        request: step.request && {
-          fields: createFieldsArgs(step.request.fields ?? []),
-          permission: createPermissionArgs(step.request.permission),
+        request: {
+          fields: createFieldsArgs(step.request?.fields ?? []),
+          permission: createPermissionArgs(
+            step.request?.permission,
+            formState.reusable && index === 0 ? userId : undefined,
+          ),
         },
         response: step.response && {
           fields: [createFieldArgs(step.response.field)],
@@ -22,6 +25,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType): NewFlowArgs => {
         },
         action: createActionArgs(step.action, step.response?.field),
         result: createResultArgs(step.result, step.response?.field),
+        expirationSeconds: step.expirationSeconds
       };
     }),
     evolve: formState.evolve && {

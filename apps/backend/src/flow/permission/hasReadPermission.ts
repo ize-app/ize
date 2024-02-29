@@ -4,9 +4,11 @@ export const hasReadPermission = (
   permission: PermissionPrismaType | null,
   groupIds: string[] | null,
   identityIds: string[] | null,
+  userId: string | undefined,
 ): boolean => {
   if (!permission) return false;
   if (permission.anyone) return true;
+  if (permission.userId && permission.userId === userId) return true;
 
   if (permission.EntitySet) {
     const hasEntityPermission = permission.EntitySet.EntitySetEntities.some((entity) => {

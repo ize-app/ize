@@ -1,11 +1,8 @@
-import {
-  FieldArgs,
-  FieldOptionArgs,
-  FieldOptionsConfigArgs,
-} from "@/graphql/generated/resolver-types";
+import { FieldArgs, FieldOptionsConfigArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { FieldSetPrismaType, fieldSetInclude } from "./types";
+import { newOptionSet } from "./newOptionSet";
 
 export const newFieldSet = async ({
   fields,
@@ -14,7 +11,6 @@ export const newFieldSet = async ({
   fields: FieldArgs[];
   transaction: Prisma.TransactionClient;
 }): Promise<FieldSetPrismaType | null> => {
-  console.log("inside new field set");
   if (fields.length === 0) return null;
   const dbFields = await Promise.all(
     fields.map(async (field) => {
@@ -61,31 +57,20 @@ const createFieldOptionsConfig = async ({
   const { selectionType, options, hasRequestOptions, maxSelections, requestOptionsDataType } =
     fieldOptionsConfigArgs;
 
-  const dbOptions = await Promise.all(
-    options.map(async (option: FieldOptionArgs, index) => {
-      const res = await transaction.fieldOption.create({
-        data: {
-          name: option.name,
-          dataType: option.dataType,
-        },
-      });
-      return { fieldOptionId: res.id, index };
-    }),
-  );
-
+  const optionSetId = await newOptionSet({ options, transaction });
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
     data: {
       maxSelections,
       hasRequestOptions,
       requestOptionsDataType,
       selectionType,
-      FieldOptionSet: {
-        create: {
-          FieldOptionSetFieldOptions: {
-            createMany: { data: dbOptions },
-          },
-        },
-      },
+      FieldOptionSet: optionSetId
+        ? {
+            connect: {
+              id: optionSetId,
+            },
+          }
+        : {},
     },
   });
 

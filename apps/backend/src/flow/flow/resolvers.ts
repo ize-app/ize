@@ -12,11 +12,13 @@ export const flowResolver = ({
   evolveFlow,
   userIdentityIds,
   userGroupIds,
+  userId,
 }: {
   flow: FlowPrismaType;
   evolveFlow?: FlowPrismaType;
   userIdentityIds: string[];
   userGroupIds: string[];
+  userId: string | undefined;
 }): Flow => {
   if (!flow.CurrentFlowVersion)
     throw new GraphQLError("Flow does not have a a current version.", {
@@ -30,9 +32,11 @@ export const flowResolver = ({
     reusable: flow.CurrentFlowVersion?.reusable,
     name: flow.CurrentFlowVersion.name,
     steps: flow.CurrentFlowVersion.Steps.map((step) =>
-      stepResolver({ step, userIdentityIds, userGroupIds }),
+      stepResolver({ step, userIdentityIds, userGroupIds, userId }),
     ),
-    evolve: evolveFlow ? flowResolver({ flow: evolveFlow, userIdentityIds, userGroupIds }) : null,
+    evolve: evolveFlow
+      ? flowResolver({ flow: evolveFlow, userIdentityIds, userGroupIds, userId })
+      : null,
   };
 };
 
@@ -40,10 +44,12 @@ export const stepResolver = ({
   step,
   userIdentityIds,
   userGroupIds,
+  userId,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
   userGroupIds: string[];
+  userId: string | undefined;
 }): Step => {
   let responseOptions: Option[] | undefined = undefined;
 
@@ -62,9 +68,10 @@ export const stepResolver = ({
     },
     action: step.ActionNew ? actionResolver(step.ActionNew, responseOptions) : null,
     result: resultConfigResolver(step.ResultConfig, responseOptions),
+    expirationSeconds: step.expirationSeconds,
     userPermission: {
-      request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds),
-      response: hasReadPermission(step.ResponsePermissions, userIdentityIds, userGroupIds),
+      request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds, userId),
+      response: hasReadPermission(step.ResponsePermissions, userIdentityIds, userGroupIds, userId),
     },
   };
 };

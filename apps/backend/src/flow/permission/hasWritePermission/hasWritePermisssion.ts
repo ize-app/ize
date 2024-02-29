@@ -27,6 +27,8 @@ export const hasWritePermission = async ({
 
   if (permission.anyone) return true;
 
+  if (permission.userId === context.currentUser.id) return true;
+
   const { discordRoleGroups, nftGroups, identities } = await resolveEntitySet({
     permission,
     transaction,

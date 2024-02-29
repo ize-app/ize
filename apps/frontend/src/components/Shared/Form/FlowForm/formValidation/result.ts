@@ -34,25 +34,21 @@ const llmSchema = z.object({
 export const resultSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultType.Decision),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
     decision: decisionSchema,
   }),
   z.object({
     type: z.literal(ResultType.Ranking),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().default(1),
     prioritization: prioritizationSchema,
   }),
   z.object({
     type: z.literal(ResultType.LlmSummary),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
     llmSummary: llmSchema,
   }),
   z.object({
     type: z.literal(ResultType.Raw),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
   }),
   z.object({

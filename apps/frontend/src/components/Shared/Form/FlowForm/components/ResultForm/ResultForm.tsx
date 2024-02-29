@@ -41,7 +41,7 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
             width="300px"
             selectOptions={[
               { name: "Decision", value: ResultType.Decision },
-              { name: "Prioritized options", value: ResultType.Prioritization },
+              { name: "Prioritized options", value: ResultType.Ranking },
               { name: "AI summary of all responses", value: ResultType.LlmSummary },
               { name: "Just the responses", value: ResultType.Raw },
               { name: "Auto-approve a request", value: ResultType.AutoApprove },
@@ -54,7 +54,7 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
         {resultType === ResultType.Decision && (
           <DecisionForm formIndex={formIndex} formMethods={formMethods} />
         )}
-        {resultType === ResultType.Prioritization && (
+        {resultType === ResultType.Ranking && (
           <PrioritizationForm formIndex={formIndex} formMethods={formMethods} />
         )}
         {resultType === ResultType.LlmSummary && (
@@ -70,7 +70,7 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
               return "Request expires in " + option?.name;
             }}
             selectOptions={requestExpirationOptions}
-            name={`steps.${formIndex}.result.requestExpirationSeconds`}
+            name={`steps.${formIndex}.expirationSeconds`}
             displayLabel={false}
             size={"small"}
           />

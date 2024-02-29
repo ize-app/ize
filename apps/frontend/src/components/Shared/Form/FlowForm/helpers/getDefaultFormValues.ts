@@ -11,18 +11,6 @@ import {
 } from "@/graphql/generated/graphql";
 import { LlmSummaryType } from "../formValidation/result";
 
-export const getDefaultFormValues = (resultType: ResultType | null): StepSchemaType => {
-  console.log("getting default form values for ", resultType);
-  switch (resultType) {
-    case ResultType.Decision:
-      return structuredClone(defaultDecisionStepFormValues);
-    case ResultType.LlmSummary:
-      return structuredClone(defaultLlmSummaryStepFormValues);
-    default:
-      return {};
-  }
-};
-
 export const defaultDecisionStepFormValues: StepSchemaType = {
   request: {
     permission: { type: PermissionType.Anyone, entities: [] },
@@ -39,6 +27,7 @@ export const defaultDecisionStepFormValues: StepSchemaType = {
         hasRequestOptions: false,
         maxSelections: 1,
         previousStepOptions: false,
+        requestOptionsDataType: FieldDataType.String,
         selectionType: FieldOptionsSelectionType.Select,
       },
       required: true,
@@ -47,14 +36,14 @@ export const defaultDecisionStepFormValues: StepSchemaType = {
   result: {
     type: ResultType.Decision,
     minimumResponses: 1,
-    requestExpirationSeconds: 259200,
     decision: {
       type: DecisionType.NumberThreshold,
       threshold: 1,
-      defaultOptionId: "None"
+      defaultOptionId: "None",
     },
   },
   action: { type: ActionNewType.None },
+  expirationSeconds: 259200,
 };
 
 export const defaultLlmSummaryStepFormValues: StepSchemaType = {

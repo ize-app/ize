@@ -39,7 +39,7 @@ export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestFormSchema> = [
     title: "Confirm",
     progressBarStep: 2,
     canNext: () => true,
-    validWizardState: (formState: NewRequestFormSchema) => {
+    validWizardState: (_formState: NewRequestFormSchema) => {
       // return !!formState.requestFields;
       return true;
     },
