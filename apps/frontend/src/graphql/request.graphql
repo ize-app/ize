@@ -6,6 +6,12 @@ mutation NewResponse($requestId: String!, $optionId: String!) {
   newResponse(requestId: $requestId, optionId: $optionId)
 }
 
+query getRequest($requestId: String!) {
+  getRequest(requestId: $requestId) {
+    ...RequestNew
+  }
+}
+
 query Request($requestId: String!) {
   request(requestId: $requestId) {
     ...RequestSummaryParts
@@ -27,6 +33,29 @@ query requestsForCurrentUser {
 query RequestsForProcess($processId: String!) {
   requestsForProcess(processId: $processId) {
     ...RequestSummaryParts
+  }
+}
+
+fragment RequestNew on RequestNew {
+  flow {
+    ...Flow
+  }
+  requestId
+  currentStepIndex
+  createdAt
+  steps {
+    ...RequestStep
+  }
+}
+
+fragment RequestStep on RequestStep {
+  createdAt
+  expirationDate
+  requestFieldAnswers {
+    ...FieldAnswer
+  }
+  responseFields {
+    ...Field
   }
 }
 

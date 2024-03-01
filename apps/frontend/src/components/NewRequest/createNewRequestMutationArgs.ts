@@ -9,7 +9,7 @@ import { RequestFieldSchemaType } from "./validation";
 
 export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): NewRequestArgs => {
   if (!formState.flow) throw Error("createNewRequestMutationArgs: Missing Flow");
-  const flowId: string = formState.flow.id;
+  const flowId: string = formState.flow.flowId;
 
   const requestFields: FieldAnswerArgs[] = Object.entries(
     (formState.requestFields ?? []) as RequestFieldSchemaType,

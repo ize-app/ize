@@ -5,11 +5,19 @@ import {
   Options,
   FieldDataType,
   FieldOptionsSelectionType,
+  Option,
 } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { FieldSetPrismaType } from "./types";
+import { FieldSetPrismaType } from "../fieldPrismaTypes";
+import { RequestDefinedOptionSetPrismaType } from "../../request/requestTypes";
 
-export const fieldSetResolver = (fieldSet: FieldSetPrismaType | null): Field[] => {
+export const fieldSetResolver = ({
+  fieldSet,
+  requestDefinedOptionSets,
+}: {
+  fieldSet: FieldSetPrismaType | null;
+  requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
+}): Field[] => {
   if (!fieldSet) return [];
   return fieldSet.FieldSetFields.map((f) => {
     if (f.Field.type === FieldType.FreeInput) {
@@ -26,7 +34,33 @@ export const fieldSetResolver = (fieldSet: FieldSetPrismaType | null): Field[] =
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
+
       const config = f.Field.FieldOptionsConfigs;
+
+      // find options defined by request for this field.
+      // these options will be combined with flow defined fields
+      const requestDefinedOptionSet = requestDefinedOptionSets
+        ? requestDefinedOptionSets.find((s) => s.fieldId)
+        : undefined;
+
+      const requestOptions = requestDefinedOptionSet
+        ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map(
+            (o): Option => ({
+              optionId: o.FieldOption.id,
+              name: o.FieldOption.name,
+              dataType: o.FieldOption.dataType as FieldDataType,
+            }),
+          )
+        : [];
+
+      const flowOptions = config.FieldOptionSet.FieldOptionSetFieldOptions.map(
+        (o): Option => ({
+          optionId: o.FieldOption.id,
+          name: o.FieldOption.name,
+          dataType: o.FieldOption.dataType as FieldDataType,
+        }),
+      );
+
       const options: Options = {
         __typename: FieldType.Options,
         fieldId: f.Field.id,
@@ -37,11 +71,7 @@ export const fieldSetResolver = (fieldSet: FieldSetPrismaType | null): Field[] =
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as FieldOptionsSelectionType,
         maxSelections: config.maxSelections,
-        options: config.FieldOptionSet.FieldOptionSetFieldOptions.map((o) => ({
-          optionId: o.FieldOption.id,
-          name: o.FieldOption.name,
-          dataType: o.FieldOption.dataType as FieldDataType,
-        })),
+        options: [...flowOptions, ...requestOptions],
       };
       return options;
     } else throw Error("");

@@ -1,4 +1,4 @@
-import { FieldPrismaType } from "@/flow/fields/types";
+import { FieldPrismaType } from "@/flow/fields/fieldPrismaTypes";
 import { DecisionNewArgs, FieldType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
@@ -25,7 +25,7 @@ export const newDecisionConfig = async ({
       responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
         (fo) => fo.index === decisionArgs.defaultOptionIndex,
       )?.fieldOptionId ?? null;
-      
+
     if (defaultOptionId === null)
       throw new GraphQLError("Cannot find default option.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },

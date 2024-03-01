@@ -1,16 +1,22 @@
 import { Prisma } from "@prisma/client";
 
+export const fieldOptionSetInclude = Prisma.validator<Prisma.FieldOptionSetInclude>()({
+  FieldOptionSetFieldOptions: {
+    include: {
+      FieldOption: true,
+    },
+  },
+});
+
+export type FieldOptionSetPrismaType = Prisma.FieldOptionSetGetPayload<{
+  include: typeof fieldOptionSetInclude;
+}>;
+
 export const fieldInclude = Prisma.validator<Prisma.FieldInclude>()({
   FieldOptionsConfigs: {
     include: {
       FieldOptionSet: {
-        include: {
-          FieldOptionSetFieldOptions: {
-            include: {
-              FieldOption: true,
-            },
-          },
-        },
+        include: fieldOptionSetInclude,
       },
     },
   },
@@ -34,7 +40,10 @@ export type FieldSetPrismaType = Prisma.FieldSetGetPayload<{
   include: typeof fieldSetInclude;
 }>;
 
-export const fieldAnswerInclude = Prisma.validator<Prisma.FieldAnswerInclude>()({});
+export const fieldAnswerInclude = Prisma.validator<Prisma.FieldAnswerInclude>()({
+  AnswerFreeInput: true,
+  AnswerOptionSelections: true,
+});
 
 export type FieldAnswerPrismaType = Prisma.FieldAnswerGetPayload<{
   include: typeof fieldAnswerInclude;

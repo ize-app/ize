@@ -1,6 +1,6 @@
 import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
-import { FieldPrismaType } from "../fields/types";
+import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { newDecisionConfig } from "./decision/newDecisionConfig";
 import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./decision/newLlmSummaryConfig";

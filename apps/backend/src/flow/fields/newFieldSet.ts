@@ -1,7 +1,7 @@
 import { FieldArgs, FieldOptionsConfigArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
-import { FieldSetPrismaType, fieldSetInclude } from "./types";
+import { FieldSetPrismaType, fieldSetInclude } from "./fieldPrismaTypes";
 import { newOptionSet } from "./newOptionSet";
 
 export const newFieldSet = async ({

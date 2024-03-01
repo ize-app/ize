@@ -1,6 +1,6 @@
 import { ActionNewArgs, ActionNewType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
-import { FieldPrismaType } from "../fields/types";
+import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newActionConfig = async ({

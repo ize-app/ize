@@ -16,6 +16,7 @@ export const apolloClient = new ApolloClient({
       ActionNew: ["CallWebhook", "EvolveFlow", "TriggerStep"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
+      FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer"],
     },
   }),
   link,

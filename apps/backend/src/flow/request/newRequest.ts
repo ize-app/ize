@@ -1,7 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
-import { flowInclude } from "@/flow/flow/types";
+import { flowInclude } from "@/flow/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";
@@ -48,7 +48,7 @@ export const newRequest = async ({
 
     const request = await transaction.requestNew.create({
       data: {
-        flowId: flow.id,
+        flowVersionId: flow.CurrentFlowVersion.id,
         creatorId: context.currentUser.id,
       },
     });

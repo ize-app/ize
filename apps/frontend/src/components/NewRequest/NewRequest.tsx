@@ -32,7 +32,7 @@ export const NewRequest = () => {
   });
 
   const onComplete = async () => {
-    console.log("inside onComplete");
+
     try {
       console.log("args are", createNewRequestMutationArgs(formState));
       await mutate({

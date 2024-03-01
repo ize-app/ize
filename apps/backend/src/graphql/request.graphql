@@ -4,6 +4,7 @@ type Mutation {
 }
 
 type Query {
+  getRequest(requestId: String!): RequestNew!
   request(requestId: String!): Request!
   requestsForCurrentUser: [Request!]!
   requestsForGroup(groupId: String!): [Request!]!
@@ -19,6 +20,22 @@ input NewRequestArgs {
 input RequestDefinedOptionsArgs {
   fieldId: String!
   options: [FieldOptionArgs!]!
+}
+
+type RequestNew {
+  # refers to flow version at time of request, not necessarily the current flow
+  flow: Flow!
+  requestId: String!
+  currentStepIndex: Int!
+  createdAt: String!
+  steps: [RequestStep!]!
+}
+
+type RequestStep {
+  createdAt: String!
+  expirationDate: String!
+  requestFieldAnswers: [FieldAnswer!]!
+  responseFields: [Field!]!
 }
 
 type Request {

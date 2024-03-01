@@ -1,6 +1,6 @@
 import { FieldAnswerArgs } from "@/graphql/generated/resolver-types";
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
-import { FieldSetPrismaType } from "./types";
+import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { validateInputDataType } from "./validation/validateInputDataType";
 

@@ -1,7 +1,7 @@
 import { Flow, QueryGetFlowArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
-import { flowInclude } from "./types";
-import { flowResolver } from "./resolvers";
+import { flowInclude } from "./flowPrismaTypes";
+import { flowVersionResolver } from "./resolvers/flowVersionResolver";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { MePrismaType } from "@/utils/formatUser";
 import { getGroupIdsOfUser } from "../group/getGroupIdsOfUser";
@@ -36,9 +36,9 @@ export const getFlow = async ({
 
   const userGroupIds = await getGroupIdsOfUser({ user });
 
-  const res = flowResolver({
-    flow,
-    evolveFlow,
+  const res = flowVersionResolver({
+    flowVersion: flow.CurrentFlowVersion,
+    evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,
     userGroupIds,
     userId: user?.id,
