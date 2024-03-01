@@ -281,7 +281,8 @@ export enum FieldType {
 export type Flow = {
   __typename?: 'Flow';
   evolve?: Maybe<Flow>;
-  id: Scalars['String']['output'];
+  flowId: Scalars['String']['output'];
+  flowVersionId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Maybe<Step>>;
@@ -1490,7 +1491,8 @@ export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;

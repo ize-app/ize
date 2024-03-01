@@ -1,11 +1,11 @@
 fragment Field on Field {
-    __typename
-    ... on Options {
-        ...Options
-    }
-    ... on FreeInput {
-        ...FreeInput
-    }
+  __typename
+  ... on Options {
+    ...Options
+  }
+  ... on FreeInput {
+    ...FreeInput
+  }
 }
 
 fragment Options on Options {
@@ -33,4 +33,30 @@ fragment Option on Option {
   optionId
   name
   dataType
+}
+
+fragment FieldAnswer on FieldAnswer {
+  __typename
+  ... on OptionFieldAnswer {
+    ...OptionFieldAnswer
+  }
+  ... on FreeInputFieldAnswer {
+    ...FreeInputFieldAnswer
+  }
+}
+
+fragment OptionFieldAnswer on OptionFieldAnswer {
+  fieldId
+  selections {
+    ...OptionFieldAnswerSelection
+  }
+}
+
+fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
+  fieldId
+  value
+}
+
+fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
+  optionId
 }

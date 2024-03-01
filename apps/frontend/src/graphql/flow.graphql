@@ -16,7 +16,8 @@ fragment Flow on Flow {
 }
 
 fragment FlowFields on Flow {
-  id
+  flowId
+  flowVersionId
   type
   name
   reusable
