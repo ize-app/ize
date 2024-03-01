@@ -79,7 +79,7 @@ export const newRequest = async ({
           );
 
         if (
-          !field.Field.FieldOptionsConfigs?.hasRequestOptions ||
+          field.Field.FieldOptionsConfigs?.hasRequestOptions ||
           !field.Field.FieldOptionsConfigs?.requestOptionsDataType
         )
           throw new GraphQLError(

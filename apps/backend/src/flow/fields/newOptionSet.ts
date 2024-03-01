@@ -13,7 +13,6 @@ export const newOptionSet = async ({
   dataType?: FieldDataType;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
-  console.log("creating option args", options);
   const fieldOptions = await Promise.all(
     options.map(async (option: FieldOptionArgs, index) => {
       if (dataType && dataType !== option.dataType)

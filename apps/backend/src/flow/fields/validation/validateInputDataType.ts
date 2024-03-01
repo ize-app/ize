@@ -2,7 +2,6 @@ import * as z from "zod";
 import { FieldDataType } from "@prisma/client";
 
 export const validateInputDataType = (value: string, dataType: FieldDataType): boolean => {
-  console.log("evaluating option value: ", value, "for data type", dataType);
   let pass = false;
   switch (dataType) {
     case FieldDataType.String:

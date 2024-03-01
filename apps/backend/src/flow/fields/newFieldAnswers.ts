@@ -25,109 +25,111 @@ export const newFieldAnswers = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
   // iterate through each answer
-  fieldAnswers.forEach(async (fieldAnswer) => {
-    const field = fields.find((field) => field.id === fieldAnswer.fieldId);
-    if (!field)
-      throw new GraphQLError(
-        `Provided field is not part of field set. fieldId: ${fieldAnswer.fieldId}`,
-        {
-          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-        },
-      );
-
-    switch (field.type) {
-      case FieldType.FreeInput: {
-        if (!fieldAnswer.value)
-          throw new GraphQLError(
-            `Free input field answer is missing value. fieldId: ${fieldAnswer.fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-        if (!validateInputDataType(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
-          throw new GraphQLError(
-            `Field answer does not match data type. fieldId: ${fieldAnswer.fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-        }
-
-        await transaction.fieldAnswer.create({
-          data: {
-            type: FieldType.FreeInput,
-            fieldId: field.id,
-            AnswerFreeInput: {
-              create: {
-                dataType: field.freeInputDataType as FieldDataType,
-                value: fieldAnswer.value,
-              },
-            },
+  await Promise.all(
+    fieldAnswers.map(async (fieldAnswer) => {
+      const field = fields.find((field) => field.id === fieldAnswer.fieldId);
+      if (!field)
+        throw new GraphQLError(
+          `Provided field is not part of field set. fieldId: ${fieldAnswer.fieldId}`,
+          {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
           },
-        });
-
-        break;
-      }
-      //TODO: Make this work for previous step options and request created options
-      case FieldType.Options: {
-        if (!fieldAnswer.optionSelections)
-          throw new GraphQLError(
-            `Options field answer is missing options values. fieldId: ${fieldAnswer.fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        const fieldOptionsConfig = field.FieldOptionsConfigs;
-
-        if (!fieldOptionsConfig)
-          throw new GraphQLError(
-            `Options field answer is missing options config. fieldId: ${fieldAnswer.fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
-
-        const options = fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map(
-          (o) => o.FieldOption,
         );
 
-        if (fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections)
-          throw new GraphQLError(
-            `More option selections submitted than allowable for this field. fieldId: ${fieldAnswer.fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
-
-        // check whether selected options are part of field's option Set
-        fieldAnswer.optionSelections.map((optionSelection) => {
-          if (options.some((option) => option.id !== optionSelection.optionId))
+      switch (field.type) {
+        case FieldType.FreeInput: {
+          if (!fieldAnswer.value)
             throw new GraphQLError(
-              `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
+              `Free input field answer is missing value. fieldId: ${fieldAnswer.fieldId}`,
               {
                 extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
               },
             );
-        });
+          if (!validateInputDataType(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
+            throw new GraphQLError(
+              `Field answer does not match data type. fieldId: ${fieldAnswer.fieldId}`,
+              {
+                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+              },
+            );
+          }
 
-        await transaction.fieldAnswer.create({
-          data: {
-            type: FieldType.FreeInput,
-            fieldId: field.id,
-            AnswerOptionSelections: {
-              createMany: {
-                data: fieldAnswer.optionSelections.map((o) => ({
-                  fieldOptionId: o.optionId,
-                })),
+          await transaction.fieldAnswer.create({
+            data: {
+              type: FieldType.FreeInput,
+              fieldId: field.id,
+              AnswerFreeInput: {
+                create: {
+                  dataType: field.freeInputDataType as FieldDataType,
+                  value: fieldAnswer.value,
+                },
               },
             },
-          },
-        });
+          });
 
-        break;
+          break;
+        }
+        //TODO: Make this work for previous step options and request created options
+        case FieldType.Options: {
+          if (!fieldAnswer.optionSelections)
+            throw new GraphQLError(
+              `Options field answer is missing options values. fieldId: ${fieldAnswer.fieldId}`,
+              {
+                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+              },
+            );
+
+          const fieldOptionsConfig = field.FieldOptionsConfigs;
+
+          if (!fieldOptionsConfig)
+            throw new GraphQLError(
+              `Options field answer is missing options config. fieldId: ${fieldAnswer.fieldId}`,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
+
+          const options = fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map(
+            (o) => o.FieldOption,
+          );
+
+          if (fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections)
+            throw new GraphQLError(
+              `More option selections submitted than allowable for this field. fieldId: ${fieldAnswer.fieldId}`,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
+
+          // check whether selected options are part of field's option Set
+          fieldAnswer.optionSelections.map((optionSelection) => {
+            if (options.some((option) => option.id !== optionSelection.optionId))
+              throw new GraphQLError(
+                `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
+                {
+                  extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+                },
+              );
+          });
+
+          await transaction.fieldAnswer.create({
+            data: {
+              type: FieldType.FreeInput,
+              fieldId: field.id,
+              AnswerOptionSelections: {
+                createMany: {
+                  data: fieldAnswer.optionSelections.map((o) => ({
+                    fieldOptionId: o.optionId,
+                  })),
+                },
+              },
+            },
+          });
+
+          break;
+        }
       }
-    }
-    return;
-  });
+      return;
+    }),
+  );
 };
