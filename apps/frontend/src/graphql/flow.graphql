@@ -38,6 +38,7 @@ fragment Step on Step {
   action {
     ...ActionNew
   }
+  expirationSeconds
   userPermission {
     ...UserPermission
   }

@@ -9,7 +9,7 @@ export const newPermission = async ({
   permission: PermissionArgs;
   stepIndex: number;
   transaction: Prisma.TransactionClient;
-}): Promise<string | null> => {
+}): Promise<string> => {
   let entitySetId = undefined;
 
   if (!!args.entities && args.entities.length > 0) {
@@ -30,6 +30,7 @@ export const newPermission = async ({
       anyone: args.anyone,
       stepTriggered: stepIndex > 0,
       entitySetId,
+      userId: args.userId,
     },
   });
 

@@ -17,7 +17,7 @@ interface EvolveProcessFormProps {
   expandedStep: number | "EvolveStep" | false;
 }
 
-export const EvolveProcessForm = ({
+export const EvolveFlowForm = ({
   formMethods,
   handleStepExpansion,
   expandedStep,

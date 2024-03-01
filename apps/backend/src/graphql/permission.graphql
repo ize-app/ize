@@ -5,3 +5,9 @@ type Permission {
 }
 
 union Entity = Identity | Group
+
+input PermissionArgs {
+  anyone: Boolean!
+  entities: [EntityArgs!]!
+  userId: String
+}

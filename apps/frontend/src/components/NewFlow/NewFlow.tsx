@@ -15,10 +15,12 @@ import { NewFlowDocument } from "@/graphql/generated/graphql";
 import { useMutation } from "@apollo/client";
 import { createNewFlowArgs } from "../shared/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 import { fullUUIDToShort } from "@/utils/inputs";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const NewFlow = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
+  const { me } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
@@ -31,9 +33,10 @@ export const NewFlow = () => {
   const onComplete = async () => {
     console.log("about to make mutation");
     try {
+      if (!me?.user.id) throw Error("Missing user Id");
       await mutate({
         variables: {
-          flow: createNewFlowArgs(formState),
+          flow: createNewFlowArgs(formState, me?.user.id),
         },
       });
       setSnackbarData({

@@ -9,11 +9,6 @@ import { ResultForm } from "./ResultForm/ResultForm";
 import { RequestForm } from "./RequestForm/RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResultType } from "@/graphql/generated/graphql";
-import { useEffect, useState } from "react";
-import {
-  defaultDecisionStepFormValues,
-  getDefaultFormValues,
-} from "../helpers/getDefaultFormValues";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;

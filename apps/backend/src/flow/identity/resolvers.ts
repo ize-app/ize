@@ -1,17 +1,7 @@
-import { Prisma } from "@prisma/client";
 import { Identity } from "@graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-
-export const identityInclude = Prisma.validator<Prisma.IdentityInclude>()({
-  IdentityBlockchain: true,
-  IdentityDiscord: true,
-  IdentityEmail: true,
-});
-
-export type IdentityPrismaType = Prisma.IdentityGetPayload<{
-  include: typeof identityInclude;
-}>;
+import { IdentityPrismaType } from "./types";
 
 export const identityResolver = (
   identity: IdentityPrismaType,

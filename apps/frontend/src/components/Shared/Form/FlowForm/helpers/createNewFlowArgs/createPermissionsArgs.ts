@@ -2,9 +2,13 @@ import { PermissionArgs } from "@/graphql/generated/graphql";
 import { PermissionSchemaType } from "../../formValidation/permission";
 import { PermissionType } from "../../formValidation/permission";
 
-export const createPermissionArgs = (permission: PermissionSchemaType): PermissionArgs => {
+export const createPermissionArgs = (
+  permission: PermissionSchemaType | undefined,
+  userId?: string,
+): PermissionArgs => {
   return {
-    anyone: permission.type === PermissionType.Anyone,
-    entities: permission.entities?.map((entity) => ({ id: entity.entityId })),
+    anyone: permission && permission.type === PermissionType.Anyone ? true : false,
+    entities: (permission?.entities ?? []).map((entity) => ({ id: entity.entityId })),
+    userId,
   };
 };

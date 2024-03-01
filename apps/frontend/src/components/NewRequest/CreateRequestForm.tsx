@@ -1,0 +1,167 @@
+import { useQuery } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { useNewRequestWizardState } from "./newRequestWizard";
+import { FieldDataType, FieldType, Flow, GetFlowDocument } from "../../graphql/generated/graphql";
+import * as Routes from "../../routers/routes";
+import { shortUUIDToFull } from "../../utils/inputs";
+import Loading from "../shared/Loading";
+import { WizardBody, WizardNav } from "../shared/Wizard";
+import { DatePicker, DateTimePicker, TextField } from "../shared/Form/FormFields";
+import { CreateRequestResponseFieldForm } from "./CreateRequestResponseFieldForm";
+import { RequestSchemaType, requestSchema } from "./validation";
+
+export const CreateRequestForm = () => {
+  const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
+    useNewRequestWizardState();
+  const { flowId: shortFlowId } = useParams();
+
+  useEffect(() => setParams({ flowId: shortFlowId }), [shortFlowId, setParams]);
+
+  const flowId = shortUUIDToFull(shortFlowId as string);
+  const navigate = useNavigate();
+
+  const { data, loading, error } = useQuery(GetFlowDocument, {
+    variables: {
+      flowId,
+    },
+  });
+
+  const onError = () => {
+    navigate(Routes.newRequestRoute(Routes.NewRequestRoute.SelectFlow));
+  };
+
+  const flow = data?.getFlow as Flow;
+  const step = flow ? flow.steps[0] : null;
+
+  useEffect(() => {
+    if (step && !loading) {
+      setFormState({ flow: flow });
+      step.request.fields.forEach((field) => {
+        if (field.__typename === FieldType.FreeInput) {
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
+        }
+      });
+    }
+  }, [step, loading, setFormState]);
+
+  const formMethods = useForm({
+    defaultValues: formState ?? {},
+    resolver: zodResolver(requestSchema),
+    shouldUnregister: true,
+  });
+
+  console.log("step is ", step);
+
+  // zod record with a data type,
+
+  const onSubmit = (data: RequestSchemaType) => {
+    console.log("inside onsubmit");
+    setFormState((prev) => ({
+      ...prev,
+      requestFields: data.requestFields ?? undefined,
+      requestDefinedOptions: data.requestDefinedOptions ?? [],
+    }));
+    onNext();
+  };
+
+  if (error) onError();
+
+  if (!flow || loading) {
+    return <Loading />;
+  }
+
+  return loading ? (
+    <Loading />
+  ) : (
+    <>
+      <WizardBody>
+        {/* <div>Create a new request for {formState.process?.name}</div> */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            marginBottom: "24px",
+          }}
+        >
+          <Typography fontWeight={600} color="primary">
+            Flow: {flow.name}
+          </Typography>
+
+          {/* <Typography variant="body1">Your request will have the following options:</Typography> */}
+          {/* <ProcessOptions options={formState?.process?.options ?? []} /> */}
+          <Typography>Add some context about this request...</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              maxWidth: "800px",
+            }}
+          >
+            {step?.request.fields.map((field) => {
+              if (field.__typename !== FieldType.FreeInput) throw Error("Invlid field type");
+              const { dataType, name, required, fieldId } = field;
+
+              switch (dataType) {
+                case FieldDataType.Date:
+                  return (
+                    <DatePicker<RequestSchemaType>
+                      name={`requestFields.${field.fieldId}.value`}
+                      key={fieldId}
+                      control={formMethods.control}
+                      // showLabel={false}
+
+                      label={name}
+                    />
+                  );
+                case FieldDataType.DateTime:
+                  return (
+                    <DateTimePicker<RequestSchemaType>
+                      name={`requestFields.${field.fieldId}.value`}
+                      key={fieldId}
+                      control={formMethods.control}
+                      // showLabel={false}
+                      label={name}
+                    />
+                  );
+                default:
+                  return (
+                    <TextField<RequestSchemaType>
+                      key={fieldId}
+                      label={name}
+                      variant="outlined"
+                      showLabel={true}
+                      control={formMethods.control}
+                      name={`requestFields.${field.fieldId}.value`}
+                      required={required}
+                      multiline
+                    />
+                  );
+              }
+            })}
+          </Box>
+          <Typography>How respondants will be able to respond:</Typography>
+          <CreateRequestResponseFieldForm
+            field={step?.response.fields[0]}
+            formMethods={formMethods}
+          />
+        </Box>
+      </WizardBody>
+      <WizardNav
+        onNext={formMethods.handleSubmit(onSubmit)}
+        onPrev={onPrev}
+        nextLabel={nextLabel}
+      />
+    </>
+  );
+};

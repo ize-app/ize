@@ -10,15 +10,15 @@ import { Outlet, useNavigate } from "react-router-dom";
 import {
   NEW_REQUEST_PROGRESS_BAR_STEPS,
   NEW_REQUEST_WIZARD_STEPS,
-  NewRequestState,
-  UserInputs,
+  NewRequestFormSchema,
 } from "./newRequestWizard";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { NewRequestDocument, RequestInputArgs } from "../../graphql/generated/graphql";
+import { NewRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort } from "../../utils/inputs";
 import { Wizard, useWizard } from "../../utils/wizard";
+import { createNewRequestMutationArgs } from "./createNewRequestMutationArgs";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
@@ -26,37 +26,30 @@ export const NewRequest = () => {
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
-      const newProcessId = data.newRequest;
-      navigate(`/requests/${fullUUIDToShort(newProcessId)}`);
+      const newRequestId = data.newRequest;
+      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
     },
   });
 
   const onComplete = async () => {
+    console.log("inside onComplete");
     try {
-      const inputs: RequestInputArgs[] = Object.entries(formState.userInputs as UserInputs).map(
-        (entry) => ({
-          inputId: entry[0],
-          value: entry[1].toString(),
-        }),
-      );
-
+      console.log("args are", createNewRequestMutationArgs(formState));
       await mutate({
-        variables: {
-          processId: formState.process?.id as string,
-          requestInputs: inputs,
-        },
+        variables: { request: createNewRequestMutationArgs(formState) },
       });
 
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request created!", type: "success" });
     } catch (e) {
+      console.log("ERROR: ", e);
       navigate("/");
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request creation failed", type: "error" });
     }
   };
 
-  const newRequestWizard: Wizard<NewRequestState> = {
+  const newRequestWizard: Wizard<NewRequestFormSchema> = {
     steps: NEW_REQUEST_WIZARD_STEPS,
     onComplete,
     initialFormState: {},

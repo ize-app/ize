@@ -61,7 +61,6 @@ const resultConfigDecisionResolver = (
   return {
     __typename: "Decision",
     minimumAnswers: resultConfig.minAnswers,
-    requestExpirationSeconds: resultConfig.requestExpirationSeconds,
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
   };
@@ -76,7 +75,6 @@ const resultConfigRankResolver = (resultConfig: ResultConfigPrismaType): Ranking
   return {
     __typename: "Ranking",
     minimumAnswers: resultConfig.minAnswers,
-    requestExpirationSeconds: resultConfig.requestExpirationSeconds,
     numOptionsToInclude: rankConfig.numOptionsToInclude,
   };
 };
@@ -90,7 +88,6 @@ const resultConfigLlmResolver = (resultConfig: ResultConfigPrismaType): LlmSumma
   return {
     __typename: "LlmSummary",
     minimumAnswers: resultConfig.minAnswers,
-    requestExpirationSeconds: resultConfig.requestExpirationSeconds,
     summaryType: llmConfig.type as LlmSummaryType,
     prompt: llmConfig.prompt,
   };
@@ -100,6 +97,5 @@ const resultConfigRawResolver = (resultConfig: ResultConfigPrismaType): Raw => {
   return {
     __typename: "Raw",
     minimumAnswers: resultConfig.minAnswers,
-    requestExpirationSeconds: resultConfig.requestExpirationSeconds,
   };
 };

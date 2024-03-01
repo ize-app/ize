@@ -3,11 +3,10 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepForm } from "./StepForm";
 import { useState } from "react";
 import { FlowSchemaType } from "../formValidation/flow";
-import { EvolveProcessForm } from "./EvolveFlowForm";
+import { EvolveFlowForm } from "./EvolveFlowForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
-
 }
 
 export const StepsForm = ({ useFormMethods }: StepFormProps) => {
@@ -28,7 +27,6 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
 
   const isReusable = useFormMethods.watch(`reusable`);
 
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "36px" }}>
       {stepsArrayMethods.fields.map((item, index) => {
@@ -46,7 +44,7 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
         );
       })}
       {isReusable && (
-        <EvolveProcessForm
+        <EvolveFlowForm
           formMethods={useFormMethods}
           expandedStep={expanded}
           handleStepExpansion={handleStepExpansion("EvolveStep")}

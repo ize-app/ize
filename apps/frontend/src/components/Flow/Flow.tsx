@@ -15,7 +15,12 @@ import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../shared/Accordion";
 import Loading from "../shared/Loading";
-import { EvolveFlowRoute, evolveFlowRoute } from "@/routers/routes";
+import {
+  EvolveFlowRoute,
+  evolveFlowRoute,
+  NewRequestRoute,
+  newRequestRoute,
+} from "@/routers/routes";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -90,12 +95,11 @@ export const Flow = () => {
                   display: !me ? "none" : "flex",
                 }}
                 onClick={() =>
-                  // navigate(
-                  //   generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                  //     processId: fullUUIDToShort(flowId),
-                  //   }),
-                  // )
-                  {}
+                  navigate(
+                    generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                      flowId: fullUUIDToShort(flowId),
+                    }),
+                  )
                 }
               >
                 Create request

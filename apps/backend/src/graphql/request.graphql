@@ -1,5 +1,5 @@
 type Mutation {
-  newRequest(processId: String!, requestInputs: [RequestInputArgs!]): String!
+  newRequest(request: NewRequestArgs!): String!
   newResponse(requestId: String!, optionId: String!): String!
 }
 
@@ -10,9 +10,15 @@ type Query {
   requestsForProcess(processId: String!): [Request!]!
 }
 
-input RequestInputArgs {
-  inputId: String!
-  value: String!
+input NewRequestArgs {
+  flowId: String!
+  requestFields: [FieldAnswerArgs!]!
+  requestDefinedOptions: [RequestDefinedOptionsArgs!]!
+}
+
+input RequestDefinedOptionsArgs {
+  fieldId: String!
+  options: [FieldOptionArgs!]!
 }
 
 type Request {

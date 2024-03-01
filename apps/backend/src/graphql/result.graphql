@@ -1,7 +1,6 @@
 union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
 
 type Decision {
-  requestExpirationSeconds: Int!
   minimumAnswers: Int!
   decisionType: DecisionType!
   defaultOption: Option
@@ -9,20 +8,17 @@ type Decision {
 }
 
 type Ranking {
-  requestExpirationSeconds: Int!
   minimumAnswers: Int!
   numOptionsToInclude: Int!
 }
 
 type LlmSummary {
-  requestExpirationSeconds: Int!
   minimumAnswers: Int!
   summaryType: LlmSummaryType!
   prompt: String
 }
 
 type Raw {
-  requestExpirationSeconds: Int!
   minimumAnswers: Int!
 }
 
@@ -52,7 +48,6 @@ enum LlmSummaryType {
 
 input ResultArgs {
   type: ResultType!
-  requestExpirationSeconds: Int
   minimumResponses: Int
   decision: DecisionNewArgs
   prioritization: PrioritizationArgs

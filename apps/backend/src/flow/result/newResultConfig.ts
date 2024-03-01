@@ -61,7 +61,6 @@ export const newResultConfig = async ({
     data: {
       resultType: resultArgs.type,
       minAnswers: resultArgs.minimumResponses ?? undefined,
-      requestExpirationSeconds: resultArgs.requestExpirationSeconds ?? undefined,
       fieldId: responseField?.id,
       decisionId,
       rankId,

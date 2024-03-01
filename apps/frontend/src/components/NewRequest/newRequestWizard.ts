@@ -1,25 +1,27 @@
-import { ProcessSummaryPartsFragment } from "../../graphql/generated/graphql";
+import { Flow } from "../../graphql/generated/graphql";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
+import { RequestFieldSchemaType, RequestDefinedOptionsSchemaType } from "./validation";
 
-export interface NewRequestState {
-  process?: ProcessSummaryPartsFragment;
-  userInputs?: UserInputs;
+export interface NewRequestFormSchema {
+  flow?: Flow;
+  requestFields?: RequestFieldSchemaType;
+  requestDefinedOptions?: RequestDefinedOptionsSchemaType;
 }
 
-export interface UserInputs {
+export interface RequestFields {
   [inputId: string]: string | number;
 }
 
 export function useNewRequestWizardState() {
-  return useWizardFormState<NewRequestState>();
+  return useWizardFormState<NewRequestFormSchema>();
 }
 
 export const NEW_REQUEST_PROGRESS_BAR_STEPS = ["Select process", "Create request", "Confirm"];
 
-export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestState> = [
+export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestFormSchema> = [
   {
-    path: newRequestRoute(NewRequestRoute.SelectProcess),
+    path: newRequestRoute(NewRequestRoute.SelectFlow),
     title: "Select process",
     progressBarStep: 0,
     canNext: () => true,
@@ -37,8 +39,9 @@ export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestState> = [
     title: "Confirm",
     progressBarStep: 2,
     canNext: () => true,
-    validWizardState: (formState: NewRequestState) => {
-      return !!formState.userInputs;
+    validWizardState: (_formState: NewRequestFormSchema) => {
+      // return !!formState.requestFields;
+      return true;
     },
   },
 ];

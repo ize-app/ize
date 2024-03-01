@@ -13,7 +13,6 @@ import {
 } from "@graphql/generated/resolver-types";
 
 import { newCustomProcess } from "@services/processes/newProcess";
-import { newEditRequestService } from "@services/requests/newEditRequestService";
 import { processesForUserService } from "@services/processes/processesForUserService";
 import { newAgents as newAgentsService } from "@/services/processes/newAgents";
 import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
@@ -31,7 +30,7 @@ const newEditProcessRequest = async (
   args: MutationNewEditProcessRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newEditRequestService({ args: args.inputs }, context);
+  return "";
 };
 
 const process = async (

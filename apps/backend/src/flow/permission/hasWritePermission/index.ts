@@ -1,0 +1,1 @@
+export { hasWritePermission } from "./hasWritePermisssion";

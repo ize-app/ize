@@ -42,13 +42,11 @@ export const newStep = async ({
   // in current version, there is only one response field per step
   const responseField = responseFieldSet?.FieldSetFields[0].Field;
 
-  const requestPermissionsId = args.request
-    ? await newPermission({
-        permission: args.request.permission,
-        stepIndex: index,
-        transaction,
-      })
-    : null;
+  const requestPermissionsId = await newPermission({
+    permission: args.request.permission,
+    stepIndex: index,
+    transaction,
+  });
 
   const responsePermissionsId = args.response
     ? await newPermission({
@@ -80,6 +78,7 @@ export const newStep = async ({
       resultConfigId: resultConfigId,
       index,
       flowVersionId,
+      expirationSeconds: args.expirationSeconds,
     },
   });
 

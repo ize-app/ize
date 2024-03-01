@@ -12,12 +12,12 @@ export enum LlmSummaryType {
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().positive(),
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().min(51).max(100),
   }),
 ]);
@@ -34,25 +34,21 @@ const llmSchema = z.object({
 export const resultSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultType.Decision),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
     decision: decisionSchema,
   }),
   z.object({
     type: z.literal(ResultType.Ranking),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().default(1),
     prioritization: prioritizationSchema,
   }),
   z.object({
     type: z.literal(ResultType.LlmSummary),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
     llmSummary: llmSchema,
   }),
   z.object({
     type: z.literal(ResultType.Raw),
-    requestExpirationSeconds: z.coerce.number().int().positive(),
     minimumResponses: z.coerce.number().int().positive().default(1),
   }),
   z.object({

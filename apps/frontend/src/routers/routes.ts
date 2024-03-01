@@ -11,7 +11,7 @@ export enum Route {
   Request = "/requests/:requestId",
   Process = "/processes/:processId",
   Flow = "/flow/:flowId",
-  EditProcess = "/edit/:processId",
+  EditProcess = "/edit/:flowId",
   EvolveFlow = "/evolve/:flowId",
 }
 
@@ -25,9 +25,9 @@ export enum NewProcessRoute {
 }
 
 export enum NewRequestRoute {
-  SelectProcess = "",
-  CreateRequest = "/:processId",
-  Confirm = "/:processId/confirm",
+  SelectFlow = "",
+  CreateRequest = "/:flowId",
+  Confirm = "/:flowId/confirm",
 }
 
 export enum NewFlowRoute {

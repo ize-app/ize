@@ -7,12 +7,12 @@ export const fieldInclude = Prisma.validator<Prisma.FieldInclude>()({
         include: {
           FieldOptionSetFieldOptions: {
             include: {
-              FieldOption: true
-            }
-          }
-        }
-      }
-    }
+              FieldOption: true,
+            },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -32,4 +32,10 @@ export const fieldSetInclude = Prisma.validator<Prisma.FieldSetInclude>()({
 
 export type FieldSetPrismaType = Prisma.FieldSetGetPayload<{
   include: typeof fieldSetInclude;
+}>;
+
+export const fieldAnswerInclude = Prisma.validator<Prisma.FieldAnswerInclude>()({});
+
+export type FieldAnswerPrismaType = Prisma.FieldAnswerGetPayload<{
+  include: typeof fieldAnswerInclude;
 }>;

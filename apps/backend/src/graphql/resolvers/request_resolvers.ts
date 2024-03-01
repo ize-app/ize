@@ -1,14 +1,15 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 
-import { newRequestService } from "@services/requests/newRequestService";
+import { newRequest as newRequestService } from "@/flow/request/newRequest";
 import { formatRequest } from "../../utils/formatRequest";
-
 import { requestInclude } from "../../utils/formatRequest";
+import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import {
   MutationNewRequestArgs,
   MutationNewResponseArgs,
+  MutationResolvers,
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
@@ -17,14 +18,20 @@ import {
 import { newResponseService } from "@/services/requests/newResponseService";
 import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
 
-const newRequest = async (
+const newRequest: MutationResolvers["newRequest"] = async (
   root: unknown,
   args: MutationNewRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
 
-  return await newRequestService({ args }, context);
+  return await newRequestService({
+    args,
+    context,
+  });
 };
 
 const newResponse = async (
