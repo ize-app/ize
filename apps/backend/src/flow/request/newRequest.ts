@@ -1,7 +1,7 @@
 import { prisma } from "../../prisma/client";
 import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
-import { flowInclude } from "@/flow/flow/types";
+import { flowInclude } from "@/flow/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";

@@ -1,4 +1,4 @@
-import { FieldPrismaType } from "@/flow/fields/types";
+import { FieldPrismaType } from "@/flow/fields/fieldPrismaTypes";
 import { FieldType, PrioritizationArgs } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";

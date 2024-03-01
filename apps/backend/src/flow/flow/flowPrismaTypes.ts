@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { permissionInclude } from "../permission/types";
-import { fieldSetInclude } from "../fields/types";
+import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { actionInclude } from "../action/types";
 import { resultConfigInclude } from "../result/types";
 
@@ -33,6 +33,7 @@ export const flowVersionInclude = Prisma.validator<Prisma.FlowVersionInclude>()(
   Steps: {
     include: stepInclude,
   },
+  Flow: true,
 });
 
 export type FlowVersionPrismaType = Prisma.FlowVersionGetPayload<{

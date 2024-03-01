@@ -226,6 +226,8 @@ export type EvolveProcessesDiff = {
 
 export type Field = FreeInput | Options;
 
+export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
+
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
   optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
@@ -296,6 +298,12 @@ export type FreeInput = {
   fieldId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   required: Scalars['Boolean']['output'];
+};
+
+export type FreeInputFieldAnswer = {
+  __typename?: 'FreeInputFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type Group = {
@@ -565,6 +573,17 @@ export type Option = {
   optionId: Scalars['String']['output'];
 };
 
+export type OptionFieldAnswer = {
+  __typename?: 'OptionFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  selections: Array<OptionFieldAnswerSelection>;
+};
+
+export type OptionFieldAnswerSelection = {
+  __typename?: 'OptionFieldAnswerSelection';
+  optionId?: Maybe<Scalars['String']['output']>;
+};
+
 export type OptionSelectionArgs = {
   optionId: Scalars['String']['input'];
   value?: InputMaybe<Scalars['String']['input']>;
@@ -677,6 +696,7 @@ export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
   getFlow: Flow;
+  getRequest: RequestNew;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -701,6 +721,11 @@ export type QueryDiscordServerRolesArgs = {
 
 export type QueryGetFlowArgs = {
   flowId: Scalars['String']['input'];
+};
+
+
+export type QueryGetRequestArgs = {
+  requestId: Scalars['String']['input'];
 };
 
 
@@ -808,6 +833,23 @@ export type RequestInput = {
   required: Scalars['Boolean']['output'];
   type: InputDataType;
   value: Scalars['String']['output'];
+};
+
+export type RequestNew = {
+  __typename?: 'RequestNew';
+  createdAt: Scalars['String']['output'];
+  currentStepIndex: Scalars['Int']['output'];
+  flow: Flow;
+  requestId: Scalars['String']['output'];
+  steps: Array<RequestStep>;
+};
+
+export type RequestStep = {
+  __typename?: 'RequestStep';
+  createdAt: Scalars['String']['output'];
+  expirationDate: Scalars['String']['output'];
+  requestFieldAnswers: Array<FieldAnswer>;
+  responseFields: Array<Field>;
 };
 
 export type Response = {
@@ -1422,6 +1464,10 @@ export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDe
       "FreeInput",
       "Options"
     ],
+    "FieldAnswer": [
+      "FreeInputFieldAnswer",
+      "OptionFieldAnswer"
+    ],
     "GroupType": [
       "DiscordRoleGroup",
       "GroupCustom",
@@ -1661,6 +1707,8 @@ export type EvolveProcessesDiff = {
 
 export type Field = FreeInput | Options;
 
+export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
+
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
   optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
@@ -1731,6 +1779,12 @@ export type FreeInput = {
   fieldId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   required: Scalars['Boolean']['output'];
+};
+
+export type FreeInputFieldAnswer = {
+  __typename?: 'FreeInputFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type Group = {
@@ -2000,6 +2054,17 @@ export type Option = {
   optionId: Scalars['String']['output'];
 };
 
+export type OptionFieldAnswer = {
+  __typename?: 'OptionFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  selections: Array<OptionFieldAnswerSelection>;
+};
+
+export type OptionFieldAnswerSelection = {
+  __typename?: 'OptionFieldAnswerSelection';
+  optionId?: Maybe<Scalars['String']['output']>;
+};
+
 export type OptionSelectionArgs = {
   optionId: Scalars['String']['input'];
   value?: InputMaybe<Scalars['String']['input']>;
@@ -2112,6 +2177,7 @@ export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
   getFlow: Flow;
+  getRequest: RequestNew;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -2136,6 +2202,11 @@ export type QueryDiscordServerRolesArgs = {
 
 export type QueryGetFlowArgs = {
   flowId: Scalars['String']['input'];
+};
+
+
+export type QueryGetRequestArgs = {
+  requestId: Scalars['String']['input'];
 };
 
 
@@ -2243,6 +2314,23 @@ export type RequestInput = {
   required: Scalars['Boolean']['output'];
   type: InputDataType;
   value: Scalars['String']['output'];
+};
+
+export type RequestNew = {
+  __typename?: 'RequestNew';
+  createdAt: Scalars['String']['output'];
+  currentStepIndex: Scalars['Int']['output'];
+  flow: Flow;
+  requestId: Scalars['String']['output'];
+  steps: Array<RequestStep>;
+};
+
+export type RequestStep = {
+  __typename?: 'RequestStep';
+  createdAt: Scalars['String']['output'];
+  expirationDate: Scalars['String']['output'];
+  requestFieldAnswers: Array<FieldAnswer>;
+  responseFields: Array<Field>;
 };
 
 export type Response = {

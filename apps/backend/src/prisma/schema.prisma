@@ -845,8 +845,6 @@ model FieldOptionSet {
 
   FieldOptionsConfigs        FieldOptionsConfig[]
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
-  RequestNew                 RequestNew[]
-  RequestStep                RequestStep[]
   RequestDefinedOptionSet    RequestDefinedOptionSet[]
 
   @@map("field_option_sets")
@@ -1058,14 +1056,12 @@ model RequestNew {
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Flow               FlowVersion  @relation(fields: [flowVersionId], references: [id])
-  User               User         @relation(fields: [creatorId], references: [id])
+  FlowVersion        FlowVersion  @relation(fields: [flowVersionId], references: [id])
+  Creator            User         @relation(fields: [creatorId], references: [id])
   CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id])
 
   // For when the options are request are created by the requestor or the previous step
-  RequestStep      RequestStep[]
-  FieldOptionSet   FieldOptionSet? @relation(fields: [fieldOptionSetId], references: [id])
-  fieldOptionSetId String?         @db.Uuid
+  RequestSteps RequestStep[]
 
   @@map("requests_new")
 }
@@ -1082,12 +1078,10 @@ model RequestStep {
   Request RequestNew @relation(fields: [requestId], references: [id])
   Step    Step       @relation(fields: [stepId], references: [id])
 
-  CurrentStepParent       RequestNew?               @relation("CurrentRequestStep")
-  RequestFieldAnswers     FieldAnswer[]
-  Results                 Results[]
-  RequestDefinedOptionSet RequestDefinedOptionSet[]
-  FieldOptionSet          FieldOptionSet?           @relation(fields: [fieldOptionSetId], references: [id])
-  fieldOptionSetId        String?                   @db.Uuid
+  CurrentStepParent        RequestNew?               @relation("CurrentRequestStep")
+  RequestFieldAnswers      FieldAnswer[]
+  Results                  Results[]
+  RequestDefinedOptionSets RequestDefinedOptionSet[]
 
   @@unique([stepId, requestId])
   @@map("request_steps")

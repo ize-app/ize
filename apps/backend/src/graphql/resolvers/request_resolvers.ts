@@ -5,15 +5,19 @@ import { newRequest as newRequestService } from "@/flow/request/newRequest";
 import { formatRequest } from "../../utils/formatRequest";
 import { requestInclude } from "../../utils/formatRequest";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
+import { getRequest as getRequestService } from "@/flow/request/getRequest";
 
 import {
   MutationNewRequestArgs,
   MutationNewResponseArgs,
   MutationResolvers,
+  QueryGetRequestArgs,
   QueryRequestArgs,
   QueryRequestsForGroupArgs,
   QueryRequestsForProcessArgs,
+  QueryResolvers,
   Request,
+  RequestNew,
 } from "@graphql/generated/resolver-types";
 import { newResponseService } from "@/services/requests/newResponseService";
 import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
@@ -32,6 +36,14 @@ const newRequest: MutationResolvers["newRequest"] = async (
     args,
     context,
   });
+};
+
+const getRequest: QueryResolvers["getRequest"] = async (
+  root: unknown,
+  args: QueryGetRequestArgs,
+  context: GraphqlRequestContext,
+): Promise<RequestNew> => {
+  return await getRequestService({ args, context });
 };
 
 const newResponse = async (
@@ -147,6 +159,7 @@ const requestsForProcess = async (
 };
 
 export const requestQueries = {
+  getRequest,
   request,
   requestsForCurrentUser,
   requestsForGroup,
