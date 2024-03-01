@@ -653,7 +653,6 @@ model Flow {
   CurrentFlowVersion         FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id])
   FlowVersions               FlowVersion[] @relation("FlowToAllFlowVersions")
   EvolveRightsFoFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
-  RequestNew                 RequestNew[]
 
   @@map("flows")
 }
@@ -668,10 +667,11 @@ model FlowVersion {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  FlowForCurrentVersion Flow?  @relation("FlowToCurrentFlowVersion")
-  Flow                  Flow   @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
-  EvolveFlow            Flow?  @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
+  FlowForCurrentVersion Flow?        @relation("FlowToCurrentFlowVersion")
+  Flow                  Flow         @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
+  EvolveFlow            Flow?        @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
   Steps                 Step[]
+  RequestNew            RequestNew[]
 
   @@map("flow_versions")
 }
@@ -1052,13 +1052,13 @@ model ActionAttemptNew {
 model RequestNew {
   id                   String   @id @default(uuid()) @db.Uuid
   creatorId            String   @map("creator_id") @db.Uuid
-  flowId               String   @map("flow_id") @db.Uuid
+  flowVersionId        String   @map("flow_version_id") @db.Uuid
   currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
   open                 Boolean  @default(true)
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Flow               Flow         @relation(fields: [flowId], references: [id])
+  Flow               FlowVersion  @relation(fields: [flowVersionId], references: [id])
   User               User         @relation(fields: [creatorId], references: [id])
   CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id])
 

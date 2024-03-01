@@ -48,7 +48,7 @@ export const newRequest = async ({
 
     const request = await transaction.requestNew.create({
       data: {
-        flowId: flow.id,
+        flowVersionId: flow.CurrentFlowVersion.id,
         creatorId: context.currentUser.id,
       },
     });
