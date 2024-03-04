@@ -4,9 +4,9 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { Select } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
-import { ResponseForm } from "./ResponseForm/ResponseForm";
+import { ResponseForm } from "./ResponseForm";
 import { ResultForm } from "./ResultForm/ResultForm";
-import { RequestForm } from "./RequestForm/RequestForm";
+import { RequestForm } from "./RequestForm";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResultType } from "@/graphql/generated/graphql";
 
@@ -37,31 +37,12 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-
   const { control, getValues: getFieldValues, watch } = useFormMethods;
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
   console.log("errors are ", useFormMethods.formState.errors);
 
   const resultType = watch(`steps.${formIndex}.result.type`);
-  // const [lastResult, setLastResultType] = useState<ResultType | null>(null);
-
-  // useEffect(() => {
-  //   console.log("inside use effet for ", resultType);
-  //   if (!!resultType && lastResult !== resultType) {
-  //     useFormMethods.resetField(`steps.${formIndex}`, {
-  //       defaultValue: getDefaultFormValues(resultType),
-  //     });
-  //     setLastResultType(resultType);
-  //   }
-  // }, [resultType]);
-
-  const previousStepResult: PreviousStepResult | null =
-    formIndex > 0
-      ? {
-          resultType: watch(`steps.${formIndex - 1}.result.type`),
-        }
-      : null;
 
   const isReusable = watch("reusable");
 
@@ -96,13 +77,8 @@ export const StepForm = ({
         <>
           {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
           {resultType !== ResultType.AutoApprove && (
-            <ResponseForm
-              formMethods={useFormMethods}
-              formIndex={formIndex}
-              previousStepResult={previousStepResult}
-            />
+            <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
           )}
-          {/* <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} /> */}
           <ResultForm
             formMethods={useFormMethods}
             formIndex={formIndex}

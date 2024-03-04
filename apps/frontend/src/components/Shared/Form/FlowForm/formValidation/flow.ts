@@ -21,7 +21,7 @@ const stepSchema = z
     response: z
       .object({
         permission: permissionSchema,
-        field: fieldSchema,
+        fields: fieldsSchema,
       })
       .optional(),
     result: resultSchema,

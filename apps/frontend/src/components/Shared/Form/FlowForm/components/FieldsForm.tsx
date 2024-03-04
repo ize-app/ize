@@ -7,7 +7,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 
 import { Checkbox, Select, TextField } from "../../FormFields";
@@ -21,7 +21,6 @@ import { FieldSchemaType } from "../formValidation/fields";
 
 interface FieldsFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
-  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   formIndex: number;
   branch: "request" | "response";
 }
@@ -34,17 +33,20 @@ export const defaultField: FieldSchemaType = {
   freeInputDataType: FieldDataType.String,
 };
 
-export const FieldsForm = ({
-  useFormMethods,
-  formIndex,
-  fieldsArrayMethods,
-  branch,
-}: FieldsFormProps) => {
+export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProps) => {
+  console.log("fields form form methods, ", useFormMethods);
   const { control } = useFormMethods;
 
-  const { fields, remove, append } = fieldsArrayMethods;
+  const fieldsArrayMethods = useFieldArray({
+    control: useFormMethods.control,
+    //@ts-ignore
+    name: `steps.${formIndex}.${branch}.fields`,
+  });
 
-  return (
+  //@ts-ignore
+  const hasFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length > 0;
+
+  return hasFields ? (
     <LabeledGroupedInputs label="Fields">
       <Box
         sx={{
@@ -73,7 +75,7 @@ export const FieldsForm = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {fields.map((item, inputIndex) => {
+              {fieldsArrayMethods.fields.map((item, inputIndex) => {
                 const noEdit = false; //item.name === "Request title" ? true : false;
 
                 //@ts-ignore
@@ -182,7 +184,7 @@ export const FieldsForm = ({
                           <IconButton
                             color="primary"
                             aria-label="Remove input option"
-                            onClick={() => remove(inputIndex)}
+                            onClick={() => fieldsArrayMethods.remove(inputIndex)}
                           >
                             <HighlightOffOutlined />
                           </IconButton>
@@ -214,12 +216,21 @@ export const FieldsForm = ({
           sx={{ margin: "0px 0px 8px 8px", position: "relative", bottom: "8px" }}
           variant="outlined"
           onClick={() => {
-            append(defaultField);
+            fieldsArrayMethods.append(defaultField);
           }}
         >
           Add field
         </Button>
       </Box>
     </LabeledGroupedInputs>
+  ) : (
+    <Button
+      variant={"outlined"}
+      onClick={() => {
+        fieldsArrayMethods.append(defaultField);
+      }}
+    >
+      Add field
+    </Button>
   );
 };

@@ -54,9 +54,9 @@ export const FieldOptionsForm = ({
     formMethods.watch(`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`) ??
     [];
 
-  const optionsError = formMethods.formState?.errors?.steps
-    ? formMethods.formState?.errors?.steps[formIndex]?.response?.field?.message
-    : "";
+  const optionsError =
+    formMethods.getFieldState(`steps.${formIndex}.${branch}.fields.${fieldIndex}`).error?.message ??
+    "";
 
   const renderInput = (inputIndex: number, disabled: boolean) => {
     const dataType = formMethods.getValues(
