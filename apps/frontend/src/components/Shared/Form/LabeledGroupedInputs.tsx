@@ -16,6 +16,7 @@ export const LabeledGroupedInputs = ({
         borderColor: "rgba(0, 0, 0, 0.23)",
         borderRadius: "4px",
         position: "relative",
+        // overflowX: "hidden",
       }}
     >
       <fieldset

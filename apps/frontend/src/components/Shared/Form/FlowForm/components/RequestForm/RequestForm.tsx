@@ -8,13 +8,14 @@ import { RequestFieldsForm } from "./RequestFieldsForm";
 import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
+import { FieldsForm } from "../FieldsForm";
 
 interface RequestFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
 }
 
-export const defaultRequestField = {
+export const defaultRequestField: FieldSchemaType = {
   fieldId: "",
   type: FieldType.FreeInput,
   name: "",
@@ -26,12 +27,10 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
-  const requestInputFormMethods = useFieldArray({
+  const fieldsArrayMethods = useFieldArray({
     control: formMethods.control,
     name: `steps.${formIndex}.request.fields`,
   });
-
-  const inputs = formMethods.watch(`steps.${formIndex}.request.fields`);
 
   const hasRequestInputs =
     (formMethods.watch(`steps.${formIndex}.request.fields`) ?? []).length > 0;
@@ -64,20 +63,21 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
           </ResponsiveFormRow>
           <Box sx={{ width: "100%", display: "flex", gap: "24px" }}>
             {hasRequestInputs ? (
-              <RequestFieldsForm
-                useFormMethods={formMethods}
+              <FieldsForm
                 formIndex={formIndex}
-                //@ts-ignore Not sure why the TS error - types are the same
-                requestInputFormMethods={requestInputFormMethods}
+                branch={"request"}
+                useFormMethods={formMethods}
+                //@ts-ignore
+                fieldsArrayMethods={fieldsArrayMethods}
               />
             ) : (
               <Button
                 variant={"outlined"}
                 onClick={() => {
-                  requestInputFormMethods.append(defaultRequestField);
+                  fieldsArrayMethods.append(defaultRequestField);
                 }}
               >
-                Add required inputs to make a request
+                Add field
               </Button>
             )}
           </Box>
