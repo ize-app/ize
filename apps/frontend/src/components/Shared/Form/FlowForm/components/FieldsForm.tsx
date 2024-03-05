@@ -34,7 +34,6 @@ export const defaultField: FieldSchemaType = {
 };
 
 export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProps) => {
-  console.log("fields form form methods, ", useFormMethods);
   const { control } = useFormMethods;
 
   const fieldsArrayMethods = useFieldArray({

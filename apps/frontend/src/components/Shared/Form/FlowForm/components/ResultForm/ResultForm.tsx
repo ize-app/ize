@@ -12,6 +12,7 @@ import { DecisionForm } from "./DecisionForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { ActionForm } from "./ActionForm";
+import { ResultsForm } from "./ResultsForm";
 
 interface ResultFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -29,12 +30,12 @@ const requestExpirationOptions = [
 ];
 
 export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: ResultFormProps) => {
-  const resultType = formMethods.watch(`steps.${formIndex}.result.type`);
+  // const resultType = formMethods.watch(`steps.${formIndex}.result.type`);
 
   return (
     <StepComponentContainer label={"Result"}>
       <>
-        <ResponsiveFormRow>
+        {/* <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}
             label="What's the final result?"
@@ -50,8 +51,11 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
             size="small"
             displayLabel={false}
           />
+        </ResponsiveFormRow> */}
+        <ResponsiveFormRow>
+          <ResultsForm formMethods={formMethods} formIndex={formIndex} />
         </ResponsiveFormRow>
-        {resultType === ResultType.Decision && (
+        {/* {resultType === ResultType.Decision && (
           <DecisionForm formIndex={formIndex} formMethods={formMethods} />
         )}
         {resultType === ResultType.Ranking && (
@@ -59,7 +63,7 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
         )}
         {resultType === ResultType.LlmSummary && (
           <LlmSummaryForm formIndex={formIndex} formMethods={formMethods} />
-        )}
+        )} */}
         <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}

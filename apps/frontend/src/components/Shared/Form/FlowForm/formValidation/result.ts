@@ -55,3 +55,5 @@ export const resultSchema = z.discriminatedUnion("type", [
     type: z.literal(ResultType.AutoApprove),
   }),
 ]);
+
+export const resultsSchema = z.array(resultSchema).default([]);

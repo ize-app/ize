@@ -16,7 +16,7 @@ interface PrioritizationFormProps {
 
 export const PrioritizationForm = ({ formMethods, formIndex }: PrioritizationFormProps) => {
   useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.result.type`, ResultType.Prioritization);
+    formMethods.setValue(`steps.${formIndex}.result.type`, ResultType.Ranking);
   }, []);
 
   return (

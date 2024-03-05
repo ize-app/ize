@@ -42,50 +42,24 @@ export const StepForm = ({
 
   console.log("errors are ", useFormMethods.formState.errors);
 
-  const resultType = watch(`steps.${formIndex}.result.type`);
-
   const isReusable = watch("reusable");
-
-  const stepTitle = stepNameLabels.get(resultType)?.stepTitle;
 
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
       stepIdentifier={formIndex}
-      title={` Step ${formIndex + 1}: ${stepTitle}`}
+      title={` Step ${formIndex + 1}`}
     >
-      <ResponsiveFormRow>
-        <Select
-          control={control}
-          label="Purpose of this step"
-          name={`steps.${formIndex}.result.type`}
-          width="300px"
-          size="small"
-          displayLabel={false}
-          selectOptions={[
-            { name: "Decide", value: ResultType.Decision },
-            { name: "Get ideas, thoughts, or feedback", value: ResultType.Raw },
-            { name: "Rank", value: ResultType.Ranking },
-            { name: "Co-create shared understanding with AI ", value: ResultType.LlmSummary },
-            { name: "Auto-approve a request", value: ResultType.AutoApprove },
-          ]}
+      <>
+        <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ResultForm
+          formMethods={useFormMethods}
+          formIndex={formIndex}
+          stepsArrayMethods={stepsArrayMethods}
         />
-      </ResponsiveFormRow>
-
-      {resultType && (
-        <>
-          {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
-          {resultType !== ResultType.AutoApprove && (
-            <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
-          )}
-          <ResultForm
-            formMethods={useFormMethods}
-            formIndex={formIndex}
-            stepsArrayMethods={stepsArrayMethods}
-          />
-        </>
-      )}
+      </>
     </StepContainer>
   );
 };

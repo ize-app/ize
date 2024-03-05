@@ -12,6 +12,10 @@ export enum DefaultOptionSelection {
   None = "None",
 }
 
+export enum DefaultFieldSelection {
+  None = "None",
+}
+
 export const fieldOptionSchema = z
   .object({
     optionId: z.string(),
