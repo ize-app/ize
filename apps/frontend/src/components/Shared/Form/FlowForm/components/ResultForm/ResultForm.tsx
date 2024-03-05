@@ -7,10 +7,6 @@ import { StepComponentContainer } from "../StepContainer";
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
 import InputAdornment from "@mui/material/InputAdornment";
 
-import { ResultType } from "@/graphql/generated/graphql";
-import { DecisionForm } from "./DecisionForm";
-import { PrioritizationForm } from "./PrioritizationForm";
-import { LlmSummaryForm } from "./LlmSummaryForm";
 import { ActionForm } from "./ActionForm";
 import { ResultsForm } from "./ResultsForm";
 
@@ -35,35 +31,9 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
   return (
     <StepComponentContainer label={"Result"}>
       <>
-        {/* <ResponsiveFormRow>
-          <Select<FlowSchemaType>
-            control={formMethods.control}
-            label="What's the final result?"
-            width="300px"
-            selectOptions={[
-              { name: "Decision", value: ResultType.Decision },
-              { name: "Prioritized options", value: ResultType.Ranking },
-              { name: "AI summary of all responses", value: ResultType.LlmSummary },
-              { name: "Just the responses", value: ResultType.Raw },
-              { name: "Auto-approve a request", value: ResultType.AutoApprove },
-            ]}
-            name={`steps.${formIndex}.result.type`}
-            size="small"
-            displayLabel={false}
-          />
-        </ResponsiveFormRow> */}
         <ResponsiveFormRow>
           <ResultsForm formMethods={formMethods} formIndex={formIndex} />
         </ResponsiveFormRow>
-        {/* {resultType === ResultType.Decision && (
-          <DecisionForm formIndex={formIndex} formMethods={formMethods} />
-        )}
-        {resultType === ResultType.Ranking && (
-          <PrioritizationForm formIndex={formIndex} formMethods={formMethods} />
-        )}
-        {resultType === ResultType.LlmSummary && (
-          <LlmSummaryForm formIndex={formIndex} formMethods={formMethods} />
-        )} */}
         <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}
@@ -80,15 +50,13 @@ export const ResultForm = ({ formMethods, formIndex, stepsArrayMethods }: Result
           />
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            width="300px"
+            width="200px"
             label="Minimum # of responses for a result"
             showLabel={false}
             variant="standard"
             size={"small"}
-            endAdornment={
-              <InputAdornment position="end">response minimum for a result</InputAdornment>
-            }
-            name={`steps.${formIndex}.result.minimumResponses`}
+            endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+            name={`steps.${formIndex}.minimumResponses`}
           />
         </ResponsiveFormRow>
         <ActionForm

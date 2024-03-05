@@ -1,13 +1,11 @@
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { Select } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
 import { ResponseForm } from "./ResponseForm";
 import { ResultForm } from "./ResultForm/ResultForm";
 import { RequestForm } from "./RequestForm";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { ResultType } from "@/graphql/generated/graphql";
 
 interface StepFormProps {

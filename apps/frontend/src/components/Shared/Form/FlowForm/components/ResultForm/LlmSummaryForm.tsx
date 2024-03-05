@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 
-import { Select, TextField } from "../../../FormFields";
+import { TextField } from "../../../FormFields";
 
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
 
@@ -10,38 +10,36 @@ import { FlowSchemaType } from "../../formValidation/flow";
 
 import { LlmSummaryType } from "../../formValidation/result";
 import { InputAdornment } from "@mui/material";
+import { DefaultFieldSelection } from "../../formValidation/fields";
 
 interface LlmSummaryProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
+  resultIndex: number;
 }
 
-export const LlmSummaryForm = ({ formMethods, formIndex }: LlmSummaryProps) => {
+export const LlmSummaryForm = ({ formMethods, formIndex, resultIndex }: LlmSummaryProps) => {
   useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.result.type`, ResultType.LlmSummary);
+    formMethods.setValue(`steps.${formIndex}.results.${resultIndex}`, {
+      type: ResultType.LlmSummary,
+      fieldId: DefaultFieldSelection.None,
+      llmSummary: {
+        type: LlmSummaryType.AfterEveryResponse,
+        prompt: "sdfdf",
+      },
+      minimumResponses: 1,
+    });
   }, []);
 
   return (
     <ResponsiveFormRow>
-      <Select<FlowSchemaType>
-        control={formMethods.control}
-        label="Default option"
-        width="300px"
-        selectOptions={[
-          { name: "AI summary after every response", value: LlmSummaryType.AfterEveryResponse },
-          { name: "AI summary at the end", value: LlmSummaryType.AtTheEnd },
-        ]}
-        displayLabel={false}
-        size="small"
-        name={`steps.${formIndex}.result.llmSummary.type`}
-      />
       <TextField<FlowSchemaType>
         control={formMethods.control}
-        width="600px"
+        width="100%"
         label="Prompt to help AI summarize responses"
         variant="standard"
         placeholderText="Optional"
-        name={`steps.${formIndex}.result.llmSummary.prompt`}
+        name={`steps.${formIndex}.results.${resultIndex}.llmSummary.prompt`}
         size="small"
         startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
         showLabel={false}

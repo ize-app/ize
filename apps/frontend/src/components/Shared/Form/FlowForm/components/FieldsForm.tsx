@@ -25,13 +25,13 @@ interface FieldsFormProps {
   branch: "request" | "response";
 }
 
-export const defaultField: FieldSchemaType = {
-  fieldId: "",
+export const defaultField = (fieldIndex: number): FieldSchemaType => ({
+  fieldId: "new." + fieldIndex,
   type: FieldType.FreeInput,
   name: "",
   required: true,
   freeInputDataType: FieldDataType.String,
-};
+});
 
 export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProps) => {
   const { control } = useFormMethods;
@@ -43,9 +43,9 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
   });
 
   //@ts-ignore
-  const hasFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length > 0;
+  const numFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
 
-  return hasFields ? (
+  return numFields > 0 ? (
     <LabeledGroupedInputs label="Fields">
       <Box
         sx={{
@@ -160,10 +160,10 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                                 name: "Select one option",
                                 value: FieldOptionsSelectionType.Select,
                               },
-                              {
-                                name: "Rank options",
-                                value: FieldOptionsSelectionType.Rank,
-                              },
+                              //   {
+                              //     name: "Rank options",
+                              //     value: FieldOptionsSelectionType.Rank,
+                              //   },
                             ]}
                             label="How do participants select options?"
                           />
@@ -215,7 +215,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
           sx={{ margin: "0px 0px 8px 8px", position: "relative", bottom: "8px" }}
           variant="outlined"
           onClick={() => {
-            fieldsArrayMethods.append(defaultField);
+            fieldsArrayMethods.append(defaultField(numFields));
           }}
         >
           Add field
@@ -226,7 +226,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
     <Button
       variant={"outlined"}
       onClick={() => {
-        fieldsArrayMethods.append(defaultField);
+        fieldsArrayMethods.append(defaultField(numFields));
       }}
     >
       Add field

@@ -24,6 +24,7 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   variant?: TextFieldVariants;
   renderValue?: (value: PathValue<T, Path<T>>) => ReactNode;
   size?: "small" | "medium";
+  flexGrow?: string;
 }
 
 export const Select = <T extends FieldValues>({
@@ -38,6 +39,8 @@ export const Select = <T extends FieldValues>({
   loading = false,
   variant = "standard",
   size = "small",
+  flexGrow = "0",
+
   ...props
 }: SelectProps<T>): JSX.Element => (
   <Controller
@@ -45,7 +48,11 @@ export const Select = <T extends FieldValues>({
     control={control}
     render={({ field, fieldState: { error } }) => {
       return (
-        <FormControl sx={{ width, textAlign: "left" }} error={Boolean(error)} required={required}>
+        <FormControl
+          sx={{ width, textAlign: "left", flexGrow }}
+          error={Boolean(error)}
+          required={required}
+        >
           {displayLabel && <InputLabel id={`select-${name}`}>{label}</InputLabel>}
           <MuiSelect
             {...props}
