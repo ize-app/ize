@@ -1,16 +1,10 @@
 import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 
-import { Checkbox, Select, TextField } from "../../FormFields";
+import { Select, TextField } from "../../FormFields";
 import { LabeledGroupedInputs } from "../../LabeledGroupedInputs";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
@@ -168,7 +162,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                 )}
               </Box>
               {noEdit ? null : (
-                <Box>
+                <Box sx={{ padding: "6px 6px 0px 0px" }}>
                   <IconButton
                     color="primary"
                     aria-label="Remove input option"

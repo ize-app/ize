@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { Select } from "../../../FormFields";
+import { Select, TextField } from "../../../FormFields";
 import { LabeledGroupedInputs } from "../../../LabeledGroupedInputs";
 
 import {
@@ -132,17 +132,19 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                   }}
                 >
                   <ResponsiveFormRow>
-                    {/* <TextField<FlowSchemaType>
-                          //@ts-ignore
-                          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.optionId`}
-                          key={"optionId" + inputIndex.toString() + formIndex.toString()}
-                          control={control}
-                          showLabel={false}
-                          label={`Option ID - ignore`}
-                          variant="standard"
-                          disabled={true}
-                          size="small"
-                        /> */}
+                    <Box sx={{ display: "none" }}>
+                      <TextField<FlowSchemaType>
+                        //@ts-ignore
+                        name={`steps.${formIndex}.results.${resultIndex}.resultId`}
+                        key={"resultId" + resultIndex.toString() + formIndex.toString()}
+                        control={formMethods.control}
+                        showLabel={false}
+                        label={`Option ID - ignore`}
+                        variant="standard"
+                        disabled={true}
+                        size="small"
+                      />
+                    </Box>
                     <Select<FlowSchemaType>
                       control={formMethods.control}
                       label="What's the final result?"

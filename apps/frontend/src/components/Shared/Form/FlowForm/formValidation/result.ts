@@ -2,6 +2,7 @@ import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
+export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 
 export enum LlmSummaryType {
   AfterEveryResponse = "AfterEveryResponse",
@@ -33,18 +34,21 @@ const llmSchema = z.object({
 export const resultSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultType.Decision),
+    resultId: z.string(),
     fieldId: z.string().nullable(),
     minimumAnswers: z.coerce.number().int().positive().default(1),
     decision: decisionSchema,
   }),
   z.object({
     type: z.literal(ResultType.Ranking),
+    resultId: z.string(),
     fieldId: z.string().nullable(),
     minimumAnswers: z.coerce.number().default(1),
     prioritization: prioritizationSchema,
   }),
   z.object({
     type: z.literal(ResultType.LlmSummary),
+    resultId: z.string(),
     fieldId: z.string().nullable(),
     minimumAnswers: z.coerce.number().int().positive().default(1),
     llmSummary: llmSchema,

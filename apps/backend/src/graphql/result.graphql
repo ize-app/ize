@@ -1,4 +1,4 @@
-union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
+union ResultConfig = Decision | Ranking | LlmSummary
 
 type Decision {
   minimumAnswers: Int!
@@ -13,17 +13,7 @@ type Ranking {
 }
 
 type LlmSummary {
-  minimumAnswers: Int!
-  summaryType: LlmSummaryType!
   prompt: String
-}
-
-type Raw {
-  minimumAnswers: Int!
-}
-
-type AutoApprove {
-  _: Boolean
 }
 
 # mirrors Prisma type
@@ -66,5 +56,5 @@ input PrioritizationArgs {
 
 input LlmSummaryArgs {
   type: LlmSummaryType!
-  prompt: String!
+  prompt: String
 }

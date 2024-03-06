@@ -9,12 +9,6 @@ fragment ResultConfig on ResultConfig {
   ... on LlmSummary {
     ...LlmSummary
   }
-  ... on Raw {
-    ...Raw
-  }
-  ... on AutoApprove {
-    ...AutoApprove
-  }
 }
 
 fragment Decision on Decision {
@@ -27,20 +21,9 @@ fragment Decision on Decision {
 }
 
 fragment Ranking on Ranking {
-  minimumAnswers
   numOptionsToInclude
 }
 
 fragment LlmSummary on LlmSummary {
-  minimumAnswers
-  summaryType
   prompt
-}
-
-fragment Raw on Raw {
-  minimumAnswers
-}
-
-fragment AutoApprove on AutoApprove {
-  _
 }

@@ -24,7 +24,7 @@ enum FlowType {
 type Step {
   request: RequestConfig!
   response: ResponseConfig!
-  result: ResultConfig!
+  result: [ResultConfig!]!
   action: ActionNew
   expirationSeconds: Int!
   userPermission: UserPermission!
@@ -55,7 +55,7 @@ input NewFlowArgs {
 input NewStepArgs {
   request: StepRequestArgs!
   response: StepResponseArgs
-  result: ResultArgs!
+  result: [ResultArgs!]
   action: ActionNewArgs!
   expirationSeconds: Int!
 }

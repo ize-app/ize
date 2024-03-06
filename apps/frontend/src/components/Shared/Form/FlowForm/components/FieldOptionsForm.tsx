@@ -1,16 +1,10 @@
 import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
 import { FlowSchemaType } from "../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { DatePicker, DateTimePicker, Select, Switch, TextField } from "../../FormFields";
-import { LabeledGroupedInputs } from "../../LabeledGroupedInputs";
 
 import { FieldOptionSchemaType } from "../formValidation/fields";
 import { FieldDataType } from "@/graphql/generated/graphql";
@@ -163,7 +157,7 @@ export const FieldOptionsForm = ({
         <Box sx={{ width: "100%" }}>
           {fields.map((item, inputIndex) => {
             return (
-              <ResponsiveFormRow>
+              <ResponsiveFormRow key={item.id}>
                 <Box sx={{ display: "none" }}>
                   <TextField<FlowSchemaType>
                     //@ts-ignore

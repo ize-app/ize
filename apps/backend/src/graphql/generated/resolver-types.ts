@@ -44,6 +44,7 @@ export type ActionNew = CallWebhook | EvolveFlow | TriggerStep;
 export type ActionNewArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
   filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  filterResponseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
   type: ActionNewType;
 };
 
@@ -91,11 +92,6 @@ export type ApiHatToken = {
   tokenId: Scalars['String']['output'];
   topHatIcon?: Maybe<Scalars['String']['output']>;
   topHatName?: Maybe<Scalars['String']['output']>;
-};
-
-export type AutoApprove = {
-  __typename?: 'AutoApprove';
-  _?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export enum Blockchain {
@@ -429,13 +425,11 @@ export type InputTemplateArgs = {
 
 export type LlmSummary = {
   __typename?: 'LlmSummary';
-  minimumAnswers: Scalars['Int']['output'];
   prompt?: Maybe<Scalars['String']['output']>;
-  summaryType: LlmSummaryType;
 };
 
 export type LlmSummaryArgs = {
-  prompt: Scalars['String']['input'];
+  prompt?: InputMaybe<Scalars['String']['input']>;
   type: LlmSummaryType;
 };
 
@@ -541,7 +535,7 @@ export type NewStepArgs = {
   expirationSeconds: Scalars['Int']['input'];
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
-  result: ResultArgs;
+  result?: InputMaybe<Array<ResultArgs>>;
 };
 
 export type NftCollection = {
@@ -796,11 +790,6 @@ export type Ranking = {
   numOptionsToInclude: Scalars['Int']['output'];
 };
 
-export type Raw = {
-  __typename?: 'Raw';
-  minimumAnswers: Scalars['Int']['output'];
-};
-
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
@@ -900,7 +889,7 @@ export type ResultArgs = {
   type: ResultType;
 };
 
-export type ResultConfig = AutoApprove | Decision | LlmSummary | Ranking | Raw;
+export type ResultConfig = Decision | LlmSummary | Ranking;
 
 export enum ResultType {
   AutoApprove = 'AutoApprove',
@@ -934,7 +923,7 @@ export type Step = {
   expirationSeconds: Scalars['Int']['output'];
   request: RequestConfig;
   response: ResponseConfig;
-  result: ResultConfig;
+  result: Array<ResultConfig>;
   userPermission: UserPermission;
 };
 
@@ -1082,7 +1071,7 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
-  ResultConfig: ( AutoApprove ) | ( Decision ) | ( LlmSummary ) | ( Ranking ) | ( Raw );
+  ResultConfig: ( Decision ) | ( LlmSummary ) | ( Ranking );
 };
 
 
@@ -1101,7 +1090,6 @@ export type ResolversTypes = {
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
   ApiHatToken: ResolverTypeWrapper<ApiHatToken>;
-  AutoApprove: ResolverTypeWrapper<AutoApprove>;
   Blockchain: Blockchain;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CallWebhook: ResolverTypeWrapper<CallWebhook>;
@@ -1191,7 +1179,6 @@ export type ResolversTypes = {
   ProposedProcessEvolution: ResolverTypeWrapper<ProposedProcessEvolution>;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
-  Raw: ResolverTypeWrapper<Raw>;
   Request: ResolverTypeWrapper<Request>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
@@ -1209,7 +1196,7 @@ export type ResolversTypes = {
   RoleArgs: RoleArgs;
   RoleType: RoleType;
   Roles: ResolverTypeWrapper<Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversTypes['Agent']>, request: Array<ResolversTypes['Agent']>, respond: Array<ResolversTypes['Agent']> }>;
-  Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['ActionNew']>, result: ResolversTypes['ResultConfig'] }>;
+  Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['ActionNew']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -1237,7 +1224,6 @@ export type ResolversParentTypes = {
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
-  AutoApprove: AutoApprove;
   Boolean: Scalars['Boolean']['output'];
   CallWebhook: CallWebhook;
   CallWebhookArgs: CallWebhookArgs;
@@ -1315,7 +1301,6 @@ export type ResolversParentTypes = {
   ProposedProcessEvolution: ProposedProcessEvolution;
   Query: {};
   Ranking: Ranking;
-  Raw: Raw;
   Request: Request;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
@@ -1331,7 +1316,7 @@ export type ResolversParentTypes = {
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
   RoleArgs: RoleArgs;
   Roles: Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversParentTypes['Agent']>, request: Array<ResolversParentTypes['Agent']>, respond: Array<ResolversParentTypes['Agent']> };
-  Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['ActionNew']>, result: ResolversParentTypes['ResultConfig'] };
+  Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['ActionNew']>, result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: Scalars['String']['output'];
@@ -1397,11 +1382,6 @@ export type ApiHatTokenResolvers<ContextType = GraphqlRequestContext, ParentType
   tokenId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topHatIcon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   topHatName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AutoApproveResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AutoApprove'] = ResolversParentTypes['AutoApprove']> = {
-  _?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1591,9 +1571,7 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   prompt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  summaryType?: Resolver<ResolversTypes['LlmSummaryType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1749,11 +1727,6 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RawResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Raw'] = ResolversParentTypes['Raw']> = {
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -1841,7 +1814,7 @@ export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
-  __resolveType: TypeResolveFn<'AutoApprove' | 'Decision' | 'LlmSummary' | 'Ranking' | 'Raw', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
 };
 
 export type RolesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Roles'] = ResolversParentTypes['Roles']> = {
@@ -1856,7 +1829,7 @@ export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extend
   expirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;
-  result?: Resolver<ResolversTypes['ResultConfig'], ParentType, ContextType>;
+  result?: Resolver<Array<ResolversTypes['ResultConfig']>, ParentType, ContextType>;
   userPermission?: Resolver<ResolversTypes['UserPermission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1900,7 +1873,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;
-  AutoApprove?: AutoApproveResolvers<ContextType>;
   CallWebhook?: CallWebhookResolvers<ContextType>;
   Decision?: DecisionResolvers<ContextType>;
   DecisionTypes?: DecisionTypesResolvers<ContextType>;
@@ -1945,7 +1917,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   ProposedProcessEvolution?: ProposedProcessEvolutionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
-  Raw?: RawResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
   RequestInput?: RequestInputResolvers<ContextType>;

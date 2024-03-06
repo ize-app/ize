@@ -4,7 +4,7 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { FieldsForm } from "./FieldsForm";
-import { RoleSearch, Select, Switch } from "../../FormFields";
+import { RoleSearch, Select } from "../../FormFields";
 import { PermissionType } from "../formValidation/permission";
 
 interface ResponseFieldsFormProps {

@@ -1,10 +1,14 @@
 import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
-import { ResultSchemaType } from "../../formValidation/result";
-import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
+import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
+import {
+  DefaultOptionSelection,
+  FieldSchemaType,
+  FieldsSchemaType,
+} from "../../formValidation/fields";
 
 export const createResultArgs = (
   result: ResultSchemaType,
-  responseField: FieldSchemaType | undefined,
+  responseField: FieldSchemaType | undefined | null,
 ): ResultArgs => {
   if (result.type === ResultType.Decision && result.decision.defaultOptionId) {
     let defaultOptionIndex: number | null = null;
@@ -29,4 +33,14 @@ export const createResultArgs = (
     };
   }
   return result;
+};
+
+export const createResultsArgs = (
+  results: ResultsSchemaType,
+  responseFields: FieldsSchemaType,
+): ResultArgs[] => {
+  return results.map((result) => {
+    const responseField = responseFields.find((f) => f.fieldId === result.fieldId);
+    return createResultArgs(result, responseField);
+  });
 };
