@@ -43,13 +43,11 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
           />
         );
       })}
-      {isReusable && (
-        <EvolveFlowForm
-          formMethods={useFormMethods}
-          expandedStep={expanded}
-          handleStepExpansion={handleStepExpansion("EvolveStep")}
-        />
-      )}
+      <EvolveFlowForm
+        formMethods={useFormMethods}
+        expandedStep={expanded}
+        handleStepExpansion={handleStepExpansion("EvolveStep")}
+      />
     </Box>
   );
 };

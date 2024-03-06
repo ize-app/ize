@@ -18,16 +18,13 @@ const stepSchema = z
         fields: fieldsSchema,
       })
       .optional(),
-    response: z
-      .object({
-        permission: permissionSchema,
-        fields: fieldsSchema,
-      })
-      .optional(),
+    response: z.object({
+      permission: permissionSchema,
+      fields: fieldsSchema,
+    }),
     results: resultsSchema,
     action: actionSchema,
     expirationSeconds: z.coerce.number().int().positive(),
-    minimumResponses: z.coerce.number().int().positive(),
   })
   .superRefine((step, ctx) => {
     if (

@@ -7,6 +7,7 @@ export enum PermissionType {
   Entities = "Entities",
   Anyone = "Anyone",
   Process = "Process",
+  NA = "NA",
 }
 
 export const permissionSchema = z.object({

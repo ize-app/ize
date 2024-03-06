@@ -27,7 +27,7 @@ export const DecisionConfigForm = ({
     formMethods.setValue(`steps.${formIndex}.results.${resultIndex}`, {
       type: ResultType.Decision,
       fieldId: field.fieldId,
-      minimumResponses: 1,
+      minimumAnswers: 1,
       decision: {
         type: DecisionType.NumberThreshold,
         threshold: 1,
@@ -100,12 +100,22 @@ export const DecisionConfigForm = ({
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
           />
         )}
+        <TextField<FlowSchemaType>
+          control={formMethods.control}
+          width="200px"
+          label="Minimum # of responses for a result"
+          showLabel={false}
+          variant="standard"
+          size={"small"}
+          endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+          name={`steps.${formIndex}.results.${resultIndex}.minimumAnswers`}
+        />
       </ResponsiveFormRow>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="Default option"
-          width="100%"
+          width="200px"
           renderValue={(val) => {
             if (val === DefaultOptionSelection.None)
               return "If there is no decision, there is no result.";
@@ -116,6 +126,7 @@ export const DecisionConfigForm = ({
           }}
           selectOptions={defaultDecisionOptions}
           displayLabel={false}
+          flexGrow="1"
           name={`steps.${formIndex}.results.${resultIndex}.decision.defaultOptionId`}
         />
       </ResponsiveFormRow>

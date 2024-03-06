@@ -1,6 +1,5 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 
@@ -35,19 +34,19 @@ export const resultSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ResultType.Decision),
     fieldId: z.string().nullable(),
-    minimumResponses: z.coerce.number().int().positive().default(1),
+    minimumAnswers: z.coerce.number().int().positive().default(1),
     decision: decisionSchema,
   }),
   z.object({
     type: z.literal(ResultType.Ranking),
     fieldId: z.string().nullable(),
-    minimumResponses: z.coerce.number().default(1),
+    minimumAnswers: z.coerce.number().default(1),
     prioritization: prioritizationSchema,
   }),
   z.object({
     type: z.literal(ResultType.LlmSummary),
     fieldId: z.string().nullable(),
-    minimumResponses: z.coerce.number().int().positive().default(1),
+    minimumAnswers: z.coerce.number().int().positive().default(1),
     llmSummary: llmSchema,
   }),
 ]);

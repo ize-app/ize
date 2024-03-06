@@ -45,191 +45,152 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
   //@ts-ignore
   const numFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
 
-  return numFields > 0 ? (
-    <LabeledGroupedInputs label="Fields">
-      <Box
-        sx={{
-          backgroundColor: "#FFFFFF",
-          padding: "16px",
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
+      {fieldsArrayMethods.fields.map((item, inputIndex) => {
+        const noEdit = false; //item.name === "Request title" ? true : false;
+
+        //@ts-ignore
+        const fieldType: FieldType = useFormMethods.watch(
+          //@ts-ignore
+          `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
+        );
+
+        return (
+          <LabeledGroupedInputs label={"Fields " + (inputIndex + 1).toString()} key={item.id}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "space-between",
+                backgroundColor: "#FBF5FD",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px",
+                  alignItems: "flex-start",
+                  justifyContent: "flex-start",
+                  padding: "12px",
+                  width: "100%",
+                }}
+              >
+                <ResponsiveFormRow>
+                  <Box sx={{ display: "none" }}>
+                    <TextField<FlowSchemaType>
+                      //@ts-ignore
+                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.fieldId`}
+                      key={"fieldId" + inputIndex.toString() + formIndex.toString()}
+                      control={control}
+                      label="outlined"
+                      disabled={true}
+                      variant="outlined"
+                    />
+                  </Box>
+                  <TextField<FlowSchemaType>
+                    //@ts-ignore
+                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.name`}
+                    key={"name" + inputIndex.toString() + formIndex.toString()}
+                    control={control}
+                    width="200px"
+                    flexGrow="1"
+                    placeholderText={`What's your question?`}
+                    label={``}
+                  />
+                  <Select<FlowSchemaType>
+                    control={control}
+                    width="110px"
+                    displayLabel={false}
+                    size={"small"}
+                    disabled={noEdit}
+                    //@ts-ignore
+                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
+                    key={"type" + inputIndex.toString() + formIndex.toString()}
+                    selectOptions={[
+                      { name: "Free input", value: FieldType.FreeInput },
+                      { name: "Options", value: FieldType.Options },
+                    ]}
+                    label="Type"
+                  />
+
+                  {fieldType === FieldType.FreeInput ? (
+                    <Select<FlowSchemaType>
+                      control={control}
+                      width="160px"
+                      displayLabel={false}
+                      size={"small"}
+                      disabled={noEdit}
+                      //@ts-ignore
+                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
+                      key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                      selectOptions={[
+                        { name: "Text", value: FieldDataType.String },
+                        { name: "Number", value: FieldDataType.Number },
+                        { name: "Url", value: FieldDataType.Uri },
+                        { name: "Date Time", value: FieldDataType.DateTime },
+                        { name: "Date", value: FieldDataType.Date },
+                      ]}
+                      label="Free input data type"
+                    />
+                  ) : (
+                    <Select
+                      control={control}
+                      width="160px"
+                      //@ts-ignore
+                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
+                      selectOptions={[
+                        {
+                          name: "Select one option",
+                          value: FieldOptionsSelectionType.Select,
+                        },
+                        //   {
+                        //     name: "Rank options",
+                        //     value: FieldOptionsSelectionType.Rank,
+                        //   },
+                      ]}
+                      label="How do participants select options?"
+                    />
+                  )}
+                </ResponsiveFormRow>
+                {fieldType === FieldType.Options && (
+                  <ResponsiveFormRow>
+                    <FieldOptionsForm
+                      formMethods={useFormMethods}
+                      formIndex={formIndex}
+                      fieldIndex={inputIndex}
+                      branch={branch}
+                    />
+                  </ResponsiveFormRow>
+                )}
+              </Box>
+              {noEdit ? null : (
+                <Box>
+                  <IconButton
+                    color="primary"
+                    aria-label="Remove input option"
+                    onClick={() => fieldsArrayMethods.remove(inputIndex)}
+                  >
+                    <HighlightOffOutlined />
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+          </LabeledGroupedInputs>
+        );
+      })}
+      <Button
+        variant={"outlined"}
+        sx={{ width: "140px" }}
+        onClick={() => {
+          fieldsArrayMethods.append(defaultField(numFields));
         }}
       >
-        <TableContainer
-          sx={{
-            overflowX: "auto",
-            paddingBottom: "20px",
-            "& .MuiTableCell-root": {
-              padding: "4px",
-              border: "none",
-            },
-          }}
-        >
-          <Table aria-label="Fields" stickyHeader={true}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Field</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell></TableCell>
-                <TableCell align="center">Required?</TableCell>
-                <TableCell />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {fieldsArrayMethods.fields.map((item, inputIndex) => {
-                const noEdit = false; //item.name === "Request title" ? true : false;
-
-                //@ts-ignore
-                const fieldType: FieldType = useFormMethods.watch(
-                  //@ts-ignore
-                  `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
-                );
-
-                return (
-                  <>
-                    <TableRow key={item.id}>
-                      <TableCell sx={{ display: "none" }}>
-                        <TextField<FlowSchemaType>
-                          //@ts-ignore
-                          name={`steps.${formIndex}.${branch}.fields.${inputIndex}.fieldId`}
-                          key={"fieldId" + inputIndex.toString() + formIndex.toString()}
-                          control={control}
-                          label="outlined"
-                          disabled={true}
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell sx={{ minWidth: "200px" }}>
-                        <TextField<FlowSchemaType>
-                          //@ts-ignore
-                          name={`steps.${formIndex}.${branch}.fields.${inputIndex}.name`}
-                          key={"name" + inputIndex.toString() + formIndex.toString()}
-                          control={control}
-                          placeholderText={`What's your question?`}
-                          label={``}
-                        />
-                      </TableCell>
-                      <TableCell width="120px">
-                        <Select<FlowSchemaType>
-                          control={control}
-                          width="110px"
-                          displayLabel={false}
-                          size={"small"}
-                          disabled={noEdit}
-                          //@ts-ignore
-                          name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
-                          key={"type" + inputIndex.toString() + formIndex.toString()}
-                          selectOptions={[
-                            { name: "Free input", value: FieldType.FreeInput },
-                            { name: "Options", value: FieldType.Options },
-                          ]}
-                          label="Type"
-                        />
-                      </TableCell>
-                      <TableCell
-                        //   align="center"
-                        sx={{
-                          width: "110px",
-                        }}
-                      >
-                        {fieldType === FieldType.FreeInput ? (
-                          <Select<FlowSchemaType>
-                            control={control}
-                            width="160px"
-                            displayLabel={false}
-                            size={"small"}
-                            disabled={noEdit}
-                            //@ts-ignore
-                            name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
-                            key={"dataType" + inputIndex.toString() + formIndex.toString()}
-                            selectOptions={[
-                              { name: "Text", value: FieldDataType.String },
-                              { name: "Number", value: FieldDataType.Number },
-                              { name: "Url", value: FieldDataType.Uri },
-                              { name: "Date Time", value: FieldDataType.DateTime },
-                              { name: "Date", value: FieldDataType.Date },
-                            ]}
-                            label="Free input data type"
-                          />
-                        ) : (
-                          <Select
-                            control={control}
-                            width="160px"
-                            //@ts-ignore
-                            name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
-                            selectOptions={[
-                              {
-                                name: "Select one option",
-                                value: FieldOptionsSelectionType.Select,
-                              },
-                              //   {
-                              //     name: "Rank options",
-                              //     value: FieldOptionsSelectionType.Rank,
-                              //   },
-                            ]}
-                            label="How do participants select options?"
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell align="center" sx={{ width: "100px" }}>
-                        <Checkbox<FlowSchemaType>
-                          //@ts-ignore
-                          name={`steps.${formIndex}.${branch}.fields.${inputIndex}.required`}
-                          key={"required" + inputIndex.toString() + formIndex.toString()}
-                          disabled={noEdit}
-                          control={control}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ width: "100px" }}>
-                        {noEdit ? null : (
-                          <IconButton
-                            color="primary"
-                            aria-label="Remove input option"
-                            onClick={() => fieldsArrayMethods.remove(inputIndex)}
-                          >
-                            <HighlightOffOutlined />
-                          </IconButton>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                    {fieldType === FieldType.Options && (
-                      <TableRow>
-                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
-                          <ResponsiveFormRow>
-                            <FieldOptionsForm
-                              formMethods={useFormMethods}
-                              formIndex={formIndex}
-                              fieldIndex={inputIndex}
-                              branch={branch}
-                            />
-                          </ResponsiveFormRow>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Button
-          sx={{ margin: "0px 0px 8px 8px", position: "relative", bottom: "8px" }}
-          variant="outlined"
-          onClick={() => {
-            fieldsArrayMethods.append(defaultField(numFields));
-          }}
-        >
-          Add field
-        </Button>
-      </Box>
-    </LabeledGroupedInputs>
-  ) : (
-    <Button
-      variant={"outlined"}
-      onClick={() => {
-        fieldsArrayMethods.append(defaultField(numFields));
-      }}
-    >
-      Add field
-    </Button>
+        Add field
+      </Button>
+    </Box>
   );
 };

@@ -12,7 +12,7 @@ import { Switch, TextField } from "../../FormFields";
 import { AgentType, DecisionType } from "@/graphql/generated/graphql";
 import { useContext } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { defaultDecisionStepFormValues } from "../helpers/getDefaultFormValues";
+import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -36,7 +36,7 @@ export const Setup = () => {
           threshold: 1,
         },
       },
-      steps: formState.steps ? [...formState.steps] : [defaultDecisionStepFormValues],
+      steps: formState.steps ? [...formState.steps] : [defaultStepFormValues],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: true,
@@ -62,18 +62,13 @@ export const Setup = () => {
         >
           <TextField<FlowSchemaType>
             control={useFormMethods.control}
-            width="300px"
-            label="What's the purpose of this form?"
+            width="100%"
+            label="Name of this flow"
             placeholderText="What's the purpose of this form?"
-            variant="standard"
+            variant="outlined"
             size="small"
-            showLabel={false}
+            showLabel={true}
             name={`name`}
-          />
-          <Switch<FlowSchemaType>
-            name={`reusable`}
-            control={useFormMethods.control}
-            label="Reusable flow"
           />
           <StepsForm useFormMethods={useFormMethods} />
         </Box>

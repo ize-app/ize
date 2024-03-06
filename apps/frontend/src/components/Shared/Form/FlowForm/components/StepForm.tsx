@@ -4,9 +4,10 @@ import { FlowSchemaType } from "../formValidation/flow";
 
 import { StepContainer } from "./StepContainer";
 import { ResponseForm } from "./ResponseForm";
-import { ResultForm } from "./ResultForm/ResultForm";
 import { RequestForm } from "./RequestForm";
 import { ResultType } from "@/graphql/generated/graphql";
+import { ActionForm } from "./ActionForm";
+import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
@@ -35,12 +36,10 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-  const { control, getValues: getFieldValues, watch } = useFormMethods;
+  const { getValues: getFieldValues } = useFormMethods;
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
   console.log("errors are ", useFormMethods.formState.errors);
-
-  const isReusable = watch("reusable");
 
   return (
     <StepContainer
@@ -52,7 +51,8 @@ export const StepForm = ({
       <>
         <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
         <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
-        <ResultForm
+        <ResultsForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ActionForm
           formMethods={useFormMethods}
           formIndex={formIndex}
           stepsArrayMethods={stepsArrayMethods}
