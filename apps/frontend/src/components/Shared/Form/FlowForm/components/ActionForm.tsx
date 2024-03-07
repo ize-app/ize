@@ -49,12 +49,16 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
     value: DefaultOptionSelection.None,
   });
 
+  const stepCount = formMethods.watch("steps").length;
+
   useEffect(() => {
     if (actionType !== latestActionState) {
       if (actionType === ActionNewType.TriggerStep) {
         stepsArrayMethods.append(defaultStepFormValues);
       } else if (latestActionState === ActionNewType.TriggerStep) {
-        stepsArrayMethods.remove(formIndex + 1);
+        for (let i = 0; i < stepCount; i++) {
+          stepsArrayMethods.remove(formIndex + 1);
+        }
       }
       setLatestActionState(actionType);
     }
