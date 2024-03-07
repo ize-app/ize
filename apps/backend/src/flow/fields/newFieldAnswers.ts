@@ -103,7 +103,7 @@ export const newFieldAnswers = async ({
 
           // check whether selected options are part of field's option Set
           fieldAnswer.optionSelections.map((optionSelection) => {
-            if (options.some((option) => option.id !== optionSelection.optionId))
+            if (!options.some((option) => option.id === optionSelection.optionId))
               throw new GraphQLError(
                 `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
                 {

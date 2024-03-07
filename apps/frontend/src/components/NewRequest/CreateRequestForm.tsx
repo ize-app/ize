@@ -15,6 +15,7 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 import { DatePicker, DateTimePicker, TextField } from "../shared/Form/FormFields";
 import { CreateRequestResponseFieldForm } from "./CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "./validation";
+import { Radio } from "../shared/Form/FormFields/Radio";
 
 export const CreateRequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
@@ -59,7 +60,8 @@ export const CreateRequestForm = () => {
     shouldUnregister: true,
   });
 
-  console.log("step is ", step);
+  console.log("errors are", formMethods.formState.errors);
+  console.log("formstate is ", formMethods.getValues());
 
   // zod record with a data type,
 
@@ -93,13 +95,10 @@ export const CreateRequestForm = () => {
             marginBottom: "24px",
           }}
         >
-          <Typography fontWeight={600} color="primary">
+          <Typography fontWeight={600} color="primary" marginBottom={"12px"}>
             Flow: {flow.name}
           </Typography>
 
-          {/* <Typography variant="body1">Your request will have the following options:</Typography> */}
-          {/* <ProcessOptions options={formState?.process?.options ?? []} /> */}
-          <Typography>Add some context about this request...</Typography>
           <Box
             sx={{
               display: "flex",
@@ -109,48 +108,69 @@ export const CreateRequestForm = () => {
             }}
           >
             {step?.request.fields.map((field) => {
-              if (field.__typename !== FieldType.FreeInput) throw Error("Invlid field type");
-              const { dataType, name, required, fieldId } = field;
+              switch (field.__typename) {
+                case FieldType.FreeInput: {
+                  const { dataType, name, required, fieldId } = field;
 
-              switch (dataType) {
-                case FieldDataType.Date:
+                  switch (dataType) {
+                    case FieldDataType.Date:
+                      return (
+                        <DatePicker<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          control={formMethods.control}
+                          // showLabel={false}
+
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.DateTime:
+                      return (
+                        <DateTimePicker<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          control={formMethods.control}
+                          // showLabel={false}
+                          label={name}
+                        />
+                      );
+                    default:
+                      return (
+                        <TextField<RequestSchemaType>
+                          key={fieldId}
+                          label={name}
+                          variant="outlined"
+                          showLabel={true}
+                          control={formMethods.control}
+                          name={`requestFields.${field.fieldId}.value`}
+                          required={required}
+                          multiline
+                        />
+                      );
+                  }
+                }
+                case FieldType.Options: {
+                  const { options, name } = field;
+                  console.log("options field is ", field);
                   return (
-                    <DatePicker<RequestSchemaType>
-                      name={`requestFields.${field.fieldId}.value`}
-                      key={fieldId}
+                    <Radio<RequestSchemaType>
+                      name={`requestFields.${field.fieldId}.optionSelections.${0}.optionId`}
                       control={formMethods.control}
-                      // showLabel={false}
-
                       label={name}
+                      sx={{ flexDirection: "column", gap: "4px" }}
+                      options={options.map((option) => ({
+                        label: option.name,
+                        value: option.optionId,
+                      }))}
                     />
                   );
-                case FieldDataType.DateTime:
-                  return (
-                    <DateTimePicker<RequestSchemaType>
-                      name={`requestFields.${field.fieldId}.value`}
-                      key={fieldId}
-                      control={formMethods.control}
-                      // showLabel={false}
-                      label={name}
-                    />
-                  );
+                }
                 default:
-                  return (
-                    <TextField<RequestSchemaType>
-                      key={fieldId}
-                      label={name}
-                      variant="outlined"
-                      showLabel={true}
-                      control={formMethods.control}
-                      name={`requestFields.${field.fieldId}.value`}
-                      required={required}
-                      multiline
-                    />
-                  );
+                  throw Error("Invalid field type");
               }
             })}
           </Box>
-          <Typography>How respondants will be able to respond:</Typography>
+          <Typography fontStyle={"italic"}>How respondants will be able to respond:</Typography>
           <CreateRequestResponseFieldForm
             field={step?.response.fields[0]}
             formMethods={formMethods}

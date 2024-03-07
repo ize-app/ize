@@ -14,11 +14,14 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
   const requestFields: FieldAnswerArgs[] = Object.entries(
     (formState.requestFields ?? []) as RequestFieldSchemaType,
   )
-    .map((entry) => ({
-      fieldId: entry[0],
-      value: entry[1].value ? entry[1].value.toString() : null,
-    }))
-    .filter((f) => !!f.value);
+    .map(
+      (entry): FieldAnswerArgs => ({
+        fieldId: entry[0],
+        value: entry[1].value ? entry[1].value.toString() : null,
+        optionSelections: entry[1].optionSelections ?? [],
+      }),
+    )
+    .filter((f) => f.value || (f.optionSelections ?? []).length > 0);
 
   const requestDefinedOptions: RequestDefinedOptionsArgs[] =
     formState.requestDefinedOptions && (formState.requestDefinedOptions ?? []).length > 0

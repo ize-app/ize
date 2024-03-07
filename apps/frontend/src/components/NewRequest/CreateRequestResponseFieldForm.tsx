@@ -28,7 +28,9 @@ export const CreateRequestResponseFieldForm = ({
   if (!field) return null;
   switch (field.__typename) {
     case FieldType.FreeInput: {
-      return <Typography fontWeight={500}>{field.name}</Typography>;
+      return (
+        <Typography fontWeight={500}>{field.name + " (" + field.dataType + " input)"}</Typography>
+      );
     }
     case FieldType.Options: {
       const requestDefinedOptionsFormMethods = useFieldArray({

@@ -7,18 +7,23 @@ export type RequestDefinedOptionSchemaType = z.infer<typeof requestDefinedOption
 export type RequestDefinedOptionsSchemaType = z.infer<typeof requestDefinedOptionsSchema>;
 export type RequestSchemaType = z.infer<typeof requestSchema>;
 
+export const optionSelectionsSchema = z.array(z.object({ optionId: z.string().min(1) }));
+
 export const requestFieldsSchema = z.record(
   z.string().min(1),
   z
     .object({
-      dataType: z.nativeEnum(FieldDataType),
+      dataType: z.nativeEnum(FieldDataType).optional(),
       value: z.any(),
-      required: z.boolean(),
+      optionSelections: optionSelectionsSchema.optional(),
+      required: z.boolean().optional(),
     })
     .superRefine((field, ctx) => {
       if (!field?.required && !field.value) return;
+      if (!field.dataType) return;
       evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
-    }),
+    })
+
 );
 
 export const requestDefinedOptionSchema = z
