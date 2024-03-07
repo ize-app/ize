@@ -8,7 +8,7 @@ import { WizardBody, WizardNav } from "@/components/shared/Wizard";
 import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
 import { PermissionType } from "../formValidation/permission";
-import { Switch, TextField } from "../../FormFields";
+import { TextField } from "../../FormFields";
 import { AgentType, DecisionType } from "@/graphql/generated/graphql";
 import { useContext } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";

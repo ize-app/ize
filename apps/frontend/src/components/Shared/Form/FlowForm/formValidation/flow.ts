@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { fieldsSchema } from "./fields";
-import { permissionSchema } from "./permission";
+import { PermissionType, permissionSchema } from "./permission";
 import { resultsSchema } from "./result";
 import { actionSchema } from "./action";
 import { evolveFlowSchema } from "./evolve";
@@ -24,7 +24,7 @@ const stepSchema = z
     }),
     result: resultsSchema,
     action: actionSchema,
-    expirationSeconds: z.coerce.number().int().positive(),
+    expirationSeconds: z.coerce.number().int().positive().optional(),
   })
   .superRefine((step, ctx) => {
     if (
@@ -41,7 +41,26 @@ const stepSchema = z
         }
       });
     }
-  });
+  })
+  .refine(
+    (step) => {
+      if (step.response.permission.type !== PermissionType.NA && step.response.fields.length === 0)
+        return false;
+      else return true;
+    },
+    { message: "Either add response fields or set this step to 'No response'", path: ["response"] },
+  )
+  .refine(
+    (step) => {
+      if (step.response.permission.type !== PermissionType.NA && !step.expirationSeconds)
+        return false;
+      else return true;
+    },
+    {
+      message: "Required",
+      path: ["expirationSeconds"],
+    },
+  );
 
 export const flowSchema = z.object({
   name: z.string().min(1, "Enter a name"),

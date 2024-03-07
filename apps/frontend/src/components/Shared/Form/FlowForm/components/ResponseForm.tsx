@@ -6,6 +6,7 @@ import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { FieldsForm } from "./FieldsForm";
 import { RoleSearch, Select } from "../../FormFields";
 import { PermissionType } from "../formValidation/permission";
+import { FormHelperText } from "@mui/material";
 
 interface ResponseFieldsFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -23,6 +24,8 @@ const requestExpirationOptions = [
 
 export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps) => {
   const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
+  const responseError =
+    formMethods.getFieldState(`steps.${formIndex}.response`).error?.root?.message ?? "";
 
   return (
     <StepComponentContainer label={"Response"}>
@@ -79,6 +82,15 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
           </>
         )}
       </>
+      {responseError && (
+        <FormHelperText
+          sx={{
+            color: "error.main",
+          }}
+        >
+          {responseError}
+        </FormHelperText>
+      )}
     </StepComponentContainer>
   );
 };

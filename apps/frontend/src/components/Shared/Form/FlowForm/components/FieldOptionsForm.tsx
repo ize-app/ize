@@ -115,30 +115,34 @@ export const FieldOptionsForm = ({
     >
       {formIndex === 0 && (
         <ResponsiveFormRow>
-          <Switch<FlowSchemaType>
-            //@ts-ignore
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
-            control={formMethods.control}
-            label="Requestor can create options"
-          />
-          {hasRequestDefinedOptions && (
-            <Select
-              control={formMethods.control}
-              width="150px"
-              //@ts-ignore
-              name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-              selectOptions={[
-                { name: "Text", value: FieldDataType.String },
-                { name: "Number", value: FieldDataType.Number },
-                { name: "Uri", value: FieldDataType.Uri },
-                { name: "Date", value: FieldDataType.Date },
-                { name: "DateTime", value: FieldDataType.DateTime },
-              ]}
-              label="Option type"
-              size="small"
-              variant="standard"
-              displayLabel={false}
-            />
+          {branch === "response" && (
+            <>
+              <Switch<FlowSchemaType>
+                //@ts-ignore
+                name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
+                control={formMethods.control}
+                label="Requestor can create options"
+              />
+              {hasRequestDefinedOptions && (
+                <Select
+                  control={formMethods.control}
+                  width="150px"
+                  //@ts-ignore
+                  name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+                  selectOptions={[
+                    { name: "Text", value: FieldDataType.String },
+                    { name: "Number", value: FieldDataType.Number },
+                    { name: "Uri", value: FieldDataType.Uri },
+                    { name: "Date", value: FieldDataType.Date },
+                    { name: "DateTime", value: FieldDataType.DateTime },
+                  ]}
+                  label="Option type"
+                  size="small"
+                  variant="standard"
+                  displayLabel={false}
+                />
+              )}
+            </>
           )}
         </ResponsiveFormRow>
       )}
