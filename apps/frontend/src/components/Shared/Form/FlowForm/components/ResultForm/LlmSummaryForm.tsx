@@ -16,18 +16,25 @@ interface LlmSummaryProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
   resultIndex: number;
+  resultId: string;
 }
 
-export const LlmSummaryForm = ({ formMethods, formIndex, resultIndex }: LlmSummaryProps) => {
+export const LlmSummaryForm = ({
+  formMethods,
+  formIndex,
+  resultIndex,
+  resultId,
+}: LlmSummaryProps) => {
   useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.results.${resultIndex}`, {
+    formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, {
       type: ResultType.LlmSummary,
       fieldId: DefaultFieldSelection.None,
+      resultId,
       llmSummary: {
         type: LlmSummaryType.AfterEveryResponse,
         prompt: "sdfdf",
       },
-      minimumResponses: 1,
+      minimumAnswers: 1,
     });
   }, []);
 
@@ -39,7 +46,7 @@ export const LlmSummaryForm = ({ formMethods, formIndex, resultIndex }: LlmSumma
         label="Prompt to help AI summarize responses"
         variant="standard"
         placeholderText="Optional"
-        name={`steps.${formIndex}.results.${resultIndex}.llmSummary.prompt`}
+        name={`steps.${formIndex}.result.${resultIndex}.llmSummary.prompt`}
         size="small"
         startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
         showLabel={false}

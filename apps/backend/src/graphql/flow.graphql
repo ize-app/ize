@@ -55,7 +55,7 @@ input NewFlowArgs {
 input NewStepArgs {
   request: StepRequestArgs!
   response: StepResponseArgs
-  result: [ResultArgs!]
+  result: [ResultArgs!]!
   action: ActionNewArgs!
   expirationSeconds: Int!
 }

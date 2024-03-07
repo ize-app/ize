@@ -1,8 +1,8 @@
-import { NewStepArgs, ResultType } from "@/graphql/generated/resolver-types";
+import { NewStepArgs } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { newFieldSet } from "@/flow/fields/newFieldSet";
 import { newPermission } from "@/flow/permission/newPermission";
-import { newResultConfig } from "@/flow/result/newResultConfig";
+import { newResultConfigSet } from "@/flow/result/newResultConfig";
 import { newActionConfig } from "@/flow/action/newAction";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
@@ -24,23 +24,13 @@ export const newStep = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  if (
-    (!args.response?.permission || !args.response.fields) &&
-    args.result.type !== ResultType.AutoApprove
-  )
-    throw new GraphQLError("Response fields are missing", {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-
   const requestFieldSet = args.request
     ? await newFieldSet({ fields: args.request.fields, transaction })
     : null;
+    
   const responseFieldSet = args.response
     ? await newFieldSet({ fields: args.response.fields, transaction })
     : null;
-
-  // in current version, there is only one response field per step
-  const responseField = responseFieldSet?.FieldSetFields[0].Field;
 
   const requestPermissionsId = await newPermission({
     permission: args.request.permission,
@@ -56,16 +46,16 @@ export const newStep = async ({
       })
     : null;
 
-  const resultConfigId = await newResultConfig({
-    resultArgs: args.result,
+  const resultConfigSetId = await newResultConfigSet({
+    resultsArgs: args.result,
     transaction,
-    responseField,
+    responseFieldSet,
   });
 
   const actionId = await newActionConfig({
     actionArgs: args.action,
+    responseFieldSet,
     transaction,
-    responseField,
   });
 
   const step = await transaction.step.create({
@@ -75,7 +65,7 @@ export const newStep = async ({
       responseFieldSetId: responseFieldSet?.id,
       responsePermissionsId: responsePermissionsId,
       actionId: actionId,
-      resultConfigId: resultConfigId,
+      resultConfigSetId: resultConfigSetId,
       index,
       flowVersionId,
       expirationSeconds: args.expirationSeconds,

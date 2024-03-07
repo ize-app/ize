@@ -23,7 +23,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
           fields: createFieldsArgs(step.response.fields ?? []),
           permission: createPermissionArgs(step.response.permission),
         },
-        result: createResultsArgs(step.results, step.response?.fields),
+        result: createResultsArgs(step.result, step.response?.fields),
         action: createActionArgs(step.action, step.response?.fields),
         expirationSeconds: step.expirationSeconds,
       };

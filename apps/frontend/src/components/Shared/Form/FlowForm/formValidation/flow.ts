@@ -22,16 +22,16 @@ const stepSchema = z
       permission: permissionSchema,
       fields: fieldsSchema,
     }),
-    results: resultsSchema,
+    result: resultsSchema,
     action: actionSchema,
     expirationSeconds: z.coerce.number().int().positive(),
   })
   .superRefine((step, ctx) => {
     if (
       (!step.response?.fields || !step.response.fields.find((f) => f.type === FieldType.Options)) &&
-      step.results.length > 0
+      step.result.length > 0
     ) {
-      step.results.forEach((res, index) => {
+      step.result.forEach((res, index) => {
         if (res.type === ResultType.Decision) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,

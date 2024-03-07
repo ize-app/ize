@@ -1,19 +1,23 @@
 import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
 import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
-import {
-  DefaultOptionSelection,
-  FieldSchemaType,
-  FieldsSchemaType,
-} from "../../formValidation/fields";
+import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
 
 export const createResultArgs = (
   result: ResultSchemaType,
-  responseField: FieldSchemaType | undefined | null,
+  responseFields: FieldsSchemaType | undefined | null,
 ): ResultArgs => {
   if (result.type === ResultType.Decision && result.decision.defaultOptionId) {
     let defaultOptionIndex: number | null = null;
+    let responseFieldIndex = responseFields
+      ? responseFields.findIndex((f) => f.fieldId === result.fieldId)
+      : null;
 
-    if (result.decision.defaultOptionId !== DefaultOptionSelection.None.toString()) {
+    if (
+      result.decision.defaultOptionId !== DefaultOptionSelection.None.toString() &&
+      responseFieldIndex &&
+      responseFields
+    ) {
+      const responseField = responseFields[responseFieldIndex];
       if (!responseField || responseField.type !== FieldType.Options)
         throw Error("Missing option set for default result");
       const options = responseField.optionsConfig.options;
@@ -26,6 +30,7 @@ export const createResultArgs = (
     delete result.decision.defaultOptionId;
     return {
       ...result,
+      responseFieldIndex,
       decision: {
         ...result.decision,
         defaultOptionIndex,
@@ -40,7 +45,6 @@ export const createResultsArgs = (
   responseFields: FieldsSchemaType,
 ): ResultArgs[] => {
   return results.map((result) => {
-    const responseField = responseFields.find((f) => f.fieldId === result.fieldId);
-    return createResultArgs(result, responseField);
+    return createResultArgs(result, responseFields);
   });
 };

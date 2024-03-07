@@ -12,7 +12,7 @@ export const defaultStepFormValues: StepSchemaType = {
     permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],
   },
-  results: [],
+  result: [],
   action: { type: ActionNewType.None },
   expirationSeconds: 259200,
 };

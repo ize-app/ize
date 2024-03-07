@@ -21,7 +21,8 @@ import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { StepComponentContainer } from "../StepContainer";
 
-export const defaultResult: ResultSchemaType = {
+export const defaultResult = (resultIndex: number): ResultSchemaType => ({
+  resultId: "new." + resultIndex,
   type: ResultType.Decision,
   fieldId: DefaultFieldSelection.None,
   minimumAnswers: 1,
@@ -30,19 +31,12 @@ export const defaultResult: ResultSchemaType = {
     threshold: 1,
     defaultOptionId: DefaultOptionSelection.None,
   },
-};
+});
 
 interface ResultsFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
 }
-
-// (field.optionsConfig.options ?? []).forEach((option) =>
-// options.push({
-//   name: "Field " + (fieldIndex + 1).toString() + ": " + option.name.toString(),
-//   value: option.optionId,
-// }),
-// );
 
 const createResultFieldOptions = (
   resultType: ResultType,
@@ -87,25 +81,22 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
   const { fields, remove, append } = useFieldArray({
     control: formMethods.control,
     //@ts-ignore
-    name: `steps.${formIndex}.results`,
+    name: `steps.${formIndex}.result`,
   });
 
   const responseFields = watch(`steps.${formIndex}.response.fields`) ?? [];
+  const results = watch(`steps.${formIndex}.result`) ?? [];
 
   return (
     <StepComponentContainer label={"Result"}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
         {fields.map((item, resultIndex) => {
-          const resultType: ResultType = formMethods.watch(
-            `steps.${formIndex}.results.${resultIndex}.type`,
-          );
-          const resultFieldId = formMethods.watch(
-            `steps.${formIndex}.results.${resultIndex}.fieldId`,
-          );
-          const resultField = responseFields.find((field) => field.fieldId === resultFieldId);
-          const fieldOptions = createResultFieldOptions(resultType, responseFields);
+          const result = formMethods.watch(`steps.${formIndex}.result.${resultIndex}`);
+
+          const resultField = responseFields.find((field) => field.fieldId === result.fieldId);
+          const fieldOptions = createResultFieldOptions(result.type, responseFields);
           const resultError =
-            formMethods.getFieldState(`steps.${formIndex}.results.${resultIndex}`).error?.root
+            formMethods.getFieldState(`steps.${formIndex}.result.${resultIndex}`).error?.root
               ?.message ?? "";
 
           return (
@@ -135,7 +126,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                     <Box sx={{ display: "none" }}>
                       <TextField<FlowSchemaType>
                         //@ts-ignore
-                        name={`steps.${formIndex}.results.${resultIndex}.resultId`}
+                        name={`steps.${formIndex}.result.${resultIndex}.resultId`}
                         key={"resultId" + resultIndex.toString() + formIndex.toString()}
                         control={formMethods.control}
                         showLabel={false}
@@ -154,7 +145,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                         { name: "Prioritized options", value: ResultType.Ranking },
                         { name: "AI summary", value: ResultType.LlmSummary },
                       ]}
-                      name={`steps.${formIndex}.results.${resultIndex}.type`}
+                      name={`steps.${formIndex}.result.${resultIndex}.type`}
                       size="small"
                       displayLabel={false}
                     />
@@ -165,7 +156,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                         width="300px"
                         flexGrow={"1"}
                         selectOptions={fieldOptions}
-                        name={`steps.${formIndex}.results.${resultIndex}.fieldId`}
+                        name={`steps.${formIndex}.result.${resultIndex}.fieldId`}
                         size="small"
                         displayLabel={false}
                       />
@@ -175,19 +166,21 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                       </Typography>
                     )}
                   </ResponsiveFormRow>
-                  {resultType === ResultType.Decision && resultField && (
+                  {result.type === ResultType.Decision && resultField && (
                     <DecisionConfigForm
                       formIndex={formIndex}
                       formMethods={formMethods}
                       resultIndex={resultIndex}
+                      resultId={result.resultId}
                       field={resultField}
                     />
                   )}
-                  {resultType === ResultType.LlmSummary && (
+                  {result.type === ResultType.LlmSummary && (
                     <LlmSummaryForm
                       formIndex={formIndex}
                       formMethods={formMethods}
                       resultIndex={resultIndex}
+                      resultId={result.resultId}
                     />
                   )}
                 </Box>
@@ -214,7 +207,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
           sx={{ position: "relative", bottom: "8px", width: "140px" }}
           variant="outlined"
           onClick={() => {
-            append(defaultResult);
+            append(defaultResult(results.length));
           }}
         >
           Add result

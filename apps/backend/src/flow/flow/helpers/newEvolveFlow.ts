@@ -42,11 +42,13 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
   const resultArgs: ResultArgs = {
     type: ResultType.Decision,
     decision: { ...evolveArgs.decision },
-    minimumResponses: 1,
+    responseFieldIndex: 0,
+    minimumAnswers: 1,
   };
 
   const actionArgs: ActionNewArgs = {
     type: ActionNewType.EvolveFlow,
+    filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
   };
 
@@ -60,7 +62,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       fields: [responseFieldSetArgs],
     },
     expirationSeconds: 259200,
-    result: resultArgs,
+    result: [resultArgs],
     action: actionArgs,
   };
 };

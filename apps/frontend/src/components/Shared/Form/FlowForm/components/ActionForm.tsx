@@ -24,12 +24,12 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
   const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
 
   // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
-  const results = formMethods.watch(`steps.${formIndex}.results`);
+  const results = formMethods.watch(`steps.${formIndex}.result`);
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
 
   const options: SelectOption[] = [];
 
-  results
+  (results ?? [])
     .filter((res) => res.type === ResultType.Decision)
     .forEach((res, resIndex) => {
       const field = responseFields.find((f) => f.fieldId === res.fieldId);

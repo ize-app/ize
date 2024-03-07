@@ -38,7 +38,10 @@ enum LlmSummaryType {
 
 input ResultArgs {
   type: ResultType!
-  minimumResponses: Int
+  resultId: String
+  fieldId: String
+  minimumAnswers: Int
+  responseFieldIndex: Int
   decision: DecisionNewArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs

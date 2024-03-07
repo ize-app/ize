@@ -35,3 +35,17 @@ export const resultConfigInclude = Prisma.validator<Prisma.ResultConfigInclude>(
 export type ResultConfigPrismaType = Prisma.ResultConfigGetPayload<{
   include: typeof resultConfigInclude;
 }>;
+
+export const resultConfigSetInclude = Prisma.validator<Prisma.ResultConfigSetInclude>()({
+  ResultConfigSetResultConfigs: {
+    include: {
+      ResultConfig: {
+        include: resultConfigInclude,
+      },
+    },
+  },
+});
+
+export type ResultConfigSetPrismaType = Prisma.ResultConfigSetGetPayload<{
+  include: typeof resultConfigSetInclude;
+}>;

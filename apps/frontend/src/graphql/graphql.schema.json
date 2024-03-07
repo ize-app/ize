@@ -4294,15 +4294,19 @@
             "name": "result",
             "description": null,
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "NON_NULL",
+                "kind": "LIST",
                 "name": null,
                 "ofType": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ResultArgs",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ResultArgs",
+                    "ofType": null
+                  }
                 }
               }
             },
@@ -7302,6 +7306,18 @@
             "deprecationReason": null
           },
           {
+            "name": "fieldId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "llmSummary",
             "description": null,
             "type": {
@@ -7314,7 +7330,7 @@
             "deprecationReason": null
           },
           {
-            "name": "minimumResponses",
+            "name": "minimumAnswers",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -7331,6 +7347,30 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "PrioritizationArgs",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "responseFieldIndex",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,

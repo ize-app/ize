@@ -21,7 +21,7 @@ export const createActionArgs = (
           }
         }
       });
-      if (action.filterOptionId && !filterOptionIndex)
+      if (action.filterOptionId && typeof filterOptionIndex !== "number")
         throw Error("Action filter option not found ");
     }
     //@ts-ignore

@@ -14,6 +14,7 @@ interface DecisionConfigFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
   resultIndex: number;
+  resultId: string;
   field: FieldSchemaType;
 }
 
@@ -21,12 +22,14 @@ export const DecisionConfigForm = ({
   formMethods,
   formIndex,
   resultIndex,
+  resultId,
   field,
 }: DecisionConfigFormProps) => {
   useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.results.${resultIndex}`, {
+    formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, {
       type: ResultType.Decision,
       fieldId: field.fieldId,
+      resultId,
       minimumAnswers: 1,
       decision: {
         type: DecisionType.NumberThreshold,
@@ -36,7 +39,7 @@ export const DecisionConfigForm = ({
     });
   }, []);
 
-  const decisionType = formMethods.watch(`steps.${formIndex}.results.${resultIndex}.decision.type`);
+  const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
 
   const defaultDecisionOptions: SelectOption[] = [
     {
@@ -71,7 +74,7 @@ export const DecisionConfigForm = ({
               value: DecisionType.PercentageThreshold,
             },
           ]}
-          name={`steps.${formIndex}.results.${resultIndex}.decision.type`}
+          name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
           displayLabel={false}
         />
@@ -81,7 +84,7 @@ export const DecisionConfigForm = ({
             control={formMethods.control}
             width="200px"
             label="Threshold votes"
-            name={`steps.${formIndex}.results.${resultIndex}.decision.threshold`}
+            name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
             variant="standard"
             showLabel={false}
@@ -96,7 +99,7 @@ export const DecisionConfigForm = ({
             size="small"
             variant="standard"
             showLabel={false}
-            name={`steps.${formIndex}.results.${resultIndex}.decision.threshold`}
+            name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
           />
         )}
@@ -108,7 +111,7 @@ export const DecisionConfigForm = ({
           variant="standard"
           size={"small"}
           endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-          name={`steps.${formIndex}.results.${resultIndex}.minimumAnswers`}
+          name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
       </ResponsiveFormRow>
       <ResponsiveFormRow>
@@ -127,7 +130,7 @@ export const DecisionConfigForm = ({
           selectOptions={defaultDecisionOptions}
           displayLabel={false}
           flexGrow="1"
-          name={`steps.${formIndex}.results.${resultIndex}.decision.defaultOptionId`}
+          name={`steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`}
         />
       </ResponsiveFormRow>
     </>

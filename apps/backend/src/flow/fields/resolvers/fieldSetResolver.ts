@@ -74,6 +74,9 @@ export const fieldSetResolver = ({
         options: [...flowOptions, ...requestOptions],
       };
       return options;
-    } else throw Error("");
+    } else
+      throw new GraphQLError("Unknown field type.", {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
   });
 };

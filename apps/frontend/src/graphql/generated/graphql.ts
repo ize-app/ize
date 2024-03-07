@@ -534,7 +534,7 @@ export type NewStepArgs = {
   expirationSeconds: Scalars['Int']['input'];
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
-  result?: InputMaybe<Array<ResultArgs>>;
+  result: Array<ResultArgs>;
 };
 
 export type NftCollection = {
@@ -882,9 +882,12 @@ export type Result = {
 
 export type ResultArgs = {
   decision?: InputMaybe<DecisionNewArgs>;
+  fieldId?: InputMaybe<Scalars['String']['input']>;
   llmSummary?: InputMaybe<LlmSummaryArgs>;
-  minimumResponses?: InputMaybe<Scalars['Int']['input']>;
+  minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
+  responseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
+  resultId?: InputMaybe<Scalars['String']['input']>;
   type: ResultType;
 };
 
@@ -2023,7 +2026,7 @@ export type NewStepArgs = {
   expirationSeconds: Scalars['Int']['input'];
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
-  result?: InputMaybe<Array<ResultArgs>>;
+  result: Array<ResultArgs>;
 };
 
 export type NftCollection = {
@@ -2371,9 +2374,12 @@ export type Result = {
 
 export type ResultArgs = {
   decision?: InputMaybe<DecisionNewArgs>;
+  fieldId?: InputMaybe<Scalars['String']['input']>;
   llmSummary?: InputMaybe<LlmSummaryArgs>;
-  minimumResponses?: InputMaybe<Scalars['Int']['input']>;
+  minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
+  responseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
+  resultId?: InputMaybe<Scalars['String']['input']>;
   type: ResultType;
 };
 
