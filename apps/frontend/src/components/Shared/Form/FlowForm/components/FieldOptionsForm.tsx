@@ -62,7 +62,7 @@ export const FieldOptionsForm = ({
     append: linksAppend,
   } = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.links`,
+    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions`,
   });
 
   const steps = formMethods.watch(`steps`);
@@ -93,8 +93,9 @@ export const FieldOptionsForm = ({
     [];
 
   const linkedOptions =
-    formMethods.watch(`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.links`) ??
-    [];
+    formMethods.watch(
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions`,
+    ) ?? [];
 
   const optionsError =
     formMethods.getFieldState(`steps.${formIndex}.${branch}.fields.${fieldIndex}`).error?.message ??
@@ -218,7 +219,7 @@ export const FieldOptionsForm = ({
                     size={"small"}
                     // variant="outlined"
                     flexGrow="1"
-                    name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.links.${inputIndex}.id`}
+                    name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions.${inputIndex}.id`}
                     key={"links" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={possibleLinkOptions}
                     renderValue={(val) => {
@@ -288,7 +289,7 @@ export const FieldOptionsForm = ({
           >
             Add option
           </Button>
-          {possibleLinkOptions.length > 0 && (
+          {possibleLinkOptions.length > 0 && branch === "response" && (
             <Button
               sx={{ position: "relative", width: "250px" }}
               variant="outlined"
@@ -300,7 +301,7 @@ export const FieldOptionsForm = ({
               Use previous result as option(s)
             </Button>
           )}
-          {!hasRequestDefinedOptions && formIndex === 0 && (
+          {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
             <Button
               sx={{ position: "relative", width: "250px" }}
               variant="outlined"

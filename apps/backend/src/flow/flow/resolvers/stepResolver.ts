@@ -19,6 +19,8 @@ export const stepResolver = ({
 }): Step => {
   const responseFields = fieldSetResolver({ fieldSet: step.ResponseFieldSet });
 
+  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields);
+
   let responseOptions: Option[] | undefined = undefined;
   return {
     request: {
@@ -30,7 +32,7 @@ export const stepResolver = ({
       fields: responseFields,
     },
     action: actionResolver(step.ActionNew, responseOptions),
-    result: resultsConfigSetResolver(step.ResultConfigSet, responseFields),
+    result,
     expirationSeconds: step.expirationSeconds,
     userPermission: {
       request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds, userId),

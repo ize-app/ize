@@ -25,7 +25,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
         },
         result: createResultsArgs(step.result, step.response?.fields),
         action: createActionArgs(step.action, step.response?.fields),
-        expirationSeconds: step.expirationSeconds,
+        expirationSeconds: step.expirationSeconds ?? null,
       };
     }),
     evolve: formState.evolve && {

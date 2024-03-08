@@ -68,6 +68,7 @@ export const fieldSetResolver = ({
         required: f.Field.required,
         hasRequestOptions: config.hasRequestOptions,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
+        linkedResults: config.linkedResultOptions,
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as FieldOptionsSelectionType,
         maxSelections: config.maxSelections,

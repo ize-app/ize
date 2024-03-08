@@ -1,6 +1,7 @@
 union ResultConfig = Decision | Ranking | LlmSummary
 
 type Decision {
+  resultConfigId: String!
   minimumAnswers: Int!
   decisionType: DecisionType!
   defaultOption: Option
@@ -8,21 +9,21 @@ type Decision {
 }
 
 type Ranking {
+  resultConfigId: String!
   minimumAnswers: Int!
   numOptionsToInclude: Int!
 }
 
 type LlmSummary {
+  resultConfigId: String!
   prompt: String
 }
 
 # mirrors Prisma type
 enum ResultType {
-  Raw
   Decision
   Ranking
   LlmSummary
-  AutoApprove
 }
 
 # mirrors Prisma type

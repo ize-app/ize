@@ -32,6 +32,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       previousStepOptions: false,
       maxSelections: 1,
       selectionType: FieldOptionsSelectionType.Select,
+      linkedOptions: [],
       options: [
         { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
         { optionId: "deny", dataType: FieldDataType.String, name: "❌" },

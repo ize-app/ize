@@ -684,7 +684,7 @@ model Step {
   id                    String  @id @default(uuid()) @db.Uuid
   flowVersionId         String  @map("flow_version_id") @db.Uuid
   index                 Int
-  expirationSeconds     Int     @default(0) @map("request_expiration_seconds")
+  expirationSeconds     Int?    @default(0) @map("request_expiration_seconds")
   requestPermissionsId  String  @map("request_permissions_id") @db.Uuid
   responsePermissionsId String? @map("response_permissions_id") @db.Uuid
   requestFieldSetId     String? @map("request_field_set_id") @db.Uuid
@@ -830,6 +830,7 @@ model FieldOptionsConfig {
   previousStepOptions    Boolean             @default(false) @map("previous_step_options")
   // Whether option is single or multi-select
   maxSelections          Int                 @map("max_selections")
+  linkedResultOptions    String[]            @default([]) @map("linked_result_options")
   // type single select / multi-select / etc
   selectionType          OptionSelectionType @map("option_selection_type")
   createdAt              DateTime            @default(now()) @map("created_at")

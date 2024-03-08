@@ -54,8 +54,14 @@ const createFieldOptionsConfig = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   // if option Configs hasn't changed, just use the existing Id
-  const { selectionType, options, hasRequestOptions, maxSelections, requestOptionsDataType } =
-    fieldOptionsConfigArgs;
+  const {
+    selectionType,
+    options,
+    hasRequestOptions,
+    maxSelections,
+    requestOptionsDataType,
+    linkedOptions,
+  } = fieldOptionsConfigArgs;
 
   const optionSetId = await newOptionSet({ options, transaction });
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
@@ -64,6 +70,7 @@ const createFieldOptionsConfig = async ({
       hasRequestOptions,
       requestOptionsDataType,
       selectionType,
+      linkedResultOptions: linkedOptions.map((l) => l.id),
       FieldOptionSet: optionSetId
         ? {
             connect: {
