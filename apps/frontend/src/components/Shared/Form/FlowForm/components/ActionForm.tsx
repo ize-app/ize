@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { ActionNewType, FieldType, ResultType } from "@/graphql/generated/graphql";
-import { FieldOptionSchemaType } from "../formValidation/fields";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../FormFields/Select";
 import { StepComponentContainer } from "./StepContainer";
+import { getSelectOptionName } from "../../getSelectOptionName";
 
 interface ActionFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -87,9 +87,9 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
               label="When to run action"
               width="300px"
               renderValue={(val) => {
-                const option = options.find((option) => option.value === val);
-                if (option) {
-                  return "Only run action on: " + option.name;
+                const optionName = getSelectOptionName(options, val);
+                if (optionName) {
+                  return "Only run action on: " + optionName;
                 } else return "Run action on all options";
               }}
               flexGrow="1"

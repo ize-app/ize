@@ -151,14 +151,23 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   )}
                 </ResponsiveFormRow>
                 {fieldType === FieldType.Options && (
-                  <ResponsiveFormRow>
-                    <FieldOptionsForm
-                      formMethods={useFormMethods}
-                      formIndex={formIndex}
-                      fieldIndex={inputIndex}
-                      branch={branch}
-                    />
-                  </ResponsiveFormRow>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Box sx={{ width: "80%" }}>
+                      <FieldOptionsForm
+                        formMethods={useFormMethods}
+                        formIndex={formIndex}
+                        fieldIndex={inputIndex}
+                        branch={branch}
+                      />
+                    </Box>
+                  </Box>
                 )}
               </Box>
               {noEdit ? null : (

@@ -5,11 +5,11 @@ import { ActionNewType } from "@/graphql/generated/graphql";
 
 export const defaultStepFormValues: StepSchemaType = {
   request: {
-    permission: { type: PermissionType.Anyone, entities: [] },
+    permission: { type: PermissionType.Anyone },
     fields: [],
   },
   response: {
-    permission: { type: PermissionType.Anyone, entities: [] },
+    permission: { type: PermissionType.Anyone },
     fields: [],
   },
   result: [],

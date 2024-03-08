@@ -21,8 +21,8 @@ import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { StepComponentContainer } from "../StepContainer";
 
-export const defaultResult = (resultIndex: number): ResultSchemaType => ({
-  resultId: "new." + resultIndex,
+export const defaultResult = (stepIndex: number, resultIndex: number): ResultSchemaType => ({
+  resultId: "new." + stepIndex + "." + resultIndex,
   type: ResultType.Decision,
   fieldId: DefaultFieldSelection.None,
   minimumAnswers: 1,
@@ -207,7 +207,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
           sx={{ position: "relative", bottom: "8px", width: "140px" }}
           variant="outlined"
           onClick={() => {
-            append(defaultResult(results.length));
+            append(defaultResult(formIndex, results.length));
           }}
         >
           Add result

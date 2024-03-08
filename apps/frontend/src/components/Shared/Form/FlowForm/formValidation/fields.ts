@@ -38,6 +38,12 @@ const fieldOptionsSchema = z
     selectionType: z.nativeEnum(FieldOptionsSelectionType),
     maxSelections: z.coerce.number().default(1),
     options: z.array(fieldOptionSchema).default([]),
+    links: z.array(
+      z.object({
+        type: z.literal("ResultConfig").default("ResultConfig"),
+        id: z.string().min(1),
+      }),
+    ),
   })
   .refine(
     (requestOptions) => {
