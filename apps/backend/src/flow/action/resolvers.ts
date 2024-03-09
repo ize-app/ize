@@ -4,9 +4,10 @@ import { ActionNewPrismaType } from "./types";
 import { ActionNewType } from "@prisma/client";
 
 export const actionResolver = (
-  action: ActionNewPrismaType,
+  action: ActionNewPrismaType | null | undefined,
   responseOptions: Option[] | undefined,
-): ActionNew => {
+): ActionNew | null => {
+  if (!action) return null;
   let filterOption: Option | undefined = undefined;
 
   if (action.filterOptionId) {

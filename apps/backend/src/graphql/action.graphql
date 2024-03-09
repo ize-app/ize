@@ -29,6 +29,7 @@ input CallWebhookArgs {
 
 input ActionNewArgs {
   type: ActionNewType!
+  filterResponseFieldIndex: Int
   filterOptionIndex: Int
   callWebhook: CallWebhookArgs
 }

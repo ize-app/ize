@@ -68,12 +68,16 @@ export const fieldSetResolver = ({
         required: f.Field.required,
         hasRequestOptions: config.hasRequestOptions,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
+        linkedResultOptions: config.linkedResultOptions,
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as FieldOptionsSelectionType,
         maxSelections: config.maxSelections,
         options: [...flowOptions, ...requestOptions],
       };
       return options;
-    } else throw Error("");
+    } else
+      throw new GraphQLError("Unknown field type.", {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
   });
 };

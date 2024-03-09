@@ -1,4 +1,4 @@
-import { InputAdornment, TextField as MuiTextField, TextFieldVariants } from "@mui/material";
+import { TextField as MuiTextField, TextFieldVariants } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { ReactNode } from "react";
@@ -15,12 +15,13 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   startAdornment?: ReactNode;
   multiline?: boolean;
   size?: "small" | "medium";
+  flexGrow?: string;
 }
 
 export const TextField = <T extends FieldValues>({
   label,
   name,
-  control, 
+  control,
   width = "100%",
   showLabel = false,
   required = false,
@@ -30,13 +31,14 @@ export const TextField = <T extends FieldValues>({
   endAdornment,
   startAdornment,
   placeholderText,
+  flexGrow = "0",
 }: TextFieldProps<T>) => {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl sx={{ width }} error={Boolean(error)} required={required}>
+        <FormControl sx={{ width, flexGrow }} error={Boolean(error)} required={required}>
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
           <MuiTextField
             {...field}

@@ -1,34 +1,27 @@
 import {
-  AutoApprove,
   Decision,
   DecisionType,
+  Field,
   LlmSummary,
-  LlmSummaryType,
   Option,
   Ranking,
-  Raw,
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { ResultConfigPrismaType } from "./types";
+import { ResultConfigPrismaType } from "../types";
 
 export const resultConfigResolver = (
   resultConfig: ResultConfigPrismaType,
-  responseOptions: Option[] | undefined,
+  responseField: Field | undefined | null,
 ): ResultConfig => {
   switch (resultConfig.resultType) {
     case ResultType.Decision:
-      return resultConfigDecisionResolver(resultConfig, responseOptions);
+      return resultConfigDecisionResolver(resultConfig, responseField);
     case ResultType.Ranking:
       return resultConfigRankResolver(resultConfig);
     case ResultType.LlmSummary:
       return resultConfigLlmResolver(resultConfig);
-    case ResultType.Raw:
-      return resultConfigRawResolver(resultConfig);
-    case ResultType.AutoApprove:
-      const auto: AutoApprove = { __typename: "AutoApprove" };
-      return auto;
     default:
       throw new GraphQLError("Invalid result type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -38,18 +31,23 @@ export const resultConfigResolver = (
 
 const resultConfigDecisionResolver = (
   resultConfig: ResultConfigPrismaType,
-  responseOptions: Option[] | undefined,
+  responseField: Field | undefined | null,
 ): Decision => {
+  let defaultOption: Option | undefined = undefined;
+
   const decConfig = resultConfig.ResultConfigDecision;
   if (!decConfig)
     throw new GraphQLError("Missing decision config.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  let defaultOption: Option | undefined = undefined;
-
   if (decConfig.defaultOptionId) {
-    defaultOption = (responseOptions ?? []).find(
+    if (responseField?.__typename !== "Options")
+      throw new GraphQLError("Default option specififed but field is not an Options type", {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
+
+    defaultOption = responseField.options.find(
       (option) => option.optionId === decConfig.defaultOptionId,
     );
     if (!defaultOption)
@@ -60,9 +58,12 @@ const resultConfigDecisionResolver = (
 
   return {
     __typename: "Decision",
+    resultConfigId: resultConfig.id,
+    fieldId: resultConfig.fieldId,
     minimumAnswers: resultConfig.minAnswers,
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
+    defaultOption,
   };
 };
 
@@ -74,6 +75,8 @@ const resultConfigRankResolver = (resultConfig: ResultConfigPrismaType): Ranking
     });
   return {
     __typename: "Ranking",
+    fieldId: resultConfig.fieldId,
+    resultConfigId: resultConfig.id,
     minimumAnswers: resultConfig.minAnswers,
     numOptionsToInclude: rankConfig.numOptionsToInclude,
   };
@@ -87,15 +90,9 @@ const resultConfigLlmResolver = (resultConfig: ResultConfigPrismaType): LlmSumma
     });
   return {
     __typename: "LlmSummary",
+    resultConfigId: resultConfig.id,
     minimumAnswers: resultConfig.minAnswers,
-    summaryType: llmConfig.type as LlmSummaryType,
+    fieldId: resultConfig.fieldId,
     prompt: llmConfig.prompt,
-  };
-};
-
-const resultConfigRawResolver = (resultConfig: ResultConfigPrismaType): Raw => {
-  return {
-    __typename: "Raw",
-    minimumAnswers: resultConfig.minAnswers,
   };
 };

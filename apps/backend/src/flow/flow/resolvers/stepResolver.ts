@@ -3,8 +3,8 @@ import { StepPrismaType } from "../flowPrismaTypes";
 import { permissionResolver } from "../../permission/resolvers";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { actionResolver } from "../../action/resolvers";
-import { resultConfigResolver } from "../../result/resolvers";
 import { hasReadPermission } from "../../permission/hasReadPermission";
+import { resultsConfigSetResolver } from "@/flow/result/resolvers/resultConfigSetResolver";
 
 export const stepResolver = ({
   step,
@@ -17,25 +17,23 @@ export const stepResolver = ({
   userGroupIds: string[];
   userId: string | undefined;
 }): Step => {
-  let responseOptions: Option[] | undefined = undefined;
+  const responseFields = fieldSetResolver({ fieldSet: step.ResponseFieldSet });
 
-  const responseFields = step.ResponseFieldSet
-    ? fieldSetResolver({ fieldSet: step.ResponseFieldSet })
-    : null;
-  if (responseFields && responseFields[0].__typename === "Options") {
-    responseOptions = responseFields[0].options as Option[];
-  }
+  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields);
+
+  let responseOptions: Option[] | undefined = undefined;
   return {
+    index: step.index,
     request: {
       permission: permissionResolver(step.RequestPermissions, userIdentityIds),
       fields: fieldSetResolver({ fieldSet: step.RequestFieldSet }),
     },
     response: {
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
-      fields: fieldSetResolver({ fieldSet: step.ResponseFieldSet }),
+      fields: responseFields,
     },
-    action: step.ActionNew ? actionResolver(step.ActionNew, responseOptions) : null,
-    result: resultConfigResolver(step.ResultConfig, responseOptions),
+    action: actionResolver(step.ActionNew, responseOptions),
+    result,
     expirationSeconds: step.expirationSeconds,
     userPermission: {
       request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds, userId),

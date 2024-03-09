@@ -6,7 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect from "@mui/material/Select";
 import Loading from "../../Loading";
-import { TextFieldVariants } from "@mui/material";
+import { ListSubheader, TextFieldVariants } from "@mui/material";
 import { ReactNode } from "react";
 
 export interface SelectOption {
@@ -14,10 +14,15 @@ export interface SelectOption {
   value: string | number | undefined;
 }
 
-interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
+export interface SelectOptionGroup {
+  name: string;
+  options: SelectOption[];
+}
+
+interface SelectGroupedProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
   displayLabel?: boolean;
-  selectOptions: SelectOption[];
+  selectOptionGroups: SelectOptionGroup[];
   width: string;
   required?: boolean;
   loading?: boolean;
@@ -25,16 +30,14 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   renderValue?: (value: PathValue<T, Path<T>>) => ReactNode;
   size?: "small" | "medium";
   flexGrow?: string;
-  displayEmpty?: boolean;
 }
 
-export const Select = <T extends FieldValues>({
+export const SelectGrouped = <T extends FieldValues>({
   name,
   control,
   label,
   width,
-  selectOptions,
-  displayEmpty = false,
+  selectOptionGroups,
   renderValue,
   displayLabel = false,
   required = false,
@@ -44,7 +47,7 @@ export const Select = <T extends FieldValues>({
   flexGrow = "0",
 
   ...props
-}: SelectProps<T>): JSX.Element => (
+}: SelectGroupedProps<T>): JSX.Element => (
   <Controller
     name={name}
     control={control}
@@ -55,7 +58,7 @@ export const Select = <T extends FieldValues>({
           error={Boolean(error)}
           required={required}
         >
-          {displayLabel && !field.value && <InputLabel id={`select-${name}`}>{label}</InputLabel>}
+          {displayLabel && <InputLabel id={`select-${name}`}>{label}</InputLabel>}
           <MuiSelect
             {...props}
             autoWidth={true}
@@ -65,15 +68,21 @@ export const Select = <T extends FieldValues>({
             size={size}
             renderValue={renderValue}
             variant={variant}
-            displayEmpty={displayEmpty}
           >
             {loading ? (
               <Loading />
             ) : (
-              selectOptions.map((option, index) => (
-                <MenuItem key={`${option.name + index.toString()}`} value={option.value}>
-                  {option.name}
-                </MenuItem>
+              selectOptionGroups.map((group, index) => (
+                <>
+                  <ListSubheader key={group.name + index.toString()}>{group.name}</ListSubheader>
+                  {group.options.map((option, index) => {
+                    return (
+                      <MenuItem key={`${option.name + index.toString()}`} value={option.value}>
+                        {option.name}
+                      </MenuItem>
+                    );
+                  })}
+                </>
               ))
             )}
           </MuiSelect>

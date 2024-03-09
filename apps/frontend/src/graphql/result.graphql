@@ -9,15 +9,11 @@ fragment ResultConfig on ResultConfig {
   ... on LlmSummary {
     ...LlmSummary
   }
-  ... on Raw {
-    ...Raw
-  }
-  ... on AutoApprove {
-    ...AutoApprove
-  }
 }
 
 fragment Decision on Decision {
+  fieldId
+  resultConfigId
   minimumAnswers
   decisionType
   defaultOption {
@@ -27,20 +23,13 @@ fragment Decision on Decision {
 }
 
 fragment Ranking on Ranking {
-  minimumAnswers
+  fieldId
+  resultConfigId
   numOptionsToInclude
 }
 
 fragment LlmSummary on LlmSummary {
-  minimumAnswers
-  summaryType
+  fieldId
+  resultConfigId
   prompt
-}
-
-fragment Raw on Raw {
-  minimumAnswers
-}
-
-fragment AutoApprove on AutoApprove {
-  _
 }

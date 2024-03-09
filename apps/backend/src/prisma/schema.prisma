@@ -681,27 +681,28 @@ model FlowVersion {
 // we'd need to create a steps_versions_model and flows_versions_steps model.
 // Too much complexity for v1
 model Step {
-  id                    String   @id @default(uuid()) @db.Uuid
-  flowVersionId         String   @map("flow_version_id") @db.Uuid
+  id                    String  @id @default(uuid()) @db.Uuid
+  flowVersionId         String  @map("flow_version_id") @db.Uuid
   index                 Int
-  expirationSeconds     Int      @default(0) @map("request_expiration_seconds")
-  requestPermissionsId  String   @map("request_permissions_id") @db.Uuid
-  responsePermissionsId String?  @map("response_permissions_id") @db.Uuid
-  requestFieldSetId     String?  @map("request_field_set_id") @db.Uuid
-  responseFieldSetId    String?  @map("response_field_set_id") @db.Uuid
-  resultConfigId        String   @map("result_config_id") @db.Uuid
-  actionId              String?  @map("action_id") @db.Uuid
-  createdAt             DateTime @default(now()) @map("created_at")
+  expirationSeconds     Int?    @default(0) @map("request_expiration_seconds")
+  requestPermissionsId  String  @map("request_permissions_id") @db.Uuid
+  responsePermissionsId String? @map("response_permissions_id") @db.Uuid
+  requestFieldSetId     String? @map("request_field_set_id") @db.Uuid
+  responseFieldSetId    String? @map("response_field_set_id") @db.Uuid
+  resultConfigSetId     String? @map("result_config_set_id") @db.Uuid
 
-  FlowVersion         FlowVersion @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  RequestPermissions  Permission  @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
-  RequestFieldSet     FieldSet?   @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
-  ResponseFieldSet    FieldSet?   @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
-  ResponsePermissions Permission? @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
+  actionId  String?  @map("action_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
 
-  ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
-  ActionNew    ActionNew?    @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
-  RequestStep  RequestStep[]
+  FlowVersion         FlowVersion      @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
+  RequestPermissions  Permission       @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
+  RequestFieldSet     FieldSet?        @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
+  ResponseFieldSet    FieldSet?        @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
+  ResponsePermissions Permission?      @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
+  ResultConfigSet     ResultConfigSet? @relation(fields: [resultConfigSetId], references: [id])
+
+  ActionNew   ActionNew?    @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
+  RequestStep RequestStep[]
 
   @@map("steps")
 }
@@ -829,6 +830,7 @@ model FieldOptionsConfig {
   previousStepOptions    Boolean             @default(false) @map("previous_step_options")
   // Whether option is single or multi-select
   maxSelections          Int                 @map("max_selections")
+  linkedResultOptions    String[]            @default([]) @map("linked_result_options")
   // type single select / multi-select / etc
   selectionType          OptionSelectionType @map("option_selection_type")
   createdAt              DateTime            @default(now()) @map("created_at")
@@ -948,12 +950,12 @@ model ResultConfig {
   rankId     String? @map("rank_id") @db.Uuid
   llmId      String? @map("llm_id") @db.Uuid
 
-  Field                Field?                @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  ResultConfigDecision ResultConfigDecision? @relation(fields: [decisionId], references: [id], onDelete: Cascade)
-  ResultConfigRank     ResultConfigRank?     @relation(fields: [rankId], references: [id], onDelete: Cascade)
-  ResultConfigLlm      ResultConfigLlm?      @relation(fields: [llmId], references: [id], onDelete: Cascade)
-  Steps                Step[]
-  Results              Results[]
+  Field                        Field?                         @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
+  ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
+  Results                      Results[]
+  ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
 
   @@map("result_configs")
 }
@@ -995,7 +997,7 @@ enum LlmSummaryType {
 model ResultConfigLlm {
   id        String         @id @default(uuid()) @db.Uuid
   type      LlmSummaryType
-  prompt    String
+  prompt    String?
   createdAt DateTime       @default(now()) @map("created_at")
 
   ResultConfigs ResultConfig[]
@@ -1016,9 +1018,9 @@ model ActionNew {
   filterOptionId String?       @map("filter_option_id") @db.Uuid
   createdAt      DateTime      @default(now()) @map("created_at")
 
-  Steps       Step[]       @relation("StepsWithAction")
-  FieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
-  Webhook     Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  Steps             Step[]       @relation("StepsWithAction")
+  FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
+  Webhook           Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   ActionAttemptsNew ActionAttemptNew[]
 
@@ -1052,6 +1054,7 @@ model RequestNew {
   creatorId            String   @map("creator_id") @db.Uuid
   flowVersionId        String   @map("flow_version_id") @db.Uuid
   currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
+  name                 String
   open                 Boolean  @default(true)
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
@@ -1108,6 +1111,30 @@ model ResponseNew {
   User    User          @relation(fields: [creatorId], references: [id])
 
   @@map("responses_new")
+}
+
+// List of fields for use in request or response
+model ResultConfigSet {
+  id                           String                         @id @default(uuid()) @db.Uuid
+  createdAt                    DateTime                       @default(now()) @map("created_at")
+  // FieldSetFields                  FieldSetsFields[]
+  Step                         Step[]
+  ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
+
+  @@map("result_config_sets")
+}
+
+// Purpose of this association table is so that there can be new sets of options without 
+// needing to create new fields everytime there's a change to the group (since data is immutable in Ize)
+model ResultConfigSetResultConfigs {
+  resultConfigSetId String @map("result_config_set_id") @db.Uuid
+  resultConfigId    String @map("result_config_id") @db.Uuid
+
+  ResultConfigSet ResultConfigSet @relation(fields: [resultConfigSetId], references: [id])
+  ResultConfig    ResultConfig    @relation(fields: [resultConfigId], references: [id])
+
+  @@unique([resultConfigId, resultConfigSetId])
+  @@map("result_config_set_result_configs")
 }
 
 // can have multiple results for a given result config

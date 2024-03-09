@@ -1,15 +1,16 @@
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
-import { FlowSchemaType } from "../../formValidation/flow";
-import { Select, TextField } from "../../../FormFields";
-import { ResponsiveFormRow } from "../ResponsiveFormRow";
+import { FlowSchemaType } from "../formValidation/flow";
+import { Select, TextField } from "../../FormFields";
+import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { useEffect, useState } from "react";
 
-import { defaultDecisionStepFormValues } from "../../helpers/getDefaultFormValues";
-import { ActionNewType } from "@/graphql/generated/graphql";
-import { FieldOptionSchemaType } from "../../formValidation/fields";
-import { DefaultOptionSelection } from "../../formValidation/fields";
-import { SelectOption } from "../../../FormFields/Select";
+import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
+import { ActionNewType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { DefaultOptionSelection } from "../formValidation/fields";
+import { SelectOption } from "../../FormFields/Select";
+import { StepComponentContainer } from "./StepContainer";
+import { getSelectOptionName } from "../../getSelectOptionName";
 
 interface ActionFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -22,35 +23,49 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
 
   const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
 
-  const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
+  // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
+  const results = formMethods.watch(`steps.${formIndex}.result`);
+  const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
 
-  const defaultOptionSelections: SelectOption[] = (options ?? []).map(
-    (option: FieldOptionSchemaType) => {
-      return {
-        name: option.name,
-        value: option.optionId,
-      };
-    },
-  );
+  const options: SelectOption[] = [];
+
+  (results ?? [])
+    .filter((res) => res.type === ResultType.Decision)
+    .forEach((res, resIndex) => {
+      const field = responseFields.find((f) => f.fieldId === res.fieldId);
+      if (!field || field.type !== FieldType.Options) return;
+      field.optionsConfig.options.map((o) => {
+        options.push({
+          name: `Result ${resIndex}: "${o.name}"`,
+          value: o.optionId,
+        });
+      });
+    });
+
+  const defaultOptionSelections: SelectOption[] = [...options];
 
   defaultOptionSelections.unshift({
     name: "Action runs for every result",
     value: DefaultOptionSelection.None,
   });
 
+  const stepCount = formMethods.watch("steps").length;
+
   useEffect(() => {
     if (actionType !== latestActionState) {
       if (actionType === ActionNewType.TriggerStep) {
-        stepsArrayMethods.append(defaultDecisionStepFormValues);
+        stepsArrayMethods.append(defaultStepFormValues);
       } else if (latestActionState === ActionNewType.TriggerStep) {
-        stepsArrayMethods.remove(formIndex + 1);
+        for (let i = 0; i < stepCount; i++) {
+          stepsArrayMethods.remove(formIndex + 1);
+        }
       }
       setLatestActionState(actionType);
     }
   }, [actionType]);
 
   return (
-    <>
+    <StepComponentContainer label={"Action"}>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
@@ -66,20 +81,23 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
           displayLabel={false}
         />
         {(options ?? []).length > 0 && actionType !== ActionNewType.None && (
-          <Select<FlowSchemaType>
-            control={formMethods.control}
-            label="When to run action"
-            width="300px"
-            renderValue={(val) => {
-              const option = options.find((option) => option.optionId === val);
-              if (option) {
-                return "Only run action on: " + option.name;
-              } else return "Run action on all options";
-            }}
-            selectOptions={defaultOptionSelections}
-            displayLabel={false}
-            name={`steps.${formIndex}.action.filterOptionId`}
-          />
+          <>
+            <Select<FlowSchemaType>
+              control={formMethods.control}
+              label="When to run action"
+              width="300px"
+              renderValue={(val) => {
+                const optionName = getSelectOptionName(options, val);
+                if (optionName) {
+                  return "Only run action on: " + optionName;
+                } else return "Run action on all options";
+              }}
+              flexGrow="1"
+              selectOptions={defaultOptionSelections}
+              displayLabel={false}
+              name={`steps.${formIndex}.action.filterOptionId`}
+            />
+          </>
         )}
       </ResponsiveFormRow>
       {actionType === ActionNewType.CallWebhook && (
@@ -100,12 +118,13 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
             label="What does this webhook do?"
             placeholderText="What does this webhook do?"
             variant="standard"
+            flexGrow="1"
             size="small"
             showLabel={false}
             name={`steps.${formIndex}.action.callWebhook.name`}
           />
         </ResponsiveFormRow>
       )}
-    </>
+    </StepComponentContainer>
   );
 };

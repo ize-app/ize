@@ -1,14 +1,13 @@
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { Select } from "@/components/shared/Form/FormFields";
 
 import { StepContainer } from "./StepContainer";
-import { ResponseForm } from "./ResponseForm/ResponseForm";
-import { ResultForm } from "./ResultForm/ResultForm";
-import { RequestForm } from "./RequestForm/RequestForm";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponseForm } from "./ResponseForm";
+import { RequestForm } from "./RequestForm";
 import { ResultType } from "@/graphql/generated/graphql";
+import { ActionForm } from "./ActionForm";
+import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
@@ -21,8 +20,6 @@ interface StepFormProps {
 export const stepNameLabels = new Map<ResultType, { stepTitle: string }>([
   [ResultType.Decision, { stepTitle: "Decide" }],
   [ResultType.Ranking, { stepTitle: "Rank" }],
-  [ResultType.AutoApprove, { stepTitle: "Auto-approve request" }],
-  [ResultType.Raw, { stepTitle: "Get group's thoughts" }],
   [ResultType.LlmSummary, { stepTitle: "Sensemaking with AI" }],
 ]);
 
@@ -37,79 +34,28 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-
-  const { control, getValues: getFieldValues, watch } = useFormMethods;
+  const { getValues: getFieldValues } = useFormMethods;
   console.log("form state for ", formIndex, " is ", getFieldValues());
 
   console.log("errors are ", useFormMethods.formState.errors);
-
-  const resultType = watch(`steps.${formIndex}.result.type`);
-  // const [lastResult, setLastResultType] = useState<ResultType | null>(null);
-
-  // useEffect(() => {
-  //   console.log("inside use effet for ", resultType);
-  //   if (!!resultType && lastResult !== resultType) {
-  //     useFormMethods.resetField(`steps.${formIndex}`, {
-  //       defaultValue: getDefaultFormValues(resultType),
-  //     });
-  //     setLastResultType(resultType);
-  //   }
-  // }, [resultType]);
-
-  const previousStepResult: PreviousStepResult | null =
-    formIndex > 0
-      ? {
-          resultType: watch(`steps.${formIndex - 1}.result.type`),
-        }
-      : null;
-
-  const isReusable = watch("reusable");
-
-  const stepTitle = stepNameLabels.get(resultType)?.stepTitle;
 
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
       stepIdentifier={formIndex}
-      title={` Step ${formIndex + 1}: ${stepTitle}`}
+      title={` Step ${formIndex + 1}`}
     >
-      <ResponsiveFormRow>
-        <Select
-          control={control}
-          label="Purpose of this step"
-          name={`steps.${formIndex}.result.type`}
-          width="300px"
-          size="small"
-          displayLabel={false}
-          selectOptions={[
-            { name: "Decide", value: ResultType.Decision },
-            { name: "Get ideas, thoughts, or feedback", value: ResultType.Raw },
-            { name: "Rank", value: ResultType.Ranking },
-            { name: "Co-create shared understanding with AI ", value: ResultType.LlmSummary },
-            { name: "Auto-approve a request", value: ResultType.AutoApprove },
-          ]}
+      <>
+        <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ResultsForm formMethods={useFormMethods} formIndex={formIndex} />
+        <ActionForm
+          formMethods={useFormMethods}
+          formIndex={formIndex}
+          stepsArrayMethods={stepsArrayMethods}
         />
-      </ResponsiveFormRow>
-
-      {resultType && (
-        <>
-          {isReusable && <RequestForm formMethods={useFormMethods} formIndex={formIndex} />}
-          {resultType !== ResultType.AutoApprove && (
-            <ResponseForm
-              formMethods={useFormMethods}
-              formIndex={formIndex}
-              previousStepResult={previousStepResult}
-            />
-          )}
-          {/* <ResponsePermissionsForm formMethods={useFormMethods} formIndex={formIndex} /> */}
-          <ResultForm
-            formMethods={useFormMethods}
-            formIndex={formIndex}
-            stepsArrayMethods={stepsArrayMethods}
-          />
-        </>
-      )}
+      </>
     </StepContainer>
   );
 };

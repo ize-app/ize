@@ -2,8 +2,6 @@ import { useQuery } from "@apollo/client";
 import { useState } from "react";
 
 import {
-  GroupSummaryPartsFragment,
-  GroupsDocument,
   ProcessSummaryPartsFragment,
   ProcessesDocument,
   RequestSummaryPartsFragment,
@@ -49,7 +47,7 @@ const Dashboard = () => {
     },
     {
       title: "Groups",
-      content: <GroupTab  />,
+      content: <GroupTab />,
     },
   ];
 

@@ -12,6 +12,10 @@ export enum DefaultOptionSelection {
   None = "None",
 }
 
+export enum DefaultFieldSelection {
+  None = "None",
+}
+
 export const fieldOptionSchema = z
   .object({
     optionId: z.string(),
@@ -34,6 +38,7 @@ const fieldOptionsSchema = z
     selectionType: z.nativeEnum(FieldOptionsSelectionType),
     maxSelections: z.coerce.number().default(1),
     options: z.array(fieldOptionSchema).default([]),
+    linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
   .refine(
     (requestOptions) => {
@@ -82,12 +87,12 @@ export const fieldSchema = z
         field.type === FieldType.Options &&
         (field.optionsConfig.options ?? []).length === 0 &&
         !field.optionsConfig.hasRequestOptions &&
-        !field.optionsConfig.previousStepOptions
+        field.optionsConfig.linkedResultOptions.length === 0
       )
         return false;
       return true;
     },
-    { path: [""], message: "Add options" },
+    { path: [""], message: "Add options or allow requestor to create their own options." },
   );
 
 export const fieldsSchema = z.array(fieldSchema).default([]);

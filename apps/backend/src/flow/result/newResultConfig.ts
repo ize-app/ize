@@ -1,10 +1,48 @@
 import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
-import { FieldPrismaType } from "../fields/fieldPrismaTypes";
+import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 import { newDecisionConfig } from "./decision/newDecisionConfig";
 import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./decision/newLlmSummaryConfig";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+
+export const newResultConfigSet = async ({
+  resultsArgs,
+  responseFieldSet,
+  transaction,
+}: {
+  resultsArgs: ResultArgs[];
+  responseFieldSet: FieldSetPrismaType | undefined | null;
+  transaction: Prisma.TransactionClient;
+}): Promise<string | undefined> => {
+  if (resultsArgs.length === 0) return undefined;
+  const dbResults = await Promise.all(
+    resultsArgs.map(async (res) => {
+      // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
+      let responseField = null;
+      if (typeof res.responseFieldIndex === "number")
+        responseField = responseFieldSet?.FieldSetFields[res.responseFieldIndex].Field;
+
+      return await newResultConfig({
+        resultArgs: res,
+        responseField,
+        transaction,
+      });
+    }),
+  );
+
+  const fieldSet = await transaction.resultConfigSet.create({
+    data: {
+      ResultConfigSetResultConfigs: {
+        createMany: {
+          data: dbResults.map((resultConfigId) => ({ resultConfigId: resultConfigId })),
+        },
+      },
+    },
+  });
+
+  return fieldSet.id;
+};
 
 export const newResultConfig = async ({
   resultArgs,
@@ -12,15 +50,12 @@ export const newResultConfig = async ({
   transaction,
 }: {
   resultArgs: ResultArgs;
-  responseField: FieldPrismaType | undefined;
+  responseField: FieldPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   let decisionId;
   let rankId;
   let llmId;
-
-  if (resultArgs.type !== ResultType.AutoApprove && !responseField)
-    throw Error("newResultConfig: Missing field ");
 
   switch (resultArgs.type) {
     case ResultType.Decision:
@@ -60,7 +95,7 @@ export const newResultConfig = async ({
   const resultConfig = await transaction.resultConfig.create({
     data: {
       resultType: resultArgs.type,
-      minAnswers: resultArgs.minimumResponses ?? undefined,
+      minAnswers: resultArgs.minimumAnswers ?? undefined,
       fieldId: responseField?.id,
       decisionId,
       rankId,

@@ -1,6 +1,8 @@
-union ResultConfig = Decision | Ranking | LlmSummary | Raw | AutoApprove
+union ResultConfig = Decision | Ranking | LlmSummary
 
 type Decision {
+  resultConfigId: String!
+  fieldId: String
   minimumAnswers: Int!
   decisionType: DecisionType!
   defaultOption: Option
@@ -8,31 +10,24 @@ type Decision {
 }
 
 type Ranking {
+  resultConfigId: String!
+  fieldId: String
   minimumAnswers: Int!
   numOptionsToInclude: Int!
 }
 
 type LlmSummary {
+  resultConfigId: String!
+  fieldId: String
   minimumAnswers: Int!
-  summaryType: LlmSummaryType!
   prompt: String
-}
-
-type Raw {
-  minimumAnswers: Int!
-}
-
-type AutoApprove {
-  _: Boolean
 }
 
 # mirrors Prisma type
 enum ResultType {
-  Raw
   Decision
   Ranking
   LlmSummary
-  AutoApprove
 }
 
 # mirrors Prisma type
@@ -48,7 +43,10 @@ enum LlmSummaryType {
 
 input ResultArgs {
   type: ResultType!
-  minimumResponses: Int
+  resultId: String
+  fieldId: String
+  minimumAnswers: Int
+  responseFieldIndex: Int
   decision: DecisionNewArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs
@@ -66,5 +64,5 @@ input PrioritizationArgs {
 
 input LlmSummaryArgs {
   type: LlmSummaryType!
-  prompt: String!
+  prompt: String
 }

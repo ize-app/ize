@@ -1,15 +1,15 @@
 import { ActionNewArgs, ActionNewType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
-import { FieldPrismaType } from "../fields/fieldPrismaTypes";
+import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newActionConfig = async ({
   actionArgs,
-  responseField,
+  responseFieldSet,
   transaction,
 }: {
   actionArgs: ActionNewArgs;
-  responseField: FieldPrismaType | undefined;
+  responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   let filterOptionId: string | null = null;
@@ -17,7 +17,10 @@ export const newActionConfig = async ({
 
   if (actionArgs.type === ActionNewType.None) return null;
 
-  if (actionArgs.filterOptionIndex && responseField) {
+  if (actionArgs.filterOptionIndex && actionArgs.filterResponseFieldIndex && responseFieldSet) {
+    const responseField =
+      responseFieldSet?.FieldSetFields[actionArgs.filterResponseFieldIndex].Field;
+
     filterOptionId =
       responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
         (fo) => fo.index === actionArgs.filterOptionIndex,

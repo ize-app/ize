@@ -1,4 +1,4 @@
-import { Box, useFormControl } from "@mui/material";
+import { Box } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { StepForm } from "./StepForm";
 import { useState } from "react";
@@ -43,13 +43,11 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
           />
         );
       })}
-      {isReusable && (
-        <EvolveFlowForm
-          formMethods={useFormMethods}
-          expandedStep={expanded}
-          handleStepExpansion={handleStepExpansion("EvolveStep")}
-        />
-      )}
+      <EvolveFlowForm
+        formMethods={useFormMethods}
+        expandedStep={expanded}
+        handleStepExpansion={handleStepExpansion("EvolveStep")}
+      />
     </Box>
   );
 };

@@ -205,6 +205,18 @@
             "deprecationReason": null
           },
           {
+            "name": "filterResponseFieldIndex",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "type",
             "description": null,
             "type": {
@@ -611,29 +623,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "OBJECT",
-        "name": "AutoApprove",
-        "description": null,
-        "fields": [
-          {
-            "name": "_",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "ENUM",
         "name": "Blockchain",
         "description": null,
@@ -910,6 +899,18 @@
             "deprecationReason": null
           },
           {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "minimumAnswers",
             "description": null,
             "args": [],
@@ -919,6 +920,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultConfigId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -2004,6 +2021,30 @@
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "linkedResultOptions",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LinkedResultOptionsArgs",
+                    "ofType": null
+                  }
+                }
               }
             },
             "defaultValue": null,
@@ -3473,10 +3514,65 @@
         "possibleTypes": null
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "LinkedResultOptionsArgs",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "resultIndex",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stepIndex",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "LlmSummary",
         "description": null,
         "fields": [
+          {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "minimumAnswers",
             "description": null,
@@ -3506,15 +3602,15 @@
             "deprecationReason": null
           },
           {
-            "name": "summaryType",
+            "name": "resultConfigId",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "LlmSummaryType",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -3537,13 +3633,9 @@
             "name": "prompt",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4127,9 +4219,13 @@
             "name": "evolve",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "EvolveFlowArgs",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "EvolveFlowArgs",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4204,6 +4300,22 @@
         "inputFields": [
           {
             "name": "flowId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -4297,13 +4409,9 @@
             "name": "expirationSeconds",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4344,9 +4452,17 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "ResultArgs",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ResultArgs",
+                    "ofType": null
+                  }
+                }
               }
             },
             "defaultValue": null,
@@ -4802,6 +4918,30 @@
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "linkedResultOptions",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,
@@ -6340,6 +6480,18 @@
         "description": null,
         "fields": [
           {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "minimumAnswers",
             "description": null,
             "args": [],
@@ -6370,20 +6522,9 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Raw",
-        "description": null,
-        "fields": [
+          },
           {
-            "name": "minimumAnswers",
+            "name": "resultConfigId",
             "description": null,
             "args": [],
             "type": {
@@ -6391,7 +6532,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -6847,6 +6988,22 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "Flow",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -7372,6 +7529,18 @@
             "deprecationReason": null
           },
           {
+            "name": "fieldId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "llmSummary",
             "description": null,
             "type": {
@@ -7384,7 +7553,7 @@
             "deprecationReason": null
           },
           {
-            "name": "minimumResponses",
+            "name": "minimumAnswers",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -7401,6 +7570,30 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "PrioritizationArgs",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "responseFieldIndex",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -7439,11 +7632,6 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
-            "name": "AutoApprove",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
             "name": "Decision",
             "ofType": null
           },
@@ -7455,11 +7643,6 @@
           {
             "kind": "OBJECT",
             "name": "Ranking",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Raw",
             "ofType": null
           }
         ]
@@ -7473,12 +7656,6 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "AutoApprove",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "Decision",
             "description": null,
             "isDeprecated": false,
@@ -7492,12 +7669,6 @@
           },
           {
             "name": "Ranking",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Raw",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -7680,6 +7851,18 @@
             "description": null,
             "args": [],
             "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "index",
+            "description": null,
+            "args": [],
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -7731,9 +7914,17 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "UNION",
-                "name": "ResultConfig",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "UNION",
+                    "name": "ResultConfig",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,

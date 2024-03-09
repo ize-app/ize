@@ -7,7 +7,7 @@ import { StepComponentContainer, StepContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { PermissionType } from "../formValidation/permission";
 
-import { InputAdornment } from "@mui/material";
+import { Box, InputAdornment } from "@mui/material";
 
 import { DecisionType } from "@/graphql/generated/graphql";
 
@@ -36,6 +36,26 @@ export const EvolveFlowForm = ({
       title={`How this flow evolves`}
     >
       <StepComponentContainer label={"Request"}>
+        <Box sx={{ display: "none" }}>
+          {/* <Select<FlowSchemaType>
+            control={formMethods.control}
+            label="Default option"
+            width="200px"
+            // renderValue={(val) => {
+            //   if (val === DefaultOptionSelection.None)
+            //     return "If there is no decision, there is no result.";
+            //   const option = defaultDecisionOptions.find((option) => option.value === val);
+            //   if (option) {
+            //     return "Default result if no decision: " + option.name;
+            //   } else return "No default result";
+            // }}
+            // selectOptions={defaultDecisionOptions}
+            selectOptions={[]}
+            displayLabel={false}
+            flexGrow="1"
+            name={`evolve.decision.defaultOptionId`}
+          /> */}
+        </Box>
         <ResponsiveFormRow>
           <Select
             control={formMethods.control}

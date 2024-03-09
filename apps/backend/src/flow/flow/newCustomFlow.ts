@@ -4,6 +4,7 @@ import { newStep } from "./helpers/newStep";
 import { FlowType } from "@prisma/client";
 import { newEvolveFlow } from "./helpers/newEvolveFlow";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { StepPrismaType } from "./flowPrismaTypes";
 
 export const newCustomFlow = async ({ args }: { args: MutationNewFlowArgs }): Promise<string> => {
   let evolveFlowId: string | null = null;
@@ -48,17 +49,20 @@ export const newCustomFlow = async ({ args }: { args: MutationNewFlowArgs }): Pr
       },
     });
 
-    await Promise.all(
-      args.flow.steps.map(async (step, index) => {
-        await newStep({
-          args: step,
-          transaction,
-          flowVersionId: flowVersion.id,
-          index,
-          reusable: args.flow.reusable,
-        });
-      }),
-    );
+    const createdSteps: StepPrismaType[] = [];
+
+    // executing in sequence because steps can reference previous steps
+    for (let i = 0; i <= args.flow.steps.length - 1; i++) {
+      const step = args.flow.steps[i];
+      await newStep({
+        args: step,
+        transaction,
+        flowVersionId: flowVersion.id,
+        index: i,
+        createdSteps,
+        reusable: args.flow.reusable,
+      });
+    }
 
     return flow.id;
   });

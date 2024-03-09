@@ -1,11 +1,18 @@
 import { FlowSchemaType } from "../../formValidation/flow";
 import { DecisionNewArgs, NewFlowArgs } from "@/graphql/generated/graphql";
-import { createFieldArgs, createFieldsArgs } from "./createFieldsArgs";
+import { createFieldsArgs } from "./createFieldsArgs";
 import { createPermissionArgs } from "./createPermissionsArgs";
 import { createActionArgs } from "./createActionArgs";
-import { createResultArgs } from "./createResultArgs";
+import { createResultsArgs } from "./createResultArgs";
+
+export interface ResultConfigCache {
+  id: string;
+  stepIndex: number;
+  resultIndex: number;
+}
 
 export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): NewFlowArgs => {
+  const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
     name: formState.name,
     reusable: formState.reusable,
@@ -13,19 +20,19 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
       return {
         ...step,
         request: {
-          fields: createFieldsArgs(step.request?.fields ?? []),
+          fields: createFieldsArgs(step.request?.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(
             step.request?.permission,
             formState.reusable && index === 0 ? userId : undefined,
           ),
         },
         response: step.response && {
-          fields: [createFieldArgs(step.response.field)],
+          fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.response.permission),
         },
-        action: createActionArgs(step.action, step.response?.field),
-        result: createResultArgs(step.result, step.response?.field),
-        expirationSeconds: step.expirationSeconds
+        result: createResultsArgs(step.result, step.response?.fields, index, resultConfigCache),
+        action: createActionArgs(step.action, step.response?.fields),
+        expirationSeconds: step.expirationSeconds ?? null,
       };
     }),
     evolve: formState.evolve && {

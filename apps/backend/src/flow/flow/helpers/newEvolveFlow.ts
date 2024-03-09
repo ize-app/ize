@@ -32,6 +32,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       previousStepOptions: false,
       maxSelections: 1,
       selectionType: FieldOptionsSelectionType.Select,
+      linkedResultOptions: [],
       options: [
         { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
         { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
@@ -42,11 +43,13 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
   const resultArgs: ResultArgs = {
     type: ResultType.Decision,
     decision: { ...evolveArgs.decision },
-    minimumResponses: 1,
+    responseFieldIndex: 0,
+    minimumAnswers: 1,
   };
 
   const actionArgs: ActionNewArgs = {
     type: ActionNewType.EvolveFlow,
+    filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
   };
 
@@ -60,7 +63,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       fields: [responseFieldSetArgs],
     },
     expirationSeconds: 259200,
-    result: resultArgs,
+    result: [resultArgs],
     action: actionArgs,
   };
 };
@@ -104,6 +107,7 @@ export const newEvolveFlow = async ({
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,
+    createdSteps: [],
     reusable: true,
   });
 

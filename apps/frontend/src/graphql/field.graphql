@@ -17,6 +17,7 @@ fragment Options on Options {
   requestOptionsDataType
   selectionType
   maxSelections
+  linkedResultOptions
   options {
     ...Option
   }
