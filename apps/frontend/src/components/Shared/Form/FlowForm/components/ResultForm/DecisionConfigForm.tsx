@@ -25,19 +25,19 @@ export const DecisionConfigForm = ({
   resultId,
   field,
 }: DecisionConfigFormProps) => {
-  useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, {
-      type: ResultType.Decision,
-      fieldId: field.fieldId,
-      resultId,
-      minimumAnswers: 1,
-      decision: {
-        type: DecisionType.NumberThreshold,
-        threshold: 1,
-        defaultOptionId: DefaultOptionSelection.None,
-      },
-    });
-  }, []);
+  // useEffect(() => {
+  //   formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, {
+  //     type: ResultType.Decision,
+  //     fieldId: field.fieldId,
+  //     resultId,
+  //     minimumAnswers: 1,
+  //     decision: {
+  //       type: DecisionType.NumberThreshold,
+  //       threshold: 1,
+  //       defaultOptionId: DefaultOptionSelection.None,
+  //     },
+  //   });
+  // }, []);
 
   const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
 

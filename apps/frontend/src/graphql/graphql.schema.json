@@ -899,6 +899,18 @@
             "deprecationReason": null
           },
           {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "minimumAnswers",
             "description": null,
             "args": [],
@@ -2016,7 +2028,7 @@
             "deprecationReason": null
           },
           {
-            "name": "linkedOptions",
+            "name": "linkedResultOptions",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -2029,7 +2041,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "LinkedOptionArgs",
+                    "name": "LinkedResultOptionsArgs",
                     "ofType": null
                   }
                 }
@@ -3503,19 +3515,19 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "LinkedOptionArgs",
+        "name": "LinkedResultOptionsArgs",
         "description": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
+            "name": "resultIndex",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -3524,14 +3536,14 @@
             "deprecationReason": null
           },
           {
-            "name": "type",
+            "name": "stepIndex",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -3549,6 +3561,34 @@
         "name": "LlmSummary",
         "description": null,
         "fields": [
+          {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "minimumAnswers",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "prompt",
             "description": null,
@@ -4179,9 +4219,13 @@
             "name": "evolve",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "EvolveFlowArgs",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "EvolveFlowArgs",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4864,7 +4908,7 @@
             "deprecationReason": null
           },
           {
-            "name": "linkedResults",
+            "name": "linkedResultOptions",
             "description": null,
             "args": [],
             "type": {
@@ -6420,6 +6464,18 @@
         "description": null,
         "fields": [
           {
+            "name": "fieldId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "minimumAnswers",
             "description": null,
             "args": [],
@@ -7766,6 +7822,22 @@
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "index",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

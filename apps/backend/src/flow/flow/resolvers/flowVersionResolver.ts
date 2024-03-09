@@ -24,7 +24,7 @@ export const flowVersionResolver = ({
     name: flowVersion.name,
     steps: flowVersion.Steps.map((step) =>
       stepResolver({ step, userIdentityIds, userGroupIds, userId }),
-    ),
+    ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow
       ? flowVersionResolver({ flowVersion: evolveFlow, userIdentityIds, userGroupIds, userId })
       : null,

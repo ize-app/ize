@@ -32,7 +32,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
       previousStepOptions: false,
       maxSelections: 1,
       selectionType: FieldOptionsSelectionType.Select,
-      linkedOptions: [],
+      linkedResultOptions: [],
       options: [
         { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
         { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
@@ -107,6 +107,7 @@ export const newEvolveFlow = async ({
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,
+    createdSteps: [],
     reusable: true,
   });
 

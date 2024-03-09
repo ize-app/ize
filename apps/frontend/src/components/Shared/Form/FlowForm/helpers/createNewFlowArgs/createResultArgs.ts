@@ -1,6 +1,7 @@
 import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
 import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
 import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+import { ResultConfigCache } from "./createNewFlowArgs";
 
 export const createResultArgs = (
   result: ResultSchemaType,
@@ -43,8 +44,11 @@ export const createResultArgs = (
 export const createResultsArgs = (
   results: ResultsSchemaType,
   responseFields: FieldsSchemaType,
+  stepIndex: number,
+  resultConfigCache: ResultConfigCache[],
 ): ResultArgs[] => {
-  return results.map((result) => {
-    return createResultArgs(result, responseFields);
+  return results.map((resultConfig, resultIndex) => {
+    resultConfigCache.push({ id: resultConfig.resultId, stepIndex, resultIndex });
+    return createResultArgs(resultConfig, responseFields);
   });
 };

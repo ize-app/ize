@@ -5,31 +5,34 @@ import { newPermission } from "@/flow/permission/newPermission";
 import { newResultConfigSet } from "@/flow/result/newResultConfig";
 import { newActionConfig } from "@/flow/action/newAction";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { StepPrismaType, stepInclude } from "../flowPrismaTypes";
 
 export const newStep = async ({
   args,
   flowVersionId,
   index,
   reusable,
+  createdSteps,
   transaction,
 }: {
   args: NewStepArgs;
   flowVersionId: string;
   index: number;
   reusable: boolean;
+  createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
-}): Promise<string> => {
+}): Promise<StepPrismaType> => {
   if (!args.request?.permission && !(!reusable || index > 0))
     throw new GraphQLError("Request permissions required for the first step of reusable flows.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
   const requestFieldSet = args.request
-    ? await newFieldSet({ fields: args.request.fields, transaction })
+    ? await newFieldSet({ fields: args.request.fields, transaction, createdSteps })
     : null;
-    
+
   const responseFieldSet = args.response
-    ? await newFieldSet({ fields: args.response.fields, transaction })
+    ? await newFieldSet({ fields: args.response.fields, transaction, createdSteps })
     : null;
 
   const requestPermissionsId = await newPermission({
@@ -59,6 +62,7 @@ export const newStep = async ({
   });
 
   const step = await transaction.step.create({
+    include: stepInclude,
     data: {
       requestFieldSetId: requestFieldSet?.id,
       requestPermissionsId: requestPermissionsId,
@@ -72,5 +76,7 @@ export const newStep = async ({
     },
   });
 
-  return step.id;
+  createdSteps.push(step);
+
+  return step;
 };

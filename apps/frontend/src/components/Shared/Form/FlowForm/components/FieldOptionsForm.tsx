@@ -62,14 +62,13 @@ export const FieldOptionsForm = ({
     append: linksAppend,
   } = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions`,
+    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
   });
 
   const steps = formMethods.watch(`steps`);
   const possibleLinkOptions = createLinkOptions(steps, formIndex);
 
   const enableRequestCreatedOptions = (_event: React.MouseEvent<HTMLElement>) => {
-    console.log("inside enable request created options");
     formMethods.setValue(
       `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
       true,
@@ -94,7 +93,7 @@ export const FieldOptionsForm = ({
 
   const linkedOptions =
     formMethods.watch(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions`,
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
     ) ?? [];
 
   const optionsError =
@@ -158,6 +157,39 @@ export const FieldOptionsForm = ({
           width: "100%",
         }}
       >
+        <Box sx={{ display: "none" }}>
+          {" "}
+          <TextField<FlowSchemaType>
+            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
+            key={"hasRequestOptions" + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Has request options - ignore`}
+            variant="standard"
+            disabled={true}
+            size="small"
+          />
+          <TextField<FlowSchemaType>
+            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`}
+            key={"linkedOptions" + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Linked options - ignore`}
+            variant="standard"
+            disabled={true}
+            size="small"
+          />
+          <TextField<FlowSchemaType>
+            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+            key={"requestOptionsDataType" + formIndex.toString()}
+            control={control}
+            showLabel={false}
+            label={`Linked options - ignore`}
+            variant="standard"
+            disabled={true}
+            size="small"
+          />
+        </Box>
         {stepDefinedOptions.length > 0 && (
           <Box sx={{ width: "100%" }}>
             {fields.map((item, inputIndex) => {
@@ -219,7 +251,7 @@ export const FieldOptionsForm = ({
                     size={"small"}
                     // variant="outlined"
                     flexGrow="1"
-                    name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedOptions.${inputIndex}.id`}
+                    name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                     key={"links" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={possibleLinkOptions}
                     renderValue={(val) => {
@@ -242,7 +274,7 @@ export const FieldOptionsForm = ({
             })}
           </Box>
         )}
-        {hasRequestDefinedOptions && branch === "request" && (
+        {hasRequestDefinedOptions && branch === "response" && (
           <ResponsiveFormRow>
             <Typography sx={{ flexGrow: 1 }}>Requestor can add options</Typography>
             <Select
@@ -295,7 +327,7 @@ export const FieldOptionsForm = ({
               variant="outlined"
               size="small"
               onClick={() => {
-                linksAppend({ type: "ResultConfig", id: "" });
+                linksAppend({ id: "" });
               }}
             >
               Use previous result as option(s)

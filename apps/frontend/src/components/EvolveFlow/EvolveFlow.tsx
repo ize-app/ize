@@ -29,21 +29,21 @@ export const EvolveFlow = () => {
   const { flowId: flowIdShort } = useParams();
   const flowId: string = shortUUIDToFull(flowIdShort as string);
 
-
   const { error, data, loading } = useQuery(GetFlowDocument, {
     variables: {
       flowId,
     },
     onCompleted: (data) => {
       const formState = createFormStateForExistingFlow(data.getFlow as Flow);
-      setFormState((prev) => ({
-        ...prev,
-        currentFlow: { ...formState },
-        ...formState,
-      }));
+      setFormState((prev) => {
+        return {
+          ...prev,
+          ...formState,
+          currentFlow: formState,
+        };
+      });
     },
   });
-
 
   const [mutate] = useMutation(NewEditProcessRequestDocument, {
     onCompleted: (data) => {
@@ -96,8 +96,6 @@ export const EvolveFlow = () => {
   useEffect(() => {
     setParams({ flowId: flowIdShort });
   }, [setParams, flowIdShort]);
-
-  console.log("current formstate is ", formState.currentFlow);
 
   return (
     <PageContainer>

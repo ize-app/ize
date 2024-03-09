@@ -109,7 +109,7 @@ export const Flow = () => {
                 onClick={() => {
                   navigate(
                     generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {
-                      flowId: fullUUIDToShort(flow.id),
+                      flowId: fullUUIDToShort(flowId),
                     }),
                   );
                 }}

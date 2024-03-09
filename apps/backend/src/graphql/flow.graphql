@@ -13,7 +13,7 @@ type Flow {
   name: String!
   reusable: Boolean!
   steps: [Step]!
-  evolve: Flow # TBD
+  evolve: Flow
 }
 
 enum FlowType {
@@ -22,6 +22,7 @@ enum FlowType {
 }
 
 type Step {
+  index: Int!
   request: RequestConfig!
   response: ResponseConfig!
   result: [ResultConfig!]!
@@ -49,7 +50,7 @@ input NewFlowArgs {
   name: String!
   reusable: Boolean!
   steps: [NewStepArgs!]!
-  evolve: EvolveFlowArgs
+  evolve: EvolveFlowArgs!
 }
 
 input NewStepArgs {

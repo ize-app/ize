@@ -66,7 +66,6 @@ export const CreateRequestForm = () => {
   // zod record with a data type,
 
   const onSubmit = (data: RequestSchemaType) => {
-    console.log("inside onsubmit");
     setFormState((prev) => ({
       ...prev,
       requestFields: data.requestFields ?? undefined,

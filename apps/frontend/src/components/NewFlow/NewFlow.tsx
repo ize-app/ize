@@ -24,14 +24,12 @@ export const NewFlow = () => {
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
-      console.log("inside onCompleted");
       const { newFlow: newFlowId } = data;
       navigate(`/flow/${fullUUIDToShort(newFlowId)}`);
     },
   });
 
   const onComplete = async () => {
-    console.log("about to make mutation");
     try {
       if (!me?.user.id) throw Error("Missing user Id");
       await mutate({

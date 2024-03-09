@@ -12,6 +12,8 @@ fragment ResultConfig on ResultConfig {
 }
 
 fragment Decision on Decision {
+  fieldId
+  resultConfigId
   minimumAnswers
   decisionType
   defaultOption {
@@ -21,9 +23,13 @@ fragment Decision on Decision {
 }
 
 fragment Ranking on Ranking {
+  fieldId
+  resultConfigId
   numOptionsToInclude
 }
 
 fragment LlmSummary on LlmSummary {
+  fieldId
+  resultConfigId
   prompt
 }

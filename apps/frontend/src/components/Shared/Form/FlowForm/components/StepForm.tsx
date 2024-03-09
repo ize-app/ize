@@ -20,8 +20,6 @@ interface StepFormProps {
 export const stepNameLabels = new Map<ResultType, { stepTitle: string }>([
   [ResultType.Decision, { stepTitle: "Decide" }],
   [ResultType.Ranking, { stepTitle: "Rank" }],
-  [ResultType.AutoApprove, { stepTitle: "Auto-approve request" }],
-  [ResultType.Raw, { stepTitle: "Get group's thoughts" }],
   [ResultType.LlmSummary, { stepTitle: "Sensemaking with AI" }],
 ]);
 

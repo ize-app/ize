@@ -128,6 +128,7 @@ export type Decision = {
   __typename?: 'Decision';
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
+  fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
   resultConfigId: Scalars['String']['output'];
   threshold: Scalars['Int']['output'];
@@ -257,7 +258,7 @@ export type FieldOptionArgs = {
 
 export type FieldOptionsConfigArgs = {
   hasRequestOptions: Scalars['Boolean']['input'];
-  linkedOptions: Array<LinkedOptionArgs>;
+  linkedResultOptions: Array<LinkedResultOptionsArgs>;
   maxSelections: Scalars['Int']['input'];
   options: Array<FieldOptionArgs>;
   previousStepOptions: Scalars['Boolean']['input'];
@@ -425,13 +426,15 @@ export type InputTemplateArgs = {
   type: InputDataType;
 };
 
-export type LinkedOptionArgs = {
-  id: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+export type LinkedResultOptionsArgs = {
+  resultIndex: Scalars['Int']['input'];
+  stepIndex: Scalars['Int']['input'];
 };
 
 export type LlmSummary = {
   __typename?: 'LlmSummary';
+  fieldId?: Maybe<Scalars['String']['output']>;
+  minimumAnswers: Scalars['Int']['output'];
   prompt?: Maybe<Scalars['String']['output']>;
   resultConfigId: Scalars['String']['output'];
 };
@@ -526,7 +529,7 @@ export enum NewAgentTypes {
 }
 
 export type NewFlowArgs = {
-  evolve?: InputMaybe<EvolveFlowArgs>;
+  evolve: EvolveFlowArgs;
   name: Scalars['String']['input'];
   reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
@@ -604,7 +607,7 @@ export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
   hasRequestOptions: Scalars['Boolean']['output'];
-  linkedResults: Array<Scalars['String']['output']>;
+  linkedResultOptions: Array<Scalars['String']['output']>;
   maxSelections: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   options: Array<Option>;
@@ -795,6 +798,7 @@ export type QuerySearchNftContractsArgs = {
 
 export type Ranking = {
   __typename?: 'Ranking';
+  fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
   numOptionsToInclude: Scalars['Int']['output'];
   resultConfigId: Scalars['String']['output'];
@@ -932,6 +936,7 @@ export type Step = {
   __typename?: 'Step';
   action?: Maybe<ActionNew>;
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
+  index: Scalars['Int']['output'];
   request: RequestConfig;
   response: ResponseConfig;
   result: Array<ResultConfig>;
@@ -1157,7 +1162,7 @@ export type ResolversTypes = {
   InputTemplate: ResolverTypeWrapper<InputTemplate>;
   InputTemplateArgs: InputTemplateArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  LinkedOptionArgs: LinkedOptionArgs;
+  LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
   LlmSummaryArgs: LlmSummaryArgs;
   LlmSummaryType: LlmSummaryType;
@@ -1285,7 +1290,7 @@ export type ResolversParentTypes = {
   InputTemplate: InputTemplate;
   InputTemplateArgs: InputTemplateArgs;
   Int: Scalars['Int']['output'];
-  LinkedOptionArgs: LinkedOptionArgs;
+  LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
   Me: Me;
@@ -1408,6 +1413,7 @@ export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType
 export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Decision'] = ResolversParentTypes['Decision']> = {
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1585,6 +1591,8 @@ export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
+  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   prompt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1648,7 +1656,7 @@ export type OptionFieldAnswerSelectionResolvers<ContextType = GraphqlRequestCont
 export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Options'] = ResolversParentTypes['Options']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  linkedResults?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  linkedResultOptions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   maxSelections?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
@@ -1738,6 +1746,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
+  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   numOptionsToInclude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1844,6 +1853,7 @@ export type RolesResolvers<ContextType = GraphqlRequestContext, ParentType exten
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['ActionNew']>, ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;
   result?: Resolver<Array<ResolversTypes['ResultConfig']>, ParentType, ContextType>;

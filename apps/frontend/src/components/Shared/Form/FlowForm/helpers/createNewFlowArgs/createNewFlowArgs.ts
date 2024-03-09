@@ -5,7 +5,14 @@ import { createPermissionArgs } from "./createPermissionsArgs";
 import { createActionArgs } from "./createActionArgs";
 import { createResultsArgs } from "./createResultArgs";
 
+export interface ResultConfigCache {
+  id: string;
+  stepIndex: number;
+  resultIndex: number;
+}
+
 export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): NewFlowArgs => {
+  const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
     name: formState.name,
     reusable: formState.reusable,
@@ -13,17 +20,17 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
       return {
         ...step,
         request: {
-          fields: createFieldsArgs(step.request?.fields ?? []),
+          fields: createFieldsArgs(step.request?.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(
             step.request?.permission,
             formState.reusable && index === 0 ? userId : undefined,
           ),
         },
         response: step.response && {
-          fields: createFieldsArgs(step.response.fields ?? []),
+          fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.response.permission),
         },
-        result: createResultsArgs(step.result, step.response?.fields),
+        result: createResultsArgs(step.result, step.response?.fields, index, resultConfigCache),
         action: createActionArgs(step.action, step.response?.fields),
         expirationSeconds: step.expirationSeconds ?? null,
       };

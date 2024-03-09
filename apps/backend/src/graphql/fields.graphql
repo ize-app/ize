@@ -20,7 +20,7 @@ type Options {
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int!
-  linkedResults: [String!]!
+  linkedResultOptions: [String!]!
   options: [Option!]!
 }
 
@@ -89,7 +89,7 @@ input FieldOptionsConfigArgs {
   hasRequestOptions: Boolean!
   maxSelections: Int!
   selectionType: FieldOptionsSelectionType!
-  linkedOptions: [LinkedOptionArgs!]!
+  linkedResultOptions: [LinkedResultOptionsArgs!]!
   options: [FieldOptionArgs!]!
 }
 
@@ -99,7 +99,7 @@ input FieldOptionArgs {
   name: String!
 }
 
-input LinkedOptionArgs {
-  id: String!
-  type: String!
+input LinkedResultOptionsArgs {
+  resultIndex: Int!
+  stepIndex: Int!
 }

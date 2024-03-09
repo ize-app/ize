@@ -3,12 +3,16 @@ import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { FieldSetPrismaType, fieldSetInclude } from "./fieldPrismaTypes";
 import { newOptionSet } from "./newOptionSet";
+import { StepPrismaType } from "../flow/flowPrismaTypes";
+import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newFieldSet = async ({
   fields,
+  createdSteps,
   transaction,
 }: {
   fields: FieldArgs[];
+  createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
 }): Promise<FieldSetPrismaType | null> => {
   if (fields.length === 0) return null;
@@ -18,6 +22,7 @@ export const newFieldSet = async ({
       if (field.optionsConfig) {
         fieldOptionsConfigId = await createFieldOptionsConfig({
           fieldOptionsConfigArgs: field.optionsConfig,
+          createdSteps,
           transaction,
         });
       }
@@ -48,9 +53,11 @@ export const newFieldSet = async ({
 
 const createFieldOptionsConfig = async ({
   fieldOptionsConfigArgs,
+  createdSteps,
   transaction = prisma,
 }: {
   fieldOptionsConfigArgs: FieldOptionsConfigArgs;
+  createdSteps: StepPrismaType[];
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   // if option Configs hasn't changed, just use the existing Id
@@ -60,7 +67,7 @@ const createFieldOptionsConfig = async ({
     hasRequestOptions,
     maxSelections,
     requestOptionsDataType,
-    linkedOptions,
+    linkedResultOptions,
   } = fieldOptionsConfigArgs;
 
   const optionSetId = await newOptionSet({ options, transaction });
@@ -70,7 +77,18 @@ const createFieldOptionsConfig = async ({
       hasRequestOptions,
       requestOptionsDataType,
       selectionType,
-      linkedResultOptions: linkedOptions.map((l) => l.id),
+      linkedResultOptions: linkedResultOptions.map((l) => {
+        console.log("linked results is ", l);
+        console.log("created steps are", createdSteps);
+        const resultConfigId =
+          createdSteps[l.stepIndex].ResultConfigSet?.ResultConfigSetResultConfigs[l.resultIndex]
+            .resultConfigId;
+        if (!resultConfigId)
+          throw new GraphQLError(`Cannot find result config`, {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          });
+        return resultConfigId;
+      }),
       FieldOptionSet: optionSetId
         ? {
             connect: {

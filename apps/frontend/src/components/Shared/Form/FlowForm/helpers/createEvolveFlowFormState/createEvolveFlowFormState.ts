@@ -4,6 +4,7 @@ import {
   Field,
   FieldType,
   Flow,
+  LlmSummaryType,
   Permission,
   ResultConfig,
   ResultType,
@@ -18,7 +19,12 @@ import {
   FieldSchemaType,
   FieldsSchemaType,
 } from "../../formValidation/fields";
-import { ResultSchemaType } from "../../formValidation/result";
+import {
+  DecisionResultSchemaType,
+  LlmSummaryResultSchemaType,
+  RankingResultSchemaType,
+  ResultSchemaType,
+} from "../../formValidation/result";
 import { ActionSchemaType } from "../../formValidation/action";
 import { EntitySchemaType } from "../../formValidation/entity";
 import { EvolveSchemaType } from "../../formValidation/evolve";
@@ -28,7 +34,7 @@ export const createFormStateForExistingFlow = (flow: Flow): FlowSchemaType => {
     name: flow.name,
     reusable: flow.reusable,
     steps: flow.steps.map((step) => createStepFormState(step as Step)),
-    evolve: createEvolveFormState(flow),
+    evolve: createEvolveFormState(flow.evolve as Flow),
   };
 };
 
@@ -44,23 +50,34 @@ const createStepFormState = (step: Step): StepSchemaType => {
     },
     response: {
       permission: createPermissionFormState(step.response.permission),
-      field: createFieldFormState(step.response.fields[0]),
+      fields: createFieldsFormState(step.response.fields),
     },
     result: createResultFormState(step.result),
     action: createActionFormState(step.action),
-    expirationSeconds: step.expirationSeconds,
+    expirationSeconds: step.expirationSeconds ?? undefined,
   };
 };
-
 const createPermissionFormState = (permission: Permission): PermissionSchemaType => {
-  return {
-    type: (() => {
-      if (permission.anyone) return PermissionType.Anyone;
-      else if (permission.stepTriggered) return PermissionType.Process;
-      else return PermissionType.Entities;
-    })(),
-    entities: permission.entities as EntitySchemaType[],
-  };
+  // return {
+  //   type: (() => {
+  //     if (permission.anyone) return {PermissionType.Anyone};
+  //     else if (permission.stepTriggered) return PermissionType.Process;
+  //     else return PermissionType.Entities;
+  //   })(),
+  //   entities: permission.entities as EntitySchemaType[],
+  // };
+  if (permission.anyone) return { type: PermissionType.Anyone };
+  else if (permission.stepTriggered) return { type: PermissionType.Process };
+  else
+    return {
+      type: PermissionType.Entities,
+      entities: permission.entities.map((entity) => {
+        if (entity.__typename === "Group")
+          return { ...entity, groupType: { __typename: entity.groupType.__typename } };
+        else if (entity.__typename === "Identity")
+          return { ...entity, identityType: { __typename: entity.identityType.__typename } };
+      }) as EntitySchemaType[],
+    };
 };
 
 const createFieldsFormState = (fields: Field[]): FieldsSchemaType => {
@@ -80,6 +97,7 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
       };
     case FieldType.Options:
       const optionsConfig: FieldOptionsSchemaType = {
+        linkedResultOptions: field.linkedResultOptions.map((id) => ({ id })),
         previousStepOptions: field.previousStepOptions,
         hasRequestOptions: field.hasRequestOptions,
         requestOptionsDataType: field.requestOptionsDataType ?? undefined,
@@ -99,48 +117,49 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
   }
 };
 
-const createResultFormState = (result: ResultConfig): ResultSchemaType => {
-  console.log("creating result form state for ", result);
-  switch (result.__typename) {
-    case ResultType.Decision:
-      return {
-        type: ResultType.Decision,
-        minimumResponses: result.minimumAnswers,
-        decision: {
-          type: result.decisionType,
-          threshold: result.threshold,
-          defaultOptionId: result.defaultOption?.optionId ?? DefaultOptionSelection.None,
-        },
-      };
-    case ResultType.Ranking:
-      return {
-        type: ResultType.Ranking,
-        minimumResponses: result.minimumAnswers,
-        prioritization: {
-          numOptionsToInclude: result.numOptionsToInclude,
-        },
-      };
-    case ResultType.LlmSummary:
-      return {
-        type: ResultType.LlmSummary,
-        minimumResponses: result.minimumAnswers,
-        llmSummary: {
-          type: result.summaryType,
-          prompt: result.prompt ?? undefined,
-        },
-      };
-    case ResultType.AutoApprove:
-      return {
-        type: ResultType.AutoApprove,
-      };
-    case ResultType.Raw:
-      return {
-        type: ResultType.Raw,
-        minimumResponses: result.minimumAnswers,
-      };
-    default:
-      throw Error("Unknown result type");
-  }
+const createResultFormState = (results: ResultConfig[]): ResultSchemaType[] => {
+  return results.map((result) => {
+    switch (result.__typename) {
+      case ResultType.Decision:
+        const dec: DecisionResultSchemaType = {
+          type: ResultType.Decision,
+          fieldId: result.fieldId ?? null,
+          resultId: result.resultConfigId,
+          minimumAnswers: result.minimumAnswers,
+          decision: {
+            type: result.decisionType,
+            threshold: result.threshold,
+            defaultOptionId: result.defaultOption?.optionId ?? DefaultOptionSelection.None,
+          },
+        };
+        return dec;
+      case ResultType.Ranking:
+        const rank: RankingResultSchemaType = {
+          type: ResultType.Ranking,
+          fieldId: result.fieldId ?? null,
+          resultId: result.resultConfigId,
+          minimumAnswers: result.minimumAnswers,
+          prioritization: {
+            numOptionsToInclude: result.numOptionsToInclude,
+          },
+        };
+        return rank;
+      case ResultType.LlmSummary:
+        const llm: LlmSummaryResultSchemaType = {
+          type: ResultType.LlmSummary,
+          fieldId: result.fieldId ?? null,
+          resultId: result.resultConfigId,
+          minimumAnswers: result.minimumAnswers,
+          llmSummary: {
+            type: LlmSummaryType.AfterEveryResponse,
+            prompt: result.prompt ?? undefined,
+          },
+        };
+        return llm;
+      default:
+        throw Error("Unknown result type");
+    }
+  });
 };
 
 const createActionFormState = (action: ActionNew | null | undefined): ActionSchemaType => {
@@ -171,17 +190,17 @@ const createActionFormState = (action: ActionNew | null | undefined): ActionSche
   }
 };
 
-const createEvolveFormState = (flow: Flow | null): EvolveSchemaType | undefined => {
-  if (!flow) return undefined;
-  if (!flow.steps[0] || !(flow.steps[0].result.__typename === ResultType.Decision))
+const createEvolveFormState = (flow: Flow): EvolveSchemaType => {
+  if (!flow.steps[0] || !(flow.steps[0].result[0].__typename === ResultType.Decision))
     throw Error("Invalid evolve flow state");
   return {
     requestPermission: createPermissionFormState(flow.steps[0].request.permission as Permission),
     responsePermission: createPermissionFormState(flow.steps[0].response.permission as Permission),
     decision: {
-      type: flow.steps[0].result.decisionType,
-      threshold: flow.steps[0].result.threshold,
-      defaultOptionId: flow.steps[0].result.defaultOption?.optionId ?? DefaultOptionSelection.None,
+      type: flow.steps[0].result[0].decisionType,
+      threshold: flow.steps[0].result[0].threshold,
+      // defaultOptionId:
+      //   flow.steps[0].result[0].defaultOption?.optionId ?? DefaultOptionSelection.None,
     },
   };
 };
