@@ -15,6 +15,7 @@ export const requestResolver = ({
   context: GraphqlRequestContext;
 }): RequestNew => {
   const requestNew: RequestNew = {
+    name: req.name,
     flow: flowVersionResolver({
       flowVersion: req.FlowVersion,
       userGroupIds,

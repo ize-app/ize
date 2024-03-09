@@ -7,6 +7,7 @@ export interface NewRequestFormSchema {
   flow?: Flow;
   requestFields?: RequestFieldSchemaType;
   requestDefinedOptions?: RequestDefinedOptionsSchemaType;
+  name?: string;
 }
 
 export interface RequestFields {

@@ -1054,6 +1054,7 @@ model RequestNew {
   creatorId            String   @map("creator_id") @db.Uuid
   flowVersionId        String   @map("flow_version_id") @db.Uuid
   currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
+  name                 String
   open                 Boolean  @default(true)
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")

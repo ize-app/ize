@@ -22,8 +22,7 @@ export const requestFieldsSchema = z.record(
       if (!field?.required && !field.value) return;
       if (!field.dataType) return;
       evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
-    })
-
+    }),
 );
 
 export const requestDefinedOptionSchema = z
@@ -37,7 +36,16 @@ export const requestDefinedOptionSchema = z
 
 export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
 
-export const requestSchema = z.object({
-  requestFields: requestFieldsSchema.optional(),
-  requestDefinedOptions: requestDefinedOptionsSchema.optional(),
-});
+export const requestSchema = z
+  .object({
+    name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
+    requestFields: requestFieldsSchema.optional(),
+    requestDefinedOptions: requestDefinedOptionsSchema.optional(),
+  })
+  // .refine(
+  //   (r) => {
+  //     if (!r.name || r.name.length < 5) return false;
+  //     else return true;
+  //   },
+  //   { path: ["name"], message: "Pl" },
+  // );

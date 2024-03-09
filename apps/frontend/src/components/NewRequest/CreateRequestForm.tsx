@@ -68,6 +68,7 @@ export const CreateRequestForm = () => {
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
       ...prev,
+      name: data.name,
       requestFields: data.requestFields ?? undefined,
       requestDefinedOptions: data.requestDefinedOptions ?? [],
     }));
@@ -106,6 +107,16 @@ export const CreateRequestForm = () => {
               maxWidth: "800px",
             }}
           >
+            <TextField<RequestSchemaType>
+              label={"Request name"}
+              variant="outlined"
+              placeholderText="Describe the intention of this request."
+              showLabel={true}
+              control={formMethods.control}
+              name={`name`}
+              required={true}
+              multiline
+            />
             {step?.request.fields.map((field) => {
               switch (field.__typename) {
                 case FieldType.FreeInput: {

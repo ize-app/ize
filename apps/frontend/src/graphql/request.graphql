@@ -37,6 +37,7 @@ query RequestsForProcess($processId: String!) {
 }
 
 fragment RequestNew on RequestNew {
+  name
   flow {
     ...Flow
   }

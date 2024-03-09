@@ -8,8 +8,9 @@ import { NewRequestFormSchema } from "./newRequestWizard";
 import { RequestFieldSchemaType } from "./validation";
 
 export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): NewRequestArgs => {
-  if (!formState.flow) throw Error("createNewRequestMutationArgs: Missing Flow");
+  if (!formState.flow || !formState.name) throw Error("createNewRequestMutationArgs: Missing Flow");
   const flowId: string = formState.flow.flowId;
+  const name: string = formState.name;
 
   const requestFields: FieldAnswerArgs[] = Object.entries(
     (formState.requestFields ?? []) as RequestFieldSchemaType,
@@ -35,5 +36,5 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
         ]
       : [];
 
-  return { flowId, requestFields, requestDefinedOptions };
+  return { flowId, requestFields, requestDefinedOptions, name };
 };

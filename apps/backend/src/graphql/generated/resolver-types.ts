@@ -537,6 +537,7 @@ export type NewFlowArgs = {
 
 export type NewRequestArgs = {
   flowId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
   requestFields: Array<FieldAnswerArgs>;
 };
@@ -845,6 +846,7 @@ export type RequestNew = {
   createdAt: Scalars['String']['output'];
   currentStepIndex: Scalars['Int']['output'];
   flow: Flow;
+  name: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
   steps: Array<RequestStep>;
 };
@@ -1788,6 +1790,7 @@ export type RequestNewResolvers<ContextType = GraphqlRequestContext, ParentType 
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentStepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   flow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   steps?: Resolver<Array<ResolversTypes['RequestStep']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

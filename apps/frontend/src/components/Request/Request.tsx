@@ -37,7 +37,7 @@ export const Request = () => {
   const request = data?.getRequest as RequestNewFragment;
 
   const theme = useTheme();
-  const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   return loading || !request ? (
     <Loading />
@@ -54,6 +54,9 @@ export const Request = () => {
               Request
             </Typography>
             <Typography variant={"h1"} marginTop="8px">
+              {request.name}
+            </Typography>
+            <Typography variant={"h2"} marginTop="8px">
               {request.flow.name}
             </Typography>
           </Box>

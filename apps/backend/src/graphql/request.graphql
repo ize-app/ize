@@ -13,6 +13,7 @@ type Query {
 
 input NewRequestArgs {
   flowId: String!
+  name: String!
   requestFields: [FieldAnswerArgs!]!
   requestDefinedOptions: [RequestDefinedOptionsArgs!]!
 }
@@ -24,6 +25,7 @@ input RequestDefinedOptionsArgs {
 
 type RequestNew {
   # refers to flow version at time of request, not necessarily the current flow
+  name: String!
   flow: Flow!
   requestId: String!
   currentStepIndex: Int!
