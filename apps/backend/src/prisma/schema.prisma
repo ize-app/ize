@@ -1085,6 +1085,7 @@ model RequestStep {
   RequestFieldAnswers      FieldAnswer[]
   Results                  Results[]
   RequestDefinedOptionSets RequestDefinedOptionSet[]
+  ResponseNew              ResponseNew[]
 
   @@unique([stepId, requestId])
   @@map("request_steps")
@@ -1103,12 +1104,14 @@ model RequestDefinedOptionSet {
 }
 
 model ResponseNew {
-  id        String   @id @default(uuid()) @db.Uuid
-  creatorId String   @map("creator_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
+  id            String   @id @default(uuid()) @db.Uuid
+  requestStepId String   @map("request_step_id") @db.Uuid
+  creatorId     String   @map("creator_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  Answers FieldAnswer[]
-  User    User          @relation(fields: [creatorId], references: [id])
+  RequestStep RequestStep   @relation(fields: [requestStepId], references: [id])
+  Answers     FieldAnswer[]
+  User        User          @relation(fields: [creatorId], references: [id])
 
   @@map("responses_new")
 }

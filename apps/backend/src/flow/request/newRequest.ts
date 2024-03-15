@@ -119,10 +119,8 @@ export const newRequest = async ({
       },
     });
 
-    // if auto approve, just create the result
-    // validate fields against flow step, has required fields, data types are correct --> create fields
-    // validate request definedoptions  --> create request defined options
-
+    // TODO: if auto approve, just create the result
+    
     return request.id;
   });
 };
