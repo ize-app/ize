@@ -54,12 +54,6 @@ export const newRequest = async ({
       },
     });
 
-    await newFieldAnswers({
-      fieldSet: step.RequestFieldSet,
-      fieldAnswers: requestFields,
-      transaction,
-    });
-
     await Promise.all(
       requestDefinedOptions.map(async (r) => {
         if (!step.ResponseFieldSet)
@@ -98,7 +92,7 @@ export const newRequest = async ({
       }),
     );
 
-    await transaction.requestStep.create({
+    const requestStep = await transaction.requestStep.create({
       data: {
         expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
         Request: {
@@ -120,7 +114,14 @@ export const newRequest = async ({
     });
 
     // TODO: if auto approve, just create the result
-    
+
+    await newFieldAnswers({
+      fieldSet: step.RequestFieldSet,
+      fieldAnswers: requestFields,
+      requestStepId: requestStep.id,
+      transaction,
+    });
+
     return request.id;
   });
 };

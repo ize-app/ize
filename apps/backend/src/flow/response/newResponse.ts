@@ -61,18 +61,21 @@ export const newResponse = async ({
         },
       );
 
-    await newFieldAnswers({
-      fieldSet: step.ResponseFieldSet,
-      fieldAnswers: answers,
-      transaction,
-    });
-
     const response = await transaction.responseNew.create({
       data: {
         creatorId: context.currentUser.id,
         requestStepId,
       },
     });
+
+    await newFieldAnswers({
+      fieldSet: step.ResponseFieldSet,
+      fieldAnswers: answers,
+      responseId: response.id,
+      transaction,
+    });
+
+    
 
     return response.id;
   });

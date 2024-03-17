@@ -10,12 +10,20 @@ export const newFieldAnswers = async ({
   fieldSet,
   fieldAnswers,
   transaction,
+  responseId,
+  requestStepId,
 }: {
   fieldSet: FieldSetPrismaType | null;
   fieldAnswers: FieldAnswerArgs[];
   transaction: Prisma.TransactionClient;
+  responseId?: string | null | undefined;
+  requestStepId?: string | null | undefined;
 }): Promise<void> => {
   if (!fieldSet) return;
+  if (!responseId && !requestStepId)
+    throw new GraphQLError("Missing response Id or requestStepId", {
+      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+    });
   // check whether that all required fields have answers
 
   const answerFieldIds = fieldAnswers.map((a) => a.fieldId);
@@ -58,6 +66,8 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.FreeInput,
               fieldId: field.id,
+              requestStepId,
+              responseId,
               AnswerFreeInput: {
                 create: {
                   dataType: field.freeInputDataType as FieldDataType,
@@ -116,6 +126,8 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.FreeInput,
               fieldId: field.id,
+              requestStepId,
+              responseId,
               AnswerOptionSelections: {
                 createMany: {
                   data: fieldAnswer.optionSelections.map((o) => ({
