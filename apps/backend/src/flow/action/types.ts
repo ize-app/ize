@@ -15,3 +15,9 @@ export const actionInclude = Prisma.validator<Prisma.ActionNewInclude>()({
 export type ActionNewPrismaType = Prisma.ActionNewGetPayload<{
   include: typeof actionInclude;
 }>;
+
+export const actionExecutionInclude = Prisma.validator<Prisma.ActionExecutionInclude>()({});
+
+export type ActionExecutionPrismaType = Prisma.ActionExecutionGetPayload<{
+  include: typeof actionExecutionInclude;
+}>;

@@ -6,7 +6,10 @@ import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/
 import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import { requestStepInclude } from "../request/requestTypes";
+import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
+import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
+import { responseInclude } from "./type";
+import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
 // creates a new response for a given request step
 // validates/creates field answers
@@ -27,19 +30,29 @@ export const newResponse = async ({
       where: {
         id: requestStepId,
       },
-      include: requestStepInclude,
-    });
-
-    requestStep.stepId;
-
-    const step = await transaction.step.findUniqueOrThrow({
-      where: {
-        id: requestStep.requestId,
+      include: {
+        Step: {
+          include: stepInclude,
+        },
+        Responses: {
+          include: responseInclude,
+        },
+        RequestFieldAnswers: {
+          include: fieldAnswerInclude,
+        },
+        RequestDefinedOptionSets: {
+          include: {
+            FieldOptionSet: {
+              include: fieldOptionSetInclude,
+            },
+          },
+        },
       },
-      include: stepInclude,
     });
 
-    if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
+    if (
+      !hasWritePermission({ permission: requestStep.Step.RequestPermissions, context, transaction })
+    )
       throw new GraphQLError("Unauthenticated", {
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
@@ -69,13 +82,19 @@ export const newResponse = async ({
     });
 
     await newFieldAnswers({
-      fieldSet: step.ResponseFieldSet,
+      fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
       responseId: response.id,
       transaction,
     });
 
-    
+    if (checkIfEarlyResult({ step: requestStep.Step, responses: requestStep.Responses })) {
+      await runResultsAndActions({
+        requestStepId: requestStep.id,
+        step: requestStep.Step,
+        responses: requestStep.Responses,
+      });
+    }
 
     return response.id;
   });

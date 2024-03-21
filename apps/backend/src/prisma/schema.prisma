@@ -879,6 +879,7 @@ model FieldOption {
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
   DefaultOptionForDecisions  ResultConfigDecision[]
   ActionNew                  ActionNew[]
+  ResultItems                ResultItems[]
 
   @@map("field_options")
 }
@@ -954,7 +955,7 @@ model ResultConfig {
   ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
   ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
   ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
-  Results                      Results[]
+  Results                      ResultsNew[]
   ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
 
   @@map("result_configs")
@@ -1022,7 +1023,7 @@ model ActionNew {
   FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
   Webhook           Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
-  ActionAttemptsNew ActionAttemptNew[]
+  ActionExecution ActionExecution[]
 
   @@map("actions_new")
 }
@@ -1038,14 +1039,19 @@ model Webhook {
   @@map("webhooks")
 }
 
-model ActionAttemptNew {
-  id        String   @id @default(uuid()) @db.Uuid
-  actionId  String   @map("action_id") @db.Uuid
-  success   Boolean
-  createdAt DateTime @default(now()) @map("created_at")
+model ActionExecution {
+  id              String   @id @default(uuid()) @db.Uuid
+  actionId        String   @map("action_id") @db.Uuid
+  requestStepId   String   @map("request_step_id") @db.Uuid
+  complete        Boolean  @default(false)
+  lastAttemptedAt DateTime @default(now()) @map("last_attempted_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Action ActionNew @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  Action      ActionNew   @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  RequestStep RequestStep @relation(fields: [requestStepId], references: [id])
 
+  @@unique([actionId, requestStepId])
   @@map("action_attempts_new")
 }
 
@@ -1070,22 +1076,24 @@ model RequestNew {
 }
 
 model RequestStep {
-  id             String   @id @default(uuid()) @db.Uuid
-  requestId      String   @map("request_id") @db.Uuid
-  stepId         String   @map("step_id") @db.Uuid
-  expirationDate DateTime @map("expiration_date")
+  id              String   @id @default(uuid()) @db.Uuid
+  requestId       String   @map("request_id") @db.Uuid
+  stepId          String   @map("step_id") @db.Uuid
+  expired         Boolean  @default(false)
+  resultsComplete Boolean  @default(false) @map("results_complete")
+  actionsComplete Boolean  @default(false) @map("actions_complete")
+  expirationDate  DateTime @map("expiration_date")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-
-  Request RequestNew @relation(fields: [requestId], references: [id])
-  Step    Step       @relation(fields: [stepId], references: [id])
-
+  Request                  RequestNew                @relation(fields: [requestId], references: [id])
+  Step                     Step                      @relation(fields: [stepId], references: [id])
   CurrentStepParent        RequestNew?               @relation("CurrentRequestStep")
   RequestFieldAnswers      FieldAnswer[]
-  Results                  Results[]
+  Results                  ResultsNew[]
   RequestDefinedOptionSets RequestDefinedOptionSet[]
-  ResponseNew              ResponseNew[]
+  Responses                ResponseNew[]
+  ActionExecution          ActionExecution[]
 
   @@unique([stepId, requestId])
   @@map("request_steps")
@@ -1140,15 +1148,36 @@ model ResultConfigSetResultConfigs {
   @@map("result_config_set_result_configs")
 }
 
-// can have multiple results for a given result config
-model Results {
+// there is a single results record for a given request step + results Config 
+// so if a step has two result Configs, there will be two Results every time that Result rows
+// A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
+model ResultsNew {
   id             String   @id @default(uuid()) @db.Uuid
+  complete       Boolean  @default(false)
   requestStepId  String   @map("request_step_id") @db.Uuid
   resultConfigId String   @map("result_config_id") @db.Uuid
+  // Number of items within result array
+  itemCount      Int      @map("itemCount")
   createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
-  RequestStep  RequestStep  @relation(fields: [requestStepId], references: [id])
-  ResultConfig ResultConfig @relation(fields: [resultConfigId], references: [id])
+  RequestStep  RequestStep   @relation(fields: [requestStepId], references: [id])
+  ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id])
+  ResultItems  ResultItems[]
 
   @@map("results_new")
+}
+
+model ResultItems {
+  id            String        @id @default(uuid()) @db.Uuid
+  value         String
+  dataType      FieldDataType @map("data_type")
+  fieldOptionId String?       @map("field_option_id") @db.Uuid
+  resultId      String        @db.Uuid
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  Result ResultsNew   @relation(fields: [resultId], references: [id])
+  Option FieldOption? @relation(fields: [fieldOptionId], references: [id])
+
+  @@map("result_items")
 }
