@@ -2,10 +2,6 @@ mutation NewRequest($request: NewRequestArgs!) {
   newRequest(request: $request)
 }
 
-mutation NewResponseOld($requestId: String!, $optionId: String!) {
-  newResponseOld(requestId: $requestId, optionId: $optionId)
-}
-
 mutation NewResponse($response: NewResponseArgs!) {
   newResponse(response: $response)
 }
@@ -13,30 +9,6 @@ mutation NewResponse($response: NewResponseArgs!) {
 query getRequest($requestId: String!) {
   getRequest(requestId: $requestId) {
     ...RequestNew
-  }
-}
-
-query Request($requestId: String!) {
-  request(requestId: $requestId) {
-    ...RequestSummaryParts
-  }
-}
-
-query RequestsForGroup($groupId: String!) {
-  requestsForGroup(groupId: $groupId) {
-    ...RequestSummaryParts
-  }
-}
-
-query requestsForCurrentUser {
-  requestsForCurrentUser {
-    ...RequestSummaryParts
-  }
-}
-
-query RequestsForProcess($processId: String!) {
-  requestsForProcess(processId: $processId) {
-    ...RequestSummaryParts
   }
 }
 
@@ -62,98 +34,4 @@ fragment RequestStep on RequestStep {
   responseFields {
     ...Field
   }
-}
-
-fragment RequestSummaryParts on Request {
-  id
-  name
-  creator {
-    ...UserSummaryParts
-  }
-  process {
-    ...ProcessSummaryParts
-  }
-  expirationDate
-  inputs {
-    ...RequestInputSummaryParts
-  }
-  createdAt
-  responses {
-    ...ResponsesSummaryParts
-  }
-  result {
-    ...ResultSummaryParts
-  }
-  evolveProcessChanges {
-    ...EvolveProcessChangesSummaryParts
-  }
-}
-
-fragment EvolveProcessChangesSummaryParts on EvolveProcessesDiff {
-  processName
-  processId
-  changes {
-    ...ProposedProcessEvolutionSummaryParts
-  }
-}
-
-fragment ProposedProcessEvolutionSummaryParts on ProposedProcessEvolution {
-  current {
-    ...ProcessSummaryParts
-  }
-  proposed {
-    ...ProcessSummaryParts
-  }
-}
-
-type ProposedProcessEvolution {
-  current: Process!
-  proposed: Process!
-}
-
-fragment RequestInputSummaryParts on RequestInput {
-  inputTemplateId
-  requestInputId
-  name
-  description
-  type
-  value
-  required
-}
-
-fragment ResponsesSummaryParts on Responses {
-  userResponse {
-    ...ResponseSummaryParts
-  }
-  allResponses {
-    ...ResponseSummaryParts
-  }
-  responseCount {
-    ...ResponseCountSummaryParts
-  }
-}
-
-fragment ResponseSummaryParts on Response {
-  optionId
-  value
-  user {
-    ...UserSummaryParts
-  }
-  type
-  createdAt
-}
-
-fragment ResponseCountSummaryParts on ResponseCount {
-  optionId
-  value
-  type
-  count
-}
-
-fragment ResultSummaryParts on Result {
-  selectedOption {
-    ...OptionSummaryParts
-  }
-  actionComplete
-  createdAt
 }

@@ -1,15 +1,10 @@
 type Mutation {
   newRequest(request: NewRequestArgs!): String!
   newResponse(response: NewResponseArgs!): String!
-  newResponseOld(requestId: String!, optionId: String!): String!
 }
 
 type Query {
   getRequest(requestId: String!): RequestNew!
-  request(requestId: String!): Request!
-  requestsForCurrentUser: [Request!]!
-  requestsForGroup(groupId: String!): [Request!]!
-  requestsForProcess(processId: String!): [Request!]!
 }
 
 input NewRequestArgs {
@@ -44,66 +39,4 @@ type RequestStep {
   expirationDate: String!
   requestFieldAnswers: [FieldAnswer!]!
   responseFields: [Field!]!
-}
-
-type Request {
-  id: String!
-  name: String!
-  creator: User!
-  process: Process!
-  expirationDate: String!
-  inputs: [RequestInput!]!
-  createdAt: String!
-  responses: Responses!
-  result: Result
-  evolveProcessChanges: [EvolveProcessesDiff]
-}
-
-type Responses {
-  userResponse: Response
-  allResponses: [Response!]!
-  responseCount: [ResponseCount!]!
-}
-
-type EvolveProcessesDiff {
-  processName: String!
-  processId: String!
-  changes: ProposedProcessEvolution!
-}
-
-type ProposedProcessEvolution {
-  current: Process!
-  proposed: Process!
-}
-
-type Result {
-  id: String!
-  createdAt: String!
-  selectedOption: ProcessOption!
-  actionComplete: Boolean!
-}
-
-type Response {
-  optionId: String!
-  value: String!
-  user: User!
-  type: OptionType!
-  createdAt: String!
-}
-
-type ResponseCount {
-  optionId: String!
-  value: String!
-  type: OptionType!
-  count: Int!
-}
-
-type RequestInput {
-  inputTemplateId: String!
-  requestInputId: String!
-  name: String!
-  description: String
-  type: InputDataType!
-  value: String!
-  required: Boolean!
 }

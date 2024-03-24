@@ -216,13 +216,6 @@ export type EvolveProcessAction = {
   _?: Maybe<Scalars['Boolean']['output']>;
 };
 
-export type EvolveProcessesDiff = {
-  __typename?: 'EvolveProcessesDiff';
-  changes: ProposedProcessEvolution;
-  processId: Scalars['String']['output'];
-  processName: Scalars['String']['output'];
-};
-
 export type Field = FreeInput | Options;
 
 export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
@@ -465,7 +458,6 @@ export type Mutation = {
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
-  newResponseOld: Scalars['String']['output'];
   setUpDiscordServer: Group;
 };
 
@@ -502,12 +494,6 @@ export type MutationNewRequestArgs = {
 
 export type MutationNewResponseArgs = {
   response: NewResponseArgs;
-};
-
-
-export type MutationNewResponseOldArgs = {
-  optionId: Scalars['String']['input'];
-  requestId: Scalars['String']['input'];
 };
 
 
@@ -706,12 +692,6 @@ export enum ProcessType {
   Evolve = 'Evolve'
 }
 
-export type ProposedProcessEvolution = {
-  __typename?: 'ProposedProcessEvolution';
-  current: Process;
-  proposed: Process;
-};
-
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
@@ -726,10 +706,6 @@ export type Query = {
   process: Process;
   processesForCurrentUser: Array<Process>;
   processesForGroup: Array<Process>;
-  request: Request;
-  requestsForCurrentUser: Array<Request>;
-  requestsForGroup: Array<Request>;
-  requestsForProcess: Array<Request>;
   searchNftContracts: Array<AlchemyApiNftContract>;
 };
 
@@ -788,21 +764,6 @@ export type QueryProcessesForGroupArgs = {
 };
 
 
-export type QueryRequestArgs = {
-  requestId: Scalars['String']['input'];
-};
-
-
-export type QueryRequestsForGroupArgs = {
-  groupId: Scalars['String']['input'];
-};
-
-
-export type QueryRequestsForProcessArgs = {
-  processId: Scalars['String']['input'];
-};
-
-
 export type QuerySearchNftContractsArgs = {
   chain: Blockchain;
   query: Scalars['String']['input'];
@@ -816,20 +777,6 @@ export type Ranking = {
   resultConfigId: Scalars['String']['output'];
 };
 
-export type Request = {
-  __typename?: 'Request';
-  createdAt: Scalars['String']['output'];
-  creator: User;
-  evolveProcessChanges?: Maybe<Array<Maybe<EvolveProcessesDiff>>>;
-  expirationDate: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  inputs: Array<RequestInput>;
-  name: Scalars['String']['output'];
-  process: Process;
-  responses: Responses;
-  result?: Maybe<Result>;
-};
-
 export type RequestConfig = {
   __typename?: 'RequestConfig';
   fields: Array<Field>;
@@ -839,17 +786,6 @@ export type RequestConfig = {
 export type RequestDefinedOptionsArgs = {
   fieldId: Scalars['String']['input'];
   options: Array<FieldOptionArgs>;
-};
-
-export type RequestInput = {
-  __typename?: 'RequestInput';
-  description?: Maybe<Scalars['String']['output']>;
-  inputTemplateId: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  requestInputId: Scalars['String']['output'];
-  required: Scalars['Boolean']['output'];
-  type: InputDataType;
-  value: Scalars['String']['output'];
 };
 
 export type RequestNew = {
@@ -870,42 +806,10 @@ export type RequestStep = {
   responseFields: Array<Field>;
 };
 
-export type Response = {
-  __typename?: 'Response';
-  createdAt: Scalars['String']['output'];
-  optionId: Scalars['String']['output'];
-  type: OptionType;
-  user: User;
-  value: Scalars['String']['output'];
-};
-
 export type ResponseConfig = {
   __typename?: 'ResponseConfig';
   fields: Array<Field>;
   permission: Permission;
-};
-
-export type ResponseCount = {
-  __typename?: 'ResponseCount';
-  count: Scalars['Int']['output'];
-  optionId: Scalars['String']['output'];
-  type: OptionType;
-  value: Scalars['String']['output'];
-};
-
-export type Responses = {
-  __typename?: 'Responses';
-  allResponses: Array<Response>;
-  responseCount: Array<ResponseCount>;
-  userResponse?: Maybe<Response>;
-};
-
-export type Result = {
-  __typename?: 'Result';
-  actionComplete: Scalars['Boolean']['output'];
-  createdAt: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  selectedOption: ProcessOption;
 };
 
 export type ResultArgs = {
@@ -1140,7 +1044,6 @@ export type ResolversTypes = {
   EvolveFlow: ResolverTypeWrapper<EvolveFlow>;
   EvolveFlowArgs: EvolveFlowArgs;
   EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
-  EvolveProcessesDiff: ResolverTypeWrapper<EvolveProcessesDiff>;
   Field: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Field']>;
   FieldAnswer: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['FieldAnswer']>;
   FieldAnswerArgs: FieldAnswerArgs;
@@ -1207,20 +1110,13 @@ export type ResolversTypes = {
   ProcessOption: ResolverTypeWrapper<ProcessOption>;
   ProcessOptionArgs: ProcessOptionArgs;
   ProcessType: ProcessType;
-  ProposedProcessEvolution: ResolverTypeWrapper<ProposedProcessEvolution>;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
-  Request: ResolverTypeWrapper<Request>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestInput: ResolverTypeWrapper<RequestInput>;
   RequestNew: ResolverTypeWrapper<RequestNew>;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFields: Array<ResolversTypes['Field']> }>;
-  Response: ResolverTypeWrapper<Response>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
-  ResponseCount: ResolverTypeWrapper<ResponseCount>;
-  Responses: ResolverTypeWrapper<Responses>;
-  Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultType: ResultType;
@@ -1274,7 +1170,6 @@ export type ResolversParentTypes = {
   EvolveFlow: EvolveFlow;
   EvolveFlowArgs: EvolveFlowArgs;
   EvolveProcessAction: EvolveProcessAction;
-  EvolveProcessesDiff: EvolveProcessesDiff;
   Field: ResolversUnionTypes<ResolversParentTypes>['Field'];
   FieldAnswer: ResolversUnionTypes<ResolversParentTypes>['FieldAnswer'];
   FieldAnswerArgs: FieldAnswerArgs;
@@ -1331,20 +1226,13 @@ export type ResolversParentTypes = {
   Process: Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversParentTypes['DecisionTypes'] };
   ProcessOption: ProcessOption;
   ProcessOptionArgs: ProcessOptionArgs;
-  ProposedProcessEvolution: ProposedProcessEvolution;
   Query: {};
   Ranking: Ranking;
-  Request: Request;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestInput: RequestInput;
   RequestNew: RequestNew;
   RequestStep: Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFields: Array<ResolversParentTypes['Field']> };
-  Response: Response;
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
-  ResponseCount: ResponseCount;
-  Responses: Responses;
-  Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
   RoleArgs: RoleArgs;
@@ -1489,13 +1377,6 @@ export type EvolveProcessActionResolvers<ContextType = GraphqlRequestContext, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EvolveProcessesDiffResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveProcessesDiff'] = ResolversParentTypes['EvolveProcessesDiff']> = {
-  changes?: Resolver<ResolversTypes['ProposedProcessEvolution'], ParentType, ContextType>;
-  processId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  processName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type FieldResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Field'] = ResolversParentTypes['Field']> = {
   __resolveType: TypeResolveFn<'FreeInput' | 'Options', ParentType, ContextType>;
 };
@@ -1628,7 +1509,6 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
-  newResponseOld?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseOldArgs, 'optionId' | 'requestId'>>;
   setUpDiscordServer?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<MutationSetUpDiscordServerArgs, 'input'>>;
 };
 
@@ -1735,12 +1615,6 @@ export type ProcessOptionResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ProposedProcessEvolutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ProposedProcessEvolution'] = ResolversParentTypes['ProposedProcessEvolution']> = {
-  current?: Resolver<ResolversTypes['Process'], ParentType, ContextType>;
-  proposed?: Resolver<ResolversTypes['Process'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
@@ -1754,10 +1628,6 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
   processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'requestRoleOnly'>>;
   processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
-  request?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryRequestArgs, 'requestId'>>;
-  requestsForCurrentUser?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
-  requestsForGroup?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForGroupArgs, 'groupId'>>;
-  requestsForProcess?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<QueryRequestsForProcessArgs, 'processId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
 };
 
@@ -1769,34 +1639,9 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  evolveProcessChanges?: Resolver<Maybe<Array<Maybe<ResolversTypes['EvolveProcessesDiff']>>>, ParentType, ContextType>;
-  expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  inputs?: Resolver<Array<ResolversTypes['RequestInput']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  process?: Resolver<ResolversTypes['Process'], ParentType, ContextType>;
-  responses?: Resolver<ResolversTypes['Responses'], ParentType, ContextType>;
-  result?: Resolver<Maybe<ResolversTypes['Result']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestConfig'] = ResolversParentTypes['RequestConfig']> = {
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RequestInputResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestInput'] = ResolversParentTypes['RequestInput']> = {
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  inputTemplateId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestInputId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['InputDataType'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1818,41 +1663,9 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  optionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseConfig'] = ResolversParentTypes['ResponseConfig']> = {
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ResponseCountResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseCount'] = ResolversParentTypes['ResponseCount']> = {
-  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  optionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ResponsesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Responses'] = ResolversParentTypes['Responses']> = {
-  allResponses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
-  responseCount?: Resolver<Array<ResolversTypes['ResponseCount']>, ParentType, ContextType>;
-  userResponse?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
-  actionComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  selectedOption?: Resolver<ResolversTypes['ProcessOption'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1927,7 +1740,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Entity?: EntityResolvers<ContextType>;
   EvolveFlow?: EvolveFlowResolvers<ContextType>;
   EvolveProcessAction?: EvolveProcessActionResolvers<ContextType>;
-  EvolveProcessesDiff?: EvolveProcessesDiffResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
@@ -1958,19 +1770,12 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Permission?: PermissionResolvers<ContextType>;
   Process?: ProcessResolvers<ContextType>;
   ProcessOption?: ProcessOptionResolvers<ContextType>;
-  ProposedProcessEvolution?: ProposedProcessEvolutionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
-  Request?: RequestResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
-  RequestInput?: RequestInputResolvers<ContextType>;
   RequestNew?: RequestNewResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
-  Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
-  ResponseCount?: ResponseCountResolvers<ContextType>;
-  Responses?: ResponsesResolvers<ContextType>;
-  Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
   Roles?: RolesResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
