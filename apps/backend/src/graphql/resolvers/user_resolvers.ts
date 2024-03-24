@@ -3,7 +3,7 @@ import { GraphqlRequestContext } from "../context";
 import { Me, Identity } from "@graphql/generated/resolver-types";
 import { userInclude, formatUser } from "@utils/formatUser";
 import { formatIdentity } from "@/utils/formatIdentity";
-import { getDiscordServers } from "@/services/discord/getDiscordServers";
+import { getDiscordServers } from "@/discord/getDiscordServers";
 import { updateUserDiscordGroups } from "@/services/groups/updateIdentitiesGroups/updateUserDiscordGroups";
 import { updateUserNftGroups } from "@/services/groups/updateIdentitiesGroups/updateUserNftGroups";
 
