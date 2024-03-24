@@ -1,3 +1,3 @@
-const evolveFlow = (): boolean => {
+export const evolveFlow = (): boolean => {
   return true;
 };

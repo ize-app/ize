@@ -2,7 +2,6 @@ import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
