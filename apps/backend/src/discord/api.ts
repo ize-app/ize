@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import { decrypt } from "@/encrypt";
-import { MePrismaType } from "@/utils/formatUser";
+import { decrypt } from "@/prisma/encrypt";
+import { MePrismaType } from "@/core/user/formatUser";
 import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 
 type DiscordImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;

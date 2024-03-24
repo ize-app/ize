@@ -1,10 +1,10 @@
 import { createContext, useState } from "react";
 
-import { AgentSummaryPartsFragment } from "../graphql/generated/graphql";
+import { EntitySummaryPartsFragment } from "../graphql/generated/graphql";
 
 interface RecentAgentsContextValue {
-  recentAgents: AgentSummaryPartsFragment[];
-  setRecentAgents: (agents: AgentSummaryPartsFragment[]) => void;
+  recentAgents: EntitySummaryPartsFragment[];
+  setRecentAgents: (agents: EntitySummaryPartsFragment[]) => void;
 }
 
 export const RecentAgentsContext = createContext<RecentAgentsContextValue>({
@@ -14,9 +14,9 @@ export const RecentAgentsContext = createContext<RecentAgentsContextValue>({
   },
 });
 
-export const dedupOptions = (agents: AgentSummaryPartsFragment[]) => {
+export const dedupOptions = (agents: EntitySummaryPartsFragment[]) => {
   const uniqueIds: { [key: string]: boolean } = {};
-  return agents.filter((agent: AgentSummaryPartsFragment) => {
+  return agents.filter((agent: EntitySummaryPartsFragment) => {
     if (!uniqueIds[agent.id]) {
       uniqueIds[agent.id] = true;
       return true;
@@ -26,11 +26,11 @@ export const dedupOptions = (agents: AgentSummaryPartsFragment[]) => {
 };
 
 export const RecentAgentsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [recentAgents, set] = useState<AgentSummaryPartsFragment[]>([]);
+  const [recentAgents, set] = useState<EntitySummaryPartsFragment[]>([]);
 
   // limit results
   // TODO: Dedup results
-  const setRecentAgents = (agents: AgentSummaryPartsFragment[]) => {
+  const setRecentAgents = (agents: EntitySummaryPartsFragment[]) => {
     set((prev) => {
       const newAgents = dedupOptions([...prev, ...agents]);
       return newAgents.slice(-20);

@@ -5,8 +5,8 @@ import {
   QueryGetFlowArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
-import { newCustomFlow as newCustomFlowService } from "@/flow/flow/newCustomFlow";
-import { getFlow as getFlowService } from "@/flow/flow/getFlow";
+import { newCustomFlow as newCustomFlowService } from "@/core/flow/newCustomFlow";
+import { getFlow as getFlowService } from "@/core/flow/getFlow";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 const getFlow: QueryResolvers["getFlow"] = async (

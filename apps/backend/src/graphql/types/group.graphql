@@ -1,0 +1,131 @@
+input setUpDiscordServerInput {
+  serverId: String!
+  roleId: String
+}
+
+type Mutation {
+  newCustomGroup(inputs: CustomGroupArgs!): String!
+  newEntities(entities: [NewEntityArgs!]!): [Entity!]!
+}
+
+type Query {
+  group(id: String!): Group!
+  groupsForCurrentUser: [Group!]!
+}
+
+input CustomGroupArgs {
+  name: String!
+  members: [CustomGroupMembersArgs!]!
+}
+
+input CustomGroupMembersArgs {
+  id: String!
+  entityType: EntityType!
+}
+
+union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
+
+type Group {
+  id: String!
+  entityId: String!
+  name: String!
+  creator: User!
+  color: String
+  icon: String
+  memberCount: Int
+  organization: Organization
+  createdAt: String!
+  groupType: GroupType!
+}
+
+type Organization {
+  name: String!
+  icon: String
+}
+
+type GroupCustom {
+  id: String!
+  name: String!
+}
+
+type GroupNft {
+  id: String!
+  name: String!
+  icon: String
+  tokenId: String
+  NftCollection: NftCollection!
+}
+
+type NftCollection {
+  id: String!
+  name: String
+  icon: String
+  chain: Blockchain!
+  type: NftTypes!
+  address: String!
+}
+
+type DiscordRoleGroup {
+  id: String!
+  name: String!
+  color: Int
+  icon: String
+  memberCount: Int
+  unicodeEmoji: String
+  discordRoleId: String
+  discordServer: OnboardedDiscordServer!
+}
+
+type OnboardedDiscordServer {
+  id: String!
+  discordServerId: String!
+  name: String!
+  icon: String
+  banner: String
+}
+
+input NewEntityArgs {
+  identityBlockchain: IdentityBlockchainArgs
+  identityDiscord: IdentityDiscordArgs
+  identityEmail: IdentityEmailArgs
+  groupDiscordRole: GroupDiscordRoleArgs
+  groupEns: GroupEnsArgs
+  groupHat: GroupHatArgs
+  groupNft: GroupNftArgs
+}
+
+input GroupDiscordRoleArgs {
+  serverId: String!
+  roleId: String!
+}
+
+input GroupNftArgs {
+  chain: Blockchain!
+  address: String!
+  tokenId: String
+}
+
+input GroupEnsArgs {
+  name: String!
+}
+
+input GroupHatArgs {
+  chain: Blockchain!
+  tokenId: String!
+}
+
+enum NewEntityTypes {
+  IdentityBlockchain
+  IdentityDiscord
+  IdentityEmail
+  GroupDiscord
+  GroupNft
+  GroupHat
+}
+
+enum EntityType {
+  Group
+  Identity
+}
+
+union Entity = Identity | Group

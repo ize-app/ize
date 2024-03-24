@@ -1,9 +1,9 @@
 import { ApiHatToken, Blockchain } from "@/graphql/generated/resolver-types";
-import { isBigIntString } from "./isBigIntSting";
-import { isHexadecimal } from "./isHexString";
+import { isBigIntString } from "./utils/isBigIntSting";
+import { isHexadecimal } from "./utils/isHexString";
 import { hatIdHexToDecimal, hatIdDecimalToIp } from "@hatsprotocol/sdk-v1-core";
-import { hatsClient } from "./clients/hatsClient";
-import { getIpfsUrl } from "./getIpfsUrl";
+import { hatsClient } from "./hatsClient/hatsClient";
+import { getIpfsUrl } from "./utils/getIpfsUrl";
 
 interface HatIpfsDetails {
   type: string;

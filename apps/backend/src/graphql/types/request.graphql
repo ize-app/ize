@@ -1,0 +1,42 @@
+type Mutation {
+  newRequest(request: NewRequestArgs!): String!
+  newResponse(response: NewResponseArgs!): String!
+}
+
+type Query {
+  getRequest(requestId: String!): RequestNew!
+}
+
+input NewRequestArgs {
+  flowId: String!
+  name: String!
+  requestFields: [FieldAnswerArgs!]!
+  requestDefinedOptions: [RequestDefinedOptionsArgs!]!
+}
+
+input RequestDefinedOptionsArgs {
+  fieldId: String!
+  options: [FieldOptionArgs!]!
+}
+
+input NewResponseArgs {
+  requestStepId: String!
+  answers: [FieldAnswerArgs!]!
+}
+
+type RequestNew {
+  # refers to flow version at time of request, not necessarily the current flow
+  name: String!
+  flow: Flow!
+  requestId: String!
+  currentStepIndex: Int!
+  createdAt: String!
+  steps: [RequestStep!]!
+}
+
+type RequestStep {
+  createdAt: String!
+  expirationDate: String!
+  requestFieldAnswers: [FieldAnswer!]!
+  responseFields: [Field!]!
+}

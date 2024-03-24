@@ -1,6 +1,6 @@
-mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
-  setUpDiscordServer(input: $input) {
-    id
+mutation NewEntities($entities: [NewEntityArgs!]!) {
+  newEntities(entities: $entities) {
+    ...EntitySummaryParts
   }
 }
 
@@ -95,4 +95,14 @@ fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
   discordServerId
   name
   icon
+}
+
+fragment EntitySummaryParts on Entity {
+  __typename
+  ... on Group {
+    ...GroupSummaryParts
+  }
+  ... on Identity {
+    ...IdentitySummaryParts
+  }
 }
