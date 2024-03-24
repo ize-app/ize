@@ -3,7 +3,7 @@ import { WizardBody, WizardNav } from "../shared/Wizard";
 import { useNewCustomGroupWizardState, NewCustomGroupFormFields } from "./newCustomGroupWizard";
 import { newCustomGroupFormSchema } from "./formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RoleSearchControl } from "../shared/Form";
+import { RoleSearch } from "../shared/Form/formFields";
 import { FormControl, FormHelperText, TextField } from "@mui/material";
 
 export const Setup = ({}) => {
@@ -58,14 +58,12 @@ export const Setup = ({}) => {
               </FormControl>
             )}
           />
-          <RoleSearchControl
-            //@ts-ignore
+          <RoleSearch
+            ariaLabel={"Individuals and groups to add to custom group"}
             control={control}
             name={"members"}
             label={"Group members"}
             setFieldValue={setFieldValue}
-            // TODO make this typing dynamic
-            //@ts-ignore
             getFieldValues={getFieldValues}
           />
         </form>

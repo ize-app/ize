@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { entityFormSchema } from "../shared/Form/FlowForm/formValidation/entity";
+import { entityFormSchema } from "../shared/Form/formValidation/entity";
 
 export type NewCustomGroupSchemaType = z.infer<typeof newCustomGroupFormSchema>;
 

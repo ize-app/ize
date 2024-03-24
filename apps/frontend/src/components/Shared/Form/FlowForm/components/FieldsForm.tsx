@@ -5,11 +5,11 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 
 import { Select, TextField } from "../../formFields";
-import { LabeledGroupedInputs } from "../../LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 import { Box } from "@mui/material";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { FieldOptionsForm } from "./FieldOptionsForm";
 import { FieldSchemaType } from "../formValidation/fields";
 

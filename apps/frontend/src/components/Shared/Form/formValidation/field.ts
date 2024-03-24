@@ -1,6 +1,6 @@
 import * as z from "zod";
 import dayjs, { Dayjs } from "dayjs";
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { FieldDataType } from "@/graphql/generated/graphql";
 
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {

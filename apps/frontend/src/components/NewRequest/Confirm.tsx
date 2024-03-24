@@ -3,9 +3,6 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useNewRequestWizardState } from "./newRequestWizard";
-import { Accordion } from "../shared/Accordion";
-import { RequestInputTable } from "../shared/Request";
-import { ProcessSummaryTable } from "../shared/Request/ProcessSummary";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 
 export const Confirm = () => {

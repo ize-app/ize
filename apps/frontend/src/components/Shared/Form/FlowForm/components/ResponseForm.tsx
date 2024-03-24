@@ -2,7 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { StepComponentContainer } from "./StepContainer";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { FieldsForm } from "./FieldsForm";
 import { RoleSearch, Select } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";

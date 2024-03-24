@@ -2,7 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { TextField } from "../../../formFields";
 
-import { ResponsiveFormRow } from "../ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 
 import { ResultType } from "@/graphql/generated/graphql";
 import { useEffect } from "react";

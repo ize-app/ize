@@ -2,7 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Select, TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
-import { ResponsiveFormRow } from "../ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { InputAdornment } from "@mui/material";
 
 import { DecisionType, FieldType, ResultType } from "@/graphql/generated/graphql";

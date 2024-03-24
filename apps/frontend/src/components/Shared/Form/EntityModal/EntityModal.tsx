@@ -18,14 +18,13 @@ import TextField from "@mui/material/TextField";
 import { newEntityFormSchema } from "../formValidation/entity";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { SelectControl } from "../..";
 import { useContext, useState } from "react";
-import { SelectOption } from "../../SelectControl";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { attachDiscord } from "@/components/shared/Auth/attachDiscord";
 import { DiscordLogoSvg } from "@/components/shared/icons";
 import botInviteUrl from "@/components/shared/Auth/botInviteUrl";
 import { HatsTokenCard, NftCard } from "./NftCard";
+import { Select, SelectOption } from "../formFields/Select";
 
 type FormFields = z.infer<typeof newEntityFormSchema>;
 
@@ -41,7 +40,7 @@ const style = {
   p: 4,
 };
 
-interface RoleModalProps {
+interface EntityModalProps {
   open: boolean;
   setOpen: (x: boolean) => void;
   onSubmit: (value: AgentSummaryPartsFragment[]) => void;
@@ -124,7 +123,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
   }
 };
 
-export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalProps) {
+export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModalProps) {
   const { me } = useContext(CurrentUserContext);
 
   const isConnectedToDiscord = me?.identities.find(
@@ -229,10 +228,9 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
           Add role
         </Typography>
         <form style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <SelectControl
+          <Select<FormFields>
             name="type"
-            sx={{ width: "200px" }}
-            //@ts-ignore
+            width="200px"
             control={control}
             label=""
             selectOptions={[
@@ -372,9 +370,9 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                     }}
                   >
                     <Box sx={{ width: "300px" }}>
-                      <SelectControl
+                      <Select<FormFields>
                         name="discordRole.serverId"
-                        //@ts-ignore
+                        width="200px"
                         control={control}
                         label="Server"
                         selectOptions={serverOptions}
@@ -382,11 +380,11 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                     </Box>
                     {discordServerId && (
                       <>
-                        <SelectControl
+                        <Select<FormFields>
                           name="discordRole.roleId"
-                          //@ts-ignore
                           control={control}
                           label="Role"
+                          width="200px"
                           loading={roleLoading}
                           selectOptions={discordServerRoles}
                         />
@@ -427,15 +425,13 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
                   }}
                 >
                   <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
-                    <Box sx={{ width: "140px" }}>
-                      <SelectControl
-                        name="nft.chain"
-                        //@ts-ignore
-                        control={control}
-                        label="Chain"
-                        selectOptions={chainOptions}
-                      />
-                    </Box>
+                    <Select<FormFields>
+                      name="nft.chain"
+                      control={control}
+                      width="140px"
+                      label="Chain"
+                      selectOptions={chainOptions}
+                    />
                     <Controller
                       name={"nft.contractAddress"}
                       control={control}
@@ -531,9 +527,9 @@ export function RoleModal({ open, setOpen, onSubmit, initialType }: RoleModalPro
             <>
               <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
                 <Box sx={{ width: "140px" }}>
-                  <SelectControl
+                  <Select<FormFields>
                     name="hat.chain"
-                    //@ts-ignore
+                    width="200px"
                     control={control}
                     label="Chain"
                     selectOptions={chainOptions}

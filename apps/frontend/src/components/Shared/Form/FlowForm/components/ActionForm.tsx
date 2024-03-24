@@ -2,7 +2,7 @@ import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { useEffect, useState } from "react";
 
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";

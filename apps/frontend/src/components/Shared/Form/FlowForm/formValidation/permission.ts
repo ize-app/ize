@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { entityFormSchema } from "./entity";
+import { entityFormSchema } from "../../formValidation/entity";
 
 export type PermissionSchemaType = z.infer<typeof permissionSchema>;
 

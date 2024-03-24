@@ -26,7 +26,7 @@ import {
   ResultSchemaType,
 } from "../../formValidation/result";
 import { ActionSchemaType } from "../../formValidation/action";
-import { EntitySchemaType } from "../../formValidation/entity";
+import { EntitySchemaType } from "../../../formValidation/entity";
 import { EvolveSchemaType } from "../../formValidation/evolve";
 
 export const createFormStateForExistingFlow = (flow: Flow): FlowSchemaType => {

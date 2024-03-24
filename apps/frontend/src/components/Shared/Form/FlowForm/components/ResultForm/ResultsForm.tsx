@@ -5,7 +5,7 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { Select, TextField } from "../../../formFields";
-import { LabeledGroupedInputs } from "../../../LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 
 import {
   DefaultFieldSelection,
@@ -13,7 +13,7 @@ import {
   FieldsSchemaType,
 } from "../../formValidation/fields";
 import { DecisionType, FieldType, ResultType } from "@/graphql/generated/graphql";
-import { ResponsiveFormRow } from "../ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { ResultSchemaType } from "../../formValidation/result";
 import { SelectOption } from "../../../formFields/Select";

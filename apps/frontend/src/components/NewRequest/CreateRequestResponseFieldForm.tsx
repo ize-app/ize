@@ -1,5 +1,5 @@
 import { Field, FieldType } from "@/graphql/generated/graphql";
-import { LabeledGroupedInputs } from "../shared/Form/LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../shared/Form/formLayout/LabeledGroupedInputs";
 import Typography from "@mui/material/Typography";
 
 import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";

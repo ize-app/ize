@@ -8,7 +8,7 @@ import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields"
 
 import { FieldOptionSchemaType } from "../formValidation/fields";
 import { FieldDataType } from "@/graphql/generated/graphql";
-import { ResponsiveFormRow } from "./ResponsiveFormRow";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";

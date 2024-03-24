@@ -25,12 +25,12 @@ import {
 } from "../../../../graphql/generated/graphql";
 import { Avatar } from "../../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { RoleModal } from "../FlowForm/RoleModal/RoleModal";
+import { EntityModal } from "../EntityModal/EntityModal";
 import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
 import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
 import NftSvg from "../../icons/NftSvg";
 
-interface RoleSearchProps<T extends FieldValues> extends UseControllerProps<T> {
+interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T> {
   label?: string;
   ariaLabel: string;
   placeholderText?: string;
@@ -38,7 +38,7 @@ interface RoleSearchProps<T extends FieldValues> extends UseControllerProps<T> {
   getFieldValues: UseFormGetValues<T>;
 }
 
-export const RoleSearch = <T extends FieldValues>({
+export const EntitySearch = <T extends FieldValues>({
   control,
   name,
   label,
@@ -46,7 +46,7 @@ export const RoleSearch = <T extends FieldValues>({
   setFieldValue,
   getFieldValues,
   ...props
-}: RoleSearchProps<T>) => {
+}: EntitySearchProps<T>) => {
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
@@ -72,7 +72,12 @@ export const RoleSearch = <T extends FieldValues>({
   return (
     <>
       {open && ( // unmounting the modal fully so that react hook form state clears
-        <RoleModal open={open} setOpen={setOpen} onSubmit={onSubmit} initialType={roleModalType} />
+        <EntityModal
+          open={open}
+          setOpen={setOpen}
+          onSubmit={onSubmit}
+          initialType={roleModalType}
+        />
       )}
       <Controller
         name={name}
