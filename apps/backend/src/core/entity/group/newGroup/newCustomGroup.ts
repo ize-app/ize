@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
-import { AgentType, MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
+import { EntityType, MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
 export const newCustomGroup = async ({
   context,
@@ -28,14 +28,14 @@ export const newCustomGroup = async ({
               CustomGroupMemberGroups: {
                 createMany: {
                   data: args.inputs.members
-                    .filter((members) => members.agentType === AgentType.Group)
+                    .filter((members) => members.entityType === EntityType.Group)
                     .map((memberGroup) => ({ groupId: memberGroup.id })),
                 },
               },
               CustomGroupMemberIdentities: {
                 createMany: {
                   data: args.inputs.members
-                    .filter((members) => members.agentType === AgentType.Identity)
+                    .filter((members) => members.entityType === EntityType.Identity)
                     .map((memberIdentity) => ({ identityId: memberIdentity.id })),
                 },
               },

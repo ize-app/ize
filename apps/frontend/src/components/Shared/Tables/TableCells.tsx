@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 import {
   ResultSummaryPartsFragment,
-  AgentSummaryPartsFragment,
+  EntitySummaryPartsFragment,
   UserSummaryPartsFragment,
 } from "../../../graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "../../../utils/inputs";
@@ -29,7 +29,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
+  avatars: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
   align: "center" | "left";
 }
 

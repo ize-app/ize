@@ -1,7 +1,7 @@
 // needs to distn
 
-import { ResponsePrismaType } from "@/core/response/type";
-import { ResultPrismaType } from "../types";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { ResultPrismaType } from "../resultPrismaTypes";
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { newDecisionResult } from "../decision/newDecisionResult";

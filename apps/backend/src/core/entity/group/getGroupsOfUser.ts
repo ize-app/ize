@@ -2,7 +2,8 @@ import { Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
 
-import { groupInclude, formatGroup } from "@/core/entity/group/formatGroup";
+import { groupInclude } from "./groupPrismaTypes";
+import { groupResolver } from "./groupResolver";
 import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
 
 export const getGroupsOfUser = async ({
@@ -25,6 +26,6 @@ export const getGroupsOfUser = async ({
     include: groupInclude,
   });
 
-  const formattedGroups = groups.map((group) => formatGroup(group));
+  const formattedGroups = groups.map((group) => groupResolver(group));
   return formattedGroups;
 };

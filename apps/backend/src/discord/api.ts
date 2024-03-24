@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { decrypt } from "@/encrypt";
+import { decrypt } from "@/prisma/encrypt";
 import { MePrismaType } from "@/core/user/formatUser";
 import { APIGuildMember, APIRole, APIGuild } from "discord.js";
 

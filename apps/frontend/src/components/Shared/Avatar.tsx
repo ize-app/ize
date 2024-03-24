@@ -11,8 +11,8 @@ import { useState } from "react";
 import Blockies from "react-blockies";
 
 import {
-  AgentSummaryPartsFragment,
-  AgentType,
+  EntitySummaryPartsFragment,
+  EntityType,
   UserSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 import { avatarString, stringToColor } from "../../utils/inputs";
@@ -23,7 +23,7 @@ export interface AvatarWithNameProps {
   name: string;
   color?: string | null;
   parent?: ParentProps;
-  type: AgentType;
+  type: EntityType;
   cryptoWallet?: string | null | undefined;
 }
 
@@ -34,7 +34,7 @@ export interface ParentProps {
 
 export interface AvatarProps extends MuiAvatarProps {
   id: string;
-  type: AgentType;
+  type: EntityType;
   avatarUrl?: string | null | undefined;
   name: string;
   parent?: ParentProps;
@@ -43,14 +43,14 @@ export interface AvatarProps extends MuiAvatarProps {
 }
 
 export const reformatAgentForAvatar = (
-  agent: AgentSummaryPartsFragment | UserSummaryPartsFragment,
+  agent: EntitySummaryPartsFragment | UserSummaryPartsFragment,
 ): AvatarProps => {
   switch (agent.__typename) {
     case "Group":
       return {
         id: agent.id,
         name: agent.name,
-        type: AgentType.Group,
+        type: EntityType.Group,
         avatarUrl: agent.icon,
         backgroundColor: agent.color,
         parent: agent.organization
@@ -65,7 +65,7 @@ export const reformatAgentForAvatar = (
       return {
         id: agent.id,
         name: agent.name,
-        type: AgentType.Identity,
+        type: EntityType.Identity,
         avatarUrl: agent.icon,
         backgroundColor: null,
         cryptoWallet:
@@ -77,7 +77,7 @@ export const reformatAgentForAvatar = (
       return {
         id: agent.id,
         name: agent.name,
-        type: AgentType.Identity, // TODO: Make an "AvatarType" enum that includes "User"
+        type: EntityType.Identity, // TODO: Make an "AvatarType" enum that includes "User"
         avatarUrl: agent.icon,
         backgroundColor: null,
       };
@@ -237,7 +237,7 @@ const AvatarPopper = ({
 export const AvatarGroup = ({
   agents,
 }: {
-  agents: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
+  agents: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
 }): JSX.Element => {
   const avatars: AvatarProps[] = agents.map((agent) => reformatAgentForAvatar(agent));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -288,7 +288,7 @@ export const NameWithPopper = ({
   agents,
 }: {
   name: string;
-  agents: (AgentSummaryPartsFragment | UserSummaryPartsFragment)[];
+  agents: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
 }) => {
   const agentsFormatted: AvatarProps[] = agents.map((agent) => reformatAgentForAvatar(agent));
 

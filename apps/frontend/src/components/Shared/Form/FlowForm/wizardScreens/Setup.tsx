@@ -9,7 +9,7 @@ import { flowSchema } from "../formValidation/flow";
 import { StepsForm } from "../components/StepsForm";
 import { PermissionType } from "../formValidation/permission";
 import { TextField } from "../../formFields";
-import { AgentType, DecisionType } from "@/graphql/generated/graphql";
+import { EntityType, DecisionType } from "@/graphql/generated/graphql";
 import { useContext } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
@@ -28,7 +28,7 @@ export const Setup = () => {
         responsePermission: {
           type: PermissionType.Entities,
           entities: me?.identities
-            ? [me.identities.map((id) => ({ ...id, __typename: "Identity" as AgentType }))[0]]
+            ? [me.identities.map((id) => ({ ...id, __typename: "Identity" as EntityType }))[0]]
             : [],
         },
         decision: {

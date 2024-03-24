@@ -2,7 +2,7 @@ import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 import { Me, Identity } from "@graphql/generated/resolver-types";
 import { userInclude, formatUser } from "@/core/user/formatUser";
-import { formatIdentity } from "@/core/entity/identity/formatIdentity";
+import { identityResolver } from "@/core/entity/identity/identityResolver";
 import { getDiscordServers } from "@/discord/getDiscordServers";
 import { updateUserDiscordGroups } from "@/core/entity/updateIdentitiesGroups/updateUserDiscordGroups";
 import { updateUserNftGroups } from "@/core/entity/updateIdentitiesGroups/updateUserNftGroups";
@@ -19,7 +19,11 @@ const me = async (
   await updateUserNftGroups({ context });
 
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
-    return formatIdentity(identity, context.currentUser);
+    return identityResolver(
+      identity,
+      context.currentUser?.Identities.map((i) => i.id) ?? [],
+      false,
+    );
   });
 
   const userData = await prisma.user.findFirstOrThrow({

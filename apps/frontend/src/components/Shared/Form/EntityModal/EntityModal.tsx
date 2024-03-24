@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import {
-  AgentSummaryPartsFragment,
-  NewAgentsDocument,
-  MutationNewAgentsArgs,
-  NewAgentTypes,
+  EntitySummaryPartsFragment,
+  NewEntitiesDocument,
+  MutationNewEntitiesArgs,
+  NewEntityTypes,
   DiscordServerRolesDocument,
   Me,
   Blockchain,
@@ -43,8 +43,8 @@ const style = {
 interface EntityModalProps {
   open: boolean;
   setOpen: (x: boolean) => void;
-  onSubmit: (value: AgentSummaryPartsFragment[]) => void;
-  initialType: NewAgentTypes;
+  onSubmit: (value: EntitySummaryPartsFragment[]) => void;
+  initialType: NewEntityTypes;
 }
 
 const chainOptions: SelectOption[] = [
@@ -55,29 +55,29 @@ const chainOptions: SelectOption[] = [
   { name: "Base", value: Blockchain.Base },
 ];
 
-const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
+const createNewAgentArgs = (data: FormFields): MutationNewEntitiesArgs => {
   switch (data.type) {
-    case NewAgentTypes.IdentityBlockchain: {
+    case NewEntityTypes.IdentityBlockchain: {
       return {
-        agents: (data.ethAddress ?? []).map((address) => ({
+        entities: (data.ethAddress ?? []).map((address) => ({
           identityBlockchain: {
             address: address,
           },
         })),
       };
     }
-    case NewAgentTypes.IdentityEmail: {
+    case NewEntityTypes.IdentityEmail: {
       return {
-        agents: (data.emailAddress ?? []).map((email) => ({
+        entities: (data.emailAddress ?? []).map((email) => ({
           identityEmail: {
             email: email,
           },
         })),
       };
     }
-    case NewAgentTypes.GroupDiscord: {
+    case NewEntityTypes.GroupDiscord: {
       return {
-        agents: data.discordRole
+        entities: data.discordRole
           ? [
               {
                 groupDiscordRole: {
@@ -89,9 +89,9 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
           : [],
       };
     }
-    case NewAgentTypes.GroupNft: {
+    case NewEntityTypes.GroupNft: {
       return {
-        agents: data.nft
+        entities: data.nft
           ? [
               {
                 groupNft: {
@@ -104,9 +104,9 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
           : [],
       };
     }
-    case NewAgentTypes.GroupHat: {
+    case NewEntityTypes.GroupHat: {
       return {
-        agents: data.hat
+        entities: data.hat
           ? [
               {
                 groupHat: {
@@ -119,7 +119,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewAgentsArgs => {
       };
     }
     default:
-      return { agents: [] };
+      return { entities: [] };
   }
 };
 
@@ -137,11 +137,11 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
 
   const [disableSubmit, setDisableSubmit] = useState(false);
 
-  const [mutate] = useMutation(NewAgentsDocument, {
+  const [mutate] = useMutation(NewEntitiesDocument, {
     onCompleted: (data) => {
       setDisableSubmit(false);
       setOpen(false);
-      onSubmit(data.newAgents);
+      onSubmit(data.newEntities);
     },
     onError: (error) => {
       console.log("Error", error);
@@ -183,7 +183,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
 
     await mutate({
       variables: {
-        agents: createNewAgentArgs(data).agents,
+        entities: createNewAgentArgs(data).entities,
       },
     });
   };
@@ -234,14 +234,14 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
             control={control}
             label=""
             selectOptions={[
-              { name: "Email address", value: NewAgentTypes.IdentityEmail },
-              { name: "Eth wallet", value: NewAgentTypes.IdentityBlockchain },
-              { name: "Discord role", value: NewAgentTypes.GroupDiscord },
-              { name: "NFT", value: NewAgentTypes.GroupNft },
-              { name: "Hat", value: NewAgentTypes.GroupHat },
+              { name: "Email address", value: NewEntityTypes.IdentityEmail },
+              { name: "Eth wallet", value: NewEntityTypes.IdentityBlockchain },
+              { name: "Discord role", value: NewEntityTypes.GroupDiscord },
+              { name: "NFT", value: NewEntityTypes.GroupNft },
+              { name: "Hat", value: NewEntityTypes.GroupHat },
             ]}
           />
-          {inputType === NewAgentTypes.IdentityBlockchain && (
+          {inputType === NewEntityTypes.IdentityBlockchain && (
             <Box>
               <Typography>
                 Enter an Eth address or ENS address (or multiple seperated by commas).
@@ -291,7 +291,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               </Box>
             </Box>
           )}
-          {inputType === NewAgentTypes.IdentityEmail && (
+          {inputType === NewEntityTypes.IdentityEmail && (
             <>
               <Typography>
                 Enter an email address (or multiple seperated by commas). The full email address
@@ -342,7 +342,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               </Box>
             </>
           )}
-          {inputType === NewAgentTypes.GroupDiscord && (
+          {inputType === NewEntityTypes.GroupDiscord && (
             <>
               {!isConnectedToDiscord ? (
                 <>
@@ -412,7 +412,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               )}
             </>
           )}
-          {inputType === NewAgentTypes.GroupNft && (
+          {inputType === NewEntityTypes.GroupNft && (
             <>
               <div>
                 <Box
@@ -523,7 +523,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               </div>
             </>
           )}
-          {inputType === NewAgentTypes.GroupHat && (
+          {inputType === NewEntityTypes.GroupHat && (
             <>
               <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
                 <Box sx={{ width: "140px" }}>

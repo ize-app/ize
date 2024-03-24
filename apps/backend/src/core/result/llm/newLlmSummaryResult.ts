@@ -1,5 +1,5 @@
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
-import { ResponsePrismaType } from "@/core/response/type";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 // import { ResultPrismaType } from "../types";
 
 export const newLlmSummaryResult = ({

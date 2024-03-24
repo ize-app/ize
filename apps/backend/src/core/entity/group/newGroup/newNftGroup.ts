@@ -4,11 +4,12 @@ import { prisma } from "../../../../prisma/client";
 import { Prisma } from "@prisma/client";
 import { getNftToken } from "@/blockchain/getNftToken";
 import { getNftContract } from "@/blockchain/getNftContract";
-import { formatGroup, groupInclude } from "@/core/entity/group/formatGroup";
+import { groupResolver } from "../groupResolver";
+import { groupInclude } from "../groupPrismaTypes";
 import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
 import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
 
-export const createNftGroup = async ({
+export const newNftGroup = async ({
   chain,
   address,
   tokenId,
@@ -68,7 +69,7 @@ export const createNftGroup = async ({
     },
   });
 
-  return formatGroup(group);
+  return groupResolver(group);
 };
 
 const upsertNftCollection = async ({
@@ -215,5 +216,5 @@ export const createHatsGroup = async ({
     },
   });
 
-  return formatGroup(group);
+  return groupResolver(group);
 };

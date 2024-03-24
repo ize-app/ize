@@ -1,7 +1,7 @@
 import { GraphqlRequestContext } from "@graphql/context";
 
 import { DiscordApi } from "@/discord/api";
-import { GroupDiscordPrismaType } from "@/core/entity/group/formatGroup";
+import { GroupDiscordPrismaType } from "@/core/entity/group/groupPrismaTypes";
 
 // checks whether user has permission according to their discord @roles
 // for a given set of request or respond roles.

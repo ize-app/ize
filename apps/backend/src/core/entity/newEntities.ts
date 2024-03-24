@@ -1,29 +1,30 @@
-import { prisma } from "../../../prisma/client";
-import { GraphqlRequestContext } from "../../../graphql/context";
-import { MutationNewAgentsArgs, Agent } from "@graphql/generated/resolver-types";
+import { prisma } from "../../prisma/client";
+import { GraphqlRequestContext } from "../../graphql/context";
+import { MutationNewEntitiesArgs, Entity } from "@graphql/generated/resolver-types";
 
-import { refreshDiscordServerRoles } from "@/core/entity/group/upsertGroups/refreshDiscordServerRoles";
-import { upsertDiscordEveryoneRole } from "@/core/entity/group/upsertGroups/upsertDiscordEveryoneRole";
-import { formatGroup, groupInclude } from "@/core/entity/group/formatGroup";
-import { createHatsGroup, createNftGroup } from "@/core/entity/group/upsertGroups/createNftGroup";
-import { upsertBlockchainIdentity } from "../identity/upsertBlockchainIdentity";
-import { upsertEmailIdentity } from "../identity/upsertEmailIdentity";
+import { refreshDiscordServerRoles } from "@/core/entity/group/newGroup/refreshDiscordServerRoles";
+import { newDiscordEveryoneRole } from "@/core/entity/group/newGroup/newDiscordEveryoneRole";
+import { groupResolver } from "./group/groupResolver";
+import { groupInclude } from "./group/groupPrismaTypes";
 
-export const newAgents = async (
-  args: MutationNewAgentsArgs,
+import { createHatsGroup, newNftGroup } from "@/core/entity/group/newGroup/newNftGroup";
+import { upsertBlockchainIdentity } from "./identity/newIdentity/upsertBlockchainIdentity";
+import { upsertEmailIdentity } from "./identity/newIdentity/upsertEmailIdentity";
+
+export const newEntities = async (
+  args: MutationNewEntitiesArgs,
   context: GraphqlRequestContext,
-): Promise<Agent[]> => {
-  // ): Promise<Agent[]> => {
+): Promise<Entity[]> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   const agents = await Promise.all(
-    args.agents.map(async (a) => {
+    args.entities.map(async (a) => {
       if (a.identityBlockchain) {
-        return await upsertBlockchainIdentity({ newAgent: a, context });
+        return await upsertBlockchainIdentity({ newEntity: a, context });
       } else if (a.identityEmail) {
         return await upsertEmailIdentity({ newAgent: a, context });
       } else if (a.groupDiscordRole) {
         if (a.groupDiscordRole.roleId === "@everyone") {
-          await upsertDiscordEveryoneRole({ serverId: a.groupDiscordRole.serverId, context });
+          await newDiscordEveryoneRole({ serverId: a.groupDiscordRole.serverId, context });
           const group = await prisma.group.findFirstOrThrow({
             include: groupInclude,
             where: {
@@ -35,7 +36,7 @@ export const newAgents = async (
               },
             },
           });
-          return formatGroup(group);
+          return groupResolver(group);
         } else {
           await refreshDiscordServerRoles({ serverId: a.groupDiscordRole.serverId, context });
           const group = await prisma.group.findFirstOrThrow({
@@ -49,10 +50,10 @@ export const newAgents = async (
               },
             },
           });
-          return formatGroup(group);
+          return groupResolver(group);
         }
       } else if (a.groupNft) {
-        return await createNftGroup({
+        return await newNftGroup({
           context,
           address: a.groupNft.address,
           chain: a.groupNft.chain,

@@ -2,14 +2,14 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "../../../prisma/client";
 import {
-  GroupCustomPrismaType,
-  GroupDiscordPrismaType,
-  GroupNftPrismaType,
   GroupPrismaType,
-  groupInclude,
-} from "@/core/entity/group/formatGroup";
-import { identityInclude, IdentityPrismaType } from "@/core/entity/identity/types";
-import { PermissionPrismaType } from "../types";
+  GroupCustomPrismaType,
+  GroupNftPrismaType,
+  GroupDiscordPrismaType,
+} from "@/core/entity/group/groupPrismaTypes";
+import { groupInclude } from "@/core/entity/group/groupPrismaTypes";
+import { identityInclude, IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
+import { PermissionPrismaType } from "../permissionPrismaTypes";
 
 // creates unique list of different group / identity types for a given permission set
 // resolves custom groups to their consitituent group / identity members

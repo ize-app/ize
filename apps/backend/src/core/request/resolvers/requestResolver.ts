@@ -1,6 +1,6 @@
 import { RequestNew } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { RequestPrismaType } from "../requestTypes";
+import { RequestPrismaType } from "../requestPrismaTypes";
 import { flowVersionResolver } from "../../flow/resolvers/flowVersionResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { requestStepResolver } from "./requestStepResolver";

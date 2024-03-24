@@ -1,8 +1,8 @@
 import { Permission } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { PermissionPrismaType } from "./types";
-import { identityResolver } from "../entity/identity/resolvers";
-import { resolveGroup } from "../entity/group/resolvers";
+import { PermissionPrismaType } from "./permissionPrismaTypes";
+import { identityResolver } from "../entity/identity/identityResolver";
+import { groupResolver } from "../entity/group/groupResolver";
 
 export const permissionResolver = (
   permission: PermissionPrismaType | null,
@@ -12,7 +12,7 @@ export const permissionResolver = (
 
   const entities = permission.EntitySet
     ? permission.EntitySet.EntitySetEntities.map((entity) => {
-        if (entity.Entity.Group) return resolveGroup(entity.Entity.Group);
+        if (entity.Entity.Group) return groupResolver(entity.Entity.Group);
         else if (entity.Entity.Identity)
           return identityResolver(entity.Entity.Identity, userIdentityIds);
         else

@@ -1,7 +1,7 @@
 import { RequestNew, QueryGetRequestArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
-import { requestInclude } from "./requestTypes";
+import { requestInclude } from "./requestPrismaTypes";
 import { requestResolver } from "./resolvers/requestResolver";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 

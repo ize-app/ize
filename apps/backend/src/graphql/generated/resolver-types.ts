@@ -34,13 +34,6 @@ export enum ActionNewType {
   TriggerStep = 'TriggerStep'
 }
 
-export type Agent = Group | Identity;
-
-export enum AgentType {
-  Group = 'Group',
-  Identity = 'Identity'
-}
-
 export type AlchemyApiNftContract = {
   __typename?: 'AlchemyApiNftContract';
   address: Scalars['String']['output'];
@@ -97,7 +90,7 @@ export type CustomGroupArgs = {
 };
 
 export type CustomGroupMembersArgs = {
-  agentType: AgentType;
+  entityType: EntityType;
   id: Scalars['String']['input'];
 };
 
@@ -163,6 +156,11 @@ export type Entity = Group | Identity;
 export type EntityArgs = {
   id: Scalars['String']['input'];
 };
+
+export enum EntityType {
+  Group = 'Group',
+  Identity = 'Identity'
+}
 
 export type EvolveFlow = {
   __typename?: 'EvolveFlow';
@@ -386,22 +384,21 @@ export type Me = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  newAgents: Array<Agent>;
   newCustomGroup: Scalars['String']['output'];
+  newEntities: Array<Entity>;
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
-  setUpDiscordServer: Group;
-};
-
-
-export type MutationNewAgentsArgs = {
-  agents: Array<NewAgentArgs>;
 };
 
 
 export type MutationNewCustomGroupArgs = {
   inputs: CustomGroupArgs;
+};
+
+
+export type MutationNewEntitiesArgs = {
+  entities: Array<NewEntityArgs>;
 };
 
 
@@ -419,12 +416,7 @@ export type MutationNewResponseArgs = {
   response: NewResponseArgs;
 };
 
-
-export type MutationSetUpDiscordServerArgs = {
-  input: SetUpDiscordServerInput;
-};
-
-export type NewAgentArgs = {
+export type NewEntityArgs = {
   groupDiscordRole?: InputMaybe<GroupDiscordRoleArgs>;
   groupEns?: InputMaybe<GroupEnsArgs>;
   groupHat?: InputMaybe<GroupHatArgs>;
@@ -434,7 +426,7 @@ export type NewAgentArgs = {
   identityEmail?: InputMaybe<IdentityEmailArgs>;
 };
 
-export enum NewAgentTypes {
+export enum NewEntityTypes {
   GroupDiscord = 'GroupDiscord',
   GroupHat = 'GroupHat',
   GroupNft = 'GroupNft',
@@ -790,7 +782,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   ActionNew: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
-  Agent: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   Entity: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
@@ -805,8 +796,6 @@ export type ResolversTypes = {
   ActionNew: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionNew']>;
   ActionNewArgs: ActionNewArgs;
   ActionNewType: ActionNewType;
-  Agent: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Agent']>;
-  AgentType: AgentType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
   ApiHatToken: ResolverTypeWrapper<ApiHatToken>;
@@ -825,6 +814,7 @@ export type ResolversTypes = {
   DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
   Entity: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Entity']>;
   EntityArgs: EntityArgs;
+  EntityType: EntityType;
   EvolveFlow: ResolverTypeWrapper<EvolveFlow>;
   EvolveFlowArgs: EvolveFlowArgs;
   Field: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Field']>;
@@ -863,8 +853,8 @@ export type ResolversTypes = {
   LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
-  NewAgentArgs: NewAgentArgs;
-  NewAgentTypes: NewAgentTypes;
+  NewEntityArgs: NewEntityArgs;
+  NewEntityTypes: NewEntityTypes;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -905,7 +895,6 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   ActionNew: ResolversUnionTypes<ResolversParentTypes>['ActionNew'];
   ActionNewArgs: ActionNewArgs;
-  Agent: ResolversUnionTypes<ResolversParentTypes>['Agent'];
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
@@ -955,7 +944,7 @@ export type ResolversParentTypes = {
   LlmSummaryArgs: LlmSummaryArgs;
   Me: Me;
   Mutation: {};
-  NewAgentArgs: NewAgentArgs;
+  NewEntityArgs: NewEntityArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -992,10 +981,6 @@ export type ResolversParentTypes = {
 
 export type ActionNewResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionNew'] = ResolversParentTypes['ActionNew']> = {
   __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
-};
-
-export type AgentResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Agent'] = ResolversParentTypes['Agent']> = {
-  __resolveType: TypeResolveFn<'Group' | 'Identity', ParentType, ContextType>;
 };
 
 export type AlchemyApiNftContractResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftContract'] = ResolversParentTypes['AlchemyApiNftContract']> = {
@@ -1206,12 +1191,11 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  newAgents?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType, RequireFields<MutationNewAgentsArgs, 'agents'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
+  newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
-  setUpDiscordServer?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<MutationSetUpDiscordServerArgs, 'input'>>;
 };
 
 export type NftCollectionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['NftCollection'] = ResolversParentTypes['NftCollection']> = {
@@ -1365,7 +1349,6 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type Resolvers<ContextType = GraphqlRequestContext> = {
   ActionNew?: ActionNewResolvers<ContextType>;
-  Agent?: AgentResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;

@@ -1,5 +1,5 @@
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { ResultConfigDecisionPrismaType } from "../types";
+import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
 
 export const determineDecision = ({

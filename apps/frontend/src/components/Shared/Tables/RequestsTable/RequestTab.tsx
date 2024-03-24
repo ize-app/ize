@@ -9,11 +9,11 @@ import CreateButton from "../CreateButton";
 import Search from "../Search";
 
 import {
-  AgentSummaryPartsFragment,
+  EntitySummaryPartsFragment,
   RequestSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 
-const searchForUser = (regExSearchQuery: RegExp, users: AgentSummaryPartsFragment[]) => {
+const searchForUser = (regExSearchQuery: RegExp, users: EntitySummaryPartsFragment[]) => {
   let foundMatch = false;
   for (let i = 0; i < users.length; i++) {
     if (users[i].name.search(regExSearchQuery) !== -1) {
@@ -71,7 +71,7 @@ const RequestTab = ({
 
       if (request.name.search(regExSearchQuery) !== -1) searchMatch = true;
       else if (request.process.name.search(regExSearchQuery) !== -1) searchMatch = true;
-      else if (searchForUser(regExSearchQuery, [request.creator as AgentSummaryPartsFragment]))
+      else if (searchForUser(regExSearchQuery, [request.creator as EntitySummaryPartsFragment]))
         searchMatch = true;
 
       return selectMatch && searchMatch;

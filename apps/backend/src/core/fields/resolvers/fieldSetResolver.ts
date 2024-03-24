@@ -9,7 +9,7 @@ import {
 } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { FieldSetPrismaType } from "../fieldPrismaTypes";
-import { RequestDefinedOptionSetPrismaType } from "../../request/requestTypes";
+import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTypes";
 
 export const fieldSetResolver = ({
   fieldSet,

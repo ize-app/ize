@@ -1,5 +1,5 @@
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
-import { ResultPrismaType } from "@/core/result/types";
+import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
 import { ActionNewType } from "@/graphql/generated/resolver-types";
 import { triggerNextStep } from "./triggerNextStep";
 import { callWebhook } from "./callWebhook";

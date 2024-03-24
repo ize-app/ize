@@ -5,7 +5,7 @@ import { prisma } from "../../../prisma/client";
 import { hasIdentityPermission } from "./hasIdentityPermission";
 import { hasDiscordRoleGroupPermission } from "./hasDiscordRoleGroupPermission";
 import { hasNftGroupPermission } from "./hasNftGroupPermission";
-import { PermissionPrismaType } from "../types";
+import { PermissionPrismaType } from "../permissionPrismaTypes";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { resolveEntitySet } from "./resolveEntitySet";
 

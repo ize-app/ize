@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { permissionInclude } from "../permission/types";
+import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { actionInclude } from "../action/actionPrismaTypes";
-import { resultConfigSetInclude } from "../result/types";
+import { resultConfigSetInclude } from "../result/resultPrismaTypes";
 
 export const stepInclude = Prisma.validator<Prisma.StepInclude>()({
   RequestPermissions: {

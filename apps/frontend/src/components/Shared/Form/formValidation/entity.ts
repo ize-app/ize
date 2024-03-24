@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { Blockchain, NewAgentTypes, AgentType } from "@/graphql/generated/graphql";
+import { Blockchain, NewEntityTypes, EntityType } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
 
 export type EntitySchemaType = z.infer<typeof entityFormSchema>;
@@ -15,7 +15,7 @@ const groupFormSchema = z.object({
     name: z.string(),
     icon: z.string().optional().nullable(),
   }),
-  __typename: z.nativeEnum(AgentType),
+  __typename: z.nativeEnum(EntityType),
   groupType: z
     .object({
       __typename: z.any(),
@@ -28,7 +28,7 @@ const identityFormSchema = z.object({
   name: z.string(),
   entityId: z.string(),
   icon: z.string().optional().nullable(),
-  __typename: z.nativeEnum(AgentType),
+  __typename: z.nativeEnum(EntityType),
   identityType: z
     .object({
       __typename: z.any(),
@@ -39,7 +39,7 @@ const identityFormSchema = z.object({
 export const entityFormSchema = z.union([identityFormSchema, groupFormSchema]);
 
 export const newEntityFormSchema = z.object({
-  type: z.nativeEnum(NewAgentTypes),
+  type: z.nativeEnum(NewEntityTypes),
   discordRole: z
     .object({
       serverId: z.string().trim().min(1, { message: "Select a server" }),

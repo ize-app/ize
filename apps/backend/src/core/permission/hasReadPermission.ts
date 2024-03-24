@@ -1,4 +1,4 @@
-import { PermissionPrismaType } from "./types";
+import { PermissionPrismaType } from "./permissionPrismaTypes";
 
 export const hasReadPermission = (
   permission: PermissionPrismaType | null,

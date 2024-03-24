@@ -1,4 +1,4 @@
-import { IdentityPrismaType } from "@/core/entity/identity/types";
+import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
 
 // checks whether one of a user's identities are assigned a role
 // for a given set of request or respond roles.

@@ -1,5 +1,5 @@
 import { ResultConfig, Field } from "@/graphql/generated/resolver-types";
-import { ResultConfigSetPrismaType } from "../types";
+import { ResultConfigSetPrismaType } from "../resultPrismaTypes";
 import { resultConfigResolver } from "./resultConfigResolver";
 
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";

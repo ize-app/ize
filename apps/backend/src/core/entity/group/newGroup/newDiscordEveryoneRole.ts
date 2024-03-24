@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 // this function upserts @everyone role for servers that have not yet
 // added the Ize bots (meaning we can't see their roles / roleIds via the Discord API)
-export const upsertDiscordEveryoneRole = async ({
+export const newDiscordEveryoneRole = async ({
   serverId,
   context,
   transaction = prisma,

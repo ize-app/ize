@@ -1,6 +1,6 @@
 import { Option, Step } from "@/graphql/generated/resolver-types";
 import { StepPrismaType } from "../flowPrismaTypes";
-import { permissionResolver } from "../../permission/resolvers";
+import { permissionResolver } from "../../permission/permissionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { resolveAction } from "../../action/resolveAction";
 import { hasReadPermission } from "../../permission/hasReadPermission";

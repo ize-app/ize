@@ -2,9 +2,9 @@ import { Blockchain } from "@/graphql/generated/resolver-types";
 import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
 
 import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
-import { GroupNftPrismaType } from "@/core/entity/group/formatGroup";
+import { GroupNftPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { hatsClient } from "@/blockchain/hatsClient/hatsClient";
-import { IdentityPrismaType } from "@/core/entity/identity/types";
+import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
 
 // checks whether user has permission according to their discord @roles
 // for a given set of request or respond roles.

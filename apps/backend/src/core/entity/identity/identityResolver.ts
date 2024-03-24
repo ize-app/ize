@@ -1,21 +1,11 @@
-import { Prisma } from "@prisma/client";
 import { Identity } from "@graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
-import { MePrismaType } from "../../user/formatUser";
+import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { IdentityPrismaType } from "./identityPrismaTypes";
 
-export const identityInclude = Prisma.validator<Prisma.IdentityInclude>()({
-  IdentityBlockchain: true,
-  IdentityDiscord: true,
-  IdentityEmail: true,
-});
-
-export type IdentityPrismaType = Prisma.IdentityGetPayload<{
-  include: typeof identityInclude;
-}>;
-
-export const formatIdentity = (
+export const identityResolver = (
   identity: IdentityPrismaType,
-  user: MePrismaType | undefined | null,
+  userIdentityIds: string[],
   obscure = true,
 ): Identity => {
   if (identity.IdentityBlockchain)
@@ -29,7 +19,8 @@ export const formatIdentity = (
       identityType: { __typename: "IdentityBlockchain", ...identity.IdentityBlockchain },
     };
   else if (identity.IdentityEmail) {
-    const isUserIdentity = user?.Identities.some((userId) => userId.id === identity.id) ?? false;
+    const isUserIdentity =
+      userIdentityIds.some((identityId) => identityId === identity.id) ?? false;
     return {
       __typename: "Identity",
       id: identity.id,
@@ -56,5 +47,8 @@ export const formatIdentity = (
         : null,
       identityType: { __typename: "IdentityDiscord", ...identity.IdentityDiscord },
     };
-  else throw Error("ERROR: Unrecognized identity");
+  else
+    throw new GraphQLError("Invalid identity type.", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    });
 };

@@ -18,10 +18,10 @@ import {
 import { useContext, useState } from "react";
 
 import {
-  AgentSummaryPartsFragment,
-  AgentType,
+  EntitySummaryPartsFragment,
+  EntityType,
   Me,
-  NewAgentTypes,
+  NewEntityTypes,
 } from "../../../../graphql/generated/graphql";
 import { Avatar } from "../../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
@@ -50,19 +50,19 @@ export const EntitySearch = <T extends FieldValues>({
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
-  const userIdentities = ((me as Me).identities as AgentSummaryPartsFragment[]).filter(
+  const userIdentities = ((me as Me).identities as EntitySummaryPartsFragment[]).filter(
     (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
   );
 
   const options = [...userIdentities, ...recentAgents];
 
   const [open, setOpen] = useState(false);
-  const [roleModalType, setRoleModalType] = useState(NewAgentTypes.IdentityEmail);
+  const [roleModalType, setRoleModalType] = useState(NewEntityTypes.IdentityEmail);
 
-  const onSubmit = (value: AgentSummaryPartsFragment[]) => {
+  const onSubmit = (value: EntitySummaryPartsFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = (getFieldValues(name) ?? []) as AgentSummaryPartsFragment[];
+    const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
     const newAgents = dedupOptions([...currentState, ...value]);
 
     //@ts-ignore
@@ -94,11 +94,11 @@ export const EntitySearch = <T extends FieldValues>({
                 {...field}
                 {...props}
                 options={options}
-                getOptionLabel={(option: AgentSummaryPartsFragment) => option.name}
+                getOptionLabel={(option: EntitySummaryPartsFragment) => option.name}
                 onChange={(_event, data) => field.onChange(data)}
                 isOptionEqualToValue={(
-                  option: AgentSummaryPartsFragment,
-                  value: AgentSummaryPartsFragment,
+                  option: EntitySummaryPartsFragment,
+                  value: EntitySummaryPartsFragment,
                 ) => {
                   return option.id === value.id;
                 }}
@@ -118,7 +118,7 @@ export const EntitySearch = <T extends FieldValues>({
                           variant="outlined"
                           startIcon={<MailOutline color="primary" />}
                           onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.IdentityEmail);
+                            setRoleModalType(NewEntityTypes.IdentityEmail);
                             setOpen(true);
                           }}
                         >
@@ -128,7 +128,7 @@ export const EntitySearch = <T extends FieldValues>({
                           variant="outlined"
                           startIcon={<EthLogoSvg />}
                           onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.IdentityBlockchain);
+                            setRoleModalType(NewEntityTypes.IdentityBlockchain);
                             setOpen(true);
                           }}
                         >
@@ -138,7 +138,7 @@ export const EntitySearch = <T extends FieldValues>({
                           variant="outlined"
                           startIcon={<DiscordLogoSvg />}
                           onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.GroupDiscord);
+                            setRoleModalType(NewEntityTypes.GroupDiscord);
                             setOpen(true);
                           }}
                         >
@@ -148,7 +148,7 @@ export const EntitySearch = <T extends FieldValues>({
                           variant="outlined"
                           startIcon={<NftSvg />}
                           onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.GroupNft);
+                            setRoleModalType(NewEntityTypes.GroupNft);
                             setOpen(true);
                           }}
                         >
@@ -158,7 +158,7 @@ export const EntitySearch = <T extends FieldValues>({
                           variant="outlined"
                           startIcon={<NftSvg />}
                           onMouseDown={() => {
-                            setRoleModalType(NewAgentTypes.GroupHat);
+                            setRoleModalType(NewEntityTypes.GroupHat);
                             setOpen(true);
                           }}
                         >
@@ -169,8 +169,8 @@ export const EntitySearch = <T extends FieldValues>({
                     </Paper>
                   );
                 }}
-                renderTags={(value: readonly AgentSummaryPartsFragment[], getTagProps) =>
-                  value.map((option: AgentSummaryPartsFragment, index: number) => {
+                renderTags={(value: readonly EntitySummaryPartsFragment[], getTagProps) =>
+                  value.map((option: EntitySummaryPartsFragment, index: number) => {
                     return (
                       <Chip
                         avatar={
@@ -185,7 +185,7 @@ export const EntitySearch = <T extends FieldValues>({
                                 ? option.organization.icon ?? option.icon
                                 : option.icon
                             }
-                            type={option.__typename as AgentType}
+                            type={option.__typename as EntityType}
                             cryptoWallet={
                               option.__typename === "Identity" &&
                               option.identityType.__typename === "IdentityBlockchain"
@@ -224,7 +224,7 @@ export const EntitySearch = <T extends FieldValues>({
                       }
                       name={option.name}
                       backgroundColor={option.__typename === "Group" ? option.color : undefined}
-                      type={option.__typename as AgentType}
+                      type={option.__typename as EntityType}
                       cryptoWallet={
                         option.__typename === "Identity" &&
                         option.identityType.__typename === "IdentityBlockchain"

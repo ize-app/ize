@@ -8,7 +8,7 @@ import { hasWritePermission } from "../permission/hasWritePermission";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
-import { responseInclude } from "./type";
+import { responseInclude } from "./responsePrismaTypes";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
 // creates a new response for a given request step

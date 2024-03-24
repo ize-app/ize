@@ -1,15 +1,16 @@
 import * as z from "zod";
 
-import { prisma } from "../../../prisma/client";
-import { GraphqlRequestContext } from "../../../graphql/context";
-import { NewAgentArgs } from "@graphql/generated/resolver-types";
-import { IdentityPrismaType, formatIdentity } from "@/core/entity/identity/formatIdentity";
+import { prisma } from "../../../../prisma/client";
+import { GraphqlRequestContext } from "../../../../graphql/context";
+import { NewEntityArgs } from "@graphql/generated/resolver-types";
+import { IdentityPrismaType } from "../identityPrismaTypes";
+import { identityResolver } from "../identityResolver";
 
 export const upsertEmailIdentity = async ({
   newAgent,
   context,
 }: {
-  newAgent: NewAgentArgs;
+  newAgent: NewEntityArgs;
   context: GraphqlRequestContext;
 }) => {
   if (!newAgent.identityEmail) throw Error("ERROR: upsertIdentityEmail - missing identityEmail");
@@ -38,5 +39,9 @@ export const upsertEmailIdentity = async ({
     },
   });
 
-  return formatIdentity(res.Identity as IdentityPrismaType, context.currentUser);
+  return identityResolver(
+    res.Identity as IdentityPrismaType,
+    context.currentUser?.Identities.map((i) => i.id) ?? [],
+    false,
+  );
 };

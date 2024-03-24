@@ -1,5 +1,5 @@
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { ResponsePrismaType } from "@/core/response/type";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 
 // gets all answers for a particular field from a list of responses
 export const getFieldAnswersFromResponses = ({

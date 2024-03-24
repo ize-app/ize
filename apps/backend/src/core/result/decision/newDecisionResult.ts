@@ -1,5 +1,5 @@
-import { ResponsePrismaType } from "@/core/response/type";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../types";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { FieldOption, ResultType } from "@prisma/client";
 import { prisma } from "../../../prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";

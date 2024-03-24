@@ -2,7 +2,7 @@ import { prisma } from "@/prisma/client";
 import { OauthTypes, Prisma } from "@prisma/client";
 import { UserPrismaType } from "@/core/user/formatUser";
 import { OAuthAuthenticateResponse } from "stytch";
-import { encrypt } from "@/encrypt";
+import { encrypt } from "@/prisma/encrypt";
 
 export const upsertOauthToken = async ({
   stytchOAuthentication,

@@ -1,5 +1,5 @@
 import { RequestStep } from "@/graphql/generated/resolver-types";
-import { RequestStepPrismaType } from "../requestTypes";
+import { RequestStepPrismaType } from "../requestPrismaTypes";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { fieldAnswerResolver } from "../../fields/resolvers/fieldAnswerResolver";

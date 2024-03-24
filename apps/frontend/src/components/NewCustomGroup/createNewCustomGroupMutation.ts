@@ -9,7 +9,7 @@ export const createNewCustomGroupMutation = (
       name: formState.name as string,
       members: formState.members.map((member) => ({
         id: member.id,
-        agentType: member.__typename,
+        EntityType: member.__typename,
       })),
     },
   };

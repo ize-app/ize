@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { stepInclude } from "../flow/flowPrismaTypes";
-import { responseInclude } from "../response/type";
+import { responseInclude } from "../response/responsePrismaTypes";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
 // run results and actions on newly expired requests

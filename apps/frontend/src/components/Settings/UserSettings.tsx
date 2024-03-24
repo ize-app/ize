@@ -4,7 +4,7 @@ import { useStytch } from "@stytch/react";
 import { useCallback, useContext, useState } from "react";
 import PageContainer from "@/layout/PageContainer";
 import { AvatarWithName } from "../shared/Avatar";
-import { AgentType } from "@/graphql/generated/graphql";
+import { EntityType } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import Box from "@mui/material/Box";
 import { DiscordLogoSvg, EthLogoSvg } from "../shared/icons";
@@ -35,7 +35,7 @@ export const UserSettings = () => {
                 name={identity.name}
                 cryptoWallet={identity.identityType.address}
                 avatarUrl={null}
-                type={AgentType.Identity}
+                type={EntityType.Identity}
               />
             );
           }
@@ -48,7 +48,7 @@ export const UserSettings = () => {
                 key={identity.id}
                 name={identity.name}
                 avatarUrl={identity.icon}
-                type={AgentType.Identity}
+                type={EntityType.Identity}
               />
             );
           }
@@ -61,7 +61,7 @@ export const UserSettings = () => {
                 key={identity.id}
                 name={identity.name}
                 avatarUrl={identity.icon}
-                type={AgentType.Identity}
+                type={EntityType.Identity}
               />
             );
           }

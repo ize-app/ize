@@ -1,6 +1,6 @@
 import { newResults } from "./newResults";
-import { ResponsePrismaType } from "@/core/response/type";
-import { ResultPrismaType } from "../types";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { ResultPrismaType } from "../resultPrismaTypes";
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";

@@ -1,4 +1,4 @@
-import { ResponsePrismaType } from "@/core/response/type";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { determineDecision } from "./decision/determineDecision";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";

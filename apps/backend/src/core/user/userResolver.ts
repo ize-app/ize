@@ -1,7 +1,7 @@
 import { User } from "@graphql/generated/resolver-types";
-import { UserPrismaType } from "./types";
+import { UserPrismaType } from "./userPrismaTypes";
 
-export const resolveUser = (user: UserPrismaType): User => {
+export const userResolver = (user: UserPrismaType): User => {
   return {
     id: user.id,
     name: user.firstName ? user.firstName + " " + user.lastName : "User",

@@ -1,10 +1,10 @@
-import { GroupPrismaType } from "./types";
+import { GroupPrismaType } from "./groupPrismaTypes";
 import { Group, GroupType } from "@/graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
-import { resolveUser } from "../../user/resolvers";
+import { userResolver } from "../../user/userResolver";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
-export const resolveGroup = (group: GroupPrismaType): Group => {
+export const groupResolver = (group: GroupPrismaType): Group => {
   if (group.GroupDiscordRole) {
     return resolveDiscordGroup(group);
   } else if (group.GroupNft) {
@@ -26,7 +26,7 @@ const resolveDiscordGroup = (group: GroupPrismaType): Group => {
   const discordGroup: Group = {
     ...group,
     __typename: "Group",
-    creator: resolveUser(group.creator),
+    creator: userResolver(group.creator),
     // discord only includes the @sign for @everyone
     name:
       group.GroupDiscordRole.name !== "@everyone"
@@ -69,7 +69,7 @@ const resolveGroupNft = (group: GroupPrismaType): Group => {
   const discordGroup: Group = {
     ...group,
     __typename: "Group",
-    creator: resolveUser(group.creator),
+    creator: userResolver(group.creator),
     name: nft.name,
     icon: nft.icon,
     color: null,
@@ -92,7 +92,7 @@ const resolveGroupCustom = (group: GroupPrismaType): Group => {
   const { GroupCustom: custom } = group;
   return {
     ...group,
-    creator: resolveUser(group.creator),
+    creator: userResolver(group.creator),
     name: custom.name,
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "GroupCustom", ...custom } as GroupType,

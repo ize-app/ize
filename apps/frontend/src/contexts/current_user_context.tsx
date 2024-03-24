@@ -1,13 +1,7 @@
 import { ApolloQueryResult, useQuery } from "@apollo/client";
 import { createContext, useEffect } from "react";
 
-import {
-  GroupsDocument,
-  GroupsQuery,
-  MeDocument,
-  MePartsFragment,
-  MeQuery,
-} from "../graphql/generated/graphql";
+import { MeDocument, MePartsFragment, MeQuery } from "../graphql/generated/graphql";
 import { useStytchUser } from "@stytch/react";
 import { Exact } from "utility-types/dist/mapped-types";
 
@@ -26,20 +20,20 @@ interface CurrentUserContextValue {
             >
           | undefined,
       ) => Promise<ApolloQueryResult<MeQuery>>);
-  groups: {
-    data: GroupsQuery | undefined;
-    loading: boolean;
-  };
+  // groups: {
+  //   data: GroupsQuery | undefined;
+  //   loading: boolean;
+  // };
 }
 
 export const CurrentUserContext = createContext<CurrentUserContextValue>({
   me: null,
   meLoading: false,
   refetch: null,
-  groups: {
-    data: undefined,
-    loading: false,
-  },
+  // groups: {
+  //   data: undefined,
+  //   loading: false,
+  // },
 });
 
 export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -48,18 +42,16 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const { data: medata, loading: meLoading, refetch } = useQuery(MeDocument);
   const me = medata?.me;
 
-  const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
-    skip: !me,
-  });
+  // const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
+  //   skip: !me,
+  // });
 
   useEffect(() => {
     refetch();
   }, [user, refetch]);
 
   return (
-    <CurrentUserContext.Provider
-      value={{ me, meLoading, refetch, groups: { data: groupsData, loading: groupsLoading } }}
-    >
+    <CurrentUserContext.Provider value={{ me, meLoading, refetch }}>
       {children}
     </CurrentUserContext.Provider>
   );

@@ -1,7 +1,7 @@
 import { prisma } from "../../../prisma/client";
 import { stepInclude } from "../../flow/flowPrismaTypes";
-import { responseInclude } from "../../response/type";
-import { resultInclude } from "../types";
+import { responseInclude } from "../../response/responsePrismaTypes";
+import { resultInclude } from "../resultPrismaTypes";
 import { runResultsAndActions } from "./runResultsAndActions";
 export const retryNewResults = async ({}: {}) => {
   //  check if there are any request steps that don't have completed results
