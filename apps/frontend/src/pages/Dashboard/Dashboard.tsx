@@ -1,15 +1,14 @@
-import { useQuery } from "@apollo/client";
 import { useState } from "react";
 
 import PageContainer from "../../layout/PageContainer";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import { CurrentUserContext } from "../../contexts/current_user_context";
-import { useContext } from "react";
+// import { CurrentUserContext } from "../../contexts/current_user_context";
+// import { useContext } from "react";
 import CreateButton from "../../components/Tables/CreateButton";
 
 const Dashboard = () => {
-  const { me } = useContext(CurrentUserContext);
+  // const { me } = useContext(CurrentUserContext);
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {

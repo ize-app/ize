@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const Confirm = () => {
-  const { onNext, formState, onPrev, nextLabel } = useNewFlowWizardState();
+  const { onNext, onPrev, nextLabel } = useNewFlowWizardState();
 
   return (
     <>

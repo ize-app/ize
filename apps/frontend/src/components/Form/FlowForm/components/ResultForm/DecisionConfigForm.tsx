@@ -5,8 +5,7 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { InputAdornment } from "@mui/material";
 
-import { DecisionType, FieldType, ResultType } from "@/graphql/generated/graphql";
-import { useEffect } from "react";
+import { DecisionType, FieldType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../../formFields/Select";
 import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
 
@@ -14,7 +13,6 @@ interface DecisionConfigFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
   resultIndex: number;
-  resultId: string;
   field: FieldSchemaType;
 }
 
@@ -22,7 +20,6 @@ export const DecisionConfigForm = ({
   formMethods,
   formIndex,
   resultIndex,
-  resultId,
   field,
 }: DecisionConfigFormProps) => {
   // useEffect(() => {

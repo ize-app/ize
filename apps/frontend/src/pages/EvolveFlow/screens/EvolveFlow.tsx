@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -15,7 +15,7 @@ import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { Wizard, useWizard } from "../../../utils/wizard";
 
-import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
+import { shortUUIDToFull } from "@/utils/inputs";
 import Loading from "../../../components/Loading";
 import { createFormStateForExistingFlow } from "../../../components/Form/FlowForm/helpers/createEvolveFlowFormState/createEvolveFlowFormState";
 
@@ -25,7 +25,7 @@ export const EvolveFlow = () => {
   const { flowId: flowIdShort } = useParams();
   const flowId: string = shortUUIDToFull(flowIdShort as string);
 
-  const { error, data, loading } = useQuery(GetFlowDocument, {
+  const { loading } = useQuery(GetFlowDocument, {
     variables: {
       flowId,
     },
@@ -77,17 +77,8 @@ export const EvolveFlow = () => {
     initialFormState: {},
   };
 
-  const {
-    onPrev,
-    onNext,
-    progressBarStep,
-    title,
-    formState,
-    setFormState,
-    nextLabel,
-    params,
-    setParams,
-  } = useWizard(editProcessWizard);
+  const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel, setParams } =
+    useWizard(editProcessWizard);
 
   useEffect(() => {
     setParams({ flowId: flowIdShort });

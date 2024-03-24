@@ -33,6 +33,7 @@ fragment AlchemyApiNftContractParts on AlchemyApiNftContract {
 fragment AlchemyApiTokenParts on AlchemyApiNftToken {
   tokenId
   name
+  chain
   icon
   contract {
     ...AlchemyApiNftContractParts

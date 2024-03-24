@@ -8,6 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FlowFragment } from "@/graphql/generated/graphql";
 
 import { useNewRequestWizardState } from "../newRequestWizard";
 import { fullUUIDToShort } from "../../../utils/inputs";
@@ -31,7 +32,7 @@ export const SelectProcess = () => {
 
   const loading = false;
 
-  const filteredProcesses = [];
+  const filteredProcesses: FlowFragment[] = [];
 
   return loading ? (
     <Loading />
@@ -69,16 +70,16 @@ export const SelectProcess = () => {
           }}
         >
           <TableBody>
-            {filteredProcesses.map((process) => (
+            {filteredProcesses.map((flow) => (
               <TableRow
-                key={process.id}
+                key={flow.flowId}
                 onClick={() => {
-                  setParams({ processId: fullUUIDToShort(process.id) });
-                  navigate(fullUUIDToShort(process.id));
+                  setParams({ processId: fullUUIDToShort(flow.flowId) });
+                  navigate(fullUUIDToShort(flow.flowId));
                 }}
               >
                 <TableCell>
-                  <Typography fontWeight={500}>{process.name}</Typography>
+                  <Typography fontWeight={500}>{flow.name}</Typography>
                 </TableCell>
               </TableRow>
             ))}

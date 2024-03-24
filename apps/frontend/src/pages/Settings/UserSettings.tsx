@@ -19,7 +19,6 @@ export const UserSettings = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   let hasBlockchainIdentity = false;
-  let hasEmailIdentity = false;
   let hasDiscordIdentity = false;
 
   const identities = me
@@ -40,7 +39,6 @@ export const UserSettings = () => {
             );
           }
           case "IdentityEmail": {
-            hasEmailIdentity = true;
             return (
               <AvatarWithName
                 color={"transparent"}
@@ -129,14 +127,16 @@ export const UserSettings = () => {
           >
             Connect Email
           </Button>
-          <Button
-            onClick={attachDiscord}
-            variant={"outlined"}
-            sx={{ width: "200px" }}
-            startIcon={<DiscordLogoSvg />}
-          >
-            Connect Discord
-          </Button>
+          {!hasDiscordIdentity && (
+            <Button
+              onClick={attachDiscord}
+              variant={"outlined"}
+              sx={{ width: "200px" }}
+              startIcon={<DiscordLogoSvg />}
+            >
+              Connect Discord
+            </Button>
+          )}
         </Box>
       </PageContainer>
     </>

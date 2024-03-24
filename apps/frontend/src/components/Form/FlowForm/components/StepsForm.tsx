@@ -25,8 +25,6 @@ export const StepsForm = ({ useFormMethods }: StepFormProps) => {
       setExpanded(newExpanded ? stepIdentifier : false);
     };
 
-  const isReusable = useFormMethods.watch(`reusable`);
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "36px" }}>
       {stepsArrayMethods.fields.map((item, index) => {
