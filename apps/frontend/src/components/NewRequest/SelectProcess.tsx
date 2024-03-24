@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -11,10 +10,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useNewRequestWizardState } from "./newRequestWizard";
-import {
-  GetProcessesToCreateRequestDocument,
-  ProcessSummaryPartsFragment,
-} from "../../graphql/generated/graphql";
 import { fullUUIDToShort } from "../../utils/inputs";
 import Loading from "../shared/Loading";
 import Search from "../shared/Tables/Search";
@@ -25,14 +20,18 @@ export const SelectProcess = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { setParams } = useNewRequestWizardState();
 
-  const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
+  // const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
 
-  const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
+  // const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
 
-  const filteredProcesses = processes.filter((process) => {
-    const regExSearchQuery = new RegExp(searchQuery, "i");
-    return process.name.search(regExSearchQuery) !== -1;
-  });
+  // const filteredProcesses = processes.filter((process) => {
+  //   const regExSearchQuery = new RegExp(searchQuery, "i");
+  //   return process.name.search(regExSearchQuery) !== -1;
+  // });
+
+  const loading = false;
+
+  const filteredProcesses = [];
 
   return loading ? (
     <Loading />

@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { Select, TextField } from "../../../FormFields";
+import { Select, TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
@@ -7,7 +7,7 @@ import { InputAdornment } from "@mui/material";
 
 import { DecisionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { useEffect } from "react";
-import { SelectOption } from "../../../FormFields/Select";
+import { SelectOption } from "../../../formFields/Select";
 import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
 
 interface DecisionConfigFormProps {

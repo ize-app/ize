@@ -11,7 +11,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { TextField, DatePicker, DateTimePicker } from "../shared/Form/FormFields";
+import { TextField, DatePicker, DateTimePicker } from "../shared/Form/formFields";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 import Box from "@mui/material/Box";

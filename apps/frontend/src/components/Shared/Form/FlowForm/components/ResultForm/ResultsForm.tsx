@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { Select, TextField } from "../../../FormFields";
+import { Select, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../LabeledGroupedInputs";
 
 import {
@@ -16,7 +16,7 @@ import { DecisionType, FieldType, ResultType } from "@/graphql/generated/graphql
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { ResultSchemaType } from "../../formValidation/result";
-import { SelectOption } from "../../../FormFields/Select";
+import { SelectOption } from "../../../formFields/Select";
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { StepComponentContainer } from "../StepContainer";

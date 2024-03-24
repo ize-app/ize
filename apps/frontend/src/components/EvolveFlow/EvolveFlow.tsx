@@ -13,7 +13,6 @@ import { SnackbarContext } from "../../contexts/SnackbarContext";
 import {
   Flow,
   GetFlowDocument,
-  NewEditProcessRequestDocument,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -45,12 +44,12 @@ export const EvolveFlow = () => {
     },
   });
 
-  const [mutate] = useMutation(NewEditProcessRequestDocument, {
-    onCompleted: (data) => {
-      const newRequestId = data.newEditProcessRequest;
-      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
-    },
-  });
+  // const [mutate] = useMutation(NewEditProcessRequestDocument, {
+  //   onCompleted: (data) => {
+  //     const newRequestId = data.newEditProcessRequest;
+  //     navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+  //   },
+  // });
 
   const onComplete = async () => {
     try {

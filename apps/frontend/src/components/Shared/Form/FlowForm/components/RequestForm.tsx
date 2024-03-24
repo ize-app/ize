@@ -1,7 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
-import { RoleSearch, Select, Switch } from "../../FormFields";
+import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
 import { FieldsForm } from "./FieldsForm";

@@ -48,12 +48,12 @@ function GroupRow(props: { group: GroupSummaryPartsFragment }) {
               alignItems: "center",
             }}
           >
-            <AvatarWithName
+            {/* <AvatarWithName
               type={AgentType.Group}
               id={group.name}
               name={group.organization.name}
               avatarUrl={group.organization.icon}
-            />
+            /> */}
           </Box>
         </TableCellHideable>
         <TableCellHideable align={"center"} hideOnSmallScreen={true}>

@@ -4,14 +4,14 @@ import IconButton from "@mui/material/IconButton";
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { DatePicker, DateTimePicker, Select, TextField } from "../../FormFields";
+import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields";
 
 import { FieldOptionSchemaType } from "../formValidation/fields";
 import { FieldDataType } from "@/graphql/generated/graphql";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
-import { SelectOption } from "../../FormFields/Select";
-import { getSelectOptionName } from "../../getSelectOptionName";
+import { SelectOption } from "../../formFields/Select";
+import { getSelectOptionName } from "../../utils/getSelectOptionName";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];

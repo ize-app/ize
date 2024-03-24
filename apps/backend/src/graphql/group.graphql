@@ -6,6 +6,7 @@ input setUpDiscordServerInput {
 type Mutation {
   setUpDiscordServer(input: setUpDiscordServerInput!): Group!
   newCustomGroup(inputs: CustomGroupArgs!): String!
+  newAgents(agents: [NewAgentArgs!]!): [Agent!]!
 }
 
 type Query {
@@ -83,3 +84,49 @@ type OnboardedDiscordServer {
   icon: String
   banner: String
 }
+
+input NewAgentArgs {
+  identityBlockchain: IdentityBlockchainArgs
+  identityDiscord: IdentityDiscordArgs
+  identityEmail: IdentityEmailArgs
+  groupDiscordRole: GroupDiscordRoleArgs
+  groupEns: GroupEnsArgs
+  groupHat: GroupHatArgs
+  groupNft: GroupNftArgs
+}
+
+input GroupDiscordRoleArgs {
+  serverId: String!
+  roleId: String!
+}
+
+input GroupNftArgs {
+  chain: Blockchain!
+  address: String!
+  tokenId: String
+}
+
+input GroupEnsArgs {
+  name: String!
+}
+
+input GroupHatArgs {
+  chain: Blockchain!
+  tokenId: String!
+}
+
+enum NewAgentTypes {
+  IdentityBlockchain
+  IdentityDiscord
+  IdentityEmail
+  GroupDiscord
+  GroupNft
+  GroupHat
+}
+
+enum AgentType {
+  Group
+  Identity
+}
+
+union Agent = Identity | Group

@@ -1,16 +1,16 @@
 import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { Select, TextField } from "../../FormFields";
+import { Select, TextField } from "../../formFields";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { useEffect, useState } from "react";
 
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { ActionNewType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
-import { SelectOption } from "../../FormFields/Select";
+import { SelectOption } from "../../formFields/Select";
 import { StepComponentContainer } from "./StepContainer";
-import { getSelectOptionName } from "../../getSelectOptionName";
+import { getSelectOptionName } from "../../utils/getSelectOptionName";
 
 interface ActionFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

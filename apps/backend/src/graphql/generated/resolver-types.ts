@@ -18,27 +18,6 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type AbsoluteDecision = {
-  __typename?: 'AbsoluteDecision';
-  threshold: Scalars['Int']['output'];
-};
-
-export type AbsoluteDecisionArgs = {
-  threshold: Scalars['Int']['input'];
-};
-
-export type Action = {
-  __typename?: 'Action';
-  actionDetails?: Maybe<ActionType>;
-  id: Scalars['String']['output'];
-  optionFilter?: Maybe<ProcessOption>;
-};
-
-export type ActionArgs = {
-  optionTrigger?: InputMaybe<Scalars['String']['input']>;
-  webhook?: InputMaybe<WebhookActionArgs>;
-};
-
 export type ActionNew = CallWebhook | EvolveFlow | TriggerStep;
 
 export type ActionNewArgs = {
@@ -54,8 +33,6 @@ export enum ActionNewType {
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
-
-export type ActionType = EvolveProcessAction | WebhookAction;
 
 export type Agent = Group | Identity;
 
@@ -134,12 +111,6 @@ export type Decision = {
   threshold: Scalars['Int']['output'];
 };
 
-export type DecisionArgs = {
-  absoluteDecision?: InputMaybe<AbsoluteDecisionArgs>;
-  expirationSeconds: Scalars['Int']['input'];
-  percentageDecision?: InputMaybe<PercentageDecisionArgs>;
-};
-
 export type DecisionNewArgs = {
   defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
   threshold: Scalars['Int']['input'];
@@ -150,8 +121,6 @@ export enum DecisionType {
   NumberThreshold = 'NumberThreshold',
   PercentageThreshold = 'PercentageThreshold'
 }
-
-export type DecisionTypes = AbsoluteDecision | PercentageDecision;
 
 export type DiscordApiServerRole = {
   __typename?: 'DiscordAPIServerRole';
@@ -195,11 +164,6 @@ export type EntityArgs = {
   id: Scalars['String']['input'];
 };
 
-export type EvolveArgs = {
-  decision: DecisionArgs;
-  roles: Array<RoleArgs>;
-};
-
 export type EvolveFlow = {
   __typename?: 'EvolveFlow';
   filterOption?: Maybe<Option>;
@@ -209,11 +173,6 @@ export type EvolveFlowArgs = {
   decision: DecisionNewArgs;
   requestPermission: PermissionArgs;
   responsePermission: PermissionArgs;
-};
-
-export type EvolveProcessAction = {
-  __typename?: 'EvolveProcessAction';
-  _?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type Field = FreeInput | Options;
@@ -395,30 +354,6 @@ export type IdentityEmailArgs = {
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
-export enum InputDataType {
-  Float = 'Float',
-  Int = 'Int',
-  StringArray = 'StringArray',
-  Text = 'Text',
-  Uri = 'Uri'
-}
-
-export type InputTemplate = {
-  __typename?: 'InputTemplate';
-  description?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  required: Scalars['Boolean']['output'];
-  type: InputDataType;
-};
-
-export type InputTemplateArgs = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  required: Scalars['Boolean']['input'];
-  type: InputDataType;
-};
-
 export type LinkedResultOptionsArgs = {
   resultIndex: Scalars['Int']['input'];
   stepIndex: Scalars['Int']['input'];
@@ -453,9 +388,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   newAgents: Array<Agent>;
   newCustomGroup: Scalars['String']['output'];
-  newEditProcessRequest: Scalars['String']['output'];
   newFlow: Scalars['String']['output'];
-  newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
   setUpDiscordServer: Group;
@@ -472,18 +405,8 @@ export type MutationNewCustomGroupArgs = {
 };
 
 
-export type MutationNewEditProcessRequestArgs = {
-  inputs: NewEditProcessRequestArgs;
-};
-
-
 export type MutationNewFlowArgs = {
   flow: NewFlowArgs;
-};
-
-
-export type MutationNewProcessArgs = {
-  process: NewProcessArgs;
 };
 
 
@@ -594,13 +517,6 @@ export type OptionSelectionArgs = {
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
-export enum OptionType {
-  Float = 'Float',
-  Int = 'Int',
-  Text = 'Text',
-  Uri = 'Uri'
-}
-
 export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
@@ -621,23 +537,6 @@ export type Organization = {
   name: Scalars['String']['output'];
 };
 
-export type ParentProcess = {
-  __typename?: 'ParentProcess';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
-export type PercentageDecision = {
-  __typename?: 'PercentageDecision';
-  percentage: Scalars['Float']['output'];
-  quorum: Scalars['Int']['output'];
-};
-
-export type PercentageDecisionArgs = {
-  percentage: Scalars['Float']['input'];
-  quorum: Scalars['Int']['input'];
-};
-
 export type Permission = {
   __typename?: 'Permission';
   anyone: Scalars['Boolean']['output'];
@@ -655,43 +554,6 @@ export type PrioritizationArgs = {
   numOptionsToInclude: Scalars['Int']['input'];
 };
 
-export type Process = {
-  __typename?: 'Process';
-  action?: Maybe<Action>;
-  createdAt: Scalars['String']['output'];
-  creator: User;
-  currentProcessVersionId: Scalars['String']['output'];
-  decisionSystem: DecisionTypes;
-  description?: Maybe<Scalars['String']['output']>;
-  evolve?: Maybe<Process>;
-  expirationSeconds: Scalars['Int']['output'];
-  id: Scalars['String']['output'];
-  inputs: Array<InputTemplate>;
-  name: Scalars['String']['output'];
-  options: Array<ProcessOption>;
-  parent?: Maybe<ParentProcess>;
-  roles: Roles;
-  type: ProcessType;
-  userRoles?: Maybe<UserRoles>;
-};
-
-export type ProcessOption = {
-  __typename?: 'ProcessOption';
-  id: Scalars['String']['output'];
-  type: OptionType;
-  value: Scalars['String']['output'];
-};
-
-export type ProcessOptionArgs = {
-  type: OptionType;
-  value: Scalars['String']['input'];
-};
-
-export enum ProcessType {
-  Custom = 'Custom',
-  Evolve = 'Evolve'
-}
-
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
@@ -703,9 +565,6 @@ export type Query = {
   me?: Maybe<Me>;
   nftContract?: Maybe<AlchemyApiNftContract>;
   nftToken?: Maybe<AlchemyApiNftToken>;
-  process: Process;
-  processesForCurrentUser: Array<Process>;
-  processesForGroup: Array<Process>;
   searchNftContracts: Array<AlchemyApiNftContract>;
 };
 
@@ -746,21 +605,6 @@ export type QueryNftTokenArgs = {
   address: Scalars['String']['input'];
   chain: Blockchain;
   tokenId: Scalars['String']['input'];
-};
-
-
-export type QueryProcessArgs = {
-  processId: Scalars['String']['input'];
-};
-
-
-export type QueryProcessesForCurrentUserArgs = {
-  requestRoleOnly: Scalars['Boolean']['input'];
-};
-
-
-export type QueryProcessesForGroupArgs = {
-  groupId: Scalars['String']['input'];
 };
 
 
@@ -831,24 +675,6 @@ export enum ResultType {
   Ranking = 'Ranking'
 }
 
-export type RoleArgs = {
-  agentType: AgentType;
-  id: Scalars['String']['input'];
-  type: RoleType;
-};
-
-export enum RoleType {
-  Request = 'Request',
-  Respond = 'Respond'
-}
-
-export type Roles = {
-  __typename?: 'Roles';
-  edit?: Maybe<Agent>;
-  request: Array<Agent>;
-  respond: Array<Agent>;
-};
-
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<ActionNew>;
@@ -887,38 +713,6 @@ export type UserPermission = {
   __typename?: 'UserPermission';
   request: Scalars['Boolean']['output'];
   response: Scalars['Boolean']['output'];
-};
-
-export type UserRoles = {
-  __typename?: 'UserRoles';
-  request: Scalars['Boolean']['output'];
-  respond: Scalars['Boolean']['output'];
-};
-
-export type WebhookAction = {
-  __typename?: 'WebhookAction';
-  uri: Scalars['String']['output'];
-};
-
-export type WebhookActionArgs = {
-  uri: Scalars['String']['input'];
-};
-
-export type NewEditProcessRequestArgs = {
-  currentProcess: NewProcessArgs;
-  evolvedProcess: NewProcessArgs;
-  processId: Scalars['String']['input'];
-};
-
-export type NewProcessArgs = {
-  action?: InputMaybe<ActionArgs>;
-  decision: DecisionArgs;
-  description?: InputMaybe<Scalars['String']['input']>;
-  evolve: EvolveArgs;
-  inputs: Array<InputTemplateArgs>;
-  name: Scalars['String']['input'];
-  options: Array<ProcessOptionArgs>;
-  roles: Array<RoleArgs>;
 };
 
 export type SetUpDiscordServerInput = {
@@ -996,9 +790,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   ActionNew: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
-  ActionType: ( EvolveProcessAction ) | ( WebhookAction );
   Agent: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
-  DecisionTypes: ( AbsoluteDecision ) | ( PercentageDecision );
   Entity: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
@@ -1010,14 +802,9 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AbsoluteDecision: ResolverTypeWrapper<AbsoluteDecision>;
-  AbsoluteDecisionArgs: AbsoluteDecisionArgs;
-  Action: ResolverTypeWrapper<Omit<Action, 'actionDetails'> & { actionDetails?: Maybe<ResolversTypes['ActionType']> }>;
-  ActionArgs: ActionArgs;
   ActionNew: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionNew']>;
   ActionNewArgs: ActionNewArgs;
   ActionNewType: ActionNewType;
-  ActionType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionType']>;
   Agent: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Agent']>;
   AgentType: AgentType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
@@ -1030,20 +817,16 @@ export type ResolversTypes = {
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: ResolverTypeWrapper<Decision>;
-  DecisionArgs: DecisionArgs;
   DecisionNewArgs: DecisionNewArgs;
   DecisionType: DecisionType;
-  DecisionTypes: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['DecisionTypes']>;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
   DiscordServer: ResolverTypeWrapper<DiscordServer>;
   DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
   Entity: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Entity']>;
   EntityArgs: EntityArgs;
-  EvolveArgs: EvolveArgs;
   EvolveFlow: ResolverTypeWrapper<EvolveFlow>;
   EvolveFlowArgs: EvolveFlowArgs;
-  EvolveProcessAction: ResolverTypeWrapper<EvolveProcessAction>;
   Field: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Field']>;
   FieldAnswer: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['FieldAnswer']>;
   FieldAnswerArgs: FieldAnswerArgs;
@@ -1053,7 +836,6 @@ export type ResolversTypes = {
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
-  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Flow: ResolverTypeWrapper<Flow>;
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
@@ -1074,9 +856,6 @@ export type ResolversTypes = {
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
-  InputDataType: InputDataType;
-  InputTemplate: ResolverTypeWrapper<InputTemplate>;
-  InputTemplateArgs: InputTemplateArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
@@ -1097,19 +876,11 @@ export type ResolversTypes = {
   OptionFieldAnswer: ResolverTypeWrapper<OptionFieldAnswer>;
   OptionFieldAnswerSelection: ResolverTypeWrapper<OptionFieldAnswerSelection>;
   OptionSelectionArgs: OptionSelectionArgs;
-  OptionType: OptionType;
   Options: ResolverTypeWrapper<Options>;
   Organization: ResolverTypeWrapper<Organization>;
-  ParentProcess: ResolverTypeWrapper<ParentProcess>;
-  PercentageDecision: ResolverTypeWrapper<PercentageDecision>;
-  PercentageDecisionArgs: PercentageDecisionArgs;
   Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
-  Process: ResolverTypeWrapper<Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversTypes['DecisionTypes'] }>;
-  ProcessOption: ResolverTypeWrapper<ProcessOption>;
-  ProcessOptionArgs: ProcessOptionArgs;
-  ProcessType: ProcessType;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
@@ -1120,9 +891,6 @@ export type ResolversTypes = {
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultType: ResultType;
-  RoleArgs: RoleArgs;
-  RoleType: RoleType;
-  Roles: ResolverTypeWrapper<Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversTypes['Agent']>, request: Array<ResolversTypes['Agent']>, respond: Array<ResolversTypes['Agent']> }>;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['ActionNew']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
@@ -1130,23 +898,13 @@ export type ResolversTypes = {
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   User: ResolverTypeWrapper<User>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
-  UserRoles: ResolverTypeWrapper<UserRoles>;
-  WebhookAction: ResolverTypeWrapper<WebhookAction>;
-  WebhookActionArgs: WebhookActionArgs;
-  newEditProcessRequestArgs: NewEditProcessRequestArgs;
-  newProcessArgs: NewProcessArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AbsoluteDecision: AbsoluteDecision;
-  AbsoluteDecisionArgs: AbsoluteDecisionArgs;
-  Action: Omit<Action, 'actionDetails'> & { actionDetails?: Maybe<ResolversParentTypes['ActionType']> };
-  ActionArgs: ActionArgs;
   ActionNew: ResolversUnionTypes<ResolversParentTypes>['ActionNew'];
   ActionNewArgs: ActionNewArgs;
-  ActionType: ResolversUnionTypes<ResolversParentTypes>['ActionType'];
   Agent: ResolversUnionTypes<ResolversParentTypes>['Agent'];
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
@@ -1157,26 +915,21 @@ export type ResolversParentTypes = {
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: Decision;
-  DecisionArgs: DecisionArgs;
   DecisionNewArgs: DecisionNewArgs;
-  DecisionTypes: ResolversUnionTypes<ResolversParentTypes>['DecisionTypes'];
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
   DiscordServerOnboarded: DiscordServerOnboarded;
   Entity: ResolversUnionTypes<ResolversParentTypes>['Entity'];
   EntityArgs: EntityArgs;
-  EvolveArgs: EvolveArgs;
   EvolveFlow: EvolveFlow;
   EvolveFlowArgs: EvolveFlowArgs;
-  EvolveProcessAction: EvolveProcessAction;
   Field: ResolversUnionTypes<ResolversParentTypes>['Field'];
   FieldAnswer: ResolversUnionTypes<ResolversParentTypes>['FieldAnswer'];
   FieldAnswerArgs: FieldAnswerArgs;
   FieldArgs: FieldArgs;
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
-  Float: Scalars['Float']['output'];
   Flow: Flow;
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
@@ -1196,8 +949,6 @@ export type ResolversParentTypes = {
   IdentityEmail: IdentityEmail;
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
-  InputTemplate: InputTemplate;
-  InputTemplateArgs: InputTemplateArgs;
   Int: Scalars['Int']['output'];
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
@@ -1217,15 +968,9 @@ export type ResolversParentTypes = {
   OptionSelectionArgs: OptionSelectionArgs;
   Options: Options;
   Organization: Organization;
-  ParentProcess: ParentProcess;
-  PercentageDecision: PercentageDecision;
-  PercentageDecisionArgs: PercentageDecisionArgs;
   Permission: Omit<Permission, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
-  Process: Omit<Process, 'decisionSystem'> & { decisionSystem: ResolversParentTypes['DecisionTypes'] };
-  ProcessOption: ProcessOption;
-  ProcessOptionArgs: ProcessOptionArgs;
   Query: {};
   Ranking: Ranking;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
@@ -1235,8 +980,6 @@ export type ResolversParentTypes = {
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
-  RoleArgs: RoleArgs;
-  Roles: Omit<Roles, 'edit' | 'request' | 'respond'> & { edit?: Maybe<ResolversParentTypes['Agent']>, request: Array<ResolversParentTypes['Agent']>, respond: Array<ResolversParentTypes['Agent']> };
   Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['ActionNew']>, result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
@@ -1244,32 +987,11 @@ export type ResolversParentTypes = {
   TriggerStep: TriggerStep;
   User: User;
   UserPermission: UserPermission;
-  UserRoles: UserRoles;
-  WebhookAction: WebhookAction;
-  WebhookActionArgs: WebhookActionArgs;
-  newEditProcessRequestArgs: NewEditProcessRequestArgs;
-  newProcessArgs: NewProcessArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
-};
-
-export type AbsoluteDecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AbsoluteDecision'] = ResolversParentTypes['AbsoluteDecision']> = {
-  threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
-  actionDetails?: Resolver<Maybe<ResolversTypes['ActionType']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  optionFilter?: Resolver<Maybe<ResolversTypes['ProcessOption']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ActionNewResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionNew'] = ResolversParentTypes['ActionNew']> = {
   __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
-};
-
-export type ActionTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionType'] = ResolversParentTypes['ActionType']> = {
-  __resolveType: TypeResolveFn<'EvolveProcessAction' | 'WebhookAction', ParentType, ContextType>;
 };
 
 export type AgentResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Agent'] = ResolversParentTypes['Agent']> = {
@@ -1323,10 +1045,6 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DecisionTypesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DecisionTypes'] = ResolversParentTypes['DecisionTypes']> = {
-  __resolveType: TypeResolveFn<'AbsoluteDecision' | 'PercentageDecision', ParentType, ContextType>;
-};
-
 export type DiscordApiServerRoleResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordAPIServerRole'] = ResolversParentTypes['DiscordAPIServerRole']> = {
   botRole?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1369,11 +1087,6 @@ export type EntityResolvers<ContextType = GraphqlRequestContext, ParentType exte
 
 export type EvolveFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveFlow'] = ResolversParentTypes['EvolveFlow']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EvolveProcessActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveProcessAction'] = ResolversParentTypes['EvolveProcessAction']> = {
-  _?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1477,15 +1190,6 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
 };
 
-export type InputTemplateResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['InputTemplate'] = ResolversParentTypes['InputTemplate']> = {
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['InputDataType'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1504,9 +1208,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   newAgents?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType, RequireFields<MutationNewAgentsArgs, 'agents'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
-  newEditProcessRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEditProcessRequestArgs, 'inputs'>>;
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
-  newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   setUpDiscordServer?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<MutationSetUpDiscordServerArgs, 'input'>>;
@@ -1569,49 +1271,10 @@ export type OrganizationResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ParentProcessResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ParentProcess'] = ResolversParentTypes['ParentProcess']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PercentageDecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['PercentageDecision'] = ResolversParentTypes['PercentageDecision']> = {
-  percentage?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  quorum?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Permission'] = ResolversParentTypes['Permission']> = {
   anyone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   entities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
   stepTriggered?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ProcessResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Process'] = ResolversParentTypes['Process']> = {
-  action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  currentProcessVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  decisionSystem?: Resolver<ResolversTypes['DecisionTypes'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  evolve?: Resolver<Maybe<ResolversTypes['Process']>, ParentType, ContextType>;
-  expirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  inputs?: Resolver<Array<ResolversTypes['InputTemplate']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  options?: Resolver<Array<ResolversTypes['ProcessOption']>, ParentType, ContextType>;
-  parent?: Resolver<Maybe<ResolversTypes['ParentProcess']>, ParentType, ContextType>;
-  roles?: Resolver<ResolversTypes['Roles'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['ProcessType'], ParentType, ContextType>;
-  userRoles?: Resolver<Maybe<ResolversTypes['UserRoles']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ProcessOptionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ProcessOption'] = ResolversParentTypes['ProcessOption']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1625,9 +1288,6 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
   nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
-  process?: Resolver<ResolversTypes['Process'], ParentType, ContextType, RequireFields<QueryProcessArgs, 'processId'>>;
-  processesForCurrentUser?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForCurrentUserArgs, 'requestRoleOnly'>>;
-  processesForGroup?: Resolver<Array<ResolversTypes['Process']>, ParentType, ContextType, RequireFields<QueryProcessesForGroupArgs, 'groupId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
 };
 
@@ -1673,13 +1333,6 @@ export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
 };
 
-export type RolesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Roles'] = ResolversParentTypes['Roles']> = {
-  edit?: Resolver<Maybe<ResolversTypes['Agent']>, ParentType, ContextType>;
-  request?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
-  respond?: Resolver<Array<ResolversTypes['Agent']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['ActionNew']>, ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1710,36 +1363,20 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserRolesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserRoles'] = ResolversParentTypes['UserRoles']> = {
-  request?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  respond?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type WebhookActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookAction'] = ResolversParentTypes['WebhookAction']> = {
-  uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type Resolvers<ContextType = GraphqlRequestContext> = {
-  AbsoluteDecision?: AbsoluteDecisionResolvers<ContextType>;
-  Action?: ActionResolvers<ContextType>;
   ActionNew?: ActionNewResolvers<ContextType>;
-  ActionType?: ActionTypeResolvers<ContextType>;
   Agent?: AgentResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;
   CallWebhook?: CallWebhookResolvers<ContextType>;
   Decision?: DecisionResolvers<ContextType>;
-  DecisionTypes?: DecisionTypesResolvers<ContextType>;
   DiscordAPIServerRole?: DiscordApiServerRoleResolvers<ContextType>;
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;
   DiscordServer?: DiscordServerResolvers<ContextType>;
   DiscordServerOnboarded?: DiscordServerOnboardedResolvers<ContextType>;
   Entity?: EntityResolvers<ContextType>;
   EvolveFlow?: EvolveFlowResolvers<ContextType>;
-  EvolveProcessAction?: EvolveProcessActionResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
@@ -1754,7 +1391,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
-  InputTemplate?: InputTemplateResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -1765,11 +1401,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   OptionFieldAnswerSelection?: OptionFieldAnswerSelectionResolvers<ContextType>;
   Options?: OptionsResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
-  ParentProcess?: ParentProcessResolvers<ContextType>;
-  PercentageDecision?: PercentageDecisionResolvers<ContextType>;
   Permission?: PermissionResolvers<ContextType>;
-  Process?: ProcessResolvers<ContextType>;
-  ProcessOption?: ProcessOptionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
@@ -1777,12 +1409,9 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestStep?: RequestStepResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
-  Roles?: RolesResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserPermission?: UserPermissionResolvers<ContextType>;
-  UserRoles?: UserRolesResolvers<ContextType>;
-  WebhookAction?: WebhookActionResolvers<ContextType>;
 };
 

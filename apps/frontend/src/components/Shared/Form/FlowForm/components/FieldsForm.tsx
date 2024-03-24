@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 
-import { Select, TextField } from "../../FormFields";
+import { Select, TextField } from "../../formFields";
 import { LabeledGroupedInputs } from "../../LabeledGroupedInputs";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";

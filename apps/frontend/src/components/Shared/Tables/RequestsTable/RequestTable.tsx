@@ -13,7 +13,6 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { ExpandedRequest } from "./ExpandedRequest";
 import { AvatarsCell, StatusCell, TableCellHideable, TwoTierCell } from "../TableCells";
 
 import { RequestSummaryPartsFragment } from "@/graphql/generated/graphql";

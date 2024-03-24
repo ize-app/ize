@@ -6,20 +6,11 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import {
-  GroupDocument,
-  GroupSummaryPartsFragment,
-  ProcessSummaryPartsFragment,
-  ProcessesForGroupDocument,
-  RequestSummaryPartsFragment,
-  RequestsForGroupDocument,
-} from "../../graphql/generated/graphql";
+import { GroupDocument, GroupSummaryPartsFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../shared/Loading";
-import ProcessTab from "../shared/Tables/ProcessesTable/ProcessTab";
-import RequestTab from "../shared/Tables/RequestsTable/RequestTab";
 import TabPanel from "../shared/Tables/TabPanel";
 import { TabProps, Tabs } from "../shared/Tables/Tabs";
 
@@ -34,20 +25,6 @@ export const Group = () => {
       id: groupId,
     },
   });
-
-  const { data: processData, loading: processLoading } = useQuery(ProcessesForGroupDocument, {
-    variables: { groupId: groupId },
-  });
-
-  const processes = (processData?.processesForGroup ?? []) as ProcessSummaryPartsFragment[];
-
-  const { data: requestData, loading: requestLoading } = useQuery(RequestsForGroupDocument, {
-    variables: {
-      groupId: groupId,
-    },
-  });
-
-  const requests = (requestData?.requestsForGroup ?? []) as RequestSummaryPartsFragment[];
 
   const group = data?.group as GroupSummaryPartsFragment;
 
@@ -65,16 +42,7 @@ export const Group = () => {
 
   if (error) onError();
 
-  const tabs = [
-    {
-      title: "Requests",
-      content: <RequestTab requests={requests} loading={requestLoading} />,
-    },
-    {
-      title: "Process",
-      content: <ProcessTab processes={processes} loading={processLoading} />,
-    },
-  ];
+  const tabs: TabProps[] = [];
 
   return loading || !group ? (
     <Loading />

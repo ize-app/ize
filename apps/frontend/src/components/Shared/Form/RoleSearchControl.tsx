@@ -18,7 +18,7 @@ import {
 } from "../../../graphql/generated/graphql";
 import { Avatar } from "../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { RoleModal } from "./ProcessForm/components/RoleModal";
+import { RoleModal } from "./FlowForm/RoleModal/RoleModal";
 import { GetFieldValues, SetFieldValue } from "./ProcessForm/wizardScreens/Roles";
 import { MailOutline } from "@mui/icons-material";
 import { DiscordLogoSvg, EthLogoSvg } from "../icons";

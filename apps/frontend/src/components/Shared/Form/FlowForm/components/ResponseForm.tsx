@@ -4,7 +4,7 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";
 import { FieldsForm } from "./FieldsForm";
-import { RoleSearch, Select } from "../../FormFields";
+import { RoleSearch, Select } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
 

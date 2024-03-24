@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 
-import { TextField } from "../../../FormFields";
+import { TextField } from "../../../formFields";
 
 import { ResponsiveFormRow } from "../ResponsiveFormRow";
 

@@ -4,6 +4,12 @@ mutation setUpDiscordServerGroup($input: setUpDiscordServerInput!) {
   }
 }
 
+mutation NewAgents($agents: [NewAgentArgs!]!) {
+  newAgents(agents: $agents) {
+    ...AgentSummaryParts
+  }
+}
+
 mutation NewCustomGroup($inputs: CustomGroupArgs!) {
   newCustomGroup(inputs: $inputs)
 }
@@ -95,4 +101,14 @@ fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
   discordServerId
   name
   icon
+}
+
+fragment AgentSummaryParts on Agent {
+  __typename
+  ... on Group {
+    ...GroupSummaryParts
+  }
+  ... on Identity {
+    ...IdentitySummaryParts
+  }
 }

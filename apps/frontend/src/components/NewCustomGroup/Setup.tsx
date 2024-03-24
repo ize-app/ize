@@ -1,7 +1,7 @@
 import { Controller, useForm } from "react-hook-form";
 import { WizardBody, WizardNav } from "../shared/Wizard";
 import { useNewCustomGroupWizardState, NewCustomGroupFormFields } from "./newCustomGroupWizard";
-import { newCustomGroupFormSchema } from "../shared/Form/ProcessForm/formSchema";
+import { newCustomGroupFormSchema } from "./formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RoleSearchControl } from "../shared/Form";
 import { FormControl, FormHelperText, TextField } from "@mui/material";

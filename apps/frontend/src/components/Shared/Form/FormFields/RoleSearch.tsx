@@ -25,7 +25,7 @@ import {
 } from "../../../../graphql/generated/graphql";
 import { Avatar } from "../../Avatar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { RoleModal } from "../ProcessForm/components/RoleModal";
+import { RoleModal } from "../FlowForm/RoleModal/RoleModal";
 import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
 import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
 import NftSvg from "../../icons/NftSvg";

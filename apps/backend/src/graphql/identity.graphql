@@ -8,6 +8,7 @@ type Identity {
   identityType: IdentityType!
 }
 
+
 type IdentityBlockchain {
   id: String!
   address: String!
@@ -24,4 +25,16 @@ type IdentityDiscord {
   avatar: String
   username: String!
   discordUserId: String!
+}
+
+input IdentityBlockchainArgs {
+  address: String!
+}
+
+input IdentityDiscordArgs {
+  discordUserId: String!
+}
+
+input IdentityEmailArgs {
+  email: String!
 }

@@ -1,9 +1,7 @@
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 import * as z from "zod";
-
-import { ProcessForm } from "@/components/shared/Form/ProcessForm/types";
-import { newCustomGroupFormSchema } from "../shared/Form/ProcessForm/formSchema";
+import { newCustomGroupFormSchema, NewCustomGroupSchemaType } from "./formSchema";
 
 export type NewCustomGroupFormFields = z.infer<typeof newCustomGroupFormSchema>;
 
@@ -18,7 +16,7 @@ export function useNewCustomGroupWizardState() {
 
 export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Finish"];
 
-export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<ProcessForm> = [
+export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<NewCustomGroupSchemaType> = [
   {
     path: newCustomGroupRoute(NewCustomGroupRoute.Setup),
     title: "Setup group",
@@ -31,6 +29,6 @@ export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<ProcessForm> = [
     title: "Confirm new group creation",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: (formState: ProcessForm) => !!formState.name,
+    validWizardState: (formState: NewCustomGroupSchemaType) => !!formState.name,
   },
 ];

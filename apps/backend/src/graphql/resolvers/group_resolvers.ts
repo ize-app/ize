@@ -1,12 +1,14 @@
 import { setUpDiscordServerService } from "@services/groups/discord_server_group";
 import { GraphqlRequestContext } from "@graphql/context";
 import { prisma } from "@/prisma/client";
-
+import { newAgents as newAgentsService } from "@/services/groups/newAgents";
 import { groupInclude, formatGroup, GroupPrismaType } from "@utils/formatGroup";
 import { getGroupsOfUser } from "@/services/groups/getGroupsOfUser";
 
 import {
+  Agent,
   Group,
+  MutationNewAgentsArgs,
   MutationNewCustomGroupArgs,
   MutationSetUpDiscordServerArgs,
   QueryGroupArgs,
@@ -45,9 +47,18 @@ export const newCustomGroup = async (
   return await newCustomGroupService({ args, context });
 };
 
+const newAgents = async (
+  root: unknown,
+  args: MutationNewAgentsArgs,
+  context: GraphqlRequestContext,
+): Promise<Agent[]> => {
+  return await newAgentsService(args, context);
+};
+
 export const groupMutations = {
   setUpDiscordServer,
   newCustomGroup,
+  newAgents,
 };
 
 export const groupQueries = {

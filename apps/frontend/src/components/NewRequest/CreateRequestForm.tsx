@@ -12,10 +12,10 @@ import * as Routes from "../../routers/routes";
 import { shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../shared/Loading";
 import { WizardBody, WizardNav } from "../shared/Wizard";
-import { DatePicker, DateTimePicker, TextField } from "../shared/Form/FormFields";
+import { DatePicker, DateTimePicker, TextField } from "../shared/Form/formFields";
 import { CreateRequestResponseFieldForm } from "./CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "./validation";
-import { Radio } from "../shared/Form/FormFields/Radio";
+import { Radio } from "../shared/Form/formFields/Radio";
 
 export const CreateRequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =

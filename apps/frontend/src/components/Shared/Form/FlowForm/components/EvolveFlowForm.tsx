@@ -1,7 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { RoleSearch, Select, TextField } from "@/components/shared/Form/FormFields";
+import { RoleSearch, Select, TextField } from "apps/frontend/src/components/shared/Form/formFields";
 
 import { StepComponentContainer, StepContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "./ResponsiveFormRow";

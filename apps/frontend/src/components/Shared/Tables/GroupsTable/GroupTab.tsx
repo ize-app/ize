@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import { ChangeEvent, useContext, useState } from "react";
 
 import GroupTable from "./GroupTable";
-import { GroupSummaryPartsFragment } from "../../../../graphql/generated/graphql";
 import Loading from "../../Loading";
 import CreateButton from "../CreateButton";
 import Search from "../Search";

@@ -8,11 +8,9 @@ import { Link } from "react-router-dom";
 import {
   NewCustomGroupRoute,
   NewFlowRoute,
-  NewProcessRoute,
   NewRequestRoute,
   newCustomGroupRoute,
   newFlowRoute,
-  newProcessRoute,
   newRequestRoute,
 } from "../../../routers/routes";
 
@@ -64,9 +62,6 @@ const CreateButton = (): JSX.Element => {
         </MenuItem>
         <MenuItem>
           <Link to={newFlowRoute(NewFlowRoute.Setup)}>New flow</Link>
-        </MenuItem>
-        <MenuItem>
-          <Link to={newProcessRoute(NewProcessRoute.Intro)}>New process</Link>
         </MenuItem>
         <MenuItem>
           <Link to={newCustomGroupRoute(NewCustomGroupRoute.Setup)}>New group</Link>
