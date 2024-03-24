@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "tsc --project ./",
-    "start:dev": "nodemon src/server.ts",
-    "start:prod": "node dist/server.js"
+    "start:dev": "nodemon src/express/server.ts",
+    "start:prod": "node dist/express/server.js"
   },
   "dependencies": {
     "@apollo/server": "^4.7.5",
