@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import { Outlet } from "react-router-dom";
 
 import Head from "./Head";
-import { NavBar } from "../components/shared/NavBar";
-import Snackbar from "../components/shared/Snackbar";
+import { NavBar } from "../components/NavBar";
+import Snackbar from "../components/Snackbar";
 
 export const DefaultLayout = () => {
   return (

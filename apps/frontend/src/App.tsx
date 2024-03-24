@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router-dom";
 
-import { apolloClient } from "./apollo";
+import { apolloClient } from "./graphql/apollo";
 import { stytchClient } from "./stytch";
 import { CurrentUserProvider } from "./contexts/current_user_context";
 import { SnackbarProvider } from "./contexts/SnackbarContext";

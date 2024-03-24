@@ -1,21 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { _404 } from "@/components/404";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { Group } from "@/components/Groups/Group";
-import { Home } from "@/components/Home";
-import * as NewFlow from "@/components/NewFlow";
-import { Setup as FlowSetup } from "@/components/shared/Form/FlowForm/wizardScreens/Setup";
-import * as NewRequest from "@/components/NewRequest";
-import { Flow } from "@/components/Flow/Flow";
-import { Request } from "@/components/Request/Request";
+import { _404 } from "@/pages/404";
+import { ErrorBoundary } from "@/pages/ErrorBoundary";
+import { Group } from "@/pages/Groups/Group";
+import { Home } from "@/pages/Home";
+import * as NewFlow from "@/pages/NewFlow";
+import { Setup as FlowSetup } from "@/components/Form/FlowForm/wizardScreens/Setup";
+import * as NewRequest from "@/pages/NewRequest";
+import { Flow } from "@/pages/Flow/Flow";
+import { Request } from "@/pages/Request/Request";
 import { DefaultLayout } from "@/layout/default";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
-import { ResetPassword } from "@/components/shared/Auth/ResetPassword";
-import { UserSettings } from "@/components/Settings/UserSettings";
-import * as NewCustomGroup from "@/components/NewCustomGroup";
-import * as EvolveFlow from "@/components/EvolveFlow";
+import { ResetPassword } from "@/components/Auth/ResetPassword";
+import { UserSettings } from "@/pages/Settings/UserSettings";
+import * as NewCustomGroup from "@/pages/NewCustomGroup";
+import * as EvolveFlow from "@/pages/EvolveFlow";
 
 export const router = createBrowserRouter([
   {
