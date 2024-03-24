@@ -1,9 +1,9 @@
 import { NftTokenType } from "alchemy-sdk";
 
 import { GraphqlRequestContext } from "@/graphql/context";
-import { alchemyClient } from "./clients/alchemyClient";
+import { alchemyClient } from "./alchemyClient/alchemyClient";
 import { Blockchain } from "@/graphql/generated/resolver-types";
-import { formatNftToken } from "./formatNftToken";
+import { nftTokenResolver } from "./resolvers/nftTokenResolver";
 
 export const getNftToken = async ({
   chain,
@@ -23,5 +23,5 @@ export const getNftToken = async ({
     token.contract.tokenType !== NftTokenType.ERC721
   )
     return null;
-  return formatNftToken(token, chain);
+  return nftTokenResolver(token, chain);
 };

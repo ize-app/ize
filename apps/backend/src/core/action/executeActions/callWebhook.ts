@@ -1,4 +1,4 @@
-import { WebhookPrismaType } from "../types";
+import { WebhookPrismaType } from "../actionPrismaTypes";
 
 // TODO: create the payload for the webhook
 export const callWebhook = async ({

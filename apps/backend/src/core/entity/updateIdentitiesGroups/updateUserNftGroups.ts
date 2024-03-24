@@ -1,4 +1,4 @@
-import { alchemyClient } from "@/blockchain/clients/alchemyClient";
+import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 

@@ -9,8 +9,8 @@ import {
   QuerySearchNftContractsArgs,
 } from "../generated/resolver-types";
 
-import { alchemyClient } from "@/blockchain/clients/alchemyClient";
-import { formatNftContract } from "@/blockchain/formatNftContract";
+import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
+import { nftContractResolver } from "@/blockchain/resolvers/nftContractResolver";
 import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
 import { getNftContract } from "@/blockchain/getNftContract";
 import { getNftToken } from "@/blockchain/getNftToken";
@@ -53,7 +53,7 @@ const searchNftContracts = async (
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
   const results = await alchemyClient.forChain(args.chain).nft.searchContractMetadata(args.query);
   const formattedReults = results.contracts.map((contract) =>
-    formatNftContract(contract, args.chain),
+    nftContractResolver(contract, args.chain),
   );
   return formattedReults;
 };

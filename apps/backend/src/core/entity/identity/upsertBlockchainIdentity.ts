@@ -2,7 +2,7 @@ import { prisma } from "../../../prisma/client";
 import { GraphqlRequestContext } from "../../../graphql/context";
 import { Blockchain, NewAgentArgs } from "@graphql/generated/resolver-types";
 
-import { viemClient } from "@/blockchain/clients/viemClient";
+import { viemClient } from "@/blockchain/viemClient/viemClient";
 import { normalize } from "viem/ens";
 import { isAddress } from "viem";
 import { IdentityPrismaType, formatIdentity } from "@/core/entity/identity/formatIdentity";

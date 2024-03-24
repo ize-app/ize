@@ -2,7 +2,7 @@ import { Option, Step } from "@/graphql/generated/resolver-types";
 import { StepPrismaType } from "../flowPrismaTypes";
 import { permissionResolver } from "../../permission/resolvers";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
-import { actionResolver } from "../../action/resolvers";
+import { resolveAction } from "../../action/resolveAction";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 
@@ -32,7 +32,7 @@ export const stepResolver = ({
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
       fields: responseFields,
     },
-    action: actionResolver(step.ActionNew, responseOptions),
+    action: resolveAction(step.ActionNew, responseOptions),
     result,
     expirationSeconds: step.expirationSeconds,
     userPermission: {
