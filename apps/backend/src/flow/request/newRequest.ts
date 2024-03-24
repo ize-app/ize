@@ -54,12 +54,6 @@ export const newRequest = async ({
       },
     });
 
-    await newFieldAnswers({
-      fieldSet: step.RequestFieldSet,
-      fieldAnswers: requestFields,
-      transaction,
-    });
-
     await Promise.all(
       requestDefinedOptions.map(async (r) => {
         if (!step.ResponseFieldSet)
@@ -98,7 +92,7 @@ export const newRequest = async ({
       }),
     );
 
-    await transaction.requestStep.create({
+    const requestStep = await transaction.requestStep.create({
       data: {
         expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
         Request: {
@@ -119,9 +113,14 @@ export const newRequest = async ({
       },
     });
 
-    // if auto approve, just create the result
-    // validate fields against flow step, has required fields, data types are correct --> create fields
-    // validate request definedoptions  --> create request defined options
+    // TODO: if auto approve, just create the result
+
+    await newFieldAnswers({
+      fieldSet: step.RequestFieldSet,
+      fieldAnswers: requestFields,
+      requestStepId: requestStep.id,
+      transaction,
+    });
 
     return request.id;
   });

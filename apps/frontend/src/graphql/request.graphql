@@ -2,8 +2,12 @@ mutation NewRequest($request: NewRequestArgs!) {
   newRequest(request: $request)
 }
 
-mutation NewResponse($requestId: String!, $optionId: String!) {
-  newResponse(requestId: $requestId, optionId: $optionId)
+mutation NewResponseOld($requestId: String!, $optionId: String!) {
+  newResponseOld(requestId: $requestId, optionId: $optionId)
+}
+
+mutation NewResponse($response: NewResponseArgs!) {
+  newResponse(response: $response)
 }
 
 query getRequest($requestId: String!) {

@@ -9,11 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import * as z from "zod";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
-import {
-  NewResponseDocument,
-  ProcessOption,
-  Response,
-} from "@/graphql/generated/graphql";
+import { NewResponseOldDocument, ProcessOption, Response } from "@/graphql/generated/graphql";
 import { RadioControl } from "../Form";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
@@ -47,7 +43,7 @@ export const SubmitResponse = ({
 
   const { setSnackbarOpen, setSnackbarData, snackbarData } = useContext(SnackbarContext);
 
-  const [mutate] = useMutation(NewResponseDocument);
+  const [mutate] = useMutation(NewResponseOldDocument);
 
   const onComplete = async (data: FormFields) => {
     try {

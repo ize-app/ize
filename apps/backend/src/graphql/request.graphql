@@ -1,6 +1,7 @@
 type Mutation {
   newRequest(request: NewRequestArgs!): String!
-  newResponse(requestId: String!, optionId: String!): String!
+  newResponse(response: NewResponseArgs!): String!
+  newResponseOld(requestId: String!, optionId: String!): String!
 }
 
 type Query {
@@ -21,6 +22,11 @@ input NewRequestArgs {
 input RequestDefinedOptionsArgs {
   fieldId: String!
   options: [FieldOptionArgs!]!
+}
+
+input NewResponseArgs {
+  requestStepId: String!
+  answers: [FieldAnswerArgs!]!
 }
 
 type RequestNew {

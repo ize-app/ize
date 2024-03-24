@@ -465,6 +465,7 @@ export type Mutation = {
   newProcess: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
+  newResponseOld: Scalars['String']['output'];
   setUpDiscordServer: Group;
 };
 
@@ -500,6 +501,11 @@ export type MutationNewRequestArgs = {
 
 
 export type MutationNewResponseArgs = {
+  response: NewResponseArgs;
+};
+
+
+export type MutationNewResponseOldArgs = {
   optionId: Scalars['String']['input'];
   requestId: Scalars['String']['input'];
 };
@@ -540,6 +546,11 @@ export type NewRequestArgs = {
   name: Scalars['String']['input'];
   requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
   requestFields: Array<FieldAnswerArgs>;
+};
+
+export type NewResponseArgs = {
+  answers: Array<FieldAnswerArgs>;
+  requestStepId: Scalars['String']['input'];
 };
 
 export type NewStepArgs = {
@@ -1174,6 +1185,7 @@ export type ResolversTypes = {
   NewAgentTypes: NewAgentTypes;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
+  NewResponseArgs: NewResponseArgs;
   NewStepArgs: NewStepArgs;
   NftCollection: ResolverTypeWrapper<NftCollection>;
   NftTypes: NftTypes;
@@ -1300,6 +1312,7 @@ export type ResolversParentTypes = {
   NewAgentArgs: NewAgentArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
+  NewResponseArgs: NewResponseArgs;
   NewStepArgs: NewStepArgs;
   NftCollection: NftCollection;
   OnboardedDiscordServer: OnboardedDiscordServer;
@@ -1614,7 +1627,8 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newProcess?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewProcessArgs, 'process'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
-  newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'optionId' | 'requestId'>>;
+  newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
+  newResponseOld?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseOldArgs, 'optionId' | 'requestId'>>;
   setUpDiscordServer?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<MutationSetUpDiscordServerArgs, 'input'>>;
 };
 

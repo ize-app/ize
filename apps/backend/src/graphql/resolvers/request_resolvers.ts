@@ -2,6 +2,7 @@ import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 
 import { newRequest as newRequestService } from "@/flow/request/newRequest";
+import { newResponse as newResponseService } from "@/flow/response/newResponse";
 import { formatRequest } from "../../utils/formatRequest";
 import { requestInclude } from "../../utils/formatRequest";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
@@ -19,7 +20,6 @@ import {
   Request,
   RequestNew,
 } from "@graphql/generated/resolver-types";
-import { newResponseService } from "@/services/requests/newResponseService";
 import { getGroupIdsOfUser } from "@/flow/group/getGroupIdsOfUser";
 
 const newRequest: MutationResolvers["newRequest"] = async (
@@ -52,6 +52,14 @@ const newResponse = async (
   context: GraphqlRequestContext,
 ): Promise<string> => {
   return await newResponseService({ args, context });
+};
+
+const newResponseOld = async (
+  root: unknown,
+  args: MutationNewResponseArgs,
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  return "";
 };
 
 const request = async (
@@ -166,4 +174,4 @@ export const requestQueries = {
   requestsForProcess,
 };
 
-export const requestMutations = { newRequest, newResponse };
+export const requestMutations = { newRequest, newResponse, newResponseOld };
