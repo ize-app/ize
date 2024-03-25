@@ -20,6 +20,16 @@ query Groups {
   }
 }
 
+fragment EntitySummaryParts on Entity {
+  __typename
+  ... on Group {
+    ...GroupSummaryParts
+  }
+  ... on Identity {
+    ...IdentitySummaryParts
+  }
+}
+
 fragment GroupSummaryParts on Group {
   __typename
   id
@@ -97,12 +107,44 @@ fragment OnboardedDiscordServerParts on OnboardedDiscordServer {
   icon
 }
 
-fragment EntitySummaryParts on Entity {
+fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
+  id
+  address
+}
+
+fragment IdentityEmailSummaryParts on IdentityEmail {
+  id
+  email
+  icon
+}
+
+fragment IdentityDiscordSummaryParts on IdentityDiscord {
+  id
+  username
+  discordUserId
+  avatar
+}
+
+fragment IdentityTypesSummaryParts on IdentityType {
   __typename
-  ... on Group {
-    ...GroupSummaryParts
+  ... on IdentityBlockchain {
+    ...IdentityBlockchainSummaryParts
   }
-  ... on Identity {
-    ...IdentitySummaryParts
+  ... on IdentityEmail {
+    ...IdentityEmailSummaryParts
+  }
+  ... on IdentityDiscord {
+    ...IdentityDiscordSummaryParts
+  }
+}
+
+fragment IdentitySummaryParts on Identity {
+  __typename
+  id
+  name
+  icon
+  entityId
+  identityType {
+    ...IdentityTypesSummaryParts
   }
 }

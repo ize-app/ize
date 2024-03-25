@@ -1,6 +1,6 @@
 import { blockchainQueries } from "./blockchainResolvers";
 import { discordQueries } from "./discordResolvers";
-import { groupMutations, groupQueries } from "./groupResolvers";
+import { entityMutations, entityQueries } from "./entityResolvers";
 import { userQueries } from "./userResolvers";
 import { requestMutations, requestQueries } from "./requestResolvers";
 import { flowMutations, flowQueries } from "./flowResolvers";
@@ -10,12 +10,12 @@ export const resolvers = {
     ...blockchainQueries,
     ...discordQueries,
     ...userQueries,
-    ...groupQueries,
+    ...entityQueries,
     ...requestQueries,
     ...flowQueries,
   },
   Mutation: {
-    ...groupMutations,
+    ...entityMutations,
     ...requestMutations,
     ...flowMutations,
   },

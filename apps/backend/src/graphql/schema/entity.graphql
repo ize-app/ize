@@ -13,14 +13,48 @@ type Query {
   groupsForCurrentUser: [Group!]!
 }
 
-input CustomGroupArgs {
-  name: String!
-  members: [CustomGroupMembersArgs!]!
+enum NewEntityTypes {
+  IdentityBlockchain
+  IdentityDiscord
+  IdentityEmail
+  GroupDiscord
+  GroupNft
+  GroupHat
 }
 
-input CustomGroupMembersArgs {
+enum EntityType {
+  Group
+  Identity
+}
+
+union Entity = Identity | Group
+
+union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord
+
+type Identity {
+  id: String! # refers to id of Identity model
+  name: String!
+  icon: String
+  entityId: String!
+  identityType: IdentityType!
+}
+
+type IdentityBlockchain {
   id: String!
-  entityType: EntityType!
+  address: String!
+}
+
+type IdentityEmail {
+  id: String!
+  icon: String
+  email: String!
+}
+
+type IdentityDiscord {
+  id: String!
+  avatar: String
+  username: String!
+  discordUserId: String!
 }
 
 union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
@@ -84,6 +118,28 @@ type OnboardedDiscordServer {
   banner: String
 }
 
+input IdentityBlockchainArgs {
+  address: String!
+}
+
+input IdentityDiscordArgs {
+  discordUserId: String!
+}
+
+input IdentityEmailArgs {
+  email: String!
+}
+
+input CustomGroupArgs {
+  name: String!
+  members: [CustomGroupMembersArgs!]!
+}
+
+input CustomGroupMembersArgs {
+  id: String!
+  entityType: EntityType!
+}
+
 input NewEntityArgs {
   identityBlockchain: IdentityBlockchainArgs
   identityDiscord: IdentityDiscordArgs
@@ -113,19 +169,3 @@ input GroupHatArgs {
   chain: Blockchain!
   tokenId: String!
 }
-
-enum NewEntityTypes {
-  IdentityBlockchain
-  IdentityDiscord
-  IdentityEmail
-  GroupDiscord
-  GroupNft
-  GroupHat
-}
-
-enum EntityType {
-  Group
-  Identity
-}
-
-union Entity = Identity | Group
