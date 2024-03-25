@@ -5,24 +5,14 @@ import {
   FieldOptionArgs,
 } from "@/graphql/generated/graphql";
 import { NewRequestFormSchema } from "./newRequestWizard";
-import { RequestFieldSchemaType } from "./formValidation";
+import { createFieldAnswersArgs } from "@/components/Form/utils/createFieldAnswers";
 
 export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): NewRequestArgs => {
   if (!formState.flow || !formState.name) throw Error("createNewRequestMutationArgs: Missing Flow");
   const flowId: string = formState.flow.flowId;
   const name: string = formState.name;
 
-  const requestFields: FieldAnswerArgs[] = Object.entries(
-    (formState.requestFields ?? []) as RequestFieldSchemaType,
-  )
-    .map(
-      (entry): FieldAnswerArgs => ({
-        fieldId: entry[0],
-        value: entry[1].value ? entry[1].value.toString() : null,
-        optionSelections: entry[1].optionSelections ?? [],
-      }),
-    )
-    .filter((f) => f.value || (f.optionSelections ?? []).length > 0);
+  const requestFields: FieldAnswerArgs[] = createFieldAnswersArgs(formState.requestFields);
 
   const requestDefinedOptions: RequestDefinedOptionsArgs[] =
     formState.requestDefinedOptions && (formState.requestDefinedOptions ?? []).length > 0

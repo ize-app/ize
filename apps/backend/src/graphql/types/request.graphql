@@ -35,8 +35,17 @@ type RequestNew {
 }
 
 type RequestStep {
+  requestStepId: String!
   createdAt: String!
   expirationDate: String!
   requestFieldAnswers: [FieldAnswer!]!
   responseFields: [Field!]!
+  responses: [Response!]!
+}
+
+type Response {
+  responseId: String!
+  createdAt: String!
+  user: User!
+  answers: [FieldAnswer!]!
 }

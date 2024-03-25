@@ -6,14 +6,17 @@ import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GetRequestDocument, RequestNewFragment } from "../../graphql/generated/graphql";
+import { GetRequestDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
+import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const Request = () => {
+  const { me } = useContext(CurrentUserContext);
   const { requestId: shortRequestId } = useParams();
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
@@ -33,7 +36,14 @@ export const Request = () => {
 
   if (error) onError();
 
-  const request = data?.getRequest as RequestNewFragment;
+  const request = data?.getRequest;
+  if (!request) return null;
+
+  const currReqStep = request.steps[request.currentStepIndex];
+  const currStep = request.flow.steps[request.currentStepIndex];
+
+  const canRespond = currStep?.userPermission.response ?? false;
+  const userResponse = currReqStep.responses.find((r) => r.user.id === me?.user.id);
 
   const theme = useTheme();
   // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -59,6 +69,19 @@ export const Request = () => {
               {request.flow.name}
             </Typography>
           </Box>
+          {canRespond && !userResponse && (
+            <Accordion
+              id="submit-response-panel"
+              defaultExpanded={true}
+              label={"Respond"}
+              elevation={6}
+            >
+              <ResponseForm
+                requestStepId={currReqStep.requestStepId}
+                responseFields={currReqStep.responseFields}
+              />
+            </Accordion>
+          )}
           <Box
             sx={(theme) => ({
               display: "flex",
@@ -102,26 +125,7 @@ export const Request = () => {
                 flex: "1 400px",
               },
             })}
-          >
-            <Accordion
-              id="submit-response-panel"
-              defaultExpanded={true}
-              label={"Respond"}
-              elevation={6}
-            >
-              <div>sup</div>
-              {/* <SubmitResponse
-                options={request.process.options}
-                displayAsColumn={true}
-                requestId={request.id}
-                userResponse={request.responses.userResponse as Response}
-                onSubmit={() => {
-                  return;
-                }}
-                hasRespondRole={!!request.process.userRoles?.respond}
-              /> */}
-            </Accordion>
-          </Box>
+          ></Box>
           <Box
             sx={{
               [theme.breakpoints.up("md")]: {

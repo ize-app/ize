@@ -63,7 +63,7 @@ export const newResponse = async ({
       });
 
     const existingUserResponse = await transaction.responseNew.findFirst({
-      where: { creatorId: context.currentUser.id },
+      where: { creatorId: context.currentUser.id, requestStepId },
     });
 
     if (existingUserResponse)

@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { flowVersionInclude } from "../flow/flowPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
+import { responseInclude } from "../response/responsePrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -16,6 +17,9 @@ export type RequestDefinedOptionSetPrismaType = Prisma.RequestDefinedOptionSetGe
 export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()({
   RequestFieldAnswers: {
     include: fieldAnswerInclude,
+  },
+  Responses: {
+    include: responseInclude
   },
   RequestDefinedOptionSets: {
     include: {
