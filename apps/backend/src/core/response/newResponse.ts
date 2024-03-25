@@ -62,7 +62,7 @@ export const newResponse = async ({
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
 
-    const existingUserResponse = await transaction.responseNew.findFirst({
+    const existingUserResponse = await transaction.response.findFirst({
       where: { creatorId: context.currentUser.id, requestStepId },
     });
 
@@ -74,7 +74,7 @@ export const newResponse = async ({
         },
       );
 
-    const response = await transaction.responseNew.create({
+    const response = await transaction.response.create({
       data: {
         creatorId: context.currentUser.id,
         requestStepId,

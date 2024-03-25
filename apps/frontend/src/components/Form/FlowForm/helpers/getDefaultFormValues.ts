@@ -1,7 +1,7 @@
 import { StepSchemaType } from "../formValidation/flow";
 
 import { PermissionType } from "../formValidation/permission";
-import { ActionNewType } from "@/graphql/generated/graphql";
+import { ActionType } from "@/graphql/generated/graphql";
 
 export const defaultStepFormValues: StepSchemaType = {
   request: {
@@ -13,6 +13,6 @@ export const defaultStepFormValues: StepSchemaType = {
     fields: [],
   },
   result: [],
-  action: { type: ActionNewType.None },
+  action: { type: ActionType.None },
   expirationSeconds: 259200,
 };

@@ -1,6 +1,6 @@
 import {
-  ActionNew,
-  ActionNewType,
+  Action,
+  ActionType,
   Field,
   FieldType,
   Flow,
@@ -162,30 +162,30 @@ const createResultFormState = (results: ResultConfig[]): ResultSchemaType[] => {
   });
 };
 
-const createActionFormState = (action: ActionNew | null | undefined): ActionSchemaType => {
+const createActionFormState = (action: Action | null | undefined): ActionSchemaType => {
   switch (action?.__typename) {
-    case ActionNewType.CallWebhook:
+    case ActionType.CallWebhook:
       return {
-        type: ActionNewType.CallWebhook,
+        type: ActionType.CallWebhook,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
         callWebhook: {
           name: action.name,
           uri: action.uri,
         },
       };
-    case ActionNewType.TriggerStep:
+    case ActionType.TriggerStep:
       return {
-        type: ActionNewType.TriggerStep,
+        type: ActionType.TriggerStep,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
-    case ActionNewType.EvolveFlow:
+    case ActionType.EvolveFlow:
       return {
-        type: ActionNewType.EvolveFlow,
+        type: ActionType.EvolveFlow,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     default:
       return {
-        type: ActionNewType.None,
+        type: ActionType.None,
       };
   }
 };

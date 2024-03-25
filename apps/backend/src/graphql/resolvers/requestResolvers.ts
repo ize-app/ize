@@ -11,7 +11,7 @@ import {
   MutationResolvers,
   QueryGetRequestArgs,
   QueryResolvers,
-  RequestNew,
+  Request,
 } from "@graphql/generated/resolver-types";
 
 const newRequest: MutationResolvers["newRequest"] = async (
@@ -34,7 +34,7 @@ const getRequest: QueryResolvers["getRequest"] = async (
   root: unknown,
   args: QueryGetRequestArgs,
   context: GraphqlRequestContext,
-): Promise<RequestNew> => {
+): Promise<Request> => {
   return await getRequestService({ args, context });
 };
 

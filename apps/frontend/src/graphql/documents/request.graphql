@@ -8,11 +8,11 @@ mutation NewResponse($response: NewResponseArgs!) {
 
 query getRequest($requestId: String!) {
   getRequest(requestId: $requestId) {
-    ...RequestNew
+    ...Request
   }
 }
 
-fragment RequestNew on RequestNew {
+fragment Request on Request {
   name
   flow {
     ...Flow

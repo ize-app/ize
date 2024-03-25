@@ -1,12 +1,12 @@
-import { ActionNewArgs, ActionNewType, FieldType } from "@/graphql/generated/graphql";
+import { ActionArgs, ActionType, FieldType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
 import { ActionSchemaType } from "../../formValidation/action";
 
 export const createActionArgs = (
   action: ActionSchemaType,
   responseFields: FieldsSchemaType | undefined,
-): ActionNewArgs => {
-  if (action.type !== ActionNewType.None && action.filterOptionId) {
+): ActionArgs => {
+  if (action.type !== ActionType.None && action.filterOptionId) {
     let filterOptionIndex: number | null = null;
     let filterResponseFieldIndex: number | null = null;
     if (action.filterOptionId !== DefaultOptionSelection.None.toString()) {

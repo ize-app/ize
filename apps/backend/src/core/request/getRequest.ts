@@ -1,4 +1,4 @@
-import { RequestNew, QueryGetRequestArgs } from "@/graphql/generated/resolver-types";
+import { Request, QueryGetRequestArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { requestInclude } from "./requestPrismaTypes";
@@ -11,9 +11,9 @@ export const getRequest = async ({
 }: {
   args: QueryGetRequestArgs;
   context: GraphqlRequestContext;
-}): Promise<RequestNew> => {
+}): Promise<Request> => {
   return await prisma.$transaction(async (transaction) => {
-    const request = await transaction.requestNew.findFirstOrThrow({
+    const request = await transaction.request.findFirstOrThrow({
       where: { id: args.requestId },
       include: requestInclude,
     });

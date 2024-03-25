@@ -26,7 +26,7 @@ type Step {
   request: RequestConfig!
   response: ResponseConfig!
   result: [ResultConfig!]!
-  action: ActionNew
+  action: Action
   expirationSeconds: Int
   userPermission: UserPermission!
 }
@@ -57,14 +57,14 @@ input NewStepArgs {
   request: StepRequestArgs!
   response: StepResponseArgs
   result: [ResultArgs!]!
-  action: ActionNewArgs!
+  action: ActionArgs!
   expirationSeconds: Int
 }
 
 input EvolveFlowArgs {
   requestPermission: PermissionArgs!
   responsePermission: PermissionArgs!
-  decision: DecisionNewArgs!
+  decision: DecisionArgs!
 }
 
 input StepRequestArgs {

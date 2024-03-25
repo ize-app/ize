@@ -4,8 +4,6 @@ type Permission {
   entities: [Entity!]!
 }
 
-union Entity = Identity | Group
-
 input PermissionArgs {
   anyone: Boolean!
   entities: [EntityArgs!]!

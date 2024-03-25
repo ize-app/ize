@@ -1,12 +1,12 @@
-import { ActionNew, CallWebhook, Option } from "@/graphql/generated/resolver-types";
+import { Action, CallWebhook, Option } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { ActionNewPrismaType } from "./actionPrismaTypes";
-import { ActionNewType } from "@prisma/client";
+import { ActionType } from "@prisma/client";
 
 export const resolveAction = (
   action: ActionNewPrismaType | null | undefined,
   responseOptions: Option[] | undefined,
-): ActionNew | null => {
+): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
 
@@ -21,14 +21,14 @@ export const resolveAction = (
   }
 
   switch (action.type) {
-    case ActionNewType.CallWebhook:
+    case ActionType.CallWebhook:
       return callWebhookResolver(action, filterOption);
-    case ActionNewType.TriggerStep:
+    case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
         filterOption,
       };
-    case ActionNewType.EvolveFlow:
+    case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
         filterOption,

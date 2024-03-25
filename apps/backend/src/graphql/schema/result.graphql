@@ -47,12 +47,12 @@ input ResultArgs {
   fieldId: String
   minimumAnswers: Int
   responseFieldIndex: Int
-  decision: DecisionNewArgs
+  decision: DecisionArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs
 }
 
-input DecisionNewArgs {
+input DecisionArgs {
   type: DecisionType!
   defaultOptionIndex: Int
   threshold: Int!

@@ -46,7 +46,7 @@ export const newRequest = async ({
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
 
-    const request = await transaction.requestNew.create({
+    const request = await transaction.request.create({
       data: {
         name: args.request.name,
         flowVersionId: flow.CurrentFlowVersion.id,

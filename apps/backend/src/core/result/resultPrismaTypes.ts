@@ -50,10 +50,10 @@ export type ResultConfigSetPrismaType = Prisma.ResultConfigSetGetPayload<{
   include: typeof resultConfigSetInclude;
 }>;
 
-export const resultInclude = Prisma.validator<Prisma.ResultsNewInclude>()({
+export const resultInclude = Prisma.validator<Prisma.ResultInclude>()({
   ResultItems: true,
 });
 
-export type ResultPrismaType = Prisma.ResultsNewGetPayload<{
+export type ResultPrismaType = Prisma.ResultGetPayload<{
   include: typeof resultInclude;
 }>;

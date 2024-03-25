@@ -1,6 +1,6 @@
 import {
-  ActionNewArgs,
-  ActionNewType,
+  ActionArgs,
+  ActionType,
   EvolveFlowArgs,
   FieldArgs,
   FieldDataType,
@@ -47,8 +47,8 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
     minimumAnswers: 1,
   };
 
-  const actionArgs: ActionNewArgs = {
-    type: ActionNewType.EvolveFlow,
+  const actionArgs: ActionArgs = {
+    type: ActionType.EvolveFlow,
     filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
   };

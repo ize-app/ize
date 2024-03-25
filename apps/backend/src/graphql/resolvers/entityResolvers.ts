@@ -14,6 +14,14 @@ import {
 } from "@graphql/generated/resolver-types";
 import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
 
+const newEntities = async (
+  root: unknown,
+  args: MutationNewEntitiesArgs,
+  context: GraphqlRequestContext,
+): Promise<Entity[]> => {
+  return await newEntitiesService(args, context);
+};
+
 const group = async (root: unknown, args: QueryGroupArgs): Promise<Group> => {
   const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
     include: groupInclude,
@@ -38,20 +46,12 @@ export const newCustomGroup = async (
   return await newCustomGroupService({ args, context });
 };
 
-const newEntities = async (
-  root: unknown,
-  args: MutationNewEntitiesArgs,
-  context: GraphqlRequestContext,
-): Promise<Entity[]> => {
-  return await newEntitiesService(args, context);
-};
-
-export const groupMutations = {
+export const entityMutations = {
   newCustomGroup,
   newEntities,
 };
 
-export const groupQueries = {
+export const entityQueries = {
   group,
   groupsForCurrentUser,
 };

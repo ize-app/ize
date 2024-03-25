@@ -1,6 +1,6 @@
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
-import { ActionNewType } from "@/graphql/generated/resolver-types";
+import { ActionType } from "@/graphql/generated/resolver-types";
 import { triggerNextStep } from "./triggerNextStep";
 import { callWebhook } from "./callWebhook";
 import { prisma } from "../../../prisma/client";
@@ -16,7 +16,7 @@ export const executeAction = async ({
   step: StepPrismaType;
   results: ResultPrismaType[];
 }): Promise<boolean> => {
-  const action = step.ActionNew;
+  const action = step.Action;
   if (!action) return true;
 
   //// if filter, check if decision before running action
@@ -31,16 +31,16 @@ export const executeAction = async ({
 
   //// if webhook, trigger webhook, with retry logic
   switch (action.type) {
-    case ActionNewType.CallWebhook: {
+    case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
       actionComplete = await callWebhook({ webhook: action.Webhook });
       break;
     }
-    case ActionNewType.TriggerStep: {
+    case ActionType.TriggerStep: {
       actionComplete = await triggerNextStep({});
       break;
     }
-    case ActionNewType.EvolveFlow: {
+    case ActionType.EvolveFlow: {
       actionComplete = await evolveFlow();
       break;
     }

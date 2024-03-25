@@ -12,7 +12,7 @@ export const apolloClient = new ApolloClient({
       Entity: ["Identity", "Group"],
       Field: ["Options", "FreeInput"],
       ResultConfig: ["Decision", "Ranking", "LlmSummary", "Raw", "AutoApprove"],
-      ActionNew: ["CallWebhook", "EvolveFlow", "TriggerStep"],
+      Action: ["CallWebhook", "EvolveFlow", "TriggerStep"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
       FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer"],
