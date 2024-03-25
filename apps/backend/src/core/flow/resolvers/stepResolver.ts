@@ -32,7 +32,7 @@ export const stepResolver = ({
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
       fields: responseFields,
     },
-    action: resolveAction(step.ActionNew, responseOptions),
+    action: resolveAction(step.Action, responseOptions),
     result,
     expirationSeconds: step.expirationSeconds,
     userPermission: {

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { ActionNewType } from "@/graphql/generated/graphql";
+import { ActionType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "./fields";
 
 export type ActionSchemaType = z.infer<typeof actionSchema>;
@@ -11,19 +11,19 @@ const callWebhookSchema = z.object({
 
 export const actionSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal(ActionNewType.TriggerStep),
+    type: z.literal(ActionType.TriggerStep),
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
   }),
   z.object({
-    type: z.literal(ActionNewType.CallWebhook),
+    type: z.literal(ActionType.CallWebhook),
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
     callWebhook: callWebhookSchema,
   }),
   z.object({
-    type: z.literal(ActionNewType.EvolveFlow),
+    type: z.literal(ActionType.EvolveFlow),
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
   }),
   z.object({
-    type: z.literal(ActionNewType.None),
+    type: z.literal(ActionType.None),
   }),
 ]);

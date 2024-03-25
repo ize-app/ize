@@ -18,16 +18,16 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type ActionNew = CallWebhook | EvolveFlow | TriggerStep;
+export type Action = CallWebhook | EvolveFlow | TriggerStep;
 
-export type ActionNewArgs = {
+export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
   filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
   filterResponseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
-  type: ActionNewType;
+  type: ActionType;
 };
 
-export enum ActionNewType {
+export enum ActionType {
   CallWebhook = 'CallWebhook',
   EvolveFlow = 'EvolveFlow',
   None = 'None',
@@ -455,7 +455,7 @@ export type NewResponseArgs = {
 };
 
 export type NewStepArgs = {
-  action: ActionNewArgs;
+  action: ActionArgs;
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
@@ -679,7 +679,7 @@ export enum ResultType {
 
 export type Step = {
   __typename?: 'Step';
-  action?: Maybe<ActionNew>;
+  action?: Maybe<Action>;
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
   index: Scalars['Int']['output'];
   request: RequestConfig;
@@ -791,7 +791,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
-  ActionNew: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
+  Action: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
@@ -803,9 +803,9 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  ActionNew: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ActionNew']>;
-  ActionNewArgs: ActionNewArgs;
-  ActionNewType: ActionNewType;
+  Action: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Action']>;
+  ActionArgs: ActionArgs;
+  ActionType: ActionType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
   ApiHatToken: ResolverTypeWrapper<ApiHatToken>;
@@ -892,7 +892,7 @@ export type ResolversTypes = {
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultType: ResultType;
-  Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['ActionNew']>, result: Array<ResolversTypes['ResultConfig']> }>;
+  Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -904,8 +904,8 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  ActionNew: ResolversUnionTypes<ResolversParentTypes>['ActionNew'];
-  ActionNewArgs: ActionNewArgs;
+  Action: ResolversUnionTypes<ResolversParentTypes>['Action'];
+  ActionArgs: ActionArgs;
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
@@ -981,7 +981,7 @@ export type ResolversParentTypes = {
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
-  Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['ActionNew']>, result: Array<ResolversParentTypes['ResultConfig']> };
+  Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: Scalars['String']['output'];
@@ -991,7 +991,7 @@ export type ResolversParentTypes = {
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
-export type ActionNewResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionNew'] = ResolversParentTypes['ActionNew']> = {
+export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
   __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
 };
 
@@ -1340,7 +1340,7 @@ export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentTyp
 };
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
-  action?: Resolver<Maybe<ResolversTypes['ActionNew']>, ParentType, ContextType>;
+  action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
@@ -1370,7 +1370,7 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 };
 
 export type Resolvers<ContextType = GraphqlRequestContext> = {
-  ActionNew?: ActionNewResolvers<ContextType>;
+  Action?: ActionResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;

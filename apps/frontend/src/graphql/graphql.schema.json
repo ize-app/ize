@@ -10,7 +10,7 @@
     "types": [
       {
         "kind": "UNION",
-        "name": "ActionNew",
+        "name": "Action",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -36,7 +36,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "ActionNewArgs",
+        "name": "ActionArgs",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -84,7 +84,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ActionNewType",
+                "name": "ActionType",
                 "ofType": null
               }
             },
@@ -99,7 +99,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "ActionNewType",
+        "name": "ActionType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -3737,7 +3737,7 @@
               "name": null,
               "ofType": {
                 "kind": "INPUT_OBJECT",
-                "name": "ActionNewArgs",
+                "name": "ActionArgs",
                 "ofType": null
               }
             },
@@ -5695,7 +5695,7 @@
             "args": [],
             "type": {
               "kind": "UNION",
-              "name": "ActionNew",
+              "name": "Action",
               "ofType": null
             },
             "isDeprecated": false,

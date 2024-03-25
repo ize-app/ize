@@ -311,7 +311,7 @@ model Step {
   ResponsePermissions Permission?      @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
   ResultConfigSet     ResultConfigSet? @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
 
-  ActionNew   Action?       @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
+  Action      Action?       @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
   RequestStep RequestStep[]
 
   @@map("steps")
@@ -488,7 +488,7 @@ model FieldOption {
   AnswerOptionSelections     AnswerOptionSelection[]
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
   DefaultOptionForDecisions  ResultConfigDecision[]
-  ActionNew                  Action[]
+  Action                     Action[]
   ResultItems                ResultItems[]
 
   @@map("field_options")
@@ -646,7 +646,7 @@ model Webhook {
   uri       String
   createdAt DateTime @default(now()) @map("created_at")
 
-  ActionsNew Action[]
+  Actions Action[]
 
   @@map("webhooks")
 }

@@ -37,7 +37,7 @@ fragment Step on Step {
     ...ResultConfig
   }
   action {
-    ...ActionNew
+    ...Action
   }
   expirationSeconds
   userPermission {

@@ -1,4 +1,4 @@
-import { ActionNew, CallWebhook, Option } from "@/graphql/generated/resolver-types";
+import { Action, CallWebhook, Option } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { ActionType } from "@prisma/client";
@@ -6,7 +6,7 @@ import { ActionType } from "@prisma/client";
 export const resolveAction = (
   action: ActionNewPrismaType | null | undefined,
   responseOptions: Option[] | undefined,
-): ActionNew | null => {
+): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
 

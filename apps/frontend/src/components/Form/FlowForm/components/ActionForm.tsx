@@ -6,7 +6,7 @@ import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { useEffect, useState } from "react";
 
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { ActionNewType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
 import { StepComponentContainer } from "./StepContainer";
@@ -19,7 +19,7 @@ interface ActionFormProps {
 }
 
 export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: ActionFormProps) => {
-  const [latestActionState, setLatestActionState] = useState<ActionNewType>();
+  const [latestActionState, setLatestActionState] = useState<ActionType>();
 
   const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
 
@@ -53,9 +53,9 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
 
   useEffect(() => {
     if (actionType !== latestActionState) {
-      if (actionType === ActionNewType.TriggerStep) {
+      if (actionType === ActionType.TriggerStep) {
         stepsArrayMethods.append(defaultStepFormValues);
-      } else if (latestActionState === ActionNewType.TriggerStep) {
+      } else if (latestActionState === ActionType.TriggerStep) {
         for (let i = 0; i < stepCount; i++) {
           stepsArrayMethods.remove(formIndex + 1);
         }
@@ -72,15 +72,15 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
           width="300px"
           name={`steps.${formIndex}.action.type`}
           selectOptions={[
-            { name: "No automated action on result", value: ActionNewType.None },
-            { name: "Trigger new step on result", value: ActionNewType.TriggerStep },
-            { name: "Call a webhook on result", value: ActionNewType.CallWebhook },
+            { name: "No automated action on result", value: ActionType.None },
+            { name: "Trigger new step on result", value: ActionType.TriggerStep },
+            { name: "Call a webhook on result", value: ActionType.CallWebhook },
           ]}
           label="Action"
           size="small"
           displayLabel={false}
         />
-        {(options ?? []).length > 0 && actionType !== ActionNewType.None && (
+        {(options ?? []).length > 0 && actionType !== ActionType.None && (
           <>
             <Select<FlowSchemaType>
               control={formMethods.control}
@@ -100,7 +100,7 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
           </>
         )}
       </ResponsiveFormRow>
-      {actionType === ActionNewType.CallWebhook && (
+      {actionType === ActionType.CallWebhook && (
         <ResponsiveFormRow>
           <TextField<FlowSchemaType>
             control={formMethods.control}

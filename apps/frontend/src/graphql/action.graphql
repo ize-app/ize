@@ -1,4 +1,4 @@
-fragment ActionNew on ActionNew {
+fragment Action on Action {
   __typename
   ... on CallWebhook {
     ...CallWebhook
