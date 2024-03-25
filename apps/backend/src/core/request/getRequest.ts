@@ -13,7 +13,7 @@ export const getRequest = async ({
   context: GraphqlRequestContext;
 }): Promise<RequestNew> => {
   return await prisma.$transaction(async (transaction) => {
-    const request = await transaction.requestNew.findFirstOrThrow({
+    const request = await transaction.request.findFirstOrThrow({
       where: { id: args.requestId },
       include: requestInclude,
     });

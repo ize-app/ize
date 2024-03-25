@@ -43,7 +43,7 @@ export const newActionConfig = async ({
     webhookId = webhook.id;
   }
 
-  const action = await transaction.actionNew.create({
+  const action = await transaction.action.create({
     data: {
       type: actionArgs.type,
       filterOptionId,

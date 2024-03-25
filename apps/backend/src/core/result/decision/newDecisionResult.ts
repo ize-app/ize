@@ -51,7 +51,7 @@ export const newDecisionResult = async ({
     });
 
     ////// create results for that decision
-    return await prisma.resultsNew.create({
+    return await prisma.result.create({
       include: resultInclude,
       data: {
         itemCount: 1,

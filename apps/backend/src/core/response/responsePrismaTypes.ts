@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { userInclude } from "../user/userPrismaTypes";
 
-export const responseInclude = Prisma.validator<Prisma.ResponseNewInclude>()({
+export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   Answers: {
     include: {
       AnswerOptionSelections: true,
@@ -9,10 +9,10 @@ export const responseInclude = Prisma.validator<Prisma.ResponseNewInclude>()({
     },
   },
   User: {
-    include: userInclude
-  }
+    include: userInclude,
+  },
 });
 
-export type ResponsePrismaType = Prisma.ResponseNewGetPayload<{
+export type ResponsePrismaType = Prisma.ResponseGetPayload<{
   include: typeof responseInclude;
 }>;

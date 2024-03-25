@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(uuid()) @db.Uuid
-  stytchId    String        @unique @map("stytch_id")
+  id          String       @id @default(uuid()) @db.Uuid
+  stytchId    String       @unique @map("stytch_id")
   firstName   String?
   lastName    String?
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
   Group       Group[]
   Identities  Identity[]
   Oauths      Oauths[]
-  RequestNew  RequestNew[]
-  ResponseNew ResponseNew[]
+  RequestNew  Request[]
+  ResponseNew Response[]
   Permission  Permission[]
 
   @@map("users")
@@ -260,7 +260,7 @@ model Flow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  CurrentFlowVersion         FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id])
+  CurrentFlowVersion         FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
   FlowVersions               FlowVersion[] @relation("FlowToAllFlowVersions")
   EvolveRightsFoFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
 
@@ -277,11 +277,11 @@ model FlowVersion {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  FlowForCurrentVersion Flow?        @relation("FlowToCurrentFlowVersion")
-  Flow                  Flow         @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
-  EvolveFlow            Flow?        @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
+  FlowForCurrentVersion Flow?     @relation("FlowToCurrentFlowVersion")
+  Flow                  Flow      @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
+  EvolveFlow            Flow?     @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
   Steps                 Step[]
-  RequestNew            RequestNew[]
+  RequestNew            Request[]
 
   @@map("flow_versions")
 }
@@ -309,9 +309,9 @@ model Step {
   RequestFieldSet     FieldSet?        @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
   ResponseFieldSet    FieldSet?        @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
   ResponsePermissions Permission?      @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
-  ResultConfigSet     ResultConfigSet? @relation(fields: [resultConfigSetId], references: [id])
+  ResultConfigSet     ResultConfigSet? @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
 
-  ActionNew   ActionNew?    @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
+  ActionNew   Action?       @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
   RequestStep RequestStep[]
 
   @@map("steps")
@@ -415,7 +415,7 @@ model Field {
   fieldOptionsConfigId String?        @map("field_options_config_id") @db.Uuid
   createdAt            DateTime       @default(now()) @map("created_at")
 
-  FieldOptionsConfigs     FieldOptionsConfig?       @relation(fields: [fieldOptionsConfigId], references: [id])
+  FieldOptionsConfigs     FieldOptionsConfig?       @relation(fields: [fieldOptionsConfigId], references: [id], onDelete: Cascade)
   Answers                 FieldAnswer[]
   ResultConfig            ResultConfig[]
   FieldSetFields          FieldSetsFields[]
@@ -488,7 +488,7 @@ model FieldOption {
   AnswerOptionSelections     AnswerOptionSelection[]
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
   DefaultOptionForDecisions  ResultConfigDecision[]
-  ActionNew                  ActionNew[]
+  ActionNew                  Action[]
   ResultItems                ResultItems[]
 
   @@map("field_options")
@@ -504,7 +504,7 @@ model FieldAnswer {
   createdAt     DateTime  @default(now()) @map("created_at")
 
   Field                  Field                   @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  Response               ResponseNew?            @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  Response               Response?               @relation(fields: [responseId], references: [id], onDelete: Cascade)
   Request                RequestStep?            @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   AnswerOptionSelections AnswerOptionSelection[]
   AnswerFreeInput        AnswerFreeInput[]
@@ -565,7 +565,7 @@ model ResultConfig {
   ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
   ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
   ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
-  Results                      ResultsNew[]
+  Results                      Result[]
   ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
 
   @@map("result_configs")
@@ -616,18 +616,20 @@ model ResultConfigLlm {
   @@map("result_config_llms")
 }
 
-enum ActionNewType {
+enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+
+  @@map("ActionType")
 }
 
-model ActionNew {
-  id             String        @id @default(uuid()) @db.Uuid
-  type           ActionNewType
-  webhookId      String?       @map("webhook_id") @db.Uuid
-  filterOptionId String?       @map("filter_option_id") @db.Uuid
-  createdAt      DateTime      @default(now()) @map("created_at")
+model Action {
+  id             String     @id @default(uuid()) @db.Uuid
+  type           ActionType
+  webhookId      String?    @map("webhook_id") @db.Uuid
+  filterOptionId String?    @map("filter_option_id") @db.Uuid
+  createdAt      DateTime   @default(now()) @map("created_at")
 
   Steps             Step[]       @relation("StepsWithAction")
   FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
@@ -635,7 +637,7 @@ model ActionNew {
 
   ActionExecution ActionExecution[]
 
-  @@map("actions_new")
+  @@map("actions")
 }
 
 model Webhook {
@@ -644,7 +646,7 @@ model Webhook {
   uri       String
   createdAt DateTime @default(now()) @map("created_at")
 
-  ActionsNew ActionNew[]
+  ActionsNew Action[]
 
   @@map("webhooks")
 }
@@ -658,14 +660,14 @@ model ActionExecution {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Action      ActionNew   @relation(fields: [actionId], references: [id], onDelete: Cascade)
-  RequestStep RequestStep @relation(fields: [requestStepId], references: [id])
+  Action      Action      @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  RequestStep RequestStep @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
 
   @@unique([actionId, requestStepId])
-  @@map("action_attempts_new")
+  @@map("action_executions")
 }
 
-model RequestNew {
+model Request {
   id                   String   @id @default(uuid()) @db.Uuid
   creatorId            String   @map("creator_id") @db.Uuid
   flowVersionId        String   @map("flow_version_id") @db.Uuid
@@ -675,14 +677,14 @@ model RequestNew {
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
-  FlowVersion        FlowVersion  @relation(fields: [flowVersionId], references: [id])
-  Creator            User         @relation(fields: [creatorId], references: [id])
-  CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id])
+  FlowVersion        FlowVersion  @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
+  Creator            User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id], onDelete: Cascade)
 
   // For when the options are request are created by the requestor or the previous step
   RequestSteps RequestStep[]
 
-  @@map("requests_new")
+  @@map("requests")
 }
 
 model RequestStep {
@@ -696,13 +698,13 @@ model RequestStep {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Request                  RequestNew                @relation(fields: [requestId], references: [id])
-  Step                     Step                      @relation(fields: [stepId], references: [id])
-  CurrentStepParent        RequestNew?               @relation("CurrentRequestStep")
+  Request                  Request                   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  Step                     Step                      @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  CurrentStepParent        Request?                  @relation("CurrentRequestStep")
   RequestFieldAnswers      FieldAnswer[]
-  Results                  ResultsNew[]
+  Results                  Result[]
   RequestDefinedOptionSets RequestDefinedOptionSet[]
-  Responses                ResponseNew[]
+  Responses                Response[]
   ActionExecution          ActionExecution[]
 
   @@unique([stepId, requestId])
@@ -714,24 +716,24 @@ model RequestDefinedOptionSet {
   requestStepId    String         @map("request_step_id") @db.Uuid
   fieldId          String         @map("field_id") @db.Uuid
   fieldOptionSetId String         @map("field_option_set_id") @db.Uuid
-  RequestStep      RequestStep    @relation(fields: [requestStepId], references: [id])
-  Field            Field          @relation(fields: [fieldId], references: [id])
-  FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id])
+  RequestStep      RequestStep    @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  Field            Field          @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
 
   @@map("request_defined_option_sets")
 }
 
-model ResponseNew {
+model Response {
   id            String   @id @default(uuid()) @db.Uuid
   requestStepId String   @map("request_step_id") @db.Uuid
   creatorId     String   @map("creator_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
-  RequestStep RequestStep   @relation(fields: [requestStepId], references: [id])
+  RequestStep RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   Answers     FieldAnswer[]
-  User        User          @relation(fields: [creatorId], references: [id])
+  User        User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
-  @@map("responses_new")
+  @@map("responses")
 }
 
 // List of fields for use in request or response
@@ -751,8 +753,8 @@ model ResultConfigSetResultConfigs {
   resultConfigSetId String @map("result_config_set_id") @db.Uuid
   resultConfigId    String @map("result_config_id") @db.Uuid
 
-  ResultConfigSet ResultConfigSet @relation(fields: [resultConfigSetId], references: [id])
-  ResultConfig    ResultConfig    @relation(fields: [resultConfigId], references: [id])
+  ResultConfigSet ResultConfigSet @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
+  ResultConfig    ResultConfig    @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
 
   @@unique([resultConfigId, resultConfigSetId])
   @@map("result_config_set_result_configs")
@@ -761,7 +763,7 @@ model ResultConfigSetResultConfigs {
 // there is a single results record for a given request step + results Config 
 // so if a step has two result Configs, there will be two Results every time that Result rows
 // A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
-model ResultsNew {
+model Result {
   id             String   @id @default(uuid()) @db.Uuid
   complete       Boolean  @default(false)
   requestStepId  String   @map("request_step_id") @db.Uuid
@@ -771,11 +773,11 @@ model ResultsNew {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
-  RequestStep  RequestStep   @relation(fields: [requestStepId], references: [id])
-  ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id])
+  RequestStep  RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
   ResultItems  ResultItems[]
 
-  @@map("results_new")
+  @@map("results")
 }
 
 model ResultItems {
@@ -786,8 +788,8 @@ model ResultItems {
   resultId      String        @db.Uuid
   createdAt     DateTime      @default(now()) @map("created_at")
 
-  Result ResultsNew   @relation(fields: [resultId], references: [id])
-  Option FieldOption? @relation(fields: [fieldOptionId], references: [id])
+  Result Result       @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  Option FieldOption? @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
 
   @@map("result_items")
 }

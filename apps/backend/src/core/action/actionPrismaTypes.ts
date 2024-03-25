@@ -6,13 +6,13 @@ export type WebhookPrismaType = Prisma.WebhookGetPayload<{
   include: typeof webhookInclude;
 }>;
 
-export const actionInclude = Prisma.validator<Prisma.ActionNewInclude>()({
+export const actionInclude = Prisma.validator<Prisma.ActionInclude>()({
   Webhook: {
     include: webhookInclude,
   },
 });
 
-export type ActionNewPrismaType = Prisma.ActionNewGetPayload<{
+export type ActionNewPrismaType = Prisma.ActionGetPayload<{
   include: typeof actionInclude;
 }>;
 

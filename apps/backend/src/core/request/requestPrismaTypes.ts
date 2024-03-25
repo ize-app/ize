@@ -19,7 +19,7 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
     include: fieldAnswerInclude,
   },
   Responses: {
-    include: responseInclude
+    include: responseInclude,
   },
   RequestDefinedOptionSets: {
     include: {
@@ -34,7 +34,7 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const requestInclude = Prisma.validator<Prisma.RequestNewInclude>()({
+export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   RequestSteps: {
     include: requestStepInclude,
   },
@@ -44,6 +44,6 @@ export const requestInclude = Prisma.validator<Prisma.RequestNewInclude>()({
   },
 });
 
-export type RequestPrismaType = Prisma.RequestNewGetPayload<{
+export type RequestPrismaType = Prisma.RequestGetPayload<{
   include: typeof requestInclude;
 }>;
