@@ -1,4 +1,4 @@
-import { RequestNew } from "@/graphql/generated/resolver-types";
+import { Request } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { RequestPrismaType } from "../requestPrismaTypes";
 import { flowVersionResolver } from "../../flow/resolvers/flowVersionResolver";
@@ -13,8 +13,8 @@ export const requestResolver = ({
   req: RequestPrismaType;
   userGroupIds: string[];
   context: GraphqlRequestContext;
-}): RequestNew => {
-  const requestNew: RequestNew = {
+}): Request => {
+  const Request: Request = {
     name: req.name,
     flow: flowVersionResolver({
       flowVersion: req.FlowVersion,
@@ -36,5 +36,5 @@ export const requestResolver = ({
       return requestStepResolver({ reqStep, step });
     }),
   };
-  return requestNew;
+  return Request;
 };

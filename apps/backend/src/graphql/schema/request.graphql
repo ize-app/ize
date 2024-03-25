@@ -4,7 +4,7 @@ type Mutation {
 }
 
 type Query {
-  getRequest(requestId: String!): RequestNew!
+  getRequest(requestId: String!): Request!
 }
 
 input NewRequestArgs {
@@ -24,7 +24,7 @@ input NewResponseArgs {
   answers: [FieldAnswerArgs!]!
 }
 
-type RequestNew {
+type Request {
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
   flow: Flow!

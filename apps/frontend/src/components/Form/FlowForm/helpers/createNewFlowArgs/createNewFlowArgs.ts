@@ -1,5 +1,5 @@
 import { FlowSchemaType } from "../../formValidation/flow";
-import { DecisionNewArgs, NewFlowArgs } from "@/graphql/generated/graphql";
+import { DecisionArgs, NewFlowArgs } from "@/graphql/generated/graphql";
 import { createFieldsArgs } from "./createFieldsArgs";
 import { createPermissionArgs } from "./createPermissionsArgs";
 import { createActionArgs } from "./createActionArgs";
@@ -37,7 +37,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
     }),
     evolve: formState.evolve && {
       ...formState.evolve,
-      decision: formState.evolve.decision as DecisionNewArgs,
+      decision: formState.evolve.decision as DecisionArgs,
       requestPermission: createPermissionArgs(formState.evolve.requestPermission),
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),
     },

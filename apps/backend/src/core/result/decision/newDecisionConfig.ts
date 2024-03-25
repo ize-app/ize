@@ -1,5 +1,5 @@
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { DecisionNewArgs, FieldType } from "@/graphql/generated/resolver-types";
+import { DecisionArgs, FieldType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
@@ -8,7 +8,7 @@ export const newDecisionConfig = async ({
   responseField,
   transaction,
 }: {
-  decisionArgs: DecisionNewArgs;
+  decisionArgs: DecisionArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {

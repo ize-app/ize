@@ -64,7 +64,7 @@ input NewStepArgs {
 input EvolveFlowArgs {
   requestPermission: PermissionArgs!
   responsePermission: PermissionArgs!
-  decision: DecisionNewArgs!
+  decision: DecisionArgs!
 }
 
 input StepRequestArgs {

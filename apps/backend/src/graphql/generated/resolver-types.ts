@@ -104,7 +104,7 @@ export type Decision = {
   threshold: Scalars['Int']['output'];
 };
 
-export type DecisionNewArgs = {
+export type DecisionArgs = {
   defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
   threshold: Scalars['Int']['input'];
   type: DecisionType;
@@ -168,7 +168,7 @@ export type EvolveFlow = {
 };
 
 export type EvolveFlowArgs = {
-  decision: DecisionNewArgs;
+  decision: DecisionArgs;
   requestPermission: PermissionArgs;
   responsePermission: PermissionArgs;
 };
@@ -550,7 +550,7 @@ export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
   getFlow: Flow;
-  getRequest: RequestNew;
+  getRequest: Request;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -613,6 +613,16 @@ export type Ranking = {
   resultConfigId: Scalars['String']['output'];
 };
 
+export type Request = {
+  __typename?: 'Request';
+  createdAt: Scalars['String']['output'];
+  currentStepIndex: Scalars['Int']['output'];
+  flow: Flow;
+  name: Scalars['String']['output'];
+  requestId: Scalars['String']['output'];
+  steps: Array<RequestStep>;
+};
+
 export type RequestConfig = {
   __typename?: 'RequestConfig';
   fields: Array<Field>;
@@ -622,16 +632,6 @@ export type RequestConfig = {
 export type RequestDefinedOptionsArgs = {
   fieldId: Scalars['String']['input'];
   options: Array<FieldOptionArgs>;
-};
-
-export type RequestNew = {
-  __typename?: 'RequestNew';
-  createdAt: Scalars['String']['output'];
-  currentStepIndex: Scalars['Int']['output'];
-  flow: Flow;
-  name: Scalars['String']['output'];
-  requestId: Scalars['String']['output'];
-  steps: Array<RequestStep>;
 };
 
 export type RequestStep = {
@@ -659,7 +659,7 @@ export type ResponseConfig = {
 };
 
 export type ResultArgs = {
-  decision?: InputMaybe<DecisionNewArgs>;
+  decision?: InputMaybe<DecisionArgs>;
   fieldId?: InputMaybe<Scalars['String']['input']>;
   llmSummary?: InputMaybe<LlmSummaryArgs>;
   minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
@@ -816,7 +816,7 @@ export type ResolversTypes = {
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: ResolverTypeWrapper<Decision>;
-  DecisionNewArgs: DecisionNewArgs;
+  DecisionArgs: DecisionArgs;
   DecisionType: DecisionType;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
@@ -883,9 +883,9 @@ export type ResolversTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
+  Request: ResolverTypeWrapper<Request>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestNew: ResolverTypeWrapper<RequestNew>;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFields: Array<ResolversTypes['Field']> }>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
@@ -915,7 +915,7 @@ export type ResolversParentTypes = {
   CustomGroupArgs: CustomGroupArgs;
   CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: Decision;
-  DecisionNewArgs: DecisionNewArgs;
+  DecisionArgs: DecisionArgs;
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
@@ -973,9 +973,9 @@ export type ResolversParentTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: {};
   Ranking: Ranking;
+  Request: Request;
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestNew: RequestNew;
   RequestStep: Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFields: Array<ResolversParentTypes['Field']> };
   Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
@@ -1277,7 +1277,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
-  getRequest?: Resolver<ResolversTypes['RequestNew'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
+  getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
@@ -1295,19 +1295,19 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestConfig'] = ResolversParentTypes['RequestConfig']> = {
-  fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
-  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RequestNewResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestNew'] = ResolversParentTypes['RequestNew']> = {
+export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentStepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   flow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   steps?: Resolver<Array<ResolversTypes['RequestStep']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestConfig'] = ResolversParentTypes['RequestConfig']> = {
+  fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
+  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1409,8 +1409,8 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Permission?: PermissionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
+  Request?: RequestResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
-  RequestNew?: RequestNewResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;

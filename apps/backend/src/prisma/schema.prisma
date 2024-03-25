@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid()) @db.Uuid
-  stytchId    String       @unique @map("stytch_id")
-  firstName   String?
-  lastName    String?
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
-  Group       Group[]
-  Identities  Identity[]
-  Oauths      Oauths[]
-  RequestNew  Request[]
-  ResponseNew Response[]
-  Permission  Permission[]
+  id         String       @id @default(uuid()) @db.Uuid
+  stytchId   String       @unique @map("stytch_id")
+  firstName  String?
+  lastName   String?
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @default(now()) @updatedAt @map("updated_at")
+  Group      Group[]
+  Identities Identity[]
+  Oauths     Oauths[]
+  Request    Request[]
+  Response   Response[]
+  Permission Permission[]
 
   @@map("users")
 }
@@ -281,7 +281,7 @@ model FlowVersion {
   Flow                  Flow      @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
   EvolveFlow            Flow?     @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
   Steps                 Step[]
-  RequestNew            Request[]
+  Request               Request[]
 
   @@map("flow_versions")
 }
