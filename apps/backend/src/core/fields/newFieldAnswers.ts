@@ -124,7 +124,7 @@ export const newFieldAnswers = async ({
 
           await transaction.fieldAnswer.create({
             data: {
-              type: FieldType.FreeInput,
+              type: FieldType.Options,
               fieldId: field.id,
               requestStepId,
               responseId,

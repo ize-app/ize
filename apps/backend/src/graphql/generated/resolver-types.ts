@@ -639,7 +639,17 @@ export type RequestStep = {
   createdAt: Scalars['String']['output'];
   expirationDate: Scalars['String']['output'];
   requestFieldAnswers: Array<FieldAnswer>;
+  requestStepId: Scalars['String']['output'];
   responseFields: Array<Field>;
+  responses: Array<Response>;
+};
+
+export type Response = {
+  __typename?: 'Response';
+  answers: Array<FieldAnswer>;
+  createdAt: Scalars['String']['output'];
+  responseId: Scalars['String']['output'];
+  user: User;
 };
 
 export type ResponseConfig = {
@@ -877,6 +887,7 @@ export type ResolversTypes = {
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestNew: ResolverTypeWrapper<RequestNew>;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFields: Array<ResolversTypes['Field']> }>;
+  Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
@@ -966,6 +977,7 @@ export type ResolversParentTypes = {
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestNew: RequestNew;
   RequestStep: Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFields: Array<ResolversParentTypes['Field']> };
+  Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
@@ -1303,7 +1315,17 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestFieldAnswers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
+  requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
+  responses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
+  answers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  responseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1390,6 +1412,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestConfig?: RequestConfigResolvers<ContextType>;
   RequestNew?: RequestNewResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
+  Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;

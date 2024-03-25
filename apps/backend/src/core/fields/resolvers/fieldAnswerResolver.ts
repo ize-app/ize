@@ -16,6 +16,7 @@ export const fieldAnswerResolver = ({
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
       const freeInputAnswer: FreeInputFieldAnswer = {
+        __typename: "FreeInputFieldAnswer",
         fieldId: fieldAnswer.fieldId,
         value: fieldAnswer.AnswerFreeInput[0].value,
       };
@@ -23,6 +24,7 @@ export const fieldAnswerResolver = ({
     }
     case FieldType.Options: {
       const optionsAnswer: OptionFieldAnswer = {
+        __typename: "OptionFieldAnswer",
         fieldId: fieldAnswer.fieldId,
         selections: fieldAnswer.AnswerOptionSelections.map(
           (s): OptionFieldAnswerSelection => ({

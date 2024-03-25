@@ -2,6 +2,8 @@ import * as z from "zod";
 import dayjs, { Dayjs } from "dayjs";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
+export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
+
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
     const date = val as Dayjs;
@@ -27,13 +29,16 @@ export const evaluateMultiTypeInput = (
         });
       return;
     case FieldDataType.String:
-      if (!z.string().min(1).safeParse(value).success)
+      console.log("evaluating string", value);
+      if (!z.string().min(1).safeParse(value).success) {
+        console.log("string error!");
         ctx.addIssue({
           code: z.ZodIssueCode.invalid_string,
           validation: "url",
           message: "Invalid text",
           path: errorPath,
         });
+      }
       return;
     case FieldDataType.Number:
       if (!z.number().or(z.string().min(1)).pipe(z.coerce.number()).safeParse(value).success)
@@ -68,3 +73,22 @@ export const evaluateMultiTypeInput = (
       return;
   }
 };
+
+export const optionSelectionsSchema = z.array(z.object({ optionId: z.string().min(1) }));
+
+export const fieldAnswerSchema = z.record(
+  z.string().min(1),
+  z
+    .object({
+      dataType: z.nativeEnum(FieldDataType).optional(),
+      value: z.any(),
+      optionSelections: optionSelectionsSchema.optional(),
+      required: z.boolean().optional(),
+    })
+    .superRefine((field, ctx) => {
+      console.log("evaluating field", field);
+      if (!field?.required && !field.value) return;
+      if (!field.dataType) return;
+      evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
+    }),
+);

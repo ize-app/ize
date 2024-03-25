@@ -26,6 +26,7 @@ fragment RequestNew on RequestNew {
 }
 
 fragment RequestStep on RequestStep {
+  requestStepId
   createdAt
   expirationDate
   requestFieldAnswers {
@@ -33,5 +34,19 @@ fragment RequestStep on RequestStep {
   }
   responseFields {
     ...Field
+  }
+  responses {
+    ...Response
+  }
+}
+
+fragment Response on Response {
+  responseId
+  createdAt
+  user {
+    ...UserSummaryParts
+  }
+  answers {
+    ...FieldAnswer
   }
 }
