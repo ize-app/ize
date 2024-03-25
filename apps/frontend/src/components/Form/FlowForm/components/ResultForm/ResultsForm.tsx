@@ -171,7 +171,6 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                       formIndex={formIndex}
                       formMethods={formMethods}
                       resultIndex={resultIndex}
-                      resultId={result.resultId}
                       field={resultField}
                     />
                   )}

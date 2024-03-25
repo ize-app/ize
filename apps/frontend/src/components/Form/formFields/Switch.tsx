@@ -1,4 +1,4 @@
-import { FormControlLabel, TextField as MuiTextField, TextFieldVariants } from "@mui/material";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import { default as MuiSwitch } from "@mui/material/Switch";
 import FormHelperText from "@mui/material/FormHelperText";

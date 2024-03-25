@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 
-import { WizardBody, WizardNav } from "../../../components/Wizard";
+import { WizardBody, WizardNav } from "@/components/Wizard";
 import Typography from "@mui/material/Typography";
 import { useEvolveFlowWizardState } from "../evolveFlowWizard";
 import { diff } from "deep-object-diff";
@@ -9,7 +9,7 @@ export const Confirm = () => {
   const { onNext, formState, onPrev, nextLabel } = useEvolveFlowWizardState();
 
   const diffFlow = diff(formState, formState.currentFlow);
-  // console.log("diff flow ", diffFlow);
+  console.log("diff flow ", diffFlow);
 
   return (
     <>

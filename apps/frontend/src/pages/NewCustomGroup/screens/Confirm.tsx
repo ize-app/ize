@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import { useTheme } from "@mui/material/styles";
 
 import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
