@@ -108,10 +108,8 @@ export function Menu({ open, handleDrawerClose, me, setMenuOpen }: MenuProps) {
         </List>
       </Box>
       <Box>
+        <UserDropDown username={me.user.name} avatarURL={me.user.icon ?? null} />
         <List>
-          <ListItem>
-            <UserDropDown username={me.user.name} avatarURL={me.user.icon ?? null} />
-          </ListItem>
           <Divider />
           <ListItem disablePadding>
             <ListItemButton
