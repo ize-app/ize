@@ -16,7 +16,7 @@ import { CreateListButton } from "./CreateButton";
 import { Dispatch, SetStateAction } from "react";
 
 import { Box } from "@mui/material";
-import { UserDropDown } from "./UesrDropDown";
+import { UserDropDown } from "./UserDropDown";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { useNavigate } from "react-router-dom";
