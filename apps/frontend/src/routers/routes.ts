@@ -1,6 +1,8 @@
 export enum Route {
   Home = "/",
-  UserSettings = "/settings",
+  Requests = "/requests",
+  Flows = "/flows",
+  Identities = "/identities",
   ResetPassword = "/resetpassword",
   NewFlow = "/create/flow",
   NewRequest = "/create/request",
@@ -27,7 +29,6 @@ export enum NewCustomGroupRoute {
   Setup = "",
   Finish = "/finish",
 }
-
 
 export enum EvolveFlowRoute {
   Setup = "",

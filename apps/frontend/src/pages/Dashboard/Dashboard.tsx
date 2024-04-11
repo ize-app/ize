@@ -5,7 +5,7 @@ import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
 // import { CurrentUserContext } from "../../contexts/current_user_context";
 // import { useContext } from "react";
-import CreateButton from "../../components/Tables/CreateButton";
+import CreateButton from "../../components/Menu/CreateButton";
 
 const Dashboard = () => {
   // const { me } = useContext(CurrentUserContext);

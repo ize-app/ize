@@ -28,6 +28,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
       },
       {
+        path: Routes.Route.Requests,
+        element: <div>requests</div>,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Flows,
+        element: <div>flows</div>,
+        errorElement: <ErrorBoundary />,
+      },
+      {
         element: (
           <AuthRoute>
             <NewFlow.default />
@@ -128,7 +138,7 @@ export const router = createBrowserRouter([
         element: <Flow />,
       },
       {
-        path: Routes.Route.UserSettings,
+        path: Routes.Route.Identities,
         errorElement: <ErrorBoundary />,
         element: (
           <AuthRoute>

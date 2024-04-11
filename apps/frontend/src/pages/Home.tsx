@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
-
-import Dashboard from "./Dashboard/Dashboard";
+import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/current_user_context";
 import Login from "../components/Auth/Login";
+import { Route } from "@/routers/routes";
 
 const UnauthenticatedHome = () => {
   return (
@@ -18,7 +18,6 @@ const UnauthenticatedHome = () => {
         justifyContent: "center",
       }}
     >
-      {/* <PageContainer> */}
       <img
         src="./logo-yellow@2x.png"
         style={{
@@ -49,5 +48,9 @@ const UnauthenticatedHome = () => {
 
 export const Home = () => {
   const { me } = useContext(CurrentUserContext);
-  return me?.user == null ? <UnauthenticatedHome /> : <Dashboard />;
+  const navigate = useNavigate();
+  if (me?.user) {
+    navigate(Route.Requests);
+  }
+  return <UnauthenticatedHome />;
 };
