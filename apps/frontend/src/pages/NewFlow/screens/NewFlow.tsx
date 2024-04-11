@@ -67,6 +67,9 @@ export const NewFlow = () => {
         title={"Create a flow"}
         description={"Create a new flow for collective thinking and action."}
       />
+      <Typography variant="h1" sx={{ marginTop: "32px" }}>
+        {title}
+      </Typography>
       <Box
         sx={{
           display: "flex",
@@ -82,10 +85,7 @@ export const NewFlow = () => {
             </Step>
           ))}
         </Stepper>
-        <Typography variant="h1" sx={{ marginTop: "32px" }}>
-          {title}
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: "36px" }}>
           <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
         </Box>
       </Box>
