@@ -16,6 +16,8 @@ import { ResetPassword } from "@/components/Auth/ResetPassword";
 import { UserSettings } from "@/pages/Settings/UserSettings";
 import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as EvolveFlow from "@/pages/EvolveFlow";
+import { Requests } from "@/pages/Requests/Requests";
+import { Flows } from "@/pages/Flows/Flows";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +27,16 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.Home,
         element: <Home />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Requests,
+        element: <Requests />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Flows,
+        element: <Flows />,
         errorElement: <ErrorBoundary />,
       },
       {
@@ -128,7 +140,7 @@ export const router = createBrowserRouter([
         element: <Flow />,
       },
       {
-        path: Routes.Route.UserSettings,
+        path: Routes.Route.Identities,
         errorElement: <ErrorBoundary />,
         element: (
           <AuthRoute>
