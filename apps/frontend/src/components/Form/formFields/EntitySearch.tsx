@@ -63,12 +63,11 @@ export const EntitySearch = <T extends FieldValues>({
     setRecentAgents(value);
 
     const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
-    const newAgents = dedupOptions([...currentState, ...value]);
+    const newAgents = dedupOptions([...(currentState ?? []), ...(value ?? [])]);
 
     //@ts-ignore
     setFieldValue(name, newAgents);
   };
-
   return (
     <>
       {open && ( // unmounting the modal fully so that react hook form state clears
