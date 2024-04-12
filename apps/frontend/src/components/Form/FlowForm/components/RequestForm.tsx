@@ -22,7 +22,7 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
           name={`reusable`}
           control={formMethods.control}
           label="Reusable flow"
-          width="100%"
+          sx={{ width: "100%" }}
         />
         <ResponsiveFormRow>
           <Select

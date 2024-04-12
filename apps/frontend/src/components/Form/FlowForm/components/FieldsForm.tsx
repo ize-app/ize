@@ -75,7 +75,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.fieldId`}
                       key={"fieldId" + inputIndex.toString() + formIndex.toString()}
                       control={control}
-                      label="outlined"
+                      label="fieldId"
                       disabled={true}
                       variant="outlined"
                     />
