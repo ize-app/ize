@@ -51,7 +51,6 @@ export const Setup = () => {
     <form>
       <WizardBody>
         <Box
-          component="form"
           sx={{
             display: "flex",
             flexDirection: "column",

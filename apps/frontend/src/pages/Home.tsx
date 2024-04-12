@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useContext } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/current_user_context";
 import Login from "../components/Auth/Login";
@@ -49,8 +49,12 @@ const UnauthenticatedHome = () => {
 export const Home = () => {
   const { me } = useContext(CurrentUserContext);
   const navigate = useNavigate();
-  if (me?.user) {
-    navigate(Route.Requests);
-  }
+
+  useLayoutEffect(() => {
+    if (me?.user) {
+      navigate(Route.Requests);
+    }
+  }, [me, navigate]);
+
   return <UnauthenticatedHome />;
 };
