@@ -135,8 +135,7 @@ export const FieldOptionsForm = ({
             placeholderText={`Option #${inputIndex + 1}`}
             showLabel={false}
             multiline
-            width="300px"
-            flexGrow="1"
+            sx={{ width: "300px", flexGrow: 1 }}
             label={`Option #${inputIndex + 1}`}
             disabled={disabled}
             size="small"

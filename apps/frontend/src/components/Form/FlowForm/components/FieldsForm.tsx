@@ -84,8 +84,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.name`}
                     key={"name" + inputIndex.toString() + formIndex.toString()}
                     control={control}
-                    width="200px"
-                    flexGrow="1"
+                    sx={{ width: "200px", flexGrow: 1 }}
                     multiline
                     placeholderText={`What's your question?`}
                     label={``}

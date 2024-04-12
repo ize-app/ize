@@ -61,7 +61,7 @@ export const Setup = () => {
         >
           <TextField<FlowSchemaType>
             control={useFormMethods.control}
-            width="100%"
+            sx={{ width: "100%" }}
             label="Name of this flow"
             placeholderText="What's the purpose of this form?"
             variant="outlined"

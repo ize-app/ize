@@ -9,13 +9,11 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   variant?: TextFieldVariants;
   required?: boolean;
   showLabel?: boolean;
-  width?: string;
   placeholderText?: string;
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
   multiline?: boolean;
   size?: "small" | "medium";
-  flexGrow?: string;
   sx?: SxProps;
 }
 
@@ -23,7 +21,6 @@ export const TextField = <T extends FieldValues>({
   label,
   name,
   control,
-  width = "100%",
   showLabel = false,
   required = false,
   size = "small",
@@ -32,10 +29,9 @@ export const TextField = <T extends FieldValues>({
   endAdornment,
   startAdornment,
   placeholderText,
-  flexGrow = "0",
   sx = {},
 }: TextFieldProps<T>) => {
-  const defaultStyles: SxProps = {};
+  const defaultStyles: SxProps = { flexGrow: 0, width: "100%" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller

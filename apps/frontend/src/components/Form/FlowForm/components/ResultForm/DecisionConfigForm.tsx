@@ -79,7 +79,7 @@ export const DecisionConfigForm = ({
         {decisionType === DecisionType.NumberThreshold && (
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            width="200px"
+            sx={{ width: "200px" }}
             label="Threshold votes"
             name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
@@ -91,7 +91,7 @@ export const DecisionConfigForm = ({
         {decisionType === DecisionType.PercentageThreshold && (
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            width="200px"
+            sx={{ width: "200px" }}
             label="Percentage votes"
             size="small"
             variant="standard"
@@ -102,7 +102,7 @@ export const DecisionConfigForm = ({
         )}
         <TextField<FlowSchemaType>
           control={formMethods.control}
-          width="200px"
+          sx={{ width: "200px" }}
           label="Minimum # of responses for a result"
           showLabel={false}
           variant="standard"
