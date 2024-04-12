@@ -1,7 +1,3 @@
-import Box from "@mui/material/Box";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -16,6 +12,7 @@ import { useMutation } from "@apollo/client";
 import { createNewFlowArgs } from "../../../components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 import { fullUUIDToShort } from "@/utils/inputs";
 import { CurrentUserContext } from "@/contexts/current_user_context";
+import { WizardContainer } from "@/components/Wizard";
 
 export const NewFlow = () => {
   const navigate = useNavigate();
@@ -70,25 +67,12 @@ export const NewFlow = () => {
       <Typography variant="h1" sx={{ marginTop: "32px" }}>
         {title}
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          marginTop: "16px",
-        }}
+      <WizardContainer
+        progressBarStep={progressBarStep}
+        progressBarSteps={NEW_FLOW_PROGRESS_BAR_STEPS}
       >
-        <Stepper activeStep={progressBarStep}>
-          {NEW_FLOW_PROGRESS_BAR_STEPS.map((title) => (
-            <Step key={title}>
-              <StepLabel>{title}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: "36px" }}>
-          <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
-        </Box>
-      </Box>
+        <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
+      </WizardContainer>
     </PageContainer>
   );
 };
