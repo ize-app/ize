@@ -134,6 +134,7 @@ export const FieldOptionsForm = ({
             control={control}
             placeholderText={`Option #${inputIndex + 1}`}
             showLabel={false}
+            multiline
             width="300px"
             flexGrow="1"
             label={`Option #${inputIndex + 1}`}

@@ -92,6 +92,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     control={control}
                     width="200px"
                     flexGrow="1"
+                    multiline
                     placeholderText={`What's your question?`}
                     label={``}
                   />
