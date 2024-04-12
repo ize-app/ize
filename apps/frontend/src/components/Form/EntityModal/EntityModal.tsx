@@ -25,6 +25,7 @@ import { DiscordLogoSvg } from "@/components/icons";
 import botInviteUrl from "@/components/Auth/botInviteUrl";
 import { HatsTokenCard, NftCard } from "./NftCard";
 import { Select, SelectOption } from "../formFields/Select";
+import { ResponsiveFormRow } from "../formLayout/ResponsiveFormRow";
 
 type FormFields = z.infer<typeof newEntityFormSchema>;
 
@@ -33,7 +34,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "600px",
+  maxWidth: "800px",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -246,14 +247,12 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               <Typography>
                 Enter an Eth address or ENS address (or multiple seperated by commas).
               </Typography>
-              <Box
+              <ResponsiveFormRow
                 sx={{
                   marginTop: "8px",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
                   alignItems: "center",
                   gap: "24px",
+                  justifyContent: "space-between",
                 }}
               >
                 <Controller
@@ -261,7 +260,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                   control={control}
                   render={({ field, fieldState: { error } }) => {
                     return (
-                      <FormControl sx={{ width: "100%" }}>
+                      <FormControl sx={{ flexGrow: 1, minWidth: "200px" }}>
                         <TextField
                           {...field}
                           label={"ETH wallet or ENS"}
@@ -288,7 +287,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 >
                   Submit
                 </Button>
-              </Box>
+              </ResponsiveFormRow>
             </Box>
           )}
           {inputType === NewEntityTypes.IdentityEmail && (
@@ -298,13 +297,12 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 will not be publicly visible.
               </Typography>
 
-              <Box
+              <ResponsiveFormRow
                 sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
+                  marginTop: "8px",
                   alignItems: "center",
                   gap: "24px",
+                  justifyContent: "space-between",
                 }}
               >
                 <Controller
@@ -312,7 +310,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                   control={control}
                   render={({ field, fieldState: { error } }) => {
                     return (
-                      <FormControl sx={{ width: "100%" }}>
+                      <FormControl sx={{ flexGrow: 1, minWidth: "200px" }}>
                         <TextField
                           {...field}
                           label={"Email addresses"}
@@ -339,7 +337,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 >
                   Submit
                 </Button>
-              </Box>
+              </ResponsiveFormRow>
             </>
           )}
           {inputType === NewEntityTypes.GroupDiscord && (
@@ -424,12 +422,13 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     alignItems: "left",
                   }}
                 >
-                  <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+                  <ResponsiveFormRow>
                     <Select<FormFields>
                       name="nft.chain"
                       control={control}
-                      width="140px"
+                      width="200px"
                       label="Chain"
+                      size="medium"
                       selectOptions={chainOptions}
                     />
                     <Controller
@@ -437,7 +436,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                       control={control}
                       render={({ field, fieldState: { error } }) => {
                         return (
-                          <FormControl sx={{ width: "100%" }}>
+                          <FormControl sx={{ flexGrow: 1, minWidth: "300px" }}>
                             <TextField
                               {...field}
                               label={"Contract Address"}
@@ -457,14 +456,11 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                         );
                       }}
                     />
-                  </Box>
-                  <Box
+                  </ResponsiveFormRow>
+                  <ResponsiveFormRow
                     sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "16px",
+                      justifyContent: "space-between",
                     }}
                   >
                     <Controller
@@ -472,7 +468,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                       control={control}
                       render={({ field }) => {
                         return (
-                          <FormControl>
+                          <FormControl sx={{ maxWidth: "200px" }}>
                             <FormControlLabel
                               label="Include all token Ids"
                               control={<Switch {...field} checked={field.value} />}
@@ -488,7 +484,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                         render={({ field, fieldState: { error } }) => {
                           console.log("error is ", error);
                           return (
-                            <FormControl sx={{ width: "300px" }}>
+                            <FormControl sx={{ flexGrow: 1, minWidth: "200px" }}>
                               <TextField
                                 {...field}
                                 label={"Token Id"}
@@ -509,7 +505,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                         }}
                       />
                     )}
-                  </Box>
+                  </ResponsiveFormRow>
                   <NftCard address={nftContractAddress} tokenId={nftTokenId} chain={nftChain} />
                   <Button
                     onClick={handleSubmit(createAgents)}
@@ -525,22 +521,26 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
           )}
           {inputType === NewEntityTypes.GroupHat && (
             <>
-              <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
-                <Box sx={{ width: "140px" }}>
-                  <Select<FormFields>
-                    name="hat.chain"
-                    width="200px"
-                    control={control}
-                    label="Chain"
-                    selectOptions={chainOptions}
-                  />
-                </Box>
+              <ResponsiveFormRow
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Select<FormFields>
+                  name="hat.chain"
+                  width="200px"
+                  size="medium"
+                  control={control}
+                  label="Chain"
+                  selectOptions={chainOptions}
+                />
                 <Controller
                   name={"hat.tokenId"}
                   control={control}
                   render={({ field, fieldState: { error } }) => {
                     return (
-                      <FormControl sx={{ width: "100%" }}>
+                      <FormControl sx={{ flexGrow: 1, minWidth: "200px" }}>
                         <TextField
                           {...field}
                           label={"Hat Token Id"}
@@ -560,7 +560,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     );
                   }}
                 />
-              </Box>
+              </ResponsiveFormRow>
               <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
               <Button
                 onClick={handleSubmit(createAgents)}
