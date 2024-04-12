@@ -213,7 +213,6 @@ export const FieldOptionsForm = ({
                     width="120px"
                     displayLabel={false}
                     size={"small"}
-                    //@ts-ignore
                     name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
                     key={"dataType" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={[
@@ -281,7 +280,6 @@ export const FieldOptionsForm = ({
             <Select
               control={formMethods.control}
               width="150px"
-              //@ts-ignore
               name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
               selectOptions={[
                 { name: "Text", value: FieldDataType.String },

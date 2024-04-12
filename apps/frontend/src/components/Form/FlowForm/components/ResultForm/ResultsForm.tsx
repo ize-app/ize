@@ -80,7 +80,6 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
 
   const { fields, remove, append } = useFieldArray({
     control: formMethods.control,
-    //@ts-ignore
     name: `steps.${formIndex}.result`,
   });
 
@@ -125,7 +124,6 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                   <ResponsiveFormRow>
                     <Box sx={{ display: "none" }}>
                       <TextField<FlowSchemaType>
-                        //@ts-ignore
                         name={`steps.${formIndex}.result.${resultIndex}.resultId`}
                         key={"resultId" + resultIndex.toString() + formIndex.toString()}
                         control={formMethods.control}

@@ -32,11 +32,9 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
 
   const fieldsArrayMethods = useFieldArray({
     control: useFormMethods.control,
-    //@ts-ignore
     name: `steps.${formIndex}.${branch}.fields`,
   });
 
-  //@ts-ignore
   const numFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
 
   return (
@@ -44,9 +42,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
       {fieldsArrayMethods.fields.map((item, inputIndex) => {
         const noEdit = false; //item.name === "Request title" ? true : false;
 
-        //@ts-ignore
         const fieldType: FieldType = useFormMethods.watch(
-          //@ts-ignore
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
         );
 
@@ -76,7 +72,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                 <ResponsiveFormRow>
                   <Box sx={{ display: "none" }}>
                     <TextField<FlowSchemaType>
-                      //@ts-ignore
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.fieldId`}
                       key={"fieldId" + inputIndex.toString() + formIndex.toString()}
                       control={control}
@@ -86,7 +81,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     />
                   </Box>
                   <TextField<FlowSchemaType>
-                    //@ts-ignore
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.name`}
                     key={"name" + inputIndex.toString() + formIndex.toString()}
                     control={control}
@@ -102,7 +96,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     displayLabel={false}
                     size={"small"}
                     disabled={noEdit}
-                    //@ts-ignore
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
                     key={"type" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={[
@@ -119,7 +112,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                       displayLabel={false}
                       size={"small"}
                       disabled={noEdit}
-                      //@ts-ignore
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
                       key={"dataType" + inputIndex.toString() + formIndex.toString()}
                       selectOptions={[
@@ -135,7 +127,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     <Select
                       control={control}
                       width="160px"
-                      //@ts-ignore
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
                       selectOptions={[
                         {
