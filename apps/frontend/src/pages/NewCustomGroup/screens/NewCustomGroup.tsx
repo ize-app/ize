@@ -21,7 +21,7 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 export const NewCustomGroup = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
-  const { setAuthModalOpen } = useContext(CurrentUserContext);
+  const { me, setAuthModalOpen } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewCustomGroupDocument, {
     onCompleted: (data) => {
@@ -63,7 +63,7 @@ export const NewCustomGroup = () => {
   const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel } =
     useWizard(newCustomGroupWizard);
 
-  return (
+  return me ? (
     <PageContainer>
       <Head title={"Create a group"} description={"Create a new Ize group"} />
       <Typography variant="h1" sx={{ marginTop: "32px" }}>
@@ -76,5 +76,5 @@ export const NewCustomGroup = () => {
         <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
       </WizardContainer>
     </PageContainer>
-  );
+  ) : null;
 };

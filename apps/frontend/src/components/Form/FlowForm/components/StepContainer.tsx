@@ -5,27 +5,26 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { FormHelperText } from "@mui/material";
 
 export const StepContainer = ({
   children,
   expandedStep,
   stepIdentifier,
   title,
+  hasError,
   handleStepExpansion,
 }: {
   children: React.ReactNode;
   expandedStep: number | "EvolveStep" | false;
   stepIdentifier: number | "EvolveStep";
   title: string;
+  hasError: boolean;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
 }) => {
+  const isExpanded = expandedStep === stepIdentifier;
   return (
-    <Accordion
-      expanded={expandedStep === stepIdentifier}
-      disableGutters
-      onChange={handleStepExpansion}
-      sx={{}}
-    >
+    <Accordion expanded={isExpanded} disableGutters onChange={handleStepExpansion} sx={{}}>
       <AccordionSummary
         sx={{
           "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
@@ -34,9 +33,18 @@ export const StepContainer = ({
         }}
         expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
       >
-        <Typography variant="h3" fontWeight={400}>
-          {title}
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <Typography variant="h3" fontWeight={400}>
+            {title}
+          </Typography>
+          <FormHelperText
+            sx={{
+              color: "error.main",
+            }}
+          >
+            {hasError && !isExpanded ? "Error in this step" : null}
+          </FormHelperText>
+        </Box>
       </AccordionSummary>
       <AccordionDetails
         sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "20px" }}

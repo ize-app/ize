@@ -28,12 +28,15 @@ export const EvolveFlowForm = ({
 
   const decisionType = formMethods.watch(`evolve.decision.type`);
 
+  const hasError = !!formMethods.formState.errors.evolve;
+
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
       stepIdentifier={"EvolveStep"}
       title={`How this flow evolves`}
+      hasError={hasError}
     >
       <StepComponentContainer label={"Request"}>
         <Box sx={{ display: "none" }}>

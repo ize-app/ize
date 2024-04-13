@@ -50,9 +50,11 @@ export const EntitySearch = <T extends FieldValues>({
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
-  const userIdentities = ((me as Me).identities as EntitySummaryPartsFragment[]).filter(
-    (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
-  );
+  const userIdentities = me
+    ? (me.identities as EntitySummaryPartsFragment[]).filter(
+        (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
+      )
+    : [];
 
   const options = [...userIdentities, ...recentAgents];
 
@@ -68,7 +70,7 @@ export const EntitySearch = <T extends FieldValues>({
     //@ts-ignore
     setFieldValue(name, newAgents);
   };
-  return (
+  return me ? (
     <>
       {open && ( // unmounting the modal fully so that react hook form state clears
         <EntityModal
@@ -269,5 +271,5 @@ export const EntitySearch = <T extends FieldValues>({
         }}
       />
     </>
-  );
+  ) : null;
 };

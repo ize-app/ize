@@ -22,7 +22,7 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 export const NewRequest = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
-  const { setAuthModalOpen } = useContext(CurrentUserContext);
+  const { setAuthModalOpen, me } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
@@ -70,7 +70,7 @@ export const NewRequest = () => {
     setParams,
   } = useWizard(newRequestWizard);
 
-  return (
+  return me ? (
     <PageContainer>
       <Head
         title={"Create a request"}
@@ -96,5 +96,5 @@ export const NewRequest = () => {
         />
       </WizardContainer>
     </PageContainer>
-  );
+  ) : null;
 };

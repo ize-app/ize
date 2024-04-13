@@ -61,7 +61,7 @@ export const NewFlow = () => {
   const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel } =
     useWizard(newFlowWizard);
 
-  return (
+  return me ? (
     <PageContainer>
       <Head
         title={"Create a flow"}
@@ -77,5 +77,5 @@ export const NewFlow = () => {
         <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
       </WizardContainer>
     </PageContainer>
-  );
+  ) : null;
 };

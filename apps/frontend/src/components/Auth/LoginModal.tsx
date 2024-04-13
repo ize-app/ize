@@ -80,7 +80,6 @@ const styles: StyleConfig = {
 
 const LoginModal = () => {
   const { refetch, authModalOpen, setAuthModalOpen } = useContext(CurrentUserContext);
-  console.log("oauth redirect url", config.oauthOptions?.loginRedirectURL);
 
   // Oauth/Magiclink are already redirected to backend endpoint by stytch
   // so these callbacks call backend for crypto wallets / passwords to create the identity if it doesn't exist already
