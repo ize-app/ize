@@ -20,7 +20,7 @@ export const requestDefinedOptionSchema = z
 export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
 
 export const requestSchema = z.object({
-  name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
+  name: z.string().min(5, "Please make the request name at least 5 characters"),
   requestFields: fieldAnswerSchema.optional(),
   requestDefinedOptions: requestDefinedOptionsSchema.optional(),
 });

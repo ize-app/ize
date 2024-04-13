@@ -2,9 +2,11 @@ import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
-import { DateTimePicker as MuiDateTimePicker, } from "@mui/x-date-pickers/DateTimePicker";
+import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+import { userTimezone } from "@/utils/datetime";
 
 interface DateTimePickerProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
@@ -41,8 +43,8 @@ export const DateTimePicker = <T extends FieldValues>({
                   },
                 }}
                 aria-label={label}
-                timezone="system"
-                label={showLabel ? label : ""}
+                timezone={userTimezone}
+                label={showLabel ? label + " (" + userTimezone + ")" : ""}
               />
             </LocalizationProvider>
             <FormHelperText
