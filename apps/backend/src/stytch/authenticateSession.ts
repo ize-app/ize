@@ -3,7 +3,7 @@ import { prisma } from "../prisma/client";
 import { StytchError } from "stytch";
 import { meInclude } from "../core/user/formatUser";
 
-import { stytchClient } from "./stytchClient";
+import { stytchClient, sessionDurationMinutes } from "./stytchClient";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +14,10 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
   }
 
   try {
-    const session = await stytchClient.sessions.authenticate({ session_token });
+    const session = await stytchClient.sessions.authenticate({
+      session_token,
+      session_duration_minutes: sessionDurationMinutes,
+    });
 
     // find or create user
     const user = await prisma.user.upsert({
