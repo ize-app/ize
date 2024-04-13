@@ -89,7 +89,7 @@ app.get("/auth/token", async (req, res, next) => {
       } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
         const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
           token,
-          session_duration_minutes: 60,
+          session_duration_minutes: sessionDurationMinutes,
         });
         sessionToken = stytchMagicAuthentication.session_token;
         const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
@@ -127,7 +127,7 @@ app.post("/auth/crypto", async (req, res, next) => {
     const session_token = req.cookies["stytch_session"];
     const sessionData = await stytchClient.sessions.authenticate({
       session_token,
-      session_duration_minutes: 1440,
+      session_duration_minutes: sessionDurationMinutes,
     });
 
     if (!session_token) res.status(401).send();
