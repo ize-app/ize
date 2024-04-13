@@ -123,7 +123,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                       label="Free input data type"
                     />
                   ) : (
-                    <Select
+                    <Select<FlowSchemaType>
                       control={control}
                       width="160px"
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
@@ -150,7 +150,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                       justifyContent: "center",
                     }}
                   >
-                    <Box sx={{ width: "80%" }}>
+                    <Box sx={{ width: "100%" }}>
                       <FieldOptionsForm
                         formMethods={useFormMethods}
                         formIndex={formIndex}

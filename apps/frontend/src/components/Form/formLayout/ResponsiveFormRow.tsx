@@ -6,7 +6,7 @@ export const ResponsiveFormRow = ({ children, sx }: { children: ReactNode; sx?: 
   const defaultStyles: SxProps = {
     width: "100%",
     display: "flex",
-    gap: "24px",
+    gap: "8px",
     justifyContent: "flex-start",
     alignItems: "flex-end",
     flexWrap: "wrap",
