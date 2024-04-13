@@ -2,7 +2,7 @@ import { FieldAnswerArgs } from "@/graphql/generated/resolver-types";
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { validateInputDataType } from "./validation/validateInputDataType";
+import { validateInput } from "./validation/validateInput";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
 
 // creates field answers to a request or response's fields
@@ -56,9 +56,11 @@ export const newFieldAnswers = async ({
                 extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
               },
             );
-          if (!validateInputDataType(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
+          if (!validateInput(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
             throw new GraphQLError(
-              `Field answer does not match data type. fieldId: ${fieldAnswer.fieldId}`,
+              `Field answer does not match data type. fieldDataType: ${
+                field.freeInputDataType ?? ""
+              } fieldId: ${fieldAnswer.fieldId}`,
               {
                 extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
               },

@@ -1,6 +1,6 @@
 import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { FieldDataType, Prisma } from "@prisma/client";
-import { validateInputDataType } from "./validation/validateInputDataType";
+import { validateInput } from "./validation/validateInput";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newOptionSet = async ({
@@ -22,7 +22,7 @@ export const newOptionSet = async ({
             extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
           },
         );
-      if (!validateInputDataType(option.name, option.dataType))
+      if (!validateInput(option.name, option.dataType))
         throw new GraphQLError(`Option value does not match field type: ${option.dataType}`, {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
