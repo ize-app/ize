@@ -7,6 +7,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { newOptionSet } from "../fields/newOptionSet";
+import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -54,44 +55,6 @@ export const newRequest = async ({
       },
     });
 
-    await Promise.all(
-      requestDefinedOptions.map(async (r) => {
-        if (!step.ResponseFieldSet)
-          throw new GraphQLError(
-            "Request defined options provided, but this flow step does not have response fields.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        const field = step.ResponseFieldSet.FieldSetFields.find((f) => f.fieldId === r.fieldId);
-        if (!field)
-          throw new GraphQLError(
-            "Cannot find flow field corresponding to request defined options.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        if (
-          field.Field.FieldOptionsConfigs?.hasRequestOptions ||
-          !field.Field.FieldOptionsConfigs?.requestOptionsDataType
-        )
-          throw new GraphQLError(
-            "Request deifned options provided but this field does not allow request defined options.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        await newOptionSet({
-          transaction,
-          options: r.options,
-          dataType: field.Field.FieldOptionsConfigs?.requestOptionsDataType,
-        });
-      }),
-    );
-
     const requestStep = await transaction.requestStep.create({
       data: {
         expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
@@ -113,11 +76,71 @@ export const newRequest = async ({
       },
     });
 
+    const requestDefinedOptionSets = await Promise.all(
+      requestDefinedOptions.map(async (r) => {
+        if (!step.ResponseFieldSet)
+          throw new GraphQLError(
+            "Request defined options provided, but this flow step does not have response fields.",
+            {
+              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+            },
+          );
+
+        const field = step.ResponseFieldSet.FieldSetFields.find((f) => f.fieldId === r.fieldId);
+        if (!field)
+          throw new GraphQLError(
+            "Cannot find flow field corresponding to request defined options.",
+            {
+              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+            },
+          );
+
+        if (
+          !field.Field.FieldOptionsConfigs?.hasRequestOptions ||
+          !field.Field.FieldOptionsConfigs?.requestOptionsDataType
+        )
+          throw new GraphQLError(
+            "Request deifned options provided but this field does not allow request defined options.",
+            {
+              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+            },
+          );
+
+        const optionSetId = await newOptionSet({
+          transaction,
+          options: r.options,
+          dataType: field.Field.FieldOptionsConfigs?.requestOptionsDataType,
+        });
+
+        return await transaction.requestDefinedOptionSet.create({
+          include: requestDefinedOptionSetInclude,
+          data: {
+            RequestStep: {
+              connect: {
+                id: requestStep.id,
+              },
+            },
+            Field: {
+              connect: {
+                id: r.fieldId,
+              },
+            },
+            FieldOptionSet: {
+              connect: {
+                id: optionSetId,
+              },
+            },
+          },
+        });
+      }),
+    );
+
     // TODO: if auto approve, just create the result
 
     await newFieldAnswers({
       fieldSet: step.RequestFieldSet,
       fieldAnswers: requestFields,
+      requestDefinedOptionSets: requestDefinedOptionSets,
       requestStepId: requestStep.id,
       transaction,
     });

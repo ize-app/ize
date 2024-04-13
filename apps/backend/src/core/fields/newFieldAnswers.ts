@@ -2,12 +2,14 @@ import { FieldAnswerArgs } from "@/graphql/generated/resolver-types";
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { validateInputDataType } from "./validation/validateInputDataType";
+import { validateInput } from "./validation/validateInput";
+import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
 
 // creates field answers to a request or response's fields
 // checks that all required fields are presents and that answers are correct type
 export const newFieldAnswers = async ({
   fieldSet,
+  requestDefinedOptionSets,
   fieldAnswers,
   transaction,
   responseId,
@@ -15,6 +17,7 @@ export const newFieldAnswers = async ({
 }: {
   fieldSet: FieldSetPrismaType | null;
   fieldAnswers: FieldAnswerArgs[];
+  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   transaction: Prisma.TransactionClient;
   responseId?: string | null | undefined;
   requestStepId?: string | null | undefined;
@@ -53,9 +56,11 @@ export const newFieldAnswers = async ({
                 extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
               },
             );
-          if (!validateInputDataType(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
+          if (!validateInput(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
             throw new GraphQLError(
-              `Field answer does not match data type. fieldId: ${fieldAnswer.fieldId}`,
+              `Field answer does not match data type. fieldDataType: ${
+                field.freeInputDataType ?? ""
+              } fieldId: ${fieldAnswer.fieldId}`,
               {
                 extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
               },
@@ -79,7 +84,7 @@ export const newFieldAnswers = async ({
 
           break;
         }
-        //TODO: Make this work for previous step options and request created options
+        //TODO: Make this work for previous step options (same as request defined options)
         case FieldType.Options: {
           if (!fieldAnswer.optionSelections)
             throw new GraphQLError(
@@ -99,9 +104,20 @@ export const newFieldAnswers = async ({
               },
             );
 
-          const options = fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map(
-            (o) => o.FieldOption,
+          const stepDefinedOptions =
+            fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map((o) => o.FieldOption);
+
+          const requestDefinedOptionSet = requestDefinedOptionSets.find(
+            (rdos) => rdos.fieldId === field.id,
           );
+
+          const requestDefinedOptions = requestDefinedOptionSet
+            ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map(
+                (o) => o.FieldOption,
+              )
+            : [];
+
+          const options = [...stepDefinedOptions, ...requestDefinedOptions];
 
           if (fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections)
             throw new GraphQLError(

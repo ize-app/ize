@@ -9,14 +9,12 @@ import {
   Me,
   Blockchain,
 } from "@/graphql/generated/graphql";
-import { Button, FormControlLabel, Switch, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import TextField from "@mui/material/TextField";
+import { TextField, Switch } from "../formFields";
 import { newEntityFormSchema } from "../formValidation/entity";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
@@ -25,6 +23,7 @@ import { DiscordLogoSvg } from "@/components/icons";
 import botInviteUrl from "@/components/Auth/botInviteUrl";
 import { HatsTokenCard, NftCard } from "./NftCard";
 import { Select, SelectOption } from "../formFields/Select";
+import { ResponsiveFormRow } from "../formLayout/ResponsiveFormRow";
 
 type FormFields = z.infer<typeof newEntityFormSchema>;
 
@@ -33,7 +32,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "600px",
+  maxWidth: "800px",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -246,40 +245,22 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               <Typography>
                 Enter an Eth address or ENS address (or multiple seperated by commas).
               </Typography>
-              <Box
+              <ResponsiveFormRow
                 sx={{
                   marginTop: "8px",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
                   alignItems: "center",
                   gap: "24px",
+                  justifyContent: "space-between",
                 }}
               >
-                <Controller
+                <TextField<FormFields>
                   name={"ethAddress"}
                   control={control}
-                  render={({ field, fieldState: { error } }) => {
-                    return (
-                      <FormControl sx={{ width: "100%" }}>
-                        <TextField
-                          {...field}
-                          label={"ETH wallet or ENS"}
-                          fullWidth
-                          required
-                          error={Boolean(error)}
-                          placeholder=""
-                        />
-                        <FormHelperText
-                          sx={{
-                            color: error?.message ? "error.main" : "black",
-                          }}
-                        >
-                          {error?.message ?? ""}
-                        </FormHelperText>
-                      </FormControl>
-                    );
-                  }}
+                  label={"ETH wallet or ENS"}
+                  showLabel={true}
+                  multiline
+                  variant="outlined"
+                  sx={{ flexGrow: 1, minWidth: "200px" }}
                 />
                 <Button
                   onClick={handleSubmit(createAgents)}
@@ -288,7 +269,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 >
                   Submit
                 </Button>
-              </Box>
+              </ResponsiveFormRow>
             </Box>
           )}
           {inputType === NewEntityTypes.IdentityEmail && (
@@ -298,38 +279,22 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 will not be publicly visible.
               </Typography>
 
-              <Box
+              <ResponsiveFormRow
                 sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
+                  marginTop: "8px",
                   alignItems: "center",
                   gap: "24px",
+                  justifyContent: "space-between",
                 }}
               >
-                <Controller
+                <TextField<FormFields>
                   name={"emailAddress"}
                   control={control}
-                  render={({ field, fieldState: { error } }) => {
-                    return (
-                      <FormControl sx={{ width: "100%" }}>
-                        <TextField
-                          {...field}
-                          label={"Email addresses"}
-                          fullWidth
-                          required
-                          error={Boolean(error)}
-                        />
-                        <FormHelperText
-                          sx={{
-                            color: error?.message ? "error.main" : "black",
-                          }}
-                        >
-                          {error?.message ?? ""}
-                        </FormHelperText>
-                      </FormControl>
-                    );
-                  }}
+                  label={"Email addresses"}
+                  showLabel={true}
+                  multiline
+                  variant="outlined"
+                  sx={{ flexGrow: 1, minWidth: "200px" }}
                 />
                 <Button
                   type="submit"
@@ -339,7 +304,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 >
                   Submit
                 </Button>
-              </Box>
+              </ResponsiveFormRow>
             </>
           )}
           {inputType === NewEntityTypes.GroupDiscord && (
@@ -424,92 +389,46 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     alignItems: "left",
                   }}
                 >
-                  <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+                  <ResponsiveFormRow>
                     <Select<FormFields>
                       name="nft.chain"
                       control={control}
-                      width="140px"
+                      width="200px"
                       label="Chain"
                       selectOptions={chainOptions}
                     />
-                    <Controller
+                    <TextField<FormFields>
                       name={"nft.contractAddress"}
                       control={control}
-                      render={({ field, fieldState: { error } }) => {
-                        return (
-                          <FormControl sx={{ width: "100%" }}>
-                            <TextField
-                              {...field}
-                              label={"Contract Address"}
-                              fullWidth
-                              required
-                              error={Boolean(error)}
-                              placeholder="Address of this NFT contract"
-                            />
-                            <FormHelperText
-                              sx={{
-                                color: error?.message ? "error.main" : "black",
-                              }}
-                            >
-                              {error?.message ?? ""}
-                            </FormHelperText>
-                          </FormControl>
-                        );
-                      }}
+                      placeholderText="NFT contract address"
+                      label="Contract Address"
+                      variant="outlined"
+                      sx={{ flexGrow: 1, minWidth: "300px" }}
                     />
-                  </Box>
-                  <Box
+                  </ResponsiveFormRow>
+                  <ResponsiveFormRow
                     sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "16px",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <Controller
+                    <Switch<FormFields>
                       name={"nft.allTokens"}
                       control={control}
-                      render={({ field }) => {
-                        return (
-                          <FormControl>
-                            <FormControlLabel
-                              label="Include all token Ids"
-                              control={<Switch {...field} checked={field.value} />}
-                            />
-                          </FormControl>
-                        );
-                      }}
+                      label="Include all token Ids"
+                      sx={{ flexGrow: 1 }}
                     />
                     {!nftAllTokens && (
-                      <Controller
+                      <TextField<FormFields>
                         name={"nft.tokenId"}
                         control={control}
-                        render={({ field, fieldState: { error } }) => {
-                          console.log("error is ", error);
-                          return (
-                            <FormControl sx={{ width: "300px" }}>
-                              <TextField
-                                {...field}
-                                label={"Token Id"}
-                                fullWidth
-                                // required
-                                error={Boolean(error)}
-                                placeholder="Token Id"
-                              />
-                              <FormHelperText
-                                sx={{
-                                  color: error?.message ? "error.main" : "black",
-                                }}
-                              >
-                                {error?.message ?? ""}
-                              </FormHelperText>
-                            </FormControl>
-                          );
-                        }}
+                        placeholderText="Token Id"
+                        label="Token Id"
+                        variant="outlined"
+                        sx={{ flexGrow: 1, minWidth: "100px" }}
                       />
                     )}
-                  </Box>
+                  </ResponsiveFormRow>
                   <NftCard address={nftContractAddress} tokenId={nftTokenId} chain={nftChain} />
                   <Button
                     onClick={handleSubmit(createAgents)}
@@ -525,42 +444,28 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
           )}
           {inputType === NewEntityTypes.GroupHat && (
             <>
-              <Box sx={{ display: "flex", flexDirection: "row", gap: "16px" }}>
-                <Box sx={{ width: "140px" }}>
-                  <Select<FormFields>
-                    name="hat.chain"
-                    width="200px"
-                    control={control}
-                    label="Chain"
-                    selectOptions={chainOptions}
-                  />
-                </Box>
-                <Controller
+              <ResponsiveFormRow
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Select<FormFields>
+                  name="hat.chain"
+                  width="200px"
+                  control={control}
+                  label="Chain"
+                  selectOptions={chainOptions}
+                />
+                <TextField<FormFields>
                   name={"hat.tokenId"}
                   control={control}
-                  render={({ field, fieldState: { error } }) => {
-                    return (
-                      <FormControl sx={{ width: "100%" }}>
-                        <TextField
-                          {...field}
-                          label={"Hat Token Id"}
-                          fullWidth
-                          required
-                          error={Boolean(error)}
-                          placeholder="Address of this NFT contract"
-                        />
-                        <FormHelperText
-                          sx={{
-                            color: error?.message ? "error.main" : "black",
-                          }}
-                        >
-                          {error?.message ?? ""}
-                        </FormHelperText>
-                      </FormControl>
-                    );
-                  }}
+                  placeholderText="Hat ID (hex or decimal)"
+                  label={"Hat Token Id"}
+                  variant="outlined"
+                  sx={{ flexGrow: 1, minWidth: "200px" }}
                 />
-              </Box>
+              </ResponsiveFormRow>
               <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
               <Button
                 onClick={handleSubmit(createAgents)}

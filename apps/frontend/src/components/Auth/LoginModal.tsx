@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { StytchLogin } from "@stytch/react";
 import {
   OAuthProviders,
@@ -11,7 +11,6 @@ import {
   StytchEventType,
 } from "@stytch/vanilla-js";
 import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
@@ -79,12 +78,8 @@ const styles: StyleConfig = {
   },
 };
 
-const Login = () => {
-  const { refetch } = useContext(CurrentUserContext);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const LoginModal = () => {
+  const { refetch, authModalOpen, setAuthModalOpen } = useContext(CurrentUserContext);
 
   // Oauth/Magiclink are already redirected to backend endpoint by stytch
   // so these callbacks call backend for crypto wallets / passwords to create the identity if it doesn't exist already
@@ -110,32 +105,27 @@ const Login = () => {
   };
 
   return (
-    <Box>
-      <Button onClick={handleOpen} variant="outlined" color="secondary">
-        Login
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="login-modal"
-        aria-describedby="login-modal"
+    <Modal
+      open={authModalOpen}
+      onClose={() => setAuthModalOpen(false)}
+      aria-labelledby="login-modal"
+      aria-describedby="login-modal"
+    >
+      <Box
+        sx={{
+          position: "absolute" as "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          boxShadow: 24,
+          borderRadius: "8px",
+          border: "1px solid #21005D",
+        }}
       >
-        <Box
-          sx={{
-            position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            boxShadow: 24,
-            borderRadius: "8px",
-            border: "1px solid #21005D",
-          }}
-        >
-          <StytchLogin config={config} styles={styles} callbacks={callBacks} />
-        </Box>
-      </Modal>
-    </Box>
+        <StytchLogin config={config} styles={styles} callbacks={callBacks} />
+      </Box>
+    </Modal>
   );
 };
 
-export default Login;
+export default LoginModal;

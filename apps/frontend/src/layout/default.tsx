@@ -10,6 +10,7 @@ import { CssBaseline, IconButton } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { useContext, useState } from "react";
+import LoginModal from "@/components/Auth/LoginModal";
 
 const drawerWidth = 240;
 
@@ -34,19 +35,19 @@ export const DefaultLayout = () => {
       <Head title="Ize" description="Distributed sensemaking" />
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <CssBaseline />
-        <AppBar position="sticky" open={menuOpen} color="transparent" sx={{ border: "none" }}>
-          <IconButton
-            color="primary"
-            aria-label="open drawer"
-            onClick={handleMenuOpen}
-            edge="start"
-            sx={{ width: "60px", mr: 2, ...(menuOpen && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-        </AppBar>
         {me && (
           <>
+            <AppBar position="sticky" open={menuOpen} color="transparent" sx={{ border: "none" }}>
+              <IconButton
+                color="primary"
+                aria-label="open drawer"
+                onClick={handleMenuOpen}
+                edge="start"
+                sx={{ width: "60px", mr: 2, ...(menuOpen && { display: "none" }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </AppBar>
             <Menu
               open={menuOpen}
               setMenuOpen={setMenuOpen}
@@ -59,6 +60,7 @@ export const DefaultLayout = () => {
           <Outlet />
         </Main>
         <Snackbar />
+        <LoginModal />
       </Box>
     </>
   );

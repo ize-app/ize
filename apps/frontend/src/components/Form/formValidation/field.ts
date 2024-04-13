@@ -3,6 +3,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
+export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
 
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
@@ -76,19 +77,17 @@ export const evaluateMultiTypeInput = (
 
 export const optionSelectionsSchema = z.array(z.object({ optionId: z.string().min(1) }));
 
-export const fieldAnswerSchema = z.record(
-  z.string().min(1),
-  z
-    .object({
-      dataType: z.nativeEnum(FieldDataType).optional(),
-      value: z.any(),
-      optionSelections: optionSelectionsSchema.optional(),
-      required: z.boolean().optional(),
-    })
-    .superRefine((field, ctx) => {
-      console.log("evaluating field", field);
-      if (!field?.required && !field.value) return;
-      if (!field.dataType) return;
-      evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
-    }),
-);
+const fieldAnswerSchema = z
+  .object({
+    dataType: z.nativeEnum(FieldDataType).optional(),
+    value: z.any(),
+    optionSelections: optionSelectionsSchema.optional(),
+    required: z.boolean().optional(),
+  })
+  .superRefine((field, ctx) => {
+    if (!field?.required && !field.value) return;
+    if (!field.dataType) return;
+    evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
+  });
+
+export const fieldAnswerRecordSchema = z.record(z.string().min(1), fieldAnswerSchema);

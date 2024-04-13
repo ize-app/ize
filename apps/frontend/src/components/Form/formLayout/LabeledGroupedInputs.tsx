@@ -1,24 +1,27 @@
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ReactNode } from "react";
 
 export const LabeledGroupedInputs = ({
   label,
   children,
+  sx = {},
 }: {
   label: string;
   children: ReactNode;
+  sx?: SxProps;
 }) => {
+  const defaultStyles: SxProps = {
+    width: "100%",
+    border: "solid 1px",
+    borderColor: "rgba(0, 0, 0, 0.23)",
+    borderRadius: "4px",
+    position: "relative",
+    // overflowX: "hidden",
+  };
+  const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
-    <Box
-      sx={{
-        width: "100%",
-        border: "solid 1px",
-        borderColor: "rgba(0, 0, 0, 0.23)",
-        borderRadius: "4px",
-        position: "relative",
-        // overflowX: "hidden",
-      }}
-    >
+    <Box sx={styles}>
       <fieldset
         style={{
           position: "absolute",

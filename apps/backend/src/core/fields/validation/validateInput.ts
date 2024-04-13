@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { FieldDataType } from "@prisma/client";
 
-export const validateInputDataType = (value: string, dataType: FieldDataType): boolean => {
+export const validateInput = (value: string, dataType: FieldDataType): boolean => {
   let pass = false;
   switch (dataType) {
     case FieldDataType.String:
@@ -14,14 +14,11 @@ export const validateInputDataType = (value: string, dataType: FieldDataType): b
       pass = z.coerce.number().safeParse(value).success;
       break;
     case FieldDataType.Date:
-      pass = true;
-      // TODO
-      // pass = z.string().datetime().safeParse(value).success;
+      // TODO: Make this fail if the date is not in the format YYYY-MM-DD
+      pass = z.string().pipe(z.coerce.date()).safeParse(value).success;
       break;
     case FieldDataType.DateTime:
-      pass = true;
-      // TODO
-      // pass = z.string().datetime().safeParse(value).success;
+      pass = z.string().datetime().safeParse(value).success;
       break;
     default:
       break;

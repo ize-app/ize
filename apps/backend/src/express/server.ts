@@ -15,7 +15,7 @@ import { authenticateSession } from "../stytch/authenticateSession";
 import { GraphqlRequestContext } from "../graphql/context";
 import { DiscordApi } from "../discord/api";
 import { prisma } from "../prisma/client";
-import { stytchClient } from "../stytch/stytchClient";
+import { stytchClient, sessionDurationMinutes } from "../stytch/stytchClient";
 import { MePrismaType } from "../core/user/formatUser";
 import { createBlockchainIdentitiesForUser } from "../stytch/createBlockchainIdentities";
 import { createEmailIdentities } from "../stytch/createEmailIdentities";
@@ -58,7 +58,7 @@ app.get("/auth/token", async (req, res, next) => {
       if (stytch_token_type === "oauth") {
         const stytchOAuthentication = await stytchClient.oauth.authenticate({
           token: token,
-          session_duration_minutes: 60,
+          session_duration_minutes: sessionDurationMinutes,
         });
 
         sessionToken = stytchOAuthentication.session_token;
@@ -89,7 +89,7 @@ app.get("/auth/token", async (req, res, next) => {
       } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
         const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
           token,
-          session_duration_minutes: 60,
+          session_duration_minutes: sessionDurationMinutes,
         });
         sessionToken = stytchMagicAuthentication.session_token;
         const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
@@ -125,7 +125,10 @@ app.post("/auth/attach-discord", async (req, res, next) => {
 app.post("/auth/crypto", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];
-    const sessionData = await stytchClient.sessions.authenticate({ session_token });
+    const sessionData = await stytchClient.sessions.authenticate({
+      session_token,
+      session_duration_minutes: sessionDurationMinutes,
+    });
 
     if (!session_token) res.status(401).send();
 
@@ -143,7 +146,10 @@ app.post("/auth/crypto", async (req, res, next) => {
 app.post("/auth/password", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];
-    const sessionData = await stytchClient.sessions.authenticate({ session_token });
+    const sessionData = await stytchClient.sessions.authenticate({
+      session_token,
+      session_duration_minutes: sessionDurationMinutes,
+    });
     const sessionToken = sessionData.session_token;
 
     if (!session_token) {

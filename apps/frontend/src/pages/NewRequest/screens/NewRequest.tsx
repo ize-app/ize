@@ -1,8 +1,4 @@
 import { useMutation } from "@apollo/client";
-import Box from "@mui/material/Box";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -18,11 +14,15 @@ import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { fullUUIDToShort } from "../../../utils/inputs";
 import { Wizard, useWizard } from "../../../utils/wizard";
+import { WizardContainer } from "@/components/Wizard";
 import { createNewRequestMutationArgs } from "../createNewRequestMutationArgs";
+import { ApolloError } from "@apollo/client";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { setAuthModalOpen, me } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
@@ -42,7 +42,11 @@ export const NewRequest = () => {
       setSnackbarData({ message: "Request created!", type: "success" });
     } catch (e) {
       console.log("ERROR: ", e);
-      navigate("/");
+      if (e instanceof ApolloError && e.message === "Unauthenticated") {
+        setAuthModalOpen(true);
+      } else {
+        navigate("/");
+      }
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request creation failed", type: "error" });
     }
@@ -66,7 +70,7 @@ export const NewRequest = () => {
     setParams,
   } = useWizard(newRequestWizard);
 
-  return (
+  return me ? (
     <PageContainer>
       <Head
         title={"Create a request"}
@@ -75,35 +79,22 @@ export const NewRequest = () => {
       <Typography variant="h1" sx={{ marginTop: "32px" }}>
         {title}
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          marginTop: "16px",
-        }}
+      <WizardContainer
+        progressBarStep={progressBarStep}
+        progressBarSteps={NEW_REQUEST_PROGRESS_BAR_STEPS}
       >
-        <Stepper activeStep={progressBarStep}>
-          {NEW_REQUEST_PROGRESS_BAR_STEPS.map((title) => (
-            <Step key={title}>
-              <StepLabel>{title}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: "36px" }}>
-          <Outlet
-            context={{
-              formState,
-              setFormState,
-              onNext,
-              onPrev,
-              nextLabel,
-              params,
-              setParams,
-            }}
-          />
-        </Box>
-      </Box>
+        <Outlet
+          context={{
+            formState,
+            setFormState,
+            onNext,
+            onPrev,
+            nextLabel,
+            params,
+            setParams,
+          }}
+        />
+      </WizardContainer>
     </PageContainer>
-  );
+  ) : null;
 };

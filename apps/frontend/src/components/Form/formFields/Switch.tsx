@@ -3,16 +3,19 @@ import FormControl from "@mui/material/FormControl";
 import { default as MuiSwitch } from "@mui/material/Switch";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { SxProps } from "@mui/material";
 
 interface SwitchProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
   width?: string;
+  sx?: SxProps;
 }
 
 export const Switch = <T extends FieldValues>({
   label,
   name,
   control,
+  sx = {},
   width = "300px",
 }: SwitchProps<T>) => {
   return (
@@ -20,8 +23,7 @@ export const Switch = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl error={Boolean(error)} sx={{ width }}>
-          {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
+        <FormControl error={Boolean(error)} sx={sx}>
           <FormControlLabel
             label={label}
             control={<MuiSwitch {...field} checked={field.value} />}

@@ -104,7 +104,7 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
         <ResponsiveFormRow>
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            width="300px"
+            sx={{ width: "300px" }}
             label="Url"
             variant="standard"
             size="small"
@@ -114,11 +114,10 @@ export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: Action
           />
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            width="300px"
+            sx={{ width: "300px", flexGrow: 1 }}
             label="What does this webhook do?"
             placeholderText="What does this webhook do?"
             variant="standard"
-            flexGrow="1"
             size="small"
             showLabel={false}
             name={`steps.${formIndex}.action.callWebhook.name`}

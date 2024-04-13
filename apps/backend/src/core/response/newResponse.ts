@@ -84,6 +84,7 @@ export const newResponse = async ({
     await newFieldAnswers({
       fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
+      requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
       responseId: response.id,
       transaction,
     });

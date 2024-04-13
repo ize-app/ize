@@ -28,12 +28,15 @@ export const EvolveFlowForm = ({
 
   const decisionType = formMethods.watch(`evolve.decision.type`);
 
+  const hasError = !!formMethods.formState.errors.evolve;
+
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
       stepIdentifier={"EvolveStep"}
       title={`How this flow evolves`}
+      hasError={hasError}
     >
       <StepComponentContainer label={"Request"}>
         <Box sx={{ display: "none" }}>
@@ -132,7 +135,7 @@ export const EvolveFlowForm = ({
           {decisionType === DecisionType.NumberThreshold && (
             <TextField<FlowSchemaType>
               control={formMethods.control}
-              width="300px"
+              sx={{ width: "300px" }}
               label="Threshold votes"
               name={`evolve.decision.threshold`}
               size="small"
@@ -144,7 +147,7 @@ export const EvolveFlowForm = ({
           {decisionType === DecisionType.PercentageThreshold && (
             <TextField<FlowSchemaType>
               control={formMethods.control}
-              width="300px"
+              sx={{ width: "300px" }}
               label="Option selected with"
               size="small"
               variant="standard"

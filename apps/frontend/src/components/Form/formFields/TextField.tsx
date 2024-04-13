@@ -1,4 +1,4 @@
-import { TextField as MuiTextField, TextFieldVariants } from "@mui/material";
+import { TextField as MuiTextField, SxProps, TextFieldVariants } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { ReactNode } from "react";
@@ -9,20 +9,18 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   variant?: TextFieldVariants;
   required?: boolean;
   showLabel?: boolean;
-  width?: string;
   placeholderText?: string;
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
   multiline?: boolean;
   size?: "small" | "medium";
-  flexGrow?: string;
+  sx?: SxProps;
 }
 
 export const TextField = <T extends FieldValues>({
   label,
   name,
   control,
-  width = "100%",
   showLabel = false,
   required = false,
   size = "small",
@@ -31,14 +29,16 @@ export const TextField = <T extends FieldValues>({
   endAdornment,
   startAdornment,
   placeholderText,
-  flexGrow = "0",
+  sx = {},
 }: TextFieldProps<T>) => {
+  const defaultStyles: SxProps = { flexGrow: 0, width: "100%" };
+  const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl sx={{ width, flexGrow }} error={Boolean(error)} required={required}>
+        <FormControl sx={styles} error={Boolean(error)} required={required}>
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
           <MuiTextField
             {...field}

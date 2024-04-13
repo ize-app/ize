@@ -23,12 +23,19 @@ export const Setup = () => {
     defaultValues: {
       name: formState.name ?? "",
       reusable: formState.reusable ?? false,
-      evolve: {
+      evolve: formState.evolve ?? {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
           type: PermissionType.Entities,
           entities: me?.identities
-            ? [me.identities.map((id) => ({ ...id, __typename: "Identity" as EntityType }))[0]]
+            ? [
+                // This would be an issue if there was ever not any other id but the discord id
+                // but each discord auth also creates email identity
+                // TODO: brittle, should handle better
+                me.identities
+                  .filter((id) => id.identityType.__typename !== "IdentityDiscord")
+                  .map((id) => ({ ...id, __typename: "Identity" as EntityType }))[0],
+              ]
             : [],
         },
         decision: {
@@ -51,7 +58,6 @@ export const Setup = () => {
     <form>
       <WizardBody>
         <Box
-          component="form"
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -62,7 +68,7 @@ export const Setup = () => {
         >
           <TextField<FlowSchemaType>
             control={useFormMethods.control}
-            width="100%"
+            sx={{ width: "100%" }}
             label="Name of this flow"
             placeholderText="What's the purpose of this form?"
             variant="outlined"

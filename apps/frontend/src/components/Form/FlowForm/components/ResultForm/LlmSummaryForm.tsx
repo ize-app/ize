@@ -42,7 +42,7 @@ export const LlmSummaryForm = ({
     <ResponsiveFormRow>
       <TextField<FlowSchemaType>
         control={formMethods.control}
-        width="100%"
+        sx={{ width: "100%" }}
         label="Prompt to help AI summarize responses"
         variant="standard"
         placeholderText="Optional"

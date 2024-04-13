@@ -2,7 +2,7 @@ import { FieldDataType } from "@/graphql/generated/graphql";
 import * as z from "zod";
 import { evaluateMultiTypeInput } from "../../components/Form/formValidation/field";
 
-import { fieldAnswerSchema } from "../../components/Form/formValidation/field";
+import { fieldAnswerRecordSchema } from "../../components/Form/formValidation/field";
 
 export type RequestDefinedOptionSchemaType = z.infer<typeof requestDefinedOptionSchema>;
 export type RequestDefinedOptionsSchemaType = z.infer<typeof requestDefinedOptionsSchema>;
@@ -20,7 +20,7 @@ export const requestDefinedOptionSchema = z
 export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
 
 export const requestSchema = z.object({
-  name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
-  requestFields: fieldAnswerSchema.optional(),
+  name: z.string().min(5, "Please make the request name at least 5 characters"),
+  requestFields: fieldAnswerRecordSchema.optional(),
   requestDefinedOptions: requestDefinedOptionsSchema.optional(),
 });

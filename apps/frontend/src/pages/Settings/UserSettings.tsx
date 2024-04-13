@@ -90,7 +90,7 @@ export const UserSettings = () => {
       crypto_wallet_address,
       crypto_wallet_type: "ethereum",
       signature: signature as string,
-      session_duration_minutes: 60,
+      session_duration_minutes: 1440,
     });
 
     await fetch("/api/auth/crypto", { method: "POST" });

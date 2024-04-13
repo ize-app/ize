@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
 
-interface WizardBodyProps {
+interface WizardScreenBodyProps {
   children: React.ReactNode;
 }
 
-export const WizardBody = ({ children }: WizardBodyProps) => (
+export const WizardScreenBody = ({ children }: WizardScreenBodyProps) => (
   <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>{children}</Box>
 );
