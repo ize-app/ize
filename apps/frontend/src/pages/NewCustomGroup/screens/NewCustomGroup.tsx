@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -16,10 +16,12 @@ import { fullUUIDToShort } from "../../../utils/inputs";
 import { Wizard, useWizard } from "@/utils/wizard";
 import { WizardContainer } from "@/components/Wizard";
 import { createNewCustomGroupMutation } from "../createNewCustomGroupMutation";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const NewCustomGroup = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
+  const { setAuthModalOpen } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewCustomGroupDocument, {
     onCompleted: (data) => {
@@ -40,8 +42,13 @@ export const NewCustomGroup = () => {
         type: "success",
       });
       setSnackbarOpen(true);
-    } catch {
-      navigate("/");
+    } catch (e) {
+      console.log("Error: ", e);
+      if (e instanceof ApolloError && e.message === "Unauthenticated") {
+        setAuthModalOpen(true);
+      } else {
+        navigate("/");
+      }
       setSnackbarOpen(true);
       setSnackbarData({ message: "Group creation failed", type: "error" });
     }

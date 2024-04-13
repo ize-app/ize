@@ -8,7 +8,7 @@ import { Wizard, useWizard } from "@/utils/wizard";
 import { NEW_FLOW_PROGRESS_BAR_STEPS, NEW_FLOW_WIZARD_STEPS } from "../newFlowWizard";
 import { FlowSchemaType } from "../../../components/Form/FlowForm/formValidation/flow";
 import { NewFlowDocument } from "@/graphql/generated/graphql";
-import { useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { createNewFlowArgs } from "../../../components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 import { fullUUIDToShort } from "@/utils/inputs";
 import { CurrentUserContext } from "@/contexts/current_user_context";
@@ -17,7 +17,7 @@ import { WizardContainer } from "@/components/Wizard";
 export const NewFlow = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
-  const { me } = useContext(CurrentUserContext);
+  const { me, setAuthModalOpen } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
@@ -41,8 +41,11 @@ export const NewFlow = () => {
       });
       setSnackbarOpen(true);
     } catch (e) {
-      console.log("Error creating mutation: ", e);
-      navigate("/");
+      if (e instanceof ApolloError && e.message === "Unauthenticated") {
+        setAuthModalOpen(true);
+      } else {
+        navigate("/");
+      }
       setSnackbarOpen(true);
       setSnackbarData({ message: "Process creation failed", type: "error" });
     }

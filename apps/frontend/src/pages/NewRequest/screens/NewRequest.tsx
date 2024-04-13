@@ -16,10 +16,13 @@ import { fullUUIDToShort } from "../../../utils/inputs";
 import { Wizard, useWizard } from "../../../utils/wizard";
 import { WizardContainer } from "@/components/Wizard";
 import { createNewRequestMutationArgs } from "../createNewRequestMutationArgs";
+import { ApolloError } from "@apollo/client";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const NewRequest = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { setAuthModalOpen } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
@@ -39,7 +42,11 @@ export const NewRequest = () => {
       setSnackbarData({ message: "Request created!", type: "success" });
     } catch (e) {
       console.log("ERROR: ", e);
-      navigate("/");
+      if (e instanceof ApolloError && e.message === "Unauthenticated") {
+        setAuthModalOpen(true);
+      } else {
+        navigate("/");
+      }
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request creation failed", type: "error" });
     }

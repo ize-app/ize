@@ -1,5 +1,5 @@
 import { ApolloQueryResult, useQuery } from "@apollo/client";
-import { createContext, useEffect } from "react";
+import { Dispatch, SetStateAction, createContext, useEffect, useState } from "react";
 
 import { MeDocument, MePartsFragment, MeQuery } from "../graphql/generated/graphql";
 import { useStytchUser } from "@stytch/react";
@@ -20,6 +20,8 @@ interface CurrentUserContextValue {
             >
           | undefined,
       ) => Promise<ApolloQueryResult<MeQuery>>);
+  authModalOpen: boolean;
+  setAuthModalOpen: Dispatch<SetStateAction<boolean>>;
   // groups: {
   //   data: GroupsQuery | undefined;
   //   loading: boolean;
@@ -30,6 +32,10 @@ export const CurrentUserContext = createContext<CurrentUserContextValue>({
   me: null,
   meLoading: false,
   refetch: null,
+  authModalOpen: false,
+  setAuthModalOpen: () => {
+    return;
+  },
   // groups: {
   //   data: undefined,
   //   loading: false,
@@ -37,8 +43,9 @@ export const CurrentUserContext = createContext<CurrentUserContextValue>({
 });
 
 export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useStytchUser();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
+  const { user } = useStytchUser();
   const { data: medata, loading: meLoading, refetch } = useQuery(MeDocument);
   const me = medata?.me;
 
@@ -51,7 +58,9 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [user, refetch]);
 
   return (
-    <CurrentUserContext.Provider value={{ me, meLoading, refetch }}>
+    <CurrentUserContext.Provider
+      value={{ me, meLoading, refetch, authModalOpen, setAuthModalOpen }}
+    >
       {children}
     </CurrentUserContext.Provider>
   );

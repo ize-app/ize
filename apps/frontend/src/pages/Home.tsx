@@ -3,8 +3,8 @@ import Button from "@mui/material/Button";
 import { useContext, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/current_user_context";
-import Login from "../components/Auth/Login";
 import { Route } from "@/routers/routes";
+import { LoginButton } from "@/components/Auth/LoginButton";
 
 const UnauthenticatedHome = () => {
   return (
@@ -40,7 +40,7 @@ const UnauthenticatedHome = () => {
         <Button variant="contained" color="primary" href="/">
           Join Alpha Waitlist
         </Button>
-        <Login />
+        <LoginButton />
       </Box>
     </Box>
   );

@@ -31,12 +31,20 @@ export const router = createBrowserRouter([
       },
       {
         path: Routes.Route.Requests,
-        element: <Requests />,
+        element: (
+          <AuthRoute>
+            <Requests />
+          </AuthRoute>
+        ),
         errorElement: <ErrorBoundary />,
       },
       {
         path: Routes.Route.Flows,
-        element: <Flows />,
+        element: (
+          <AuthRoute>
+            <Flows />
+          </AuthRoute>
+        ),
         errorElement: <ErrorBoundary />,
       },
       {
