@@ -57,15 +57,7 @@ export const flowSummaryInclude = Prisma.validator<Prisma.FlowInclude>()({
       Steps: {
         include: {
           RequestPermissions: {
-            include: {
-              EntitySet: {
-                include: {
-                  EntitySetEntities: {
-                    include: { Entity: { include: { Group: true, Identity: true } } },
-                  },
-                },
-              },
-            },
+            include: permissionInclude,
           },
         },
       },

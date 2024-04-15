@@ -24,9 +24,9 @@ export const SelectFlow = () => {
 
   const { data, loading } = useQuery(GetFlowsDocument, { fetchPolicy: "network-only" });
 
-  const processes = (data?.getFlows ?? []) as FlowSummaryFragment[];
+  const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
 
-  const filteredFlows = processes.filter((process) => {
+  const filteredFlows = flows.filter((process) => {
     const regExSearchQuery = new RegExp(searchQuery, "i");
     return process.name.search(regExSearchQuery) !== -1;
   });
