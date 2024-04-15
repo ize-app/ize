@@ -4,6 +4,7 @@ type Mutation {
 
 type Query {
   getFlow(flowId: String!): Flow!
+  getFlows: [FlowSummary!]!
 }
 
 type Flow {
@@ -14,6 +15,16 @@ type Flow {
   reusable: Boolean!
   steps: [Step]!
   evolve: Flow
+}
+
+type FlowSummary {
+  flowId: String!
+  name: String!
+  creator: User!
+  createdAt: String!
+  # permission to trigger first step of the flow
+  requestStep0Permission: Permission!
+  userPermission: UserFlowPermission!
 }
 
 enum FlowType {
@@ -44,6 +55,10 @@ type ResponseConfig {
 type UserPermission {
   request: Boolean!
   response: Boolean!
+}
+
+type UserFlowPermission {
+  request: Boolean!
 }
 
 input NewFlowArgs {
