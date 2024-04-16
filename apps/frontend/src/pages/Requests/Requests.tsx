@@ -13,7 +13,8 @@ import { Button, debounce } from "@mui/material";
 
 export const Requests = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const limit = 4;
+  const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
+  const limit = 20;
   // const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestStepsDocument);
@@ -75,21 +76,25 @@ export const Requests = () => {
           <CreateButton />
         </Box>
         {loading ? <Loading /> : <RequestStepsTable requestSteps={requestSteps} />}
-        <Button
-          onClick={() => {
-            return fetchMore({
-              variables: {
-                cursor: newCursor,
-                userOnly: true,
-                flowId: null,
-                searchQuery,
-                limit,
-              },
-            });
-          }}
-        >
-          Load more
-        </Button>
+        {/* if there are no new results or no results at all, then hide the "load more" button */}
+        {oldCursor !== newCursor && (data?.getRequestSteps.length ?? 0) >= limit && (
+          <Button
+            onClick={() => {
+              setOldCursor(newCursor);
+              return fetchMore({
+                variables: {
+                  cursor: newCursor,
+                  userOnly: true,
+                  flowId: null,
+                  searchQuery,
+                  limit,
+                },
+              });
+            }}
+          >
+            Load more
+          </Button>
+        )}
       </Box>
     </PageContainer>
   );
