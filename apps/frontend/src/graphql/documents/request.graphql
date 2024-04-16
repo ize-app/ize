@@ -12,6 +12,12 @@ query getRequest($requestId: String!) {
   }
 }
 
+query getRequestSteps {
+  getRequestSteps {
+    ...RequestStepSummary
+  }
+}
+
 fragment Request on Request {
   name
   flow {
@@ -38,6 +44,26 @@ fragment RequestStep on RequestStep {
   responses {
     ...Response
   }
+}
+
+fragment RequestStepSummary on RequestStepSummary {
+  requestStepId
+  requestId
+  flowId
+  requestName
+  flowName
+  creator {
+    ...UserSummaryParts
+  }
+  respondPermission {
+    ...Permission
+  }
+  userRespondPermission
+  stepIndex
+  totalSteps
+  createdAt
+  expirationDate
+  final
 }
 
 fragment Response on Response {

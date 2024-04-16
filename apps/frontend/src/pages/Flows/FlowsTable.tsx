@@ -19,7 +19,7 @@ import { fullUUIDToShort } from "@/utils/inputs";
 export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
-      <Table aria-label="table" stickyHeader={true}>
+      <Table aria-label="Flows Table" stickyHeader={true}>
         <TableHead>
           <TableRow>
             <TableCellHideable sx={{ minWidth: "60%" }}>Flow</TableCellHideable>
@@ -47,6 +47,7 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
   return (
     <>
       <TableRow
+        aria-label="Flow Row"
         onClick={() =>
           navigate(
             generatePath(Route.Flow, {

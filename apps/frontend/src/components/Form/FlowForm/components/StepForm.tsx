@@ -34,9 +34,9 @@ export const StepForm = ({
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-  // const { getValues: getFieldValues } = useFormMethods;
-  // console.log("form state for ", formIndex, " is ", getFieldValues());
-  // console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
+  const { getValues: getFieldValues } = useFormMethods;
+  console.log("form state for ", formIndex, " is ", getFieldValues());
+  console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
 
   const hasError = !!useFormMethods.formState.errors.steps?.[formIndex];
 

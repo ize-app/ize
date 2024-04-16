@@ -87,7 +87,6 @@ export const FieldOptionsForm = ({
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
   );
 
-  console.log("request requeted options is", hasRequestDefinedOptions);
   const stepDefinedOptions =
     formMethods.watch(`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`) ??
     [];

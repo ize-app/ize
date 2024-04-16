@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client";
 import { flowVersionInclude } from "../flow/flowPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
+import { permissionInclude } from "../permission/permissionPrismaTypes";
+import { userInclude } from "../user/userPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -32,6 +34,30 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
 
 export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
+}>;
+
+export const requestStepSummaryInclude = Prisma.validator<Prisma.RequestStepInclude>()({
+  Request: {
+    include: {
+      FlowVersion: {
+        include: {
+          Flow: true,
+        },
+      },
+      Creator: userInclude,
+    },
+  },
+  Step: {
+    include: {
+      ResponsePermissions: {
+        include: permissionInclude,
+      },
+    },
+  },
+});
+
+export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
+  include: typeof requestStepSummaryInclude;
 }>;
 
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({

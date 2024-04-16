@@ -274,6 +274,7 @@ model FlowVersion {
   id           String  @id @default(uuid()) @db.Uuid
   name         String
   reusable     Boolean
+  totalSteps   Int     @map("total_steps")
   flowId       String  @map("flow_id") @db.Uuid
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
   evolveFlowId String? @map("evolve_flow_id") @db.Uuid
@@ -694,7 +695,7 @@ model RequestStep {
   id              String   @id @default(uuid()) @db.Uuid
   requestId       String   @map("request_id") @db.Uuid
   stepId          String   @map("step_id") @db.Uuid
-  expired         Boolean  @default(false)
+  final           Boolean  @default(false)
   resultsComplete Boolean  @default(false) @map("results_complete")
   actionsComplete Boolean  @default(false) @map("actions_complete")
   expirationDate  DateTime @map("expiration_date")

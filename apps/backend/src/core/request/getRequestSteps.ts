@@ -1,36 +1,28 @@
-import { FlowSummary } from "@/graphql/generated/resolver-types";
+import { RequestStepSummary } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
-import { FlowSummaryPrismaType, flowSummaryInclude } from "./flowPrismaTypes";
-import { MePrismaType } from "@/core/user/formatUser";
+import { requestStepSummaryInclude } from "./requestPrismaTypes";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
+import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
+import { MePrismaType } from "../user/userPrismaTypes";
 
-// Gets all flows that user has request permissions for on the first step of the flow, or that user created
-// intentionally not pulling processes that have the "anyone" permission
-// TODO: In the future, this query will only pull flows that user has interacted with or created
-export const getFlows = async ({
+export const getRequestSteps = async ({
   args,
   user,
 }: {
   args: {};
   user: MePrismaType;
-}): Promise<FlowSummary[]> => {
+}): Promise<RequestStepSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user.Identities.map((id) => id.id);
-
-  const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: flowSummaryInclude,
-    where: {
-      // id: args.flowId,
-      AND: [
-        { type: "Custom" },
-        {
+  return await prisma.$transaction(async (transaction) => {
+    const requestSteps = await transaction.requestStep.findMany({
+      where: {
+        Request: {
           OR: [
             {
-              CurrentFlowVersion: {
+              FlowVersion: {
                 Steps: {
                   some: {
-                    index: 0,
                     RequestPermissions: {
                       EntitySet: {
                         EntitySetEntities: {
@@ -56,9 +48,17 @@ export const getFlows = async ({
             },
           ],
         },
-      ],
-    },
-  });
+      },
+      include: requestStepSummaryInclude,
+    });
 
-  return flows.map((flow) => flowSummaryResolver({ flow, identityIds, groupIds, userId: user.id }));
+    return requestSteps.map((requestStep) =>
+      requestStepSummaryResolver({
+        requestStepSummary: requestStep,
+        identityIds,
+        groupIds,
+        userId: user.id,
+      }),
+    );
+  });
 };

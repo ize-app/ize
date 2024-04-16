@@ -84,6 +84,7 @@ export const newEvolveFlow = async ({
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: "Evolve flow",
+      totalSteps: 1,
       reusable: true,
       // evolve flow has evolve rights over itself.
       EvolveFlow: {

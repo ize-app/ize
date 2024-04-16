@@ -30,7 +30,6 @@ export const evaluateMultiTypeInput = (
         });
       return;
     case FieldDataType.String:
-      console.log("evaluating string", value);
       if (!z.string().min(1).safeParse(value).success) {
         console.log("string error!");
         ctx.addIssue({

@@ -14,7 +14,7 @@ import { filterFlows } from "./flowSearch";
 export const Flows = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, loading } = useQuery(GetFlowsDocument, { fetchPolicy: "network-only" });
+  const { data, loading } = useQuery(GetFlowsDocument); // { fetchPolicy: "network-only" }
 
   const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
 

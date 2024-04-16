@@ -35,6 +35,7 @@ export const newCustomFlow = async ({
     const flowVersion = await transaction.flowVersion.create({
       data: {
         name: args.flow.name,
+        totalSteps: args.flow.steps.length,
         reusable: args.flow.reusable,
         EvolveFlow: evolveFlowId
           ? {
