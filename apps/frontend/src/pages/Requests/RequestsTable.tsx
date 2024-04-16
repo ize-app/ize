@@ -41,7 +41,7 @@ export const RequestStepsTable = ({
         </TableHead>
         <TableBody>
           {requestSteps.map((requestStep) => (
-            <RequestStepRow key={requestStep.flowId} requestStep={requestStep} />
+            <RequestStepRow key={requestStep.requestStepId} requestStep={requestStep} />
           ))}
         </TableBody>
       </Table>

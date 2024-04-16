@@ -16,6 +16,7 @@ export const requestStepSummaryResolver = ({
   userId: string;
 }): RequestStepSummary => {
   return {
+    id: requestStepSummary.id,
     requestStepId: requestStepSummary.id,
     requestId: requestStepSummary.Request.id,
     flowId: requestStepSummary.Request.FlowVersion.Flow.id,

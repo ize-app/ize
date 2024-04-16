@@ -589,7 +589,9 @@ export type QueryGetRequestArgs = {
 
 
 export type QueryGetRequestStepsArgs = {
+  cursor?: InputMaybe<Scalars['String']['input']>;
   flowId?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
   userOnly: Scalars['Boolean']['input'];
 };
@@ -671,6 +673,7 @@ export type RequestStepSummary = {
   final: Scalars['Boolean']['output'];
   flowId: Scalars['String']['output'];
   flowName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
   requestName: Scalars['String']['output'];
   requestStepId: Scalars['String']['output'];
@@ -1336,7 +1339,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'searchQuery' | 'userOnly'>>;
+  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'searchQuery' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
@@ -1387,6 +1390,7 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

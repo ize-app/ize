@@ -16,6 +16,9 @@ export const getRequestSteps = async ({
   const identityIds: string[] = user.Identities.map((id) => id.id);
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.requestStep.findMany({
+      take: args.limit,
+      skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
+      cursor: args.cursor ? { id: args.cursor } : undefined,
       where: {
         AND: [
           args.searchQuery !== ""
@@ -87,6 +90,10 @@ export const getRequestSteps = async ({
         ],
       },
       include: requestStepSummaryInclude,
+      // TODO revisit the ordering logic here
+      orderBy: {
+        expirationDate: "asc",
+      },
     });
 
     return requestSteps.map((requestStep) =>

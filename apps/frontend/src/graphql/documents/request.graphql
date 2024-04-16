@@ -12,8 +12,20 @@ query getRequest($requestId: String!) {
   }
 }
 
-query getRequestSteps($userOnly: Boolean!, $flowId: String, $searchQuery: String!) {
-  getRequestSteps(userOnly: $userOnly, flowId: $flowId, searchQuery: $searchQuery) {
+query getRequestSteps(
+  $cursor: String
+  $limit: Int!
+  $userOnly: Boolean!
+  $flowId: String
+  $searchQuery: String!
+) {
+  getRequestSteps(
+    cursor: $cursor
+    limit: $limit
+    userOnly: $userOnly
+    flowId: $flowId
+    searchQuery: $searchQuery
+  ) {
     ...RequestStepSummary
   }
 }
@@ -47,6 +59,7 @@ fragment RequestStep on RequestStep {
 }
 
 fragment RequestStepSummary on RequestStepSummary {
+  id
   requestStepId
   requestId
   flowId
