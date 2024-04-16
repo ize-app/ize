@@ -5,7 +5,7 @@ type Mutation {
 
 type Query {
   getRequest(requestId: String!): Request!
-  getRequestSteps: [RequestStepSummary!]!
+  getRequestSteps(userOnly: Boolean!, flowId: String, searchQuery: String!): [RequestStepSummary!]!
 }
 
 input NewRequestArgs {

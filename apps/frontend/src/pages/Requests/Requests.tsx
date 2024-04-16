@@ -10,15 +10,22 @@ import Loading from "@/components/Loading";
 import Search from "@/components/Tables/Search";
 import { RequestStepsTable } from "./RequestsTable";
 import { filterRequests } from "./requestsSearch";
+import StatusToggle from "./StatusToggle";
 
 export const Requests = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
 
-  const { data, loading } = useQuery(GetRequestStepsDocument); // { fetchPolicy: "network-only" }
+  const { data, loading } = useQuery(GetRequestStepsDocument, {
+    variables: {
+      userOnly: true,
+      flowId: null,
+      searchQuery,
+    },
+  }); // { fetchPolicy: "network-only" }
 
   const requestSteps = (data?.getRequestSteps ?? []) as RequestStepSummaryFragment[];
 
-  // const filteredFlows = filterFlows({ flows: requestSteps, searchQuery });
   const filteredRequestSteps = filterRequests({ requestSteps, searchQuery });
 
   return (
@@ -58,6 +65,7 @@ export const Requests = () => {
                   setSearchQuery(event.target.value);
                 }}
               />
+              <StatusToggle status={statusToggle} setStatus={setStatusToggle} />
             </Box>
             <CreateButton />
           </Box>

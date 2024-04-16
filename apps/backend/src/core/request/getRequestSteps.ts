@@ -1,4 +1,4 @@
-import { RequestStepSummary } from "@/graphql/generated/resolver-types";
+import { QueryGetRequestStepsArgs, RequestStepSummary } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { requestStepSummaryInclude } from "./requestPrismaTypes";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -9,7 +9,7 @@ export const getRequestSteps = async ({
   args,
   user,
 }: {
-  args: {};
+  args: QueryGetRequestStepsArgs;
   user: MePrismaType;
 }): Promise<RequestStepSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
@@ -17,37 +17,74 @@ export const getRequestSteps = async ({
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.requestStep.findMany({
       where: {
-        Request: {
-          OR: [
-            {
-              FlowVersion: {
-                Steps: {
-                  some: {
-                    RequestPermissions: {
-                      EntitySet: {
-                        EntitySetEntities: {
+        AND: [
+          args.searchQuery !== ""
+            ? {
+                Request: {
+                  OR: [
+                    {
+                      name: {
+                        contains: args.searchQuery,
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      FlowVersion: {
+                        name: {
+                          contains: args.searchQuery,
+                          mode: "insensitive",
+                        },
+                      },
+                    },
+                  ],
+                },
+              }
+            : {},
+          args.userOnly
+            ? {
+                Request: {
+                  OR: [
+                    true && {
+                      FlowVersion: {
+                        Steps: {
                           some: {
-                            Entity: {
-                              OR: [
-                                { Group: { id: { in: groupIds } } },
-                                { Identity: { id: { in: identityIds } } },
-                              ],
+                            RequestPermissions: {
+                              EntitySet: {
+                                EntitySetEntities: {
+                                  some: {
+                                    Entity: {
+                                      OR: [
+                                        { Group: { id: { in: groupIds } } },
+                                        { Identity: { id: { in: identityIds } } },
+                                      ],
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
                         },
                       },
                     },
+                    {
+                      Creator: {
+                        id: user.id,
+                      },
+                    },
+                  ],
+                },
+              }
+            : {},
+          args.flowId
+            ? {
+                Request: {
+                  FlowVersion: {
+                    flowId: args.flowId,
                   },
                 },
-              },
-            },
-            {
-              Creator: {
-                id: user.id,
-              },
-            },
-          ],
-        },
+              }
+            : {},
+        ],
       },
       include: requestStepSummaryInclude,
     });

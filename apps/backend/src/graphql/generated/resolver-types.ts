@@ -588,6 +588,13 @@ export type QueryGetRequestArgs = {
 };
 
 
+export type QueryGetRequestStepsArgs = {
+  flowId?: InputMaybe<Scalars['String']['input']>;
+  searchQuery: Scalars['String']['input'];
+  userOnly: Scalars['Boolean']['input'];
+};
+
+
 export type QueryGroupArgs = {
   id: Scalars['String']['input'];
 };
@@ -1329,7 +1336,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType>;
+  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'searchQuery' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;

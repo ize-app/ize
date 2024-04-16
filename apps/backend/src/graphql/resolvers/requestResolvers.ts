@@ -11,6 +11,7 @@ import {
   MutationNewResponseArgs,
   MutationResolvers,
   QueryGetRequestArgs,
+  QueryGetRequestStepsArgs,
   QueryResolvers,
   Request,
   RequestStepSummary,
@@ -43,7 +44,7 @@ const getRequest: QueryResolvers["getRequest"] = async (
 // getRequestSteps is called on user's dashboard to get all the request steps that the user has access to
 const getRequestSteps: QueryResolvers["getRequestSteps"] = async (
   root: unknown,
-  args: {},
+  args: QueryGetRequestStepsArgs,
   context: GraphqlRequestContext,
 ): Promise<RequestStepSummary[]> => {
   if (!context.currentUser)

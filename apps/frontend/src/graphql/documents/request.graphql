@@ -12,8 +12,8 @@ query getRequest($requestId: String!) {
   }
 }
 
-query getRequestSteps {
-  getRequestSteps {
+query getRequestSteps($userOnly: Boolean!, $flowId: String, $searchQuery: String!) {
+  getRequestSteps(userOnly: $userOnly, flowId: $flowId, searchQuery: $searchQuery) {
     ...RequestStepSummary
   }
 }
