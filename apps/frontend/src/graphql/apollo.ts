@@ -22,7 +22,8 @@ export const apolloClient = new ApolloClient({
         fields: {
           getRequestSteps: {
             keyArgs: ["userOnly", "flowId", "searchQuery"],
-            merge(existing, incoming, { args: { cursor }, readField }) {
+            merge(existing, incoming, { args, readField }) {
+              const cursor = args && args.cursor;
               const merged = existing ? existing.slice(0) : [];
               let offset = offsetFromCursor(merged, cursor, readField);
               // If we couldn't find the cursor, default to appending to
