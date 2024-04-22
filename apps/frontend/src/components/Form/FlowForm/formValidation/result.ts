@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
+import { OptionSelectionCountLimit } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
@@ -10,6 +11,10 @@ export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 export enum LlmSummaryType {
   AfterEveryResponse = "AfterEveryResponse",
   AtTheEnd = "AtTheEnd",
+}
+
+export enum ResultListCountLimit {
+  None = "None",
 }
 
 export const decisionSchema = z.discriminatedUnion("type", [
@@ -26,7 +31,15 @@ export const decisionSchema = z.discriminatedUnion("type", [
 ]);
 
 const prioritizationSchema = z.object({
-  numOptionsToInclude: z.coerce.number().int().positive(),
+  numPrioritizedItems: z
+    .number()
+    .or(z.nativeEnum(ResultListCountLimit))
+    .transform((val) => {
+      if (val === ResultListCountLimit.None) return null;
+      return val;
+    })
+    .pipe(z.coerce.number().positive())
+    .nullable(),
 });
 
 const llmSchema = z.object({

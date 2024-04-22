@@ -119,7 +119,10 @@ export const newFieldAnswers = async ({
 
           const options = [...stepDefinedOptions, ...requestDefinedOptions];
 
-          if (fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections)
+          if (
+            fieldOptionsConfig.maxSelections &&
+            fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections
+          )
             throw new GraphQLError(
               `More option selections submitted than allowable for this field. fieldId: ${fieldAnswer.fieldId}`,
               {

@@ -20,6 +20,7 @@ import { SelectOption } from "../../../formFields/Select";
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { StepComponentContainer } from "../StepContainer";
+import { PrioritizationForm } from "./PrioritizationForm";
 
 export const defaultResult = (stepIndex: number, resultIndex: number): ResultSchemaType => ({
   resultId: "new." + stepIndex + "." + resultIndex,
@@ -140,7 +141,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                       width="140px"
                       selectOptions={[
                         { name: "Decision", value: ResultType.Decision },
-                        { name: "Prioritized options", value: ResultType.Ranking },
+                        { name: "Ranked list", value: ResultType.Ranking },
                         { name: "AI summary", value: ResultType.LlmSummary },
                       ]}
                       name={`steps.${formIndex}.result.${resultIndex}.type`}
@@ -159,9 +160,7 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                         displayLabel={false}
                       />
                     ) : (
-                      <Typography>
-                        To make a decision result, first add a response options field.
-                      </Typography>
+                      <Typography>Add options to this field to use this result type</Typography>
                     )}
                   </ResponsiveFormRow>
                   {result.type === ResultType.Decision && resultField && (
@@ -178,6 +177,14 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                       formMethods={formMethods}
                       resultIndex={resultIndex}
                       resultId={result.resultId}
+                    />
+                  )}
+                  {result.type === ResultType.Ranking && resultField && (
+                    <PrioritizationForm
+                      formIndex={formIndex}
+                      formMethods={formMethods}
+                      resultIndex={resultIndex}
+                      field={resultField}
                     />
                   )}
                 </Box>
