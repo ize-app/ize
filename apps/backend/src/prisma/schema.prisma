@@ -443,8 +443,8 @@ model FieldOptionsConfig {
   // Whether or not options are created by the requestor
   hasRequestOptions      Boolean             @default(false) @map("has_request_options")
   previousStepOptions    Boolean             @default(false) @map("previous_step_options")
-  // Whether option is single or multi-select
-  maxSelections          Int                 @map("max_selections")
+  // Whether option is single or multi-select. Null means no maximum # of selections
+  maxSelections          Int?                @map("max_selections")
   linkedResultOptions    String[]            @default([]) @map("linked_result_options")
   // type single select / multi-select / etc
   selectionType          OptionSelectionType @map("option_selection_type")

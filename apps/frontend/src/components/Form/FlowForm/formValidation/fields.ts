@@ -16,6 +16,10 @@ export enum DefaultFieldSelection {
   None = "None",
 }
 
+export enum OptionSelectionCountLimit {
+  None = "None",
+}
+
 export const fieldOptionSchema = z
   .object({
     optionId: z.string(),
@@ -36,7 +40,15 @@ const fieldOptionsSchema = z
     hasRequestOptions: z.boolean().default(false),
     requestOptionsDataType: z.nativeEnum(FieldDataType).optional(), // refers only to request created options
     selectionType: z.nativeEnum(FieldOptionsSelectionType),
-    maxSelections: z.coerce.number().default(1),
+    maxSelections: z
+      .number()
+      .or(z.nativeEnum(OptionSelectionCountLimit))
+      .transform((val) => {
+        if (val === OptionSelectionCountLimit.None) return null;
+        return val;
+      })
+      .pipe(z.coerce.number())
+      .nullable(), 
     options: z.array(fieldOptionSchema).default([]),
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
@@ -48,14 +60,6 @@ const fieldOptionsSchema = z
       return true;
     },
     { path: ["dataType"], message: "Select a data type" },
-  )
-  .refine(
-    (options) => {
-      if (options.selectionType === FieldOptionsSelectionType.MultiSelect && !options.maxSelections)
-        return false;
-      return true;
-    },
-    { path: ["maxSelectableOptions"], message: "Required" },
   )
   .refine(
     (options) => {

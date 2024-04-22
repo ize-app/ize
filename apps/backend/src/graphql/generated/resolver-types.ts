@@ -209,7 +209,7 @@ export type FieldOptionArgs = {
 export type FieldOptionsConfigArgs = {
   hasRequestOptions: Scalars['Boolean']['input'];
   linkedResultOptions: Array<LinkedResultOptionsArgs>;
-  maxSelections: Scalars['Int']['input'];
+  maxSelections?: InputMaybe<Scalars['Int']['input']>;
   options: Array<FieldOptionArgs>;
   previousStepOptions: Scalars['Boolean']['input'];
   requestOptionsDataType?: InputMaybe<FieldDataType>;
@@ -524,7 +524,7 @@ export type Options = {
   fieldId: Scalars['String']['output'];
   hasRequestOptions: Scalars['Boolean']['output'];
   linkedResultOptions: Array<Scalars['String']['output']>;
-  maxSelections: Scalars['Int']['output'];
+  maxSelections?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   options: Array<Option>;
   previousStepOptions: Scalars['Boolean']['output'];
@@ -1311,7 +1311,7 @@ export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType ext
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   linkedResultOptions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  maxSelections?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  maxSelections?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
   previousStepOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

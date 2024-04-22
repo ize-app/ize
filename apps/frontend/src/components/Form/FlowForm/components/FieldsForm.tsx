@@ -132,10 +132,14 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                           name: "Select one option",
                           value: FieldOptionsSelectionType.Select,
                         },
-                        //   {
-                        //     name: "Rank options",
-                        //     value: FieldOptionsSelectionType.Rank,
-                        //   },
+                        {
+                          name: "Select multiple options",
+                          value: FieldOptionsSelectionType.MultiSelect,
+                        },
+                        {
+                          name: "Rank options",
+                          value: FieldOptionsSelectionType.Rank,
+                        },
                       ]}
                       label="How do participants select options?"
                     />
