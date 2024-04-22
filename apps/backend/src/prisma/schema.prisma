@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -8,18 +9,19 @@ datasource db {
 }
 
 model User {
-  id         String       @id @default(uuid()) @db.Uuid
-  stytchId   String       @unique @map("stytch_id")
-  firstName  String?
-  lastName   String?
-  createdAt  DateTime     @default(now()) @map("created_at")
-  updatedAt  DateTime     @default(now()) @updatedAt @map("updated_at")
-  Group      Group[]
-  Identities Identity[]
-  Oauths     Oauths[]
-  Request    Request[]
-  Response   Response[]
-  Permission Permission[]
+  id           String       @id @default(uuid()) @db.Uuid
+  stytchId     String       @unique @map("stytch_id")
+  firstName    String?
+  lastName     String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
+  Group        Group[]
+  Identities   Identity[]
+  Oauths       Oauths[]
+  Request      Request[]
+  Response     Response[]
+  Permission   Permission[]
+  CreatedFlows Flow[]
 
   @@map("users")
 }
@@ -252,14 +254,16 @@ enum FlowType {
 }
 
 model Flow {
-  id   String   @id @default(uuid()) @db.Uuid
-  type FlowType
+  id        String   @id @default(uuid()) @db.Uuid
+  type      FlowType
+  creatorId String   @map("creator_id") @db.Uuid
 
   currentFlowVersionId String? @unique @map("current_flow_version_id") @db.Uuid
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
+  Creator                    User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   CurrentFlowVersion         FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
   FlowVersions               FlowVersion[] @relation("FlowToAllFlowVersions")
   EvolveRightsFoFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
@@ -271,6 +275,7 @@ model FlowVersion {
   id           String  @id @default(uuid()) @db.Uuid
   name         String
   reusable     Boolean
+  totalSteps   Int     @map("total_steps")
   flowId       String  @map("flow_id") @db.Uuid
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
   evolveFlowId String? @map("evolve_flow_id") @db.Uuid
@@ -691,7 +696,7 @@ model RequestStep {
   id              String   @id @default(uuid()) @db.Uuid
   requestId       String   @map("request_id") @db.Uuid
   stepId          String   @map("step_id") @db.Uuid
-  expired         Boolean  @default(false)
+  final           Boolean  @default(false)
   resultsComplete Boolean  @default(false) @map("results_complete")
   actionsComplete Boolean  @default(false) @map("actions_complete")
   expirationDate  DateTime @map("expiration_date")

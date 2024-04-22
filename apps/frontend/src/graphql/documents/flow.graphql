@@ -8,10 +8,31 @@ query GetFlow($flowId: String!) {
   }
 }
 
+query GetFlows {
+  getFlows {
+    ...FlowSummary
+  }
+}
+
 fragment Flow on Flow {
   ...FlowFields
   evolve {
     ...FlowFields
+  }
+}
+
+fragment FlowSummary on FlowSummary {
+  flowId
+  name
+  createdAt
+  creator {
+    ...UserSummaryParts
+  }
+  requestStep0Permission {
+    ...Permission
+  }
+  userPermission {
+    ...UserFlowPermission
   }
 }
 
@@ -66,4 +87,8 @@ fragment ResponseConfig on ResponseConfig {
 fragment UserPermission on UserPermission {
   request
   response
+}
+
+fragment UserFlowPermission on UserFlowPermission {
+  request
 }

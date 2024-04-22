@@ -238,6 +238,16 @@ export type Flow = {
   type: FlowType;
 };
 
+export type FlowSummary = {
+  __typename?: 'FlowSummary';
+  createdAt: Scalars['String']['output'];
+  creator: User;
+  flowId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  requestStep0Permission: Permission;
+  userPermission: UserFlowPermission;
+};
+
 export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve'
@@ -550,7 +560,9 @@ export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
   getFlow: Flow;
+  getFlows: Array<FlowSummary>;
   getRequest: Request;
+  getRequestSteps: Array<RequestStepSummary>;
   group: Group;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -573,6 +585,15 @@ export type QueryGetFlowArgs = {
 
 export type QueryGetRequestArgs = {
   requestId: Scalars['String']['input'];
+};
+
+
+export type QueryGetRequestStepsArgs = {
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  flowId?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+  searchQuery: Scalars['String']['input'];
+  userOnly: Scalars['Boolean']['input'];
 };
 
 
@@ -644,6 +665,24 @@ export type RequestStep = {
   responses: Array<Response>;
 };
 
+export type RequestStepSummary = {
+  __typename?: 'RequestStepSummary';
+  createdAt: Scalars['String']['output'];
+  creator: User;
+  expirationDate: Scalars['String']['output'];
+  final: Scalars['Boolean']['output'];
+  flowId: Scalars['String']['output'];
+  flowName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  requestId: Scalars['String']['output'];
+  requestName: Scalars['String']['output'];
+  requestStepId: Scalars['String']['output'];
+  respondPermission: Permission;
+  stepIndex: Scalars['Int']['output'];
+  totalSteps: Scalars['Int']['output'];
+  userRespondPermission: Scalars['Boolean']['output'];
+};
+
 export type Response = {
   __typename?: 'Response';
   answers: Array<FieldAnswer>;
@@ -709,6 +748,11 @@ export type User = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type UserFlowPermission = {
+  __typename?: 'UserFlowPermission';
+  request: Scalars['Boolean']['output'];
 };
 
 export type UserPermission = {
@@ -837,6 +881,7 @@ export type ResolversTypes = {
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
   Flow: ResolverTypeWrapper<Flow>;
+  FlowSummary: ResolverTypeWrapper<FlowSummary>;
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
@@ -887,6 +932,7 @@ export type ResolversTypes = {
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFields: Array<ResolversTypes['Field']> }>;
+  RequestStepSummary: ResolverTypeWrapper<RequestStepSummary>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   ResultArgs: ResultArgs;
@@ -898,6 +944,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   User: ResolverTypeWrapper<User>;
+  UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
@@ -931,6 +978,7 @@ export type ResolversParentTypes = {
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   Flow: Flow;
+  FlowSummary: FlowSummary;
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
@@ -977,6 +1025,7 @@ export type ResolversParentTypes = {
   RequestConfig: Omit<RequestConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'requestFieldAnswers' | 'responseFields'> & { requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFields: Array<ResolversParentTypes['Field']> };
+  RequestStepSummary: RequestStepSummary;
   Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   ResultArgs: ResultArgs;
@@ -987,6 +1036,7 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   TriggerStep: TriggerStep;
   User: User;
+  UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
@@ -1103,6 +1153,16 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowSummary'] = ResolversParentTypes['FlowSummary']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestStep0Permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  userPermission?: Resolver<ResolversTypes['UserFlowPermission'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1277,7 +1337,9 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
+  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'searchQuery' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
@@ -1318,6 +1380,24 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   responses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepSummary'] = ResolversParentTypes['RequestStepSummary']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  respondPermission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalSteps?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1363,6 +1443,11 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserFlowPermissionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFlowPermission'] = ResolversParentTypes['UserFlowPermission']> = {
+  request?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserPermission'] = ResolversParentTypes['UserPermission']> = {
   request?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1385,6 +1470,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
+  FlowSummary?: FlowSummaryResolvers<ContextType>;
   FreeInput?: FreeInputResolvers<ContextType>;
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
@@ -1412,12 +1498,14 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Request?: RequestResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
+  RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserFlowPermission?: UserFlowPermissionResolvers<ContextType>;
   UserPermission?: UserPermissionResolvers<ContextType>;
 };
 

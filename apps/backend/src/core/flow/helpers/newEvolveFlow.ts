@@ -70,18 +70,21 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
 
 export const newEvolveFlow = async ({
   evolveArgs,
+  creatorId,
   transaction,
 }: {
   evolveArgs: EvolveFlowArgs;
+  creatorId: string;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   const flow = await transaction.flow.create({
-    data: { type: FlowType.Evolve },
+    data: { type: FlowType.Evolve, creatorId },
   });
 
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: "Evolve flow",
+      totalSteps: 1,
       reusable: true,
       // evolve flow has evolve rights over itself.
       EvolveFlow: {

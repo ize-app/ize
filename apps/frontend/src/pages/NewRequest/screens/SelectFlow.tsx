@@ -8,31 +8,28 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FlowFragment } from "@/graphql/generated/graphql";
+import { FlowSummaryFragment, GetFlowsDocument } from "@/graphql/generated/graphql";
 
 import { useNewRequestWizardState } from "../newRequestWizard";
 import { fullUUIDToShort } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
 import Search from "../../../components/Tables/Search";
 import { WizardBody } from "../../../components/Wizard";
+import { useQuery } from "@apollo/client";
 
-export const SelectProcess = () => {
+export const SelectFlow = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { setParams } = useNewRequestWizardState();
 
-  // const { data, loading } = useQuery(GetProcessesToCreateRequestDocument);
+  const { data, loading } = useQuery(GetFlowsDocument, { fetchPolicy: "network-only" });
 
-  // const processes = (data?.processesForCurrentUser ?? []) as ProcessSummaryPartsFragment[];
+  const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
 
-  // const filteredProcesses = processes.filter((process) => {
-  //   const regExSearchQuery = new RegExp(searchQuery, "i");
-  //   return process.name.search(regExSearchQuery) !== -1;
-  // });
-
-  const loading = false;
-
-  const filteredProcesses: FlowFragment[] = [];
+  const filteredFlows = flows.filter((process) => {
+    const regExSearchQuery = new RegExp(searchQuery, "i");
+    return process.name.search(regExSearchQuery) !== -1;
+  });
 
   return loading ? (
     <Loading />
@@ -70,11 +67,11 @@ export const SelectProcess = () => {
           }}
         >
           <TableBody>
-            {filteredProcesses.map((flow) => (
+            {filteredFlows.map((flow) => (
               <TableRow
                 key={flow.flowId}
                 onClick={() => {
-                  setParams({ processId: fullUUIDToShort(flow.flowId) });
+                  setParams({ flowId: fullUUIDToShort(flow.flowId) });
                   navigate(fullUUIDToShort(flow.flowId));
                 }}
               >

@@ -47,8 +47,9 @@ export const identityResolver = (
         : null,
       identityType: { __typename: "IdentityDiscord", ...identity.IdentityDiscord },
     };
-  else
+  else {
     throw new GraphQLError("Invalid identity type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
+  }
 };

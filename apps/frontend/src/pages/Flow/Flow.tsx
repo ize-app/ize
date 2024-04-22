@@ -21,6 +21,7 @@ import {
   NewRequestRoute,
   newRequestRoute,
 } from "@/routers/routes";
+import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -155,6 +156,7 @@ export const Flow = () => {
           /> */}
         </Box>
       </Box>
+      <RequestStepsSearch userOnly={false} flowId={flow.flowId} />
     </PageContainer>
   );
 };

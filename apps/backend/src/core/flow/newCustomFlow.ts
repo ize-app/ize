@@ -6,7 +6,13 @@ import { newEvolveFlow } from "./helpers/newEvolveFlow";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { StepPrismaType } from "./flowPrismaTypes";
 
-export const newCustomFlow = async ({ args }: { args: MutationNewFlowArgs }): Promise<string> => {
+export const newCustomFlow = async ({
+  args,
+  creatorId,
+}: {
+  args: MutationNewFlowArgs;
+  creatorId: string;
+}): Promise<string> => {
   let evolveFlowId: string | null = null;
   return await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
@@ -17,17 +23,19 @@ export const newCustomFlow = async ({ args }: { args: MutationNewFlowArgs }): Pr
     if (args.flow.evolve) {
       evolveFlowId = await newEvolveFlow({
         evolveArgs: args.flow.evolve,
+        creatorId,
         transaction,
       });
     }
 
     const flow = await transaction.flow.create({
-      data: { type: FlowType.Custom },
+      data: { type: FlowType.Custom, creatorId },
     });
 
     const flowVersion = await transaction.flowVersion.create({
       data: {
         name: args.flow.name,
+        totalSteps: args.flow.steps.length,
         reusable: args.flow.reusable,
         EvolveFlow: evolveFlowId
           ? {
