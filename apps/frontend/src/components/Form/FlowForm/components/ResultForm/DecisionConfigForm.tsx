@@ -3,9 +3,9 @@ import { Select, TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
-import { InputAdornment } from "@mui/material";
+import { InputAdornment, Typography } from "@mui/material";
 
-import { DecisionType, FieldType } from "@/graphql/generated/graphql";
+import { DecisionType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../../formFields/Select";
 import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
 
@@ -15,6 +15,29 @@ interface DecisionConfigFormProps {
   resultIndex: number;
   field: FieldSchemaType;
 }
+
+const decisionTypeOptions = (selectionType: FieldOptionsSelectionType) => {
+  switch (selectionType) {
+    case FieldOptionsSelectionType.Select:
+      return [
+        { name: "Threshold vote", value: DecisionType.NumberThreshold },
+        { name: "Percentage vote", value: DecisionType.PercentageThreshold },
+      ];
+    case FieldOptionsSelectionType.MultiSelect:
+      return [{ name: "Weighted average", value: DecisionType.WeightedAverage }];
+    case FieldOptionsSelectionType.Rank:
+      return [{ name: "Weighted average", value: DecisionType.WeightedAverage }];
+  }
+};
+
+const weightedAverageDescription = (selectionType: FieldOptionsSelectionType) => {
+  switch (selectionType) {
+    case FieldOptionsSelectionType.MultiSelect:
+      return "Decision will be whichever option is selected the most.";
+    case FieldOptionsSelectionType.Rank:
+      return "Decision is the option with the highest weighted average rank";
+  }
+};
 
 export const DecisionConfigForm = ({
   formMethods,
@@ -54,6 +77,9 @@ export const DecisionConfigForm = ({
     });
   }
 
+  if (field.type !== FieldType.Options)
+    throw Error("Cannot set decision config for non-options field");
+
   return (
     <>
       <ResponsiveFormRow>
@@ -61,16 +87,7 @@ export const DecisionConfigForm = ({
           control={formMethods.control}
           label="How do we determine the final result?"
           width="200px"
-          selectOptions={[
-            {
-              name: "Threshold vote",
-              value: DecisionType.NumberThreshold,
-            },
-            {
-              name: "Percentage vote",
-              value: DecisionType.PercentageThreshold,
-            },
-          ]}
+          selectOptions={decisionTypeOptions(field.optionsConfig.selectionType)}
           name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
           displayLabel={false}
@@ -111,6 +128,7 @@ export const DecisionConfigForm = ({
           name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
       </ResponsiveFormRow>
+      <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}

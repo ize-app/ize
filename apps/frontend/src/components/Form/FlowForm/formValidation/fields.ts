@@ -48,7 +48,7 @@ const fieldOptionsSchema = z
         return val;
       })
       .pipe(z.coerce.number())
-      .nullable(), 
+      .optional(),
     options: z.array(fieldOptionSchema).default([]),
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
@@ -63,11 +63,23 @@ const fieldOptionsSchema = z
   )
   .refine(
     (options) => {
+      if (
+        options.selectionType === FieldOptionsSelectionType.MultiSelect &&
+        options.maxSelections === undefined
+      )
+        return false;
+      return true;
+    },
+    { path: ["maxSelections"], message: "Required" },
+  )
+  .refine(
+    (options) => {
       if (options.hasRequestOptions && !options.requestOptionsDataType) return false;
       return true;
     },
     { path: ["requestOptionsDataType"], message: "Required" },
   );
+
 export const fieldSchema = z
   .discriminatedUnion("type", [
     z.object({

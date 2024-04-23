@@ -1,6 +1,5 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
-import { OptionSelectionCountLimit } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
@@ -27,6 +26,10 @@ export const decisionSchema = z.discriminatedUnion("type", [
     type: z.literal(DecisionType.PercentageThreshold),
     defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().min(51).max(100),
+  }),
+  z.object({
+    type: z.literal(DecisionType.WeightedAverage),
+    defaultOptionId: z.string().optional(),
   }),
 ]);
 

@@ -6,7 +6,7 @@ type Decision {
   minimumAnswers: Int!
   decisionType: DecisionType!
   defaultOption: Option
-  threshold: Int!
+  threshold: Int
 }
 
 type Ranking {
@@ -34,6 +34,7 @@ enum ResultType {
 enum DecisionType {
   NumberThreshold
   PercentageThreshold
+  WeightedAverage
 }
 
 enum LlmSummaryType {
@@ -55,7 +56,7 @@ input ResultArgs {
 input DecisionArgs {
   type: DecisionType!
   defaultOptionIndex: Int
-  threshold: Int!
+  threshold: Int
 }
 
 input PrioritizationArgs {

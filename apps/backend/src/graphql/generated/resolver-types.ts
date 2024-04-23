@@ -101,18 +101,19 @@ export type Decision = {
   fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
   resultConfigId: Scalars['String']['output'];
-  threshold: Scalars['Int']['output'];
+  threshold?: Maybe<Scalars['Int']['output']>;
 };
 
 export type DecisionArgs = {
   defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
-  threshold: Scalars['Int']['input'];
+  threshold?: InputMaybe<Scalars['Int']['input']>;
   type: DecisionType;
 };
 
 export enum DecisionType {
   NumberThreshold = 'NumberThreshold',
-  PercentageThreshold = 'PercentageThreshold'
+  PercentageThreshold = 'PercentageThreshold',
+  WeightedAverage = 'WeightedAverage'
 }
 
 export type DiscordApiServerRole = {
@@ -1088,7 +1089,7 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  threshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
