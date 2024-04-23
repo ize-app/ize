@@ -3,12 +3,7 @@ union Field = Options | FreeInput
 input FieldAnswerArgs {
   fieldId: String!
   value: String
-  optionSelections: [OptionSelectionArgs!]
-}
-
-input OptionSelectionArgs {
-  optionId: String!
-  value: String
+  optionSelections: [String!]
 }
 
 type Options {

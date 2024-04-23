@@ -74,14 +74,29 @@ export const evaluateMultiTypeInput = (
   }
 };
 
-export const optionSelectionsSchema = z.array(z.object({ optionId: z.string().min(1) }));
+export const optionSelectionsSchema = z.array(z.string().min(1));
 
 const fieldAnswerSchema = z
   .object({
     dataType: z.nativeEnum(FieldDataType).optional(),
+    maxSelections: z.number().optional(),
     value: z.any(),
     optionSelections: optionSelectionsSchema.optional(),
     required: z.boolean().optional(),
+  })
+  .superRefine((field, ctx) => {
+    if (
+      field.maxSelections &&
+      field.optionSelections &&
+      field.maxSelections < field.optionSelections.length
+    ) {
+      console.log("Error: option selections exceeded");
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only a maximum of " + field.maxSelections + " selections are allowed",
+        path: ["optionSelections"],
+      });
+    }
   })
   .superRefine((field, ctx) => {
     if (!field?.required && !field.value) return;

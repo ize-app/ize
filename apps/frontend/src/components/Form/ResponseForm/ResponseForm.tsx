@@ -6,10 +6,11 @@ import { useForm } from "react-hook-form";
 import {
   FieldDataType,
   FieldFragment,
+  FieldOptionsSelectionType,
   FieldType,
   NewResponseDocument,
 } from "../../../graphql/generated/graphql";
-import { DatePicker, DateTimePicker, TextField } from "../formFields";
+import { DatePicker, DateTimePicker, MultiSelect, TextField } from "../formFields";
 import { ResponseSchemaType, responseSchema } from "./formValidation";
 import { Radio } from "../formFields/Radio";
 import { Button } from "@mui/material";
@@ -46,6 +47,11 @@ export const ResponseForm = ({
         formMethods.setValue(`responseFields.${field.fieldId}.dataType`, field.dataType);
         // @ts-ignore not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.required`, field.required);
+      } else if (field.__typename === FieldType.Options) {
+        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        formMethods.setValue(`responseFields.${field.fieldId}.selectionType`, field.selectionType);
+        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        formMethods.setValue(`responseFields.${field.fieldId}.maxSelections`, field.maxSelections);
       }
     });
   }, [responseFields]);
@@ -130,20 +136,42 @@ export const ResponseForm = ({
               }
             }
             case FieldType.Options: {
-              const { options, name } = field;
-              console.log("options field is ", field);
-              return (
-                <Radio<ResponseSchemaType>
-                  name={`responseFields.${field.fieldId}.optionSelections.${0}.optionId`}
-                  control={formMethods.control}
-                  label={name}
-                  sx={{ flexDirection: "column", gap: "4px" }}
-                  options={options.map((option) => ({
-                    label: option.name,
-                    value: option.optionId,
-                  }))}
-                />
-              );
+              const { options, name, selectionType, fieldId } = field;
+
+              switch (selectionType) {
+                case FieldOptionsSelectionType.Select: {
+                  return (
+                    <Radio<ResponseSchemaType>
+                      name={`responseFields.${field.fieldId}.optionSelections`}
+                      control={formMethods.control}
+                      label={name}
+                      sx={{ flexDirection: "column", gap: "4px" }}
+                      options={options.map((option) => ({
+                        label: option.name,
+                        value: option.optionId,
+                      }))}
+                    />
+                  );
+                }
+                case FieldOptionsSelectionType.MultiSelect: {
+                  return (
+                    <MultiSelect<ResponseSchemaType>
+                      name={`responseFields.${field.fieldId}.optionSelections`}
+                      control={formMethods.control}
+                      label={name}
+                      key={fieldId}
+                      sx={{ flexDirection: "column", gap: "4px" }}
+                      options={options.map((option) => ({
+                        label: option.name,
+                        value: option.optionId,
+                      }))}
+                    />
+                  );
+                }
+                case FieldOptionsSelectionType.Rank: {
+                  return null;
+                }
+              }
             }
             default:
               throw Error("Invalid field type");

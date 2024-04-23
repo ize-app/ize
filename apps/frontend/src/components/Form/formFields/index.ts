@@ -5,3 +5,4 @@ export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
 export { DateTimePicker } from "./DateTimePicker";
 export { Switch } from "./Switch";
+export { MultiSelect } from "./MultiSelect";

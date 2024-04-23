@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useNewRequestWizardState } from "../newRequestWizard";
 import {
   FieldDataType,
+  FieldOptionsSelectionType,
   FieldType,
   Flow,
   GetFlowDocument,
@@ -17,7 +18,12 @@ import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
 import { WizardBody, WizardNav } from "../../../components/Wizard";
-import { DatePicker, DateTimePicker, TextField } from "../../../components/Form/formFields";
+import {
+  DatePicker,
+  DateTimePicker,
+  MultiSelect,
+  TextField,
+} from "../../../components/Form/formFields";
 import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { Radio } from "../../../components/Form/formFields/Radio";
@@ -54,6 +60,11 @@ export const CreateRequestForm = () => {
           formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
           // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
+        } else if (field.__typename === FieldType.Options) {
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.selectionType`, field.selectionType);
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.maxSelections`, field.maxSelections);
         }
       });
     }
@@ -65,10 +76,8 @@ export const CreateRequestForm = () => {
     shouldUnregister: true,
   });
 
-  console.log("errors are", formMethods.formState.errors);
-  console.log("formstate is ", formMethods.getValues());
-
-  // zod record with a data type,
+  // console.log("errors are", formMethods.formState.errors);
+  // console.log("formstate is ", formMethods.getValues());
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
@@ -165,20 +174,42 @@ export const CreateRequestForm = () => {
                   }
                 }
                 case FieldType.Options: {
-                  const { options, name } = field;
-                  console.log("options field is ", field);
-                  return (
-                    <Radio<RequestSchemaType>
-                      name={`requestFields.${field.fieldId}.optionSelections.${0}.optionId`}
-                      control={formMethods.control}
-                      label={name}
-                      sx={{ flexDirection: "column", gap: "4px" }}
-                      options={options.map((option) => ({
-                        label: option.name,
-                        value: option.optionId,
-                      }))}
-                    />
-                  );
+                  const { options, name, selectionType, fieldId } = field;
+
+                  switch (selectionType) {
+                    case FieldOptionsSelectionType.Select: {
+                      return (
+                        <Radio<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          control={formMethods.control}
+                          label={name}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.MultiSelect: {
+                      return (
+                        <MultiSelect<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          control={formMethods.control}
+                          label={name}
+                          key={fieldId}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.Rank: {
+                      return null;
+                    }
+                  }
                 }
                 default:
                   throw Error("Invalid field type");
