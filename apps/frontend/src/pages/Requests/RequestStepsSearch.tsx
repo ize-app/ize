@@ -47,7 +47,9 @@ export const RequestStepsSearch = ({
     getResults({ variables: queryVars });
   }, []);
 
-  const newCursor = data?.getRequestSteps[data.getRequestSteps.length - 1].id;
+  const newCursor = data?.getRequestSteps.length
+    ? data.getRequestSteps[data.getRequestSteps.length - 1].id
+    : "";
   const requestSteps = (data?.getRequestSteps ?? []) as RequestStepSummaryFragment[];
 
   return (
