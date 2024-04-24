@@ -66,7 +66,6 @@ export const ResponseForm = ({
   // console.log("formstate is ", formMethods.getValues());
 
   const onSubmit = async (data: ResponseSchemaType) => {
-    console.log("hitting onSubmit, data is ", data);
     await mutate({
       variables: {
         response: {

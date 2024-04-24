@@ -9,6 +9,7 @@ import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 
 import { useWatch } from "react-hook-form";
+import { OptionSelectionSchemaType, OptionSelectionsSchemaType } from "../formValidation/field";
 
 interface MultiSelectProps<T extends FieldValues> extends UseControllerProps<T> {
   label?: string;
@@ -29,27 +30,27 @@ export const MultiSelect = <T extends FieldValues>({
   options,
   ...rest
 }: MultiSelectProps<T>) => {
-  const checkboxIds = useWatch({ control, name: name }) || [];
+  const selectedOptions = useWatch({ control, name: name }) || [];
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field: { ref, value, onChange, ...inputProps }, fieldState: { error } }) => {
-        const handleChange = (value: string) => {
-          const newArray: string[] = [...checkboxIds];
+        const handleChange = (value: OptionProps) => {
+          const newArray: OptionSelectionsSchemaType = [...selectedOptions];
           const item = value;
 
           if (newArray.length > 0) {
-            const index = newArray.findIndex((x) => x === item);
+            const index = newArray.findIndex((x) => x.optionId === item.value);
 
             if (index === -1) {
-              newArray.push(item);
+              newArray.push({ optionId: item.value });
             } else {
               newArray.splice(index, 1);
             }
           } else {
-            newArray.push(item);
+            newArray.push({ optionId: item.value });
           }
 
           onChange(newArray);
@@ -68,11 +69,13 @@ export const MultiSelect = <T extends FieldValues>({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={value?.some((checked: string) => checked === option.value)}
+                      checked={value?.some(
+                        (checked: OptionSelectionSchemaType) => checked.optionId === option.value,
+                      )}
                       {...inputProps}
                       inputRef={ref}
                       key={"checkbox-" + option.value}
-                      onChange={() => handleChange(option.value)}
+                      onChange={() => handleChange(option)}
                       disabled={rest?.disabled}
                     />
                   }

@@ -179,7 +179,7 @@ export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
-  optionSelections?: InputMaybe<Array<Scalars['String']['input']>>;
+  optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -512,6 +512,10 @@ export type OptionFieldAnswer = {
 export type OptionFieldAnswerSelection = {
   __typename?: 'OptionFieldAnswerSelection';
   optionId?: Maybe<Scalars['String']['output']>;
+};
+
+export type OptionSelectionArgs = {
+  optionId: Scalars['String']['input'];
 };
 
 export type Options = {
@@ -1308,7 +1312,7 @@ export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
-  optionSelections?: InputMaybe<Array<Scalars['String']['input']>>;
+  optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1641,6 +1645,10 @@ export type OptionFieldAnswer = {
 export type OptionFieldAnswerSelection = {
   __typename?: 'OptionFieldAnswerSelection';
   optionId?: Maybe<Scalars['String']['output']>;
+};
+
+export type OptionSelectionArgs = {
+  optionId: Scalars['String']['input'];
 };
 
 export type Options = {

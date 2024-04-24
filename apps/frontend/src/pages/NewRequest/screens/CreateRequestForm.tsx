@@ -54,7 +54,7 @@ export const CreateRequestForm = () => {
 
   useEffect(() => {
     if (step && !loading) {
-      setFormState({ flow: flow });
+      setFormState((prev) => ({ ...prev, flow: flow }));
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
           // @ts-ignore not sure why react hook forms isn't picking up on record type

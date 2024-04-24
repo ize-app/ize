@@ -1,17 +1,15 @@
-import { FieldValues, UseControllerProps } from "react-hook-form";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 
-export interface SortableItemProps<T extends FieldValues> extends UseControllerProps<T> {
+export interface SortableItemProps {
+  id: string;
   label: string;
   index: number;
-  id: string;
-  onRemove: () => void;
 }
 
-export const SortableItem = <T extends FieldValues>({ label, id }: SortableItemProps<T>) => {
+export const SortableItem = ({ id, label, index }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });
@@ -27,12 +25,16 @@ export const SortableItem = <T extends FieldValues>({ label, id }: SortableItemP
       {...listeners}
       sx={{
         display: "flex",
+        gap: 1,
         alignItems: "center",
         cursor: isDragging ? "grabbing" : "grab",
       }}
     >
-      <DragHandleIcon />
-      {label}
+      <DragHandleIcon fontSize={"small"} />
+      <Typography>
+        {(index + 1).toString() + ". "}
+        {label}
+      </Typography>
     </Box>
   );
 };

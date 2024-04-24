@@ -180,7 +180,7 @@ export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
-  optionSelections?: InputMaybe<Array<Scalars['String']['input']>>;
+  optionSelections?: InputMaybe<Array<OptionSelectionArgs>>;
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -513,6 +513,10 @@ export type OptionFieldAnswer = {
 export type OptionFieldAnswerSelection = {
   __typename?: 'OptionFieldAnswerSelection';
   optionId?: Maybe<Scalars['String']['output']>;
+};
+
+export type OptionSelectionArgs = {
+  optionId: Scalars['String']['input'];
 };
 
 export type Options = {
@@ -916,6 +920,7 @@ export type ResolversTypes = {
   Option: ResolverTypeWrapper<Option>;
   OptionFieldAnswer: ResolverTypeWrapper<OptionFieldAnswer>;
   OptionFieldAnswerSelection: ResolverTypeWrapper<OptionFieldAnswerSelection>;
+  OptionSelectionArgs: OptionSelectionArgs;
   Options: ResolverTypeWrapper<Options>;
   Organization: ResolverTypeWrapper<Organization>;
   Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
@@ -1008,6 +1013,7 @@ export type ResolversParentTypes = {
   Option: Option;
   OptionFieldAnswer: OptionFieldAnswer;
   OptionFieldAnswerSelection: OptionFieldAnswerSelection;
+  OptionSelectionArgs: OptionSelectionArgs;
   Options: Options;
   Organization: Organization;
   Permission: Omit<Permission, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };

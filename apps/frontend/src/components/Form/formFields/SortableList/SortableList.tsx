@@ -7,11 +7,11 @@ import {
   UseFormReturn,
   FieldArray,
 } from "react-hook-form";
-import { Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { SortableItem } from "./SortableItem";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { OptionSelectionSchemaType } from "../../formValidation/field";
+import { TextField } from "../TextField";
 
 export interface OptionProps {
   value: string;
@@ -29,21 +29,24 @@ interface SortableListProps<T extends FieldValues> extends UseControllerProps<T>
   formMethods: UseFormReturn<T>;
 }
 
+// TODO: Lots of ts-ignore here. Not quite sure how to make fieldArray a generic type
 export const SortableList = <T extends FieldValues>({
   control,
   name,
   options,
-  formMethods,
+  label,
 }: SortableListProps<T>) => {
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, move } = useFieldArray({
     control,
     name: name as ArrayPath<T>,
   });
+  console.log("inside Soratble list. fields are", fields);
 
   useEffect(() => {
-    options.forEach((option) => {
-      append({ optionId: option.value } as FieldArray<T, ArrayPath<T>>);
-    });
+    if (fields.length === 0)
+      options.forEach((option) => {
+        append({ optionId: option.value } as FieldArray<T, ArrayPath<T>>);
+      });
   }, []);
 
   return (
@@ -61,32 +64,35 @@ export const SortableList = <T extends FieldValues>({
       }}
     >
       <SortableContext items={fields}>
-        <Typography>Rank Component!</Typography>
-        <Stack spacing={2}>
+        <Typography>{label}</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {fields.map((field, index) => {
-            const option = formMethods.watch(
-              // @ts-ignore
-              `${name}.${index}`,
-            ) as unknown as OptionSelectionSchemaType;
             const label =
               options.find((o) => {
-                return option.optionId === o.value;
+                // @ts-ignore
+                return field.optionId === o.value;
               })?.label ?? "";
+
             return (
               <>
-                <SortableItem
-                  key={field.id}
-                  id={field.id}
-                  label={label}
+                <TextField<T>
                   //@ts-ignore
+                  name={`${name}.${index}.optionId`}
+                  key={"optionId" + name + index}
                   control={control}
-                  index={index}
-                  onRemove={() => remove(index)}
+                  sx={{ display: "none" }}
+                  showLabel={false}
+                  label={`Option ID - ignore`}
+                  variant="standard"
+                  disabled={true}
+                  size="small"
                 />
+
+                <SortableItem key={field.id} id={field.id} label={label} index={index} />
               </>
             );
           })}
-        </Stack>
+        </Box>
       </SortableContext>
     </DndContext>
   );
