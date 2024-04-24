@@ -62,17 +62,19 @@ export const newResponse = async ({
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
 
-    const existingUserResponse = await transaction.response.findFirst({
-      where: { creatorId: context.currentUser.id, requestStepId },
-    });
+    if (!requestStep.Step.allowMultipleResponses) {
+      const existingUserResponse = await transaction.response.findFirst({
+        where: { creatorId: context.currentUser.id, requestStepId },
+      });
 
-    if (existingUserResponse)
-      throw new GraphQLError(
-        `Response already exists for this request step. requestStepId: ${requestStepId}, userId: ${context.currentUser.id}`,
-        {
-          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-        },
-      );
+      if (existingUserResponse)
+        throw new GraphQLError(
+          `Response already exists for this request step. requestStepId: ${requestStepId}, userId: ${context.currentUser.id}`,
+          {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          },
+        );
+    }
 
     const response = await transaction.response.create({
       data: {

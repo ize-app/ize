@@ -64,6 +64,7 @@ export const newStep = async ({
   const step = await transaction.step.create({
     include: stepInclude,
     data: {
+      allowMultipleResponses: args.allowMultipleResponses,
       requestFieldSetId: requestFieldSet?.id,
       requestPermissionsId: requestPermissionsId,
       responseFieldSetId: responseFieldSet?.id,

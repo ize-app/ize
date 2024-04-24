@@ -12,6 +12,10 @@ export enum LlmSummaryType {
   AtTheEnd = "AtTheEnd",
 }
 
+export enum ResultListCountLimit {
+  None = "None",
+}
+
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
@@ -23,10 +27,22 @@ export const decisionSchema = z.discriminatedUnion("type", [
     defaultOptionId: z.string().optional(),
     threshold: z.coerce.number().int().min(51).max(100),
   }),
+  z.object({
+    type: z.literal(DecisionType.WeightedAverage),
+    defaultOptionId: z.string().optional(),
+  }),
 ]);
 
 const prioritizationSchema = z.object({
-  numOptionsToInclude: z.coerce.number().int().positive(),
+  numPrioritizedItems: z
+    .number()
+    .or(z.nativeEnum(ResultListCountLimit))
+    .transform((val) => {
+      if (val === ResultListCountLimit.None) return null;
+      return val;
+    })
+    .pipe(z.coerce.number().positive())
+    .nullable(),
 });
 
 const llmSchema = z.object({

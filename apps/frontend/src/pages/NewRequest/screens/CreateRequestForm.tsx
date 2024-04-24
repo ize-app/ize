@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useNewRequestWizardState } from "../newRequestWizard";
 import {
   FieldDataType,
+  FieldOptionsSelectionType,
   FieldType,
   Flow,
   GetFlowDocument,
@@ -17,7 +18,13 @@ import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
 import { WizardBody, WizardNav } from "../../../components/Wizard";
-import { DatePicker, DateTimePicker, TextField } from "../../../components/Form/formFields";
+import {
+  DatePicker,
+  DateTimePicker,
+  MultiSelect,
+  SortableList,
+  TextField,
+} from "../../../components/Form/formFields";
 import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { Radio } from "../../../components/Form/formFields/Radio";
@@ -47,19 +54,47 @@ export const CreateRequestForm = () => {
 
   useEffect(() => {
     if (step && !loading) {
-      setFormState({ flow: flow });
+      setFormState((prev) => ({ ...prev, flow: flow }));
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
           // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
           // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
+        } else if (field.__typename === FieldType.Options) {
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.selectionType`, field.selectionType);
+          // @ts-ignore not sure why react hook forms isn't picking up on record type
+          formMethods.setValue(`requestFields.${field.fieldId}.maxSelections`, field.maxSelections);
         }
       });
     }
   }, [step, loading, setFormState]);
 
   const formMethods = useForm({
+    // defaultValues: {
+    //   name: "test",
+    //   requestFields: {
+    //     "2e07f9e0-3bd7-44df-a603-5ef4ee52a760": {
+    //       selectionType: "Rank",
+    //       maxSelections: null,
+    //       optionSelections: [
+    //         {
+    //           optionId: "91ddf40a-ba01-4c0d-ae0f-9482f43a6860",
+    //         },
+    //         {
+    //           optionId: "9a7efef1-fa00-4afc-a97d-cc55c6c5666d",
+    //         },
+    //         {
+    //           optionId: "9b3404ca-2102-4861-acd9-eeac7572715d",
+    //         },
+    //         {
+    //           optionId: "36cadaa0-a52e-42bf-a726-da6d91387a5c",
+    //         },
+    //       ],
+    //     },
+    //   },
+    // },
     defaultValues: formState ?? {},
     resolver: zodResolver(requestSchema),
     shouldUnregister: true,
@@ -67,8 +102,6 @@ export const CreateRequestForm = () => {
 
   console.log("errors are", formMethods.formState.errors);
   console.log("formstate is ", formMethods.getValues());
-
-  // zod record with a data type,
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
@@ -165,20 +198,54 @@ export const CreateRequestForm = () => {
                   }
                 }
                 case FieldType.Options: {
-                  const { options, name } = field;
-                  console.log("options field is ", field);
-                  return (
-                    <Radio<RequestSchemaType>
-                      name={`requestFields.${field.fieldId}.optionSelections.${0}.optionId`}
-                      control={formMethods.control}
-                      label={name}
-                      sx={{ flexDirection: "column", gap: "4px" }}
-                      options={options.map((option) => ({
-                        label: option.name,
-                        value: option.optionId,
-                      }))}
-                    />
-                  );
+                  const { options, name, selectionType, fieldId } = field;
+
+                  switch (selectionType) {
+                    case FieldOptionsSelectionType.Select: {
+                      return (
+                        <Radio<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          control={formMethods.control}
+                          label={name}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.MultiSelect: {
+                      return (
+                        <MultiSelect<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          control={formMethods.control}
+                          label={name}
+                          key={fieldId}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.Rank: {
+                      return (
+                        <SortableList<RequestSchemaType>
+                          control={formMethods.control}
+                          label="Example label"
+                          key={fieldId}
+                          formMethods={formMethods}
+                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                  }
                 }
                 default:
                   throw Error("Invalid field type");

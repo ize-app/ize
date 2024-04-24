@@ -119,7 +119,10 @@ export const newFieldAnswers = async ({
 
           const options = [...stepDefinedOptions, ...requestDefinedOptions];
 
-          if (fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections)
+          if (
+            fieldOptionsConfig.maxSelections &&
+            fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections
+          )
             throw new GraphQLError(
               `More option selections submitted than allowable for this field. fieldId: ${fieldAnswer.fieldId}`,
               {
@@ -128,8 +131,8 @@ export const newFieldAnswers = async ({
             );
 
           // check whether selected options are part of field's option Set
-          fieldAnswer.optionSelections.map((optionSelection) => {
-            if (!options.some((option) => option.id === optionSelection.optionId))
+          fieldAnswer.optionSelections.map((optionSelectionArgs) => {
+            if (!options.some((option) => option.id === optionSelectionArgs.optionId))
               throw new GraphQLError(
                 `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
                 {
@@ -146,8 +149,8 @@ export const newFieldAnswers = async ({
               responseId,
               AnswerOptionSelections: {
                 createMany: {
-                  data: fieldAnswer.optionSelections.map((o) => ({
-                    fieldOptionId: o.optionId,
+                  data: fieldAnswer.optionSelections.map((optionSelectionArgs) => ({
+                    fieldOptionId: optionSelectionArgs.optionId,
                   })),
                 },
               },

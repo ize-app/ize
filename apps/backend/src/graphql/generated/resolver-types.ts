@@ -101,18 +101,19 @@ export type Decision = {
   fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
   resultConfigId: Scalars['String']['output'];
-  threshold: Scalars['Int']['output'];
+  threshold?: Maybe<Scalars['Int']['output']>;
 };
 
 export type DecisionArgs = {
   defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
-  threshold: Scalars['Int']['input'];
+  threshold?: InputMaybe<Scalars['Int']['input']>;
   type: DecisionType;
 };
 
 export enum DecisionType {
   NumberThreshold = 'NumberThreshold',
-  PercentageThreshold = 'PercentageThreshold'
+  PercentageThreshold = 'PercentageThreshold',
+  WeightedAverage = 'WeightedAverage'
 }
 
 export type DiscordApiServerRole = {
@@ -209,7 +210,7 @@ export type FieldOptionArgs = {
 export type FieldOptionsConfigArgs = {
   hasRequestOptions: Scalars['Boolean']['input'];
   linkedResultOptions: Array<LinkedResultOptionsArgs>;
-  maxSelections: Scalars['Int']['input'];
+  maxSelections?: InputMaybe<Scalars['Int']['input']>;
   options: Array<FieldOptionArgs>;
   previousStepOptions: Scalars['Boolean']['input'];
   requestOptionsDataType?: InputMaybe<FieldDataType>;
@@ -466,6 +467,7 @@ export type NewResponseArgs = {
 
 export type NewStepArgs = {
   action: ActionArgs;
+  allowMultipleResponses: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
@@ -516,7 +518,6 @@ export type OptionFieldAnswerSelection = {
 
 export type OptionSelectionArgs = {
   optionId: Scalars['String']['input'];
-  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Options = {
@@ -524,7 +525,7 @@ export type Options = {
   fieldId: Scalars['String']['output'];
   hasRequestOptions: Scalars['Boolean']['output'];
   linkedResultOptions: Array<Scalars['String']['output']>;
-  maxSelections: Scalars['Int']['output'];
+  maxSelections?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   options: Array<Option>;
   previousStepOptions: Scalars['Boolean']['output'];
@@ -553,7 +554,7 @@ export type PermissionArgs = {
 };
 
 export type PrioritizationArgs = {
-  numOptionsToInclude: Scalars['Int']['input'];
+  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Query = {
@@ -630,7 +631,7 @@ export type Ranking = {
   __typename?: 'Ranking';
   fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
-  numOptionsToInclude: Scalars['Int']['output'];
+  numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
   resultConfigId: Scalars['String']['output'];
 };
 
@@ -719,6 +720,7 @@ export enum ResultType {
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
+  allowMultipleResponses: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
   index: Scalars['Int']['output'];
   request: RequestConfig;
@@ -1088,7 +1090,7 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  threshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1311,7 +1313,7 @@ export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType ext
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   linkedResultOptions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  maxSelections?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  maxSelections?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
   previousStepOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1352,7 +1354,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  numOptionsToInclude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  numOptionsToInclude?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1421,6 +1423,7 @@ export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentTyp
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
+  allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;

@@ -5,6 +5,9 @@ import { FieldDataType } from "@/graphql/generated/graphql";
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
 export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
 
+export type OptionSelectionsSchemaType = z.infer<typeof optionSelectionsSchema>;
+export type OptionSelectionSchemaType = z.infer<typeof optionSelectionSchema>;
+
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
     const date = val as Dayjs;
@@ -73,15 +76,30 @@ export const evaluateMultiTypeInput = (
       return;
   }
 };
-
-export const optionSelectionsSchema = z.array(z.object({ optionId: z.string().min(1) }));
+export const optionSelectionSchema = z.object({ optionId: z.string().min(1) });
+export const optionSelectionsSchema = z.array(optionSelectionSchema);
 
 const fieldAnswerSchema = z
   .object({
     dataType: z.nativeEnum(FieldDataType).optional(),
+    maxSelections: z.number().nullable().optional(),
     value: z.any(),
     optionSelections: optionSelectionsSchema.optional(),
     required: z.boolean().optional(),
+  })
+  .superRefine((field, ctx) => {
+    if (
+      field.maxSelections &&
+      field.optionSelections &&
+      field.maxSelections < field.optionSelections.length
+    ) {
+      console.log("Error: option selections exceeded");
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only a maximum of " + field.maxSelections + " selections are allowed",
+        path: ["optionSelections"],
+      });
+    }
   })
   .superRefine((field, ctx) => {
     if (!field?.required && !field.value) return;

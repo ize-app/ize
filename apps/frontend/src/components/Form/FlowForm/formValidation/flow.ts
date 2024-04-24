@@ -23,6 +23,7 @@ const stepSchema = z
     }),
     result: resultsSchema,
     action: actionSchema,
+    allowMultipleResponses: z.boolean().default(false),
     expirationSeconds: z.coerce.number().int().positive().optional(),
   })
   .superRefine((step, ctx) => {
@@ -63,8 +64,7 @@ const stepSchema = z
 
 export const flowSchema = z.object({
   name: z.string().min(1, "Enter a name"),
-  reusable: z.boolean().optional().default(false),
+  // reusable: z.boolean().optional().default(false),
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   evolve: evolveFlowSchema,
 });
-

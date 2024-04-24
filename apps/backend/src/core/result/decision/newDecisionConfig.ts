@@ -1,5 +1,5 @@
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { DecisionArgs, FieldType } from "@/graphql/generated/resolver-types";
+import { DecisionArgs, DecisionType, FieldType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
@@ -30,6 +30,12 @@ export const newDecisionConfig = async ({
       throw new GraphQLError("Cannot find default option.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
+  }
+
+  if (decisionArgs.type !== DecisionType.WeightedAverage && !decisionArgs.threshold) {
+    throw new GraphQLError("Missing decision threshold", {
+      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+    });
   }
 
   const decisionConfig = await transaction.resultConfigDecision.create({

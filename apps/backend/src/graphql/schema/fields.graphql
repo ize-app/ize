@@ -8,7 +8,6 @@ input FieldAnswerArgs {
 
 input OptionSelectionArgs {
   optionId: String!
-  value: String
 }
 
 type Options {
@@ -19,7 +18,7 @@ type Options {
   hasRequestOptions: Boolean!
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
-  maxSelections: Int!
+  maxSelections: Int
   linkedResultOptions: [String!]!
   options: [Option!]!
 }
@@ -87,7 +86,7 @@ input FieldOptionsConfigArgs {
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
   hasRequestOptions: Boolean!
-  maxSelections: Int!
+  maxSelections: Int
   selectionType: FieldOptionsSelectionType!
   linkedResultOptions: [LinkedResultOptionsArgs!]!
   options: [FieldOptionArgs!]!

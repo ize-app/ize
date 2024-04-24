@@ -39,6 +39,7 @@ type Step {
   result: [ResultConfig!]!
   action: Action
   expirationSeconds: Int
+  allowMultipleResponses: Boolean!
   userPermission: UserPermission!
 }
 
@@ -74,6 +75,7 @@ input NewStepArgs {
   result: [ResultArgs!]!
   action: ActionArgs!
   expirationSeconds: Int
+  allowMultipleResponses: Boolean!
 }
 
 input EvolveFlowArgs {

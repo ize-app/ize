@@ -6,8 +6,8 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields";
 
-import { FieldOptionSchemaType } from "../formValidation/fields";
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { FieldOptionSchemaType, OptionSelectionCountLimit } from "../formValidation/fields";
+import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { SelectOption } from "../../formFields/Select";
@@ -30,6 +30,15 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
   });
   return results;
 };
+
+const multiSelectOptions = [
+  { name: "1 option", value: 1 },
+  { name: "2 options", value: 2 },
+  { name: "3 options", value: 3 },
+  { name: "4 options", value: 4 },
+  { name: "5 options", value: 5 },
+  { name: "No limit", value: OptionSelectionCountLimit.None },
+];
 
 export const defaultOption = (index: number): FieldOptionSchemaType => ({
   optionId: "new." + index,
@@ -99,6 +108,10 @@ export const FieldOptionsForm = ({
   const optionsError =
     formMethods.getFieldState(`steps.${formIndex}.${branch}.fields.${fieldIndex}`).error?.message ??
     "";
+
+  const optionSelectionType = formMethods.watch(
+    `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,
+  );
 
   const renderInput = (inputIndex: number, disabled: boolean) => {
     const dataType = formMethods.getValues(
@@ -189,6 +202,25 @@ export const FieldOptionsForm = ({
           size="small"
         />
       </Box>
+      {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
+        <ResponsiveFormRow>
+          <Select<FlowSchemaType>
+            control={formMethods.control}
+            label="How many options can be selected?"
+            width="400px"
+            renderValue={(val) => {
+              if (val === OptionSelectionCountLimit.None)
+                return "User can select any number of options";
+              const option = multiSelectOptions.find((option) => option.value === val);
+              return "User can select " + option?.name + " maximum";
+            }}
+            selectOptions={multiSelectOptions}
+            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.maxSelections`}
+            displayLabel={false}
+            size={"small"}
+          />
+        </ResponsiveFormRow>
+      )}
       {stepDefinedOptions.length > 0 &&
         fields.map((item, inputIndex) => {
           return (
