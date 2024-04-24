@@ -599,7 +599,7 @@ model ResultConfigDecision {
 model ResultConfigRank {
   id                  String         @id @default(uuid()) @db.Uuid
   // null means include all options
-  numOptionsToInclude Int            @map("num_options")
+  numOptionsToInclude Int?           @map("num_options")
   createdAt           DateTime       @default(now()) @map("created_at")
   ResultConfigs       ResultConfig[]
 

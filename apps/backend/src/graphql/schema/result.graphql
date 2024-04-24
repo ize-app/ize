@@ -13,7 +13,7 @@ type Ranking {
   resultConfigId: String!
   fieldId: String
   minimumAnswers: Int!
-  numOptionsToInclude: Int!
+  numOptionsToInclude: Int
 }
 
 type LlmSummary {
@@ -60,7 +60,7 @@ input DecisionArgs {
 }
 
 input PrioritizationArgs {
-  numOptionsToInclude: Int!
+  numOptionsToInclude: Int
 }
 
 input LlmSummaryArgs {

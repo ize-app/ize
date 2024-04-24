@@ -553,7 +553,7 @@ export type PermissionArgs = {
 };
 
 export type PrioritizationArgs = {
-  numOptionsToInclude: Scalars['Int']['input'];
+  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Query = {
@@ -630,7 +630,7 @@ export type Ranking = {
   __typename?: 'Ranking';
   fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
-  numOptionsToInclude: Scalars['Int']['output'];
+  numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
   resultConfigId: Scalars['String']['output'];
 };
 
@@ -1352,7 +1352,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  numOptionsToInclude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  numOptionsToInclude?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
