@@ -15,7 +15,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
   const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
     name: formState.name,
-    reusable: formState.reusable,
+    reusable: true,
     steps: formState.steps.map((step, index) => {
       return {
         ...step,

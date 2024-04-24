@@ -18,12 +18,6 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
   return (
     formIndex === 0 && (
       <StepComponentContainer label="Request">
-        <Switch<FlowSchemaType>
-          name={`reusable`}
-          control={formMethods.control}
-          label="Reusable flow"
-          sx={{ width: "100%" }}
-        />
         <ResponsiveFormRow>
           <Select
             control={formMethods.control}
