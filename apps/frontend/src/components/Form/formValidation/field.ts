@@ -5,6 +5,9 @@ import { FieldDataType } from "@/graphql/generated/graphql";
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
 export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
 
+export type OptionSelectionsSchemaType = z.infer<typeof optionSelectionsSchema>;
+export type OptionSelectionSchemaType = z.infer<typeof optionSelectionSchema>;
+
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
     const date = val as Dayjs;
@@ -73,13 +76,13 @@ export const evaluateMultiTypeInput = (
       return;
   }
 };
-
-export const optionSelectionsSchema = z.array(z.string().min(1));
+export const optionSelectionSchema = z.object({ optionId: z.string().min(1) });
+export const optionSelectionsSchema = z.array(optionSelectionSchema);
 
 const fieldAnswerSchema = z
   .object({
     dataType: z.nativeEnum(FieldDataType).optional(),
-    maxSelections: z.number().optional(),
+    maxSelections: z.number().nullable().optional(),
     value: z.any(),
     optionSelections: optionSelectionsSchema.optional(),
     required: z.boolean().optional(),
