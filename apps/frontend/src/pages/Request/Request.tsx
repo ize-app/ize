@@ -44,6 +44,7 @@ export const Request = () => {
 
   const canRespond = currStep?.userPermission.response ?? false;
   const userResponse = currReqStep.responses.find((r) => r.user.id === me?.user.id);
+  const allowMultipleResponses = currStep?.allowMultipleResponses ?? false;
 
   const theme = useTheme();
   // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -69,7 +70,7 @@ export const Request = () => {
               {request.flow.name}
             </Typography>
           </Box>
-          {canRespond && !userResponse && (
+          {canRespond && (!userResponse || allowMultipleResponses) && (
             <Accordion
               id="submit-response-panel"
               defaultExpanded={true}

@@ -296,15 +296,16 @@ model FlowVersion {
 // we'd need to create a steps_versions_model and flows_versions_steps model.
 // Too much complexity for v1
 model Step {
-  id                    String  @id @default(uuid()) @db.Uuid
-  flowVersionId         String  @map("flow_version_id") @db.Uuid
-  index                 Int
-  expirationSeconds     Int?    @default(0) @map("request_expiration_seconds")
-  requestPermissionsId  String  @map("request_permissions_id") @db.Uuid
-  responsePermissionsId String? @map("response_permissions_id") @db.Uuid
-  requestFieldSetId     String? @map("request_field_set_id") @db.Uuid
-  responseFieldSetId    String? @map("response_field_set_id") @db.Uuid
-  resultConfigSetId     String? @map("result_config_set_id") @db.Uuid
+  id                     String  @id @default(uuid()) @db.Uuid
+  flowVersionId          String  @map("flow_version_id") @db.Uuid
+  index                  Int
+  expirationSeconds      Int?    @default(0) @map("request_expiration_seconds")
+  allowMultipleResponses Boolean @default(false) @map("allow_multiple_responses")
+  requestPermissionsId   String  @map("request_permissions_id") @db.Uuid
+  responsePermissionsId  String? @map("response_permissions_id") @db.Uuid
+  requestFieldSetId      String? @map("request_field_set_id") @db.Uuid
+  responseFieldSetId     String? @map("response_field_set_id") @db.Uuid
+  resultConfigSetId      String? @map("result_config_set_id") @db.Uuid
 
   actionId  String?  @map("action_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")

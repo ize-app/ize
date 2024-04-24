@@ -23,6 +23,7 @@ const stepSchema = z
     }),
     result: resultsSchema,
     action: actionSchema,
+    allowMultipleResponses: z.boolean().default(false),
     expirationSeconds: z.coerce.number().int().positive().optional(),
   })
   .superRefine((step, ctx) => {

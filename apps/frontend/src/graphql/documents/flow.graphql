@@ -61,6 +61,7 @@ fragment Step on Step {
     ...Action
   }
   expirationSeconds
+  allowMultipleResponses
   userPermission {
     ...UserPermission
   }

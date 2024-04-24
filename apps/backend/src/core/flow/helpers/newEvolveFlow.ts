@@ -54,6 +54,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
   };
 
   return {
+    allowMultipleResponses: false,
     request: {
       permission: evolveArgs.requestPermission,
       fields: [requestFieldSetArgs],

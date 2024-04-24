@@ -4,7 +4,7 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { StepComponentContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { FieldsForm } from "./FieldsForm";
-import { RoleSearch, Select } from "../../formFields";
+import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
 
@@ -47,7 +47,6 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
             displayLabel={false}
             size="small"
           />
-
           {responseTrigger === PermissionType.Entities && (
             <RoleSearch<FlowSchemaType>
               key="responseRoleSearch"
@@ -61,7 +60,7 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
         </ResponsiveFormRow>
         {responseTrigger !== PermissionType.NA && (
           <>
-            <ResponsiveFormRow>
+            <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
               <Select<FlowSchemaType>
                 control={formMethods.control}
                 label="How long do people have to respond?"
@@ -75,7 +74,21 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
                 displayLabel={false}
                 size={"small"}
               />
+              <Switch<FlowSchemaType>
+                name={`steps.${formIndex}.allowMultipleResponses`}
+                control={formMethods.control}
+                label="Allow multiple responses"
+                // sx={{ flexGrow: 1 }}
+              />
             </ResponsiveFormRow>
+            {/* <ResponsiveFormRow>
+              <Switch<FlowSchemaType>
+                name={`steps.${formIndex}.allowMultipleResponses`}
+                control={formMethods.control}
+                label="Allow multiple responses"
+                sx={{ flexGrow: 1 }}
+              />
+            </ResponsiveFormRow> */}
             <ResponsiveFormRow>
               <FieldsForm formIndex={formIndex} branch={"response"} useFormMethods={formMethods} />
             </ResponsiveFormRow>

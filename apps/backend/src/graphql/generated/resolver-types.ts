@@ -467,6 +467,7 @@ export type NewResponseArgs = {
 
 export type NewStepArgs = {
   action: ActionArgs;
+  allowMultipleResponses: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request: StepRequestArgs;
   response?: InputMaybe<StepResponseArgs>;
@@ -719,6 +720,7 @@ export enum ResultType {
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
+  allowMultipleResponses: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
   index: Scalars['Int']['output'];
   request: RequestConfig;
@@ -1421,6 +1423,7 @@ export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentTyp
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
+  allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
