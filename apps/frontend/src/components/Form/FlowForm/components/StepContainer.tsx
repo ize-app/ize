@@ -16,8 +16,8 @@ export const StepContainer = ({
   handleStepExpansion,
 }: {
   children: React.ReactNode;
-  expandedStep: number | "EvolveStep" | false;
-  stepIdentifier: number | "EvolveStep";
+  expandedStep: string | false;
+  stepIdentifier: string | "Trigger";
   title: string;
   hasError: boolean;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
@@ -47,7 +47,7 @@ export const StepContainer = ({
         </Box>
       </AccordionSummary>
       <AccordionDetails
-        sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "20px" }}
+        sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "16px" }}
       >
         {children}
       </AccordionDetails>

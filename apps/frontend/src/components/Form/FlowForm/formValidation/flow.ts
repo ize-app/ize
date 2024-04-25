@@ -22,7 +22,7 @@ const stepSchema = z
       fields: fieldsSchema,
     }),
     result: resultsSchema,
-    action: actionSchema,
+    action: actionSchema.optional(),
     allowMultipleResponses: z.boolean().default(false),
     expirationSeconds: z.coerce.number().int().positive().optional(),
   })

@@ -4,16 +4,14 @@ import { FlowSchemaType } from "../formValidation/flow";
 
 import { StepContainer } from "./StepContainer";
 import { ResponseForm } from "./ResponseForm";
-import { RequestForm } from "./RequestForm";
 import { ResultType } from "@/graphql/generated/graphql";
-import { ActionForm } from "./ActionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
   stepsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: number | "EvolveStep" | false;
+  expandedStep: string | false;
   formIndex: number; // react-hook-form name
 }
 
@@ -30,33 +28,29 @@ export interface PreviousStepResult {
 export const StepForm = ({
   useFormMethods,
   formIndex,
-  stepsArrayMethods,
   handleStepExpansion,
   expandedStep,
 }: StepFormProps) => {
-  const { getValues: getFieldValues } = useFormMethods;
-  console.log("form state for ", formIndex, " is ", getFieldValues());
-  console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
+  // console.log("form state for ", formIndex, " is ", getFieldValues());
+  // console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
 
-  const hasError = !!useFormMethods.formState.errors.steps?.[formIndex];
+  const hasError =
+    !!useFormMethods.formState.errors.steps?.[formIndex]?.response ||
+    !!useFormMethods.formState.errors.steps?.[formIndex]?.result ||
+    !!useFormMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses ||
+    !!useFormMethods.formState.errors.steps?.[formIndex]?.expirationSeconds;
 
   return (
     <StepContainer
       expandedStep={expandedStep}
       handleStepExpansion={handleStepExpansion}
-      stepIdentifier={formIndex}
+      stepIdentifier={"step" + formIndex.toString()}
       hasError={hasError}
-      title={` Step ${formIndex + 1}`}
+      title={`Collab (${formIndex + 1})`}
     >
       <>
-        <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
         <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
         <ResultsForm formMethods={useFormMethods} formIndex={formIndex} />
-        <ActionForm
-          formMethods={useFormMethods}
-          formIndex={formIndex}
-          stepsArrayMethods={stepsArrayMethods}
-        />
       </>
     </StepContainer>
   );

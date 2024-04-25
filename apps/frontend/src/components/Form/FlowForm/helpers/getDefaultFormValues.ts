@@ -4,6 +4,7 @@ import { PermissionType } from "../formValidation/permission";
 import { ActionType } from "@/graphql/generated/graphql";
 
 export const defaultStepFormValues: StepSchemaType = {
+  allowMultipleResponses: false,
   request: {
     permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],

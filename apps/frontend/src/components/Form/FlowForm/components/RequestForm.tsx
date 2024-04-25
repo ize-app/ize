@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { StepComponentContainer } from "./StepContainer";
+import { StepContainer } from "./StepContainer";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
@@ -9,15 +9,30 @@ import { FieldsForm } from "./FieldsForm";
 interface RequestFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
+  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
+  expandedStep: string | false;
 }
 
-export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
+export const RequestForm = ({
+  formMethods,
+  formIndex,
+  handleStepExpansion,
+  expandedStep,
+}: RequestFormProps) => {
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
+  const hasError = !!formMethods.formState.errors.steps?.[formIndex]?.request;
+
   return (
     formIndex === 0 && (
-      <StepComponentContainer label="Request">
+      <StepContainer
+        expandedStep={expandedStep}
+        handleStepExpansion={handleStepExpansion}
+        stepIdentifier={"trigger0"}
+        hasError={hasError}
+        title={`Trigger`}
+      >
         <ResponsiveFormRow>
           <Select
             control={formMethods.control}
@@ -41,7 +56,8 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
           )}
         </ResponsiveFormRow>
         <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
-      </StepComponentContainer>
+        {/* </StepComponentContainer> */}
+      </StepContainer>
     )
   );
 };

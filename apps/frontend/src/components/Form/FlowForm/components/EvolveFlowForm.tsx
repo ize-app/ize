@@ -14,7 +14,7 @@ import { DecisionType } from "@/graphql/generated/graphql";
 interface EvolveProcessFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: number | "EvolveStep" | false;
+  expandedStep: string | false;
 }
 
 export const EvolveFlowForm = ({
