@@ -8,22 +8,16 @@ import { useEffect } from "react";
 import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
-import { StepContainer } from "./StepContainer";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
+import { Box } from "@mui/material";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
-  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: string | false;
+  show: boolean;
 }
 
-export const WebhookForm = ({
-  formMethods,
-  formIndex,
-  handleStepExpansion,
-  expandedStep,
-}: WebhookFormProps) => {
+export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) => {
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
   }, []);
@@ -57,13 +51,7 @@ export const WebhookForm = ({
   const hasError = !!formMethods.formState.errors.steps?.[formIndex]?.action;
 
   return (
-    <StepContainer
-      expandedStep={expandedStep}
-      handleStepExpansion={handleStepExpansion}
-      stepIdentifier={"webhook" + formIndex.toString()}
-      hasError={hasError} // to fix
-      title={`Call webhook`}
-    >
+    <Box sx={{ display: show ? "box" : "none" }}>
       <ResponsiveFormRow>
         {(options ?? []).length > 0 && actionType !== ActionType.None && (
           <>
@@ -108,6 +96,6 @@ export const WebhookForm = ({
           name={`steps.${formIndex}.action.callWebhook.name`}
         />
       </ResponsiveFormRow>
-    </StepContainer>
+    </Box>
   );
 };

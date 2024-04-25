@@ -22,6 +22,7 @@ export const WizardContainer = ({
         flexGrow: 1,
         marginTop: "16px",
         alignItems: "center",
+        height: "100%",
       }}
     >
       <Stepper activeStep={progressBarStep} sx={{ width: "100%" }}>
@@ -31,7 +32,7 @@ export const WizardContainer = ({
           </Step>
         ))}
       </Stepper>
-      <Box
+      {/* <Box
         sx={(theme) => ({
           display: "flex",
           flexDirection: "column",
@@ -43,9 +44,8 @@ export const WizardContainer = ({
           },
           maxWidth: "1000px",
         })}
-      >
-        {children}
-      </Box>
+      > */}
+      <Box sx={{ width: "100%", marginTop: "36px", height: "100%" }}>{children}</Box>
     </Box>
   );
 };

@@ -31,10 +31,10 @@ export const StepContainer = ({
             transform: "rotate(90deg)",
           },
         }}
-        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+        // expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
       >
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-          <Typography variant="h3" fontWeight={400}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+          <Typography color="primary" fontWeight={"500"}>
             {title}
           </Typography>
           <FormHelperText

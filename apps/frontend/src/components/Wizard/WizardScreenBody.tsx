@@ -5,5 +5,7 @@ interface WizardScreenBodyProps {
 }
 
 export const WizardScreenBody = ({ children }: WizardScreenBodyProps) => (
-  <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>{children}</Box>
+  <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%" }}>
+    {children}
+  </Box>
 );

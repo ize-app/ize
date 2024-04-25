@@ -13,15 +13,10 @@ import { DecisionType } from "@/graphql/generated/graphql";
 
 interface EvolveProcessFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
-  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: string | false;
+  show: boolean;
 }
 
-export const EvolveFlowForm = ({
-  formMethods,
-  handleStepExpansion,
-  expandedStep,
-}: EvolveProcessFormProps) => {
+export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) => {
   const requestPermissionType = formMethods.watch(`evolve.requestPermission.type`);
 
   const responsePermissionType = formMethods.watch(`evolve.responsePermission.type`);
@@ -31,13 +26,7 @@ export const EvolveFlowForm = ({
   const hasError = !!formMethods.formState.errors.evolve;
 
   return (
-    <StepContainer
-      expandedStep={expandedStep}
-      handleStepExpansion={handleStepExpansion}
-      stepIdentifier={"EvolveStep"}
-      title={`How this flow evolves`}
-      hasError={hasError}
-    >
+    <Box sx={{ display: show ? "box" : "none" }}>
       <StepComponentContainer label={"Request"}>
         <Box sx={{ display: "none" }}>
           {/* <Select<FlowSchemaType>
@@ -158,6 +147,6 @@ export const EvolveFlowForm = ({
           )}
         </ResponsiveFormRow>
       </>
-    </StepContainer>
+    </Box>
   );
 };

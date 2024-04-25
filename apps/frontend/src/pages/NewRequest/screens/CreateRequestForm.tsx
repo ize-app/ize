@@ -28,6 +28,7 @@ import {
 import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { Radio } from "../../../components/Form/formFields/Radio";
+import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 export const CreateRequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
@@ -72,29 +73,6 @@ export const CreateRequestForm = () => {
   }, [step, loading, setFormState]);
 
   const formMethods = useForm({
-    // defaultValues: {
-    //   name: "test",
-    //   requestFields: {
-    //     "2e07f9e0-3bd7-44df-a603-5ef4ee52a760": {
-    //       selectionType: "Rank",
-    //       maxSelections: null,
-    //       optionSelections: [
-    //         {
-    //           optionId: "91ddf40a-ba01-4c0d-ae0f-9482f43a6860",
-    //         },
-    //         {
-    //           optionId: "9a7efef1-fa00-4afc-a97d-cc55c6c5666d",
-    //         },
-    //         {
-    //           optionId: "9b3404ca-2102-4861-acd9-eeac7572715d",
-    //         },
-    //         {
-    //           optionId: "36cadaa0-a52e-42bf-a726-da6d91387a5c",
-    //         },
-    //       ],
-    //     },
-    //   },
-    // },
     defaultValues: formState ?? {},
     resolver: zodResolver(requestSchema),
     shouldUnregister: true,
@@ -123,7 +101,7 @@ export const CreateRequestForm = () => {
     <Loading />
   ) : (
     <>
-      <WizardBody>
+      <WizardScreenBodyNarrow>
         {/* <div>Create a new request for {formState.process?.name}</div> */}
         <Box
           sx={{
@@ -258,7 +236,7 @@ export const CreateRequestForm = () => {
             formMethods={formMethods}
           />
         </Box>
-      </WizardBody>
+      </WizardScreenBodyNarrow>
       <WizardNav
         onNext={formMethods.handleSubmit(onSubmit)}
         onPrev={onPrev}
