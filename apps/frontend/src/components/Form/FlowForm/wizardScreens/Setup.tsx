@@ -254,7 +254,7 @@ export const Setup = () => {
               icon={<ChangeCircleOutlinedIcon color="primary" />}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
-              sx={{ marginTop: "60px" }}
+              sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
             />
           </DiagramPanel>
         </Box>

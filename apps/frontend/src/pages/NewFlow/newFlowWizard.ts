@@ -11,7 +11,7 @@ export const NEW_FLOW_PROGRESS_BAR_STEPS = ["Setup", "Confirm"];
 export const NEW_FLOW_WIZARD_STEPS: WizardSteps<FlowSchemaType> = [
   {
     path: newFlowRoute(NewFlowRoute.Setup),
-    title: "New flow Setup",
+    title: "New flow setup",
     progressBarStep: 0,
     canNext: () => true,
     validWizardState: () => true,
