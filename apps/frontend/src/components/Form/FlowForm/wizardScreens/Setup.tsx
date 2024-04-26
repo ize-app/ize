@@ -7,7 +7,7 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { WizardNav } from "@/components/Wizard";
 import { flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
-import { TextField } from "../../formFields";
+import { StreamlinedTextField } from "../../formFields";
 import { EntityType, DecisionType, ActionType } from "@/graphql/generated/graphql";
 import React, { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
@@ -148,14 +148,12 @@ export const Setup = () => {
           })}
         >
           <StageHeader>
-            <TextField<FlowSchemaType>
+            <StreamlinedTextField
               control={useFormMethods.control}
               sx={{ width: "100%" }}
               label="Name of this flow"
               placeholderText="Name of this flow"
-              variant="standard"
               size="small"
-              showLabel={false}
               name={`name`}
             />
           </StageHeader>
