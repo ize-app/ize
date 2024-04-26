@@ -1,25 +1,28 @@
 import { UseFormReturn } from "react-hook-form";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { RoleSearch, Select } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
 import { FieldsForm } from "./FieldsForm";
 import { Box } from "@mui/material";
+import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
 
-interface RequestFormProps {
+interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
   show: boolean;
 }
 
-export const RequestForm = ({ formMethods, formIndex, show }: RequestFormProps) => {
+export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
   return (
     formIndex === 0 && (
       <Box sx={{ display: show ? "block" : "none" }}>
-        <ResponsiveFormRow>
+        <FieldGroupAccordion
+          title="Permission"
+          hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.permission}
+        >
           <Select
             control={formMethods.control}
             width="300px"
@@ -40,8 +43,13 @@ export const RequestForm = ({ formMethods, formIndex, show }: RequestFormProps) 
               getFieldValues={formMethods.getValues}
             />
           )}
-        </ResponsiveFormRow>
-        <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
+        </FieldGroupAccordion>
+        <FieldGroupAccordion
+          title="Request fields"
+          hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
+        >
+          <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
+        </FieldGroupAccordion>
       </Box>
     )
   );

@@ -14,7 +14,7 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { Button, Typography } from "@mui/material";
 import { StageContainer } from "../components/StageContainer";
-import { RequestForm } from "../components/RequestForm";
+import { TriggerForm } from "../components/TriggerForm";
 import { StepForm } from "../components/StepForm";
 import { StageConnectorButton } from "../components/StageConnectorButton";
 import { WebhookForm } from "../components/WebhookForm";
@@ -49,7 +49,7 @@ const ConfigurationPanel = ({ children }: { children: React.ReactNode }) => {
         height: "100%",
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         backgroundColor: "white",
-        padding: "1rem",
+        // padding: "1rem",
       }}
     >
       {children}
@@ -273,7 +273,7 @@ export const Setup = () => {
             </Typography>
           </StageHeader>
           <ConfigurationPanel>
-            <RequestForm
+            <TriggerForm
               formMethods={useFormMethods}
               formIndex={0}
               show={selectedId === "trigger0"}

@@ -5,11 +5,13 @@ import * as style from "./style";
 declare module "@mui/material/styles" {
   interface TypographyVariants {
     label: React.CSSProperties;
+    label2: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions {
     label?: React.CSSProperties;
+    label2?: React.CSSProperties;
   }
 }
 
@@ -17,6 +19,7 @@ declare module "@mui/material/styles" {
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     label: true;
+    label2: true;
   }
 }
 
@@ -52,6 +55,12 @@ const muiTheme = createTheme({
       color: style.colors.primary,
       fontWeight: 500,
       letterSpacing: ".05rem",
+    },
+    label2: {
+      fontSize: ".7rem",
+      color: style.colors.primary,
+      fontWeight: 500,
+      letterSpacing: ".1rem",
     },
   },
   components: {
