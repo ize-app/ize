@@ -1,4 +1,5 @@
-import { FormHelperText, Paper, SxProps, Typography } from "@mui/material";
+import { Warning, WarningOutlined } from "@mui/icons-material";
+import { Box, FormHelperText, Paper, SxProps, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 
 interface StageContainerProps {
@@ -22,32 +23,34 @@ export const StageContainer = ({
 }: StageContainerProps) => {
   const isSelected = selectedId === id;
   return (
-    <Paper
-      onClick={() => {
-        setSelectedId(id);
-      }}
+    <Box
       sx={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
-        border: "1px solid",
-        borderColor: hasError ? "red" : "primary",
-        width: "200px",
-        height: "40px",
-        ...sx,
+        marginLeft: hasError ? "28px" : "0px",
       }}
     >
-      <Typography color="primary">{label}</Typography>
-      {children}
-      {isSelected && "selected"}
-      <FormHelperText
+      <Paper
+        onClick={() => {
+          setSelectedId(id);
+        }}
         sx={{
-          color: "error.main",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px solid",
+          borderColor: hasError ? "red" : "primary",
+          width: "200px",
+          height: "40px",
+          ...sx,
         }}
       >
-        {hasError ? "Error in this step" : null}
-      </FormHelperText>
-    </Paper>
+        <Typography color="primary">{label}</Typography>
+        {children}
+      </Paper>
+      {hasError && <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />}
+    </Box>
   );
 };
