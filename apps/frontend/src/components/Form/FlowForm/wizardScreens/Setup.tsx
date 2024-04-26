@@ -19,6 +19,10 @@ import { StepForm } from "../components/StepForm";
 import { StageConnectorButton } from "../components/StageConnectorButton";
 import { WebhookForm } from "../components/WebhookForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
+import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
+import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
+import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 
 const StageHeader = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -164,12 +168,14 @@ export const Setup = () => {
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
+              icon={<PlayCircleOutlineOutlinedIcon color="primary" />}
             />
             <StageConnectorButton />
             {stepsArrayMethods.fields.map((item, index) => {
               return (
                 <>
                   <StageContainer
+                    icon={<Diversity3OutlinedIcon color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
                     key={"stage-" + item.id}
                     hasError={
@@ -233,6 +239,7 @@ export const Setup = () => {
                 id={"webhook"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
+                icon={<PublicOutlinedIcon color="primary" />}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
                     ?.action
@@ -244,6 +251,7 @@ export const Setup = () => {
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
+              icon={<ChangeCircleOutlinedIcon color="primary" />}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               sx={{ marginTop: "60px" }}
