@@ -9,10 +9,10 @@ import { flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 import { TextField } from "../../formFields";
 import { EntityType, DecisionType, ActionType } from "@/graphql/generated/graphql";
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { Button, Paper } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { StageContainer } from "../components/StageContainer";
 import { RequestForm } from "../components/RequestForm";
 import { StepForm } from "../components/StepForm";
@@ -20,9 +20,59 @@ import { StageConnectorButton } from "../components/StageConnectorButton";
 import { WebhookForm } from "../components/WebhookForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 
+const StageHeader = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        backgroundColor: "white",
+        padding: "1rem",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const ConfigurationPanel = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        height: "100%",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        backgroundColor: "white",
+        padding: "1rem",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        height: "100%",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        display: "flex",
+        flexDirection: "column",
+        padding: "48px 0px",
+        alignItems: "center",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
-  const [expandedNew, setExpandedNew] = useState<string | false>("trigger0"); // change to step1
+  const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
 
   const fieldArrayName = "steps";
 
@@ -73,158 +123,170 @@ export const Setup = () => {
   };
 
   return (
-    <form style={{ height: "90%" }}>
-      {/* <WizardBody> */}
+    <form style={{ height: "100%" }}>
       <Box
-        sx={{
+        sx={(theme) => ({
           display: "flex",
-          flexDirection: "horizontal",
-          height: "100%",
-          gap: "36px",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
+          [theme.breakpoints.down("md")]: {
             flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            // gap: "24px",
-            maxWidth: "1200px",
-            width: "50%",
-          }}
+          },
+          flexDirection: "row",
+          width: "100%",
+          height: "100%",
+        })}
+      >
+        {/* Flow diagram*/}
+        <Box
+          sx={(theme) => ({
+            [theme.breakpoints.down("md")]: {
+              flexGrow: 0,
+            },
+            flexGrow: 1,
+            display: "flex",
+            minWidth: "300px",
+            flexDirection: "column",
+          })}
         >
-          <TextField<FlowSchemaType>
-            control={useFormMethods.control}
-            sx={{ width: "100%" }}
-            label="Name of this flow"
-            placeholderText="What's the purpose of this form?"
-            variant="outlined"
-            size="small"
-            showLabel={true}
-            name={`name`}
-          />
-          <StageContainer
-            label="Trigger"
-            onClick={() => {
-              setExpandedNew("trigger");
-            }}
-            hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
-          />
-          <StageConnectorButton />
-          {stepsArrayMethods.fields.map((item, index) => {
-            return (
-              <>
-                <StageContainer
-                  label={"Collaboration " + (index + 1).toString()}
-                  key={"stage-" + item.id}
-                  hasError={
-                    !!useFormMethods.formState.errors.steps?.[index]?.response ||
-                    !!useFormMethods.formState.errors.steps?.[index]?.result ||
-                    !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses ||
-                    !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds
-                  }
-                  onClick={() => {
-                    setExpandedNew("step" + index.toString());
-                  }}
-                />
-                <StageConnectorButton />
-              </>
-            );
-          })}
-
-          {!hasWebhook ? (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "16px",
-                flexWrap: "wrap",
-                width: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "8px",
-                marginBottom: "16px",
-              }}
-            >
-              <Button
-                variant="outlined"
-                size="medium"
-                color="secondary"
-                sx={{ border: "3px dashed", width: "200px" }}
-                onClick={() => {
-                  stepsArrayMethods.append(defaultStepFormValues);
-                }}
-              >
-                Add collaborative step
-              </Button>
-              <Button
-                variant="outlined"
-                size="medium"
-                color="secondary"
-                sx={{ border: "3px dashed", width: "200px" }}
-                onClick={() => {
-                  //@ts-ignore
-                  useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
-                    type: ActionType.CallWebhook,
-                  });
-                  setExpandedNew("webhook");
-                }}
-              >
-                Trigger webhook
-              </Button>
-            </Box>
-          ) : (
+          <StageHeader>
+            <TextField<FlowSchemaType>
+              control={useFormMethods.control}
+              sx={{ width: "100%" }}
+              label="Name of this flow"
+              placeholderText="Name of this flow"
+              variant="standard"
+              size="small"
+              showLabel={false}
+              name={`name`}
+            />
+          </StageHeader>
+          <DiagramPanel>
             <StageContainer
-              label="Webhook"
-              onClick={() => {
-                setExpandedNew("webhook");
-              }}
-              hasError={
-                !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
-                  ?.action
-              }
+              label="Trigger"
+              id={"trigger0"}
+              setSelectedId={setSelectedId}
+              selectedId={selectedId}
+              hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
             />
-          )}
-          <StageContainer
-            label={"How this flow evolves"}
-            key={"evolve"}
-            hasError={!!useFormMethods.formState.errors.evolve}
-            onClick={() => {
-              setExpandedNew("evolve");
-            }}
-            sx={{ marginTop: "60px" }}
-          />
-        </Box>
-        <Paper elevation={3} sx={{ width: "50%", backgroundColor: "white" }}>
-          <RequestForm
-            formMethods={useFormMethods}
-            formIndex={0}
-            show={expandedNew === "trigger"}
-          />
-          {stepsArrayMethods.fields.map((item, index) => {
-            return (
-              <StepForm
-                // id={item.id}
-                useFormMethods={useFormMethods}
-                formIndex={index}
-                key={"step-" + item.id}
-                show={expandedNew === "step" + index.toString()}
+            <StageConnectorButton />
+            {stepsArrayMethods.fields.map((item, index) => {
+              return (
+                <>
+                  <StageContainer
+                    label={"Collaboration " + (index + 1).toString()}
+                    key={"stage-" + item.id}
+                    hasError={
+                      !!useFormMethods.formState.errors.steps?.[index]?.response ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.result ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds
+                    }
+                    id={"step" + index.toString()}
+                    setSelectedId={setSelectedId}
+                    selectedId={selectedId}
+                  />
+                  <StageConnectorButton />
+                </>
+              );
+            })}
+            {!hasWebhook ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "8px",
+                  marginBottom: "16px",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  color="secondary"
+                  sx={{ border: "3px dashed", width: "200px" }}
+                  onClick={() => {
+                    stepsArrayMethods.append(defaultStepFormValues);
+                  }}
+                >
+                  Add collaborative step
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  color="secondary"
+                  sx={{ border: "3px dashed", width: "200px" }}
+                  onClick={() => {
+                    //@ts-ignore
+                    useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
+                      type: ActionType.CallWebhook,
+                    });
+                    setSelectedId("webhook");
+                  }}
+                >
+                  Trigger webhook
+                </Button>
+              </Box>
+            ) : (
+              <StageContainer
+                label="Webhook"
+                id={"webhook"}
+                setSelectedId={setSelectedId}
+                selectedId={selectedId}
+                hasError={
+                  !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
+                    ?.action
+                }
               />
-            );
-          })}
-          {hasWebhook && (
-            <WebhookForm
-              formMethods={useFormMethods}
-              formIndex={stepsArrayMethods.fields.length - 1}
-              show={expandedNew === "webhook"}
+            )}
+            <StageContainer
+              label={"How this flow evolves"}
+              key={"evolve"}
+              hasError={!!useFormMethods.formState.errors.evolve}
+              id={"evolve"}
+              setSelectedId={setSelectedId}
+              selectedId={selectedId}
+              sx={{ marginTop: "60px" }}
             />
-          )}
-          <EvolveFlowForm formMethods={useFormMethods} show={expandedNew === "evolve"} />
-        </Paper>
+          </DiagramPanel>
+        </Box>
+        {/* Configuration panel*/}
+        <Box sx={{ minWidth: "300px", flexGrow: 1, display: "flex", flexDirection: "column" }}>
+          <StageHeader>
+            <Typography color="primary" variant="label">
+              Configuration
+            </Typography>
+          </StageHeader>
+          <ConfigurationPanel>
+            <RequestForm
+              formMethods={useFormMethods}
+              formIndex={0}
+              show={selectedId === "trigger0"}
+            />
+            {stepsArrayMethods.fields.map((item, index) => {
+              return (
+                <StepForm
+                  // id={item.id}
+                  useFormMethods={useFormMethods}
+                  formIndex={index}
+                  key={"step-" + item.id}
+                  show={selectedId === "step" + index.toString()}
+                />
+              );
+            })}
+            {hasWebhook && (
+              <WebhookForm
+                formMethods={useFormMethods}
+                formIndex={stepsArrayMethods.fields.length - 1}
+                show={selectedId === "webhook"}
+              />
+            )}
+            <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />
+          </ConfigurationPanel>
+        </Box>
       </Box>
-      {/* </WizardBody> */}
       <WizardNav
         onNext={useFormMethods.handleSubmit(onSubmit)}
         onPrev={onPrev}

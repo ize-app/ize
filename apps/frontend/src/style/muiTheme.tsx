@@ -37,19 +37,19 @@ const muiTheme = createTheme({
       textTransform: "none",
     },
     h1: {
-      fontSize: "2.5rem",
+      fontSize: "1.75rem",
       fontWeight: "400",
       margin: "1rem 0rem",
     },
     h2: {
-      fontSize: "2rem",
+      fontSize: "1.5rem",
     },
     h3: {
-      fontSize: "1.5rem",
+      fontSize: "1.25rem",
     },
     label: {
       fontSize: ".875rem",
-      color: style.colors.secondary,
+      color: style.colors.primary,
       fontWeight: 500,
       letterSpacing: ".05rem",
     },

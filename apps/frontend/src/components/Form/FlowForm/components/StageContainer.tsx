@@ -1,23 +1,31 @@
-import { Box, FormHelperText, Paper, SxProps, Typography } from "@mui/material";
+import { FormHelperText, Paper, SxProps, Typography } from "@mui/material";
+import { Dispatch, SetStateAction } from "react";
 
 interface StageContainerProps {
   label: string;
+  id: string;
   children?: React.ReactNode;
   sx?: SxProps;
   hasError?: boolean;
-  onClick: () => void;
+  setSelectedId: Dispatch<SetStateAction<string | false>>;
+  selectedId: string | false;
 }
 
 export const StageContainer = ({
   label,
+  id,
   children,
+  setSelectedId,
+  selectedId,
   hasError = false,
-  onClick,
   sx = {},
 }: StageContainerProps) => {
+  const isSelected = selectedId === id;
   return (
     <Paper
-      onClick={onClick}
+      onClick={() => {
+        setSelectedId(id);
+      }}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -32,6 +40,7 @@ export const StageContainer = ({
     >
       <Typography color="primary">{label}</Typography>
       {children}
+      {isSelected && "selected"}
       <FormHelperText
         sx={{
           color: "error.main",
