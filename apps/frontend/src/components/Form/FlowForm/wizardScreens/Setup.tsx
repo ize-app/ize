@@ -74,6 +74,23 @@ const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const AddButton = ({ label, onClick }: { label: string; onClick: () => void }) => (
+  <Button
+    variant="outlined"
+    size="medium"
+    color="secondary"
+    sx={{
+      width: "240px",
+      border: "2px dashed",
+      "&&:hover": {
+        border: "2px dashed",
+      },
+    }}
+    onClick={onClick}
+  >
+    {label}
+  </Button>
+);
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
   const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
@@ -206,22 +223,14 @@ export const Setup = () => {
                   marginBottom: "16px",
                 }}
               >
-                <Button
-                  variant="outlined"
-                  size="medium"
-                  color="secondary"
-                  sx={{ border: "3px dashed", width: "200px" }}
+                <AddButton
+                  label={"Add collaborative step"}
                   onClick={() => {
                     stepsArrayMethods.append(defaultStepFormValues);
                   }}
-                >
-                  Add collaborative step
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="medium"
-                  color="secondary"
-                  sx={{ border: "3px dashed", width: "200px" }}
+                />
+                <AddButton
+                  label={"Trigger webhook"}
                   onClick={() => {
                     //@ts-ignore
                     useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
@@ -229,9 +238,7 @@ export const Setup = () => {
                     });
                     setSelectedId("webhook");
                   }}
-                >
-                  Trigger webhook
-                </Button>
+                />
               </Box>
             ) : (
               <StageContainer

@@ -42,7 +42,6 @@ export const StageContainer = ({
           width: "240px",
           padding: "8px",
           "&&:hover": {
-            // backgroundColor: "#B69DF8",
             boxShadow: `0px 0px 0px 2px ${colors.primaryContainer} inset`,
           },
           ...sx,
