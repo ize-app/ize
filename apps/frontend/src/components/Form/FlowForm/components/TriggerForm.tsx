@@ -16,16 +16,14 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
+  const error = formMethods.formState.errors.steps?.[formIndex]?.request;
+
   return (
     formIndex === 0 && (
       <Box sx={{ display: show ? "block" : "none" }}>
-        <FieldGroupAccordion
-          title="Permission"
-          hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.permission}
-        >
+        <FieldGroupAccordion title="Permission" hasError={!!error?.permission}>
           <Select
             control={formMethods.control}
-            width="300px"
             name={`steps.${formIndex}.request.permission.type`}
             selectOptions={[
               { name: "Certain individuals and groups", value: PermissionType.Entities },
@@ -44,10 +42,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
             />
           )}
         </FieldGroupAccordion>
-        <FieldGroupAccordion
-          title="Request fields"
-          hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
-        >
+        <FieldGroupAccordion title="Request fields" hasError={!!error?.fields}>
           <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
         </FieldGroupAccordion>
       </Box>

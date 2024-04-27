@@ -91,7 +91,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   />
                   <Select<FlowSchemaType>
                     control={control}
-                    width="110px"
                     displayLabel={false}
                     size={"small"}
                     disabled={noEdit}
@@ -107,7 +106,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   {fieldType === FieldType.FreeInput ? (
                     <Select<FlowSchemaType>
                       control={control}
-                      width="160px"
                       displayLabel={false}
                       size={"small"}
                       disabled={noEdit}
@@ -125,7 +123,6 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   ) : (
                     <Select<FlowSchemaType>
                       control={control}
-                      width="160px"
                       name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
                       selectOptions={[
                         {

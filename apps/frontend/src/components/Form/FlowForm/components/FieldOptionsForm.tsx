@@ -207,7 +207,6 @@ export const FieldOptionsForm = ({
           <Select<FlowSchemaType>
             control={formMethods.control}
             label="How many options can be selected?"
-            width="400px"
             renderValue={(val) => {
               if (val === OptionSelectionCountLimit.None)
                 return "User can select any number of options";
@@ -247,7 +246,6 @@ export const FieldOptionsForm = ({
                 </Box>
                 <Select<FlowSchemaType>
                   control={control}
-                  width="120px"
                   displayLabel={false}
                   size={"small"}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
@@ -283,10 +281,8 @@ export const FieldOptionsForm = ({
               <ResponsiveFormRow key={item.id}>
                 <Select<FlowSchemaType>
                   control={control}
-                  width="120px"
                   displayLabel={false}
                   size={"small"}
-                  flexGrow="1"
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                   key={"links" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={possibleLinkOptions}
@@ -315,7 +311,6 @@ export const FieldOptionsForm = ({
           <Typography sx={{ flexGrow: 1 }}>Requestor can add options</Typography>
           <Select
             control={formMethods.control}
-            width="150px"
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
             selectOptions={[
               { name: "Text", value: FieldDataType.String },

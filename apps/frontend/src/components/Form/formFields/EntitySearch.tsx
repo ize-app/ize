@@ -85,7 +85,7 @@ export const EntitySearch = <T extends FieldValues>({
         control={control}
         render={({ field, fieldState: { error } }) => {
           return (
-            <FormControl required sx={{ flexGrow: 1, flexBasis: "300px" }}>
+            <FormControl required>
               <Autocomplete
                 includeInputInList={true}
                 multiple
@@ -254,7 +254,7 @@ export const EntitySearch = <T extends FieldValues>({
                       ...params.InputProps,
                       type: "search",
                     }}
-                    variant="standard"
+                    variant="outlined"
                     error={Boolean(error)}
                   />
                 )}

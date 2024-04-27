@@ -67,6 +67,8 @@ const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
         flexDirection: "column",
         padding: "48px 0px",
         alignItems: "center",
+        // backgroundColor: "#FBFBFB",
+        // backgroundImage: "url('/grid.svg')",
       }}
     >
       {children}
@@ -160,11 +162,12 @@ export const Setup = () => {
         <Box
           sx={(theme) => ({
             [theme.breakpoints.down("md")]: {
-              flexGrow: 0,
+              width: "100%",
             },
-            flexGrow: 1,
+            // flexGrow: 1,
             display: "flex",
-            minWidth: "300px",
+            width: "50%",
+            // minWidth: "300px",
             flexDirection: "column",
           })}
         >
@@ -254,7 +257,7 @@ export const Setup = () => {
               />
             )}
             <StageContainer
-              label={"How this flow evolves"}
+              label={"Flow evolution"}
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
@@ -266,7 +269,19 @@ export const Setup = () => {
           </DiagramPanel>
         </Box>
         {/* Configuration panel*/}
-        <Box sx={{ minWidth: "300px", flexGrow: 1, display: "flex", flexDirection: "column" }}>
+        <Box
+          sx={(theme) => ({
+            [theme.breakpoints.down("md")]: {
+              width: "100%",
+            },
+            // minWidth: "300px",
+            // flexGrow: 1,
+            height: "100%",
+            width: "50%",
+            display: "flex",
+            flexDirection: "column",
+          })}
+        >
           <StageHeader>
             <Typography color="primary" variant="label">
               Configuration
@@ -282,7 +297,7 @@ export const Setup = () => {
               return (
                 <StepForm
                   // id={item.id}
-                  useFormMethods={useFormMethods}
+                  formMethods={useFormMethods}
                   formIndex={index}
                   key={"step-" + item.id}
                   show={selectedId === "step" + index.toString()}

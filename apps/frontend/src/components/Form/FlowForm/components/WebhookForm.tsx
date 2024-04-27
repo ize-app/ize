@@ -9,7 +9,8 @@ import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { Box } from "@mui/material";
+import { Box, FormHelperText } from "@mui/material";
+import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -48,46 +49,39 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
     value: DefaultOptionSelection.None,
   });
 
-  const hasError = !!formMethods.formState.errors.steps?.[formIndex]?.action;
+  const webhookError = formMethods.formState.errors.steps?.[formIndex]?.action;
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
-      <ResponsiveFormRow>
+      <FieldGroupAccordion title="Setup" hasError={!!webhookError}>
+        {!!webhookError?.root && (
+          <FormHelperText
+            sx={{
+              color: "error.main",
+            }}
+          >
+            {webhookError.root?.message}
+          </FormHelperText>
+        )}
         {(options ?? []).length > 0 && actionType !== ActionType.None && (
           <>
             <Select<FlowSchemaType>
               control={formMethods.control}
               label="When to run action"
-              width="300px"
               renderValue={(val) => {
                 const optionName = getSelectOptionName(options, val);
                 if (optionName) {
                   return "Only run action on: " + optionName;
                 } else return "Run action on all options";
               }}
-              flexGrow="1"
               selectOptions={defaultOptionSelections}
               displayLabel={false}
               name={`steps.${formIndex}.action.filterOptionId`}
             />
           </>
         )}
-      </ResponsiveFormRow>
-
-      <ResponsiveFormRow>
         <TextField<FlowSchemaType>
           control={formMethods.control}
-          sx={{ width: "300px" }}
-          label="Url"
-          variant="standard"
-          size="small"
-          showLabel={false}
-          placeholderText="Webhook Uri (not displayed publicly)"
-          name={`steps.${formIndex}.action.callWebhook.uri`}
-        />
-        <TextField<FlowSchemaType>
-          control={formMethods.control}
-          sx={{ width: "300px", flexGrow: 1 }}
           label="What does this webhook do?"
           placeholderText="What does this webhook do?"
           variant="standard"
@@ -95,7 +89,16 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           showLabel={false}
           name={`steps.${formIndex}.action.callWebhook.name`}
         />
-      </ResponsiveFormRow>
+        <TextField<FlowSchemaType>
+          control={formMethods.control}
+          label="Url"
+          variant="standard"
+          size="small"
+          showLabel={false}
+          placeholderText="Webhook Uri (not displayed publicly)"
+          name={`steps.${formIndex}.action.callWebhook.uri`}
+        />
+      </FieldGroupAccordion>
     </Box>
   );
 };

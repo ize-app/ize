@@ -1,12 +1,10 @@
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Controller, FieldValues, Path, PathValue, UseControllerProps } from "react-hook-form";
-
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect from "@mui/material/Select";
 import Loading from "../../Loading";
-import { TextFieldVariants } from "@mui/material";
+import { SxProps, TextFieldVariants } from "@mui/material";
 import { ReactNode } from "react";
 
 export interface SelectOption {
@@ -18,13 +16,12 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
   displayLabel?: boolean;
   selectOptions: SelectOption[];
-  width: string;
   required?: boolean;
   loading?: boolean;
   variant?: TextFieldVariants;
   renderValue?: (value: PathValue<T, Path<T>>) => ReactNode;
   size?: "small" | "medium";
-  flexGrow?: string;
+  sx?: SxProps;
   displayEmpty?: boolean;
 }
 
@@ -32,16 +29,15 @@ export const Select = <T extends FieldValues>({
   name,
   control,
   label,
-  width,
+  sx = {},
   selectOptions,
   displayEmpty = false,
   renderValue,
-  displayLabel = false,
+  displayLabel = true,
   required = false,
   loading = false,
   variant = "standard",
   size = "small",
-  flexGrow = "0",
 
   ...props
 }: SelectProps<T>): JSX.Element => (
@@ -51,20 +47,20 @@ export const Select = <T extends FieldValues>({
     render={({ field, fieldState: { error } }) => {
       return (
         <FormControl
-          sx={{ width, textAlign: "left", flexGrow }}
+          sx={{ textAlign: "left", flexGrow: 1, ...sx }}
           error={Boolean(error)}
           required={required}
         >
-          {displayLabel && !field.value && <InputLabel id={`select-${name}`}>{label}</InputLabel>}
+          {/* {<InputLabel id={`select-${name}`}>{label}</InputLabel>} */}
           <MuiSelect
             {...props}
             autoWidth={true}
             {...field}
-            label={displayLabel ? label : ""}
+            label={""}
             aria-label={label}
             size={size}
             renderValue={renderValue}
-            variant={variant}
+            variant={"outlined"}
             displayEmpty={displayEmpty}
           >
             {loading ? (
