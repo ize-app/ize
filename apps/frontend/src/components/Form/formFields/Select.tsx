@@ -36,7 +36,7 @@ export const Select = <T extends FieldValues>({
   displayLabel = true,
   required = false,
   loading = false,
-  variant = "standard",
+  variant = "outlined",
   size = "small",
 
   ...props
@@ -60,7 +60,7 @@ export const Select = <T extends FieldValues>({
             aria-label={label}
             size={size}
             renderValue={renderValue}
-            variant={"outlined"}
+            variant={variant}
             displayEmpty={displayEmpty}
           >
             {loading ? (

@@ -1,4 +1,4 @@
-import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
@@ -12,7 +12,6 @@ import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];
@@ -148,11 +147,10 @@ export const FieldOptionsForm = ({
             placeholderText={`Option #${inputIndex + 1}`}
             showLabel={false}
             multiline
-            sx={{ flexGrow: 1, flexBasis: "100px" }}
+            // sx={{ flexGrow: 1 }}
             label={`Option #${inputIndex + 1}`}
             disabled={disabled}
             size="small"
-            variant="standard"
           />
         );
     }
@@ -164,8 +162,6 @@ export const FieldOptionsForm = ({
         display: "flex",
         flexDirection: "column",
         gap: "8px",
-        alignItems: "flex-start",
-        padding: "8px",
         flexGrow: 1,
       }}
     >
@@ -177,7 +173,6 @@ export const FieldOptionsForm = ({
           control={control}
           showLabel={false}
           label={`Has request options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
@@ -187,7 +182,6 @@ export const FieldOptionsForm = ({
           control={control}
           showLabel={false}
           label={`Linked options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
@@ -197,7 +191,6 @@ export const FieldOptionsForm = ({
           control={control}
           showLabel={false}
           label={`Linked options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
@@ -220,17 +213,24 @@ export const FieldOptionsForm = ({
           />
         </ResponsiveFormRow>
       )}
+      <Typography variant={"label2"}>Available options</Typography>
       {stepDefinedOptions.length > 0 &&
         fields.map((item, inputIndex) => {
           return (
-            <LabeledGroupedInputs
-              label={"Option " + (inputIndex + 1).toString()}
+            <Box
               sx={{
                 display: "flex",
-                flexDirection: "Row",
-                padding: "8px",
+                flexDirection: "row",
+                flexGrow: 1,
               }}
             >
+              <IconButton
+                color="primary"
+                aria-label="Remove option"
+                onClick={() => remove(inputIndex)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
               <ResponsiveFormRow key={item.id}>
                 <Box sx={{ display: "none" }}>
                   <TextField<FlowSchemaType>
@@ -239,7 +239,6 @@ export const FieldOptionsForm = ({
                     control={control}
                     showLabel={false}
                     label={`Option ID - ignore`}
-                    variant="standard"
                     disabled={true}
                     size="small"
                   />
@@ -248,6 +247,7 @@ export const FieldOptionsForm = ({
                   control={control}
                   displayLabel={false}
                   size={"small"}
+                  sx={{ width: "100px", flexGrow: 0 }}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
                   key={"dataType" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={[
@@ -258,19 +258,11 @@ export const FieldOptionsForm = ({
                     { name: "Date", value: FieldDataType.Date },
                   ]}
                   label="Type"
-                  variant="standard"
                 />
 
                 {renderInput(inputIndex, false)}
               </ResponsiveFormRow>
-              <IconButton
-                color="primary"
-                aria-label="Remove option"
-                onClick={() => remove(inputIndex)}
-              >
-                <HighlightOffOutlined />
-              </IconButton>
-            </LabeledGroupedInputs>
+            </Box>
           );
         })}
 
@@ -291,7 +283,6 @@ export const FieldOptionsForm = ({
                     else return "Select a return value";
                   }}
                   label="Type"
-                  variant="standard"
                   displayEmpty={true}
                 />
                 <IconButton
@@ -299,7 +290,7 @@ export const FieldOptionsForm = ({
                   aria-label="Remove linked options"
                   onClick={() => linksRemove(inputIndex)}
                 >
-                  <HighlightOffOutlined />
+                  <CloseIcon fontSize="small" />
                 </IconButton>
               </ResponsiveFormRow>
             );
@@ -308,7 +299,7 @@ export const FieldOptionsForm = ({
       )}
       {hasRequestDefinedOptions && branch === "response" && (
         <ResponsiveFormRow>
-          <Typography sx={{ flexGrow: 1 }}>Requestor can add options</Typography>
+          <Typography sx={{ width: "50px" }}>Requestor can add options</Typography>
           <Select
             control={formMethods.control}
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
@@ -329,13 +320,13 @@ export const FieldOptionsForm = ({
             aria-label="Remove request created options"
             onClick={disableRequestCreatedOptions}
           >
-            <HighlightOffOutlined />
+            <CloseIcon fontSize="small" />
           </IconButton>
         </ResponsiveFormRow>
       )}
       <ResponsiveFormRow>
         <Button
-          sx={{ position: "relative", width: "250px" }}
+          sx={{ position: "relative" }}
           variant="outlined"
           size="small"
           onClick={() => {

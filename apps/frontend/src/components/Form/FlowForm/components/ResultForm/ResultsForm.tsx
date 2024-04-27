@@ -138,7 +138,6 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                     <Select<FlowSchemaType>
                       control={formMethods.control}
                       label="What's the final result?"
-                      width="140px"
                       selectOptions={[
                         { name: "Decision", value: ResultType.Decision },
                         { name: "Ranked list", value: ResultType.Ranking },
@@ -152,8 +151,6 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
                       <Select<FlowSchemaType>
                         control={formMethods.control}
                         label="Field"
-                        width="300px"
-                        flexGrow={"1"}
                         selectOptions={fieldOptions}
                         name={`steps.${formIndex}.result.${resultIndex}.fieldId`}
                         size="small"

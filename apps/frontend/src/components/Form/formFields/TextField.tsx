@@ -25,13 +25,13 @@ export const TextField = <T extends FieldValues>({
   required = false,
   size = "small",
   multiline = false,
-  variant = "standard",
+  variant = "outlined",
   endAdornment,
   startAdornment,
   placeholderText,
   sx = {},
 }: TextFieldProps<T>) => {
-  const defaultStyles: SxProps = { flexGrow: 0, width: "100%" };
+  const defaultStyles: SxProps = { flexGrow: 1 };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller

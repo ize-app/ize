@@ -115,7 +115,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
             label="Threshold votes"
             name={`evolve.decision.threshold`}
             size="small"
-            variant="standard"
             showLabel={false}
             endAdornment={<InputAdornment position="end">votes to win</InputAdornment>}
           />
@@ -123,10 +122,8 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
         {decisionType === DecisionType.PercentageThreshold && (
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            sx={{ width: "300px" }}
             label="Option selected with"
             size="small"
-            variant="standard"
             showLabel={false}
             name={`evolve.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}

@@ -84,7 +84,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           control={formMethods.control}
           label="What does this webhook do?"
           placeholderText="What does this webhook do?"
-          variant="standard"
           size="small"
           showLabel={false}
           name={`steps.${formIndex}.action.callWebhook.name`}
@@ -92,7 +91,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
         <TextField<FlowSchemaType>
           control={formMethods.control}
           label="Url"
-          variant="standard"
           size="small"
           showLabel={false}
           placeholderText="Webhook Uri (not displayed publicly)"
