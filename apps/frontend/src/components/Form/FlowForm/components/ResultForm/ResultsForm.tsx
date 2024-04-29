@@ -16,6 +16,7 @@ import { PrioritizationForm } from "./PrioritizationForm";
 import { FieldOptionsForm } from "../FieldOptionsForm";
 import Close from "@mui/icons-material/Close";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
+import { defaultField } from "../FieldsForm";
 
 export const defaultResult = (stepIndex: number, resultIndex: number): ResultSchemaType => ({
   resultId: "new." + stepIndex + "." + resultIndex,
@@ -55,10 +56,15 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
     name: `steps.${formIndex}.result`,
   });
 
+  // const { remove: removeResponseField, append: appendResponseField } = useFieldArray({
+  //   control: formMethods.control,
+  //   name: `steps.${formIndex}.response.fields`,
+  // });
+
   const results = watch(`steps.${formIndex}.result`) ?? [];
 
   return (
-    <FieldBlock>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {fields.map((item, resultIndex) => {
         const result = formMethods.watch(`steps.${formIndex}.result.${resultIndex}`);
         const resultField = watch(`steps.${formIndex}.response.fields.${resultIndex}`);
@@ -204,13 +210,14 @@ export const ResultsForm = ({ formMethods, formIndex }: ResultsFormProps) => {
           variant="outlined"
           size="small"
           onClick={() => {
+            // appendResponseField(defaultField(formIndex, results.length));
             append(defaultResult(formIndex, results.length));
           }}
         >
           Add result
         </Button>
       </Box>
-    </FieldBlock>
+    </Box>
   );
 };
 

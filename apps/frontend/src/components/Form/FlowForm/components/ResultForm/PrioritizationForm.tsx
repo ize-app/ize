@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { ResponsiveFormRow } from "@/components/Form/formLayout/ResponsiveFormRow";
 import { ResultListCountLimit } from "../../formValidation/result";
 import { FieldSchemaType } from "../../formValidation/fields";
+import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 
 interface PrioritizationFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -48,12 +49,12 @@ export const PrioritizationForm = ({
   if (field.type !== FieldType.Options) return null;
 
   return (
-    <>
+    <FieldBlock>
+      <Typography variant={"label2"}>Ranking configuration</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="# of options in the final result"
-          width="400px"
           renderValue={(val) => {
             if (val === ResultListCountLimit.None)
               return "All options included in the final ranking";
@@ -67,6 +68,6 @@ export const PrioritizationForm = ({
         />
       </ResponsiveFormRow>
       <Typography>{rankingStrategyDescription(field.optionsConfig.selectionType)}</Typography>
-    </>
+    </FieldBlock>
   );
 };

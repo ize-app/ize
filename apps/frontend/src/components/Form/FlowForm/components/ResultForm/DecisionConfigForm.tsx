@@ -74,7 +74,6 @@ export const DecisionConfigForm = ({
     //   },
     // });
   }, []);
-  console.log("inside decision config, field, is ", field);
 
   const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
 
@@ -86,7 +85,7 @@ export const DecisionConfigForm = ({
   ];
 
   if (field.type === FieldType.Options) {
-    field.optionsConfig.options.forEach((o) => {
+    (field.optionsConfig.options ?? []).forEach((o) => {
       defaultDecisionOptions.push({
         name: o.name,
         value: o.optionId,
@@ -103,17 +102,38 @@ export const DecisionConfigForm = ({
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
+          name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
+          displayLabel={false}
+          size="small"
+          selectOptions={[
+            {
+              name: "Vote for 1 option",
+              value: FieldOptionsSelectionType.Select,
+            },
+            {
+              name: "Vote for multiple options",
+              value: FieldOptionsSelectionType.MultiSelect,
+            },
+            {
+              name: "Rank options",
+              value: FieldOptionsSelectionType.Rank,
+            },
+          ]}
+          label="How do participants select options?"
+        />
+        <Select<FlowSchemaType>
+          control={formMethods.control}
           label="How do we determine the final result?"
           selectOptions={decisionTypeOptions(field.optionsConfig.selectionType)}
           name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
           displayLabel={false}
         />
-
+      </ResponsiveFormRow>
+      <ResponsiveFormRow>
         {decisionType === DecisionType.NumberThreshold && (
           <TextField<FlowSchemaType>
             control={formMethods.control}
-            sx={{ width: "200px" }}
             label="Threshold votes"
             name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
@@ -121,26 +141,26 @@ export const DecisionConfigForm = ({
             endAdornment={<InputAdornment position="end">votes to decide</InputAdornment>}
           />
         )}
-      </ResponsiveFormRow>
-      {decisionType === DecisionType.PercentageThreshold && (
+        {decisionType === DecisionType.PercentageThreshold && (
+          <TextField<FlowSchemaType>
+            control={formMethods.control}
+            sx={{ width: "200px" }}
+            label="Percentage votes"
+            size="small"
+            showLabel={false}
+            name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
+            endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
+          />
+        )}
         <TextField<FlowSchemaType>
           control={formMethods.control}
-          sx={{ width: "200px" }}
-          label="Percentage votes"
-          size="small"
+          label="Minimum # of responses for a result"
           showLabel={false}
-          name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
-          endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
+          size={"small"}
+          endAdornment={<InputAdornment position="end">responses minimum to decide</InputAdornment>}
+          name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
-      )}
-      <TextField<FlowSchemaType>
-        control={formMethods.control}
-        label="Minimum # of responses for a result"
-        showLabel={false}
-        size={"small"}
-        endAdornment={<InputAdornment position="end">responses minimum to decide</InputAdornment>}
-        name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
-      />
+      </ResponsiveFormRow>
       {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
       <Select<FlowSchemaType>
         control={formMethods.control}

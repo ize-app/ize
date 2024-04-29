@@ -349,7 +349,7 @@ export const FieldOptionsForm = ({
         </Button>
         {possibleLinkOptions.length > 0 && branch === "response" && (
           <Button
-            sx={{ position: "relative", width: "250px" }}
+            sx={{ position: "relative" }}
             variant="text"
             size="small"
             onClick={() => {

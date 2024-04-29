@@ -199,12 +199,7 @@ export const Setup = () => {
                     icon={<Diversity3OutlinedIcon color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
                     key={"stage-" + item.id.toString() + index.toString()}
-                    hasError={
-                      !!useFormMethods.formState.errors.steps?.[index]?.response ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.result ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds
-                    }
+                    hasError={!!useFormMethods.formState.errors.steps?.[index]}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}

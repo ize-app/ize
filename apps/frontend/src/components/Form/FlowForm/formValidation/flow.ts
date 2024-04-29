@@ -48,7 +48,9 @@ const stepSchema = z
         return false;
       else return true;
     },
-    { message: "Either add response fields or set this step to 'No response'", path: ["response"] },
+    {
+      message: "Either add response fields or set this step to 'No response'",
+    },
   )
   .refine(
     (step) => {

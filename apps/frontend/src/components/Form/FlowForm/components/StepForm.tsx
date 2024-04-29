@@ -35,6 +35,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         <FormHelperText
           sx={{
             color: "error.main",
+            marginLeft: "16px",
           }}
         >
           {stepError?.root.message}

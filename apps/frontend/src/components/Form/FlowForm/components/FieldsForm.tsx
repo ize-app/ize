@@ -7,10 +7,11 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
 import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 
-import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
+import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 import { Box } from "@mui/material";
 import { FieldOptionsForm } from "./FieldOptionsForm";
 import { FieldSchemaType } from "../formValidation/fields";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 
 interface FieldsFormProps {
   useFormMethods: UseFormReturn<FlowSchemaType>;
@@ -18,8 +19,8 @@ interface FieldsFormProps {
   branch: "request" | "response";
 }
 
-export const defaultField = (fieldIndex: number): FieldSchemaType => ({
-  fieldId: "new." + fieldIndex,
+export const defaultField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
+  fieldId: "new." + stepIndex + "." + fieldIndex,
   type: FieldType.FreeInput,
   name: "",
   required: true,
@@ -83,60 +84,61 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   placeholderText={`What's your question?`}
                   label={``}
                 />
-                <Select<FlowSchemaType>
-                  control={control}
-                  displayLabel={false}
-                  size={"small"}
-                  disabled={noEdit}
-                  name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
-                  key={"type" + inputIndex.toString() + formIndex.toString()}
-                  selectOptions={[
-                    { name: "Free input", value: FieldType.FreeInput },
-                    { name: "Options", value: FieldType.Options },
-                  ]}
-                  label="Type"
-                />
-
-                {/* {fieldType === FieldType.FreeInput ? (
+                <ResponsiveFormRow>
                   <Select<FlowSchemaType>
                     control={control}
                     displayLabel={false}
                     size={"small"}
                     disabled={noEdit}
-                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
-                    key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
+                    key={"type" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={[
-                      { name: "Text", value: FieldDataType.String },
-                      { name: "Number", value: FieldDataType.Number },
-                      { name: "Url", value: FieldDataType.Uri },
-                      { name: "Date Time", value: FieldDataType.DateTime },
-                      { name: "Date", value: FieldDataType.Date },
+                      { name: "Free input", value: FieldType.FreeInput },
+                      { name: "Options", value: FieldType.Options },
                     ]}
-                    label="Free input data type"
+                    label="Type"
                   />
-                ) : (
-                  <Select<FlowSchemaType>
-                    control={control}
-                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
-                    displayLabel={false}
-                    size="small"
-                    selectOptions={[
-                      {
-                        name: "Select one option",
-                        value: FieldOptionsSelectionType.Select,
-                      },
-                      {
-                        name: "Select multiple options",
-                        value: FieldOptionsSelectionType.MultiSelect,
-                      },
-                      {
-                        name: "Rank options",
-                        value: FieldOptionsSelectionType.Rank,
-                      },
-                    ]}
-                    label="How do participants select options?"
-                  />
-                )} */}
+                  {fieldType === FieldType.FreeInput ? (
+                    <Select<FlowSchemaType>
+                      control={control}
+                      displayLabel={false}
+                      size={"small"}
+                      disabled={noEdit}
+                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
+                      key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                      selectOptions={[
+                        { name: "Text", value: FieldDataType.String },
+                        { name: "Number", value: FieldDataType.Number },
+                        { name: "Url", value: FieldDataType.Uri },
+                        { name: "Date Time", value: FieldDataType.DateTime },
+                        { name: "Date", value: FieldDataType.Date },
+                      ]}
+                      label="Free input data type"
+                    />
+                  ) : (
+                    <Select<FlowSchemaType>
+                      control={control}
+                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
+                      displayLabel={false}
+                      size="small"
+                      selectOptions={[
+                        {
+                          name: "Select one option",
+                          value: FieldOptionsSelectionType.Select,
+                        },
+                        {
+                          name: "Select multiple options",
+                          value: FieldOptionsSelectionType.MultiSelect,
+                        },
+                        {
+                          name: "Rank options",
+                          value: FieldOptionsSelectionType.Rank,
+                        },
+                      ]}
+                      label="How do participants select options?"
+                    />
+                  )}
+                </ResponsiveFormRow>
                 {fieldType === FieldType.Options && (
                   <Box
                     sx={{
@@ -179,7 +181,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
             flexGrow: 0,
           }}
           onClick={() => {
-            fieldsArrayMethods.append(defaultField(numFields));
+            fieldsArrayMethods.append(defaultField(formIndex, numFields));
           }}
         >
           Add field

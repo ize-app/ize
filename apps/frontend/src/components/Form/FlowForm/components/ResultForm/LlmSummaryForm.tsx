@@ -9,8 +9,9 @@ import { useEffect } from "react";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 import { LlmSummaryType } from "../../formValidation/result";
-import { InputAdornment } from "@mui/material";
+import { InputAdornment, Typography } from "@mui/material";
 import { DefaultFieldSelection } from "../../formValidation/fields";
+import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 
 interface LlmSummaryProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -39,18 +40,21 @@ export const LlmSummaryForm = ({
   }, []);
 
   return (
-    <ResponsiveFormRow>
-      <TextField<FlowSchemaType>
-        control={formMethods.control}
-        sx={{ width: "100%" }}
-        label="Prompt to help AI summarize responses"
-        variant="standard"
-        placeholderText="Optional"
-        name={`steps.${formIndex}.result.${resultIndex}.llmSummary.prompt`}
-        size="small"
-        startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
-        showLabel={false}
-      />
-    </ResponsiveFormRow>
+    <FieldBlock>
+      <Typography variant={"label2"}>AI summary configuration</Typography>
+      <ResponsiveFormRow>
+        <TextField<FlowSchemaType>
+          control={formMethods.control}
+          sx={{ width: "100%" }}
+          label="Prompt to help AI summarize responses"
+          variant="standard"
+          placeholderText="Optional"
+          name={`steps.${formIndex}.result.${resultIndex}.llmSummary.prompt`}
+          size="small"
+          startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
+          showLabel={false}
+        />
+      </ResponsiveFormRow>
+    </FieldBlock>
   );
 };
