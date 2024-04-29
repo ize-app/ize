@@ -20,7 +20,6 @@ import { useContext, useState } from "react";
 import {
   EntitySummaryPartsFragment,
   EntityType,
-  Me,
   NewEntityTypes,
 } from "../../../graphql/generated/graphql";
 import { Avatar } from "../../Avatar";
@@ -206,6 +205,7 @@ export const EntitySearch = <T extends FieldValues>({
                 renderOption={(props, option) => (
                   <Box
                     component="li"
+                    key={"option" + option.id}
                     sx={{
                       display: "flex",
                       width: "100%",
@@ -218,6 +218,7 @@ export const EntitySearch = <T extends FieldValues>({
                   >
                     <Avatar
                       id={option.id}
+                      key={"avatar" + option.id}
                       avatarUrl={
                         option.__typename === "Group" && option.organization
                           ? option.organization.icon ?? option.icon

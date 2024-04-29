@@ -67,8 +67,6 @@ const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
         flexDirection: "column",
         padding: "48px 0px",
         alignItems: "center",
-        // backgroundColor: "#FBFBFB",
-        // backgroundImage: "url('/grid.svg')",
       }}
     >
       {children}
@@ -93,6 +91,7 @@ const AddButton = ({ label, onClick }: { label: string; onClick: () => void }) =
     {label}
   </Button>
 );
+
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
   const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
@@ -156,6 +155,7 @@ export const Setup = () => {
           flexDirection: "row",
           width: "100%",
           height: "100%",
+          minWidth: "300px",
         })}
       >
         {/* Flow diagram*/}
@@ -184,6 +184,7 @@ export const Setup = () => {
           <DiagramPanel>
             <StageContainer
               label="Trigger"
+              key="trigger0"
               id={"trigger0"}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
@@ -193,11 +194,11 @@ export const Setup = () => {
             <StageConnectorButton />
             {stepsArrayMethods.fields.map((item, index) => {
               return (
-                <>
+                <Box key={item.id}>
                   <StageContainer
                     icon={<Diversity3OutlinedIcon color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
-                    key={"stage-" + item.id}
+                    key={"stage-" + item.id.toString() + index.toString()}
                     hasError={
                       !!useFormMethods.formState.errors.steps?.[index]?.response ||
                       !!useFormMethods.formState.errors.steps?.[index]?.result ||
@@ -208,8 +209,10 @@ export const Setup = () => {
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
                   />
-                  <StageConnectorButton />
-                </>
+                  <StageConnectorButton
+                    key={"connector-" + item.id.toString() + index.toString()}
+                  />
+                </Box>
               );
             })}
             {!hasWebhook ? (
@@ -230,6 +233,8 @@ export const Setup = () => {
                   label={"Add collaborative step"}
                   onClick={() => {
                     stepsArrayMethods.append(defaultStepFormValues);
+                    // navigate to newly created step
+                    setSelectedId(`step${stepsArrayMethods.fields.length}`);
                   }}
                 />
                 <AddButton

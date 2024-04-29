@@ -6,6 +6,7 @@ import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
 import { ActionFilterForm } from "./ActionForm";
+import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -93,10 +94,10 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         />
       </FieldGroupAccordion>
       <FieldGroupAccordion
-        title="Outcomes"
+        title="Results"
         hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
       >
-        Todo
+        <ResultsForm formIndex={formIndex} formMethods={formMethods} />
       </FieldGroupAccordion>
     </Box>
   );

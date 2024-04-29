@@ -224,13 +224,6 @@ export const FieldOptionsForm = ({
                 flexGrow: 1,
               }}
             >
-              <IconButton
-                color="primary"
-                aria-label="Remove option"
-                onClick={() => remove(inputIndex)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
               <ResponsiveFormRow key={item.id}>
                 <Box sx={{ display: "none" }}>
                   <TextField<FlowSchemaType>
@@ -247,7 +240,7 @@ export const FieldOptionsForm = ({
                   control={control}
                   displayLabel={false}
                   size={"small"}
-                  sx={{ width: "100px", flexGrow: 0 }}
+                  sx={{ flexBasis: "100px", flexGrow: 1 }}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
                   key={"dataType" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={[
@@ -262,25 +255,32 @@ export const FieldOptionsForm = ({
 
                 {renderInput(inputIndex, false)}
               </ResponsiveFormRow>
+              <IconButton
+                color="primary"
+                aria-label="Remove option"
+                onClick={() => remove(inputIndex)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
             </Box>
           );
         })}
-
       {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
         <Box sx={{ width: "100%" }}>
           {linksFields.map((item, inputIndex) => {
             return (
-              <ResponsiveFormRow key={item.id}>
+              <Box key={item.id} sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
                 <Select<FlowSchemaType>
                   control={control}
                   displayLabel={false}
+                  sx={{}}
                   size={"small"}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                   key={"links" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={possibleLinkOptions}
                   renderValue={(val) => {
                     if (val) return getSelectOptionName(possibleLinkOptions, val);
-                    else return "Select a return value";
+                    else return "Select a previous result";
                   }}
                   label="Type"
                   displayEmpty={true}
@@ -292,29 +292,41 @@ export const FieldOptionsForm = ({
                 >
                   <CloseIcon fontSize="small" />
                 </IconButton>
-              </ResponsiveFormRow>
+              </Box>
             );
           })}
         </Box>
       )}
       {hasRequestDefinedOptions && branch === "response" && (
-        <ResponsiveFormRow>
-          <Typography sx={{ width: "50px" }}>Requestor can add options</Typography>
-          <Select
-            control={formMethods.control}
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-            selectOptions={[
-              { name: "Text", value: FieldDataType.String },
-              { name: "Number", value: FieldDataType.Number },
-              { name: "Uri", value: FieldDataType.Uri },
-              { name: "Date", value: FieldDataType.Date },
-              { name: "DateTime", value: FieldDataType.DateTime },
-            ]}
-            label="Option type"
-            size="small"
-            variant="standard"
-            displayLabel={false}
-          />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexGrow: 1,
+          }}
+        >
+          <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
+            {" "}
+            <Typography>Options created at trigger</Typography>
+            <Box>
+              <Select
+                control={formMethods.control}
+                name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+                selectOptions={[
+                  { name: "Text", value: FieldDataType.String },
+                  { name: "Number", value: FieldDataType.Number },
+                  { name: "Uri", value: FieldDataType.Uri },
+                  { name: "Date", value: FieldDataType.Date },
+                  { name: "DateTime", value: FieldDataType.DateTime },
+                ]}
+                label="Option type"
+                size="small"
+                sx={{ width: "100px", flexGrow: 0 }}
+                variant="standard"
+                displayLabel={false}
+              />
+            </Box>
+          </ResponsiveFormRow>
           <IconButton
             color="primary"
             aria-label="Remove request created options"
@@ -322,7 +334,7 @@ export const FieldOptionsForm = ({
           >
             <CloseIcon fontSize="small" />
           </IconButton>
-        </ResponsiveFormRow>
+        </Box>
       )}
       <ResponsiveFormRow>
         <Button
@@ -338,7 +350,7 @@ export const FieldOptionsForm = ({
         {possibleLinkOptions.length > 0 && branch === "response" && (
           <Button
             sx={{ position: "relative", width: "250px" }}
-            variant="outlined"
+            variant="text"
             size="small"
             onClick={() => {
               linksAppend({ id: "" });
@@ -349,12 +361,12 @@ export const FieldOptionsForm = ({
         )}
         {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
           <Button
-            sx={{ position: "relative", width: "250px" }}
-            variant="outlined"
+            sx={{ position: "relative" }}
+            variant="text"
             size="small"
             onClick={enableRequestCreatedOptions}
           >
-            Allow requestor to add options
+            Allow options to be created at trigger
           </Button>
         )}
       </ResponsiveFormRow>

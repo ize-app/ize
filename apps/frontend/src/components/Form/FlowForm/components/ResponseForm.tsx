@@ -33,7 +33,6 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
         <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}
-            width="300px"
             name={`steps.${formIndex}.response.permission.type`}
             selectOptions={[
               { name: "Certain people can respond", value: PermissionType.Entities },
@@ -64,7 +63,6 @@ export const ResponseForm = ({ formMethods, formIndex }: ResponseFieldsFormProps
               <Select<FlowSchemaType>
                 control={formMethods.control}
                 label="How long do people have to respond?"
-                width="300px"
                 renderValue={(val) => {
                   const option = requestExpirationOptions.find((option) => option.value === val);
                   return option?.name + " to respond";

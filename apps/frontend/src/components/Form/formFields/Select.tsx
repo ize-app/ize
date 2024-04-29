@@ -55,6 +55,7 @@ export const Select = <T extends FieldValues>({
           <MuiSelect
             {...props}
             autoWidth={true}
+            inputProps={{ multiline: "true" }}
             {...field}
             label={""}
             aria-label={label}

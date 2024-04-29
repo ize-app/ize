@@ -46,17 +46,16 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
         );
 
         return (
-          <LabeledGroupedInputs key={item.id}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: "space-between",
-                backgroundColor: "#fffffa",
-              }}
-            >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "space-between",
+            }}
+          >
+            <LabeledGroupedInputs key={item.id}>
               <Box
                 sx={{
                   display: "flex",
@@ -64,6 +63,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   gap: "6px",
                   padding: "12px",
                   width: "100%",
+                  backgroundColor: "#fffff5",
                 }}
               >
                 <Box sx={{ display: "none" }}>
@@ -157,20 +157,18 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   </Box>
                 )}
               </Box>
-              {noEdit ? null : (
-                <Box sx={{}}>
-                  <IconButton
-                    color="primary"
-                    size="small"
-                    aria-label="Remove input option"
-                    onClick={() => fieldsArrayMethods.remove(inputIndex)}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              )}
-            </Box>
-          </LabeledGroupedInputs>
+            </LabeledGroupedInputs>
+            {noEdit ? null : (
+              <IconButton
+                color="primary"
+                size="small"
+                aria-label="Remove input option"
+                onClick={() => fieldsArrayMethods.remove(inputIndex)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
         );
       })}
       <Box>
