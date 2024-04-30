@@ -15,6 +15,7 @@ interface PrioritizationFormProps {
   formIndex: number;
   resultIndex: number;
   field: FieldSchemaType;
+  display?: boolean;
 }
 
 const maxListItemsOptions = [
@@ -42,19 +43,16 @@ export const PrioritizationForm = ({
   formIndex,
   resultIndex,
   field,
+  display = true,
 }: PrioritizationFormProps) => {
-  //   useEffect(() => {
-  //     formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.type`, ResultType.Ranking);
-  //   }, []);
-  if (field.type !== FieldType.Options) return null;
-
   return (
-    <FieldBlock>
+    <FieldBlock sx={{ display: display ? "flex" : "none" }}>
       <Typography variant={"label2"}>Ranking configuration</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="# of options in the final result"
+          // defaultValue={""}
           renderValue={(val) => {
             if (val === ResultListCountLimit.None)
               return "All options included in the final ranking";
@@ -67,7 +65,11 @@ export const PrioritizationForm = ({
           size={"small"}
         />
       </ResponsiveFormRow>
-      <Typography>{rankingStrategyDescription(field.optionsConfig.selectionType)}</Typography>
+      <Typography>
+        {field.type === FieldType.Options
+          ? rankingStrategyDescription(field.optionsConfig.selectionType)
+          : null}
+      </Typography>
     </FieldBlock>
   );
 };

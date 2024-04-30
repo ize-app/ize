@@ -14,12 +14,28 @@ import { FieldSchemaType } from "../formValidation/fields";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 
 interface FieldsFormProps {
-  useFormMethods: UseFormReturn<FlowSchemaType>;
+  formMethods: UseFormReturn<FlowSchemaType>;
+  fieldsArrayMethods: ReturnType<typeof useFieldArray>;
   formIndex: number;
   branch: "request" | "response";
 }
 
-export const defaultField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
+export const defaultOptionsField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
+  fieldId: "new." + stepIndex + "." + fieldIndex,
+  type: FieldType.Options,
+  name: "",
+  required: true,
+  optionsConfig: {
+    options: [],
+    hasRequestOptions: false,
+    selectionType: FieldOptionsSelectionType.Select,
+    previousStepOptions: false,
+    maxSelections: 1,
+    linkedResultOptions: [],
+  },
+});
+
+export const defaultFreeInputField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
   fieldId: "new." + stepIndex + "." + fieldIndex,
   type: FieldType.FreeInput,
   name: "",
@@ -27,22 +43,22 @@ export const defaultField = (stepIndex: number, fieldIndex: number): FieldSchema
   freeInputDataType: FieldDataType.String,
 });
 
-export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProps) => {
-  const { control } = useFormMethods;
+export const FieldsForm = ({
+  formMethods,
+  fieldsArrayMethods,
+  formIndex,
+  branch,
+}: FieldsFormProps) => {
+  const { control } = formMethods;
 
-  const fieldsArrayMethods = useFieldArray({
-    control: useFormMethods.control,
-    name: `steps.${formIndex}.${branch}.fields`,
-  });
-
-  const numFields = (useFormMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
+  const numFields = (formMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
       {fieldsArrayMethods.fields.map((item, inputIndex) => {
         const noEdit = false; //item.name === "Request title" ? true : false;
 
-        const fieldType: FieldType = useFormMethods.watch(
+        const fieldType: FieldType = formMethods.watch(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
         );
 
@@ -98,46 +114,50 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                     ]}
                     label="Type"
                   />
-                  {fieldType === FieldType.FreeInput ? (
-                    <Select<FlowSchemaType>
-                      control={control}
-                      displayLabel={false}
-                      size={"small"}
-                      disabled={noEdit}
-                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
-                      key={"dataType" + inputIndex.toString() + formIndex.toString()}
-                      selectOptions={[
-                        { name: "Text", value: FieldDataType.String },
-                        { name: "Number", value: FieldDataType.Number },
-                        { name: "Url", value: FieldDataType.Uri },
-                        { name: "Date Time", value: FieldDataType.DateTime },
-                        { name: "Date", value: FieldDataType.Date },
-                      ]}
-                      label="Free input data type"
-                    />
-                  ) : (
-                    <Select<FlowSchemaType>
-                      control={control}
-                      name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
-                      displayLabel={false}
-                      size="small"
-                      selectOptions={[
-                        {
-                          name: "Select one option",
-                          value: FieldOptionsSelectionType.Select,
-                        },
-                        {
-                          name: "Select multiple options",
-                          value: FieldOptionsSelectionType.MultiSelect,
-                        },
-                        {
-                          name: "Rank options",
-                          value: FieldOptionsSelectionType.Rank,
-                        },
-                      ]}
-                      label="How do participants select options?"
-                    />
-                  )}
+                  <Select<FlowSchemaType>
+                    control={control}
+                    sx={{
+                      display: fieldType === FieldType.FreeInput ? "flex" : "none",
+                    }}
+                    displayLabel={false}
+                    size={"small"}
+                    disabled={noEdit}
+                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
+                    key={"dataType" + inputIndex.toString() + formIndex.toString()}
+                    selectOptions={[
+                      { name: "Text", value: FieldDataType.String },
+                      { name: "Number", value: FieldDataType.Number },
+                      { name: "Url", value: FieldDataType.Uri },
+                      { name: "Date Time", value: FieldDataType.DateTime },
+                      { name: "Date", value: FieldDataType.Date },
+                    ]}
+                    label="Free input data type"
+                  />
+
+                  <Select<FlowSchemaType>
+                    control={control}
+                    sx={{
+                      display: fieldType === FieldType.Options ? "flex" : "none",
+                    }}
+                    name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
+                    displayLabel={false}
+                    size="small"
+                    selectOptions={[
+                      {
+                        name: "Select one option",
+                        value: FieldOptionsSelectionType.Select,
+                      },
+                      {
+                        name: "Select multiple options",
+                        value: FieldOptionsSelectionType.MultiSelect,
+                      },
+                      {
+                        name: "Rank options",
+                        value: FieldOptionsSelectionType.Rank,
+                      },
+                    ]}
+                    label="How do participants select options?"
+                  />
                 </ResponsiveFormRow>
                 {fieldType === FieldType.Options && (
                   <Box
@@ -150,7 +170,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
                   >
                     <Box sx={{ width: "100%" }}>
                       <FieldOptionsForm
-                        formMethods={useFormMethods}
+                        formMethods={formMethods}
                         formIndex={formIndex}
                         fieldIndex={inputIndex}
                         branch={branch}
@@ -181,7 +201,7 @@ export const FieldsForm = ({ useFormMethods, formIndex, branch }: FieldsFormProp
             flexGrow: 0,
           }}
           onClick={() => {
-            fieldsArrayMethods.append(defaultField(formIndex, numFields));
+            fieldsArrayMethods.append(defaultFreeInputField(formIndex, numFields));
           }}
         >
           Add field

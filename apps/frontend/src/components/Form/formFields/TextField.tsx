@@ -15,6 +15,7 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   multiline?: boolean;
   size?: "small" | "medium";
   sx?: SxProps;
+  display?: boolean;
 }
 
 export const TextField = <T extends FieldValues>({
@@ -29,9 +30,10 @@ export const TextField = <T extends FieldValues>({
   endAdornment,
   startAdornment,
   placeholderText,
+  display = true,
   sx = {},
 }: TextFieldProps<T>) => {
-  const defaultStyles: SxProps = { flexGrow: 1 };
+  const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none"};
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller

@@ -1,4 +1,4 @@
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { RoleSearch, Select } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
@@ -17,6 +17,11 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.request;
+
+  const fieldsArrayMethods = useFieldArray({
+    control: formMethods.control,
+    name: `steps.${formIndex}.request.fields`,
+  });
 
   return (
     formIndex === 0 && (
@@ -43,7 +48,13 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
           )}
         </FieldGroupAccordion>
         <FieldGroupAccordion title="Request fields" hasError={!!error?.fields}>
-          <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
+          <FieldsForm
+            formIndex={formIndex}
+            branch={"request"}
+            formMethods={formMethods}
+            //@ts-ignore
+            fieldsArrayMethods={fieldsArrayMethods}
+          />
         </FieldGroupAccordion>
       </Box>
     )

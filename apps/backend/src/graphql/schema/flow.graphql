@@ -73,7 +73,7 @@ input NewStepArgs {
   request: StepRequestArgs!
   response: StepResponseArgs
   result: [ResultArgs!]!
-  action: ActionArgs!
+  action: ActionArgs
   expirationSeconds: Int
   allowMultipleResponses: Boolean!
 }

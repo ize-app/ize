@@ -55,11 +55,13 @@ export const newStep = async ({
     responseFieldSet,
   });
 
-  const actionId = await newActionConfig({
-    actionArgs: args.action,
-    responseFieldSet,
-    transaction,
-  });
+  const actionId = args.action
+    ? await newActionConfig({
+        actionArgs: args.action,
+        responseFieldSet,
+        transaction,
+      })
+    : null;
 
   const step = await transaction.step.create({
     include: stepInclude,

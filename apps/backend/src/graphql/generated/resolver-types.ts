@@ -466,7 +466,7 @@ export type NewResponseArgs = {
 };
 
 export type NewStepArgs = {
-  action: ActionArgs;
+  action?: InputMaybe<ActionArgs>;
   allowMultipleResponses: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request: StepRequestArgs;

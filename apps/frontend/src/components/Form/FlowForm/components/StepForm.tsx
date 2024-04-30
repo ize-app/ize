@@ -1,4 +1,4 @@
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 import { Box } from "@mui/material";
 import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
@@ -28,6 +28,11 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
   // console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
   const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
   const stepError = formMethods.getFieldState(`steps.${formIndex}`).error;
+
+  const fieldsArrayMethods = useFieldArray({
+    control: formMethods.control,
+    name: `steps.${formIndex}.response.fields`,
+  });
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
@@ -98,7 +103,12 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         title="Results"
         hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
       >
-        <ResultsForm formIndex={formIndex} formMethods={formMethods} />
+        <ResultsForm
+          formIndex={formIndex}
+          formMethods={formMethods}
+          //@ts-ignore
+          fieldsArrayMethods={fieldsArrayMethods}
+        />
       </FieldGroupAccordion>
     </Box>
   );
