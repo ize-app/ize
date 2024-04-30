@@ -63,6 +63,7 @@ export const PrioritizationForm = ({
           name={`steps.${formIndex}.result.${resultIndex}.prioritization.numPrioritizedItems`}
           displayLabel={false}
           size={"small"}
+          defaultValue=""
         />
       </ResponsiveFormRow>
       <Typography>

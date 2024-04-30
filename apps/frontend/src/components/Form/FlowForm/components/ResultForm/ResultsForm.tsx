@@ -94,7 +94,6 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
             const field = defaultOptionsField(formIndex, results.length);
             fieldsArrayMethods.append(field);
             const result = defaultDecisionResult(formIndex, results.length, field.fieldId);
-            console.log("adding result ", result);
             resultsArrayMethods.append(result);
           }}
         >
@@ -178,6 +177,7 @@ const ResultForm = ({
               label={`Result ID - ignore`}
               variant="standard"
               disabled={true}
+              defaultValue=""
               size="small"
             />
             <TextField<FlowSchemaType>
@@ -186,6 +186,7 @@ const ResultForm = ({
               control={formMethods.control}
               label="fieldId"
               disabled={true}
+              defaultValue=""
             />
           </Box>
           <FieldBlock>
@@ -200,6 +201,7 @@ const ResultForm = ({
               name={`steps.${formIndex}.result.${resultIndex}.type`}
               size="small"
               displayLabel={false}
+              defaultValue=""
             />
             <TextField<FlowSchemaType>
               // assuming here that results to fields is 1:1 relationshp
@@ -209,6 +211,7 @@ const ResultForm = ({
               multiline
               placeholderText={resultFieldNamePlaceholderText(result.type)}
               label={``}
+              defaultValue=""
             />
           </FieldBlock>
           {(result.type === ResultType.Decision || result.type === ResultType.Ranking) && (

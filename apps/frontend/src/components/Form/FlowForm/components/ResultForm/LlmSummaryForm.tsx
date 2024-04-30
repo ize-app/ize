@@ -33,6 +33,7 @@ export const LlmSummaryForm = ({
           size="small"
           startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
           showLabel={false}
+          defaultValue=""
         />
       </ResponsiveFormRow>
     </FieldBlock>

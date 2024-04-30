@@ -75,6 +75,7 @@ export const DecisionConfigForm = ({
           name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
           displayLabel={false}
           size="small"
+          defaultValue=""
           selectOptions={[
             {
               name: "Vote for 1 option",
@@ -99,6 +100,7 @@ export const DecisionConfigForm = ({
               ? decisionTypeOptions(field.optionsConfig?.selectionType)
               : []
           }
+          defaultValue=""
           name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
           displayLabel={false}
@@ -113,6 +115,7 @@ export const DecisionConfigForm = ({
             name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
             showLabel={false}
+            defaultValue=""
             endAdornment={<InputAdornment position="end">votes to decide</InputAdornment>}
           />
         }
@@ -124,6 +127,7 @@ export const DecisionConfigForm = ({
             label="Percentage votes"
             size="small"
             showLabel={false}
+            defaultValue=""
             name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
           />
@@ -133,6 +137,7 @@ export const DecisionConfigForm = ({
           label="Minimum # of responses for a result"
           showLabel={false}
           size={"small"}
+          defaultValue=""
           endAdornment={<InputAdornment position="end">responses minimum to decide</InputAdornment>}
           name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
@@ -147,6 +152,7 @@ export const DecisionConfigForm = ({
             color: "red",
           },
         }}
+        defaultValue=""
         renderValue={(val) => {
           if (val === DefaultOptionSelection.None) return "If no decision, no default result";
           const option = defaultDecisionOptions.find((option) => option.value === val);

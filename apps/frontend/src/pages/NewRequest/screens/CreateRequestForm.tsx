@@ -78,8 +78,8 @@ export const CreateRequestForm = () => {
     shouldUnregister: true,
   });
 
-  console.log("errors are", formMethods.formState.errors);
-  console.log("formstate is ", formMethods.getValues());
+  // console.log("errors are", formMethods.formState.errors);
+  // console.log("formstate is ", formMethods.getValues());
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({

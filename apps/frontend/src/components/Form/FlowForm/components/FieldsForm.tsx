@@ -64,6 +64,7 @@ export const FieldsForm = ({
 
         return (
           <Box
+            key={item.id}
             sx={{
               display: "flex",
               flexDirection: "row",
@@ -90,6 +91,7 @@ export const FieldsForm = ({
                     control={control}
                     label="fieldId"
                     disabled={true}
+                    defaultValue=""
                   />
                 </Box>
                 <TextField<FlowSchemaType>
@@ -99,6 +101,7 @@ export const FieldsForm = ({
                   multiline
                   placeholderText={`What's your question?`}
                   label={``}
+                  defaultValue=""
                 />
                 <ResponsiveFormRow>
                   <Select<FlowSchemaType>
@@ -113,6 +116,7 @@ export const FieldsForm = ({
                       { name: "Options", value: FieldType.Options },
                     ]}
                     label="Type"
+                    defaultValue=""
                   />
                   <Select<FlowSchemaType>
                     control={control}
@@ -132,6 +136,7 @@ export const FieldsForm = ({
                       { name: "Date", value: FieldDataType.Date },
                     ]}
                     label="Free input data type"
+                    defaultValue=""
                   />
 
                   <Select<FlowSchemaType>
@@ -157,6 +162,7 @@ export const FieldsForm = ({
                       },
                     ]}
                     label="How do participants select options?"
+                    defaultValue=""
                   />
                 </ResponsiveFormRow>
                 {fieldType === FieldType.Options && (

@@ -125,6 +125,7 @@ export const FieldOptionsForm = ({
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
             showLabel={false}
+            defaultValue=""
             label={`Option #${inputIndex + 1}`}
           />
         );
@@ -133,6 +134,7 @@ export const FieldOptionsForm = ({
           <DateTimePicker<FlowSchemaType>
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
+            defaultValue=""
             control={control}
             showLabel={false}
             label={`Option #${inputIndex + 1}`}
@@ -144,6 +146,7 @@ export const FieldOptionsForm = ({
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
+            defaultValue=""
             placeholderText={`Option #${inputIndex + 1}`}
             showLabel={false}
             multiline
@@ -170,6 +173,7 @@ export const FieldOptionsForm = ({
         <TextField<FlowSchemaType>
           name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
           key={"hasRequestOptions" + formIndex.toString()}
+          defaultValue=""
           control={control}
           showLabel={false}
           label={`Has request options - ignore`}
@@ -179,6 +183,7 @@ export const FieldOptionsForm = ({
         <TextField<FlowSchemaType>
           name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`}
           key={"linkedOptions" + formIndex.toString()}
+          defaultValue=""
           control={control}
           showLabel={false}
           label={`Linked options - ignore`}
@@ -190,6 +195,7 @@ export const FieldOptionsForm = ({
           key={"requestOptionsDataType" + formIndex.toString()}
           control={control}
           showLabel={false}
+          defaultValue=""
           label={`Linked options - ignore`}
           disabled={true}
           size="small"
@@ -199,6 +205,7 @@ export const FieldOptionsForm = ({
         <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}
+            defaultValue=""
             label="How many options can be selected?"
             renderValue={(val) => {
               if (val === OptionSelectionCountLimit.None)
@@ -218,6 +225,7 @@ export const FieldOptionsForm = ({
         fields.map((item, inputIndex) => {
           return (
             <Box
+              key={item.id}
               sx={{
                 display: "flex",
                 flexDirection: "row",
@@ -234,6 +242,7 @@ export const FieldOptionsForm = ({
                     label={`Option ID - ignore`}
                     disabled={true}
                     size="small"
+                    defaultValue=""
                   />
                 </Box>
                 <Select<FlowSchemaType>
@@ -251,6 +260,7 @@ export const FieldOptionsForm = ({
                     { name: "Date", value: FieldDataType.Date },
                   ]}
                   label="Type"
+                  defaultValue=""
                 />
 
                 {renderInput(inputIndex, false)}
@@ -284,6 +294,7 @@ export const FieldOptionsForm = ({
                   }}
                   label="Type"
                   displayEmpty={true}
+                  defaultValue=""
                 />
                 <IconButton
                   color="primary"
@@ -312,6 +323,7 @@ export const FieldOptionsForm = ({
               <Select
                 control={formMethods.control}
                 name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+                defaultValue=""
                 selectOptions={[
                   { name: "Text", value: FieldDataType.String },
                   { name: "Number", value: FieldDataType.Number },
