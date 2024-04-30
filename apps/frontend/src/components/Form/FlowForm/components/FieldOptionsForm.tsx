@@ -124,8 +124,7 @@ export const FieldOptionsForm = ({
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
-            showLabel={false}
-            defaultValue=""
+            // showLabel={false}
             label={`Option #${inputIndex + 1}`}
           />
         );
@@ -134,7 +133,6 @@ export const FieldOptionsForm = ({
           <DateTimePicker<FlowSchemaType>
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
-            defaultValue=""
             control={control}
             showLabel={false}
             label={`Option #${inputIndex + 1}`}

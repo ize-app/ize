@@ -29,10 +29,10 @@ export const fieldOptionSchema = z
   .superRefine((option, ctx) => {
     evaluateMultiTypeInput(option.name, option.dataType, ["name"], ctx);
   })
-  .transform((option) => ({
-    ...option,
-    name: option.name.toString(),
-  }));
+  // .transform((option) => ({
+  //   ...option,
+  //   name: option.name.toString(),
+  // }));
 
 const fieldOptionsSchema = z
   .object({
