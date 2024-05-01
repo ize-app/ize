@@ -22,7 +22,7 @@ import {
   EntityType,
   NewEntityTypes,
 } from "../../../graphql/generated/graphql";
-import { Avatar } from "../../Avatar";
+import { Avatar } from "../../AvatarOld";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { EntityModal } from "../EntityModal/EntityModal";
 import { DiscordLogoSvg, EthLogoSvg } from "../../icons";

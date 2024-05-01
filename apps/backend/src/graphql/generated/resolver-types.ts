@@ -236,7 +236,7 @@ export type Flow = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
-  steps: Array<Maybe<Step>>;
+  steps: Array<Step>;
   type: FlowType;
 };
 
@@ -1156,7 +1156,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;
+  steps?: Resolver<Array<ResolversTypes['Step']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

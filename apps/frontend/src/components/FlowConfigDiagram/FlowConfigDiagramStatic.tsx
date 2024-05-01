@@ -70,11 +70,11 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
             )}
           </DiagramPanel>
         </PanelContainer>
-        {selectedId === "trigger0" && <ConfigTriggerPanel />}
+        {selectedId === "trigger0" && <ConfigTriggerPanel step={flow.steps[0]} />}
         {flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (
-              <ConfigStepPanel key={"steppanel-" + step?.id} />
+              <ConfigStepPanel key={"steppanel-" + step?.id} step={step} />
             )
           );
         })}

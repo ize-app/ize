@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import { useStytch } from "@stytch/react";
 import { useCallback, useContext, useState } from "react";
 import PageContainer from "@/layout/PageContainer";
-import { AvatarWithName } from "../../components/Avatar";
+import { AvatarWithName } from "../../components/AvatarOld";
 import { EntityType } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import Box from "@mui/material/Box";

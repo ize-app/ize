@@ -1,0 +1,31 @@
+import { AvatarProps } from "./type";
+import { Avatar } from "./Avatar";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        // width: "100%",
+        justifyContent: "left",
+        alignItems: "center",
+        gap: "12px",
+        verticalAlign: "middle",
+      }}
+    >
+      {<Avatar avatar={avatar} />}
+      <Typography
+        fontSize={"0.875rem"}
+        sx={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {avatar.name}
+      </Typography>
+    </Box>
+  );
+};

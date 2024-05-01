@@ -3,8 +3,9 @@ import MuiAvatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 
-import { avatarString, stringToColor } from "../../utils/inputs";
-import { ParentProps } from "../../components/Avatar";
+import { getAvatarString } from "@/components/Avatar/getAvatarString";
+import { stringToColor } from "@/components/Avatar/stringToColor";
+import { ParentProps } from "../../components/AvatarOld";
 
 interface BannerWithIconProps {
   id: string;
@@ -120,7 +121,7 @@ const BannerWithAvatar = ({
                 <MuiAvatar
                   alt={name}
                   src={parent.avatarUrl ?? undefined}
-                  children={avatarString(name.toUpperCase())}
+                  children={getAvatarString(name.toUpperCase())}
                   sx={(theme) => ({
                     border: "2px solid white",
                     [theme.breakpoints.up("sm")]: {
@@ -137,14 +138,14 @@ const BannerWithAvatar = ({
             >
               <MuiAvatar
                 src={avatarUrl}
-                children={avatarString(name.toUpperCase())}
+                children={getAvatarString(name.toUpperCase())}
                 sx={avatarStyles as SxProps}
               />
             </Badge>
           ) : (
             <MuiAvatar
               src={avatarUrl}
-              children={avatarString(name.toUpperCase())}
+              children={getAvatarString(name.toUpperCase())}
               sx={avatarStyles as SxProps}
             />
           )}

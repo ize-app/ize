@@ -14,7 +14,7 @@ type Flow {
   type: FlowType!
   name: String!
   reusable: Boolean!
-  steps: [Step]!
+  steps: [Step!]!
   evolve: Flow
 }
 
