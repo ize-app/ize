@@ -32,19 +32,6 @@ export const WizardContainer = ({
           </Step>
         ))}
       </Stepper>
-      {/* <Box
-        sx={(theme) => ({
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          marginTop: "36px",
-          [theme.breakpoints.up("sm")]: {
-            paddingLeft: "48px",
-            paddingRight: "48px",
-          },
-          maxWidth: "1000px",
-        })}
-      > */}
       <Box
         sx={{
           width: "100%",
