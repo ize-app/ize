@@ -25,7 +25,7 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
     .forEach((res, resIndex) => {
       const field = responseFields.find((f) => f.fieldId === res.fieldId);
       if (!field || field.type !== FieldType.Options) return;
-      field.optionsConfig.options.map((o) => {
+      (field.optionsConfig.options ?? []).map((o) => {
         filterOptions.push({
           name: `Result ${resIndex}: "${o.name}"`,
           value: o.optionId,

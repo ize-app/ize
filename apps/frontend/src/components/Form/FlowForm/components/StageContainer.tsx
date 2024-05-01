@@ -2,6 +2,7 @@ import { WarningOutlined } from "@mui/icons-material";
 import { Box, Paper, SxProps, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { colors } from "@/style/style";
+import { StageMenu } from "./StageMenu";
 
 interface StageContainerProps {
   label: string;
@@ -10,6 +11,7 @@ interface StageContainerProps {
   sx?: SxProps;
   hasError?: boolean;
   icon?: any;
+  deleteHandler?: () => void;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
   selectedId: string | false;
 }
@@ -20,6 +22,7 @@ export const StageContainer = ({
   children,
   setSelectedId,
   selectedId,
+  deleteHandler,
   hasError = false,
   icon,
   sx = {},
@@ -35,6 +38,7 @@ export const StageContainer = ({
           alignItems: "center",
           justifyContent: "flex-start",
           marginLeft: hasError ? "28px" : "0px",
+          minHeight: "48px",
           border: "1px solid",
           borderWidth: isSelected ? "2px" : "1px",
 
@@ -47,8 +51,7 @@ export const StageContainer = ({
           ...sx,
         }}
       >
-        {icon}
-        <Box sx={{ marginRight: "12px", display: "flex" }}></Box>
+        <Box sx={{ marginRight: "12px", display: "flex" }}>{icon}</Box>
         <Box
           onClick={() => {
             setSelectedId(id);
@@ -62,6 +65,7 @@ export const StageContainer = ({
           <Typography color="primary">{label}</Typography>
           {children}
         </Box>
+        {deleteHandler && <StageMenu deleteHandler={deleteHandler} />}
       </Paper>
       {hasError && <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />}
     </Box>

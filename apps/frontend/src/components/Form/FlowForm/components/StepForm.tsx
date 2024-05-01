@@ -34,6 +34,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
     name: `steps.${formIndex}.response.fields`,
   });
 
+
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
       {stepError?.root && (
@@ -46,7 +47,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           {stepError?.root.message}
         </FormHelperText>
       )}
-      {formIndex > 0 && <ActionFilterForm formIndex={formIndex} formMethods={formMethods} />}
+      {formIndex > 0 && <ActionFilterForm formIndex={formIndex - 1} formMethods={formMethods} />}
       <FieldGroupAccordion
         title="Response permissions"
         hasError={

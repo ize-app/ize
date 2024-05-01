@@ -199,6 +199,13 @@ export const Setup = () => {
                     icon={<Diversity3OutlinedIcon color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
                     key={"stage-" + item.id.toString() + index.toString()}
+                    deleteHandler={
+                      index > 0
+                        ? () => {
+                            stepsArrayMethods.remove(index);
+                          }
+                        : undefined
+                    }
                     hasError={!!useFormMethods.formState.errors.steps?.[index]}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
@@ -249,6 +256,14 @@ export const Setup = () => {
                 id={"webhook"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
+                deleteHandler={() => {
+                  console.log("deleting webhook");
+                  setSelectedId("trigger0");
+                  useFormMethods.setValue(
+                    `steps.${stepsArrayMethods.fields.length - 1}.action`,
+                    undefined,
+                  );
+                }}
                 icon={<PublicOutlinedIcon color="primary" />}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
