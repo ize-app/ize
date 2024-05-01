@@ -45,7 +45,17 @@ export const WizardContainer = ({
           maxWidth: "1000px",
         })}
       > */}
-      <Box sx={{ width: "100%", marginTop: "36px", height: "100%" }}>{children}</Box>
+      <Box
+        sx={{
+          width: "100%",
+          marginTop: "36px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };

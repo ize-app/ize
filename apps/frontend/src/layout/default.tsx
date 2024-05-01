@@ -28,7 +28,9 @@ export const DefaultLayout = () => {
       <CssBaseline />
       {me && <NavBar handleMenuToggle={handleMenuToggle} me={me} />}
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        {me && <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />}
+        {me && menuOpen && (
+          <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />
+        )}
         <Main open={menuOpen}>
           <Toolbar variant="dense" />
           <Outlet />
