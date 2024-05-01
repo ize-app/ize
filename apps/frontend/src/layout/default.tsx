@@ -18,10 +18,6 @@ export const DefaultLayout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { me } = useContext(CurrentUserContext);
 
-  const handleMenuClose = () => {
-    setMenuOpen(false);
-  };
-
   const handleMenuToggle = () => {
     setMenuOpen(!menuOpen);
   };
@@ -32,17 +28,7 @@ export const DefaultLayout = () => {
       <CssBaseline />
       {me && <NavBar handleMenuToggle={handleMenuToggle} me={me} />}
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        {me && (
-          <>
-            <Menu
-              open={menuOpen}
-              setMenuOpen={setMenuOpen}
-              handleDrawerClose={handleMenuClose}
-              drawerWidth={drawerWidth}
-              me={me}
-            />
-          </>
-        )}
+        {me && <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />}
         <Main open={menuOpen}>
           <Toolbar variant="dense" />
           <Outlet />

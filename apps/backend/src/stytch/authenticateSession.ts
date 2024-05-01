@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../prisma/client";
 import { StytchError } from "stytch";
-import { meInclude } from "../core/user/formatUser";
+import { meInclude } from "@/core/user/userPrismaTypes";
 
 import { stytchClient, sessionDurationMinutes } from "./stytchClient";
 

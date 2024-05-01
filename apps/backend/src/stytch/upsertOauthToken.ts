@@ -1,6 +1,6 @@
 import { prisma } from "@/prisma/client";
 import { OauthTypes, Prisma } from "@prisma/client";
-import { UserPrismaType } from "@/core/user/formatUser";
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
 import { OAuthAuthenticateResponse } from "stytch";
 import { encrypt } from "@/prisma/encrypt";
 
