@@ -8,12 +8,14 @@ import Typography from "@mui/material/Typography";
 import { ResponsiveFormRow } from "@/components/Form/formLayout/ResponsiveFormRow";
 import { ResultListCountLimit } from "../../formValidation/result";
 import { FieldSchemaType } from "../../formValidation/fields";
+import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 
 interface PrioritizationFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number;
   resultIndex: number;
   field: FieldSchemaType;
+  display?: boolean;
 }
 
 const maxListItemsOptions = [
@@ -41,19 +43,16 @@ export const PrioritizationForm = ({
   formIndex,
   resultIndex,
   field,
+  display = true,
 }: PrioritizationFormProps) => {
-  //   useEffect(() => {
-  //     formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.type`, ResultType.Ranking);
-  //   }, []);
-  if (field.type !== FieldType.Options) return null;
-
   return (
-    <>
+    <FieldBlock sx={{ display: display ? "flex" : "none" }}>
+      <Typography variant={"label2"}>Ranking configuration</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="# of options in the final result"
-          width="400px"
+          // defaultValue={""}
           renderValue={(val) => {
             if (val === ResultListCountLimit.None)
               return "All options included in the final ranking";
@@ -64,9 +63,14 @@ export const PrioritizationForm = ({
           name={`steps.${formIndex}.result.${resultIndex}.prioritization.numPrioritizedItems`}
           displayLabel={false}
           size={"small"}
+          defaultValue=""
         />
       </ResponsiveFormRow>
-      <Typography>{rankingStrategyDescription(field.optionsConfig.selectionType)}</Typography>
-    </>
+      <Typography>
+        {field.type === FieldType.Options
+          ? rankingStrategyDescription(field.optionsConfig.selectionType)
+          : null}
+      </Typography>
+    </FieldBlock>
   );
 };

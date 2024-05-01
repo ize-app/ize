@@ -229,7 +229,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
         <form style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <Select<FormFields>
             name="type"
-            width="200px"
             control={control}
             label=""
             selectOptions={[
@@ -337,7 +336,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     <Box sx={{ width: "300px" }}>
                       <Select<FormFields>
                         name="discordRole.serverId"
-                        width="200px"
                         control={control}
                         label="Server"
                         selectOptions={serverOptions}
@@ -349,7 +347,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                           name="discordRole.roleId"
                           control={control}
                           label="Role"
-                          width="200px"
                           loading={roleLoading}
                           selectOptions={discordServerRoles}
                         />
@@ -393,7 +390,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     <Select<FormFields>
                       name="nft.chain"
                       control={control}
-                      width="200px"
                       label="Chain"
                       selectOptions={chainOptions}
                     />
@@ -452,7 +448,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
               >
                 <Select<FormFields>
                   name="hat.chain"
-                  width="200px"
                   control={control}
                   label="Chain"
                   selectOptions={chainOptions}

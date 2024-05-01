@@ -3834,13 +3834,9 @@
             "name": "action",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "ActionArgs",
-                "ofType": null
-              }
+              "kind": "INPUT_OBJECT",
+              "name": "ActionArgs",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,

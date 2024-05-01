@@ -3,7 +3,7 @@ import { prisma } from "../../prisma/client";
 import { flowInclude } from "./flowPrismaTypes";
 import { flowVersionResolver } from "./resolvers/flowVersionResolver";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { MePrismaType } from "@/core/user/formatUser";
+import { MePrismaType } from "../user/userPrismaTypes";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 
 export const getFlow = async ({

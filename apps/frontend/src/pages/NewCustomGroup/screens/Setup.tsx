@@ -1,10 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
-import { WizardBody, WizardNav } from "../../../components/Wizard";
+import { WizardNav } from "../../../components/Wizard";
 import { useNewCustomGroupWizardState, NewCustomGroupFormFields } from "../newCustomGroupWizard";
 import { newCustomGroupFormSchema } from "../formValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RoleSearch } from "../../../components/Form/formFields";
 import { FormControl, FormHelperText, TextField } from "@mui/material";
+import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 export const Setup = ({}) => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
@@ -33,7 +34,7 @@ export const Setup = ({}) => {
   };
   return (
     <>
-      <WizardBody>
+      <WizardScreenBodyNarrow>
         <form
           style={{
             width: "100%",
@@ -67,7 +68,7 @@ export const Setup = ({}) => {
             getFieldValues={getFieldValues}
           />
         </form>
-      </WizardBody>
+      </WizardScreenBodyNarrow>
       <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
     </>
   );

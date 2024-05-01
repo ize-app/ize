@@ -1,4 +1,4 @@
-import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
@@ -12,7 +12,6 @@ import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];
@@ -125,7 +124,7 @@ export const FieldOptionsForm = ({
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
-            showLabel={false}
+            // showLabel={false}
             label={`Option #${inputIndex + 1}`}
           />
         );
@@ -145,14 +144,14 @@ export const FieldOptionsForm = ({
             name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
             key={"name" + inputIndex.toString() + formIndex.toString()}
             control={control}
+            defaultValue=""
             placeholderText={`Option #${inputIndex + 1}`}
             showLabel={false}
             multiline
-            sx={{ flexGrow: 1, flexBasis: "100px" }}
+            // sx={{ flexGrow: 1 }}
             label={`Option #${inputIndex + 1}`}
             disabled={disabled}
             size="small"
-            variant="standard"
           />
         );
     }
@@ -164,8 +163,6 @@ export const FieldOptionsForm = ({
         display: "flex",
         flexDirection: "column",
         gap: "8px",
-        alignItems: "flex-start",
-        padding: "8px",
         flexGrow: 1,
       }}
     >
@@ -174,20 +171,20 @@ export const FieldOptionsForm = ({
         <TextField<FlowSchemaType>
           name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
           key={"hasRequestOptions" + formIndex.toString()}
+          defaultValue=""
           control={control}
           showLabel={false}
           label={`Has request options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
         <TextField<FlowSchemaType>
           name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`}
           key={"linkedOptions" + formIndex.toString()}
+          defaultValue=""
           control={control}
           showLabel={false}
           label={`Linked options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
@@ -196,8 +193,8 @@ export const FieldOptionsForm = ({
           key={"requestOptionsDataType" + formIndex.toString()}
           control={control}
           showLabel={false}
+          defaultValue=""
           label={`Linked options - ignore`}
-          variant="standard"
           disabled={true}
           size="small"
         />
@@ -206,8 +203,8 @@ export const FieldOptionsForm = ({
         <ResponsiveFormRow>
           <Select<FlowSchemaType>
             control={formMethods.control}
+            defaultValue=""
             label="How many options can be selected?"
-            width="400px"
             renderValue={(val) => {
               if (val === OptionSelectionCountLimit.None)
                 return "User can select any number of options";
@@ -221,15 +218,16 @@ export const FieldOptionsForm = ({
           />
         </ResponsiveFormRow>
       )}
+      <Typography variant={"label2"}>Available options</Typography>
       {stepDefinedOptions.length > 0 &&
         fields.map((item, inputIndex) => {
           return (
-            <LabeledGroupedInputs
-              label={"Option " + (inputIndex + 1).toString()}
+            <Box
+              key={item.id}
               sx={{
                 display: "flex",
-                flexDirection: "Row",
-                padding: "8px",
+                flexDirection: "row",
+                flexGrow: 1,
               }}
             >
               <ResponsiveFormRow key={item.id}>
@@ -240,16 +238,16 @@ export const FieldOptionsForm = ({
                     control={control}
                     showLabel={false}
                     label={`Option ID - ignore`}
-                    variant="standard"
                     disabled={true}
                     size="small"
+                    defaultValue=""
                   />
                 </Box>
                 <Select<FlowSchemaType>
                   control={control}
-                  width="120px"
                   displayLabel={false}
                   size={"small"}
+                  sx={{ flexBasis: "100px", flexGrow: 1 }}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
                   key={"dataType" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={[
@@ -260,7 +258,7 @@ export const FieldOptionsForm = ({
                     { name: "Date", value: FieldDataType.Date },
                   ]}
                   label="Type"
-                  variant="standard"
+                  defaultValue=""
                 />
 
                 {renderInput(inputIndex, false)}
@@ -270,77 +268,87 @@ export const FieldOptionsForm = ({
                 aria-label="Remove option"
                 onClick={() => remove(inputIndex)}
               >
-                <HighlightOffOutlined />
+                <CloseIcon fontSize="small" />
               </IconButton>
-            </LabeledGroupedInputs>
+            </Box>
           );
         })}
-
       {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
         <Box sx={{ width: "100%" }}>
           {linksFields.map((item, inputIndex) => {
             return (
-              <ResponsiveFormRow key={item.id}>
+              <Box key={item.id} sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
                 <Select<FlowSchemaType>
                   control={control}
-                  width="120px"
                   displayLabel={false}
+                  sx={{}}
                   size={"small"}
-                  flexGrow="1"
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                   key={"links" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={possibleLinkOptions}
                   renderValue={(val) => {
                     if (val) return getSelectOptionName(possibleLinkOptions, val);
-                    else return "Select a return value";
+                    else return "Select a previous result";
                   }}
                   label="Type"
-                  variant="standard"
                   displayEmpty={true}
+                  defaultValue=""
                 />
                 <IconButton
                   color="primary"
                   aria-label="Remove linked options"
                   onClick={() => linksRemove(inputIndex)}
                 >
-                  <HighlightOffOutlined />
+                  <CloseIcon fontSize="small" />
                 </IconButton>
-              </ResponsiveFormRow>
+              </Box>
             );
           })}
         </Box>
       )}
       {hasRequestDefinedOptions && branch === "response" && (
-        <ResponsiveFormRow>
-          <Typography sx={{ flexGrow: 1 }}>Requestor can add options</Typography>
-          <Select
-            control={formMethods.control}
-            width="150px"
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-            selectOptions={[
-              { name: "Text", value: FieldDataType.String },
-              { name: "Number", value: FieldDataType.Number },
-              { name: "Uri", value: FieldDataType.Uri },
-              { name: "Date", value: FieldDataType.Date },
-              { name: "DateTime", value: FieldDataType.DateTime },
-            ]}
-            label="Option type"
-            size="small"
-            variant="standard"
-            displayLabel={false}
-          />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexGrow: 1,
+          }}
+        >
+          <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
+            {" "}
+            <Typography>Options created at trigger</Typography>
+            <Box>
+              <Select
+                control={formMethods.control}
+                name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+                defaultValue=""
+                selectOptions={[
+                  { name: "Text", value: FieldDataType.String },
+                  { name: "Number", value: FieldDataType.Number },
+                  { name: "Uri", value: FieldDataType.Uri },
+                  { name: "Date", value: FieldDataType.Date },
+                  { name: "DateTime", value: FieldDataType.DateTime },
+                ]}
+                label="Option type"
+                size="small"
+                sx={{ width: "100px", flexGrow: 0 }}
+                variant="standard"
+                displayLabel={false}
+              />
+            </Box>
+          </ResponsiveFormRow>
           <IconButton
             color="primary"
             aria-label="Remove request created options"
             onClick={disableRequestCreatedOptions}
           >
-            <HighlightOffOutlined />
+            <CloseIcon fontSize="small" />
           </IconButton>
-        </ResponsiveFormRow>
+        </Box>
       )}
       <ResponsiveFormRow>
         <Button
-          sx={{ position: "relative", width: "250px" }}
+          sx={{ position: "relative" }}
           variant="outlined"
           size="small"
           onClick={() => {
@@ -351,8 +359,8 @@ export const FieldOptionsForm = ({
         </Button>
         {possibleLinkOptions.length > 0 && branch === "response" && (
           <Button
-            sx={{ position: "relative", width: "250px" }}
-            variant="outlined"
+            sx={{ position: "relative" }}
+            variant="text"
             size="small"
             onClick={() => {
               linksAppend({ id: "" });
@@ -363,12 +371,12 @@ export const FieldOptionsForm = ({
         )}
         {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
           <Button
-            sx={{ position: "relative", width: "250px" }}
-            variant="outlined"
+            sx={{ position: "relative" }}
+            variant="text"
             size="small"
             onClick={enableRequestCreatedOptions}
           >
-            Allow requestor to add options
+            Allow options to be created at trigger
           </Button>
         )}
       </ResponsiveFormRow>

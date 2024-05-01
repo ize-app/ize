@@ -44,7 +44,9 @@ export const requestStepSummaryInclude = Prisma.validator<Prisma.RequestStepIncl
           Flow: true,
         },
       },
-      Creator: userInclude,
+      Creator: {
+        include: userInclude,
+      },
     },
   },
   Step: {

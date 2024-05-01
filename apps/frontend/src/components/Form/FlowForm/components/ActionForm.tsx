@@ -1,129 +1,64 @@
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { Select, TextField } from "../../formFields";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
-import { useEffect, useState } from "react";
-
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection } from "../formValidation/fields";
+import { Select } from "../../formFields";
+import { FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
-import { StepComponentContainer } from "./StepContainer";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
+import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { FormHelperText } from "@mui/material";
 
-interface ActionFormProps {
+interface ActionFilterFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
-  stepsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
 }
 
-export const ActionForm = ({ formMethods, formIndex, stepsArrayMethods }: ActionFormProps) => {
-  const [latestActionState, setLatestActionState] = useState<ActionType>();
+export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormProps) => {
+  const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
-  const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
-
-  // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
+  // get field options asssociated with decisions to use as action filters
   const results = formMethods.watch(`steps.${formIndex}.result`);
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
-
-  const options: SelectOption[] = [];
-
+  const filterOptions: SelectOption[] = [];
   (results ?? [])
     .filter((res) => res.type === ResultType.Decision)
     .forEach((res, resIndex) => {
       const field = responseFields.find((f) => f.fieldId === res.fieldId);
       if (!field || field.type !== FieldType.Options) return;
-      field.optionsConfig.options.map((o) => {
-        options.push({
+      (field.optionsConfig.options ?? []).map((o) => {
+        filterOptions.push({
           name: `Result ${resIndex}: "${o.name}"`,
           value: o.optionId,
         });
       });
     });
 
-  const defaultOptionSelections: SelectOption[] = [...options];
-
-  defaultOptionSelections.unshift({
-    name: "Action runs for every result",
-    value: DefaultOptionSelection.None,
-  });
-
-  const stepCount = formMethods.watch("steps").length;
-
-  useEffect(() => {
-    if (actionType !== latestActionState) {
-      if (actionType === ActionType.TriggerStep) {
-        stepsArrayMethods.append(defaultStepFormValues);
-      } else if (latestActionState === ActionType.TriggerStep) {
-        for (let i = 0; i < stepCount; i++) {
-          stepsArrayMethods.remove(formIndex + 1);
-        }
-      }
-      setLatestActionState(actionType);
-    }
-  }, [actionType]);
-
   return (
-    <StepComponentContainer label={"Action"}>
-      <ResponsiveFormRow>
+    (filterOptions ?? []).length > 0 && (
+      <FieldGroupAccordion title="Filter" hasError={!!error}>
+        {error?.root?.message && (
+          <FormHelperText
+            sx={{
+              color: "error.main",
+            }}
+          >
+            {error?.root?.message}
+          </FormHelperText>
+        )}
         <Select<FlowSchemaType>
           control={formMethods.control}
-          width="300px"
-          name={`steps.${formIndex}.action.type`}
-          selectOptions={[
-            { name: "No automated action on result", value: ActionType.None },
-            { name: "Trigger new step on result", value: ActionType.TriggerStep },
-            { name: "Call a webhook on result", value: ActionType.CallWebhook },
-          ]}
-          label="Action"
-          size="small"
+          label="When to run action"
+          renderValue={(val) => {
+            const optionName = getSelectOptionName(filterOptions, val);
+            if (optionName) {
+              return "Only run action on: " + optionName;
+            } else return "Run action on all options";
+          }}
+          selectOptions={[...filterOptions]}
           displayLabel={false}
+          name={`steps.${formIndex}.action.filterOptionId`}
         />
-        {(options ?? []).length > 0 && actionType !== ActionType.None && (
-          <>
-            <Select<FlowSchemaType>
-              control={formMethods.control}
-              label="When to run action"
-              width="300px"
-              renderValue={(val) => {
-                const optionName = getSelectOptionName(options, val);
-                if (optionName) {
-                  return "Only run action on: " + optionName;
-                } else return "Run action on all options";
-              }}
-              flexGrow="1"
-              selectOptions={defaultOptionSelections}
-              displayLabel={false}
-              name={`steps.${formIndex}.action.filterOptionId`}
-            />
-          </>
-        )}
-      </ResponsiveFormRow>
-      {actionType === ActionType.CallWebhook && (
-        <ResponsiveFormRow>
-          <TextField<FlowSchemaType>
-            control={formMethods.control}
-            sx={{ width: "300px" }}
-            label="Url"
-            variant="standard"
-            size="small"
-            showLabel={false}
-            placeholderText="Webhook Uri (not displayed publicly)"
-            name={`steps.${formIndex}.action.callWebhook.uri`}
-          />
-          <TextField<FlowSchemaType>
-            control={formMethods.control}
-            sx={{ width: "300px", flexGrow: 1 }}
-            label="What does this webhook do?"
-            placeholderText="What does this webhook do?"
-            variant="standard"
-            size="small"
-            showLabel={false}
-            name={`steps.${formIndex}.action.callWebhook.name`}
-          />
-        </ResponsiveFormRow>
-      )}
-    </StepComponentContainer>
+      </FieldGroupAccordion>
+    )
   );
 };

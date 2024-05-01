@@ -1,63 +1,116 @@
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
-
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
-
-import { StepContainer } from "./StepContainer";
-import { ResponseForm } from "./ResponseForm";
-import { RequestForm } from "./RequestForm";
-import { ResultType } from "@/graphql/generated/graphql";
-import { ActionForm } from "./ActionForm";
+import { Box } from "@mui/material";
+import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { RoleSearch, Select, Switch } from "../../formFields";
+import { PermissionType } from "../formValidation/permission";
+import { FormHelperText } from "@mui/material";
+import { ActionFilterForm } from "./ActionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {
-  useFormMethods: UseFormReturn<FlowSchemaType>;
-  stepsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
-  handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
-  expandedStep: number | "EvolveStep" | false;
+  formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
+  show: boolean;
 }
 
-export const stepNameLabels = new Map<ResultType, { stepTitle: string }>([
-  [ResultType.Decision, { stepTitle: "Decide" }],
-  [ResultType.Ranking, { stepTitle: "Rank" }],
-  [ResultType.LlmSummary, { stepTitle: "Sensemaking with AI" }],
-]);
+const requestExpirationOptions = [
+  { name: "1 hour", value: 3600 },
+  { name: "4 hours", value: 14400 },
+  { name: "1 day", value: 86400 },
+  { name: "3 days", value: 259200 },
+  { name: "7 days", value: 604800 },
+  { name: "30 days", value: 2592000 },
+];
 
-export interface PreviousStepResult {
-  resultType: ResultType;
-}
+export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepFormProps) => {
+  // console.log("form state for ", formIndex, " is ", getFieldValues());
+  // console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
+  const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
+  const stepError = formMethods.getFieldState(`steps.${formIndex}`).error;
 
-export const StepForm = ({
-  useFormMethods,
-  formIndex,
-  stepsArrayMethods,
-  handleStepExpansion,
-  expandedStep,
-}: StepFormProps) => {
-  const { getValues: getFieldValues } = useFormMethods;
-  console.log("form state for ", formIndex, " is ", getFieldValues());
-  console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
+  const fieldsArrayMethods = useFieldArray({
+    control: formMethods.control,
+    name: `steps.${formIndex}.response.fields`,
+  });
 
-  const hasError = !!useFormMethods.formState.errors.steps?.[formIndex];
 
   return (
-    <StepContainer
-      expandedStep={expandedStep}
-      handleStepExpansion={handleStepExpansion}
-      stepIdentifier={formIndex}
-      hasError={hasError}
-      title={` Step ${formIndex + 1}`}
-    >
-      <>
-        <RequestForm formMethods={useFormMethods} formIndex={formIndex} />
-        <ResponseForm formMethods={useFormMethods} formIndex={formIndex} />
-        <ResultsForm formMethods={useFormMethods} formIndex={formIndex} />
-        <ActionForm
-          formMethods={useFormMethods}
-          formIndex={formIndex}
-          stepsArrayMethods={stepsArrayMethods}
+    <Box sx={{ display: show ? "box" : "none" }}>
+      {stepError?.root && (
+        <FormHelperText
+          sx={{
+            color: "error.main",
+            marginLeft: "16px",
+          }}
+        >
+          {stepError?.root.message}
+        </FormHelperText>
+      )}
+      {formIndex > 0 && <ActionFilterForm formIndex={formIndex - 1} formMethods={formMethods} />}
+      <FieldGroupAccordion
+        title="Response permissions"
+        hasError={
+          !!formMethods.formState.errors.steps?.[formIndex]?.response?.permission ||
+          !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
+          !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
+        }
+      >
+        <Select<FlowSchemaType>
+          control={formMethods.control}
+          // width="300px"
+          name={`steps.${formIndex}.response.permission.type`}
+          selectOptions={[
+            { name: "Certain people can respond", value: PermissionType.Entities },
+            { name: "Anyone can respond", value: PermissionType.Anyone },
+            {
+              name: "No response: Automatically approve request",
+              value: PermissionType.NA,
+            },
+          ]}
+          label="Who can respond?"
+          displayLabel={false}
+          size="small"
         />
-      </>
-    </StepContainer>
+        {responseTrigger === PermissionType.Entities && (
+          <RoleSearch<FlowSchemaType>
+            key="responseRoleSearch"
+            ariaLabel={"Individuals and groups who can respond"}
+            name={`steps.${formIndex}.response.permission.entities`}
+            control={formMethods.control}
+            setFieldValue={formMethods.setValue}
+            getFieldValues={formMethods.getValues}
+          />
+        )}
+        <Select<FlowSchemaType>
+          control={formMethods.control}
+          label="How long do people have to respond?"
+          renderValue={(val) => {
+            const option = requestExpirationOptions.find((option) => option.value === val);
+            return option?.name + " to respond";
+          }}
+          selectOptions={requestExpirationOptions}
+          name={`steps.${formIndex}.expirationSeconds`}
+          displayLabel={false}
+          size={"small"}
+        />
+        <Switch<FlowSchemaType>
+          name={`steps.${formIndex}.allowMultipleResponses`}
+          control={formMethods.control}
+          label="Allow multiple responses"
+        />
+      </FieldGroupAccordion>
+      <FieldGroupAccordion
+        title="Results"
+        hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
+      >
+        <ResultsForm
+          formIndex={formIndex}
+          formMethods={formMethods}
+          //@ts-ignore
+          fieldsArrayMethods={fieldsArrayMethods}
+        />
+      </FieldGroupAccordion>
+    </Box>
   );
 };

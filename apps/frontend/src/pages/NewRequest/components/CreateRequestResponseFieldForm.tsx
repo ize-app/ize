@@ -117,7 +117,7 @@ export const CreateRequestResponseFieldForm = ({
                     })}
                     {requestDefinedOptionsFormMethods.fields.map((item, inputIndex) => {
                       return (
-                        <TableRow key={inputIndex}>
+                        <TableRow key={item.id}>
                           {/* Need to add a hidden option ID text field so that default values propogate correctly */}
                           <TableCell
                             align="center"

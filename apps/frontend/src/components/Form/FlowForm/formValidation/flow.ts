@@ -22,7 +22,7 @@ const stepSchema = z
       fields: fieldsSchema,
     }),
     result: resultsSchema,
-    action: actionSchema,
+    action: actionSchema.optional(),
     allowMultipleResponses: z.boolean().default(false),
     expirationSeconds: z.coerce.number().int().positive().optional(),
   })
@@ -48,7 +48,9 @@ const stepSchema = z
         return false;
       else return true;
     },
-    { message: "Either add response fields or set this step to 'No response'", path: ["response"] },
+    {
+      message: "Either add response fields or set this step to 'No response'",
+    },
   )
   .refine(
     (step) => {

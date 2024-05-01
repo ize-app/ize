@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
+import { DefaultOptionSelection } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
@@ -81,3 +82,46 @@ export const resultSchema = z.discriminatedUnion("type", [
 ]);
 
 export const resultsSchema = z.array(resultSchema).default([]);
+
+export const defaultDecisionResult = (
+  stepIndex: number,
+  resultIndex: number,
+  fieldId: string,
+): ResultSchemaType => ({
+  resultId: "new." + stepIndex + "." + resultIndex,
+  type: ResultType.Decision,
+  fieldId,
+  minimumAnswers: 1,
+  decision: {
+    type: DecisionType.NumberThreshold,
+    threshold: 1,
+    defaultOptionId: DefaultOptionSelection.None,
+  },
+});
+
+export const defaultRankingResult = (
+  stepIndex: number,
+  resultIndex: number,
+  fieldId: string,
+): ResultSchemaType => ({
+  resultId: "new." + stepIndex + "." + resultIndex,
+  type: ResultType.Ranking,
+  fieldId,
+  minimumAnswers: 1,
+  prioritization: { numPrioritizedItems: 3 },
+});
+
+export const defaultLlmSummaryResult = (
+  stepIndex: number,
+  resultIndex: number,
+  fieldId: string,
+): ResultSchemaType => ({
+  resultId: "new." + stepIndex + "." + resultIndex,
+  type: ResultType.LlmSummary,
+  fieldId,
+  minimumAnswers: 1,
+  llmSummary: {
+    type: LlmSummaryType.AtTheEnd,
+    prompt: "test prmpt",
+  },
+});

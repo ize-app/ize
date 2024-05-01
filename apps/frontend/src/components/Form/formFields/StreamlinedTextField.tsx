@@ -1,39 +1,30 @@
-import { TextField as MuiTextField, SxProps, TextFieldVariants } from "@mui/material";
+import { TextField as MuiTextField, SxProps } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
 import { ReactNode } from "react";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
-interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
+interface StreamlinedTextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
-  variant?: TextFieldVariants;
   required?: boolean;
-  showLabel?: boolean;
   placeholderText?: string;
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
   multiline?: boolean;
   size?: "small" | "medium";
   sx?: SxProps;
-  display?: boolean;
 }
 
-export const TextField = <T extends FieldValues>({
+export const StreamlinedTextField = <T extends FieldValues>({
   label,
   name,
   control,
-  showLabel = false,
   required = false,
-  size = "small",
-  multiline = false,
-  variant = "outlined",
   endAdornment,
   startAdornment,
   placeholderText,
-  display = true,
   sx = {},
-}: TextFieldProps<T>) => {
-  const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none"};
+}: StreamlinedTextFieldProps<T>) => {
+  const defaultStyles: SxProps = { flexGrow: 0, width: "100%" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller
@@ -45,11 +36,9 @@ export const TextField = <T extends FieldValues>({
           <MuiTextField
             {...field}
             aria-label={label}
-            variant={variant}
-            label={showLabel ? label : ""}
+            variant={"standard"}
             required={required}
-            multiline={multiline}
-            size={size}
+            size={"small"}
             placeholder={placeholderText}
             error={Boolean(error)}
             InputProps={{
@@ -57,13 +46,6 @@ export const TextField = <T extends FieldValues>({
               startAdornment,
             }}
           />
-          <FormHelperText
-            sx={{
-              color: "error.main",
-            }}
-          >
-            {error?.message ?? ""}
-          </FormHelperText>
         </FormControl>
       )}
     />

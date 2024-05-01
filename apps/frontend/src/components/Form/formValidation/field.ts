@@ -34,7 +34,6 @@ export const evaluateMultiTypeInput = (
       return;
     case FieldDataType.String:
       if (!z.string().min(1).safeParse(value).success) {
-        console.log("string error!");
         ctx.addIssue({
           code: z.ZodIssueCode.invalid_string,
           validation: "url",

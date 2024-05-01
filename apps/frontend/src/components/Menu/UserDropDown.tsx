@@ -1,29 +1,21 @@
 import styled from "@emotion/styled";
-import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Logout from "@mui/icons-material/Logout";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
 import { Avatar } from "../Avatar";
 import { useStytch } from "@stytch/react";
+import { Box } from "@mui/material";
+import { EntityType, MePartsFragment } from "@/graphql/generated/graphql";
 
 interface UserDropDownProps {
-  username: string;
-  avatarURL: string | null;
+  me: MePartsFragment;
 }
 
-const UserDropDownContainer = styled.li`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 16px 8px;
-`;
 
-export const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.Element => {
+export const UserDropDown = ({ me }: UserDropDownProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const stytch = useStytch();
@@ -41,15 +33,15 @@ export const UserDropDown = ({ username, avatarURL }: UserDropDownProps): JSX.El
 
   return (
     <>
-      <UserDropDownContainer onClick={handleClick}>
-        {
-          // holding off on all avatar ts scripts until I rewrite that component
-          //@ts-ignore
-          <Avatar avatarUrl={avatarURL} name={username} sx={{ height: "24px", width: "24px" }} />
-        }
-        <Typography variant="body1">{username}</Typography>
-        <ArrowDropDown />
-      </UserDropDownContainer>
+      <Box onClick={handleClick}>
+        <Avatar
+          id={"ASfd"}
+          type={EntityType.Identity}
+          avatarUrl={me.user.icon ?? null}
+          name={me.user.name}
+          sx={{ height: "24px", width: "24px" }}
+        />
+      </Box>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"

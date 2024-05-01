@@ -1,7 +1,7 @@
 import { FlowSummary } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
 import { FlowSummaryPrismaType, flowSummaryInclude } from "./flowPrismaTypes";
-import { MePrismaType } from "@/core/user/formatUser";
+import { MePrismaType } from "../user/userPrismaTypes";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 

@@ -1,27 +1,34 @@
-import { UseFormReturn } from "react-hook-form";
-import { StepComponentContainer } from "./StepContainer";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
-import { RoleSearch, Select, Switch } from "../../formFields";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { RoleSearch, Select } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
 import { FieldsForm } from "./FieldsForm";
+import { Box } from "@mui/material";
+import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
 
-interface RequestFormProps {
+interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
+  show: boolean;
 }
 
-export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
+export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
   const isEntitiesRequestTrigger =
     formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
+  const error = formMethods.formState.errors.steps?.[formIndex]?.request;
+
+  const fieldsArrayMethods = useFieldArray({
+    control: formMethods.control,
+    name: `steps.${formIndex}.request.fields`,
+  });
+
   return (
     formIndex === 0 && (
-      <StepComponentContainer label="Request">
-        <ResponsiveFormRow>
+      <Box sx={{ display: show ? "block" : "none" }}>
+        <FieldGroupAccordion title="Permission" hasError={!!error?.permission}>
           <Select
             control={formMethods.control}
-            width="300px"
             name={`steps.${formIndex}.request.permission.type`}
             selectOptions={[
               { name: "Certain individuals and groups", value: PermissionType.Entities },
@@ -39,9 +46,17 @@ export const RequestForm = ({ formMethods, formIndex }: RequestFormProps) => {
               getFieldValues={formMethods.getValues}
             />
           )}
-        </ResponsiveFormRow>
-        <FieldsForm formIndex={formIndex} branch={"request"} useFormMethods={formMethods} />
-      </StepComponentContainer>
+        </FieldGroupAccordion>
+        <FieldGroupAccordion title="Request fields" hasError={!!error?.fields}>
+          <FieldsForm
+            formIndex={formIndex}
+            branch={"request"}
+            formMethods={formMethods}
+            //@ts-ignore
+            fieldsArrayMethods={fieldsArrayMethods}
+          />
+        </FieldGroupAccordion>
+      </Box>
     )
   );
 };

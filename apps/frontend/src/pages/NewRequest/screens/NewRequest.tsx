@@ -33,7 +33,7 @@ export const NewRequest = () => {
 
   const onComplete = async () => {
     try {
-      console.log("args are", createNewRequestMutationArgs(formState));
+      // console.log("args are", createNewRequestMutationArgs(formState));
       await mutate({
         variables: { request: createNewRequestMutationArgs(formState) },
       });

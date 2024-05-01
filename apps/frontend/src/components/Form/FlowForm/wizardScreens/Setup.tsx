@@ -1,28 +1,108 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 import { FlowSchemaType } from "../formValidation/flow";
 
-import { WizardBody, WizardNav } from "@/components/Wizard";
+import { WizardNav } from "@/components/Wizard";
 import { flowSchema } from "../formValidation/flow";
-import { StepsForm } from "../components/StepsForm";
 import { PermissionType } from "../formValidation/permission";
-import { TextField } from "../../formFields";
-import { EntityType, DecisionType } from "@/graphql/generated/graphql";
-import { useContext } from "react";
+import { StreamlinedTextField } from "../../formFields";
+import { EntityType, DecisionType, ActionType } from "@/graphql/generated/graphql";
+import React, { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
+import { Button, Typography } from "@mui/material";
+import { StageContainer } from "../components/StageContainer";
+import { TriggerForm } from "../components/TriggerForm";
+import { StepForm } from "../components/StepForm";
+import { StageConnectorButton } from "../components/StageConnectorButton";
+import { WebhookForm } from "../components/WebhookForm";
+import { EvolveFlowForm } from "../components/EvolveFlowForm";
+import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
+import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
+import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
+
+const StageHeader = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        backgroundColor: "white",
+        padding: "1rem",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const ConfigurationPanel = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        height: "100%",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        backgroundColor: "white",
+        // padding: "1rem",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        height: "100%",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        display: "flex",
+        flexDirection: "column",
+        padding: "48px 0px",
+        alignItems: "center",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const AddButton = ({ label, onClick }: { label: string; onClick: () => void }) => (
+  <Button
+    variant="outlined"
+    size="medium"
+    color="secondary"
+    sx={{
+      width: "240px",
+      border: "2px dashed",
+      "&&:hover": {
+        border: "2px dashed",
+      },
+    }}
+    onClick={onClick}
+  >
+    {label}
+  </Button>
+);
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
+  const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
+
+  const fieldArrayName = "steps";
 
   const { me } = useContext(CurrentUserContext);
 
   const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
       name: formState.name ?? "",
-      reusable: formState.reusable ?? false,
       evolve: formState.evolve ?? {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
@@ -49,36 +129,207 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
+  const hasWebhook = useFormMethods.watch("steps.0.action.type") === ActionType.CallWebhook;
+
+  console.log("form state is ", useFormMethods.getValues());
+  console.log("errors are ", useFormMethods.formState.errors);
+
+  const stepsArrayMethods = useFieldArray({
+    control: useFormMethods.control,
+    name: fieldArrayName,
+  });
+
   const onSubmit = (data: FlowSchemaType) => {
     setFormState((prev) => ({ ...prev, ...data }));
     onNext();
   };
 
   return (
-    <form>
-      <WizardBody>
+    <form style={{ height: "100%" }}>
+      <Box
+        sx={(theme) => ({
+          display: "flex",
+          [theme.breakpoints.down("md")]: {
+            flexDirection: "column",
+          },
+          flexDirection: "row",
+          width: "100%",
+          height: "100%",
+          minWidth: "300px",
+        })}
+      >
+        {/* Flow diagram*/}
         <Box
-          sx={{
+          sx={(theme) => ({
+            [theme.breakpoints.down("md")]: {
+              width: "100%",
+            },
+            // flexGrow: 1,
+            display: "flex",
+            width: "50%",
+            // minWidth: "300px",
+            flexDirection: "column",
+          })}
+        >
+          <StageHeader>
+            <StreamlinedTextField
+              control={useFormMethods.control}
+              sx={{ width: "100%" }}
+              label="Name of this flow"
+              placeholderText="Name of this flow"
+              size="small"
+              name={`name`}
+            />
+          </StageHeader>
+          <DiagramPanel>
+            <StageContainer
+              label="Trigger"
+              key="trigger0"
+              id={"trigger0"}
+              setSelectedId={setSelectedId}
+              selectedId={selectedId}
+              hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
+              icon={<PlayCircleOutlineOutlinedIcon color="primary" />}
+            />
+            <StageConnectorButton />
+            {stepsArrayMethods.fields.map((item, index) => {
+              return (
+                <Box key={item.id}>
+                  <StageContainer
+                    icon={<Diversity3OutlinedIcon color="primary" />}
+                    label={"Collaboration " + (index + 1).toString()}
+                    key={"stage-" + item.id.toString() + index.toString()}
+                    deleteHandler={
+                      index > 0
+                        ? () => {
+                            stepsArrayMethods.remove(index);
+                          }
+                        : undefined
+                    }
+                    hasError={!!useFormMethods.formState.errors.steps?.[index]}
+                    id={"step" + index.toString()}
+                    setSelectedId={setSelectedId}
+                    selectedId={selectedId}
+                  />
+                  <StageConnectorButton
+                    key={"connector-" + item.id.toString() + index.toString()}
+                  />
+                </Box>
+              );
+            })}
+            {!hasWebhook ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "8px",
+                  marginBottom: "16px",
+                }}
+              >
+                <AddButton
+                  label={"Add collaborative step"}
+                  onClick={() => {
+                    stepsArrayMethods.append(defaultStepFormValues);
+                    // navigate to newly created step
+                    setSelectedId(`step${stepsArrayMethods.fields.length}`);
+                  }}
+                />
+                <AddButton
+                  label={"Trigger webhook"}
+                  onClick={() => {
+                    //@ts-ignore
+                    useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
+                      type: ActionType.CallWebhook,
+                    });
+                    setSelectedId("webhook");
+                  }}
+                />
+              </Box>
+            ) : (
+              <StageContainer
+                label="Webhook"
+                id={"webhook"}
+                setSelectedId={setSelectedId}
+                selectedId={selectedId}
+                deleteHandler={() => {
+                  console.log("deleting webhook");
+                  setSelectedId("trigger0");
+                  useFormMethods.setValue(
+                    `steps.${stepsArrayMethods.fields.length - 1}.action`,
+                    undefined,
+                  );
+                }}
+                icon={<PublicOutlinedIcon color="primary" />}
+                hasError={
+                  !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
+                    ?.action
+                }
+              />
+            )}
+            <StageContainer
+              label={"Flow evolution"}
+              key={"evolve"}
+              hasError={!!useFormMethods.formState.errors.evolve}
+              id={"evolve"}
+              icon={<ChangeCircleOutlinedIcon color="primary" />}
+              setSelectedId={setSelectedId}
+              selectedId={selectedId}
+              sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
+            />
+          </DiagramPanel>
+        </Box>
+        {/* Configuration panel*/}
+        <Box
+          sx={(theme) => ({
+            [theme.breakpoints.down("md")]: {
+              width: "100%",
+            },
+            // minWidth: "300px",
+            // flexGrow: 1,
+            height: "100%",
+            width: "50%",
             display: "flex",
             flexDirection: "column",
-            gap: "24px",
-            maxWidth: "1200px",
-            width: "100%",
-          }}
+          })}
         >
-          <TextField<FlowSchemaType>
-            control={useFormMethods.control}
-            sx={{ width: "100%" }}
-            label="Name of this flow"
-            placeholderText="What's the purpose of this form?"
-            variant="outlined"
-            size="small"
-            showLabel={true}
-            name={`name`}
-          />
-          <StepsForm useFormMethods={useFormMethods} />
+          <StageHeader>
+            <Typography color="primary" variant="label">
+              Configuration
+            </Typography>
+          </StageHeader>
+          <ConfigurationPanel>
+            <TriggerForm
+              formMethods={useFormMethods}
+              formIndex={0}
+              show={selectedId === "trigger0"}
+            />
+            {stepsArrayMethods.fields.map((item, index) => {
+              return (
+                <StepForm
+                  // id={item.id}
+                  formMethods={useFormMethods}
+                  formIndex={index}
+                  key={"step-" + item.id}
+                  show={selectedId === "step" + index.toString()}
+                />
+              );
+            })}
+            {hasWebhook && (
+              <WebhookForm
+                formMethods={useFormMethods}
+                formIndex={stepsArrayMethods.fields.length - 1}
+                show={selectedId === "webhook"}
+              />
+            )}
+            <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />
+          </ConfigurationPanel>
         </Box>
-      </WizardBody>
+      </Box>
       <WizardNav
         onNext={useFormMethods.handleSubmit(onSubmit)}
         onPrev={onPrev}

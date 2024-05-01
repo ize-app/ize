@@ -1,7 +1,8 @@
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 import { Me, Identity } from "@graphql/generated/resolver-types";
-import { userInclude, formatUser } from "@/core/user/formatUser";
+import { userInclude } from "@/core/user/userPrismaTypes";
+import { userResolver } from "@/core/user/userResolver";
 import { identityResolver } from "@/core/entity/identity/identityResolver";
 import { getDiscordServers } from "@/discord/getDiscordServers";
 import { updateUserDiscordGroups } from "@/core/entity/updateIdentitiesGroups/updateUserDiscordGroups";
@@ -30,7 +31,7 @@ const me = async (
     include: userInclude,
     where: { id: context.currentUser.id },
   });
-  const user = formatUser(userData);
+  const user = userResolver(userData);
 
   return {
     user,

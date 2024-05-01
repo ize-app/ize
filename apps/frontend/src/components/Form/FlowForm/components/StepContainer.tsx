@@ -16,8 +16,8 @@ export const StepContainer = ({
   handleStepExpansion,
 }: {
   children: React.ReactNode;
-  expandedStep: number | "EvolveStep" | false;
-  stepIdentifier: number | "EvolveStep";
+  expandedStep: string | false;
+  stepIdentifier: string | "Trigger";
   title: string;
   hasError: boolean;
   handleStepExpansion: (_event: React.SyntheticEvent, newExpanded: boolean) => void;
@@ -31,10 +31,10 @@ export const StepContainer = ({
             transform: "rotate(90deg)",
           },
         }}
-        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+        // expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
       >
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-          <Typography variant="h3" fontWeight={400}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+          <Typography color="primary" fontWeight={"500"}>
             {title}
           </Typography>
           <FormHelperText
@@ -47,7 +47,7 @@ export const StepContainer = ({
         </Box>
       </AccordionSummary>
       <AccordionDetails
-        sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "20px" }}
+        sx={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: "16px" }}
       >
         {children}
       </AccordionDetails>

@@ -10,10 +10,21 @@ export enum PermissionType {
   NA = "NA",
 }
 
-export const permissionSchema = z.object({
-  type: z.nativeEnum(PermissionType),
-  entities: z
-    .array(entityFormSchema)
-    .min(1, "Please select at least one group or individual.")
-    .optional(),
-});
+export const permissionSchema = z
+  .object({
+    type: z.nativeEnum(PermissionType),
+    entities: z
+      .array(entityFormSchema)
+      .optional(),
+  })
+  .refine(
+    (permission) => {
+      if (
+        permission.type === PermissionType.Entities &&
+        (!permission.entities || permission.entities.length === 0)
+      )
+        return false;
+      return true;
+    },
+    { path: ["entities"], message: "Please select at least one group or individual." },
+  );

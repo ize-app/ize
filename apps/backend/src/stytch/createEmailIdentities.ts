@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma/client";
-import { UserPrismaType } from "@/core/user/formatUser";
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
 import { Email } from "stytch";
 
 // creates email identities in db if they don't exist yet

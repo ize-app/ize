@@ -3,7 +3,7 @@ import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { actionInclude } from "../action/actionPrismaTypes";
 import { resultConfigSetInclude } from "../result/resultPrismaTypes";
-import { userInclude } from "../user/formatUser";
+import { userInclude } from "../user/userPrismaTypes";
 
 export const stepInclude = Prisma.validator<Prisma.StepInclude>()({
   RequestPermissions: {

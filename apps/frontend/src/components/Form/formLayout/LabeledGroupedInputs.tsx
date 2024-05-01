@@ -7,7 +7,7 @@ export const LabeledGroupedInputs = ({
   children,
   sx = {},
 }: {
-  label: string;
+  label?: string;
   children: ReactNode;
   sx?: SxProps;
 }) => {
@@ -33,17 +33,19 @@ export const LabeledGroupedInputs = ({
         }}
       >
         <legend>
-          <span
-            style={{
-              backgroundColor: "white",
-              fontWeight: "400",
-              fontFamily: "roboto",
-              color: "rgba(0, 0, 0, 0.6)",
-              fontSize: ".75rem",
-            }}
-          >
-            {label}
-          </span>
+          {label && (
+            <span
+              style={{
+                backgroundColor: "white",
+                fontWeight: "400",
+                fontFamily: "roboto",
+                color: "rgba(0, 0, 0, 0.6)",
+                fontSize: ".75rem",
+              }}
+            >
+              {label}
+            </span>
+          )}
         </legend>
       </fieldset>
       {children}
