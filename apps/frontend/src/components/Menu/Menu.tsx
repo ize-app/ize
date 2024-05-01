@@ -1,10 +1,7 @@
-import { styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -15,33 +12,19 @@ import EmailIcon from "@mui/icons-material/Email";
 import { CreateListButton } from "./CreateButton";
 import { Dispatch, SetStateAction } from "react";
 
-import { Box } from "@mui/material";
-import { UserDropDown } from "./UserDropDown";
+import { Box, Toolbar } from "@mui/material";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-const drawerWidth = 240;
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: "space-between",
-}));
-
 interface MenuProps {
   open: boolean;
-  handleDrawerClose: () => void;
-  me: MePartsFragment;
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
+  drawerWidth: number;
 }
 
-export function Menu({ open, handleDrawerClose, me, setMenuOpen }: MenuProps) {
-  const theme = useTheme();
+export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,16 +49,8 @@ export function Menu({ open, handleDrawerClose, me, setMenuOpen }: MenuProps) {
       anchor="left"
       open={open}
     >
-      <Box>
-        <DrawerHeader>
-          <Box>
-            <img src="/logo-yellow.png" style={{ height: "20px", marginLeft: "12px" }} />
-          </Box>
-          <IconButton onClick={handleDrawerClose} sx={{ padding: "0px" }}>
-            {theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-
+      <Box sx={{ overflow: "auto" }}>
+        <Toolbar variant="dense" />
         <List>
           <ListItem disablePadding>
             <CreateListButton />
@@ -107,32 +82,29 @@ export function Menu({ open, handleDrawerClose, me, setMenuOpen }: MenuProps) {
           </ListItem>
         </List>
       </Box>
-      <Box>
-        <UserDropDown username={me.user.name} avatarURL={me.user.icon ?? null} />
-        <List>
-          <Divider />
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigate(Route.Identities);
-              }}
-            >
-              <ListItemIcon>
-                <GroupIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Identities"} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <EmailIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Feedback"} />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
+
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => {
+              navigate(Route.Identities);
+            }}
+          >
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Identities"} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <EmailIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Feedback"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
     </Drawer>
   );
 }
