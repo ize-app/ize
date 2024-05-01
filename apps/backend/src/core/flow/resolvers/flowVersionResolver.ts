@@ -17,6 +17,7 @@ export const flowVersionResolver = ({
 }): Flow => {
   return {
     __typename: "Flow",
+    id: flowVersion.Flow.id,
     flowId: flowVersion.Flow.id,
     flowVersionId: flowVersion.id,
     type: flowVersion.Flow.type as FlowType,

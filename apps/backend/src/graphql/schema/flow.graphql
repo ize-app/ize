@@ -8,6 +8,7 @@ type Query {
 }
 
 type Flow {
+  id: String!
   flowId: String!
   flowVersionId: String!
   type: FlowType!
@@ -33,6 +34,7 @@ enum FlowType {
 }
 
 type Step {
+  id: String!
   index: Int!
   request: RequestConfig!
   response: ResponseConfig!

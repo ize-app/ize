@@ -37,6 +37,7 @@ fragment FlowSummary on FlowSummary {
 }
 
 fragment FlowFields on Flow {
+  id
   flowId
   flowVersionId
   type
@@ -48,6 +49,7 @@ fragment FlowFields on Flow {
 }
 
 fragment Step on Step {
+  id
   request {
     ...RequestConfig
   }

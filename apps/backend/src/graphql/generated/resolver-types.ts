@@ -233,6 +233,7 @@ export type Flow = {
   evolve?: Maybe<Flow>;
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Maybe<Step>>;
@@ -722,6 +723,7 @@ export type Step = {
   action?: Maybe<Action>;
   allowMultipleResponses: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['String']['output'];
   index: Scalars['Int']['output'];
   request: RequestConfig;
   response: ResponseConfig;
@@ -1151,6 +1153,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;
@@ -1425,6 +1428,7 @@ export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extend
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
   allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;

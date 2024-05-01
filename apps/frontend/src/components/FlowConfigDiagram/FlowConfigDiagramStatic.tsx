@@ -44,7 +44,7 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
                   <StageContainer
                     icon={<Diversity3Outlined color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
-                    key={"stage-" + index.toString()}
+                    key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
@@ -72,7 +72,11 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
         </PanelContainer>
         {selectedId === "trigger0" && <ConfigTriggerPanel />}
         {flow.steps.map((step, index) => {
-          return selectedId === "step" + index.toString() && <ConfigStepPanel />;
+          return (
+            selectedId === "step" + index.toString() && (
+              <ConfigStepPanel key={"steppanel-" + step?.id} />
+            )
+          );
         })}
         {selectedId === "action" && <ConfigActionPanel />}
       </FlowConfigDiagramContainer>

@@ -23,6 +23,7 @@ export const stepResolver = ({
 
   let responseOptions: Option[] | undefined = undefined;
   return {
+    id: step.id,
     index: step.index,
     request: {
       permission: permissionResolver(step.RequestPermissions, userIdentityIds),
