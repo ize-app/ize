@@ -8,7 +8,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { useState } from "react";
 import { WarningOutlined } from "@mui/icons-material";
 
-export const FieldGroupAccordion = ({
+export const PanelAccordion = ({
   children,
   title,
   hasError,

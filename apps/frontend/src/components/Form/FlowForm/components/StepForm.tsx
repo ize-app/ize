@@ -1,7 +1,7 @@
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 import { Box } from "@mui/material";
-import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { PanelAccordion } from "../../../FlowConfigDiagram/PanelAccordion";
 import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
@@ -34,7 +34,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
     name: `steps.${formIndex}.response.fields`,
   });
 
-
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
       {stepError?.root && (
@@ -48,7 +47,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         </FormHelperText>
       )}
       {formIndex > 0 && <ActionFilterForm formIndex={formIndex - 1} formMethods={formMethods} />}
-      <FieldGroupAccordion
+      <PanelAccordion
         title="Response permissions"
         hasError={
           !!formMethods.formState.errors.steps?.[formIndex]?.response?.permission ||
@@ -99,8 +98,8 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           control={formMethods.control}
           label="Allow multiple responses"
         />
-      </FieldGroupAccordion>
-      <FieldGroupAccordion
+      </PanelAccordion>
+      <PanelAccordion
         title="Results"
         hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
       >
@@ -110,7 +109,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           //@ts-ignore
           fieldsArrayMethods={fieldsArrayMethods}
         />
-      </FieldGroupAccordion>
+      </PanelAccordion>
     </Box>
   );
 };

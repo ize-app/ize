@@ -5,7 +5,7 @@ import { Select } from "../../formFields";
 import { FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { PanelAccordion } from "../../../FlowConfigDiagram/PanelAccordion";
 import { FormHelperText } from "@mui/material";
 
 interface ActionFilterFormProps {
@@ -35,7 +35,7 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
 
   return (
     (filterOptions ?? []).length > 0 && (
-      <FieldGroupAccordion title="Filter" hasError={!!error}>
+      <PanelAccordion title="Filter" hasError={!!error}>
         {error?.root?.message && (
           <FormHelperText
             sx={{
@@ -58,7 +58,7 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
           displayLabel={false}
           name={`steps.${formIndex}.action.filterOptionId`}
         />
-      </FieldGroupAccordion>
+      </PanelAccordion>
     )
   );
 };

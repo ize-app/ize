@@ -7,7 +7,6 @@ export const StageConnectorButton = ({}: StageConnectorButtonProps) => {
   return (
     <Box sx={{ width: "100%", display: "flex", justifyContent: "center", margin: "6px 0px" }}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        {/* <HorizontalRule sx={{ transform: "rotate(90deg)" }} fontSize="small" color="secondary" /> */}
         <ArrowDownward fontSize="small" color="secondary" sx={{ color: "#C0C0C0" }} />
       </Box>
     </Box>

@@ -13,7 +13,6 @@ import { FlowFragment, GetFlowDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import {
   EvolveFlowRoute,
@@ -22,6 +21,7 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
+import { FlowConfigDiagramStatic } from "@/components/FlowConfigDiagram";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -76,7 +76,7 @@ export const Flow = () => {
             <Typography variant={"h1"} marginTop="8px">
               {flow.name}
             </Typography>
-            <Typography>{JSON.stringify(flow)}</Typography>
+            {/* <Typography>{JSON.stringify(flow)}</Typography> */}
           </Box>
           <br />
           <Box
@@ -125,38 +125,9 @@ export const Flow = () => {
             </>
           </Box>
         </Box>
-        <Box sx={{ maxWidth: "800px" }}>
-          <Accordion
-            label="How decisions are made"
-            id="decision-panel"
-            defaultExpanded={isOverSmScreen}
-          >
-            <div>Todo</div>
-          </Accordion>
-          {flow.type !== "Evolve" && (
-            <Accordion label="How process evolves" id="decision-panel">
-              {
-                // TODO fix the evolve process type so there's no error
-                //@ts-ignore
-                // <DecisionSystemSummaryTable process={flow.evolve} />
-              }
-              <div>Todo</div>
-            </Accordion>
-          )}
-          <Accordion label="Request format" id="request-format-panel">
-            <div>Todo</div>
-          </Accordion>
-        </Box>
-        <Box>
-          {/* <RequestTab
-            defaultFilterOption={FilterOptions.All}
-            hideCreateButton
-            requests={requests}
-            loading={requestLoading}
-          /> */}
-        </Box>
+        <FlowConfigDiagramStatic flow={flow} />
+        <RequestStepsSearch userOnly={false} flowId={flow.flowId} />
       </Box>
-      <RequestStepsSearch userOnly={false} flowId={flow.flowId} />
     </PageContainer>
   );
 };

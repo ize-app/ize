@@ -9,14 +9,14 @@ import { flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 import { StreamlinedTextField } from "../../formFields";
 import { EntityType, DecisionType, ActionType } from "@/graphql/generated/graphql";
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { Button, Typography } from "@mui/material";
-import { StageContainer } from "../components/StageContainer";
+import { Typography } from "@mui/material";
+import { StageContainer } from "../../../FlowConfigDiagram/StageContainer";
 import { TriggerForm } from "../components/TriggerForm";
 import { StepForm } from "../components/StepForm";
-import { StageConnectorButton } from "../components/StageConnectorButton";
+import { StageConnectorButton } from "../../../FlowConfigDiagram/StageConnectorButton";
 import { WebhookForm } from "../components/WebhookForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
@@ -24,73 +24,14 @@ import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
 import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 
-const StageHeader = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "40px",
-        display: "flex",
-        alignItems: "center",
-        outline: "1px solid rgba(0, 0, 0, 0.1)",
-        backgroundColor: "white",
-        padding: "1rem",
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const ConfigurationPanel = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Box
-      sx={{
-        height: "100%",
-        outline: "1px solid rgba(0, 0, 0, 0.1)",
-        backgroundColor: "white",
-        // padding: "1rem",
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Box
-      sx={{
-        height: "100%",
-        outline: "1px solid rgba(0, 0, 0, 0.1)",
-        display: "flex",
-        flexDirection: "column",
-        padding: "48px 0px",
-        alignItems: "center",
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const AddButton = ({ label, onClick }: { label: string; onClick: () => void }) => (
-  <Button
-    variant="outlined"
-    size="medium"
-    color="secondary"
-    sx={{
-      width: "240px",
-      border: "2px dashed",
-      "&&:hover": {
-        border: "2px dashed",
-      },
-    }}
-    onClick={onClick}
-  >
-    {label}
-  </Button>
-);
+import {
+  FlowConfigDiagramContainer,
+  PanelHeader,
+  ConfigurationPanel,
+  DiagramPanel,
+  AddStageButton,
+  PanelContainer,
+} from "@/components/FlowConfigDiagram";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -131,8 +72,8 @@ export const Setup = () => {
 
   const hasWebhook = useFormMethods.watch("steps.0.action.type") === ActionType.CallWebhook;
 
-  console.log("form state is ", useFormMethods.getValues());
-  console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("form state is ", useFormMethods.getValues());
+  // console.log("errors are ", useFormMethods.formState.errors);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -146,32 +87,10 @@ export const Setup = () => {
 
   return (
     <form style={{ height: "100%" }}>
-      <Box
-        sx={(theme) => ({
-          display: "flex",
-          [theme.breakpoints.down("md")]: {
-            flexDirection: "column",
-          },
-          flexDirection: "row",
-          width: "100%",
-          height: "100%",
-          minWidth: "300px",
-        })}
-      >
+      <FlowConfigDiagramContainer>
         {/* Flow diagram*/}
-        <Box
-          sx={(theme) => ({
-            [theme.breakpoints.down("md")]: {
-              width: "100%",
-            },
-            // flexGrow: 1,
-            display: "flex",
-            width: "50%",
-            // minWidth: "300px",
-            flexDirection: "column",
-          })}
-        >
-          <StageHeader>
+        <PanelContainer>
+          <PanelHeader>
             <StreamlinedTextField
               control={useFormMethods.control}
               sx={{ width: "100%" }}
@@ -180,7 +99,7 @@ export const Setup = () => {
               size="small"
               name={`name`}
             />
-          </StageHeader>
+          </PanelHeader>
           <DiagramPanel>
             <StageContainer
               label="Trigger"
@@ -231,7 +150,7 @@ export const Setup = () => {
                   marginBottom: "16px",
                 }}
               >
-                <AddButton
+                <AddStageButton
                   label={"Add collaborative step"}
                   onClick={() => {
                     stepsArrayMethods.append(defaultStepFormValues);
@@ -239,7 +158,7 @@ export const Setup = () => {
                     setSelectedId(`step${stepsArrayMethods.fields.length}`);
                   }}
                 />
-                <AddButton
+                <AddStageButton
                   label={"Trigger webhook"}
                   onClick={() => {
                     //@ts-ignore
@@ -282,26 +201,14 @@ export const Setup = () => {
               sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
             />
           </DiagramPanel>
-        </Box>
+        </PanelContainer>
         {/* Configuration panel*/}
-        <Box
-          sx={(theme) => ({
-            [theme.breakpoints.down("md")]: {
-              width: "100%",
-            },
-            // minWidth: "300px",
-            // flexGrow: 1,
-            height: "100%",
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-          })}
-        >
-          <StageHeader>
+        <PanelContainer>
+          <PanelHeader>
             <Typography color="primary" variant="label">
               Configuration
             </Typography>
-          </StageHeader>
+          </PanelHeader>
           <ConfigurationPanel>
             <TriggerForm
               formMethods={useFormMethods}
@@ -328,8 +235,8 @@ export const Setup = () => {
             )}
             <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />
           </ConfigurationPanel>
-        </Box>
-      </Box>
+        </PanelContainer>
+      </FlowConfigDiagramContainer>
       <WizardNav
         onNext={useFormMethods.handleSubmit(onSubmit)}
         onPrev={onPrev}
