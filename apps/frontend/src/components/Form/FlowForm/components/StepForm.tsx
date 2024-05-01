@@ -1,7 +1,7 @@
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 import { Box } from "@mui/material";
-import { PanelAccordion } from "../../../FlowConfigDiagram/PanelAccordion";
+import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
 import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";

@@ -4,7 +4,7 @@ import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
 import { FieldsForm } from "./FieldsForm";
 import { Box } from "@mui/material";
-import { PanelAccordion } from "../../../FlowConfigDiagram/PanelAccordion";
+import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

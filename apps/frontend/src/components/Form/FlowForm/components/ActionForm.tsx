@@ -5,7 +5,7 @@ import { Select } from "../../formFields";
 import { FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { PanelAccordion } from "../../../FlowConfigDiagram/PanelAccordion";
+import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
 import { FormHelperText } from "@mui/material";
 
 interface ActionFilterFormProps {

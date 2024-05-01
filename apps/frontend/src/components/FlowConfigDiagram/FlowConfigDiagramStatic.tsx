@@ -7,12 +7,12 @@ import {
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { StageConnectorButton } from "./StageConnectorButton";
+import { StageConnectorButton } from "./DiagramPanel/StageConnectorButton";
 import { FlowFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigTriggerPanel } from "./ConfigTriggerPanel";
-import { ConfigStepPanel } from "./ConfigStepPanel";
-import { ConfigActionPanel } from "./ConfigActionPanel";
+import { ConfigTriggerPanel } from "./ConfigPanel/ConfigTriggerPanel";
+import { ConfigStepPanel } from "./ConfigPanel/ConfigStepPanel";
+import { ConfigActionPanel } from "./ConfigPanel/ConfigActionPanel";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config

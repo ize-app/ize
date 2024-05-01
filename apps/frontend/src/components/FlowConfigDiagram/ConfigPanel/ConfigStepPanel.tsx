@@ -6,7 +6,8 @@ import {
 } from "@/components/FlowConfigDiagram";
 import { StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Permissions } from "./Permissions";
+import { Permissions } from "../Permissions";
+import { Fields } from "../Fields";
 
 export const ConfigStepPanel = ({ step }: { step: StepFragment }) => {
   console.log("rendering step", step);
@@ -21,8 +22,8 @@ export const ConfigStepPanel = ({ step }: { step: StepFragment }) => {
         <PanelAccordion title="Respond permission" hasError={false}>
           <Permissions permission={step.response.permission} type="response" />
         </PanelAccordion>
-        <PanelAccordion title="Request fields" hasError={false}>
-          hello
+        <PanelAccordion title="Results" hasError={false}>
+          <Fields fields={step.response.fields} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>
