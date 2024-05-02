@@ -4,13 +4,20 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/FlowConfigDiagram";
-import { StepFragment } from "@/graphql/generated/graphql";
+import { ActionFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
 import { Permissions } from "../Permissions";
-import { Fields } from "../Fields";
+import { ResultConfigs } from "../ResultConfigs";
+import { ActionFilter } from "../ActionFilter";
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
-export const ConfigStepPanel = ({ step }: { step: StepFragment }) => {
-  console.log("rendering step", step);
+export const ConfigStepPanel = ({
+  step,
+  triggeringAction,
+}: {
+  step: StepFragment;
+  triggeringAction: ActionFragment | null | undefined;
+}) => {
   return (
     <PanelContainer>
       <PanelHeader>
@@ -19,11 +26,20 @@ export const ConfigStepPanel = ({ step }: { step: StepFragment }) => {
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
+        {triggeringAction && triggeringAction.__typename === "TriggerStep" && (
+          <ActionFilter action={triggeringAction} />
+        )}
         <PanelAccordion title="Respond permission" hasError={false}>
           <Permissions permission={step.response.permission} type="response" />
+          {step.expirationSeconds &&
+            `Respondants have ${intervalToIntuitiveTimeString(
+              step.expirationSeconds,
+            )} to respond and can respond ${
+              step.allowMultipleResponses ? "multiple times" : "only once"
+            }`}
         </PanelAccordion>
-        <PanelAccordion title="Results" hasError={false}>
-          <Fields fields={step.response.fields} />
+        <PanelAccordion title="Collaborations" hasError={false}>
+          <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

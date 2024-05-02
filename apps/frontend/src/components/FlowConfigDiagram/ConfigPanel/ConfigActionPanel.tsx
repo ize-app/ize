@@ -4,9 +4,18 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/FlowConfigDiagram";
+import { ActionFragment, FieldFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
+import { Action } from "../Action";
+import { ActionFilter } from "../ActionFilter";
 
-export const ConfigActionPanel = ({}: {}) => {
+export const ConfigActionPanel = ({
+  action,
+  prevStepResponseFields,
+}: {
+  action: ActionFragment;
+  prevStepResponseFields?: FieldFragment[];
+}) => {
   return (
     <PanelContainer>
       <PanelHeader>
@@ -15,11 +24,13 @@ export const ConfigActionPanel = ({}: {}) => {
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
-        <PanelAccordion title="Permission" hasError={false}>
-          hello
-        </PanelAccordion>
-        <PanelAccordion title="Request fields" hasError={false}>
-          hello
+        {action.filterOption && (
+          <PanelAccordion title="Filter" hasError={false}>
+            <ActionFilter action={action} />
+          </PanelAccordion>
+        )}
+        <PanelAccordion title="Action" hasError={false}>
+          <Action action={action} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

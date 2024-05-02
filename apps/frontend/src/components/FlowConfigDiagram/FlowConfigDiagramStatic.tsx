@@ -74,11 +74,15 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
         {flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (
-              <ConfigStepPanel key={"steppanel-" + step?.id} step={step} />
+              <ConfigStepPanel
+                key={"steppanel-" + step?.id}
+                step={step}
+                triggeringAction={index > 0 ? flow.steps[index - 1].action : null}
+              />
             )
           );
         })}
-        {selectedId === "action" && <ConfigActionPanel />}
+        {selectedId === "action" && finalAction && <ConfigActionPanel action={finalAction} />}
       </FlowConfigDiagramContainer>
     </Box>
   );

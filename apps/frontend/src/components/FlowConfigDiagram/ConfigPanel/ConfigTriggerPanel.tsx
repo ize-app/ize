@@ -21,9 +21,11 @@ export const ConfigTriggerPanel = ({ step }: { step: StepFragment }) => {
         <PanelAccordion title="Trigger permission" hasError={false}>
           <Permissions permission={step.request.permission} type="request" />
         </PanelAccordion>
-        <PanelAccordion title="Request fields" hasError={false}>
-          <Fields fields={step.request.fields} />
-        </PanelAccordion>
+        {step.request.fields.length > 0 && (
+          <PanelAccordion title="Request fields" hasError={false}>
+            <Fields fields={step.request.fields} />
+          </PanelAccordion>
+        )}
       </ConfigurationPanel>
     </PanelContainer>
   );
