@@ -19,8 +19,15 @@ type Options {
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
-  linkedResultOptions: [String!]!
+  linkedResultOptions: [LinkedResult!]!
   options: [Option!]!
+}
+
+type LinkedResult {
+  resultConfigId: String!
+  resultType: ResultType!
+  fieldId: String!
+  fieldName: String!
 }
 
 type FreeInput {

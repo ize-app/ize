@@ -1,6 +1,7 @@
 import { FieldFragment, ResultConfigFragment } from "@/graphql/generated/graphql";
 import Box from "@mui/material/Box";
 import { ResultConfig } from "./ResultConfig";
+import { LabeledGroupedInputs } from "../Form/formLayout/LabeledGroupedInputs";
 
 export const ResultConfigs = ({
   resultConfigs,
@@ -18,11 +19,13 @@ export const ResultConfigs = ({
           field = responseFields.find((field) => field.fieldId === resultConfig.fieldId) ?? null;
         }
         return (
-          <ResultConfig
-            key={resultConfig.resultConfigId}
-            resultConfig={resultConfig}
-            field={field}
-          />
+          <LabeledGroupedInputs sx={{ padding: "16px" }}>
+            <ResultConfig
+              key={resultConfig.resultConfigId}
+              resultConfig={resultConfig}
+              field={field}
+            />
+          </LabeledGroupedInputs>
         );
       })}
     </Box>

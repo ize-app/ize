@@ -17,7 +17,9 @@ fragment Options on Options {
   requestOptionsDataType
   selectionType
   maxSelections
-  linkedResultOptions
+  linkedResultOptions {
+    ...LinkedResult
+  }
   options {
     ...Option
   }
@@ -34,6 +36,13 @@ fragment Option on Option {
   optionId
   name
   dataType
+}
+
+fragment LinkedResult on LinkedResult {
+  resultConfigId
+  resultType
+  fieldId
+  fieldName
 }
 
 fragment FieldAnswer on FieldAnswer {

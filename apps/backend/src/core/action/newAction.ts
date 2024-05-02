@@ -12,21 +12,25 @@ export const newActionConfig = async ({
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
-  let filterOptionId: string | null = null;
+  let filterOptionId: string | null | undefined = null;
   let webhookId;
 
   if (actionArgs.type === ActionType.None) return null;
 
-  if (actionArgs.filterOptionIndex && actionArgs.filterResponseFieldIndex && responseFieldSet) {
+  if (
+    typeof actionArgs.filterOptionIndex === "number" &&
+    typeof actionArgs.filterResponseFieldIndex === "number" &&
+    responseFieldSet
+  ) {
     const responseField =
       responseFieldSet?.FieldSetFields[actionArgs.filterResponseFieldIndex].Field;
 
     filterOptionId =
-      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
-        (fo) => fo.index === actionArgs.filterOptionIndex,
-      )?.fieldOptionId ?? null;
+      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find((fo) => {
+        return fo.index === actionArgs.filterOptionIndex;
+      })?.fieldOptionId;
 
-    if (filterOptionId === null)
+    if (!filterOptionId)
       throw new GraphQLError("Cannot find action filter option.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });

@@ -24,8 +24,8 @@ const requestExpirationOptions = [
 ];
 
 export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepFormProps) => {
-  // console.log("form state for ", formIndex, " is ", getFieldValues());
-  // console.log("errors are ", useFormMethods.formState.errors.steps?.[formIndex]);
+  // console.log("form state for ", formIndex, " is ", formMethods.getValues());
+  // console.log("errors are ", formMethods.formState.errors.steps?.[formIndex]);
   const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
   const stepError = formMethods.getFieldState(`steps.${formIndex}`).error;
 

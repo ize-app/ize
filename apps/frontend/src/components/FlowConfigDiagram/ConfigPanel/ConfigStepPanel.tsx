@@ -27,7 +27,9 @@ export const ConfigStepPanel = ({
       </PanelHeader>
       <ConfigurationPanel>
         {triggeringAction && triggeringAction.__typename === "TriggerStep" && (
-          <ActionFilter action={triggeringAction} />
+          <PanelAccordion title="Filter" hasError={false}>
+            <ActionFilter action={triggeringAction} />
+          </PanelAccordion>
         )}
         <PanelAccordion title="Respond permission" hasError={false}>
           <Permissions permission={step.response.permission} type="response" />

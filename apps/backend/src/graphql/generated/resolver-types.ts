@@ -364,6 +364,14 @@ export type IdentityEmailArgs = {
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
+export type LinkedResult = {
+  __typename?: 'LinkedResult';
+  fieldId: Scalars['String']['output'];
+  fieldName: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+  resultType: ResultType;
+};
+
 export type LinkedResultOptionsArgs = {
   resultIndex: Scalars['Int']['input'];
   stepIndex: Scalars['Int']['input'];
@@ -525,7 +533,7 @@ export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
   hasRequestOptions: Scalars['Boolean']['output'];
-  linkedResultOptions: Array<Scalars['String']['output']>;
+  linkedResultOptions: Array<LinkedResult>;
   maxSelections?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   options: Array<Option>;
@@ -906,6 +914,7 @@ export type ResolversTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1002,6 +1011,7 @@ export type ResolversParentTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
+  LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1252,6 +1262,14 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
 };
 
+export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LinkedResult'] = ResolversParentTypes['LinkedResult']> = {
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultType?: Resolver<ResolversTypes['ResultType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1315,7 +1333,7 @@ export type OptionFieldAnswerSelectionResolvers<ContextType = GraphqlRequestCont
 export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Options'] = ResolversParentTypes['Options']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  linkedResultOptions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  linkedResultOptions?: Resolver<Array<ResolversTypes['LinkedResult']>, ParentType, ContextType>;
   maxSelections?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
@@ -1489,6 +1507,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
+  LinkedResult?: LinkedResultResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

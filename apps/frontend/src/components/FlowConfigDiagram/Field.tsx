@@ -1,6 +1,7 @@
 import { FieldFragment, FieldType } from "@/graphql/generated/graphql";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { FieldOptions } from "./FieldOptions";
 
 export const Field = ({ field }: { field: FieldFragment }) => {
   switch (field.__typename) {
@@ -11,14 +12,7 @@ export const Field = ({ field }: { field: FieldFragment }) => {
       return (
         <Box>
           <Typography>{field.name}</Typography>
-          {field.options.map((option) => {
-            return <Typography key={option.optionId}>- {option.name}</Typography>;
-          })}
-          {field.hasRequestOptions && field.requestOptionsDataType && (
-            <Typography>
-              - Additional {field.requestOptionsDataType} options defined by triggerer
-            </Typography>
-          )}
+          <FieldOptions fieldOptions={field} />
         </Box>
       );
     }

@@ -52,6 +52,8 @@ export const Flow = () => {
 
   const flow = flowData?.getFlow as FlowFragment;
 
+  // console.log("flow is ", flow);
+
   // const requests = requestData?.requestsForProcess as RequestSummaryPartsFragment[];
 
   const onError = () => {

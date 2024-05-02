@@ -6,6 +6,8 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   Option,
+  ResultConfig,
+  ResultType,
 } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { FieldSetPrismaType } from "../fieldPrismaTypes";
@@ -14,9 +16,13 @@ import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTy
 export const fieldSetResolver = ({
   fieldSet,
   requestDefinedOptionSets,
+  responseFieldsCache = [],
+  resultConfigsCache = [],
 }: {
   fieldSet: FieldSetPrismaType | null;
   requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
+  responseFieldsCache?: Field[];
+  resultConfigsCache?: ResultConfig[];
 }): Field[] => {
   if (!fieldSet) return [];
   return fieldSet.FieldSetFields.map((f) => {
@@ -61,6 +67,43 @@ export const fieldSetResolver = ({
         }),
       );
 
+      const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
+        const resultConfig = resultConfigsCache.find(
+          (r) => r.resultConfigId === linkedResultConfigId,
+        );
+
+        if (!resultConfig)
+          throw new GraphQLError(
+            `Linked result config not found for fieldId ${f.fieldId} and resultConfigId ${linkedResultConfigId} `,
+            {
+              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+            },
+          );
+
+        // TODO: Not sure why the type here can be undefined. Need to investigate
+        if (!resultConfig.__typename)
+          throw new GraphQLError(`Mmissing __typename for resultConfigId ${linkedResultConfigId}`, {
+            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+          });
+
+        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.fieldId);
+
+        if (!field)
+          throw new GraphQLError(
+            `Linked result config's field not found for resultConfigId ${linkedResultConfigId} `,
+            {
+              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+            },
+          );
+
+        return {
+          resultConfigId: linkedResultConfigId,
+          resultType: resultConfig.__typename as ResultType,
+          fieldId: field.fieldId,
+          fieldName: field.name,
+        };
+      });
+
       const options: Options = {
         __typename: FieldType.Options,
         fieldId: f.Field.id,
@@ -68,7 +111,7 @@ export const fieldSetResolver = ({
         required: f.Field.required,
         hasRequestOptions: config.hasRequestOptions,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
-        linkedResultOptions: config.linkedResultOptions,
+        linkedResultOptions,
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as FieldOptionsSelectionType,
         maxSelections: config.maxSelections,

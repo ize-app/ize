@@ -1,4 +1,4 @@
-import { Flow, FlowType } from "@/graphql/generated/resolver-types";
+import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
 import { stepResolver } from "./stepResolver";
 
@@ -15,6 +15,8 @@ export const flowVersionResolver = ({
   userGroupIds: string[];
   userId: string | undefined;
 }): Flow => {
+  const responseFieldsCache: Field[] = [];
+  const resultConfigsCache: ResultConfig[] = [];
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
@@ -24,7 +26,14 @@ export const flowVersionResolver = ({
     reusable: flowVersion.reusable,
     name: flowVersion.name,
     steps: flowVersion.Steps.map((step) =>
-      stepResolver({ step, userIdentityIds, userGroupIds, userId }),
+      stepResolver({
+        step,
+        userIdentityIds,
+        userGroupIds,
+        userId,
+        responseFieldsCache,
+        resultConfigsCache,
+      }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow
       ? flowVersionResolver({ flowVersion: evolveFlow, userIdentityIds, userGroupIds, userId })
