@@ -24,7 +24,7 @@ export const PanelAccordion = ({
       elevation={0}
       expanded={isExpanded}
       square
-      sx={{ outline: "1px solid rgba(0, 0, 0, 0.1)" }}
+      sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.1)", borderBottom: "none" }}
       onChange={() => {
         setIsExpanded(!isExpanded);
       }}

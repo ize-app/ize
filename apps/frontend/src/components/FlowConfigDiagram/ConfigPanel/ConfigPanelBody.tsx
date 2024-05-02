@@ -7,6 +7,12 @@ export const ConfigPanelBody = ({ children }: { children: React.ReactNode }) => 
         height: "100%",
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         backgroundColor: "white",
+        "& > .MuiAccordion-root:first-of-type": {
+          borderTop: "none",
+        },
+        "& > .MuiAccordion-root:last-of-type": {
+          borderBottom: "none",
+        },
       }}
     >
       {children}
