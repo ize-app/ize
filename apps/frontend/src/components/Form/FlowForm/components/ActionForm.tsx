@@ -5,7 +5,7 @@ import { Select, TextField } from "../../formFields";
 import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { Box, FormHelperText } from "@mui/material";
 import { useEffect } from "react";
 

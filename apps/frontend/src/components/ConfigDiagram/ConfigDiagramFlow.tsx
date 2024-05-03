@@ -3,7 +3,7 @@ import {
   DiagramPanel,
   PanelContainer,
   StageContainer,
-} from "@/components/FlowConfigDiagram";
+} from "@/components/ConfigDiagram";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";

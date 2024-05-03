@@ -7,7 +7,7 @@ import { PermissionType } from "../formValidation/permission";
 import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
 
 import { DecisionType } from "@/graphql/generated/graphql";
-import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface EvolveProcessFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

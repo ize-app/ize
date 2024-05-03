@@ -9,7 +9,7 @@ import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { Box, FormHelperText } from "@mui/material";
-import { PanelAccordion } from "../../../FlowConfigDiagram/ConfigPanel/PanelAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

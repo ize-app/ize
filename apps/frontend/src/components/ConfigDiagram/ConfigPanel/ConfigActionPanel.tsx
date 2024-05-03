@@ -3,7 +3,7 @@ import {
   PanelAccordion,
   PanelContainer,
   PanelHeader,
-} from "@/components/FlowConfigDiagram";
+} from "@/components/ConfigDiagram";
 import { ActionFragment, FieldFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
 import { Action } from "../Action";

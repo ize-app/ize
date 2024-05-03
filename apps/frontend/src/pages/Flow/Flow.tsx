@@ -19,7 +19,7 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
-import { FlowConfigDiagramStatic } from "@/components/FlowConfigDiagram";
+import { FlowConfigDiagramStatic } from "@/components/ConfigDiagram";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
