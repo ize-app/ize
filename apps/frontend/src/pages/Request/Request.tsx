@@ -116,7 +116,7 @@ export const Request = () => {
           </Box>
         </Box>
         {/* <Typography>{JSON.stringify(request)}</Typography> */}
-        <ConfigDiagramRequest flow={request.flow} />
+        <ConfigDiagramRequest request={request} />
         <Box
           sx={(theme) => ({
             display: "flex",

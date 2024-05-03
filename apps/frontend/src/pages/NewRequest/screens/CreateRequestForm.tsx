@@ -17,7 +17,7 @@ import {
 import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
-import { WizardBody, WizardNav } from "../../../components/Wizard";
+import { WizardNav } from "../../../components/Wizard";
 import {
   DatePicker,
   DateTimePicker,

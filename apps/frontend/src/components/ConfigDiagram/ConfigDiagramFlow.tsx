@@ -2,7 +2,7 @@ import {
   FlowConfigDiagramContainer,
   DiagramPanel,
   PanelContainer,
-  StageContainer,
+  FlowStage,
 } from "@/components/ConfigDiagram";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
@@ -29,7 +29,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
         <PanelContainer>
           {/* <PanelHeader>Header</PanelHeader> */}
           <DiagramPanel>
-            <StageContainer
+            <FlowStage
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
@@ -42,7 +42,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             {flow.steps.map((step, index) => {
               return (
                 <Box key={index}>
-                  <StageContainer
+                  <FlowStage
                     icon={<Diversity3Outlined color="primary" />}
                     label={flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
                     key={"stage-" + step?.id}
@@ -61,12 +61,12 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             {finalAction && (
               <>
                 <StageConnectorButton key={"connector-final"} />
-                <StageContainer
+                <FlowStage
+                  hasError={false}
                   label={finalAction.__typename}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  //   icon={<PublicOutlinedIcon color="primary" />}
                 />
               </>
             )}

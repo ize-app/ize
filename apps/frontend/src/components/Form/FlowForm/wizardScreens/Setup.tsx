@@ -13,7 +13,6 @@ import { useContext, useState } from "react";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { Typography } from "@mui/material";
-import { StageContainer } from "../../../ConfigDiagram/DiagramPanel/StageContainer";
 import { TriggerForm } from "../components/TriggerForm";
 import { StepForm } from "../components/StepForm";
 import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
@@ -31,6 +30,7 @@ import {
   DiagramPanel,
   AddStageButton,
   PanelContainer,
+  FlowStage,
 } from "@/components/ConfigDiagram";
 
 export const Setup = () => {
@@ -101,7 +101,7 @@ export const Setup = () => {
             />
           </PanelHeader>
           <DiagramPanel>
-            <StageContainer
+            <FlowStage
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
@@ -114,7 +114,7 @@ export const Setup = () => {
             {stepsArrayMethods.fields.map((item, index) => {
               return (
                 <Box key={item.id}>
-                  <StageContainer
+                  <FlowStage
                     icon={<Diversity3OutlinedIcon color="primary" />}
                     label={"Collaboration " + (index + 1).toString()}
                     key={"stage-" + item.id.toString() + index.toString()}
@@ -170,7 +170,7 @@ export const Setup = () => {
                 />
               </Box>
             ) : (
-              <StageContainer
+              <FlowStage
                 label="Webhook"
                 id={"webhook"}
                 setSelectedId={setSelectedId}
@@ -190,7 +190,7 @@ export const Setup = () => {
                 }
               />
             )}
-            <StageContainer
+            <FlowStage
               label={"Flow evolution"}
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}

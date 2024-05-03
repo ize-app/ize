@@ -3,7 +3,9 @@ export { ConfigPanelBody as ConfigurationPanel } from "./ConfigPanel/ConfigPanel
 export { DiagramPanel } from "./DiagramPanel/DiagramPanel";
 export { PanelHeader } from "./PanelHeader";
 export { PanelContainer } from "./PanelContainer";
-export { StageContainer } from "./DiagramPanel/StageContainer";
+export { Stage } from "./DiagramPanel/Stage";
+export { FlowStage } from "./DiagramPanel/FlowStage";
+export { RequestStage } from "./DiagramPanel/RequestStage";
 export { StageMenu } from "./DiagramPanel/StageMenu";
 export { ConfigDiagramContainer as FlowConfigDiagramContainer } from "./ConfigDiagramContainer";
 export { ConfigDiagramFlow } from "./ConfigDiagramFlow";
