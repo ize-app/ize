@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GetRequestDocument } from "../../graphql/generated/graphql";
+import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
@@ -14,6 +14,7 @@ import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { CurrentUserContext } from "@/contexts/current_user_context";
+import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest";
 
 export const Request = () => {
   const { me } = useContext(CurrentUserContext);
@@ -21,6 +22,10 @@ export const Request = () => {
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
+
+  let canRespond: boolean = false;
+  let userResponse: ResponseFragment | undefined = undefined;
+  let allowMultipleResponses: boolean = false;
 
   const { data, loading, error } = useQuery(GetRequestDocument, {
     variables: {
@@ -37,14 +42,16 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.getRequest;
-  if (!request) return null;
+  console.log(request);
 
-  const currReqStep = request.steps[request.currentStepIndex];
-  const currStep = request.flow.steps[request.currentStepIndex];
-
-  const canRespond = currStep?.userPermission.response ?? false;
-  const userResponse = currReqStep.responses.find((r) => r.user.id === me?.user.id);
-  const allowMultipleResponses = currStep?.allowMultipleResponses ?? false;
+  if (request) {
+    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
+    userResponse = request.steps[request.currentStepIndex].responses.find(
+      (r) => r.user.id === me?.user.id,
+    );
+    allowMultipleResponses =
+      request.flow.steps[request.currentStepIndex].allowMultipleResponses ?? false;
+  }
 
   const theme = useTheme();
   // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -78,8 +85,8 @@ export const Request = () => {
               elevation={6}
             >
               <ResponseForm
-                requestStepId={currReqStep.requestStepId}
-                responseFields={currReqStep.responseFields}
+                requestStepId={request.steps[request.currentStepIndex].requestStepId}
+                responseFields={request.steps[request.currentStepIndex].responseFields}
               />
             </Accordion>
           )}
@@ -108,7 +115,8 @@ export const Request = () => {
             </Box>
           </Box>
         </Box>
-        <Typography>{JSON.stringify(request)}</Typography>
+        {/* <Typography>{JSON.stringify(request)}</Typography> */}
+        <ConfigDiagramRequest flow={request.flow} />
         <Box
           sx={(theme) => ({
             display: "flex",

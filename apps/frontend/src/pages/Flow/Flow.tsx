@@ -19,7 +19,7 @@ import {
   newRequestRoute,
 } from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
-import { FlowConfigDiagramStatic } from "@/components/ConfigDiagram";
+import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -123,7 +123,7 @@ export const Flow = () => {
             </>
           </Box>
         </Box>
-        <FlowConfigDiagramStatic flow={flow} />
+        <ConfigDiagramFlow flow={flow} />
         <RequestStepsSearch userOnly={false} flowId={flow.flowId} />
       </Box>
     </PageContainer>

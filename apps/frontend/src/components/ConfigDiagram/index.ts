@@ -1,5 +1,3 @@
-import { FlowConfigDiagramStatic } from "./ConfigDiagramFlow";
-
 export { AddStageButton } from "./DiagramPanel/AddStageButton";
 export { ConfigPanelBody as ConfigurationPanel } from "./ConfigPanel/ConfigPanelBody";
 export { DiagramPanel } from "./DiagramPanel/DiagramPanel";
@@ -8,5 +6,5 @@ export { PanelContainer } from "./PanelContainer";
 export { StageContainer } from "./DiagramPanel/StageContainer";
 export { StageMenu } from "./DiagramPanel/StageMenu";
 export { ConfigDiagramContainer as FlowConfigDiagramContainer } from "./ConfigDiagramContainer";
-export { FlowConfigDiagramStatic } from "./ConfigDiagramFlow";
+export { ConfigDiagramFlow } from "./ConfigDiagramFlow";
 export { PanelAccordion } from "./ConfigPanel/PanelAccordion";

@@ -16,7 +16,7 @@ import { ConfigActionPanel } from "./ConfigPanel/ConfigActionPanel";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config
-export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
+export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
   const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
 
   const finalStepIndex = flow.steps.length - 1;
