@@ -7,17 +7,20 @@ export const createResultArgs = (
   result: ResultSchemaType,
   responseFields: FieldsSchemaType | undefined | null,
 ): ResultArgs => {
+  if (!responseFields)
+    throw Error("Missing response fields for result>");
+
+  let responseFieldIndex = responseFields
+    ? responseFields.findIndex((f) => f.fieldId === result.fieldId)
+    : null;
+
+  if (responseFieldIndex === null || responseFieldIndex === -1)
+    throw Error("Cannot find response field for result");
+
   if (result.type === ResultType.Decision && result.decision.defaultOptionId) {
     let defaultOptionIndex: number | null = null;
-    let responseFieldIndex = responseFields
-      ? responseFields.findIndex((f) => f.fieldId === result.fieldId)
-      : null;
 
-    if (
-      result.decision.defaultOptionId !== DefaultOptionSelection.None.toString() &&
-      responseFieldIndex &&
-      responseFields
-    ) {
+    if (result.decision.defaultOptionId !== DefaultOptionSelection.None.toString()) {
       const responseField = responseFields[responseFieldIndex];
       if (!responseField || responseField.type !== FieldType.Options)
         throw Error("Missing option set for default result");
@@ -38,7 +41,7 @@ export const createResultArgs = (
       },
     };
   }
-  return result;
+  return { ...result, responseFieldIndex };
 };
 
 export const createResultsArgs = (

@@ -26,7 +26,7 @@ export const ConfigStepPanel = ({
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
-        {triggeringAction && triggeringAction.__typename === "TriggerStep" && (
+        {triggeringAction && triggeringAction.filterOption && (
           <PanelAccordion title="Filter" hasError={false}>
             <ActionFilter action={triggeringAction} />
           </PanelAccordion>

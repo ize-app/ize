@@ -29,7 +29,13 @@ export const FieldOptions = ({ fieldOptions }: { fieldOptions: Options }) => {
       )}
       {linkedResultOptions.map((lr) => {
         return (
-          <Typography component={"li"} fontSize={".875rem"} color="primary" fontStyle={"italic"}>
+          <Typography
+            key={lr.resultConfigId + lr.fieldId}
+            component={"li"}
+            fontSize={".875rem"}
+            color="primary"
+            fontStyle={"italic"}
+          >
             {linkedResultDescription(lr)}
           </Typography>
         );

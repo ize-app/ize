@@ -1,9 +1,7 @@
 import { useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useContext } from "react";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 
@@ -30,8 +28,6 @@ export const Flow = () => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
   const flowId: string = shortUUIDToFull(flowIdShort as string);
-  const theme = useTheme();
-  const isOverSmScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
   const {

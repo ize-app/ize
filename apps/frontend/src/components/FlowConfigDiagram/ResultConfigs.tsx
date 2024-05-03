@@ -19,12 +19,8 @@ export const ResultConfigs = ({
           field = responseFields.find((field) => field.fieldId === resultConfig.fieldId) ?? null;
         }
         return (
-          <LabeledGroupedInputs sx={{ padding: "16px" }}>
-            <ResultConfig
-              key={resultConfig.resultConfigId}
-              resultConfig={resultConfig}
-              field={field}
-            />
+          <LabeledGroupedInputs sx={{ padding: "16px" }} key={resultConfig.resultConfigId}>
+            <ResultConfig resultConfig={resultConfig} field={field} />
           </LabeledGroupedInputs>
         );
       })}

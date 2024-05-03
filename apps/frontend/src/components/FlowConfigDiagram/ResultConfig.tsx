@@ -33,7 +33,7 @@ const minAnswersDescription = (minAnswers: number, resultType: ResultType) => {
     resultType === ResultType.Decision ? "vote" : "answer"
   }${minAnswers > 1 ? "s" : ""} to ${
     resultType === ResultType.Decision ? "make a decision" : "create a result"
-  }.`;
+  }. `;
 };
 
 const defaultDecisionDescription = (defaultOption: OptionFragment) => {

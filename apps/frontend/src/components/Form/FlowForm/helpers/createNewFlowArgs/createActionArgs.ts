@@ -25,9 +25,13 @@ export const createActionArgs = (
         throw Error("Action filter option not found ");
       }
     }
+
     //@ts-ignore
     delete action.filterOptionId;
-    return { ...action, filterOptionIndex, filterResponseFieldIndex };
+    const actionArgs = { ...action, filterOptionIndex, filterResponseFieldIndex };
+    return { ...actionArgs };
   }
+  //@ts-ignore
+  delete action.filterOptionId;
   return action;
 };

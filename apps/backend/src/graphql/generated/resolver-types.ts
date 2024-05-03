@@ -387,7 +387,6 @@ export type LlmSummary = {
 
 export type LlmSummaryArgs = {
   prompt?: InputMaybe<Scalars['String']['input']>;
-  type: LlmSummaryType;
 };
 
 export enum LlmSummaryType {
@@ -563,7 +562,7 @@ export type PermissionArgs = {
 };
 
 export type PrioritizationArgs = {
-  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
+  numPrioritizedItems?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Query = {
@@ -713,7 +712,7 @@ export type ResultArgs = {
   llmSummary?: InputMaybe<LlmSummaryArgs>;
   minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
-  responseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
+  responseFieldIndex: Scalars['Int']['input'];
   resultId?: InputMaybe<Scalars['String']['input']>;
   type: ResultType;
 };
