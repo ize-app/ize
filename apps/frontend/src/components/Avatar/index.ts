@@ -1,2 +1,4 @@
 export { Avatar } from "./Avatar";
-import { AvatarWithName } from "../AvatarOld";
+export { AvatarWithName } from "./AvatarWithName";
+export { AvatarPopper } from "./AvatarPopper";
+export { AvatarGroup } from "./AvatarGroup";

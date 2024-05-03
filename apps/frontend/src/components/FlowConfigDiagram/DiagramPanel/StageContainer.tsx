@@ -3,6 +3,8 @@ import { Box, Paper, SxProps, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { colors } from "@/style/style";
 import { StageMenu } from "./StageMenu";
+import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+import { AvatarGroup } from "@/components/Avatar";
 
 interface StageContainerProps {
   label: string;
@@ -14,6 +16,7 @@ interface StageContainerProps {
   deleteHandler?: () => void;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
   selectedId: string | false;
+  entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
 }
 
 export const StageContainer = ({
@@ -25,6 +28,7 @@ export const StageContainer = ({
   deleteHandler,
   hasError = false,
   icon,
+  entities = [],
   sx = {},
 }: StageContainerProps) => {
   const isSelected = selectedId === id;
@@ -65,6 +69,7 @@ export const StageContainer = ({
           <Typography color="primary">{label}</Typography>
           {children}
         </Box>
+        {entities.length > 0 && <AvatarGroup avatars={entities} />}
         {deleteHandler && <StageMenu deleteHandler={deleteHandler} />}
       </Paper>
       {hasError && <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />}

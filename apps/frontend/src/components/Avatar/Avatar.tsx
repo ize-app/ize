@@ -4,8 +4,11 @@ import Blockies from "react-blockies";
 import { getAvatarString } from "./getAvatarString";
 import { stringToColor } from "./stringToColor";
 import { SxProps } from "@mui/material";
-import { AvatarProps } from "./type";
 
+export interface AvatarProps extends MuiAvatarProps {
+  avatar: EntityFragment | UserSummaryPartsFragment;
+  size?: string;
+}
 
 export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
   const { sx } = props ?? {};

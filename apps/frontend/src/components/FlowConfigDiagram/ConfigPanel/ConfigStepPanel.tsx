@@ -40,7 +40,7 @@ export const ConfigStepPanel = ({
               step.allowMultipleResponses ? "multiple times" : "only once"
             }`}
         </PanelAccordion>
-        <PanelAccordion title="Collaborations" hasError={false}>
+        <PanelAccordion title="Collaborations 👀" hasError={false}>
           <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} />
         </PanelAccordion>
       </ConfigurationPanel>

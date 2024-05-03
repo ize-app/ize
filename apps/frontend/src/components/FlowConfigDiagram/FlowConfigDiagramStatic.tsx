@@ -36,6 +36,7 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={<PlayCircleOutlineOutlined color="primary" />}
+              entities={flow.steps[0].request.permission.entities}
             />
             <StageConnectorButton />
             {flow.steps.map((step, index) => {
@@ -43,12 +44,13 @@ export const FlowConfigDiagramStatic = ({ flow }: { flow: FlowFragment }) => {
                 <Box key={index}>
                   <StageContainer
                     icon={<Diversity3Outlined color="primary" />}
-                    label={"Collaboration " + (index + 1).toString()}
+                    label={flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
                     key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
+                    entities={flow.steps[0].response.permission.entities}
                   />
                   {index < finalStepIndex && (
                     <StageConnectorButton key={"connector-" + index.toString()} />
