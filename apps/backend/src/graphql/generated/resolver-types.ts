@@ -646,6 +646,7 @@ export type Ranking = {
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
+  creator: User;
   currentStepIndex: Scalars['Int']['output'];
   flow: Flow;
   name: Scalars['String']['output'];
@@ -1381,6 +1382,7 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
 
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   currentStepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   flow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

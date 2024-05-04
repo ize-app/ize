@@ -4,6 +4,7 @@ import { RequestPrismaType } from "../requestPrismaTypes";
 import { flowVersionResolver } from "../../flow/resolvers/flowVersionResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { requestStepResolver } from "./requestStepResolver";
+import { userResolver } from "@/core/user/userResolver";
 
 export const requestResolver = ({
   req,
@@ -16,6 +17,7 @@ export const requestResolver = ({
 }): Request => {
   const Request: Request = {
     name: req.name,
+    creator: userResolver(req.Creator),
     flow: flowVersionResolver({
       flowVersion: req.FlowVersion,
       userGroupIds,

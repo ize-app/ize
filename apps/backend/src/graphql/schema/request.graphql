@@ -35,6 +35,7 @@ type Request {
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
   flow: Flow!
+  creator: User!
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!

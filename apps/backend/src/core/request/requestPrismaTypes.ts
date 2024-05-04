@@ -66,7 +66,9 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   RequestSteps: {
     include: requestStepInclude,
   },
-  Creator: true,
+  Creator: {
+    include: userInclude,
+  },
   FlowVersion: {
     include: flowVersionInclude,
   },

@@ -32,6 +32,9 @@ query getRequestSteps(
 
 fragment Request on Request {
   name
+  creator {
+    ...UserSummaryParts
+  }
   flow {
     ...Flow
   }
