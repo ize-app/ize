@@ -41,7 +41,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               status={RequestStageStatus.Completed}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
-              icon={<PlayCircleOutlineOutlined color="primary" />}
+              icon={PlayCircleOutlineOutlined}
               entities={request.flow.steps[0].request.permission.entities}
             />
             <StageConnectorButton />
@@ -50,7 +50,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <Box key={index}>
                   <RequestStage
                     status={determineStepStatus(index, request.currentStepIndex)}
-                    icon={<Diversity3Outlined color="primary" />}
+                    icon={Diversity3Outlined}
                     label={request.flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
                     key={"stage-" + step?.id}
                     id={"step" + index.toString()}

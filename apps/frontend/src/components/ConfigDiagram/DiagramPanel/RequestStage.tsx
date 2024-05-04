@@ -67,14 +67,16 @@ export const RequestStage = ({
   icon,
   status = RequestStageStatus.InProgress,
 }: RequestStageProps) => {
+  const color = getStatusColor(status);
   return (
     <Stage
       id={id}
       setSelectedId={setSelectedId}
       selectedId={selectedId}
       icon={icon}
+      color={color}
       statusIcon={getStatusIcon(status)}
-      sx={{ borderColor: getStatusColor(status) }}
+      sx={{ borderColor: color }}
     >
       <Box
         sx={{
@@ -86,13 +88,11 @@ export const RequestStage = ({
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="label">{label}</Typography>
+          <Typography variant="label" color={color}>
+            {label}
+          </Typography>
           {status === RequestStageStatus.InProgress && (
-            <Typography
-              color={getStatusColor(RequestStageStatus.InProgress)}
-              fontSize={".7rem"}
-              lineHeight={"1rem"}
-            >
+            <Typography color={color} fontSize={".7rem"} lineHeight={"1rem"}>
               In progress
             </Typography>
           )}

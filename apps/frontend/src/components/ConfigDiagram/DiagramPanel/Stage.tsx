@@ -1,12 +1,14 @@
-import { Box, Paper, SxProps } from "@mui/material";
+import { Box, Paper, SvgIcon, SvgIconProps, SxProps } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import muiTheme from "@/style/muiTheme";
+import { colors } from "@/style/style";
 
 export interface StageProps {
   id: string;
   children?: React.ReactNode;
   sx?: SxProps;
-  icon?: any;
+  icon?: React.ComponentType<SvgIconProps>;
+  color?: string;
   statusIcon?: any;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
   selectedId: string | false;
@@ -19,6 +21,7 @@ export const Stage = ({
   selectedId,
   statusIcon,
   icon,
+  color,
   sx = {},
 }: StageProps) => {
   const isSelected = selectedId === id;
@@ -52,7 +55,11 @@ export const Stage = ({
           ...sx,
         }}
       >
-        <Box sx={{ marginRight: "12px", display: "flex" }}>{icon}</Box>
+        {icon ? (
+          <Box sx={{ marginRight: "12px", display: "flex" }}>
+            <SvgIcon component={icon} style={{ color: color ?? colors.primary }} />
+          </Box>
+        ) : null}
         {children}
       </Paper>
       <Box

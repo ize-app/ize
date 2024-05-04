@@ -10,7 +10,7 @@ export const Fields = ({
   fieldAnswers?: FieldAnswerFragment[];
 }) => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {fields.map((field) => {
         let fieldAnswer: FieldAnswerFragment | undefined;
         if (fieldAnswers) {

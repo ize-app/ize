@@ -108,14 +108,14 @@ export const Setup = () => {
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
-              icon={<PlayCircleOutlineOutlinedIcon color="primary" />}
+              icon={PlayCircleOutlineOutlinedIcon}
             />
             <StageConnectorButton />
             {stepsArrayMethods.fields.map((item, index) => {
               return (
                 <Box key={item.id}>
                   <FlowStage
-                    icon={<Diversity3OutlinedIcon color="primary" />}
+                    icon={Diversity3OutlinedIcon}
                     label={"Collaboration " + (index + 1).toString()}
                     key={"stage-" + item.id.toString() + index.toString()}
                     deleteHandler={
@@ -183,7 +183,7 @@ export const Setup = () => {
                     undefined,
                   );
                 }}
-                icon={<PublicOutlinedIcon color="primary" />}
+                icon={PublicOutlinedIcon}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
                     ?.action
@@ -195,7 +195,7 @@ export const Setup = () => {
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
-              icon={<ChangeCircleOutlinedIcon color="primary" />}
+              icon={ChangeCircleOutlinedIcon}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7

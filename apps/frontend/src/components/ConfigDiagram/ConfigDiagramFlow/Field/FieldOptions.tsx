@@ -1,9 +1,4 @@
-import {
-  FieldOptionsSelectionType,
-  LinkedResult,
-  OptionFieldAnswerSelection,
-  Options,
-} from "@/graphql/generated/graphql";
+import { LinkedResult, OptionFieldAnswerSelection, Options } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
@@ -20,8 +15,7 @@ export const FieldOptions = ({
   optionSelections?: OptionFieldAnswerSelection[] | undefined;
   final: boolean;
 }) => {
-  const { options, requestOptionsDataType, hasRequestOptions, linkedResultOptions, selectionType } =
-    fieldOptions;
+  const { options, requestOptionsDataType, hasRequestOptions, linkedResultOptions } = fieldOptions;
   return (
     <Box
       component="ul"
@@ -39,10 +33,10 @@ export const FieldOptions = ({
         const isSelected = optionSelections?.some((os) => os.optionId === option.optionId);
         return (
           <Typography
-            sx={(theme) => ({
+            sx={{
               backgroundColor: isSelected ? "#ffffe6" : "inherit",
               padding: "6px 12px",
-            })}
+            }}
             component={"li"}
             fontWeight={isSelected ? "bold" : "normal"}
             color={isSelected ? "primary" : "secondary"}

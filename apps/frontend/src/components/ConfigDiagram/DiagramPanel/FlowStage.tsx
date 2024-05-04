@@ -30,6 +30,7 @@ export const FlowStage = ({
       setSelectedId={setSelectedId}
       selectedId={selectedId}
       icon={icon}
+      color={colors.primary}
       statusIcon={
         hasError && <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />
       }
