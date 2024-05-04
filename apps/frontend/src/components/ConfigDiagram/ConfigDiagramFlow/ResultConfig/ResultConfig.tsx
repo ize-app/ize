@@ -7,7 +7,7 @@ import {
   ResultType,
 } from "@/graphql/generated/graphql";
 import { Box, Chip, Typography } from "@mui/material";
-import { FieldOptions } from "./FieldOptions";
+import { FieldOptions } from "../Field/FieldOptions";
 
 const decisionTypeDescription = (
   decisionType: DecisionType,

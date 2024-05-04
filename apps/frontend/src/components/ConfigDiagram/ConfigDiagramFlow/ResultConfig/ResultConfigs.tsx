@@ -1,7 +1,7 @@
 import { FieldFragment, ResultConfigFragment } from "@/graphql/generated/graphql";
 import Box from "@mui/material/Box";
 import { ResultConfig } from "./ResultConfig";
-import { LabeledGroupedInputs } from "../Form/formLayout/LabeledGroupedInputs";
+import { LabeledGroupedInputs } from "../../../Form/formLayout/LabeledGroupedInputs";
 
 export const ResultConfigs = ({
   resultConfigs,

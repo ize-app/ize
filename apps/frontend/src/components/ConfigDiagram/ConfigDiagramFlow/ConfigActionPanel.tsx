@@ -6,8 +6,8 @@ import {
 } from "@/components/ConfigDiagram";
 import { ActionFragment, FieldFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Action } from "../Action";
-import { ActionFilter } from "../ActionFilter";
+import { Action } from "./Action/Action";
+import { ActionFilter } from "./Action/ActionFilter";
 
 export const ConfigActionPanel = ({
   action,

@@ -7,13 +7,13 @@ import {
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { StageConnectorButton } from "./DiagramPanel/StageConnectorButton";
+import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigTriggerPanel } from "./ConfigPanel/ConfigTriggerPanel";
-import { ConfigStepPanel } from "./ConfigPanel/ConfigStepPanel";
-import { ConfigActionPanel } from "./ConfigPanel/ConfigActionPanel";
-import { RequestStageStatus } from "./DiagramPanel/RequestStage";
+import { ConfigTriggerPanel } from "../ConfigDiagramFlow/ConfigTriggerPanel";
+import { ConfigStepPanel } from "../ConfigDiagramFlow/ConfigStepPanel";
+import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
+import { RequestStageStatus } from "../DiagramPanel/RequestStage";
 
 const determineStepStatus = (stepIndex: number, currentStepIndex: number) => {
   if (stepIndex === currentStepIndex) return RequestStageStatus.InProgress;

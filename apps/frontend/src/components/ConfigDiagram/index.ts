@@ -8,5 +8,5 @@ export { FlowStage } from "./DiagramPanel/FlowStage";
 export { RequestStage } from "./DiagramPanel/RequestStage";
 export { StageMenu } from "./DiagramPanel/StageMenu";
 export { ConfigDiagramContainer as FlowConfigDiagramContainer } from "./ConfigDiagramContainer";
-export { ConfigDiagramFlow } from "./ConfigDiagramFlow";
+export { ConfigDiagramFlow } from "./ConfigDiagramFlow/ConfigDiagramFlow";
 export { PanelAccordion } from "./ConfigPanel/PanelAccordion";

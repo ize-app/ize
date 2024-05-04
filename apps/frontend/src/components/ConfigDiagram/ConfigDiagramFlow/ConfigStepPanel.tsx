@@ -6,9 +6,9 @@ import {
 } from "@/components/ConfigDiagram";
 import { ActionFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Permissions } from "../Permissions";
-import { ResultConfigs } from "../ResultConfigs";
-import { ActionFilter } from "../ActionFilter";
+import { Permissions } from "./Permissions";
+import { ResultConfigs } from "./ResultConfig/ResultConfigs";
+import { ActionFilter } from "./Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 export const ConfigStepPanel = ({

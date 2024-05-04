@@ -14,7 +14,7 @@ import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest";
+import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 
 export const Request = () => {
   const { me } = useContext(CurrentUserContext);
