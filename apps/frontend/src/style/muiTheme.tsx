@@ -66,7 +66,7 @@ const muiTheme = createTheme({
       letterSpacing: ".1rem",
     },
     description: {
-      fontSize: ".75rem",
+      fontSize: ".875rem",
       color: style.colors.secondary,
     },
   },

@@ -4,12 +4,19 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { StepFragment } from "@/graphql/generated/graphql";
+import { RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Permissions } from "./Permissions";
-import { Fields } from "./Field/Fields";
+import { Fields } from "../ConfigDiagramFlow/Field/Fields";
 
-export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
+export const ConfigRequestTriggerPanel = ({
+  step,
+  requestStep,
+}: {
+  step: StepFragment;
+  requestStep: RequestStepFragment;
+}) => {
+
+  console.log("request step is ", requestStep);
   return (
     <PanelContainer>
       <PanelHeader>
@@ -19,14 +26,12 @@ export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
       </PanelHeader>
       <ConfigurationPanel>
         <PanelAccordion title="Trigger permission" hasError={false}>
-          <Permissions permission={step.request.permission} type="request" />
+          {/* <Permissions permission={step.request.permission} type="request" /> */}
+          TODO
         </PanelAccordion>
         {step.request.fields.length > 0 && (
           <PanelAccordion title="Request fields" hasError={false}>
-            <Typography variant="description">
-              The following fields must be answered to trigger the flow:
-            </Typography>
-            <Fields fields={step.request.fields} />
+            <Fields fields={step.request.fields} fieldAnswers={requestStep.requestFieldAnswers} />
           </PanelAccordion>
         )}
       </ConfigurationPanel>

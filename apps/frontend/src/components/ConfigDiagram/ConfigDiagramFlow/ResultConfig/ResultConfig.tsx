@@ -69,7 +69,9 @@ export const ResultConfig = ({
             )}
             {resultConfig.defaultOption && defaultDecisionDescription(resultConfig.defaultOption)}
           </Typography>
-          {field && field.__typename === FieldType.Options && <FieldOptions fieldOptions={field} />}
+          {field && field.__typename === FieldType.Options && (
+            <FieldOptions fieldOptions={field} final={false} />
+          )}
         </>
       );
     }
