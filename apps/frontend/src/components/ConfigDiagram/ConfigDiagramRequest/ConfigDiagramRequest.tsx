@@ -10,15 +10,15 @@ import { useState } from "react";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigStepPanel } from "../ConfigDiagramFlow/ConfigStepPanel";
 import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
-import { RequestStageStatus } from "../DiagramPanel/RequestStage";
+import { Status } from "@/components/Status/type";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
+import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 
 const determineStepStatus = (stepIndex: number, currentStepIndex: number) => {
-  if (stepIndex === currentStepIndex) return RequestStageStatus.InProgress;
-  else if (stepIndex > currentStepIndex) return RequestStageStatus.Completed;
-  else return RequestStageStatus.Pending;
+  if (stepIndex === currentStepIndex) return Status.InProgress;
+  else if (stepIndex > currentStepIndex) return Status.Completed;
+  else return Status.Pending;
 };
 
 // Interactive diagram for understanding a given request
@@ -38,7 +38,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
-              status={RequestStageStatus.Completed}
+              status={Status.Completed}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
@@ -68,7 +68,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
-                  status={RequestStageStatus.Pending}
+                  status={Status.Pending}
                   label={finalAction.__typename}
                   id={"action"}
                   setSelectedId={setSelectedId}
@@ -80,14 +80,21 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
           </DiagramPanel>
         </PanelContainer>
         {selectedId === "trigger0" && (
-          <ConfigRequestTriggerPanel step={request.flow.steps[0]} requestStep={request.steps[0]} />
+          <ConfigRequestTriggerPanel
+            step={request.flow.steps[0]}
+            requestStep={request.steps[0]}
+            creator={request.creator}
+          />
         )}
         {request.flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (
-              <ConfigStepPanel
+              <ConfigRequestStepPanel
                 key={"steppanel-" + step?.id}
                 step={step}
+                requestStep={request.steps[index]}
+                requestStepIndex={index}
+                currentStepIndex={request.currentStepIndex}
                 triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
               />
             )

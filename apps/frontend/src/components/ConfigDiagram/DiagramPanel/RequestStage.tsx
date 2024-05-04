@@ -2,61 +2,16 @@ import { Stage, StageProps } from "./Stage";
 import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
-import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
-import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
-import HourglassTopOutlinedIcon from "@mui/icons-material/HourglassTopOutlined";
-import muiTheme from "@/style/muiTheme";
 
-export enum RequestStageStatus {
-  Pending = "Pending",
-  InProgress = "InProgress",
-  Completed = "Completed",
-}
+import { getStatusColor } from "@/components/Status/getStatusColor";
+import { Status } from "@/components/Status/type";
+import { getStatusIcon } from "@/components/Status/getStatusIcon";
 
 interface RequestStageProps extends StageProps {
   label: string;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
-  status: RequestStageStatus;
+  status: Status;
 }
-
-const getStatusColor = (status: RequestStageStatus) => {
-  switch (status) {
-    case RequestStageStatus.Pending:
-      return muiTheme.palette.secondary.main;
-    case RequestStageStatus.InProgress:
-      return muiTheme.palette.info.main;
-    case RequestStageStatus.Completed:
-      return muiTheme.palette.success.main;
-    default:
-      return muiTheme.palette.primary.main;
-  }
-};
-
-const getStatusIcon = (status: RequestStageStatus) => {
-  switch (status) {
-    case RequestStageStatus.Pending:
-      return (
-        <RadioButtonUncheckedOutlinedIcon
-          fontSize={"medium"}
-          sx={{ color: getStatusColor(status) }}
-        />
-      );
-    case RequestStageStatus.InProgress:
-      return <TimerOutlinedIcon fontSize={"medium"} sx={{ color: getStatusColor(status) }} />;
-    case RequestStageStatus.Completed:
-      return (
-        <CheckCircleOutlineOutlinedIcon
-          fontSize={"medium"}
-          sx={{ color: getStatusColor(status) }}
-        />
-      );
-    default:
-      return (
-        <HourglassTopOutlinedIcon fontSize={"medium"} sx={{ color: getStatusColor(status) }} />
-      );
-  }
-};
 
 export const RequestStage = ({
   label,
@@ -65,7 +20,7 @@ export const RequestStage = ({
   selectedId,
   entities = [],
   icon,
-  status = RequestStageStatus.InProgress,
+  status = Status.InProgress,
 }: RequestStageProps) => {
   const color = getStatusColor(status);
   return (
@@ -91,7 +46,7 @@ export const RequestStage = ({
           <Typography variant="label" color={color}>
             {label}
           </Typography>
-          {status === RequestStageStatus.InProgress && (
+          {status === Status.InProgress && (
             <Typography color={color} fontSize={".7rem"} lineHeight={"1rem"}>
               In progress
             </Typography>
