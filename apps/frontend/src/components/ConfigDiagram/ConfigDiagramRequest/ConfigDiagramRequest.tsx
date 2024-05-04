@@ -10,7 +10,7 @@ import { useState } from "react";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigTriggerPanel } from "../ConfigDiagramFlow/ConfigTriggerPanel";
+import { ConfigFlowTriggerPanel } from "../ConfigDiagramFlow/ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "../ConfigDiagramFlow/ConfigStepPanel";
 import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
 import { RequestStageStatus } from "../DiagramPanel/RequestStage";
@@ -79,7 +79,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             )}
           </DiagramPanel>
         </PanelContainer>
-        {selectedId === "trigger0" && <ConfigTriggerPanel step={request.flow.steps[0]} />}
+        {selectedId === "trigger0" && <ConfigFlowTriggerPanel step={request.flow.steps[0]} />}
         {request.flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (
