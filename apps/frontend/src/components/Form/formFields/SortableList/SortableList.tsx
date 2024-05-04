@@ -40,7 +40,6 @@ export const SortableList = <T extends FieldValues>({
     control,
     name: name as ArrayPath<T>,
   });
-  console.log("inside Soratble list. fields are", fields);
 
   useEffect(() => {
     if (fields.length === 0)

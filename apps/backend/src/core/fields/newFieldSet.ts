@@ -78,8 +78,6 @@ const createFieldOptionsConfig = async ({
       requestOptionsDataType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((l) => {
-        console.log("linked results is ", l);
-        console.log("created steps are", createdSteps);
         const resultConfigId =
           createdSteps[l.stepIndex].ResultConfigSet?.ResultConfigSetResultConfigs[l.resultIndex]
             .resultConfigId;

@@ -37,7 +37,6 @@ export const FieldOptions = ({
     >
       {options.map((option) => {
         const isSelected = optionSelections?.some((os) => os.optionId === option.optionId);
-        console.log("isSelected", isSelected);
         return (
           <Typography
             sx={(theme) => ({
@@ -52,7 +51,6 @@ export const FieldOptions = ({
           >
             {option.name}
           </Typography>
-          // </Box>
         );
       })}
       {!final && hasRequestOptions && requestOptionsDataType && (

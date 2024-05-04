@@ -42,7 +42,7 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.getRequest;
-  console.log(request);
+  // console.log(request);
 
   if (request) {
     canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;

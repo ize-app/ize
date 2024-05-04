@@ -15,8 +15,6 @@ export const ConfigRequestTriggerPanel = ({
   step: StepFragment;
   requestStep: RequestStepFragment;
 }) => {
-
-  console.log("request step is ", requestStep);
   return (
     <PanelContainer>
       <PanelHeader>

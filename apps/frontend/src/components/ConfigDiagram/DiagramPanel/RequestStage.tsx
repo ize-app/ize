@@ -67,7 +67,6 @@ export const RequestStage = ({
   icon,
   status = RequestStageStatus.InProgress,
 }: RequestStageProps) => {
-  console.log("entities are ", entities);
   return (
     <Stage
       id={id}
