@@ -4,6 +4,8 @@ import { StepPrismaType } from "../../flow/flowPrismaTypes";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { fieldAnswerResolver } from "../../fields/resolvers/fieldAnswerResolver";
 import { responsesResolver } from "@/core/response/responseResolver";
+import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
+import { resultResolver } from "@/core/result/resolvers/resultResolver";
 
 export const requestStepResolver = ({
   reqStep,
@@ -11,7 +13,6 @@ export const requestStepResolver = ({
 }: {
   reqStep: RequestStepPrismaType;
   step: StepPrismaType;
-  
 }): RequestStep => {
   const res: RequestStep = {
     requestStepId: reqStep.id,
@@ -25,6 +26,7 @@ export const requestStepResolver = ({
       requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
     }),
     responses: responsesResolver(reqStep.Responses),
+    results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
   };
   return res;
 };

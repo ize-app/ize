@@ -673,6 +673,7 @@ export type RequestStep = {
   requestStepId: Scalars['String']['output'];
   responseFields: Array<Field>;
   responses: Array<Response>;
+  results: Array<Result>;
 };
 
 export type RequestStepSummary = {
@@ -707,6 +708,14 @@ export type ResponseConfig = {
   permission: Permission;
 };
 
+export type Result = {
+  __typename?: 'Result';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+  resultItems: Array<ResultItem>;
+};
+
 export type ResultArgs = {
   decision?: InputMaybe<DecisionArgs>;
   fieldId?: InputMaybe<Scalars['String']['input']>;
@@ -719,6 +728,14 @@ export type ResultArgs = {
 };
 
 export type ResultConfig = Decision | LlmSummary | Ranking;
+
+export type ResultItem = {
+  __typename?: 'ResultItem';
+  dataType: FieldDataType;
+  id: Scalars['String']['output'];
+  optionId?: Maybe<Scalars['String']['output']>;
+  value: Scalars['String']['output'];
+};
 
 export enum ResultType {
   Decision = 'Decision',
@@ -948,8 +965,10 @@ export type ResolversTypes = {
   RequestStepSummary: ResolverTypeWrapper<RequestStepSummary>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
+  Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
+  ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
@@ -1042,8 +1061,10 @@ export type ResolversParentTypes = {
   RequestStepSummary: RequestStepSummary;
   Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
+  Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
+  ResultItem: ResultItem;
   Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
@@ -1404,6 +1425,7 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   responses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Result']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1439,8 +1461,24 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
   __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
+};
+
+export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultItem'] = ResolversParentTypes['ResultItem']> = {
+  dataType?: Resolver<ResolversTypes['FieldDataType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  optionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
@@ -1528,7 +1566,9 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
+  Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
+  ResultItem?: ResultItemResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

@@ -49,6 +49,7 @@ type RequestStep {
   requestFieldAnswers: [FieldAnswer!]!
   responseFields: [Field!]!
   responses: [Response!]!
+  results: [Result!]!
 }
 
 type RequestStepSummary {

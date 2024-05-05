@@ -11,6 +11,22 @@ fragment ResultConfig on ResultConfig {
   }
 }
 
+fragment Result on Result {
+  id
+  createdAt
+  resultConfigId
+  resultItems {
+    ...ResultItem
+  }
+}
+
+fragment ResultItem on ResultItem {
+  id
+  dataType
+  value
+  optionId
+}
+
 fragment Decision on Decision {
   fieldId
   resultConfigId

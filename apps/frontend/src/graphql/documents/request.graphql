@@ -59,6 +59,9 @@ fragment RequestStep on RequestStep {
   responses {
     ...Response
   }
+  results {
+    ...Result
+  }
 }
 
 fragment RequestStepSummary on RequestStepSummary {

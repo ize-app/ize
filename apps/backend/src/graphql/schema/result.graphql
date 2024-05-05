@@ -1,3 +1,17 @@
+type Result {
+  id: String!
+  createdAt: String!
+  resultConfigId: String!
+  resultItems: [ResultItem!]!
+}
+
+type ResultItem {
+  id: String!
+  dataType: FieldDataType!
+  value: String!
+  optionId: String
+}
+
 union ResultConfig = Decision | Ranking | LlmSummary
 
 type Decision {
