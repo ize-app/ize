@@ -5,7 +5,7 @@ export const getStatusTitle = (status: Status): string => {
     case Status.Pending:
       return "Pending";
     case Status.InProgress:
-      return "In progres";
+      return "In progress";
     case Status.Completed:
       return "Completed";
   }

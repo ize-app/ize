@@ -34,7 +34,7 @@ export const ConfigRequestStepPanel = ({
   requestStepIndex: number;
   currentStepIndex: number;
 }) => {
-  const status = determineRequestStepStatus(1, currentStepIndex);
+  const status = determineRequestStepStatus(requestStepIndex, currentStepIndex);
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
   if (requestStep) {
