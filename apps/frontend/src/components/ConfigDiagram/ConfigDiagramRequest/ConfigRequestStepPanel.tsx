@@ -7,18 +7,21 @@ import {
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
 import { Permissions } from "../ConfigDiagramFlow/Permissions";
-import { ResultConfigs } from "../ConfigDiagramFlow/ResultConfig/ResultConfigs";
 import { ActionFilter } from "../ConfigDiagramFlow/Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { Status } from "@/components/Status/type";
-import { StatusTag } from "@/components/Status/Status";
+import { RequestStatus } from "@/components/status/type";
+import { RequestStatusTag } from "@/components/status/RequestStatusTag";
 import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
+import { Results } from "@/components/result/Results";
 
-const determineRequestStepStatus = (requestStepIndex: number, currentStepIndex: number): Status => {
-  if (requestStepIndex === currentStepIndex) return Status.InProgress;
-  else if (requestStepIndex < currentStepIndex) return Status.Completed;
-  else return Status.Pending;
+const determineRequestStepStatus = (
+  requestStepIndex: number,
+  currentStepIndex: number,
+): RequestStatus => {
+  if (requestStepIndex === currentStepIndex) return RequestStatus.InProgress;
+  else if (requestStepIndex < currentStepIndex) return RequestStatus.Completed;
+  else return RequestStatus.Pending;
 };
 
 export const ConfigRequestStepPanel = ({
@@ -55,7 +58,7 @@ export const ConfigRequestStepPanel = ({
         <PanelAccordion title="Status" hasError={false}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
-            <StatusTag status={status} />
+            <RequestStatusTag status={status} />
           </Box>
           {requestStep && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -91,7 +94,13 @@ export const ConfigRequestStepPanel = ({
             }`}
         </PanelAccordion>
         <PanelAccordion title="Collaborations 👀" hasError={false}>
-          <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} />
+          {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
+          <Results
+            resultConfigs={step.result}
+            responseFields={step.response.fields}
+            results={requestStep?.results ?? []}
+            requestStatus={status}
+          />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

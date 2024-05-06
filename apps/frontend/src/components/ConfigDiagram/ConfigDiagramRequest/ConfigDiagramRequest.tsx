@@ -11,14 +11,14 @@ import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
-import { Status } from "@/components/Status/type";
+import { RequestStatus } from "@/components/status/type";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 
 const determineStepStatus = (stepIndex: number, currentStepIndex: number) => {
-  if (stepIndex === currentStepIndex) return Status.InProgress;
-  else if (stepIndex > currentStepIndex) return Status.Completed;
-  else return Status.Pending;
+  if (stepIndex === currentStepIndex) return RequestStatus.InProgress;
+  else if (stepIndex > currentStepIndex) return RequestStatus.Completed;
+  else return RequestStatus.Pending;
 };
 
 // Interactive diagram for understanding a given request
@@ -26,6 +26,8 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
   const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;
+
+  console.log("request is", request);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -38,7 +40,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
-              status={Status.Completed}
+              status={RequestStatus.Completed}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
@@ -68,7 +70,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
-                  status={Status.Pending}
+                  status={RequestStatus.Pending}
                   label={finalAction.__typename}
                   id={"action"}
                   setSelectedId={setSelectedId}

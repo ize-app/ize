@@ -3,14 +3,13 @@ import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
 
-import { getStatusColor } from "@/components/Status/getStatusColor";
-import { Status } from "@/components/Status/type";
-import { getStatusIcon } from "@/components/Status/getStatusIcon";
+import { requestStatusProps } from "@/components/status/requestStatusProps";
+import { RequestStatus } from "@/components/status/type";
 
 interface RequestStageProps extends StageProps {
   label: string;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
-  status: Status;
+  status: RequestStatus;
 }
 
 export const RequestStage = ({
@@ -20,18 +19,19 @@ export const RequestStage = ({
   selectedId,
   entities = [],
   icon,
-  status = Status.InProgress,
+  status = RequestStatus.InProgress,
 }: RequestStageProps) => {
-  const color = getStatusColor(status);
+  const backgroundColor = requestStatusProps[status].backgroundColor;
+  const Icon = requestStatusProps[status].icon;
   return (
     <Stage
       id={id}
       setSelectedId={setSelectedId}
       selectedId={selectedId}
       icon={icon}
-      color={color}
-      statusIcon={getStatusIcon(status)}
-      sx={{ borderColor: color }}
+      color={backgroundColor}
+      statusIcon={<Icon fontSize={"medium"} sx={{ color: backgroundColor }} />}
+      sx={{ borderColor: backgroundColor }}
     >
       <Box
         sx={{
@@ -43,11 +43,11 @@ export const RequestStage = ({
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="label" color={color}>
+          <Typography variant="label" color={backgroundColor}>
             {label}
           </Typography>
-          {status === Status.InProgress && (
-            <Typography color={color} fontSize={".7rem"} lineHeight={"1rem"}>
+          {status === RequestStatus.InProgress && (
+            <Typography color={backgroundColor} fontSize={".7rem"} lineHeight={"1rem"}>
               In progress
             </Typography>
           )}

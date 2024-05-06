@@ -1,4 +1,4 @@
-export enum Status {
+export enum RequestStatus {
   Pending = "Pending",
   Completed = "Completed",
   InProgress = "InProgress",

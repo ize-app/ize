@@ -1,4 +1,9 @@
-import { LinkedResult, OptionFieldAnswerSelection, Options } from "@/graphql/generated/graphql";
+import {
+  LinkedResult,
+  OptionFieldAnswerSelection,
+  Options,
+  ResultItemFragment,
+} from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
@@ -12,7 +17,7 @@ export const FieldOptions = ({
   final,
 }: {
   fieldOptions: Options;
-  optionSelections?: OptionFieldAnswerSelection[] | undefined;
+  optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
   final: boolean;
 }) => {
   const { options, requestOptionsDataType, hasRequestOptions, linkedResultOptions } = fieldOptions;
@@ -26,7 +31,8 @@ export const FieldOptions = ({
         marginBlockEnd: "0px",
         paddingInlineStart: "0px",
         listStyleType: "none",
-        "& li": { borderBottom: "1px solid rgba(0, 0, 0, 0.1)" },
+        backgroundColor: "white",
+        // "& li": { borderBottom: "1px solid rgba(0, 0, 0, 0.1)" },
       }}
     >
       {options.map((option) => {
@@ -38,7 +44,8 @@ export const FieldOptions = ({
               padding: "6px 12px",
             }}
             component={"li"}
-            fontWeight={isSelected ? "bold" : "normal"}
+            border={isSelected ? "1px solid" : "none"}
+            fontWeight={isSelected ? 500 : "normal"}
             color={isSelected ? "primary" : "secondary"}
             key={option.optionId}
             fontSize={".875rem"}

@@ -45,7 +45,7 @@ export const Stage = ({
           justifyContent: "flex-start",
           minHeight: "48px",
           border: "1px solid",
-          borderWidth: isSelected ? "2px" : "1px",
+          borderWidth: isSelected ? "4px" : "1px",
           borderColor: isSelected ? muiTheme.palette.primary.main : "rgba(0, 0, 0, 0.1)",
           width: "240px",
           padding: "8px",

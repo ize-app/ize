@@ -7,7 +7,7 @@ import {
 import { ActionFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
 import { Permissions } from "./Permissions";
-import { ResultConfigs } from "./ResultConfig/ResultConfigs";
+import { ResultConfigs } from "../../result/ResultConfigs/ResultConfigs";
 import { ActionFilter } from "./Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
