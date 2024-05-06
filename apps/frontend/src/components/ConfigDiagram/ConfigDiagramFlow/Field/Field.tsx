@@ -5,6 +5,7 @@ import { FieldOptions } from "./FieldOptions";
 import { renderFreeInputValue } from "./renderFreeInputValue";
 import { formatDataTypeName } from "./formatDataTypeName";
 import { formatOptionSelectionType } from "./formatOptionSelectionType";
+import { FieldAnswer } from "./FieldAnswer";
 
 export const Field = ({
   field,
@@ -25,21 +26,7 @@ export const Field = ({
             {field.name}
             <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span>
           </Typography>
-          {freeInputAnswer && (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                gap: "4px",
-                borderRadius: "4px",
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                padding: "6px",
-              }}
-            >
-              {renderFreeInputValue(freeInputAnswer, field.dataType)}
-            </Box>
-          )}
+          {freeInputAnswer && <FieldAnswer answer={freeInputAnswer} dataType={field.dataType} />}
         </Box>
       );
     }

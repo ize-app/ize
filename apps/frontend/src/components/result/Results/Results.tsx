@@ -1,21 +1,29 @@
-import { FieldFragment, ResultConfigFragment, ResultFragment } from "@/graphql/generated/graphql";
+import {
+  FieldFragment,
+  ResponseFragment,
+  ResultConfigFragment,
+  ResultFragment,
+} from "@/graphql/generated/graphql";
 import Box from "@mui/material/Box";
 import { Result } from "./Result";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { RequestStatus } from "@/components/status/type";
 import { Chip } from "@mui/material";
 import { requestStatusProps } from "@/components/status/requestStatusProps";
+import { getFieldAnswersOfResponse } from "@/components/response/getFieldAnswersOfResponse";
 
 export const Results = ({
   resultConfigs,
   responseFields,
   results,
   requestStatus,
+  responses,
 }: {
   resultConfigs: ResultConfigFragment[];
   responseFields: FieldFragment[];
   results: ResultFragment[];
   requestStatus: RequestStatus;
+  responses: ResponseFragment[];
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -23,6 +31,10 @@ export const Results = ({
         let field: FieldFragment | null = null;
         let result: ResultFragment | null =
           results.find((r) => r.resultConfigId === resultConfig.resultConfigId) ?? null;
+
+        let answers = resultConfig.fieldId
+          ? getFieldAnswersOfResponse(responses, resultConfig.fieldId)
+          : [];
 
         if (resultConfig.fieldId) {
           field = responseFields.find((field) => field.fieldId === resultConfig.fieldId) ?? null;

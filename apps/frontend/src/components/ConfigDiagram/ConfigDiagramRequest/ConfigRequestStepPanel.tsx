@@ -14,6 +14,8 @@ import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { useContext } from "react";
 
 export const ConfigRequestStepPanel = ({
   step,
@@ -28,6 +30,8 @@ export const ConfigRequestStepPanel = ({
   requestStepIndex: number;
   currentStepIndex: number;
 }) => {
+  const { me } = useContext(CurrentUserContext);
+
   const status = determineRequestStepStatus(
     requestStepIndex,
     requestStep?.resultsComplete ?? false,
@@ -35,6 +39,9 @@ export const ConfigRequestStepPanel = ({
   );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
+  let userResponses =
+    requestStep?.responses.filter((response) => response.user.id === me?.user.id) ?? [];
+
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);
     remainingTime = remainingTimeToRespond({
@@ -95,6 +102,7 @@ export const ConfigRequestStepPanel = ({
             responseFields={step.response.fields}
             results={requestStep?.results ?? []}
             requestStatus={status}
+            responses={requestStep?.responses ?? []}
           />
         </PanelAccordion>
       </ConfigurationPanel>
