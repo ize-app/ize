@@ -9,20 +9,11 @@ import { Box, Typography } from "@mui/material";
 import { Permissions } from "../ConfigDiagramFlow/Permissions";
 import { ActionFilter } from "../ConfigDiagramFlow/Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { RequestStatus } from "@/components/status/type";
 import { RequestStatusTag } from "@/components/status/RequestStatusTag";
 import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";
-
-const determineRequestStepStatus = (
-  requestStepIndex: number,
-  currentStepIndex: number,
-): RequestStatus => {
-  if (requestStepIndex === currentStepIndex) return RequestStatus.InProgress;
-  else if (requestStepIndex < currentStepIndex) return RequestStatus.Completed;
-  else return RequestStatus.Pending;
-};
+import { determineRequestStepStatus } from "./determineRequestStepStatus";
 
 export const ConfigRequestStepPanel = ({
   step,
@@ -37,7 +28,11 @@ export const ConfigRequestStepPanel = ({
   requestStepIndex: number;
   currentStepIndex: number;
 }) => {
-  const status = determineRequestStepStatus(requestStepIndex, currentStepIndex);
+  const status = determineRequestStepStatus(
+    requestStepIndex,
+    requestStep?.resultsComplete ?? false,
+    currentStepIndex,
+  );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
   if (requestStep) {
@@ -72,7 +67,7 @@ export const ConfigRequestStepPanel = ({
               <Typography>{new Date(requestStep?.expirationDate).toLocaleString()}</Typography>
             </Box>
           )}
-          {requestStep && remainingTime && remainingTime > 0 && (
+          {requestStep && !requestStep.responseComplete && remainingTime && remainingTime > 0 && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography>Remaining time to respond </Typography>
               <TimeLeft msLeft={remainingTime} />

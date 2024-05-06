@@ -14,12 +14,7 @@ import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
 import { RequestStatus } from "@/components/status/type";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
-
-const determineStepStatus = (stepIndex: number, currentStepIndex: number) => {
-  if (stepIndex === currentStepIndex) return RequestStatus.InProgress;
-  else if (stepIndex > currentStepIndex) return RequestStatus.Completed;
-  else return RequestStatus.Pending;
-};
+import { determineRequestStepStatus } from "./determineRequestStepStatus";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -51,7 +46,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               return (
                 <Box key={index}>
                   <RequestStage
-                    status={determineStepStatus(index, request.currentStepIndex)}
+                    status={determineRequestStepStatus(
+                      index,
+                      request.steps[index].resultsComplete,
+                      request.currentStepIndex,
+                    )}
                     icon={Diversity3Outlined}
                     label={request.flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
                     key={"stage-" + step?.id}

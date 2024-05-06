@@ -52,6 +52,7 @@ export const newRequest = async ({
         name: args.request.name,
         flowVersionId: flow.CurrentFlowVersion.id,
         creatorId: context.currentUser.id,
+        final: false,
       },
     });
 

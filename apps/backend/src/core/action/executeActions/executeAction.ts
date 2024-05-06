@@ -73,6 +73,7 @@ export const executeAction = async ({
     },
     data: {
       actionsComplete: actionComplete,
+      final: actionComplete,
     },
   });
 
