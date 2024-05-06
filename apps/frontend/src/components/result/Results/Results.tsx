@@ -30,20 +30,26 @@ export const Results = ({
 
         return (
           <Box
-            sx={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              alignItems: "flex-start",
+            }}
           >
-            <Chip
-              label={requestStatusProps[requestStatus].label}
-              sx={{
-                backgroundColor: requestStatusProps[requestStatus].backgroundColor,
-                color: requestStatusProps[requestStatus].color,
-              }}
-              size="small"
-            />
-
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
+              <Chip
+                label={requestStatusProps[requestStatus].label}
+                sx={{
+                  backgroundColor: requestStatusProps[requestStatus].backgroundColor,
+                  color: requestStatusProps[requestStatus].color,
+                }}
+                size="small"
+              />
+            </Box>
             <LabeledGroupedInputs
               sx={{
-                padding: "16px",
+                padding: "8px 16px 16px",
                 borderColor: requestStatusProps[requestStatus].backgroundColor,
                 backgroundColor:
                   requestStatus === RequestStatus.Completed

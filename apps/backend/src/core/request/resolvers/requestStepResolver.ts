@@ -27,6 +27,10 @@ export const requestStepResolver = ({
     }),
     responses: responsesResolver(reqStep.Responses),
     results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
+    responseComplete: reqStep.responseComplete,
+    resultsComplete: reqStep.resultsComplete,
+    actionsComplete: reqStep.actionsComplete,
+    final: reqStep.final,
   };
   return res;
 };

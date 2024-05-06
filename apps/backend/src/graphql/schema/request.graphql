@@ -50,6 +50,10 @@ type RequestStep {
   responseFields: [Field!]!
   responses: [Response!]!
   results: [Result!]!
+  responseComplete: Boolean!
+  resultsComplete: Boolean!
+  actionsComplete: Boolean!
+  final: Boolean!
 }
 
 type RequestStepSummary {
@@ -67,6 +71,9 @@ type RequestStepSummary {
   totalSteps: Int!
   createdAt: String!
   expirationDate: String!
+  responseComplete: Boolean!
+  resultsComplete: Boolean!
+  actionsComplete: Boolean!
   final: Boolean!
 }
 

@@ -667,17 +667,22 @@ export type RequestDefinedOptionsArgs = {
 
 export type RequestStep = {
   __typename?: 'RequestStep';
+  actionsComplete: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   expirationDate: Scalars['String']['output'];
+  final: Scalars['Boolean']['output'];
   requestFieldAnswers: Array<FieldAnswer>;
   requestStepId: Scalars['String']['output'];
+  responseComplete: Scalars['Boolean']['output'];
   responseFields: Array<Field>;
   responses: Array<Response>;
   results: Array<Result>;
+  resultsComplete: Scalars['Boolean']['output'];
 };
 
 export type RequestStepSummary = {
   __typename?: 'RequestStepSummary';
+  actionsComplete: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   creator: User;
   expirationDate: Scalars['String']['output'];
@@ -689,6 +694,8 @@ export type RequestStepSummary = {
   requestName: Scalars['String']['output'];
   requestStepId: Scalars['String']['output'];
   respondPermission: Permission;
+  responseComplete: Scalars['Boolean']['output'];
+  resultsComplete: Scalars['Boolean']['output'];
   stepIndex: Scalars['Int']['output'];
   totalSteps: Scalars['Int']['output'];
   userRespondPermission: Scalars['Boolean']['output'];
@@ -1419,17 +1426,22 @@ export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStep'] = ResolversParentTypes['RequestStep']> = {
+  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   requestFieldAnswers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   responses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['Result']>, ParentType, ContextType>;
+  resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepSummary'] = ResolversParentTypes['RequestStepSummary']> = {
+  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1441,6 +1453,8 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   respondPermission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalSteps?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

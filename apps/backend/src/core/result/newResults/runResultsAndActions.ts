@@ -20,7 +20,6 @@ export const runResultsAndActions = async ({
   existingResults?: ResultPrismaType[];
   transaction?: Prisma.TransactionClient;
 }) => {
-  console.log("inside run results and actions");
   const results = await newResults({
     step,
     responses,
