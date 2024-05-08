@@ -20,20 +20,24 @@ export const runResultsAndActions = async ({
   existingResults?: ResultPrismaType[];
   transaction?: Prisma.TransactionClient;
 }) => {
-  const results = await newResults({
-    step,
-    responses,
-    existingResults,
-    requestStepId: requestStepId,
-  });
-
-  const hasCompleteResults = results.every((result) => result.complete);
-
-  if (hasCompleteResults) {
-    await executeAction({
+  try {
+    const results = await newResults({
       step,
-      results,
+      responses,
+      existingResults,
       requestStepId: requestStepId,
     });
+
+    const hasCompleteResults = results.every((result) => result.complete);
+
+    if (hasCompleteResults) {
+      await executeAction({
+        step,
+        results,
+        requestStepId: requestStepId,
+      });
+    }
+  } catch (e) {
+    console.log("Error runResultsAndActions: ", e);
   }
 };

@@ -99,6 +99,8 @@ export const newResponse = async ({
     });
 
     if (checkIfEarlyResult({ step: requestStep.Step, responses: allResponses })) {
+      // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
+      // there is cron job to rerun stalled actions / results
       await runResultsAndActions({
         requestStepId: requestStep.id,
         step: requestStep.Step,

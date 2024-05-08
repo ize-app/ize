@@ -52,8 +52,8 @@ export const executeAction = async ({
   await prisma.actionExecution.upsert({
     where: {
       actionId_requestStepId: {
-        actionId: "",
-        requestStepId: "",
+        actionId: action.id,
+        requestStepId: requestStepId,
       },
     },
     update: {
