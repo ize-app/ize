@@ -74,6 +74,11 @@ export const Request = () => {
               <Link
                 to={generatePath(Route.Flow, {
                   flowId: fullUUIDToShort(request.flow.flowId),
+                  // Link to old version of flow if request is made from an older version
+                  flowVersionId:
+                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                      ? fullUUIDToShort(request.flow.flowVersionId)
+                      : null,
                 })}
               >
                 {request.flow.name}

@@ -1,7 +1,7 @@
 import { Request } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { RequestPrismaType } from "../requestPrismaTypes";
-import { flowVersionResolver } from "../../flow/resolvers/flowVersionResolver";
+import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { requestStepResolver } from "./requestStepResolver";
 import { userResolver } from "@/core/user/userResolver";
@@ -18,7 +18,7 @@ export const requestResolver = ({
   const Request: Request = {
     name: req.name,
     creator: userResolver(req.Creator),
-    flow: flowVersionResolver({
+    flow: flowResolver({
       flowVersion: req.FlowVersion,
       userGroupIds,
       userId: context.currentUser?.stytchId,

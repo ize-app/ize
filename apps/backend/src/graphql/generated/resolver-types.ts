@@ -230,6 +230,7 @@ export enum FieldType {
 
 export type Flow = {
   __typename?: 'Flow';
+  currentFlowVersionId?: Maybe<Scalars['String']['output']>;
   evolve?: Maybe<Flow>;
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
@@ -589,6 +590,7 @@ export type QueryDiscordServerRolesArgs = {
 
 export type QueryGetFlowArgs = {
   flowId: Scalars['String']['input'];
+  flowVersionId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1206,6 +1208,7 @@ export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
+  currentFlowVersionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
