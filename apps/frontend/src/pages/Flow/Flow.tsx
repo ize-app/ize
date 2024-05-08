@@ -55,8 +55,7 @@ export const Flow = () => {
   const flow = flowData?.getFlow as FlowFragment;
 
   // console.log("flow is ", flow);
-  // const isCurrentFlowVersion = flow.flowVersionId === flow.currentFlowVersionId;
-  const isCurrentFlowVersion = false;
+  const isCurrentFlowVersion = flow.flowVersionId === flow.currentFlowVersionId;
 
   const onError = () => {
     navigate("/");
@@ -137,7 +136,7 @@ export const Flow = () => {
                 variant="contained"
                 disabled={!flow.steps[0]?.userPermission.request}
                 sx={{
-                  width: "00px",
+                  width: "300px",
                   display: !me ? "none" : "flex",
                 }}
                 onClick={() =>

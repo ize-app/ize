@@ -39,6 +39,7 @@ type Request {
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!
+  final: Boolean!
   steps: [RequestStep!]!
 }
 

@@ -49,6 +49,7 @@ const muiTheme = createTheme({
     },
     h2: {
       fontSize: "1.5rem",
+      margin: "0.5rem 0rem",
     },
     h3: {
       fontSize: "1.25rem",

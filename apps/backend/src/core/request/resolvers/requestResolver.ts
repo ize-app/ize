@@ -28,6 +28,7 @@ export const requestResolver = ({
     currentStepIndex: req.RequestSteps.findIndex(
       (reqStep) => reqStep.id === req.currentRequestStepId,
     ),
+    final: req.final,
     requestId: req.id,
     steps: req.RequestSteps.map((reqStep) => {
       const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);

@@ -650,6 +650,7 @@ export type Request = {
   createdAt: Scalars['String']['output'];
   creator: User;
   currentStepIndex: Scalars['Int']['output'];
+  final: Scalars['Boolean']['output'];
   flow: Flow;
   name: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
@@ -1433,6 +1434,7 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   currentStepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   flow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
