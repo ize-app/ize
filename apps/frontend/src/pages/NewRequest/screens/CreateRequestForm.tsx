@@ -17,7 +17,7 @@ import {
 import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
-import { WizardBody, WizardNav } from "../../../components/Wizard";
+import { WizardNav } from "../../../components/Wizard";
 import {
   DatePicker,
   DateTimePicker,
@@ -77,6 +77,9 @@ export const CreateRequestForm = () => {
     resolver: zodResolver(requestSchema),
     shouldUnregister: true,
   });
+
+  console.log("form state is ", formMethods.getValues());
+  console.log("errors are  ", formMethods.formState.errors);
 
   // console.log("errors are", formMethods.formState.errors);
   // console.log("formstate is ", formMethods.getValues());
@@ -182,7 +185,8 @@ export const CreateRequestForm = () => {
                     case FieldOptionsSelectionType.Select: {
                       return (
                         <Radio<RequestSchemaType>
-                          name={`requestFields.${field.fieldId}.optionSelections`}
+                          name={`requestFields.${field.fieldId}.optionSelections[0].optionId`}
+                          key={fieldId}
                           control={formMethods.control}
                           label={name}
                           sx={{ flexDirection: "column", gap: "4px" }}

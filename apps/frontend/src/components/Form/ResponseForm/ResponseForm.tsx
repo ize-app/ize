@@ -141,7 +141,8 @@ export const ResponseForm = ({
                 case FieldOptionsSelectionType.Select: {
                   return (
                     <Radio<ResponseSchemaType>
-                      name={`responseFields.${field.fieldId}.optionSelections`}
+                      name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
+                      key={fieldId}
                       control={formMethods.control}
                       label={name}
                       sx={{ flexDirection: "column", gap: "4px" }}

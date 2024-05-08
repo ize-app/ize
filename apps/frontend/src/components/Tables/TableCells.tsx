@@ -8,7 +8,7 @@ import {
   UserSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 // import { intervalToIntuitiveTimeString } from "../../utils/inputs";
-import { AvatarGroup } from "../Avatar";
+import { AvatarGroup } from "../AvatarOld";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 interface TableCellHideableProps extends TableCellProps {

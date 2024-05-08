@@ -4,7 +4,7 @@ import { PermissionType } from "../formValidation/permission";
 import { FlowSchemaType } from "../formValidation/flow";
 import { FieldsForm } from "./FieldsForm";
 import { Box } from "@mui/material";
-import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -26,7 +26,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
   return (
     formIndex === 0 && (
       <Box sx={{ display: show ? "block" : "none" }}>
-        <FieldGroupAccordion title="Permission" hasError={!!error?.permission}>
+        <PanelAccordion title="Permission" hasError={!!error?.permission}>
           <Select
             control={formMethods.control}
             name={`steps.${formIndex}.request.permission.type`}
@@ -46,8 +46,8 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
               getFieldValues={formMethods.getValues}
             />
           )}
-        </FieldGroupAccordion>
-        <FieldGroupAccordion title="Request fields" hasError={!!error?.fields}>
+        </PanelAccordion>
+        <PanelAccordion title="Request fields" hasError={!!error?.fields}>
           <FieldsForm
             formIndex={formIndex}
             branch={"request"}
@@ -55,7 +55,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
             //@ts-ignore
             fieldsArrayMethods={fieldsArrayMethods}
           />
-        </FieldGroupAccordion>
+        </PanelAccordion>
       </Box>
     )
   );

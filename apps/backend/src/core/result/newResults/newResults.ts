@@ -56,6 +56,7 @@ export const newResults = async ({
       id: requestStepId,
     },
     data: {
+      responseComplete: true,
       resultsComplete: attemptedResults.every((result) => result.complete),
     },
   });

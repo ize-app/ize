@@ -19,8 +19,15 @@ type Options {
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
-  linkedResultOptions: [String!]!
+  linkedResultOptions: [LinkedResult!]!
   options: [Option!]!
+}
+
+type LinkedResult {
+  resultConfigId: String!
+  resultType: ResultType!
+  fieldId: String!
+  fieldName: String!
 }
 
 type FreeInput {
@@ -66,6 +73,17 @@ type OptionFieldAnswer {
 type FreeInputFieldAnswer {
   fieldId: String!
   value: String!
+}
+
+type UserFieldAnswer {
+  user: User!
+  createdAt: String!
+  answer: FieldAnswer!
+}
+
+type UserFieldAnswers {
+  fieldId: String!
+  answers: [UserFieldAnswer!]!
 }
 
 # later will use this type to add option free inputs

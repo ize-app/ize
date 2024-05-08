@@ -69,7 +69,7 @@ export const CreateListButton = (): JSX.Element => {
 
   return (
     <>
-      <ListItemButton color="primary" onClick={handleClick}>
+      {/* <ListItemButton color="primary" onClick={handleClick}>
         <ListItemIcon>
           <Add color="primary" width="10px" />
         </ListItemIcon>
@@ -82,7 +82,16 @@ export const CreateListButton = (): JSX.Element => {
             },
           }}
         />
-      </ListItemButton>
+      </ListItemButton> */}
+      <Button
+        onClick={handleClick}
+        variant="contained"
+        size="small"
+        // endIcon={<Add />}
+        sx={{ width: "100%", margin: "8px 8px" }}
+      >
+        Create
+      </Button>
       <CreateMenu handleClose={handleClose} open={open} anchorEl={anchorEl} />
     </>
   );

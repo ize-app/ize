@@ -1,9 +1,10 @@
 import { Request } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { RequestPrismaType } from "../requestPrismaTypes";
-import { flowVersionResolver } from "../../flow/resolvers/flowVersionResolver";
+import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { requestStepResolver } from "./requestStepResolver";
+import { userResolver } from "@/core/user/userResolver";
 
 export const requestResolver = ({
   req,
@@ -16,7 +17,8 @@ export const requestResolver = ({
 }): Request => {
   const Request: Request = {
     name: req.name,
-    flow: flowVersionResolver({
+    creator: userResolver(req.Creator),
+    flow: flowResolver({
       flowVersion: req.FlowVersion,
       userGroupIds,
       userId: context.currentUser?.stytchId,
@@ -26,6 +28,7 @@ export const requestResolver = ({
     currentStepIndex: req.RequestSteps.findIndex(
       (reqStep) => reqStep.id === req.currentRequestStepId,
     ),
+    final: req.final,
     requestId: req.id,
     steps: req.RequestSteps.map((reqStep) => {
       const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);
@@ -33,7 +36,7 @@ export const requestResolver = ({
         throw new GraphQLError("Cannot find corresponding flow step for request step.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
-      return requestStepResolver({ reqStep, step });
+      return requestStepResolver({ reqStep, step, userId: context.currentUser?.id });
     }),
   };
   return Request;

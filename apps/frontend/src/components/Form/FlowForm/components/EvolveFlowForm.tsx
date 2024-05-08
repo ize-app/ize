@@ -7,7 +7,7 @@ import { PermissionType } from "../formValidation/permission";
 import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
 
 import { DecisionType } from "@/graphql/generated/graphql";
-import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface EvolveProcessFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -25,7 +25,7 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
-      <FieldGroupAccordion
+      <PanelAccordion
         title="Trigger permissions"
         hasError={!!formMethods.formState.errors.evolve?.requestPermission}
       >
@@ -58,8 +58,8 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
             getFieldValues={formMethods.getValues}
           />
         )}
-      </FieldGroupAccordion>
-      <FieldGroupAccordion
+      </PanelAccordion>
+      <PanelAccordion
         title="Response permissions"
         hasError={!!formMethods.formState.errors.evolve?.responsePermission}
       >
@@ -83,8 +83,8 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
             getFieldValues={formMethods.getValues}
           />
         )}
-      </FieldGroupAccordion>
-      <FieldGroupAccordion
+      </PanelAccordion>
+      <PanelAccordion
         title="Decision config"
         hasError={!!formMethods.formState.errors.evolve?.decision}
       >
@@ -129,7 +129,7 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
             endAdornment={<InputAdornment position="end">% of responses</InputAdornment>}
           />
         )}
-      </FieldGroupAccordion>
+      </PanelAccordion>
     </Box>
   );
 };

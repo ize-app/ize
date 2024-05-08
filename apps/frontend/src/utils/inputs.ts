@@ -10,38 +10,6 @@ export const validatePositiveIntegerInput = (value: string) => {
 export const addMinutes = (date: Date, minutes: number): Date =>
   new Date(date.getTime() + minutes * 60000);
 
-export const stringToColor = (string: string) => {
-  let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = "#";
-
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  return color;
-};
-
-const findFirstLetter = (name: string): string => {
-  const firstOccurence = name.search("[a-zA-Z]");
-  if (firstOccurence === -1) return name[0];
-  else return name[firstOccurence];
-};
-
-export const avatarString = (name: string) => {
-  return `${findFirstLetter(name.split(" ")[0])}${
-    name.split(" ").length > 1 ? findFirstLetter(name.split(" ")[1]) : ""
-  }`;
-};
-
 //using milliseconds because that's how native JS expresses time intervals
 export const intervalToIntuitiveTimeString = (milliseconds: number): string => {
   const remainingMinutes = milliseconds / (1000 * 60);

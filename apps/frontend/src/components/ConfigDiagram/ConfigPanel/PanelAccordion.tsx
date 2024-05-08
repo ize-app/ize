@@ -8,7 +8,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { useState } from "react";
 import { WarningOutlined } from "@mui/icons-material";
 
-export const FieldGroupAccordion = ({
+export const PanelAccordion = ({
   children,
   title,
   hasError,
@@ -24,7 +24,7 @@ export const FieldGroupAccordion = ({
       elevation={0}
       expanded={isExpanded}
       square
-      sx={{ outline: "1px solid rgba(0, 0, 0, 0.1)" }}
+      sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.1)", borderBottom: "none" }}
       onChange={() => {
         setIsExpanded(!isExpanded);
       }}

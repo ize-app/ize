@@ -1,5 +1,5 @@
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { FieldType, LlmSummaryArgs } from "@/graphql/generated/resolver-types";
+import { FieldType, LlmSummaryArgs, LlmSummaryType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
@@ -20,7 +20,7 @@ export const newLlmSummaryConfig = async ({
   const llmConfig = await transaction.resultConfigLlm.create({
     data: {
       prompt: llmArgs.prompt,
-      type: llmArgs.type,
+      type: LlmSummaryType.AtTheEnd,
     },
   });
 

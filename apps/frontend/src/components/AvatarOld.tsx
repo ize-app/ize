@@ -15,7 +15,8 @@ import {
   EntityType,
   UserSummaryPartsFragment,
 } from "../graphql/generated/graphql";
-import { avatarString, stringToColor } from "../utils/inputs";
+import { getAvatarString } from "./Avatar/getAvatarString";
+import { stringToColor } from "./Avatar/stringToColor";
 
 export interface AvatarWithNameProps {
   id: string;
@@ -124,7 +125,7 @@ export const Avatar = ({
       <MuiAvatar
         src={avatarUrl ?? ""}
         children={
-          cryptoWallet ? <Blockies seed={cryptoWallet} /> : avatarString(name.toUpperCase())
+          cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())
         }
         alt={name}
         {...props}
@@ -135,7 +136,9 @@ export const Avatar = ({
     <MuiAvatar
       src={avatarUrl ?? ""}
       alt={name}
-      children={cryptoWallet ? <Blockies seed={cryptoWallet} /> : avatarString(name.toUpperCase())}
+      children={
+        cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())
+      }
       {...props}
       sx={styles}
     />
@@ -171,10 +174,14 @@ export const AvatarWithName = ({
           backgroundColor={color}
           parent={parent ? { name: parent.name, avatarUrl: parent.avatarUrl } : undefined}
           cryptoWallet={cryptoWallet}
+          sx={{
+            width: "1.25rem",
+            height: "1.25rem",
+          }}
         />
       }
       <Typography
-        variant="body1"
+        fontSize={"0.875rem"}
         sx={{
           whiteSpace: "nowrap",
           overflow: "hidden",

@@ -680,7 +680,7 @@ model Request {
   flowVersionId        String   @map("flow_version_id") @db.Uuid
   currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
   name                 String
-  open                 Boolean  @default(true)
+  final                Boolean  @default(false)
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
@@ -695,15 +695,16 @@ model Request {
 }
 
 model RequestStep {
-  id              String   @id @default(uuid()) @db.Uuid
-  requestId       String   @map("request_id") @db.Uuid
-  stepId          String   @map("step_id") @db.Uuid
-  final           Boolean  @default(false)
-  resultsComplete Boolean  @default(false) @map("results_complete")
-  actionsComplete Boolean  @default(false) @map("actions_complete")
-  expirationDate  DateTime @map("expiration_date")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+  id               String   @id @default(uuid()) @db.Uuid
+  requestId        String   @map("request_id") @db.Uuid
+  stepId           String   @map("step_id") @db.Uuid
+  final            Boolean  @default(false)
+  responseComplete Boolean  @default(false) @map("response_complete")
+  resultsComplete  Boolean  @default(false) @map("results_complete")
+  actionsComplete  Boolean  @default(false) @map("actions_complete")
+  expirationDate   DateTime @map("expiration_date")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
 
   Request                  Request                   @relation(fields: [requestId], references: [id], onDelete: Cascade)
   Step                     Step                      @relation(fields: [stepId], references: [id], onDelete: Cascade)

@@ -76,7 +76,7 @@ export const newResponse = async ({
         );
     }
 
-    const response = await transaction.response.create({
+    const newResponse = await transaction.response.create({
       data: {
         creatorId: context.currentUser.id,
         requestStepId,
@@ -87,18 +87,27 @@ export const newResponse = async ({
       fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
       requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
-      responseId: response.id,
+      responseId: newResponse.id,
       transaction,
     });
 
-    if (checkIfEarlyResult({ step: requestStep.Step, responses: requestStep.Responses })) {
+    const allResponses = await transaction.response.findMany({
+      include: responseInclude,
+      where: {
+        requestStepId,
+      },
+    });
+
+    if (checkIfEarlyResult({ step: requestStep.Step, responses: allResponses })) {
+      // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
+      // there is cron job to rerun stalled actions / results
       await runResultsAndActions({
         requestStepId: requestStep.id,
         step: requestStep.Step,
-        responses: requestStep.Responses,
+        responses: allResponses,
       });
     }
 
-    return response.id;
+    return newResponse.id;
   });
 };

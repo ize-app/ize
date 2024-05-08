@@ -1,3 +1,17 @@
+type Result {
+  id: String!
+  createdAt: String!
+  resultConfigId: String!
+  resultItems: [ResultItem!]!
+}
+
+type ResultItem {
+  id: String!
+  dataType: FieldDataType!
+  value: String!
+  optionId: String
+}
+
 union ResultConfig = Decision | Ranking | LlmSummary
 
 type Decision {
@@ -47,7 +61,7 @@ input ResultArgs {
   resultId: String
   fieldId: String
   minimumAnswers: Int
-  responseFieldIndex: Int
+  responseFieldIndex: Int!
   decision: DecisionArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs
@@ -60,10 +74,9 @@ input DecisionArgs {
 }
 
 input PrioritizationArgs {
-  numOptionsToInclude: Int
+  numPrioritizedItems: Int
 }
 
 input LlmSummaryArgs {
-  type: LlmSummaryType!
   prompt: String
 }

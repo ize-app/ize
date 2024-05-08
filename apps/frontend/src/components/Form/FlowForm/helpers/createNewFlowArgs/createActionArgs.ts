@@ -12,21 +12,26 @@ export const createActionArgs = (
     if (action.filterOptionId !== DefaultOptionSelection.None.toString()) {
       (responseFields ?? []).forEach((f, fieldIndex) => {
         if (f.type === FieldType.Options) {
-          const optionIndex = f.optionsConfig.options.findIndex(
-            (o) => o.optionId === action.filterOptionId,
-          );
-          if (optionIndex) {
+          const optionIndex = f.optionsConfig.options.findIndex((o) => {
+            return o.optionId === action.filterOptionId;
+          });
+          if (optionIndex !== -1) {
             filterOptionIndex = optionIndex;
             filterResponseFieldIndex = fieldIndex;
           }
         }
       });
-      if (action.filterOptionId && typeof filterOptionIndex !== "number")
+      if (typeof filterOptionIndex !== "number") {
         throw Error("Action filter option not found ");
+      }
     }
+
     //@ts-ignore
     delete action.filterOptionId;
-    return { ...action, filterOptionIndex, filterResponseFieldIndex };
+    const actionArgs = { ...action, filterOptionIndex, filterResponseFieldIndex };
+    return { ...actionArgs };
   }
+  //@ts-ignore
+  delete action.filterOptionId;
   return action;
 };

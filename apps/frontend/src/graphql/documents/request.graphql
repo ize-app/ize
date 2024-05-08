@@ -32,6 +32,9 @@ query getRequestSteps(
 
 fragment Request on Request {
   name
+  creator {
+    ...UserSummaryParts
+  }
   flow {
     ...Flow
   }
@@ -41,6 +44,7 @@ fragment Request on Request {
   steps {
     ...RequestStep
   }
+  final
 }
 
 fragment RequestStep on RequestStep {
@@ -50,12 +54,22 @@ fragment RequestStep on RequestStep {
   requestFieldAnswers {
     ...FieldAnswer
   }
+  responseFieldAnswers {
+    ...UserFieldAnswers
+  }
   responseFields {
     ...Field
   }
-  responses {
+  userResponses {
     ...Response
   }
+  results {
+    ...Result
+  }
+  responseComplete
+  resultsComplete
+  actionsComplete
+  final
 }
 
 fragment RequestStepSummary on RequestStepSummary {
@@ -76,6 +90,9 @@ fragment RequestStepSummary on RequestStepSummary {
   totalSteps
   createdAt
   expirationDate
+  responseComplete
+  resultsComplete
+  actionsComplete
   final
 }
 

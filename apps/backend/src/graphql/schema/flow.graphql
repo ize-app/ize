@@ -3,17 +3,19 @@ type Mutation {
 }
 
 type Query {
-  getFlow(flowId: String!): Flow!
+  getFlow(flowId: String!, flowVersionId: String): Flow!
   getFlows: [FlowSummary!]!
 }
 
 type Flow {
+  id: String!
   flowId: String!
   flowVersionId: String!
+  currentFlowVersionId: String
   type: FlowType!
   name: String!
   reusable: Boolean!
-  steps: [Step]!
+  steps: [Step!]!
   evolve: Flow
 }
 
@@ -33,6 +35,7 @@ enum FlowType {
 }
 
 type Step {
+  id: String!
   index: Int!
   request: RequestConfig!
   response: ResponseConfig!

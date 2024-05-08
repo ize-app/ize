@@ -2,8 +2,8 @@ mutation NewFlow($flow: NewFlowArgs!) {
   newFlow(flow: $flow)
 }
 
-query GetFlow($flowId: String!) {
-  getFlow(flowId: $flowId) {
+query GetFlow($flowId: String!, $flowVersionId: String) {
+  getFlow(flowId: $flowId, flowVersionId: $flowVersionId) {
     ...Flow
   }
 }
@@ -37,8 +37,10 @@ fragment FlowSummary on FlowSummary {
 }
 
 fragment FlowFields on Flow {
+  id
   flowId
   flowVersionId
+  currentFlowVersionId
   type
   name
   reusable
@@ -48,6 +50,7 @@ fragment FlowFields on Flow {
 }
 
 fragment Step on Step {
+  id
   request {
     ...RequestConfig
   }

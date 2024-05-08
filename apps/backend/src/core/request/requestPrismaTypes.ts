@@ -4,6 +4,7 @@ import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrisma
 import { responseInclude } from "../response/responsePrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { userInclude } from "../user/userPrismaTypes";
+import { resultInclude } from "../result/resultPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -29,6 +30,9 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
         include: fieldOptionSetInclude,
       },
     },
+  },
+  Results: {
+    include: resultInclude,
   },
 });
 
@@ -66,7 +70,9 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   RequestSteps: {
     include: requestStepInclude,
   },
-  Creator: true,
+  Creator: {
+    include: userInclude,
+  },
   FlowVersion: {
     include: flowVersionInclude,
   },

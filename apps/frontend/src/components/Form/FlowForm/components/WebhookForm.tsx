@@ -2,7 +2,6 @@ import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { useEffect } from "react";
 
 import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
@@ -10,7 +9,7 @@ import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { Box, FormHelperText } from "@mui/material";
-import { FieldGroupAccordion } from "../../formLayout/FieldGroupAccordion";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -53,7 +52,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
-      <FieldGroupAccordion title="Setup" hasError={!!webhookError}>
+      <PanelAccordion title="Setup" hasError={!!webhookError}>
         {!!webhookError?.root && (
           <FormHelperText
             sx={{
@@ -96,7 +95,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           placeholderText="Webhook Uri (not displayed publicly)"
           name={`steps.${formIndex}.action.callWebhook.uri`}
         />
-      </FieldGroupAccordion>
+      </PanelAccordion>
     </Box>
   );
 };

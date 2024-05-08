@@ -3,24 +3,31 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GetRequestDocument } from "../../graphql/generated/graphql";
+import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
-import { CurrentUserContext } from "@/contexts/current_user_context";
+import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { Route } from "@/routers/routes";
+import { RequestStatus } from "@/components/status/type";
+import { RequestStatusTag } from "@/components/status/RequestStatusTag";
+import { AvatarWithName } from "@/components/Avatar";
 
 export const Request = () => {
-  const { me } = useContext(CurrentUserContext);
   const { requestId: shortRequestId } = useParams();
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
+
+  let canRespond: boolean = false;
+  let userResponses: ResponseFragment[] | undefined = undefined;
+  let allowMultipleResponses: boolean = false;
 
   const { data, loading, error } = useQuery(GetRequestDocument, {
     variables: {
@@ -37,14 +44,14 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.getRequest;
-  if (!request) return null;
+  // console.log(request);
 
-  const currReqStep = request.steps[request.currentStepIndex];
-  const currStep = request.flow.steps[request.currentStepIndex];
-
-  const canRespond = currStep?.userPermission.response ?? false;
-  const userResponse = currReqStep.responses.find((r) => r.user.id === me?.user.id);
-  const allowMultipleResponses = currStep?.allowMultipleResponses ?? false;
+  if (request) {
+    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
+    userResponses = request.steps[request.currentStepIndex].userResponses;
+    allowMultipleResponses =
+      request.flow.steps[request.currentStepIndex].allowMultipleResponses ?? false;
+  }
 
   const theme = useTheme();
   // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -66,23 +73,65 @@ export const Request = () => {
             <Typography variant={"h1"} marginTop="8px">
               {request.name}
             </Typography>
-            <Typography variant={"h2"} marginTop="8px">
-              {request.flow.name}
-            </Typography>
-          </Box>
-          {canRespond && (!userResponse || allowMultipleResponses) && (
-            <Accordion
-              id="submit-response-panel"
-              defaultExpanded={true}
-              label={"Respond"}
-              elevation={6}
+
+            <Box
+              maxWidth={400}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                outline: "1px solid rgba(0, 0, 0, 0.1)",
+                padding: "12px",
+                marginTop: "8px",
+              }}
             >
-              <ResponseForm
-                requestStepId={currReqStep.requestStepId}
-                responseFields={currReqStep.responseFields}
-              />
-            </Accordion>
-          )}
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Flow: </Typography>
+                <Typography>
+                  <Link
+                    to={generatePath(Route.Flow, {
+                      flowId: fullUUIDToShort(request.flow.flowId),
+                      // Link to old version of flow if request is made from an older version
+                      flowVersionId:
+                        request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                          ? fullUUIDToShort(request.flow.flowVersionId)
+                          : null,
+                    })}
+                  >
+                    {request.flow.name}
+                  </Link>
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Status </Typography>
+                <RequestStatusTag
+                  status={request.final ? RequestStatus.Completed : RequestStatus.Pending}
+                />
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Created by </Typography>
+                <AvatarWithName avatar={request.creator} />
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Created at </Typography>
+                <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
+              </Box>
+            </Box>
+          </Box>
+          {canRespond &&
+            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+              <Accordion
+                id="submit-response-panel"
+                defaultExpanded={true}
+                label={"Respond"}
+                elevation={6}
+              >
+                <ResponseForm
+                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
+                  responseFields={request.steps[request.currentStepIndex].responseFields}
+                />
+              </Accordion>
+            )}
           <Box
             sx={(theme) => ({
               display: "flex",
@@ -108,7 +157,7 @@ export const Request = () => {
             </Box>
           </Box>
         </Box>
-        <Typography>{JSON.stringify(request)}</Typography>
+        <ConfigDiagramRequest request={request} />
         <Box
           sx={(theme) => ({
             display: "flex",

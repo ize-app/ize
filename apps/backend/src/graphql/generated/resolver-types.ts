@@ -230,12 +230,14 @@ export enum FieldType {
 
 export type Flow = {
   __typename?: 'Flow';
+  currentFlowVersionId?: Maybe<Scalars['String']['output']>;
   evolve?: Maybe<Flow>;
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
-  steps: Array<Maybe<Step>>;
+  steps: Array<Step>;
   type: FlowType;
 };
 
@@ -363,6 +365,14 @@ export type IdentityEmailArgs = {
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
+export type LinkedResult = {
+  __typename?: 'LinkedResult';
+  fieldId: Scalars['String']['output'];
+  fieldName: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+  resultType: ResultType;
+};
+
 export type LinkedResultOptionsArgs = {
   resultIndex: Scalars['Int']['input'];
   stepIndex: Scalars['Int']['input'];
@@ -378,7 +388,6 @@ export type LlmSummary = {
 
 export type LlmSummaryArgs = {
   prompt?: InputMaybe<Scalars['String']['input']>;
-  type: LlmSummaryType;
 };
 
 export enum LlmSummaryType {
@@ -524,7 +533,7 @@ export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
   hasRequestOptions: Scalars['Boolean']['output'];
-  linkedResultOptions: Array<Scalars['String']['output']>;
+  linkedResultOptions: Array<LinkedResult>;
   maxSelections?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   options: Array<Option>;
@@ -554,7 +563,7 @@ export type PermissionArgs = {
 };
 
 export type PrioritizationArgs = {
-  numOptionsToInclude?: InputMaybe<Scalars['Int']['input']>;
+  numPrioritizedItems?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Query = {
@@ -581,6 +590,7 @@ export type QueryDiscordServerRolesArgs = {
 
 export type QueryGetFlowArgs = {
   flowId: Scalars['String']['input'];
+  flowVersionId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -638,7 +648,9 @@ export type Ranking = {
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
+  creator: User;
   currentStepIndex: Scalars['Int']['output'];
+  final: Scalars['Boolean']['output'];
   flow: Flow;
   name: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
@@ -658,16 +670,23 @@ export type RequestDefinedOptionsArgs = {
 
 export type RequestStep = {
   __typename?: 'RequestStep';
+  actionsComplete: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   expirationDate: Scalars['String']['output'];
+  final: Scalars['Boolean']['output'];
   requestFieldAnswers: Array<FieldAnswer>;
   requestStepId: Scalars['String']['output'];
+  responseComplete: Scalars['Boolean']['output'];
+  responseFieldAnswers: Array<UserFieldAnswers>;
   responseFields: Array<Field>;
-  responses: Array<Response>;
+  results: Array<Result>;
+  resultsComplete: Scalars['Boolean']['output'];
+  userResponses: Array<Response>;
 };
 
 export type RequestStepSummary = {
   __typename?: 'RequestStepSummary';
+  actionsComplete: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   creator: User;
   expirationDate: Scalars['String']['output'];
@@ -679,6 +698,8 @@ export type RequestStepSummary = {
   requestName: Scalars['String']['output'];
   requestStepId: Scalars['String']['output'];
   respondPermission: Permission;
+  responseComplete: Scalars['Boolean']['output'];
+  resultsComplete: Scalars['Boolean']['output'];
   stepIndex: Scalars['Int']['output'];
   totalSteps: Scalars['Int']['output'];
   userRespondPermission: Scalars['Boolean']['output'];
@@ -698,18 +719,34 @@ export type ResponseConfig = {
   permission: Permission;
 };
 
+export type Result = {
+  __typename?: 'Result';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+  resultItems: Array<ResultItem>;
+};
+
 export type ResultArgs = {
   decision?: InputMaybe<DecisionArgs>;
   fieldId?: InputMaybe<Scalars['String']['input']>;
   llmSummary?: InputMaybe<LlmSummaryArgs>;
   minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
-  responseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
+  responseFieldIndex: Scalars['Int']['input'];
   resultId?: InputMaybe<Scalars['String']['input']>;
   type: ResultType;
 };
 
 export type ResultConfig = Decision | LlmSummary | Ranking;
+
+export type ResultItem = {
+  __typename?: 'ResultItem';
+  dataType: FieldDataType;
+  id: Scalars['String']['output'];
+  optionId?: Maybe<Scalars['String']['output']>;
+  value: Scalars['String']['output'];
+};
 
 export enum ResultType {
   Decision = 'Decision',
@@ -722,6 +759,7 @@ export type Step = {
   action?: Maybe<Action>;
   allowMultipleResponses: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['String']['output'];
   index: Scalars['Int']['output'];
   request: RequestConfig;
   response: ResponseConfig;
@@ -750,6 +788,19 @@ export type User = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
+};
+
+export type UserFieldAnswer = {
+  __typename?: 'UserFieldAnswer';
+  answer: FieldAnswer;
+  createdAt: Scalars['String']['output'];
+  user: User;
+};
+
+export type UserFieldAnswers = {
+  __typename?: 'UserFieldAnswers';
+  answers: Array<UserFieldAnswer>;
+  fieldId: Scalars['String']['output'];
 };
 
 export type UserFlowPermission = {
@@ -904,6 +955,7 @@ export type ResolversTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -937,8 +989,10 @@ export type ResolversTypes = {
   RequestStepSummary: ResolverTypeWrapper<RequestStepSummary>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
+  Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
+  ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
@@ -946,6 +1000,8 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   User: ResolverTypeWrapper<User>;
+  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer'> & { answer: ResolversTypes['FieldAnswer'] }>;
+  UserFieldAnswers: ResolverTypeWrapper<UserFieldAnswers>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
   setUpDiscordServerInput: SetUpDiscordServerInput;
@@ -1000,6 +1056,7 @@ export type ResolversParentTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
+  LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1030,14 +1087,18 @@ export type ResolversParentTypes = {
   RequestStepSummary: RequestStepSummary;
   Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
   ResponseConfig: Omit<ResponseConfig, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
+  Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
+  ResultItem: ResultItem;
   Step: Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: Scalars['String']['output'];
   TriggerStep: TriggerStep;
   User: User;
+  UserFieldAnswer: Omit<UserFieldAnswer, 'answer'> & { answer: ResolversParentTypes['FieldAnswer'] };
+  UserFieldAnswers: UserFieldAnswers;
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
   setUpDiscordServerInput: SetUpDiscordServerInput;
@@ -1148,12 +1209,14 @@ export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
+  currentFlowVersionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  steps?: Resolver<Array<Maybe<ResolversTypes['Step']>>, ParentType, ContextType>;
+  steps?: Resolver<Array<ResolversTypes['Step']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1249,6 +1312,14 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
 };
 
+export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LinkedResult'] = ResolversParentTypes['LinkedResult']> = {
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultType?: Resolver<ResolversTypes['ResultType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1312,7 +1383,7 @@ export type OptionFieldAnswerSelectionResolvers<ContextType = GraphqlRequestCont
 export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Options'] = ResolversParentTypes['Options']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasRequestOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  linkedResultOptions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  linkedResultOptions?: Resolver<Array<ResolversTypes['LinkedResult']>, ParentType, ContextType>;
   maxSelections?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
@@ -1361,7 +1432,9 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
 
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   currentStepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   flow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1376,16 +1449,23 @@ export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStep'] = ResolversParentTypes['RequestStep']> = {
+  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   requestFieldAnswers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  responseFieldAnswers?: Resolver<Array<ResolversTypes['UserFieldAnswers']>, ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
-  responses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Result']>, ParentType, ContextType>;
+  resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userResponses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepSummary'] = ResolversParentTypes['RequestStepSummary']> = {
+  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1397,6 +1477,8 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   respondPermission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalSteps?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1417,14 +1499,31 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
   __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
+};
+
+export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultItem'] = ResolversParentTypes['ResultItem']> = {
+  dataType?: Resolver<ResolversTypes['FieldDataType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  optionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
   allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['RequestConfig'], ParentType, ContextType>;
   response?: Resolver<ResolversTypes['ResponseConfig'], ParentType, ContextType>;
@@ -1443,6 +1542,19 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFieldAnswer'] = ResolversParentTypes['UserFieldAnswer']> = {
+  answer?: Resolver<ResolversTypes['FieldAnswer'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserFieldAnswersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFieldAnswers'] = ResolversParentTypes['UserFieldAnswers']> = {
+  answers?: Resolver<Array<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1485,6 +1597,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
+  LinkedResult?: LinkedResultResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -1504,10 +1617,14 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
+  Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
+  ResultItem?: ResultItemResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserFieldAnswer?: UserFieldAnswerResolvers<ContextType>;
+  UserFieldAnswers?: UserFieldAnswersResolvers<ContextType>;
   UserFlowPermission?: UserFlowPermissionResolvers<ContextType>;
   UserPermission?: UserPermissionResolvers<ContextType>;
 };

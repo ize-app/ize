@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import Logout from "@mui/icons-material/Logout";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
@@ -8,12 +7,11 @@ import { useState } from "react";
 import { Avatar } from "../Avatar";
 import { useStytch } from "@stytch/react";
 import { Box } from "@mui/material";
-import { EntityType, MePartsFragment } from "@/graphql/generated/graphql";
+import { MePartsFragment } from "@/graphql/generated/graphql";
 
 interface UserDropDownProps {
   me: MePartsFragment;
 }
-
 
 export const UserDropDown = ({ me }: UserDropDownProps): JSX.Element => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,13 +32,7 @@ export const UserDropDown = ({ me }: UserDropDownProps): JSX.Element => {
   return (
     <>
       <Box onClick={handleClick}>
-        <Avatar
-          id={"ASfd"}
-          type={EntityType.Identity}
-          avatarUrl={me.user.icon ?? null}
-          name={me.user.name}
-          sx={{ height: "24px", width: "24px" }}
-        />
+        <Avatar avatar={me.user} />
       </Box>
       <Menu
         anchorEl={anchorEl}

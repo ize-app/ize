@@ -47,7 +47,6 @@ const prioritizationSchema = z.object({
 });
 
 const llmSchema = z.object({
-  type: z.nativeEnum(LlmSummaryType),
   prompt: z.string().optional(),
 });
 
@@ -121,7 +120,6 @@ export const defaultLlmSummaryResult = (
   fieldId,
   minimumAnswers: 1,
   llmSummary: {
-    type: LlmSummaryType.AtTheEnd,
     prompt: "test prmpt",
   },
 });

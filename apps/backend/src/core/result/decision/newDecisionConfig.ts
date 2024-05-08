@@ -20,7 +20,7 @@ export const newDecisionConfig = async ({
     });
   }
 
-  if (decisionArgs.defaultOptionIndex) {
+  if (typeof decisionArgs.defaultOptionIndex === "number") {
     defaultOptionId =
       responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
         (fo) => fo.index === decisionArgs.defaultOptionIndex,
