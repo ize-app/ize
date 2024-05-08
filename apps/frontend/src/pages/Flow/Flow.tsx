@@ -54,8 +54,7 @@ export const Flow = () => {
 
   const flow = flowData?.getFlow as FlowFragment;
 
-  // console.log("flow is ", flow);
-  const isCurrentFlowVersion = flow.flowVersionId === flow.currentFlowVersionId;
+  const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
 
   const onError = () => {
     navigate("/");

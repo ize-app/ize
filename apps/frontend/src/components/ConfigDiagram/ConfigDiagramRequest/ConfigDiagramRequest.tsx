@@ -52,7 +52,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                       request.currentStepIndex,
                     )}
                     icon={Diversity3Outlined}
-                    label={request.flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
+                    label={
+                      request.flow.steps[0].result[0]
+                        ? request.flow.steps[0].result[0].__typename
+                        : "Collaboration " + (index + 1).toString()
+                    }
                     key={"stage-" + step?.id}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}

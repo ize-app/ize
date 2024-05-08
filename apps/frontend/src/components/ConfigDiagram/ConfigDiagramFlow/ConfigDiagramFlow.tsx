@@ -44,7 +44,11 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <Box key={index}>
                   <FlowStage
                     icon={Diversity3Outlined}
-                    label={flow.steps[0].result[0].__typename} //"Collaboration " + (index + 1).toString()
+                    label={
+                      flow.steps[0].result[0]
+                        ? flow.steps[0].result[0].__typename
+                        : "Collaboration " + (index + 1).toString()
+                    }
                     key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}
