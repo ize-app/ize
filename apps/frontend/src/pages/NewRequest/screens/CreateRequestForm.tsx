@@ -186,6 +186,7 @@ export const CreateRequestForm = () => {
                       return (
                         <Radio<RequestSchemaType>
                           name={`requestFields.${field.fieldId}.optionSelections[0].optionId`}
+                          key={fieldId}
                           control={formMethods.control}
                           label={name}
                           sx={{ flexDirection: "column", gap: "4px" }}
