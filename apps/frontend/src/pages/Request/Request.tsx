@@ -3,17 +3,18 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { Route } from "@/routers/routes";
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();
@@ -70,7 +71,13 @@ export const Request = () => {
               {request.name}
             </Typography>
             <Typography variant={"h2"} marginTop="8px">
-              {request.flow.name}
+              <Link
+                to={generatePath(Route.Flow, {
+                  flowId: fullUUIDToShort(request.flow.flowId),
+                })}
+              >
+                {request.flow.name}
+              </Link>
             </Typography>
           </Box>
           {canRespond &&

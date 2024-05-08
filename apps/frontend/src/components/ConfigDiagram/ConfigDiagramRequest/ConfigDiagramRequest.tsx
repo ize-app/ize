@@ -48,7 +48,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   <RequestStage
                     status={determineRequestStepStatus(
                       index,
-                      request.steps[index].resultsComplete,
+                      request.steps[index]?.resultsComplete ?? false,
                       request.currentStepIndex,
                     )}
                     icon={Diversity3Outlined}
