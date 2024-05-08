@@ -2,11 +2,12 @@ import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generat
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { FieldOptions } from "./FieldOptions";
-import { renderFreeInputValue } from "./renderFreeInputValue";
 import { formatDataTypeName } from "./formatDataTypeName";
 import { formatOptionSelectionType } from "./formatOptionSelectionType";
-import { FieldAnswer } from "./FieldAnswer";
+import { AnswerFreeInput } from "./AnswerFreeInput";
 
+// renders name of the field and answer, if it exists.
+// option fields show all options
 export const Field = ({
   field,
   fieldAnswer,
@@ -26,7 +27,9 @@ export const Field = ({
             {field.name}
             <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span>
           </Typography>
-          {freeInputAnswer && <FieldAnswer answer={freeInputAnswer} dataType={field.dataType} />}
+          {freeInputAnswer && (
+            <AnswerFreeInput answer={freeInputAnswer} dataType={field.dataType} />
+          )}
         </Box>
       );
     }

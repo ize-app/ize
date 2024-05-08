@@ -45,6 +45,23 @@ fragment LinkedResult on LinkedResult {
   fieldName
 }
 
+fragment UserFieldAnswer on UserFieldAnswer {
+  createdAt
+  user {
+    ...UserSummaryParts
+  }
+  answer {
+    ...FieldAnswer
+  }
+}
+
+fragment UserFieldAnswers on UserFieldAnswers {
+  fieldId
+  answers {
+    ...UserFieldAnswer
+  }
+}
+
 fragment FieldAnswer on FieldAnswer {
   __typename
   ... on OptionFieldAnswer {

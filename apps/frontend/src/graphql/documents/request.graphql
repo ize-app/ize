@@ -53,10 +53,13 @@ fragment RequestStep on RequestStep {
   requestFieldAnswers {
     ...FieldAnswer
   }
+  responseFieldAnswers {
+    ...UserFieldAnswers
+  }
   responseFields {
     ...Field
   }
-  responses {
+  userResponses {
     ...Response
   }
   results {

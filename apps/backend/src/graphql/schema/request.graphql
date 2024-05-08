@@ -47,8 +47,9 @@ type RequestStep {
   createdAt: String!
   expirationDate: String!
   requestFieldAnswers: [FieldAnswer!]!
+  responseFieldAnswers: [UserFieldAnswers!]!
   responseFields: [Field!]!
-  responses: [Response!]!
+  userResponses: [Response!]!
   results: [Result!]!
   responseComplete: Boolean!
   resultsComplete: Boolean!

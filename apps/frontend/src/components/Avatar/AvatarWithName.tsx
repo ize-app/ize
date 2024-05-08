@@ -1,4 +1,4 @@
-import { AvatarProps } from "./type";
+import { AvatarProps } from "./Avatar";
 import { Avatar } from "./Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -15,7 +15,7 @@ export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
         verticalAlign: "middle",
       }}
     >
-      {<Avatar avatar={avatar} />}
+      {<Avatar avatar={avatar} size="18px" />}
       <Typography
         fontSize={"0.875rem"}
         sx={{

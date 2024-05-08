@@ -1,0 +1,27 @@
+import { FieldDataType } from "@/graphql/generated/graphql";
+import { Box } from "@mui/material";
+import { renderFreeInputValue } from "./renderFreeInputValue";
+
+export const AnswerFreeInput = ({
+  answer,
+  dataType,
+}: {
+  answer: string;
+  dataType: FieldDataType;
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: "4px",
+        borderRadius: "4px",
+        outline: "1px solid rgba(0, 0, 0, 0.1)",
+        padding: "6px",
+      }}
+    >
+      {renderFreeInputValue(answer, dataType)}
+    </Box>
+  );
+};

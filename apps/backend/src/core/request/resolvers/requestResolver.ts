@@ -35,7 +35,7 @@ export const requestResolver = ({
         throw new GraphQLError("Cannot find corresponding flow step for request step.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
-      return requestStepResolver({ reqStep, step });
+      return requestStepResolver({ reqStep, step, userId: context.currentUser?.id });
     }),
   };
   return Request;

@@ -10,10 +10,13 @@ import { resultResolver } from "@/core/result/resolvers/resultResolver";
 export const requestStepResolver = ({
   reqStep,
   step,
+  userId,
 }: {
   reqStep: RequestStepPrismaType;
   step: StepPrismaType;
+  userId: string | null | undefined;
 }): RequestStep => {
+  const [responseFieldAnswers, userResponses] = responsesResolver(reqStep.Responses, userId);
   const res: RequestStep = {
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),
@@ -25,7 +28,8 @@ export const requestStepResolver = ({
       fieldSet: step.ResponseFieldSet,
       requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
     }),
-    responses: responsesResolver(reqStep.Responses),
+    responseFieldAnswers,
+    userResponses,
     results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
     responseComplete: reqStep.responseComplete,
     resultsComplete: reqStep.resultsComplete,

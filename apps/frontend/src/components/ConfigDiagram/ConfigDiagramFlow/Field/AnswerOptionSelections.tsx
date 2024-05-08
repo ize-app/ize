@@ -2,7 +2,13 @@ import { FieldDataType } from "@/graphql/generated/graphql";
 import { Box } from "@mui/material";
 import { renderFreeInputValue } from "./renderFreeInputValue";
 
-export const FieldAnswer = ({ answer, dataType }: { answer: string; dataType: FieldDataType }) => {
+export const AnswerOptionSelections = ({
+  answer,
+  dataType,
+}: {
+  answer: string;
+  dataType: FieldDataType;
+}) => {
   return (
     <Box
       sx={{

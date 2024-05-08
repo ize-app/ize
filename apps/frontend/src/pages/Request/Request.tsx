@@ -13,18 +13,16 @@ import { shortUUIDToFull } from "../../utils/inputs";
 import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 
 export const Request = () => {
-  const { me } = useContext(CurrentUserContext);
   const { requestId: shortRequestId } = useParams();
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
 
   let canRespond: boolean = false;
-  let userResponse: ResponseFragment | undefined = undefined;
+  let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
 
   const { data, loading, error } = useQuery(GetRequestDocument, {
@@ -46,9 +44,7 @@ export const Request = () => {
 
   if (request) {
     canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
-    userResponse = request.steps[request.currentStepIndex].responses.find(
-      (r) => r.user.id === me?.user.id,
-    );
+    userResponses = request.steps[request.currentStepIndex].userResponses;
     allowMultipleResponses =
       request.flow.steps[request.currentStepIndex].allowMultipleResponses ?? false;
   }
@@ -77,19 +73,20 @@ export const Request = () => {
               {request.flow.name}
             </Typography>
           </Box>
-          {canRespond && (!userResponse || allowMultipleResponses) && (
-            <Accordion
-              id="submit-response-panel"
-              defaultExpanded={true}
-              label={"Respond"}
-              elevation={6}
-            >
-              <ResponseForm
-                requestStepId={request.steps[request.currentStepIndex].requestStepId}
-                responseFields={request.steps[request.currentStepIndex].responseFields}
-              />
-            </Accordion>
-          )}
+          {canRespond &&
+            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+              <Accordion
+                id="submit-response-panel"
+                defaultExpanded={true}
+                label={"Respond"}
+                elevation={6}
+              >
+                <ResponseForm
+                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
+                  responseFields={request.steps[request.currentStepIndex].responseFields}
+                />
+              </Accordion>
+            )}
           <Box
             sx={(theme) => ({
               display: "flex",
@@ -115,7 +112,6 @@ export const Request = () => {
             </Box>
           </Box>
         </Box>
-        {/* <Typography>{JSON.stringify(request)}</Typography> */}
         <ConfigDiagramRequest request={request} />
         <Box
           sx={(theme) => ({
