@@ -8,11 +8,9 @@ import Box from "@mui/material/Box";
 import { Result } from "./Result";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { RequestStatus } from "@/components/status/type";
-import { Chip, Typography } from "@mui/material";
+import { Chip } from "@mui/material";
 import { requestStatusProps } from "@/components/status/requestStatusProps";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { useContext } from "react";
-import { UserFieldAnswer } from "@/components/ConfigDiagram/ConfigDiagramFlow/Field/UserFieldAnswer";
+import { UserFieldAnswers } from "@/components/ConfigDiagram/ConfigDiagramFlow/Field/UserFieldAnswers";
 
 export const Results = ({
   resultConfigs,
@@ -30,7 +28,6 @@ export const Results = ({
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       {resultConfigs.map((resultConfig) => {
-        const { me } = useContext(CurrentUserContext);
         let field: FieldFragment | null = null;
         let result: ResultFragment | null =
           results.find((r) => r.resultConfigId === resultConfig.resultConfigId) ?? null;
@@ -38,8 +35,6 @@ export const Results = ({
         let fieldAnswers: UserFieldAnswersFragment | undefined = fieldsAnswers.find((answer) => {
           return answer.fieldId === resultConfig.fieldId;
         });
-
-        let userFieldAnswers = fieldAnswers?.answers.filter((a) => a.user.id === me?.user.id) ?? [];
 
         if (resultConfig.fieldId) {
           field = responseFields.find((field) => field.fieldId === resultConfig.fieldId) ?? null;
@@ -82,22 +77,9 @@ export const Results = ({
               key={resultConfig.resultConfigId}
             >
               <Result resultConfig={resultConfig} field={field} result={result} />
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "8px",
-                  outline: "1px solid rgba(0, 0, 0, 0.1)",
-                  padding: "12px",
-                  marginTop: "8px",
-                }}
-              >
-                <Typography variant={"description"}>You responded:</Typography>
-                {field &&
-                  userFieldAnswers.map((a, index) => {
-                    return <UserFieldAnswer key={index} field={field} userFieldAnswer={a} />;
-                  })}
-              </Box>
+              {fieldAnswers && field && (
+                <UserFieldAnswers userFieldAnswers={fieldAnswers} field={field} />
+              )}
             </LabeledGroupedInputs>
           </Box>
         );
