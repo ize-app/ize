@@ -52,6 +52,7 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
           navigate(
             generatePath(Route.Flow, {
               flowId: fullUUIDToShort(flow.flowId),
+              flowVersionId: null,
             }),
           )
         }

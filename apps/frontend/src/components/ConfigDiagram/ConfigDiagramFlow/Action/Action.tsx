@@ -1,6 +1,7 @@
 import { ActionFragment, ActionType } from "@/graphql/generated/graphql";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { DataTable } from "@/components/Tables/DataTable/DataTable";
 
 export const Action = ({ action }: { action: ActionFragment }) => {
   switch (action.__typename) {
@@ -8,8 +9,13 @@ export const Action = ({ action }: { action: ActionFragment }) => {
       return (
         <Box>
           <Typography>Call Webhook</Typography>
-          <Typography>{action.uri}</Typography>
-          <Typography>{action.name}</Typography>
+          <DataTable
+            data={[
+              { label: "Uri", value: <Typography>{action.uri}</Typography> },
+              { label: "Name", value: <Typography>{action.name}</Typography> },
+            ]}
+            ariaLabel="Webhook context table"
+          />
         </Box>
       );
     }
@@ -21,6 +27,5 @@ export const Action = ({ action }: { action: ActionFragment }) => {
       );
     }
     default:
-      return null;
   }
 };

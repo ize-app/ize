@@ -18,6 +18,7 @@ import { Route } from "@/routers/routes";
 import { RequestStatus } from "@/components/status/type";
 import { RequestStatusTag } from "@/components/status/RequestStatusTag";
 import { AvatarWithName } from "@/components/Avatar";
+import { DataTable } from "@/components/Tables/DataTable/DataTable";
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();
@@ -73,49 +74,49 @@ export const Request = () => {
             <Typography variant={"h1"} marginTop="8px">
               {request.name}
             </Typography>
-
             <Box
-              maxWidth={400}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
                 outline: "1px solid rgba(0, 0, 0, 0.1)",
+                maxWidth: "450px",
                 padding: "12px",
                 marginTop: "8px",
               }}
             >
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Flow: </Typography>
-                <Typography>
-                  <Link
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(request.flow.flowId),
-                      // Link to old version of flow if request is made from an older version
-                      flowVersionId:
-                        request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                          ? fullUUIDToShort(request.flow.flowVersionId)
-                          : null,
-                    })}
-                  >
-                    {request.flow.name}
-                  </Link>
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Status </Typography>
-                <RequestStatusTag
-                  status={request.final ? RequestStatus.Completed : RequestStatus.Pending}
-                />
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Created by </Typography>
-                <AvatarWithName avatar={request.creator} />
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Created at </Typography>
-                <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
-              </Box>
+              <DataTable
+                data={[
+                  {
+                    label: "Flow",
+                    value: (
+                      <Link
+                        to={generatePath(Route.Flow, {
+                          flowId: fullUUIDToShort(request.flow.flowId),
+                          // Link to old version of flow if request is made from an older version
+                          flowVersionId:
+                            request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                              ? fullUUIDToShort(request.flow.flowVersionId)
+                              : null,
+                        })}
+                      >
+                        {request.flow.name}
+                      </Link>
+                    ),
+                  },
+                  {
+                    label: "Status",
+                    value: (
+                      <RequestStatusTag
+                        status={request.final ? RequestStatus.Completed : RequestStatus.Pending}
+                      />
+                    ),
+                  },
+                  { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
+                  {
+                    label: "Created at",
+                    value: <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>,
+                  },
+                ]}
+                ariaLabel="Request context table"
+              />
             </Box>
           </Box>
           {canRespond &&
