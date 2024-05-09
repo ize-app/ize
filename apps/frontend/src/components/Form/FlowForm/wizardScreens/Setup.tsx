@@ -122,6 +122,7 @@ export const Setup = () => {
                       index > 0
                         ? () => {
                             stepsArrayMethods.remove(index);
+                            setSelectedId("trigger0");
                           }
                         : undefined
                     }
@@ -176,7 +177,6 @@ export const Setup = () => {
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
                 deleteHandler={() => {
-                  console.log("deleting webhook");
                   setSelectedId("trigger0");
                   useFormMethods.setValue(
                     `steps.${stepsArrayMethods.fields.length - 1}.action`,
@@ -184,6 +184,7 @@ export const Setup = () => {
                   );
                 }}
                 icon={PublicOutlinedIcon}
+                sx={{ marginBottom: "16px" }}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
                     ?.action

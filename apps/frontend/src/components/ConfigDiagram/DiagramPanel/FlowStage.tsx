@@ -21,6 +21,7 @@ export const FlowStage = ({
   deleteHandler,
   entities = [],
   hasError = false,
+  sx = {},
   icon,
 }: FlowStageProps) => {
   const isSelected = selectedId === id;
@@ -36,6 +37,7 @@ export const FlowStage = ({
       }
       sx={{
         borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
+        ...sx,
       }}
     >
       <Box
