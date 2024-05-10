@@ -8,13 +8,14 @@ import { ActionFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
 import { ActionConfig } from "../../Action/ActionConfig";
 import { ActionFilter } from "../../Action/ActionFilter";
+import { actionProperties } from "@/components/Action/actionProperties";
 
 export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) => {
   return (
     <PanelContainer>
       <PanelHeader>
         <Typography color="primary" variant="label">
-          Action configuration
+          {actionProperties[action.__typename].label + " configuration"}
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
@@ -23,7 +24,7 @@ export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) =>
             <ActionFilter action={action} />
           </PanelAccordion>
         )}
-        <PanelAccordion title="Action" hasError={false}>
+        <PanelAccordion title={actionProperties[action.__typename].label} hasError={false}>
           <ActionConfig action={action} />
         </PanelAccordion>
       </ConfigurationPanel>

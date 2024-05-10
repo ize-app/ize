@@ -20,8 +20,6 @@ import { WebhookForm } from "../components/WebhookForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
-import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
-import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 
 import {
   FlowConfigDiagramContainer,
@@ -32,6 +30,7 @@ import {
   PanelContainer,
   FlowStage,
 } from "@/components/ConfigDiagram";
+import { actionProperties } from "@/components/Action/actionProperties";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -172,8 +171,9 @@ export const Setup = () => {
               </Box>
             ) : (
               <FlowStage
-                label="Webhook"
+                label={actionProperties[ActionType.CallWebhook].label}
                 id={"webhook"}
+                icon={actionProperties[ActionType.CallWebhook].icon}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
                 deleteHandler={() => {
@@ -183,7 +183,6 @@ export const Setup = () => {
                     undefined,
                   );
                 }}
-                icon={PublicOutlinedIcon}
                 sx={{ marginBottom: "16px" }}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
@@ -196,7 +195,7 @@ export const Setup = () => {
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
-              icon={ChangeCircleOutlinedIcon}
+              icon={actionProperties[ActionType.EvolveFlow].icon}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7

@@ -16,6 +16,9 @@ import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
+import { actionProperties } from "@/components/Action/actionProperties";
+import { get } from "http";
+import { getActionLabel } from "@/components/Action/getActionLabel";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -75,11 +78,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
                   status={RequestStatus.Pending}
-                  label={finalAction.__typename}
+                  label={actionProperties[finalAction.__typename].label}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  //   icon={<PublicOutlinedIcon color="primary" />}
+                  icon={actionProperties[finalAction.__typename].icon}
                 />
               </>
             )}
@@ -106,7 +109,9 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigRequestActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && (
+          <ConfigRequestActionPanel action={finalAction} />
+        )}
       </FlowConfigDiagramContainer>
     </Box>
   );
