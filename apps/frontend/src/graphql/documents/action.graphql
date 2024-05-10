@@ -1,3 +1,7 @@
+mutation TestWebhook($inputs: TestWebhookArgs!) {
+  testWebhook(inputs: $inputs)
+}
+
 fragment ActionExecution on ActionExecution {
   actionId
   lastAttemptedAt

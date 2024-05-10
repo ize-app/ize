@@ -421,6 +421,7 @@ export type Mutation = {
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
+  testWebhook: Scalars['Boolean']['output'];
 };
 
 
@@ -446,6 +447,11 @@ export type MutationNewRequestArgs = {
 
 export type MutationNewResponseArgs = {
   response: NewResponseArgs;
+};
+
+
+export type MutationTestWebhookArgs = {
+  inputs: TestWebhookArgs;
 };
 
 export type NewEntityArgs = {
@@ -789,6 +795,13 @@ export type StepResponseArgs = {
   permission: PermissionArgs;
 };
 
+export type TestWebhookArgs = {
+  flowName: Scalars['String']['input'];
+  requestFields: Array<WebhookValueArgs>;
+  results: Array<WebhookValueArgs>;
+  uri: Scalars['String']['input'];
+};
+
 export type TriggerStep = {
   __typename?: 'TriggerStep';
   filterOption?: Maybe<Option>;
@@ -826,10 +839,39 @@ export type UserPermission = {
   response: Scalars['Boolean']['output'];
 };
 
+export type WebhookPayload = {
+  __typename?: 'WebhookPayload';
+  createdAt: Scalars['String']['output'];
+  creator: User;
+  flowName: Scalars['String']['output'];
+  requestFields: Array<WebhookValue>;
+  requestName: Scalars['String']['output'];
+  results: Array<WebhookValue>;
+};
+
+export type WebhookValue = {
+  __typename?: 'WebhookValue';
+  fieldName: Scalars['String']['output'];
+  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type WebhookValueArgs = {
+  fieldName: Scalars['String']['input'];
+  fieldType: FieldType;
+};
+
 export type SetUpDiscordServerInput = {
   roleId?: InputMaybe<Scalars['String']['input']>;
   serverId: Scalars['String']['input'];
 };
+
+export type TestWebhookMutationVariables = Exact<{
+  inputs: TestWebhookArgs;
+}>;
+
+
+export type TestWebhookMutation = { __typename?: 'Mutation', testWebhook: boolean };
 
 export type ActionExecutionFragment = { __typename?: 'ActionExecution', actionId: string, lastAttemptedAt?: string | null, status: ActionExecutionStatus };
 
@@ -1165,6 +1207,7 @@ export const RequestFragmentDoc = {"kind":"Document","definitions":[{"kind":"Fra
 export const RequestStepSummaryFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RequestStepSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RequestStepSummary"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"requestStepId"}},{"kind":"Field","name":{"kind":"Name","value":"requestId"}},{"kind":"Field","name":{"kind":"Name","value":"flowId"}},{"kind":"Field","name":{"kind":"Name","value":"requestName"}},{"kind":"Field","name":{"kind":"Name","value":"flowName"}},{"kind":"Field","name":{"kind":"Name","value":"creator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserSummaryParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"respondPermission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Permission"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userRespondPermission"}},{"kind":"Field","name":{"kind":"Name","value":"stepIndex"}},{"kind":"Field","name":{"kind":"Name","value":"totalSteps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"expirationDate"}},{"kind":"Field","name":{"kind":"Name","value":"responseComplete"}},{"kind":"Field","name":{"kind":"Name","value":"resultsComplete"}},{"kind":"Field","name":{"kind":"Name","value":"actionsComplete"}},{"kind":"Field","name":{"kind":"Name","value":"final"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OnboardedDiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OnboardedDiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"discordServerId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordRoleGroupParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"discordRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"discordServer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OnboardedDiscordServerParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NftCollectionParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NftCollection"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupNftParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupNft"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"NftCollection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"NftCollectionParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupCustomParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupCustom"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupTypeSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordRoleGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordRoleGroupParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupNft"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupNftParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GroupCustom"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupCustomParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Organization"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GroupSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"groupType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupTypeSummaryParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityBlockchainSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityBlockchain"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityEmailSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityEmail"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityDiscordSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityDiscord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordUserId"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityTypesSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityBlockchain"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityBlockchainSummaryParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityEmail"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityEmailSummaryParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityDiscord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityDiscordSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentitySummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Identity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}},{"kind":"Field","name":{"kind":"Name","value":"identityType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityTypesSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Entity"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Entity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Group"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GroupSummaryParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Identity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentitySummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Permission"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Permission"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stepTriggered"}},{"kind":"Field","name":{"kind":"Name","value":"anyone"}},{"kind":"Field","name":{"kind":"Name","value":"entities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Entity"}}]}}]}}]} as unknown as DocumentNode<RequestStepSummaryFragment, unknown>;
 export const DiscordServerPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hasCultsBot"}}]}}]} as unknown as DocumentNode<DiscordServerPartsFragment, unknown>;
 export const MePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Me"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserSummaryParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discordServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DiscordServerParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"identities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentitySummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityBlockchainSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityBlockchain"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityEmailSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityEmail"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityDiscordSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityDiscord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discordUserId"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentityTypesSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityBlockchain"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityBlockchainSummaryParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityEmail"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityEmailSummaryParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IdentityDiscord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityDiscordSummaryParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserSummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DiscordServerParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DiscordServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hasCultsBot"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"IdentitySummaryParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Identity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"entityId"}},{"kind":"Field","name":{"kind":"Name","value":"identityType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"IdentityTypesSummaryParts"}}]}}]}}]} as unknown as DocumentNode<MePartsFragment, unknown>;
+export const TestWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TestWebhookArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}]}]}}]} as unknown as DocumentNode<TestWebhookMutation, TestWebhookMutationVariables>;
 export const NftContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"NftContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Blockchain"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nftContract"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"chain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiNftContractParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiNftContractParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AlchemyApiNftContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]} as unknown as DocumentNode<NftContractQuery, NftContractQueryVariables>;
 export const NftTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"NftToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Blockchain"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nftToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"tokenId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}}},{"kind":"Argument","name":{"kind":"Name","value":"chain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiTokenParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiNftContractParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AlchemyApiNftContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiTokenParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AlchemyApiNftToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiNftContractParts"}}]}}]}}]} as unknown as DocumentNode<NftTokenQuery, NftTokenQueryVariables>;
 export const HatTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HatToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Blockchain"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hatToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tokenId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tokenId"}}},{"kind":"Argument","name":{"kind":"Name","value":"chain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AlchemyApiHatTokenParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AlchemyApiHatTokenParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiHatToken"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chain"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"readableTokenId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"topHatName"}},{"kind":"Field","name":{"kind":"Name","value":"topHatIcon"}}]}}]} as unknown as DocumentNode<HatTokenQuery, HatTokenQueryVariables>;
@@ -1639,6 +1682,7 @@ export type Mutation = {
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
+  testWebhook: Scalars['Boolean']['output'];
 };
 
 
@@ -1664,6 +1708,11 @@ export type MutationNewRequestArgs = {
 
 export type MutationNewResponseArgs = {
   response: NewResponseArgs;
+};
+
+
+export type MutationTestWebhookArgs = {
+  inputs: TestWebhookArgs;
 };
 
 export type NewEntityArgs = {
@@ -2007,6 +2056,13 @@ export type StepResponseArgs = {
   permission: PermissionArgs;
 };
 
+export type TestWebhookArgs = {
+  flowName: Scalars['String']['input'];
+  requestFields: Array<WebhookValueArgs>;
+  results: Array<WebhookValueArgs>;
+  uri: Scalars['String']['input'];
+};
+
 export type TriggerStep = {
   __typename?: 'TriggerStep';
   filterOption?: Maybe<Option>;
@@ -2042,6 +2098,28 @@ export type UserPermission = {
   __typename?: 'UserPermission';
   request: Scalars['Boolean']['output'];
   response: Scalars['Boolean']['output'];
+};
+
+export type WebhookPayload = {
+  __typename?: 'WebhookPayload';
+  createdAt: Scalars['String']['output'];
+  creator: User;
+  flowName: Scalars['String']['output'];
+  requestFields: Array<WebhookValue>;
+  requestName: Scalars['String']['output'];
+  results: Array<WebhookValue>;
+};
+
+export type WebhookValue = {
+  __typename?: 'WebhookValue';
+  fieldName: Scalars['String']['output'];
+  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type WebhookValueArgs = {
+  fieldName: Scalars['String']['input'];
+  fieldType: FieldType;
 };
 
 export type SetUpDiscordServerInput = {

@@ -32,7 +32,6 @@ import { EvolveSchemaType } from "../../formValidation/evolve";
 export const createFormStateForExistingFlow = (flow: Flow): FlowSchemaType => {
   return {
     name: flow.name,
-    reusable: flow.reusable,
     steps: flow.steps.map((step) => createStepFormState(step as Step)),
     evolve: createEvolveFormState(flow.evolve as Flow),
   };

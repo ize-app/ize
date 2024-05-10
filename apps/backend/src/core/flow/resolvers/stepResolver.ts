@@ -2,7 +2,7 @@ import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 import { StepPrismaType } from "../flowPrismaTypes";
 import { permissionResolver } from "../../permission/permissionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
-import { resolveAction } from "../../action/actionResolver";
+import { actionResolver } from "../../action/actionResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 
@@ -46,7 +46,7 @@ export const stepResolver = ({
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
       fields: responseFields,
     },
-    action: resolveAction(step.Action, responseFieldsCache),
+    action: actionResolver(step.Action, responseFieldsCache),
     result,
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,

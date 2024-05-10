@@ -4,12 +4,19 @@ import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
 import { useEffect } from "react";
 
-import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import {
+  ActionType,
+  FieldType,
+  ResultType,
+  TestWebhookDocument,
+} from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { Box, FormHelperText } from "@mui/material";
+import { Box, Button, FormHelperText } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { useMutation } from "@apollo/client";
+import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -21,6 +28,27 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
   }, []);
+
+  const [testWebhook] = useMutation(TestWebhookDocument, {
+    // onCompleted: (data) => {
+    //   const { newFlow: newFlowId } = data;
+    // },
+  });
+
+  const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
+    const uri = formMethods.getValues(`steps.${formIndex}.action.callWebhook.uri`);
+    try {
+      const res = await testWebhook({
+        variables: {
+          inputs: createTestWebhookArgs(formMethods.getValues(), uri),
+        },
+      });
+      console.log("Test webhook response: ", res); // TODO: delete
+    } catch (e) {
+      console.log("Test webhook error: ", e);
+    }
+  };
+
   const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
   // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
   const results = formMethods.watch(`steps.${formIndex}.result`);
@@ -87,14 +115,24 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           showLabel={false}
           name={`steps.${formIndex}.action.callWebhook.name`}
         />
-        <TextField<FlowSchemaType>
-          control={formMethods.control}
-          label="Url"
-          size="small"
-          showLabel={false}
-          placeholderText="Webhook Uri (not displayed publicly)"
-          name={`steps.${formIndex}.action.callWebhook.uri`}
-        />
+        <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <TextField<FlowSchemaType>
+            control={formMethods.control}
+            label="Url"
+            size="small"
+            showLabel={false}
+            placeholderText="Webhook Uri (not displayed publicly)"
+            name={`steps.${formIndex}.action.callWebhook.uri`}
+          />
+          <Button
+            variant="outlined"
+            sx={{ width: "60px" }}
+            size={"small"}
+            onClick={handleTestWebhook}
+          >
+            Test
+          </Button>
+        </Box>
       </PanelAccordion>
     </Box>
   );

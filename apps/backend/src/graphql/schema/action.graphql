@@ -1,3 +1,7 @@
+type Mutation {
+  testWebhook(inputs: TestWebhookArgs!): Boolean!
+}
+
 union Action = CallWebhook | EvolveFlow | TriggerStep
 
 enum ActionExecutionStatus {
@@ -44,4 +48,31 @@ input ActionArgs {
   filterResponseFieldIndex: Int
   filterOptionIndex: Int
   callWebhook: CallWebhookArgs
+}
+
+input TestWebhookArgs {
+  flowName: String!
+  uri: String!
+  requestFields: [WebhookValueArgs!]!
+  results: [WebhookValueArgs!]!
+}
+
+type WebhookPayload {
+  flowName: String!
+  requestName: String!
+  createdAt: String!
+  creator: User!
+  requestFields: [WebhookValue!]!
+  results: [WebhookValue!]!
+}
+
+type WebhookValue {
+  fieldName: String!
+  value: String
+  optionSelections: [String!]
+}
+
+input WebhookValueArgs {
+  fieldName: String!
+  fieldType: FieldType!
 }

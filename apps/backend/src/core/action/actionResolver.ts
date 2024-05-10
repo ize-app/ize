@@ -4,7 +4,7 @@ import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { ActionType, FieldType } from "@prisma/client";
 import { parse } from "tldts";
 
-export const resolveAction = (
+export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,
   responseFields: Field[] | undefined,
 ): Action | null => {
