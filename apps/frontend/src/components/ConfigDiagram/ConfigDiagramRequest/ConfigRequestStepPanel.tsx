@@ -6,8 +6,8 @@ import {
 } from "@/components/ConfigDiagram";
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
-import { Permissions } from "../ConfigDiagramFlow/Permissions";
-import { ActionFilter } from "../ConfigDiagramFlow/Action/ActionFilter";
+import { Permissions } from "../../Permissions";
+import { ActionFilter } from "../../Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 import { RequestStatusTag } from "@/components/status/RequestStatusTag";
 import { TimeLeft } from "./TimeLeft";

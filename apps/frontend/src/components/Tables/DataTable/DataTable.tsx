@@ -43,7 +43,9 @@ const DataRow = ({
       aria-label={`${tableAriaLabel} row`}
     >
       <Typography>{label}</Typography>
-      {value}
+      <Box sx={{ display: "flex", alignItems: "flex-start", justifyConent: "flex-start" }}>
+        {value}
+      </Box>
     </Box>
   );
 };

@@ -4,18 +4,12 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { ActionFragment, FieldFragment } from "@/graphql/generated/graphql";
+import { ActionFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Action } from "./Action/Action";
-import { ActionFilter } from "./Action/ActionFilter";
+import { ActionConfig } from "../../Action/ActionConfig";
+import { ActionFilter } from "../../Action/ActionFilter";
 
-export const ConfigActionPanel = ({
-  action,
-  prevStepResponseFields,
-}: {
-  action: ActionFragment;
-  prevStepResponseFields?: FieldFragment[];
-}) => {
+export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) => {
   return (
     <PanelContainer>
       <PanelHeader>
@@ -30,7 +24,7 @@ export const ConfigActionPanel = ({
           </PanelAccordion>
         )}
         <PanelAccordion title="Action" hasError={false}>
-          <Action action={action} />
+          <ActionConfig action={action} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

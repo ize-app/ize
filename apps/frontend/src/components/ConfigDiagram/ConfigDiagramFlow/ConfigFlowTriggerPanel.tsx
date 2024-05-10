@@ -6,8 +6,8 @@ import {
 } from "@/components/ConfigDiagram";
 import { StepFragment } from "@/graphql/generated/graphql";
 import { Typography } from "@mui/material";
-import { Permissions } from "./Permissions";
-import { Fields } from "./Field/Fields";
+import { Permissions } from "../../Permissions";
+import { Fields } from "@/components/Field/Fields";
 
 export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
   return (

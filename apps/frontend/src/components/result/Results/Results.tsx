@@ -10,7 +10,7 @@ import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs
 import { RequestStatus } from "@/components/status/type";
 import { Chip } from "@mui/material";
 import { requestStatusProps } from "@/components/status/requestStatusProps";
-import { UserFieldAnswers } from "@/components/ConfigDiagram/ConfigDiagramFlow/Field/UserFieldAnswers";
+import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
 
 export const Results = ({
   resultConfigs,

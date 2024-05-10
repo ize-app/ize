@@ -5,7 +5,7 @@ import {
   ResultType,
 } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
-import { FieldOptions } from "../../ConfigDiagram/ConfigDiagramFlow/Field/FieldOptions";
+import { FieldOptions } from "@/components/Field/FieldOptions";
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { resultTypeDisplay } from "../resultTypeDisplay";
 import { ResultName } from "../ResultName";

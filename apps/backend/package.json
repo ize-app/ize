@@ -37,6 +37,7 @@
     "prisma": "^5.8.1",
     "reflect-metadata": "^0.1.13",
     "stytch": "^10.0.1",
+    "tldts": "^6.1.19",
     "zod": "^3.22.4"
   },
   "devDependencies": {

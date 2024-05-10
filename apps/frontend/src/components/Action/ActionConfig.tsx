@@ -1,18 +1,21 @@
-import { ActionFragment, ActionType } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType, FieldDataType } from "@/graphql/generated/graphql";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
+import { renderFreeInputValue } from "../Field/renderFreeInputValue";
 
-export const Action = ({ action }: { action: ActionFragment }) => {
+export const ActionConfig = ({ action }: { action: ActionFragment }) => {
   switch (action.__typename) {
     case ActionType.CallWebhook: {
       return (
         <Box>
-          <Typography>Call Webhook</Typography>
           <DataTable
             data={[
-              { label: "Uri", value: <Typography>{action.uri}</Typography> },
-              { label: "Name", value: <Typography>{action.name}</Typography> },
+              {
+                label: "Webhook integration",
+                value: renderFreeInputValue(action.uri, FieldDataType.Uri),
+              },
+              { label: "What this webhook does", value: <Typography>{action.name}</Typography> },
             ]}
             ariaLabel="Webhook context table"
           />

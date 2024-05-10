@@ -5,9 +5,10 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { ReactElement } from "react";
 dayjs.extend(utc);
 
-export const renderFreeInputValue = (value: string, type: FieldDataType) => {
+export const renderFreeInputValue = (value: string, type: FieldDataType): ReactElement => {
   switch (type) {
     case FieldDataType.String:
       return <Typography fontSize={".875rem"}>{value}</Typography>;
@@ -34,6 +35,7 @@ export const renderFreeInputValue = (value: string, type: FieldDataType) => {
         <>
           <LinkOutlinedIcon fontSize="small" color="primary" />
           <Typography
+            marginLeft={"8px"}
             fontSize={".875rem"}
             component={"a"}
             href={value}
@@ -44,7 +46,5 @@ export const renderFreeInputValue = (value: string, type: FieldDataType) => {
           </Typography>
         </>
       );
-    default:
-      return value;
   }
 };

@@ -10,7 +10,7 @@ import {
   UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
-import { Fields } from "../ConfigDiagramFlow/Field/Fields";
+import { Fields } from "@/components/Field/Fields";
 import { AvatarWithName } from "@/components/Avatar";
 
 export const ConfigRequestTriggerPanel = ({

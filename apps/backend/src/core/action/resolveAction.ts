@@ -2,6 +2,7 @@ import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { ActionType, FieldType } from "@prisma/client";
+import { parse } from "tldts";
 
 export const resolveAction = (
   action: ActionNewPrismaType | null | undefined,
@@ -59,7 +60,7 @@ const callWebhookResolver = (
     });
   return {
     __typename: "CallWebhook",
-    uri: webhook.uri,
+    uri: "https://" + parse(webhook.uri).domain ?? "", // Only return the hostname for privacy
     name: webhook.name,
     filterOption,
   };

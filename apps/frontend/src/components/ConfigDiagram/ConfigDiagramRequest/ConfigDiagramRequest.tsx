@@ -10,11 +10,12 @@ import { useState } from "react";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
+import { ConfigFlowActionPanel } from "../ConfigDiagramFlow/ConfigFlowActionPanel";
 import { RequestStatus } from "@/components/status/type";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -105,7 +106,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && <ConfigRequestActionPanel action={finalAction} />}
       </FlowConfigDiagramContainer>
     </Box>
   );

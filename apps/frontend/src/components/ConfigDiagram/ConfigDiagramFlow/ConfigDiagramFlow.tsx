@@ -12,7 +12,7 @@ import { FlowFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import { ConfigFlowTriggerPanel } from "./ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "./ConfigStepPanel";
-import { ConfigActionPanel } from "./ConfigActionPanel";
+import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config
@@ -88,7 +88,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && <ConfigFlowActionPanel action={finalAction} />}
       </FlowConfigDiagramContainer>
     </Box>
   );
