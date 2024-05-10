@@ -33,7 +33,7 @@ export const executeAction = async ({
   switch (action.type) {
     case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
-      actionComplete = await callWebhook({ webhook: action.Webhook });
+      actionComplete = await callWebhook({ uri: action.Webhook.uri });
       break;
     }
     case ActionType.TriggerStep: {

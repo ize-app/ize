@@ -843,7 +843,6 @@ export type UserPermission = {
 export type WebhookPayload = {
   __typename?: 'WebhookPayload';
   createdAt: Scalars['String']['output'];
-  creator: User;
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
@@ -1638,7 +1637,6 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookPayload'] = ResolversParentTypes['WebhookPayload']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestFields?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

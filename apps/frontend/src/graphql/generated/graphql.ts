@@ -842,7 +842,6 @@ export type UserPermission = {
 export type WebhookPayload = {
   __typename?: 'WebhookPayload';
   createdAt: Scalars['String']['output'];
-  creator: User;
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
@@ -2103,7 +2102,6 @@ export type UserPermission = {
 export type WebhookPayload = {
   __typename?: 'WebhookPayload';
   createdAt: Scalars['String']['output'];
-  creator: User;
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];

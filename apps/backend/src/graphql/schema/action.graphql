@@ -61,7 +61,6 @@ type WebhookPayload {
   flowName: String!
   requestName: String!
   createdAt: String!
-  creator: User!
   requestFields: [WebhookValue!]!
   results: [WebhookValue!]!
 }

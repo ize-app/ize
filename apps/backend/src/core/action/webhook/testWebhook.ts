@@ -1,10 +1,12 @@
 import { MutationTestWebhookArgs } from "@/graphql/generated/resolver-types";
+import { callWebhook } from "../executeActions/callWebhook";
+import { createTestWebhookPayload } from "./createTestWebhookPayload";
 
 export const testWebhook = async ({
   args,
 }: {
   args: MutationTestWebhookArgs;
 }): Promise<boolean> => {
-  //   console.log("inside test webhook. args are ", args);
-  return true;
+  const payload = createTestWebhookPayload(args.inputs);
+  return await callWebhook({ uri: args.inputs.uri, payload });
 };
