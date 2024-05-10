@@ -1,5 +1,17 @@
 union Action = CallWebhook | EvolveFlow | TriggerStep
 
+enum ActionExecutionStatus {
+  NotAttempted
+  Completed
+  Failure
+}
+
+type ActionExecution {
+  actionId: String!
+  lastAttemptedAt: String
+  status: ActionExecutionStatus!
+}
+
 type CallWebhook {
   filterOption: Option
   uri: String!

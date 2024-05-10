@@ -7,9 +7,9 @@ import {
 import Box from "@mui/material/Box";
 import { Result } from "./Result";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
-import { RequestStatus } from "@/components/status/type";
+import { RequestStatus } from "@/components/status/RequestStatus/type";
 import { Chip } from "@mui/material";
-import { requestStatusProps } from "@/components/status/requestStatusProps";
+import { requestStatusProps } from "@/components/status/RequestStatus/requestStatusProps";
 import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
 
 export const Results = ({

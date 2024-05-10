@@ -8,24 +8,28 @@ import utc from "dayjs/plugin/utc";
 import { ReactElement } from "react";
 dayjs.extend(utc);
 
-export const renderFreeInputValue = (value: string, type: FieldDataType): ReactElement => {
+export const renderFreeInputValue = (
+  value: string,
+  type: FieldDataType,
+  fontSize = ".875rem",
+): ReactElement => {
   switch (type) {
     case FieldDataType.String:
-      return <Typography fontSize={".875rem"}>{value}</Typography>;
+      return <Typography fontSize={fontSize}>{value}</Typography>;
     case FieldDataType.Number:
       return <Typography>{value}</Typography>;
     case FieldDataType.Date:
       return (
         <>
           <InsertInvitationOutlinedIcon fontSize="small" color="primary" />
-          <Typography fontSize={".875rem"}>{dayjs.utc(value).format("MMMM D YYYY")}</Typography>
+          <Typography fontSize={fontSize}>{dayjs.utc(value).format("MMMM D YYYY")}</Typography>
         </>
       );
     case FieldDataType.DateTime:
       return (
         <>
           <AccessTimeOutlinedIcon fontSize="small" color="primary" />
-          <Typography fontSize={".875rem"}>
+          <Typography fontSize={fontSize}>
             {dayjs.utc(value).format("MMMM D YYYY, H:mm a").toString()}
           </Typography>
         </>
@@ -36,7 +40,7 @@ export const renderFreeInputValue = (value: string, type: FieldDataType): ReactE
           <LinkOutlinedIcon fontSize="small" color="primary" />
           <Typography
             marginLeft={"8px"}
-            fontSize={".875rem"}
+            fontSize={fontSize}
             component={"a"}
             href={value}
             target="_blank"

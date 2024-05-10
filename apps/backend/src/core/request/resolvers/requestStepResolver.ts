@@ -6,6 +6,7 @@ import { fieldAnswerResolver } from "../../fields/resolvers/fieldAnswerResolver"
 import { responsesResolver } from "@/core/response/responseResolver";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
 import { resultResolver } from "@/core/result/resolvers/resultResolver";
+import { actionExecutionResolver } from "@/core/action/actionExecutionResolver";
 
 export const requestStepResolver = ({
   reqStep,
@@ -28,12 +29,13 @@ export const requestStepResolver = ({
       fieldSet: step.ResponseFieldSet,
       requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
     }),
+    actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action),
     responseFieldAnswers,
     userResponses,
     results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
     responseComplete: reqStep.responseComplete,
     resultsComplete: reqStep.resultsComplete,
-    actionsComplete: reqStep.actionsComplete,
+
     final: reqStep.final,
   };
   return res;

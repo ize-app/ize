@@ -66,9 +66,11 @@ fragment RequestStep on RequestStep {
   results {
     ...Result
   }
+  actionExecution {
+    ...ActionExecution
+  }
   responseComplete
   resultsComplete
-  actionsComplete
   final
 }
 

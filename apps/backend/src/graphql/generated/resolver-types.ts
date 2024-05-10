@@ -27,6 +27,19 @@ export type ActionArgs = {
   type: ActionType;
 };
 
+export type ActionExecution = {
+  __typename?: 'ActionExecution';
+  actionId: Scalars['String']['output'];
+  lastAttemptedAt?: Maybe<Scalars['String']['output']>;
+  status: ActionExecutionStatus;
+};
+
+export enum ActionExecutionStatus {
+  Completed = 'Completed',
+  Failure = 'Failure',
+  NotAttempted = 'NotAttempted'
+}
+
 export enum ActionType {
   CallWebhook = 'CallWebhook',
   EvolveFlow = 'EvolveFlow',
@@ -670,7 +683,7 @@ export type RequestDefinedOptionsArgs = {
 
 export type RequestStep = {
   __typename?: 'RequestStep';
-  actionsComplete: Scalars['Boolean']['output'];
+  actionExecution?: Maybe<ActionExecution>;
   createdAt: Scalars['String']['output'];
   expirationDate: Scalars['String']['output'];
   final: Scalars['Boolean']['output'];
@@ -902,6 +915,8 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
 export type ResolversTypes = {
   Action: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Action']>;
   ActionArgs: ActionArgs;
+  ActionExecution: ResolverTypeWrapper<ActionExecution>;
+  ActionExecutionStatus: ActionExecutionStatus;
   ActionType: ActionType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
@@ -1011,6 +1026,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Action: ResolversUnionTypes<ResolversParentTypes>['Action'];
   ActionArgs: ActionArgs;
+  ActionExecution: ActionExecution;
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
@@ -1106,6 +1122,13 @@ export type ResolversParentTypes = {
 
 export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
   __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
+};
+
+export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
+  actionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastAttemptedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ActionExecutionStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AlchemyApiNftContractResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftContract'] = ResolversParentTypes['AlchemyApiNftContract']> = {
@@ -1449,7 +1472,7 @@ export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStep'] = ResolversParentTypes['RequestStep']> = {
-  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  actionExecution?: Resolver<Maybe<ResolversTypes['ActionExecution']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1571,6 +1594,7 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type Resolvers<ContextType = GraphqlRequestContext> = {
   Action?: ActionResolvers<ContextType>;
+  ActionExecution?: ActionExecutionResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;

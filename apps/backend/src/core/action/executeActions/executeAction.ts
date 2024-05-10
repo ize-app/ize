@@ -58,6 +58,7 @@ export const executeAction = async ({
     },
     update: {
       complete: actionComplete,
+      lastAttemptedAt: new Date(),
     },
     create: {
       actionId: action.id,

@@ -11,7 +11,7 @@ import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import { ConfigFlowActionPanel } from "../ConfigDiagramFlow/ConfigFlowActionPanel";
-import { RequestStatus } from "@/components/status/type";
+import { RequestStatus } from "@/components/status/RequestStatus/type";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
@@ -110,7 +110,10 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
           );
         })}
         {selectedId === "action" && finalAction && (
-          <ConfigRequestActionPanel action={finalAction} />
+          <ConfigRequestActionPanel
+            action={finalAction}
+            actionExecution={request.steps[finalStepIndex]?.actionExecution ?? null}
+          />
         )}
       </FlowConfigDiagramContainer>
     </Box>

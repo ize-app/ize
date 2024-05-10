@@ -28,8 +28,8 @@ export const requestStatusProps: RequestStatusProps = {
     icon: HourglassTopOutlinedIcon,
   },
   [RequestStatus.Pending]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.grey[300],
+    color: "black",
+    backgroundColor: muiTheme.palette.grey[400],
     label: "Pending",
     icon: RadioButtonUncheckedOutlinedIcon,
   },

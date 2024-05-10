@@ -5,6 +5,7 @@ import { responseInclude } from "../response/responsePrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { userInclude } from "../user/userPrismaTypes";
 import { resultInclude } from "../result/resultPrismaTypes";
+import { actionExecutionInclude } from "../action/actionPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -33,6 +34,9 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
   },
   Results: {
     include: resultInclude,
+  },
+  ActionExecution: {
+    include: actionExecutionInclude,
   },
 });
 

@@ -9,7 +9,7 @@ import { Box, Typography } from "@mui/material";
 import { Permissions } from "../../Permissions";
 import { ActionFilter } from "../../Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { RequestStatusTag } from "@/components/status/RequestStatusTag";
+import { RequestStatusTag } from "@/components/status/RequestStatus/RequestStatusTag";
 import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";

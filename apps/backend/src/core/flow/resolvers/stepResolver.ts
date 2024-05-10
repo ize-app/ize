@@ -2,7 +2,7 @@ import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 import { StepPrismaType } from "../flowPrismaTypes";
 import { permissionResolver } from "../../permission/permissionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
-import { resolveAction } from "../../action/resolveAction";
+import { resolveAction } from "../../action/actionResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 

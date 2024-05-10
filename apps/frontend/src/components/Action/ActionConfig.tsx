@@ -13,7 +13,7 @@ export const ActionConfig = ({ action }: { action: ActionFragment }) => {
             data={[
               {
                 label: "Webhook integration",
-                value: renderFreeInputValue(action.uri, FieldDataType.Uri),
+                value: renderFreeInputValue(action.uri, FieldDataType.Uri, "1rem"),
               },
               { label: "What this webhook does", value: <Typography>{action.name}</Typography> },
             ]}

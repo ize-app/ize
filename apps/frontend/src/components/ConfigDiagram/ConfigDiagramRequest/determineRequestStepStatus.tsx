@@ -1,4 +1,4 @@
-import { RequestStatus } from "@/components/status/type";
+import { RequestStatus } from "@/components/status/RequestStatus/type";
 
 export const determineRequestStepStatus = (
   requestStepIndex: number,

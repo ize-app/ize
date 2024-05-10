@@ -15,8 +15,8 @@ import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 import { Route } from "@/routers/routes";
-import { RequestStatus } from "@/components/status/type";
-import { RequestStatusTag } from "@/components/status/RequestStatusTag";
+import { RequestStatus } from "@/components/status/RequestStatus/type";
+import { RequestStatusTag } from "@/components/status/RequestStatus/RequestStatusTag";
 import { AvatarWithName } from "@/components/Avatar";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 

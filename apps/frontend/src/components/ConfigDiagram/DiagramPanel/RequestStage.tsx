@@ -3,8 +3,8 @@ import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
 
-import { requestStatusProps } from "@/components/status/requestStatusProps";
-import { RequestStatus } from "@/components/status/type";
+import { requestStatusProps } from "@/components/status/RequestStatus/requestStatusProps";
+import { RequestStatus } from "@/components/status/RequestStatus/type";
 
 interface RequestStageProps extends StageProps {
   label: string;
