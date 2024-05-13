@@ -1,5 +1,5 @@
 import { MutationTestWebhookArgs } from "@/graphql/generated/resolver-types";
-import { callWebhook } from "../executeActions/callWebhook";
+import { callWebhook } from "./callWebhook";
 import { createTestWebhookPayload } from "./createTestWebhookPayload";
 
 export const testWebhook = async ({

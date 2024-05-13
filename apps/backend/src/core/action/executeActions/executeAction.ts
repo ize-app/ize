@@ -2,19 +2,23 @@ import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
 import { triggerNextStep } from "./triggerNextStep";
-import { callWebhook } from "./callWebhook";
+import { callWebhook } from "../webhook/callWebhook";
 import { prisma } from "../../../prisma/client";
 import { evolveFlow } from "./evolveFlow";
+import { createWebhookPayload } from "../webhook/createWebhookPayload";
+import { Prisma } from "@prisma/client";
 
 // return true if all actions executed successfully
 export const executeAction = async ({
   requestStepId,
   step,
   results,
+  transaction = prisma,
 }: {
   requestStepId: string;
   step: StepPrismaType;
   results: ResultPrismaType[];
+  transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
   const action = step.Action;
   if (!action) return true;
@@ -33,7 +37,8 @@ export const executeAction = async ({
   switch (action.type) {
     case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
-      actionComplete = await callWebhook({ uri: action.Webhook.uri });
+      const payload = await createWebhookPayload({ requestStepId, transaction });
+      actionComplete = await callWebhook({ uri: action.Webhook.uri, payload });
       break;
     }
     case ActionType.TriggerStep: {
