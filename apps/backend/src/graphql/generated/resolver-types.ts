@@ -31,15 +31,8 @@ export type ActionExecution = {
   __typename?: 'ActionExecution';
   actionId: Scalars['String']['output'];
   lastAttemptedAt?: Maybe<Scalars['String']['output']>;
-  status: ActionExecutionStatus;
+  status: Status;
 };
-
-export enum ActionExecutionStatus {
-  Completed = 'Completed',
-  Failure = 'Failure',
-  InProgress = 'InProgress',
-  NotAttempted = 'NotAttempted'
-}
 
 export enum ActionType {
   CallWebhook = 'CallWebhook',
@@ -774,6 +767,13 @@ export enum ResultType {
   Ranking = 'Ranking'
 }
 
+export enum Status {
+  Completed = 'Completed',
+  Failure = 'Failure',
+  InProgress = 'InProgress',
+  NotAttempted = 'NotAttempted'
+}
+
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
@@ -951,7 +951,6 @@ export type ResolversTypes = {
   Action: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Action']>;
   ActionArgs: ActionArgs;
   ActionExecution: ResolverTypeWrapper<ActionExecution>;
-  ActionExecutionStatus: ActionExecutionStatus;
   ActionType: ActionType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
@@ -1044,6 +1043,7 @@ export type ResolversTypes = {
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
+  Status: Status;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
@@ -1170,7 +1170,7 @@ export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType exte
 export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
   actionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastAttemptedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['ActionExecutionStatus'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Status'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -5,7 +5,6 @@ import { Select, TextField } from "../../formFields";
 import { useEffect, useState } from "react";
 
 import {
-  ActionExecutionStatus,
   ActionType,
   FieldType,
   ResultType,
@@ -18,8 +17,8 @@ import { Box, Button, FormHelperText } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { useMutation } from "@apollo/client";
 import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
-import { ActionExecutionStatusTag } from "@/components/status/ActionExecutionStatus/ActionStatusTag";
-import { actionExecutionStatusProps } from "@/components/status/ActionExecutionStatus/actionExecutionProps";
+import { Status } from "@/graphql/generated/graphql";
+import { statusProps } from "@/components/status/statusProps";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -32,11 +31,11 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
   }, []);
 
-  const [testWebhookStatus, setTestWebhookStatus] = useState<ActionExecutionStatus | null>(null);
+  const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
 
   const WebhookStatusIcon = testWebhookStatus
-    ? actionExecutionStatusProps[testWebhookStatus].icon
-    : actionExecutionStatusProps.NotAttempted.icon;
+    ? statusProps[testWebhookStatus].icon
+    : statusProps.NotAttempted.icon;
 
   const [testWebhook] = useMutation(TestWebhookDocument, {
     // onCompleted: (data) => {
@@ -46,7 +45,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
 
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
     const uri = formMethods.getValues(`steps.${formIndex}.action.callWebhook.uri`);
-    setTestWebhookStatus(ActionExecutionStatus.InProgress);
+    setTestWebhookStatus(Status.InProgress);
     try {
       const res = await testWebhook({
         variables: {
@@ -55,9 +54,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
       });
       const success = res.data?.testWebhook ?? false;
       formMethods.setValue(`steps.${formIndex}.action.callWebhook.valid`, success);
-      setTestWebhookStatus(
-        success ? ActionExecutionStatus.Completed : ActionExecutionStatus.Failure,
-      );
+      setTestWebhookStatus(success ? Status.Completed : Status.Failure);
 
       console.log("Test webhook response: ", res); // TODO: delete
     } catch (e) {
@@ -159,8 +156,8 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
               <WebhookStatusIcon
                 sx={{
                   color: testWebhookStatus
-                    ? actionExecutionStatusProps[testWebhookStatus].backgroundColor
-                    : actionExecutionStatusProps.NotAttempted.backgroundColor,
+                    ? statusProps[testWebhookStatus].backgroundColor
+                    : statusProps.NotAttempted.backgroundColor,
                 }}
                 // color={
                 //   testWebhookStatus

@@ -1,6 +1,6 @@
 import {
   ActionExecutionFragment,
-  ActionExecutionStatus,
+  Status,
   ActionFragment,
   ActionType,
   FieldDataType,
@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import { renderFreeInputValue } from "../Field/renderFreeInputValue";
-import { ActionExecutionStatusTag } from "../status/ActionExecutionStatus/ActionStatusTag";
+import { StatusTag } from "../status/StatusTag";
 
 export const ActionExecution = ({
   action,
@@ -31,19 +31,12 @@ export const ActionExecution = ({
         },
         {
           label: "Status",
-          value: actionExecution ? (
-            <ActionExecutionStatusTag status={actionExecution.status} />
-          ) : (
-            <div>sdf</div>
-          ),
+          value: actionExecution ? <StatusTag status={actionExecution.status} /> : <div>sdf</div>,
         },
       ];
       if (actionExecution?.lastAttemptedAt)
         data.push({
-          label:
-            actionExecution.status === ActionExecutionStatus.Completed
-              ? "Completed at"
-              : "Last attempted at",
+          label: actionExecution.status === Status.Completed ? "Completed at" : "Last attempted at",
           value: (
             <Typography>{new Date(actionExecution.lastAttemptedAt).toLocaleString()}</Typography>
           ),

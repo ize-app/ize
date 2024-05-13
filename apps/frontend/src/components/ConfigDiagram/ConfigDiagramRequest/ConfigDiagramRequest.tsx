@@ -10,15 +10,12 @@ import { useState } from "react";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigFlowActionPanel } from "../ConfigDiagramFlow/ConfigFlowActionPanel";
-import { RequestStatus } from "@/components/status/RequestStatus/type";
+import { Status } from "@/graphql/generated/graphql";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
 import { actionProperties } from "@/components/Action/actionProperties";
-import { get } from "http";
-import { getActionLabel } from "@/components/Action/getActionLabel";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -39,7 +36,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
-              status={RequestStatus.Completed}
+              status={Status.Completed}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
@@ -77,7 +74,9 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
-                  status={RequestStatus.Pending}
+                  status={
+                    request.steps[finalStepIndex]?.actionExecution?.status ?? Status.NotAttempted
+                  }
                   label={actionProperties[finalAction.__typename].label}
                   id={"action"}
                   setSelectedId={setSelectedId}

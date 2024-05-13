@@ -15,8 +15,8 @@ import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 import { Route } from "@/routers/routes";
-import { RequestStatus } from "@/components/status/RequestStatus/type";
-import { RequestStatusTag } from "@/components/status/RequestStatus/RequestStatusTag";
+import { Status } from "../../graphql/generated/graphql";
+import { StatusTag } from "@/components/status/StatusTag";
 import { AvatarWithName } from "@/components/Avatar";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 
@@ -104,9 +104,7 @@ export const Request = () => {
                   {
                     label: "Status",
                     value: (
-                      <RequestStatusTag
-                        status={request.final ? RequestStatus.Completed : RequestStatus.Pending}
-                      />
+                      <StatusTag status={request.final ? Status.Completed : Status.NotAttempted} />
                     ),
                   },
                   { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },

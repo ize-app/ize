@@ -3,13 +3,13 @@ import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
 
-import { requestStatusProps } from "@/components/status/RequestStatus/requestStatusProps";
-import { RequestStatus } from "@/components/status/RequestStatus/type";
+import { statusProps } from "@/components/status/statusProps";
+import { Status } from "@/graphql/generated/graphql";
 
 interface RequestStageProps extends StageProps {
   label: string;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
-  status: RequestStatus;
+  status: Status;
 }
 
 export const RequestStage = ({
@@ -19,10 +19,10 @@ export const RequestStage = ({
   selectedId,
   entities = [],
   icon,
-  status = RequestStatus.InProgress,
+  status = Status.InProgress,
 }: RequestStageProps) => {
-  const backgroundColor = requestStatusProps[status].backgroundColor;
-  const Icon = requestStatusProps[status].icon;
+  const backgroundColor = statusProps[status].backgroundColor;
+  const Icon = statusProps[status].icon;
   return (
     <Stage
       id={id}
@@ -46,7 +46,7 @@ export const RequestStage = ({
           <Typography variant="label" color={backgroundColor}>
             {label}
           </Typography>
-          {status === RequestStatus.InProgress && (
+          {status === Status.InProgress && (
             <Typography color={backgroundColor} fontSize={".7rem"} lineHeight={"1rem"}>
               In progress
             </Typography>

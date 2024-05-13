@@ -4,17 +4,10 @@ type Mutation {
 
 union Action = CallWebhook | EvolveFlow | TriggerStep
 
-enum ActionExecutionStatus {
-  NotAttempted
-  InProgress
-  Completed
-  Failure
-}
-
 type ActionExecution {
   actionId: String!
   lastAttemptedAt: String
-  status: ActionExecutionStatus!
+  status: Status!
 }
 
 type CallWebhook {

@@ -7,9 +7,9 @@ import {
 import Box from "@mui/material/Box";
 import { Result } from "./Result";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
-import { RequestStatus } from "@/components/status/RequestStatus/type";
+import { Status } from "@/graphql/generated/graphql";
 import { Chip } from "@mui/material";
-import { requestStatusProps } from "@/components/status/RequestStatus/requestStatusProps";
+import { statusProps } from "@/components/status/statusProps";
 import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
 
 export const Results = ({
@@ -22,7 +22,7 @@ export const Results = ({
   resultConfigs: ResultConfigFragment[];
   responseFields: FieldFragment[];
   results: ResultFragment[];
-  requestStatus: RequestStatus;
+  requestStatus: Status;
   fieldsAnswers: UserFieldAnswersFragment[];
 }) => {
   return (
@@ -52,10 +52,10 @@ export const Results = ({
           >
             <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
               <Chip
-                label={requestStatusProps[requestStatus].label}
+                label={statusProps[requestStatus].label}
                 sx={{
-                  backgroundColor: requestStatusProps[requestStatus].backgroundColor,
-                  color: requestStatusProps[requestStatus].color,
+                  backgroundColor: statusProps[requestStatus].backgroundColor,
+                  color: statusProps[requestStatus].color,
                 }}
                 size="small"
               />
@@ -66,11 +66,11 @@ export const Results = ({
                 display: "flex",
                 flexDirection: "column",
                 gap: "12px",
-                borderColor: requestStatusProps[requestStatus].backgroundColor,
+                borderColor: statusProps[requestStatus].backgroundColor,
                 backgroundColor:
-                  requestStatus === RequestStatus.Completed
+                  requestStatus === Status.Completed
                     ? "#f5faf5"
-                    : requestStatus === RequestStatus.InProgress
+                    : requestStatus === Status.InProgress
                       ? "#f3f8fb"
                       : "white",
               }}

@@ -9,7 +9,7 @@ import { Box, Typography } from "@mui/material";
 import { Permissions } from "../../Permissions";
 import { ActionFilter } from "../../Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { RequestStatusTag } from "@/components/status/RequestStatus/RequestStatusTag";
+import { StatusTag } from "@/components/status/StatusTag";
 import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";
@@ -54,7 +54,7 @@ export const ConfigRequestStepPanel = ({
         <PanelAccordion title="Status" hasError={false}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
-            <RequestStatusTag status={status} />
+            <StatusTag status={status} />
           </Box>
           {requestStep && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>

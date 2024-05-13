@@ -31,6 +31,13 @@ input NewResponseArgs {
   answers: [FieldAnswerArgs!]!
 }
 
+enum Status {
+  NotAttempted
+  InProgress
+  Completed
+  Failure
+}
+
 type Request {
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
