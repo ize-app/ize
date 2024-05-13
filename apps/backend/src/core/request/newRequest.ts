@@ -101,7 +101,7 @@ export const newRequest = async ({
           !field.Field.FieldOptionsConfigs?.requestOptionsDataType
         )
           throw new GraphQLError(
-            "Request deifned options provided but this field does not allow request defined options.",
+            "Request defined options provided but this field does not allow request defined options.",
             {
               extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
             },
