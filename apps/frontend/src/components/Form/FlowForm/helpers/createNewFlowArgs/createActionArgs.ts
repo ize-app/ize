@@ -1,4 +1,4 @@
-import { ActionArgs, ActionType, FieldType } from "@/graphql/generated/graphql";
+import { ActionArgs, ActionType, CallWebhookArgs, FieldType } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
 import { ActionSchemaType } from "../../formValidation/action";
 
@@ -6,9 +6,10 @@ export const createActionArgs = (
   action: ActionSchemaType,
   responseFields: FieldsSchemaType | undefined,
 ): ActionArgs => {
+  let filterOptionIndex: number | null = null;
+  let filterResponseFieldIndex: number | null = null;
+
   if (action.type !== ActionType.None && action.filterOptionId) {
-    let filterOptionIndex: number | null = null;
-    let filterResponseFieldIndex: number | null = null;
     if (action.filterOptionId !== DefaultOptionSelection.None.toString()) {
       (responseFields ?? []).forEach((f, fieldIndex) => {
         if (f.type === FieldType.Options) {
@@ -25,13 +26,19 @@ export const createActionArgs = (
         throw Error("Action filter option not found ");
       }
     }
-
-    //@ts-ignore
-    delete action.filterOptionId;
-    const actionArgs = { ...action, filterOptionIndex, filterResponseFieldIndex };
-    return { ...actionArgs };
   }
+
   //@ts-ignore
   delete action.filterOptionId;
-  return action;
+  return {
+    type: action.type,
+    filterOptionIndex,
+    filterResponseFieldIndex,
+    callWebhook: createCallWebhookArgs(action),
+  };
+};
+
+const createCallWebhookArgs = (action: ActionSchemaType): CallWebhookArgs | null => {
+  if (action.type !== ActionType.CallWebhook) return null;
+  return { name: action.callWebhook.name, uri: action.callWebhook.uri };
 };

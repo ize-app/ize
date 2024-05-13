@@ -2,9 +2,10 @@ import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
+  ActionExecutionStatus,
   ActionType,
   FieldType,
   ResultType,
@@ -17,6 +18,8 @@ import { Box, Button, FormHelperText } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { useMutation } from "@apollo/client";
 import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
+import { ActionExecutionStatusTag } from "@/components/status/ActionExecutionStatus/ActionStatusTag";
+import { actionExecutionStatusProps } from "@/components/status/ActionExecutionStatus/actionExecutionProps";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -29,6 +32,12 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
   }, []);
 
+  const [testWebhookStatus, setTestWebhookStatus] = useState<ActionExecutionStatus | null>(null);
+
+  const WebhookStatusIcon = testWebhookStatus
+    ? actionExecutionStatusProps[testWebhookStatus].icon
+    : actionExecutionStatusProps.NotAttempted.icon;
+
   const [testWebhook] = useMutation(TestWebhookDocument, {
     // onCompleted: (data) => {
     //   const { newFlow: newFlowId } = data;
@@ -37,17 +46,26 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
 
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
     const uri = formMethods.getValues(`steps.${formIndex}.action.callWebhook.uri`);
+    setTestWebhookStatus(ActionExecutionStatus.InProgress);
     try {
       const res = await testWebhook({
         variables: {
           inputs: createTestWebhookArgs(formMethods.getValues(), uri),
         },
       });
+      const success = res.data?.testWebhook ?? false;
+      formMethods.setValue(`steps.${formIndex}.action.callWebhook.valid`, success);
+      setTestWebhookStatus(
+        success ? ActionExecutionStatus.Completed : ActionExecutionStatus.Failure,
+      );
+
       console.log("Test webhook response: ", res); // TODO: delete
     } catch (e) {
       console.log("Test webhook error: ", e);
     }
   };
+
+  console.log("webhook status is ", testWebhookStatus); // TODO: delete
 
   const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
   // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
@@ -61,7 +79,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
     .forEach((res, resIndex) => {
       const field = responseFields.find((f) => f.fieldId === res.fieldId);
       if (!field || field.type !== FieldType.Options) return;
-      field.optionsConfig.options.map((o) => {
+      (field.optionsConfig.options ?? []).map((o) => {
         options.push({
           name: `Result ${resIndex}: "${o.name}"`,
           value: o.optionId,
@@ -124,10 +142,33 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
             placeholderText="Webhook Uri (not displayed publicly)"
             name={`steps.${formIndex}.action.callWebhook.uri`}
           />
+          <TextField<FlowSchemaType>
+            control={formMethods.control}
+            label="Valid webhook"
+            size="small"
+            showLabel={false}
+            display={false}
+            placeholderText="Valid webhook"
+            name={`steps.${formIndex}.action.callWebhook.valid`}
+          />
           <Button
             variant="outlined"
             sx={{ width: "60px" }}
             size={"small"}
+            endIcon={
+              <WebhookStatusIcon
+                sx={{
+                  color: testWebhookStatus
+                    ? actionExecutionStatusProps[testWebhookStatus].backgroundColor
+                    : actionExecutionStatusProps.NotAttempted.backgroundColor,
+                }}
+                // color={
+                //   testWebhookStatus
+                //     ? actionExecutionStatusProps[testWebhookStatus].color
+                //     : actionExecutionStatusProps.NotAttempted.color
+                // }
+              />
+            }
             onClick={handleTestWebhook}
           >
             Test

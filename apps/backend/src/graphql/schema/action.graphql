@@ -6,6 +6,7 @@ union Action = CallWebhook | EvolveFlow | TriggerStep
 
 enum ActionExecutionStatus {
   NotAttempted
+  InProgress
   Completed
   Failure
 }

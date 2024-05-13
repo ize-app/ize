@@ -37,6 +37,7 @@ export type ActionExecution = {
 export enum ActionExecutionStatus {
   Completed = 'Completed',
   Failure = 'Failure',
+  InProgress = 'InProgress',
   NotAttempted = 'NotAttempted'
 }
 

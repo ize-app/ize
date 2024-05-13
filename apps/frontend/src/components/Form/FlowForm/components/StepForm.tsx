@@ -50,7 +50,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
       <PanelAccordion
         title="Response permissions"
         hasError={
-          !!formMethods.formState.errors.steps?.[formIndex]?.response?.permission ||
+          !!formMethods.formState.errors.steps?.[formIndex]?.response ||
           !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
           !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
         }

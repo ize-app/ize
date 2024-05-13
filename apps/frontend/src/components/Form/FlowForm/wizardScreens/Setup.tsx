@@ -125,7 +125,12 @@ export const Setup = () => {
                           }
                         : undefined
                     }
-                    hasError={!!useFormMethods.formState.errors.steps?.[index]}
+                    hasError={
+                      !!useFormMethods.formState.errors.steps?.[index]?.root ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.response ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses
+                    }
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
