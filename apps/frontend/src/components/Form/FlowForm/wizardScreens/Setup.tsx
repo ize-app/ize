@@ -161,8 +161,8 @@ export const Setup = () => {
                 <AddStageButton
                   label={"Add collaborative step"}
                   onClick={() => {
-                    stepsArrayMethods.append(defaultStepFormValues);
                     const secondToLastIndex = stepsArrayMethods.fields.length - 1;
+                    stepsArrayMethods.append(defaultStepFormValues);
                     useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
                       filterOptionId: DefaultOptionSelection.None,
                       type: ActionType.TriggerStep,
@@ -176,6 +176,7 @@ export const Setup = () => {
                   onClick={() => {
                     //@ts-ignore
                     useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
+                      filterOptionId: DefaultOptionSelection.None,
                       type: ActionType.CallWebhook,
                     });
                     setSelectedId("webhook");

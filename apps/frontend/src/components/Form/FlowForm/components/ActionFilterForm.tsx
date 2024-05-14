@@ -2,12 +2,11 @@ import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
-import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { Box, FormHelperText } from "@mui/material";
-import { useEffect } from "react";
+import { FormHelperText } from "@mui/material";
 import { DefaultOptionSelection } from "../formValidation/fields";
 
 interface ActionFilterFormProps {
@@ -16,12 +15,12 @@ interface ActionFilterFormProps {
 }
 
 export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormProps) => {
-  useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.action`, {
-      filterOptionId: DefaultOptionSelection.None,
-      type: ActionType.TriggerStep,
-    });
-  }, []);
+  // useEffect(() => {
+  //   formMethods.setValue(`steps.${formIndex}.action`, {
+  //     filterOptionId: DefaultOptionSelection.None,
+  //     type: ActionType.TriggerStep,
+  //   });
+  // }, []);
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
@@ -60,22 +59,20 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
           {error?.root?.message}
         </FormHelperText>
       )}
-      <Box sx={{ display: "none" }}>
-        <TextField<FlowSchemaType>
-          name={`steps.${formIndex}.action.type`}
-          control={formMethods.control}
-          label="fieldId"
-          disabled={true}
-          defaultValue=""
-        />
-      </Box>
+      <TextField<FlowSchemaType>
+        display={false}
+        name={`steps.${formIndex}.action.type`}
+        control={formMethods.control}
+        label="fieldId"
+        disabled={true}
+        defaultValue=""
+      />
       <Select<FlowSchemaType>
         control={formMethods.control}
         label="When to run action"
         renderValue={(val) => {
-          if (val === DefaultOptionSelection.None) return "NONNNNEEEEE!!!";
+          if (val === DefaultOptionSelection.None) return "Action runs on every result";
           const optionName = getSelectOptionName(filterOptions, val);
-          console.log("optionName", optionName);
           if (optionName) {
             return "Only run action on: " + optionName;
           } else return "Run action on all options";
