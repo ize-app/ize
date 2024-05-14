@@ -34,6 +34,7 @@ export const newResponse = async ({
         Step: {
           include: stepInclude,
         },
+        Request: true,
         Responses: {
           include: responseInclude,
         },
@@ -61,6 +62,22 @@ export const newResponse = async ({
       throw new GraphQLError("Unauthenticated", {
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
+
+    if (requestStep.id !== requestStep.Request.currentRequestStepId)
+      throw new GraphQLError(
+        "User is trying to submit response for request step that is not the current request step.",
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
+
+    if (requestStep.responseComplete || requestStep.final || requestStep.final)
+      throw new GraphQLError(
+        "Response received for reqeust step that is no longer accepting responses",
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
 
     if (!requestStep.Step.allowMultipleResponses) {
       const existingUserResponse = await transaction.response.findFirst({
