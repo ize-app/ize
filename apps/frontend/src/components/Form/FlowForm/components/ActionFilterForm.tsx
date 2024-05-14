@@ -2,25 +2,27 @@ import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
 import { Select, TextField } from "../../formFields";
-import { FieldType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { FormHelperText } from "@mui/material";
 import { DefaultOptionSelection } from "../formValidation/fields";
+import { useEffect } from "react";
 
 interface ActionFilterFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
+  actionType: ActionType;
 }
 
-export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormProps) => {
-  // useEffect(() => {
-  //   formMethods.setValue(`steps.${formIndex}.action`, {
-  //     filterOptionId: DefaultOptionSelection.None,
-  //     type: ActionType.TriggerStep,
-  //   });
-  // }, []);
+export const ActionFilterForm = ({ formMethods, formIndex, actionType }: ActionFilterFormProps) => {
+  useEffect(() => {
+    formMethods.setValue(`steps.${formIndex}.action`, {
+      filterOptionId: DefaultOptionSelection.None,
+      type: ActionType.TriggerStep,
+    });
+  }, [actionType]);
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 

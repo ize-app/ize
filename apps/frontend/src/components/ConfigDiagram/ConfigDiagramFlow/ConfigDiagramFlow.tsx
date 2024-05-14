@@ -22,7 +22,6 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
 
   const finalStepIndex = flow.steps.length - 1;
   const finalAction = flow.steps[finalStepIndex]?.action ?? null;
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       {/* <PanelHeader>Header</PanelHeader> */}

@@ -55,7 +55,11 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
-      <ActionFilterForm formMethods={formMethods} formIndex={formIndex} />
+      <ActionFilterForm
+        formMethods={formMethods}
+        formIndex={formIndex}
+        actionType={ActionType.CallWebhook}
+      />
       <PanelAccordion title="Setup" hasError={!!webhookError}>
         {!!webhookError?.root && (
           <FormHelperText
