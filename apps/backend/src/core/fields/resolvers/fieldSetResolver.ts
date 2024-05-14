@@ -68,9 +68,9 @@ export const fieldSetResolver = ({
       );
 
       const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
-        const resultConfig = resultConfigsCache.find(
-          (r) => r.resultConfigId === linkedResultConfigId,
-        );
+        const resultConfig = resultConfigsCache.find((r) => {
+          return r.resultConfigId === linkedResultConfigId;
+        });
 
         if (!resultConfig)
           throw new GraphQLError(
