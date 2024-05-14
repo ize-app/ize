@@ -4,6 +4,7 @@ import { ActionExecutionPrismaType, ActionNewPrismaType } from "./actionPrismaTy
 export const actionExecutionResolver = (
   actionExecutions: ActionExecutionPrismaType[],
   action: ActionNewPrismaType | null,
+  requestFinal: boolean,
 ): ActionExecution | null => {
   if (!action) return null;
 
@@ -12,10 +13,16 @@ export const actionExecutionResolver = (
   return {
     actionId: action.id,
     lastAttemptedAt: actionExecution?.lastAttemptedAt.toISOString() ?? null,
-    status: !actionExecution
-      ? Status.NotAttempted
-      : actionExecution.complete
-        ? Status.Completed
-        : Status.Failure,
+    status: determineActionStatus(actionExecution, requestFinal),
   };
+};
+
+const determineActionStatus = (
+  actionExecution: ActionExecutionPrismaType | undefined,
+  requestFinal: boolean,
+) => {
+  if (actionExecution && actionExecution.complete) return Status.Completed;
+  else if (actionExecution && !actionExecution.complete) return Status.Failure;
+  else if (!actionExecution && requestFinal) return Status.Cancelled;
+  else return Status.NotAttempted;
 };

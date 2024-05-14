@@ -6675,6 +6675,12 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "Cancelled",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Completed",
             "description": null,
             "isDeprecated": false,

@@ -50,6 +50,7 @@ export const requestResolver = ({
       userId: context.currentUser?.id,
       responseFieldsCache,
       resultConfigsCache,
+      requestFinal: req.final,
     });
   });
 

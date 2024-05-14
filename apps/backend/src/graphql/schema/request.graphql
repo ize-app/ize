@@ -36,6 +36,7 @@ enum Status {
   InProgress
   Completed
   Failure
+  Cancelled
 }
 
 type Request {

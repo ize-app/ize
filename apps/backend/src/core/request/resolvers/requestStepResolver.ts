@@ -14,12 +14,15 @@ export const requestStepResolver = ({
   userId,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  // refers to whether request as a whole, rather than just the request step is final
+  requestFinal,
 }: {
   reqStep: RequestStepPrismaType;
   step: StepPrismaType;
   userId: string | null | undefined;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
+  requestFinal: boolean;
 }): RequestStep => {
   const [responseFieldAnswers, userResponses] = responsesResolver(reqStep.Responses, userId);
   const res: RequestStep = {
@@ -35,13 +38,12 @@ export const requestStepResolver = ({
       responseFieldsCache,
       resultConfigsCache,
     }),
-    actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action),
+    actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action, requestFinal),
     responseFieldAnswers,
     userResponses,
     results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
     responseComplete: reqStep.responseComplete,
     resultsComplete: reqStep.resultsComplete,
-
     final: reqStep.final,
   };
   return res;

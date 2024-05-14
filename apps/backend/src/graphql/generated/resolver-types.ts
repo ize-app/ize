@@ -768,6 +768,7 @@ export enum ResultType {
 }
 
 export enum Status {
+  Cancelled = 'Cancelled',
   Completed = 'Completed',
   Failure = 'Failure',
   InProgress = 'InProgress',

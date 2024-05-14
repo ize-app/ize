@@ -21,8 +21,10 @@ export const ConfigRequestStepPanel = ({
   triggeringAction,
   requestStepIndex,
   currentStepIndex,
+  requestFinal,
 }: {
   step: StepFragment;
+  requestFinal: boolean;
   requestStep: RequestStepFragment | null;
   triggeringAction: ActionFragment | null | undefined;
   requestStepIndex: number;
@@ -32,6 +34,7 @@ export const ConfigRequestStepPanel = ({
     requestStepIndex,
     requestStep?.resultsComplete ?? false,
     currentStepIndex,
+    requestFinal,
   );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;

@@ -51,6 +51,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                       index,
                       request.steps[index]?.resultsComplete ?? false,
                       request.currentStepIndex,
+                      request.final,
                     )}
                     icon={Diversity3Outlined}
                     label={
@@ -75,7 +76,9 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
                   status={
-                    request.steps[finalStepIndex]?.actionExecution?.status ?? Status.NotAttempted
+                    request.steps[finalStepIndex]?.actionExecution?.status ?? request.final
+                      ? Status.Cancelled
+                      : Status.NotAttempted
                   }
                   label={actionProperties[finalAction.__typename].label}
                   id={"action"}
@@ -104,6 +107,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 requestStepIndex={index}
                 currentStepIndex={request.currentStepIndex}
                 triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
+                requestFinal={request.final}
               />
             )
           );

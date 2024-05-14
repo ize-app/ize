@@ -29,8 +29,8 @@ export const statusProps: RequestStatusProps = {
     icon: HourglassTopOutlinedIcon,
   },
   [Status.NotAttempted]: {
-    color: "black",
-    backgroundColor: muiTheme.palette.grey[400],
+    color: "white",
+    backgroundColor: "black",
     label: "Pending",
     icon: RadioButtonUncheckedOutlinedIcon,
   },
@@ -38,6 +38,12 @@ export const statusProps: RequestStatusProps = {
     color: "white",
     backgroundColor: muiTheme.palette.error.main,
     label: "Error",
+    icon: CloseIcon,
+  },
+  [Status.Cancelled]: {
+    color: "white",
+    backgroundColor: muiTheme.palette.grey[400],
+    label: "Cancelled",
     icon: CloseIcon,
   },
 };
