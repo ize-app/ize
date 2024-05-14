@@ -31,6 +31,7 @@ import {
   FlowStage,
 } from "@/components/ConfigDiagram";
 import { actionProperties } from "@/components/Action/actionProperties";
+import { DefaultOptionSelection } from "../formValidation/fields";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -69,8 +70,6 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
-  const hasWebhook = useFormMethods.watch("steps.0.action.type") === ActionType.CallWebhook;
-
   console.log("form state is ", useFormMethods.getValues());
   console.log("errors are ", useFormMethods.formState.errors);
 
@@ -83,6 +82,10 @@ export const Setup = () => {
     setFormState((prev) => ({ ...prev, ...data }));
     onNext();
   };
+
+  const hasWebhook =
+    useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action.type`) ===
+    ActionType.CallWebhook;
 
   return (
     <form style={{ height: "100%" }}>
@@ -159,6 +162,11 @@ export const Setup = () => {
                   label={"Add collaborative step"}
                   onClick={() => {
                     stepsArrayMethods.append(defaultStepFormValues);
+                    const secondToLastIndex = stepsArrayMethods.fields.length - 1;
+                    useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
+                      filterOptionId: DefaultOptionSelection.None,
+                      type: ActionType.TriggerStep,
+                    });
                     // navigate to newly created step
                     setSelectedId(`step${stepsArrayMethods.fields.length}`);
                   }}

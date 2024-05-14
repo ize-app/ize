@@ -5,7 +5,7 @@ import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordio
 import { RoleSearch, Select, Switch } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
-import { ActionFilterForm } from "./ActionForm";
+import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 
 interface StepFormProps {

@@ -8,6 +8,7 @@ import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { Box, FormHelperText } from "@mui/material";
 import { useEffect } from "react";
+import { DefaultOptionSelection } from "../formValidation/fields";
 
 interface ActionFilterFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -17,7 +18,7 @@ interface ActionFilterFormProps {
 export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormProps) => {
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action`, {
-      filterOptionId: null,
+      filterOptionId: DefaultOptionSelection.None,
       type: ActionType.TriggerStep,
     });
   }, []);
@@ -27,7 +28,10 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
   // get field options asssociated with decisions to use as action filters
   const results = formMethods.watch(`steps.${formIndex}.result`);
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
-  const filterOptions: SelectOption[] = [];
+  const filterOptions: SelectOption[] = [
+    { name: "Action runs for every result", value: DefaultOptionSelection.None },
+  ];
+
   (results ?? [])
     .filter((res) => res.type === ResultType.Decision)
     .forEach((res, resIndex) => {
@@ -42,40 +46,46 @@ export const ActionFilterForm = ({ formMethods, formIndex }: ActionFilterFormPro
     });
 
   return (
-    (filterOptions ?? []).length > 0 && (
-      <PanelAccordion title="Filter" hasError={!!error}>
-        {error?.root?.message && (
-          <FormHelperText
-            sx={{
-              color: "error.main",
-            }}
-          >
-            {error?.root?.message}
-          </FormHelperText>
-        )}
-        <Box sx={{ display: "none" }}>
-          <TextField<FlowSchemaType>
-            name={`steps.${formIndex}.action.type`}
-            control={formMethods.control}
-            label="fieldId"
-            disabled={true}
-            defaultValue=""
-          />
-        </Box>
-        <Select<FlowSchemaType>
-          control={formMethods.control}
-          label="When to run action"
-          renderValue={(val) => {
-            const optionName = getSelectOptionName(filterOptions, val);
-            if (optionName) {
-              return "Only run action on: " + optionName;
-            } else return "Run action on all options";
+    <PanelAccordion
+      title="Filter"
+      hasError={!!error}
+      sx={{ display: (filterOptions ?? []).length > 1 ? "block" : "none" }}
+    >
+      {error?.root?.message && (
+        <FormHelperText
+          sx={{
+            color: "error.main",
           }}
-          selectOptions={[...filterOptions]}
-          displayLabel={false}
-          name={`steps.${formIndex}.action.filterOptionId`}
+        >
+          {error?.root?.message}
+        </FormHelperText>
+      )}
+      <Box sx={{ display: "none" }}>
+        <TextField<FlowSchemaType>
+          name={`steps.${formIndex}.action.type`}
+          control={formMethods.control}
+          label="fieldId"
+          disabled={true}
+          defaultValue=""
         />
-      </PanelAccordion>
-    )
+      </Box>
+      <Select<FlowSchemaType>
+        control={formMethods.control}
+        label="When to run action"
+        renderValue={(val) => {
+          if (val === DefaultOptionSelection.None) return "NONNNNEEEEE!!!";
+          const optionName = getSelectOptionName(filterOptions, val);
+          console.log("optionName", optionName);
+          if (optionName) {
+            return "Only run action on: " + optionName;
+          } else return "Run action on all options";
+        }}
+        selectOptions={[...filterOptions]}
+        displayLabel={false}
+        defaultValue=""
+        name={`steps.${formIndex}.action.filterOptionId`}
+      />
+    </PanelAccordion>
+    // )
   );
 };

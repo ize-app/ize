@@ -29,6 +29,7 @@ interface WebhookFormProps {
 export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) => {
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
+    formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
   }, []);
 
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
@@ -64,7 +65,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
 
   console.log("webhook status is ", testWebhookStatus); // TODO: delete
 
-  const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
   // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
   const results = formMethods.watch(`steps.${formIndex}.result`);
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
@@ -105,7 +105,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
             {webhookError.root?.message}
           </FormHelperText>
         )}
-        {(options ?? []).length > 0 && actionType !== ActionType.None && (
+        {(options ?? []).length > 0 && (
           <>
             <Select<FlowSchemaType>
               control={formMethods.control}
