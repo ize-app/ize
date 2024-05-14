@@ -1,4 +1,4 @@
-import { RequestStep } from "@/graphql/generated/resolver-types";
+import { Field, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
 import { RequestStepPrismaType } from "../requestPrismaTypes";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
@@ -12,10 +12,14 @@ export const requestStepResolver = ({
   reqStep,
   step,
   userId,
+  responseFieldsCache = [],
+  resultConfigsCache = [],
 }: {
   reqStep: RequestStepPrismaType;
   step: StepPrismaType;
   userId: string | null | undefined;
+  responseFieldsCache?: Field[];
+  resultConfigsCache?: ResultConfig[];
 }): RequestStep => {
   const [responseFieldAnswers, userResponses] = responsesResolver(reqStep.Responses, userId);
   const res: RequestStep = {
@@ -28,6 +32,8 @@ export const requestStepResolver = ({
     responseFields: fieldSetResolver({
       fieldSet: step.ResponseFieldSet,
       requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
+      responseFieldsCache,
+      resultConfigsCache,
     }),
     actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action),
     responseFieldAnswers,

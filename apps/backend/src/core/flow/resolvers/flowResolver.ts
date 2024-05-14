@@ -8,15 +8,17 @@ export const flowResolver = ({
   userIdentityIds,
   userGroupIds,
   userId,
+  responseFieldsCache = [],
+  resultConfigsCache = [],
 }: {
   flowVersion: FlowVersionPrismaType;
   evolveFlow?: FlowVersionPrismaType;
   userIdentityIds: string[];
   userGroupIds: string[];
   userId: string | undefined;
+  responseFieldsCache?: Field[];
+  resultConfigsCache?: ResultConfig[];
 }): Flow => {
-  const responseFieldsCache: Field[] = [];
-  const resultConfigsCache: ResultConfig[] = [];
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
