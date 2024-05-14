@@ -12,9 +12,11 @@ import { Prisma } from "@prisma/client";
 // since the action is the last execution component of a request step,
 // this function is also responsible for determining the final request_step and request statuses
 // actions are designed to be retried later if they fail
+// returns boolean on whether action will need to be rerun
 export const executeAction = async ({
   requestStepId,
   step,
+  // only includes results from the current step
   results,
   transaction = prisma,
 }: {
@@ -44,6 +46,34 @@ export const executeAction = async ({
   }
 
   let actionComplete = false;
+
+  // if the action filter isn't passed, end the request step and request
+  if (action.filterOptionId) {
+    let passesFilter = false;
+    for (let result of results) {
+      if (result.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId)) {
+        passesFilter = true;
+        break;
+      }
+    }
+    if (!passesFilter) {
+      await prisma.requestStep.update({
+        where: {
+          id: requestStepId,
+        },
+        data: {
+          actionsComplete: true,
+          final: true,
+          Request: {
+            update: {
+              final: true,
+            },
+          },
+        },
+      });
+      return true;
+    }
+  }
 
   switch (action.type) {
     case ActionType.CallWebhook: {
