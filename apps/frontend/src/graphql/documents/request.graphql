@@ -6,6 +6,10 @@ mutation NewResponse($response: NewResponseArgs!) {
   newResponse(response: $response)
 }
 
+mutation NewEvolveRequest($request: NewEvolveRequestArgs!) {
+  newEvolveRequest(request: $request)
+}
+
 query getRequest($requestId: String!) {
   getRequest(requestId: $requestId) {
     ...Request

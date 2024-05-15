@@ -1,5 +1,6 @@
 type Mutation {
   newRequest(request: NewRequestArgs!): String!
+  newEvolveRequest(request: NewEvolveRequestArgs!): String!
   newResponse(response: NewResponseArgs!): String!
 }
 
@@ -19,6 +20,11 @@ input NewRequestArgs {
   name: String!
   requestFields: [FieldAnswerArgs!]!
   requestDefinedOptions: [RequestDefinedOptionsArgs!]!
+}
+
+input NewEvolveRequestArgs {
+  proposedFlow: NewFlowArgs!
+  currentFlow: NewFlowArgs!
 }
 
 input RequestDefinedOptionsArgs {

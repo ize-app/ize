@@ -33,8 +33,8 @@ export const EvolveFlow = () => {
       const formState = createFlowFormState(data.getFlow as Flow);
       setFormState((prev) => {
         return {
-          ...prev,
           ...formState,
+          ...prev,
           currentFlow: formState,
         };
       });

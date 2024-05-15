@@ -413,6 +413,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
+  newEvolveRequest: Scalars['String']['output'];
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
@@ -427,6 +428,11 @@ export type MutationNewCustomGroupArgs = {
 
 export type MutationNewEntitiesArgs = {
   entities: Array<NewEntityArgs>;
+};
+
+
+export type MutationNewEvolveRequestArgs = {
+  request: NewEvolveRequestArgs;
 };
 
 
@@ -467,6 +473,11 @@ export enum NewEntityTypes {
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
 }
+
+export type NewEvolveRequestArgs = {
+  currentFlow: NewFlowArgs;
+  proposedFlow: NewFlowArgs;
+};
 
 export type NewFlowArgs = {
   evolve: EvolveFlowArgs;
@@ -1014,6 +1025,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
   NewEntityTypes: NewEntityTypes;
+  NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -1119,6 +1131,7 @@ export type ResolversParentTypes = {
   Me: Me;
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
+  NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -1405,6 +1418,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
+  newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
