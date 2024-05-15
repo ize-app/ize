@@ -17,7 +17,7 @@ import { Wizard, useWizard } from "../../../utils/wizard";
 
 import { shortUUIDToFull } from "@/utils/inputs";
 import Loading from "../../../components/Loading";
-import { createFormStateForExistingFlow } from "../../../components/Form/FlowForm/helpers/createEvolveFlowFormState/createEvolveFlowFormState";
+import createFlowFormState from "@/components/Form/FlowForm/helpers/createFlowFormState";
 
 export const EvolveFlow = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const EvolveFlow = () => {
       flowId,
     },
     onCompleted: (data) => {
-      const formState = createFormStateForExistingFlow(data.getFlow as Flow);
+      const formState = createFlowFormState(data.getFlow as Flow);
       setFormState((prev) => {
         return {
           ...prev,

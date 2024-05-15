@@ -28,11 +28,11 @@ export const fieldOptionSchema = z
   })
   .superRefine((option, ctx) => {
     evaluateMultiTypeInput(option.name, option.dataType, ["name"], ctx);
-  })
-  // .transform((option) => ({
-  //   ...option,
-  //   name: option.name.toString(),
-  // }));
+  });
+// .transform((option) => ({
+//   ...option,
+//   name: option.name.toString(),
+// }));
 
 const fieldOptionsSchema = z
   .object({
@@ -48,8 +48,10 @@ const fieldOptionsSchema = z
         return val;
       })
       .pipe(z.coerce.number())
+      .nullable()
       .optional(),
     options: z.array(fieldOptionSchema).default([]),
+    // array of resultConfig ids
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
   .refine(
