@@ -475,6 +475,7 @@ export enum NewEntityTypes {
 
 export type NewEvolveRequestArgs = {
   currentFlow: NewFlowArgs;
+  flowId: Scalars['String']['input'];
   proposedFlow: NewFlowArgs;
 };
 
@@ -1756,6 +1757,7 @@ export enum NewEntityTypes {
 
 export type NewEvolveRequestArgs = {
   currentFlow: NewFlowArgs;
+  flowId: Scalars['String']['input'];
   proposedFlow: NewFlowArgs;
 };
 

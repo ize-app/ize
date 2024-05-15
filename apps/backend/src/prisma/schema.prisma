@@ -274,6 +274,7 @@ model Flow {
 model FlowVersion {
   id           String  @id @default(uuid()) @db.Uuid
   name         String
+  draft        Boolean
   reusable     Boolean
   totalSteps   Int     @map("total_steps")
   flowId       String  @map("flow_id") @db.Uuid
