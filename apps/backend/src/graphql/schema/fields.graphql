@@ -50,6 +50,7 @@ enum FieldDataType {
   Uri
   Date
   DateTime
+  FlowVersionId
 }
 
 enum FieldType {

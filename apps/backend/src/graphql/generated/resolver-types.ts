@@ -203,6 +203,7 @@ export type FieldArgs = {
 export enum FieldDataType {
   Date = 'Date',
   DateTime = 'DateTime',
+  FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',
   Uri = 'Uri'

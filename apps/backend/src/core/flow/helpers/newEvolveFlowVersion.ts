@@ -13,7 +13,7 @@ export const newEvolveFlowVersion = async ({
   flowId: string;
   evolveArgs: EvolveFlowArgs;
   draft: boolean;
-}) => {
+}): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: "Evolve flow",
@@ -26,11 +26,13 @@ export const newEvolveFlowVersion = async ({
           id: flowId,
         },
       },
-      FlowForCurrentVersion: {
-        connect: {
-          id: flowId,
-        },
-      },
+      FlowForCurrentVersion: draft
+        ? undefined
+        : {
+            connect: {
+              id: flowId,
+            },
+          },
       Flow: {
         connect: {
           id: flowId,
@@ -47,4 +49,6 @@ export const newEvolveFlowVersion = async ({
     createdSteps: [],
     reusable: true,
   });
+
+  return flowVersion.id;
 };

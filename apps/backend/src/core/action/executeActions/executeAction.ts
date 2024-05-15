@@ -87,7 +87,7 @@ export const executeAction = async ({
       break;
     }
     case ActionType.EvolveFlow: {
-      actionComplete = await evolveFlow();
+      actionComplete = await evolveFlow({ requestStepId, transaction });
       break;
     }
     default:

@@ -50,5 +50,7 @@ export const renderFreeInputValue = (
           </Typography>
         </>
       );
+    case FieldDataType.FlowVersionId:
+      return <Typography fontSize={fontSize}>{value}</Typography>;
   }
 };

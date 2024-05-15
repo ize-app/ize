@@ -9,19 +9,27 @@ export const newCustomFlowVersion = async ({
   evolveFlowId,
   flowId,
   draft,
+  // each flow references an evolve flow id, not an evolve flow version id
+  // when we are evolving a flow and or it's corresponding evolve flow
+  // we need to know whether the evolve flow itself has been evolved as part of that draft
+  draftEvolveFlowVersionId,
 }: {
   transaction: Prisma.TransactionClient;
   flowArgs: NewFlowArgs;
   flowId: string;
   evolveFlowId: string | null;
   draft: boolean;
-}) => {
+  draftEvolveFlowVersionId: string | null;
+}): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: flowArgs.name,
       draft,
       totalSteps: flowArgs.steps.length,
       reusable: flowArgs.reusable,
+      DraftEvolveFlowVersion: draftEvolveFlowVersionId
+        ? { connect: { id: draftEvolveFlowVersionId } }
+        : undefined,
       EvolveFlow: evolveFlowId
         ? {
             connect: {
@@ -29,11 +37,13 @@ export const newCustomFlowVersion = async ({
             },
           }
         : undefined,
-      FlowForCurrentVersion: {
-        connect: {
-          id: flowId,
-        },
-      },
+      FlowForCurrentVersion: draft
+        ? undefined
+        : {
+            connect: {
+              id: flowId,
+            },
+          },
       Flow: {
         connect: {
           id: flowId,
@@ -56,4 +66,6 @@ export const newCustomFlowVersion = async ({
       reusable: flowArgs.reusable,
     });
   }
+
+  return flowVersion.id;
 };

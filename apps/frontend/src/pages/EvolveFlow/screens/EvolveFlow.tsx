@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -10,18 +10,25 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { EVOLVE_FLOW_PROGRESS_BAR_STEPS, EVOLVE_FLOW_WIZARD_STEPS } from "../evolveFlowWizard";
 import { EvolveExistingFlowSchemaType } from "../formValidation";
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { Flow, GetFlowDocument } from "../../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  GetFlowDocument,
+  NewEvolveRequestDocument,
+} from "../../../graphql/generated/graphql";
 import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { Wizard, useWizard } from "../../../utils/wizard";
 
-import { shortUUIDToFull } from "@/utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
 import Loading from "../../../components/Loading";
 import createFlowFormState from "@/components/Form/FlowForm/helpers/createFlowFormState";
+import { createNewFlowArgs } from "@/components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const EvolveFlow = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { me } = useContext(CurrentUserContext);
   const { flowId: flowIdShort } = useParams();
   const flowId: string = shortUUIDToFull(flowIdShort as string);
 
@@ -30,7 +37,7 @@ export const EvolveFlow = () => {
       flowId,
     },
     onCompleted: (data) => {
-      const formState = createFlowFormState(data.getFlow as Flow);
+      const formState = createFlowFormState(data.getFlow as FlowFragment);
       setFormState((prev) => {
         return {
           ...formState,
@@ -41,24 +48,25 @@ export const EvolveFlow = () => {
     },
   });
 
-  // const [mutate] = useMutation(NewEditProcessRequestDocument, {
-  //   onCompleted: (data) => {
-  //     const newRequestId = data.newEditProcessRequest;
-  //     navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
-  //   },
-  // });
+  const [mutate] = useMutation(NewEvolveRequestDocument, {
+    onCompleted: (data) => {
+      const newRequestId = data.newEvolveRequest;
+      navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+    },
+  });
 
   const onComplete = async () => {
     try {
-      // await mutate({
-      //   variables: {
-      //     inputs: {
-      //       processId: shortUUIDToFull(params.processId as string),
-      //       currentProcess: createProcessMutation(formState.currentProcess as ProcessForm),
-      //       evolvedProcess: createProcessMutation(formState),
-      //     },
-      //   },
-      // });
+      if (!me?.user.id) throw Error("Missing user Id");
+      await mutate({
+        variables: {
+          request: {
+            flowId: flowId,
+            proposedFlow: createNewFlowArgs(formState, me?.user.id),
+            currentFlow: createNewFlowArgs(formState.currentFlow, me?.user.id),
+          },
+        },
+      });
 
       setSnackbarOpen(true);
       setSnackbarData({ message: "Request created!", type: "success" });

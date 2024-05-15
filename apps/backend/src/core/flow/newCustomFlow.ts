@@ -31,7 +31,14 @@ export const newCustomFlow = async ({
       data: { type: FlowType.Custom, creatorId },
     });
 
-    await newCustomFlowVersion({ transaction, flowArgs: args.flow, flowId: flow.id, evolveFlowId, draft: false });
+    await newCustomFlowVersion({
+      transaction,
+      flowArgs: args.flow,
+      flowId: flow.id,
+      evolveFlowId,
+      draft: false,
+      draftEvolveFlowVersionId: null,
+    });
 
     return flow.id;
   });

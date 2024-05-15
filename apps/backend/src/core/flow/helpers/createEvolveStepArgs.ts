@@ -10,15 +10,25 @@ import {
   ResultArgs,
   ResultType,
 } from "@/graphql/generated/resolver-types";
+import { EvolveFlowFields } from "./EvolveFlowFields";
 
 export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
-  const requestFieldSetArgs: FieldArgs = {
-    type: FieldType.FreeInput,
-    fieldId: "new",
-    freeInputDataType: FieldDataType.String,
-    name: "Purpose of changes",
-    required: true,
-  };
+  const requestFieldSetArgs: FieldArgs[] = [
+    {
+      type: FieldType.FreeInput,
+      fieldId: "current",
+      freeInputDataType: FieldDataType.FlowVersionId,
+      name: EvolveFlowFields.CurrentFlow,
+      required: true,
+    },
+    {
+      type: FieldType.FreeInput,
+      fieldId: "proposed",
+      freeInputDataType: FieldDataType.FlowVersionId,
+      name: EvolveFlowFields.ProposedFlow,
+      required: true,
+    },
+  ];
 
   const responseFieldSetArgs: FieldArgs = {
     type: FieldType.Options,
@@ -55,7 +65,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     allowMultipleResponses: false,
     request: {
       permission: evolveArgs.requestPermission,
-      fields: [requestFieldSetArgs],
+      fields: requestFieldSetArgs,
     },
     response: {
       permission: evolveArgs.responsePermission,

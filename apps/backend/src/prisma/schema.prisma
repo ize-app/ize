@@ -272,22 +272,27 @@ model Flow {
 }
 
 model FlowVersion {
-  id           String  @id @default(uuid()) @db.Uuid
-  name         String
-  draft        Boolean
-  reusable     Boolean
-  totalSteps   Int     @map("total_steps")
-  flowId       String  @map("flow_id") @db.Uuid
+  id                       String  @id @default(uuid()) @db.Uuid
+  name                     String
+  reusable                 Boolean
+  totalSteps               Int     @map("total_steps")
+  flowId                   String  @map("flow_id") @db.Uuid
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
-  evolveFlowId String? @map("evolve_flow_id") @db.Uuid
+  evolveFlowId             String? @map("evolve_flow_id") @db.Uuid
+  // whether the flow version has been actually published 
+  draft                    Boolean
+  // this field is used for the evolve process so that a flow version and it's corresponding evolve flow can be evolved at the same time
+  draftEvolveFlowVersionId String? @map("draft_evolve_flow_version_id") @db.Uuid
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  FlowForCurrentVersion Flow?     @relation("FlowToCurrentFlowVersion")
-  Flow                  Flow      @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
-  EvolveFlow            Flow?     @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
-  Steps                 Step[]
-  Request               Request[]
+  FlowForCurrentVersion                        Flow?         @relation("FlowToCurrentFlowVersion")
+  Flow                                         Flow          @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
+  EvolveFlow                                   Flow?         @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
+  Steps                                        Step[]
+  Request                                      Request[]
+  DraftEvolveFlowVersion                       FlowVersion?  @relation("DraftEvolveFlowVersion", fields: [draftEvolveFlowVersionId], references: [id], onDelete: Cascade)
+  FlowVersionsReferencingThisEvolveFlowVersion FlowVersion[] @relation("DraftEvolveFlowVersion")
 
   @@map("flow_versions")
 }
@@ -405,6 +410,7 @@ enum FieldDataType {
   Uri
   Date
   DateTime
+  FlowVersionId
 }
 
 enum FieldType {
