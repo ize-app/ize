@@ -33,11 +33,11 @@ export const requestStepSummaryResolver = ({
     actionsComplete: r.actionsComplete,
     final: r.final,
     respondPermission: permissionResolver(r.Step.ResponsePermissions, identityIds),
-    userRespondPermission: hasReadPermission(
-      r.Step.ResponsePermissions,
-      groupIds,
-      identityIds,
+    userRespondPermission: hasReadPermission({
+      permission: r.Step.ResponsePermissions,
+      groupIds: groupIds,
+      identityIds: identityIds,
       userId,
-    ),
+    }),
   };
 };

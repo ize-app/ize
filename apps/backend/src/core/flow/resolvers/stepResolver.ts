@@ -51,8 +51,18 @@ export const stepResolver = ({
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,
     userPermission: {
-      request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds, userId),
-      response: hasReadPermission(step.ResponsePermissions, userIdentityIds, userGroupIds, userId),
+      request: hasReadPermission({
+        permission: step.RequestPermissions,
+        identityIds: userIdentityIds,
+        groupIds: userGroupIds,
+        userId,
+      }),
+      response: hasReadPermission({
+        permission: step.ResponsePermissions,
+        identityIds: userIdentityIds,
+        groupIds: userGroupIds,
+        userId,
+      }),
     },
   };
 };

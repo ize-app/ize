@@ -39,12 +39,12 @@ export const flowSummaryResolver = ({
       identityIds,
     ),
     userPermission: {
-      request: hasReadPermission(
-        flow.CurrentFlowVersion?.Steps[0].RequestPermissions,
+      request: hasReadPermission({
+        permission: flow.CurrentFlowVersion?.Steps[0].RequestPermissions,
         groupIds,
         identityIds,
         userId,
-      ),
+    }),
     },
   };
 };

@@ -17,14 +17,15 @@ export const requestResolver = ({
 }): Request => {
   const responseFieldsCache: Field[] = [];
   const resultConfigsCache: ResultConfig[] = [];
+  const identityIds = context.currentUser?.Identities.map((i) => i.id) ?? [];
 
   // note: this call needs to happen before requestStepResolver is called
   // so that the response and result caches can be populated
   const flow = flowResolver({
     flowVersion: req.FlowVersion,
     userGroupIds,
-    userId: context.currentUser?.stytchId,
-    userIdentityIds: context.currentUser ? context.currentUser.Identities.map((i) => i.id) : [],
+    userId: context.currentUser?.id,
+    userIdentityIds: identityIds,
     responseFieldsCache,
     resultConfigsCache,
   });
@@ -43,7 +44,6 @@ export const requestResolver = ({
       throw new GraphQLError("Cannot find corresponding flow step for request step.", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
-
     return requestStepResolver({
       reqStep,
       step,
