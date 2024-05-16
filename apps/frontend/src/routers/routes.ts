@@ -11,6 +11,7 @@ export enum Route {
   Group = "/groups/:groupId",
   Request = "/requests/:requestId",
   Flow = "/flow/:flowId/:flowVersionId?",
+  FlowVersion = "/flowVersion/:flowVersionId",
   EvolveFlow = "/evolve/:flowId",
 }
 

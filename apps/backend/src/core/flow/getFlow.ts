@@ -6,6 +6,8 @@ import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { MePrismaType } from "../user/userPrismaTypes";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 
+// if flowID is provided, it returns current published version of that flow
+// if flowVersionID is provided, it returns that specific version/draft of the flow
 export const getFlow = async ({
   args,
   user,
@@ -13,15 +15,20 @@ export const getFlow = async ({
   args: QueryGetFlowArgs;
   user: MePrismaType | undefined | null;
 }): Promise<Flow> => {
+  if (!args.flowId && !args.flowVersionId)
+    throw new GraphQLError("Missing both a flowID and flowversionID", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    });
+    
   const flow = await prisma.flow.findFirstOrThrow({
     include: flowInclude,
     where: {
-      id: args.flowId,
+      id: args.flowId ? args.flowId : undefined,
       FlowVersions: args.flowVersionId
         ? {
             some: { id: args.flowVersionId },
           }
-        : {},
+        : undefined,
     },
   });
 

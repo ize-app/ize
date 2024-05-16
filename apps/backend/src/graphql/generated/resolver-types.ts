@@ -615,7 +615,7 @@ export type QueryDiscordServerRolesArgs = {
 
 
 export type QueryGetFlowArgs = {
-  flowId: Scalars['String']['input'];
+  flowId?: InputMaybe<Scalars['String']['input']>;
   flowVersionId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1493,7 +1493,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
-  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
+  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'searchQuery' | 'userOnly'>>;

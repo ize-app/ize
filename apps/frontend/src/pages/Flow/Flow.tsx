@@ -24,14 +24,18 @@ import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
-  const { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
+  let { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
+
+  // console.log("flowID", flowIdShort, "flowVersionId", flowVersionIdShort);
 
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
-  const flowId: string = shortUUIDToFull(flowIdShort as string);
+  const flowId: string | null = flowIdShort ? shortUUIDToFull(flowIdShort as string) : null;
   const flowVersionId: string | null = flowVersionIdShort
     ? shortUUIDToFull(flowVersionIdShort as string)
     : null;
+
+  console.log("flowID", flowId, "flowVersionId", flowVersionId);
 
   const navigate = useNavigate();
 
@@ -105,7 +109,7 @@ export const Flow = () => {
                   onClick={() =>
                     navigate(
                       generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                        flowId: fullUUIDToShort(flowId),
+                        flowId: fullUUIDToShort(flow.flowId),
                       }),
                     )
                   }
@@ -117,7 +121,7 @@ export const Flow = () => {
                   onClick={() => {
                     navigate(
                       generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {
-                        flowId: fullUUIDToShort(flowId),
+                        flowId: fullUUIDToShort(flow.flowId),
                       }),
                     );
                   }}

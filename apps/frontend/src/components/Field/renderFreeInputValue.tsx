@@ -6,6 +6,9 @@ import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { ReactElement } from "react";
+import { Link, generatePath } from "react-router-dom";
+import { Route } from "@/routers/routes";
+import { fullUUIDToShort } from "@/utils/inputs";
 dayjs.extend(utc);
 
 export const renderFreeInputValue = (
@@ -51,6 +54,27 @@ export const renderFreeInputValue = (
         </>
       );
     case FieldDataType.FlowVersionId:
-      return <Typography fontSize={fontSize}>{value}</Typography>;
+      return (
+        <>
+          <LinkOutlinedIcon fontSize="small" color="primary" />
+          {/* <Typography
+            marginLeft={"8px"}
+            fontSize={fontSize}
+            component={"a"}
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Flow
+          </Typography> */}
+          <Link
+            to={generatePath(Route.FlowVersion, {
+              flowVersionId: fullUUIDToShort(value),
+            })}
+          >
+            Flow
+          </Link>
+        </>
+      );
   }
 };

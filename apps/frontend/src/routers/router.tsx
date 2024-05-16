@@ -148,6 +148,11 @@ export const router = createBrowserRouter([
         element: <Flow />,
       },
       {
+        path: Routes.Route.FlowVersion,
+        errorElement: <ErrorBoundary />,
+        element: <Flow />,
+      },
+      {
         path: Routes.Route.Identities,
         errorElement: <ErrorBoundary />,
         element: (

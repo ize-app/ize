@@ -2,7 +2,7 @@ mutation NewFlow($flow: NewFlowArgs!) {
   newFlow(flow: $flow)
 }
 
-query GetFlow($flowId: String!, $flowVersionId: String) {
+query GetFlow($flowId: String, $flowVersionId: String) {
   getFlow(flowId: $flowId, flowVersionId: $flowVersionId) {
     ...Flow
   }
