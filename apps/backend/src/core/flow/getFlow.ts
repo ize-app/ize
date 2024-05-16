@@ -1,6 +1,6 @@
 import { Flow, QueryGetFlowArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "../../prisma/client";
-import { flowInclude } from "./flowPrismaTypes";
+import { FlowVersionPrismaType, flowInclude, flowVersionInclude } from "./flowPrismaTypes";
 import { flowResolver } from "./resolvers/flowResolver";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { MePrismaType } from "../user/userPrismaTypes";
@@ -15,24 +15,46 @@ export const getFlow = async ({
   args: QueryGetFlowArgs;
   user: MePrismaType | undefined | null;
 }): Promise<Flow> => {
-  if (!args.flowId && !args.flowVersionId)
+  let flowVersion: FlowVersionPrismaType | null;
+
+  if (args.flowId) {
+    const flow = await prisma.flow.findFirstOrThrow({
+      include: flowInclude,
+      where: {
+        id: args.flowId,
+        FlowVersions: args.flowVersionId
+          ? {
+              some: { id: args.flowVersionId },
+            }
+          : undefined,
+      },
+    });
+
+    flowVersion = flow.CurrentFlowVersion;
+  } else if (args.flowVersionId) {
+    flowVersion = await prisma.flowVersion.findFirstOrThrow({
+      include: flowVersionInclude,
+      where: {
+        id: args.flowVersionId,
+      },
+    });
+  } else {
     throw new GraphQLError("Missing both a flowID and flowversionID", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
-    
-  const flow = await prisma.flow.findFirstOrThrow({
-    include: flowInclude,
-    where: {
-      id: args.flowId ? args.flowId : undefined,
-      FlowVersions: args.flowVersionId
-        ? {
-            some: { id: args.flowVersionId },
-          }
-        : undefined,
-    },
-  });
+  }
 
-  if (!flow.CurrentFlowVersion?.evolveFlowId)
+  if (!flowVersion)
+    throw new GraphQLError(
+      `Cannot find flow version for flow ${args.flowId ?? ""} and flowVersionId ${
+        args.flowVersionId ?? ""
+      }`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
+
+  if (!flowVersion.evolveFlowId)
     throw new GraphQLError("Missing evolve flow for flow.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
@@ -40,7 +62,7 @@ export const getFlow = async ({
   const evolveFlow = await prisma.flow.findFirstOrThrow({
     include: flowInclude,
     where: {
-      id: flow.CurrentFlowVersion?.evolveFlowId,
+      id: flowVersion.evolveFlowId,
     },
   });
 
@@ -49,7 +71,7 @@ export const getFlow = async ({
   const userGroupIds = await getGroupIdsOfUser({ user });
 
   const res = flowResolver({
-    flowVersion: flow.CurrentFlowVersion,
+    flowVersion: flowVersion,
     evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,
     userGroupIds,
