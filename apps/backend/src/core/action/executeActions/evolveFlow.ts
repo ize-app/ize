@@ -54,6 +54,7 @@ export const evolveFlow = async ({
       where: { id: proposedFlowField.AnswerFreeInput[0].value },
       data: {
         draft: false,
+        publishedAt: new Date(),
         FlowForCurrentVersion: { connect: { id: proposedFlowVersion.flowId } },
       },
     });

@@ -284,7 +284,9 @@ model FlowVersion {
   // this field is used for the evolve process so that a flow version and it's corresponding evolve flow can be evolved at the same time
   draftEvolveFlowVersionId String? @map("draft_evolve_flow_version_id") @db.Uuid
 
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  // when the flow version moved from draft to published
+  publishedAt DateTime? @map("published_at")
 
   FlowForCurrentVersion                        Flow?         @relation("FlowToCurrentFlowVersion")
   Flow                                         Flow          @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)

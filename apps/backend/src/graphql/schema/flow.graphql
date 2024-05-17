@@ -12,6 +12,10 @@ type Flow {
   flowId: String!
   flowVersionId: String!
   currentFlowVersionId: String
+  createdAt: String!
+  versionCreatedAt: String!
+  versionPublishedAt: String
+  draft: Boolean!
   type: FlowType!
   name: String!
   reusable: Boolean!

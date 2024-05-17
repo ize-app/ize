@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
-import { generatePath, useNavigate, useParams } from "react-router-dom";
+import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { CurrentUserContext } from "@/contexts/current_user_context";
@@ -21,12 +21,11 @@ import {
 } from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
+import { Chip } from "@mui/material";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
   let { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
-
-  // console.log("flowID", flowIdShort, "flowVersionId", flowVersionIdShort);
 
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
@@ -34,8 +33,6 @@ export const Flow = () => {
   const flowVersionId: string | null = flowVersionIdShort
     ? shortUUIDToFull(flowVersionIdShort as string)
     : null;
-
-  console.log("flowID", flowId, "flowVersionId", flowVersionId);
 
   const navigate = useNavigate();
 
@@ -50,15 +47,13 @@ export const Flow = () => {
     },
   });
 
-  // const { data: requestData, loading: requestLoading } = useQuery(RequestsForProcessDocument, {
-  //   variables: {
-  //     processId: processId,
-  //   },
-  // });
 
   const flow = flowData?.getFlow as FlowFragment;
+  // console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
+  const isDraft = flow ? flow.draft : false;
+  const isOldVersion = flow ? !flow.draft && !isCurrentFlowVersion : false;
 
   const onError = () => {
     navigate("/");
@@ -82,10 +77,62 @@ export const Flow = () => {
             <Typography variant={"h1"} marginTop="8px">
               {flow.name}
             </Typography>
-            {!isCurrentFlowVersion && (
-              <Typography>
-                This page is displaying an older version of the flow that has since been evolved.
-              </Typography>
+            {isDraft && (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <Box sx={{ display: "flex", gap: "8px" }}>
+                  <Chip label={"Draft"} size="small" />
+                  <Typography>
+                    Version created on {new Date(flow.versionCreatedAt).toLocaleString()}
+                  </Typography>
+                </Box>
+                <Typography>
+                  This draft flow version has not been published. See the{" "}
+                  <Link
+                    to={generatePath(Route.Flow, {
+                      flowId: fullUUIDToShort(flow.flowId),
+                      flowVersionId: null,
+                    })}
+                  >
+                    current published version of this flow.
+                  </Link>
+                </Typography>
+              </Box>
+            )}
+            {isCurrentFlowVersion && (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <Box sx={{ display: "flex", gap: "8px" }}>
+                  <Chip label={"Active"} size="small" />
+                  {flow.versionPublishedAt && (
+                    <Typography>
+                      Most recent version published at{" "}
+                      {new Date(flow.versionPublishedAt).toLocaleString()}
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
+            )}
+            {isOldVersion && (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <Box sx={{ display: "flex", gap: "8px" }}>
+                  <Chip label={"Old version"} size="small" />
+                  {flow.versionPublishedAt && (
+                    <Typography>
+                      This version published at {new Date(flow.versionPublishedAt).toLocaleString()}
+                    </Typography>
+                  )}
+                </Box>
+                <Typography>
+                  This is an old version of this flow. See the{" "}
+                  <Link
+                    to={generatePath(Route.Flow, {
+                      flowId: fullUUIDToShort(flow.flowId),
+                      flowVersionId: null,
+                    })}
+                  >
+                    current published version of this flow.
+                  </Link>
+                </Typography>
+              </Box>
             )}
           </Box>
           <br />

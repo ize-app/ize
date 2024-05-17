@@ -27,6 +27,7 @@ export const newCustomFlowVersion = async ({
       draft,
       totalSteps: flowArgs.steps.length,
       reusable: flowArgs.reusable,
+      publishedAt: draft ? null : new Date(),
       DraftEvolveFlowVersion: draftEvolveFlowVersionId
         ? { connect: { id: draftEvolveFlowVersionId } }
         : undefined,

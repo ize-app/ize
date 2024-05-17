@@ -41,6 +41,10 @@ fragment FlowFields on Flow {
   flowId
   flowVersionId
   currentFlowVersionId
+  createdAt
+  versionCreatedAt
+  versionPublishedAt
+  draft
   type
   name
   reusable

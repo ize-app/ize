@@ -20,6 +20,7 @@ export const newEvolveFlowVersion = async ({
       totalSteps: 1,
       reusable: true,
       draft,
+      publishedAt: draft ? null : new Date(),
       // evolve flow has evolve rights over itself.
       EvolveFlow: {
         connect: {

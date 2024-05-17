@@ -12,5 +12,7 @@ export const formatDataTypeName = (dataType: FieldDataType): string => {
       return "date + time";
     case FieldDataType.Uri:
       return "link";
+    case FieldDataType.FlowVersionId:
+      return "flow version";
   }
 };
