@@ -1,4 +1,4 @@
-import { Stage, StageProps } from "./Stage";
+import { Stage, StageProps } from "../DiagramPanel/Stage";
 import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";

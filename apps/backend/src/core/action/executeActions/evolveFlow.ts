@@ -22,13 +22,16 @@ export const evolveFlow = async ({
     });
 
     const proposedFlowField = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-      fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow;
+      return fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow;
     });
 
     if (!proposedFlowField)
-      throw new GraphQLError(`Cannot find requestStepId ${requestStepId}`, {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
+      throw new GraphQLError(
+        `Cannot find proposed flow version for request step ${requestStepId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
 
     if (
       proposedFlowField.type !== "FreeInput" ||

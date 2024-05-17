@@ -18,9 +18,22 @@ export const ActionExecution = ({
   action: ActionFragment;
   actionExecution: ActionExecutionFragment | null;
 }) => {
+  const data = [
+    {
+      label: "Status",
+      value: <StatusTag status={actionExecution ? actionExecution.status : Status.NotAttempted} />,
+    },
+  ];
+
+  if (actionExecution?.lastAttemptedAt)
+    data.push({
+      label: actionExecution.status === Status.Completed ? "Completed at" : "Last attempted at",
+      value: <Typography>{new Date(actionExecution.lastAttemptedAt).toLocaleString()}</Typography>,
+    });
+
   switch (action.__typename) {
     case ActionType.CallWebhook: {
-      const data = [
+      data.unshift(
         {
           label: "Webhook integration",
           value: renderFreeInputValue(action.uri, FieldDataType.Uri, "1rem"),
@@ -31,29 +44,22 @@ export const ActionExecution = ({
         },
         {
           label: "Status",
-          value: actionExecution ? <StatusTag status={actionExecution.status} /> : <div>sdf</div>,
-        },
-      ];
-      if (actionExecution?.lastAttemptedAt)
-        data.push({
-          label: actionExecution.status === Status.Completed ? "Completed at" : "Last attempted at",
           value: (
-            <Typography>{new Date(actionExecution.lastAttemptedAt).toLocaleString()}</Typography>
+            <StatusTag status={actionExecution ? actionExecution.status : Status.NotAttempted} />
           ),
-        });
-      return (
-        <Box>
-          <DataTable data={data} ariaLabel="Webhook context table" />
-        </Box>
+        },
       );
+      break;
     }
     case ActionType.EvolveFlow: {
-      return (
-        <>
-          <Typography>Evolve flow</Typography>
-        </>
-      );
+      break;
     }
     default:
+      break;
   }
+  return (
+    <Box>
+      <DataTable data={data} ariaLabel="Action status table" />
+    </Box>
+  );
 };

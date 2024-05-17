@@ -1,5 +1,5 @@
-import { Stage, StageProps } from "./Stage";
-import { StageMenu } from "./StageMenu";
+import { Stage, StageProps } from "../DiagramPanel/Stage";
+import { StageMenu } from "../DiagramPanel/StageMenu";
 import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";

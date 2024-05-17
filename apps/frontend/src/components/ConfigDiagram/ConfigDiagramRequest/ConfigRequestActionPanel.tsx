@@ -22,7 +22,7 @@ export const ConfigRequestActionPanel = ({
       <PanelHeader>
         <Typography color="primary" variant="label">
           {actionProperties[action.__typename].label + " configuration"}
-        </Typography>{" "}
+        </Typography>
       </PanelHeader>
       <ConfigurationPanel>
         {action.filterOption && (
