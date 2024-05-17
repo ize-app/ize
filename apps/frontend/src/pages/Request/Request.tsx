@@ -10,7 +10,6 @@ import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/gr
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { Accordion } from "../../components/Accordion";
 import Loading from "../../components/Loading";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
@@ -19,6 +18,8 @@ import { Status } from "../../graphql/generated/graphql";
 import { StatusTag } from "@/components/status/StatusTag";
 import { AvatarWithName } from "@/components/Avatar";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
+import { Paper } from "@mui/material";
+import { PanelHeader } from "@/components/ConfigDiagram";
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();
@@ -74,85 +75,68 @@ export const Request = () => {
             <Typography variant={"h1"} marginTop="8px">
               {request.name}
             </Typography>
-            <Box
-              sx={{
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                maxWidth: "450px",
-                padding: "12px",
-                marginTop: "8px",
-              }}
-            >
-              <DataTable
-                data={[
-                  {
-                    label: "Flow",
-                    value: (
-                      <Link
-                        to={generatePath(Route.Flow, {
-                          flowId: fullUUIDToShort(request.flow.flowId),
-                          // Link to old version of flow if request is made from an older version
-                          flowVersionId:
-                            request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                              ? fullUUIDToShort(request.flow.flowVersionId)
-                              : null,
-                        })}
-                      >
-                        {request.flow.name}
-                      </Link>
-                    ),
-                  },
-                  {
-                    label: "Status",
-                    value: (
-                      <StatusTag status={request.final ? Status.Completed : Status.NotAttempted} />
-                    ),
-                  },
-                  { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
-                  {
-                    label: "Created at",
-                    value: <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>,
-                  },
-                ]}
-                ariaLabel="Request context table"
-              />
-            </Box>
-          </Box>
-          {canRespond &&
-            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
-              <Accordion
-                id="submit-response-panel"
-                defaultExpanded={true}
-                label={"Respond"}
-                elevation={6}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+              <Box
+                sx={{
+                  outline: "1px solid rgba(0, 0, 0, 0.1)",
+                  width: "40%",
+                  padding: "12px",
+                  marginTop: "8px",
+                  minWidth: "400px",
+                }}
               >
-                <ResponseForm
-                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
-                  responseFields={request.steps[request.currentStepIndex].responseFields}
+                <DataTable
+                  data={[
+                    {
+                      label: "Flow",
+                      value: (
+                        <Link
+                          to={generatePath(Route.Flow, {
+                            flowId: fullUUIDToShort(request.flow.flowId),
+                            // Link to old version of flow if request is made from an older version
+                            flowVersionId:
+                              request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                                ? fullUUIDToShort(request.flow.flowVersionId)
+                                : null,
+                          })}
+                        >
+                          {request.flow.name}
+                        </Link>
+                      ),
+                    },
+                    {
+                      label: "Status",
+                      value: (
+                        <StatusTag
+                          status={request.final ? Status.Completed : Status.NotAttempted}
+                        />
+                      ),
+                    },
+                    { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
+                    {
+                      label: "Created at",
+                      value: (
+                        <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
+                      ),
+                    },
+                  ]}
+                  ariaLabel="Request context table"
                 />
-              </Accordion>
-            )}
-          <Box
-            sx={(theme) => ({
-              display: "flex",
-              flexDirection: "row",
-              width: "100%",
-              gap: "30px",
-              flexWrap: "wrap",
-              [theme.breakpoints.down("md")]: {
-                flexDirection: "column",
-                gap: "8px",
-              },
-            })}
-          >
-            <Box sx={{ display: "flex", flexDirection: "row", gap: "12px" }}>
-              {/* <RemainingTime
-                expirationDate={new Date(Date.parse(request.expirationDate))}
-                result={request.result ?? undefined}
-              /> */}
-            </Box>
-            <Box sx={{ display: "flex", gap: ".3rem" }}>
-              {/* <Typography variant="body1"> Requested by </Typography>{" "} */}
-              {/* <NameWithPopper agents={[request.creator]} name={request.creator.name} /> */}
+              </Box>
+              {canRespond &&
+                ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+                  <Paper sx={{ flexGrow: 1, width: "60%", minWidth: "400px" }}>
+                    <PanelHeader>
+                      <Typography color="primary" variant="label">
+                        Respond
+                      </Typography>
+                    </PanelHeader>
+                    <ResponseForm
+                      requestStepId={request.steps[request.currentStepIndex].requestStepId}
+                      responseFields={request.steps[request.currentStepIndex].responseFields}
+                    />
+                  </Paper>
+                )}
             </Box>
           </Box>
         </Box>

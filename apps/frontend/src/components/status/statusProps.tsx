@@ -30,7 +30,7 @@ export const statusProps: RequestStatusProps = {
   },
   [Status.NotAttempted]: {
     color: "white",
-    backgroundColor: "black",
+    backgroundColor: muiTheme.palette.grey[700],
     label: "Pending",
     icon: RadioButtonUncheckedOutlinedIcon,
   },
