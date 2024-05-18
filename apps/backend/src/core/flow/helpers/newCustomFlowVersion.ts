@@ -8,7 +8,7 @@ export const newCustomFlowVersion = async ({
   flowArgs,
   evolveFlowId,
   flowId,
-  draft,
+  active,
   // each flow references an evolve flow id, not an evolve flow version id
   // when we are evolving a flow and or it's corresponding evolve flow
   // we need to know whether the evolve flow itself has been evolved as part of that draft
@@ -18,16 +18,16 @@ export const newCustomFlowVersion = async ({
   flowArgs: NewFlowArgs;
   flowId: string;
   evolveFlowId: string | null;
-  draft: boolean;
+  active: boolean;
   draftEvolveFlowVersionId: string | null;
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: flowArgs.name,
-      draft,
+      active,
       totalSteps: flowArgs.steps.length,
       reusable: flowArgs.reusable,
-      publishedAt: draft ? null : new Date(),
+      publishedAt: !active ? null : new Date(),
       DraftEvolveFlowVersion: draftEvolveFlowVersionId
         ? { connect: { id: draftEvolveFlowVersionId } }
         : undefined,
@@ -38,7 +38,7 @@ export const newCustomFlowVersion = async ({
             },
           }
         : undefined,
-      FlowForCurrentVersion: draft
+      FlowForCurrentVersion: !active
         ? undefined
         : {
             connect: {

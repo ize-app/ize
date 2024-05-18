@@ -280,7 +280,7 @@ model FlowVersion {
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
   evolveFlowId             String? @map("evolve_flow_id") @db.Uuid
   // whether the flow version has been actually published 
-  draft                    Boolean
+  active                   Boolean
   // this field is used for the evolve process so that a flow version and it's corresponding evolve flow can be evolved at the same time
   draftEvolveFlowVersionId String? @map("draft_evolve_flow_version_id") @db.Uuid
 

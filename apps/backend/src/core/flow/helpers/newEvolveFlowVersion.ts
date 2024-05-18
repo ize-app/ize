@@ -7,27 +7,27 @@ export const newEvolveFlowVersion = async ({
   transaction,
   flowId,
   evolveArgs,
-  draft,
+  active,
 }: {
   transaction: Prisma.TransactionClient;
   flowId: string;
   evolveArgs: EvolveFlowArgs;
-  draft: boolean;
+  active: boolean;
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: "Evolve flow",
       totalSteps: 1,
       reusable: true,
-      draft,
-      publishedAt: draft ? null : new Date(),
+      active,
+      publishedAt: !active ? null : new Date(),
       // evolve flow has evolve rights over itself.
       EvolveFlow: {
         connect: {
           id: flowId,
         },
       },
-      FlowForCurrentVersion: draft
+      FlowForCurrentVersion: !active
         ? undefined
         : {
             connect: {

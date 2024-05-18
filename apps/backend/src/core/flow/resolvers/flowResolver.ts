@@ -30,7 +30,7 @@ export const flowResolver = ({
     createdAt: flowVersion.Flow.createdAt.toISOString(),
     versionCreatedAt: flowVersion.createdAt.toISOString(),
     versionPublishedAt: flowVersion.publishedAt && flowVersion.publishedAt.toISOString(),
-    draft: flowVersion.draft,
+    active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
     name: flowNameOverride ?? flowVersion.name,

@@ -48,13 +48,39 @@ export const evolveFlow = async ({
 
     const proposedFlowVersion = await transaction.flowVersion.findFirstOrThrow({
       where: { id: proposedFlowField.AnswerFreeInput[0].value },
+      include: {
+        Flow: {
+          include: {
+            CurrentFlowVersion: true,
+          },
+        },
+      },
     });
+
+    const currentFlowVersionId = proposedFlowVersion.Flow.CurrentFlowVersion?.id;
+    if (!currentFlowVersionId)
+      throw new GraphQLError(
+        `Cannot find current flow version for proposed flow version ${proposedFlowVersion.id}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
 
     await transaction.flowVersion.update({
       where: { id: proposedFlowField.AnswerFreeInput[0].value },
       data: {
-        draft: false,
+        active: true,
         publishedAt: new Date(),
+        // change current flow version to inactive
+        Flow: {
+          update: {
+            CurrentFlowVersion: {
+              update: {
+                active: false,
+              },
+            },
+          },
+        },
         FlowForCurrentVersion: { connect: { id: proposedFlowVersion.flowId } },
       },
     });
@@ -64,7 +90,17 @@ export const evolveFlow = async ({
       await transaction.flowVersion.update({
         where: { id: proposedFlowVersion.draftEvolveFlowVersionId },
         data: {
-          draft: false,
+          active: true,
+          publishedAt: new Date(),
+          Flow: {
+            update: {
+              CurrentFlowVersion: {
+                update: {
+                  active: false,
+                },
+              },
+            },
+          },
           FlowForCurrentVersion: { connect: { id: proposedFlowVersion.evolveFlowId } },
         },
       });

@@ -102,7 +102,7 @@ export const newEvolveRequest = async ({
         transaction,
         flowId: flow.CurrentFlowVersion?.evolveFlowId,
         evolveArgs: proposedFlow.evolve,
-        draft: true,
+        active: false,
       });
     }
     // create new custom flow version
@@ -111,7 +111,7 @@ export const newEvolveRequest = async ({
       flowArgs: proposedFlow,
       flowId: flow.id,
       evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId ?? null,
-      draft: true,
+      active: false,
       draftEvolveFlowVersionId,
     });
 

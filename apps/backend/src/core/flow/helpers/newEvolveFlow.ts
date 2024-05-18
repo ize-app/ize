@@ -15,7 +15,7 @@ export const newEvolveFlow = async ({
     data: { type: FlowType.Evolve, creatorId },
   });
 
-  await newEvolveFlowVersion({ transaction, flowId: flow.id, evolveArgs, draft: false });
+  await newEvolveFlowVersion({ transaction, flowId: flow.id, evolveArgs, active: true });
 
   return flow.id;
 };

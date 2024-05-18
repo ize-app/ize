@@ -15,7 +15,7 @@ type Flow {
   createdAt: String!
   versionCreatedAt: String!
   versionPublishedAt: String
-  draft: Boolean!
+  active: Boolean!
   type: FlowType!
   name: String!
   reusable: Boolean!

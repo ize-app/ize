@@ -36,7 +36,7 @@ export const newCustomFlow = async ({
       flowArgs: args.flow,
       flowId: flow.id,
       evolveFlowId,
-      draft: false,
+      active: true,
       draftEvolveFlowVersionId: null,
     });
 

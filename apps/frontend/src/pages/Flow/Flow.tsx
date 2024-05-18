@@ -51,8 +51,8 @@ export const Flow = () => {
   // console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
-  const isDraft = flow ? flow.draft : false;
-  const isOldVersion = flow ? !flow.draft && !isCurrentFlowVersion : false;
+  const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
+  const isOldVersion = flow ? !flow.active && flow.versionPublishedAt : false;
   const isEvolveFlow = (flow && flow.type === FlowType.Evolve) ?? false;
 
   const onError = () => {
