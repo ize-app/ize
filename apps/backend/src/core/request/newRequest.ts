@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/client";
-import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
+import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
 import { flowInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
@@ -38,6 +38,14 @@ export const newRequest = async ({
     throw new GraphQLError("Missing current version of flow", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
+
+  if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
+    throw new GraphQLError(
+      `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
   const step = flow.CurrentFlowVersion.Steps[0];
 

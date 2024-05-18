@@ -12,6 +12,7 @@ import {
   FieldOptionsSelectionType,
   FieldType,
   Flow,
+  FlowType,
   GetFlowDocument,
 } from "../../../graphql/generated/graphql";
 import * as Routes from "../../../routers/routes";
@@ -52,6 +53,10 @@ export const CreateRequestForm = () => {
 
   const flow = data?.getFlow as Flow;
   const step = flow ? flow.steps[0] : null;
+
+  // Users shouldn't be able to create requests for evolve flows directly in the UI
+  if (flow && flow.type === FlowType.Evolve)
+    navigate(Routes.newRequestRoute(Routes.NewRequestRoute.SelectFlow));
 
   useEffect(() => {
     if (step && !loading) {

@@ -1,6 +1,7 @@
 import { prisma } from "../../prisma/client";
 import {
   FieldAnswerArgs,
+  FlowType,
   MutationNewEvolveRequestArgs,
   NewRequestArgs,
 } from "@graphql/generated/resolver-types";
@@ -33,13 +34,23 @@ export const newEvolveRequest = async ({
       where: { id: flowId },
     });
     if (!flow.CurrentFlowVersion)
-      throw new GraphQLError("Missing current version of flow", {
+      throw new GraphQLError(`Missing current version of flow. FlowId ${flowId}`, {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
     if (!flow.CurrentFlowVersion.evolveFlowId)
-      throw new GraphQLError("Flow does not have an evolve flow ", {
+      throw new GraphQLError(`Flow does not have an evolve flow. FlowId ${flowId}`, {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
+    // currently, we're only allowing evolve requests to be created for custom flows
+    // in the future, we'll allow evolve flows to evolve themselves independent of the custom flow
+    // but this is a simplifying assumption for v1 because allowing this could result in invalid evolve flows
+    if (flow.type === FlowType.Evolve)
+      throw new GraphQLError(
+        `Cannot create evolve request for an evolve flow directly. FlowId ${flowId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
     // find evolve flow and it's fields so they can be referenced in the evolve request
     const evolveFlow = await transaction.flow.findUniqueOrThrow({
       where: { id: flow.CurrentFlowVersion.evolveFlowId },
@@ -60,9 +71,12 @@ export const newEvolveRequest = async ({
     const evolveFlowStep =
       (evolveFlow.CurrentFlowVersion && evolveFlow.CurrentFlowVersion.Steps[0]) ?? null;
     if (!evolveFlowStep || !evolveFlowStep.RequestFieldSet)
-      throw new GraphQLError("Invalid evolve flow configuration. Cannot find first step of flow", {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
+      throw new GraphQLError(
+        `Invalid evolve flow configuration. Cannot find first step of flow. flowVersionId: ${evolveFlow.currentFlowVersionId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
 
     const proposedFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find((field) => {
       return field.Field.name === EvolveFlowFields.ProposedFlow;

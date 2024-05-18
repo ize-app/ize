@@ -7,7 +7,7 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import { FlowFragment, GetFlowDocument } from "../../graphql/generated/graphql";
+import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -47,13 +47,13 @@ export const Flow = () => {
     },
   });
 
-
   const flow = flowData?.getFlow as FlowFragment;
   // console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? flow.draft : false;
   const isOldVersion = flow ? !flow.draft && !isCurrentFlowVersion : false;
+  const isEvolveFlow = (flow && flow.type === FlowType.Evolve) ?? false;
 
   const onError = () => {
     navigate("/");
@@ -144,7 +144,7 @@ export const Flow = () => {
               gap: "16px",
             }}
           >
-            {isCurrentFlowVersion ? (
+            {isCurrentFlowVersion && !isEvolveFlow && (
               <>
                 <Button
                   variant="contained"
@@ -181,7 +181,8 @@ export const Flow = () => {
                   Evolve flow
                 </Button>
               </>
-            ) : (
+            )}
+            {isOldVersion && (
               <Button
                 variant="contained"
                 disabled={!flow.steps[0]?.userPermission.request}
