@@ -481,7 +481,9 @@ export enum NewEntityTypes {
 
 export type NewEvolveRequestArgs = {
   currentFlow: NewFlowArgs;
+  description?: InputMaybe<Scalars['String']['input']>;
   flowId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   proposedFlow: NewFlowArgs;
 };
 

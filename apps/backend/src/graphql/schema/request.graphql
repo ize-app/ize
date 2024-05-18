@@ -24,6 +24,8 @@ input NewRequestArgs {
 
 input NewEvolveRequestArgs {
   flowId: String!
+  name: String!
+  description: String
   proposedFlow: NewFlowArgs!
   currentFlow: NewFlowArgs!
 }

@@ -58,10 +58,13 @@ export const EvolveFlow = () => {
   const onComplete = async () => {
     try {
       if (!me?.user.id) throw Error("Missing user Id");
+      
       await mutate({
         variables: {
           request: {
             flowId: flowId,
+            name: formState.requestName,
+            description: formState.requestDescription,
             proposedFlow: createNewFlowArgs(formState, me?.user.id),
             currentFlow: createNewFlowArgs(formState.currentFlow, me?.user.id),
           },

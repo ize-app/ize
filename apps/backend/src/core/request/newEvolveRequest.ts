@@ -1,5 +1,9 @@
 import { prisma } from "../../prisma/client";
-import { MutationNewEvolveRequestArgs, NewRequestArgs } from "@graphql/generated/resolver-types";
+import {
+  FieldAnswerArgs,
+  MutationNewEvolveRequestArgs,
+  NewRequestArgs,
+} from "@graphql/generated/resolver-types";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { newCustomFlowVersion } from "../flow/helpers/newCustomFlowVersion";
 import { newEvolveFlowVersion } from "../flow/helpers/newEvolveFlowVersion";
@@ -67,6 +71,11 @@ export const newEvolveRequest = async ({
     const currentFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
       (field) => field.Field.name === EvolveFlowFields.CurrentFlow,
     );
+
+    const descriptionField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
+      (field) => field.Field.name === EvolveFlowFields.Description,
+    );
+
     if (!proposedFlowField || !currentFlowField)
       throw new GraphQLError("Cannot find proposed flow and current flow fields of evolve flow", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -92,17 +101,27 @@ export const newEvolveRequest = async ({
       draftEvolveFlowVersionId,
     });
 
+    const requestFields: FieldAnswerArgs[] = [
+      {
+        fieldId: currentFlowField.fieldId,
+        value: flow.CurrentFlowVersion.id,
+        optionSelections: [],
+      },
+      { fieldId: proposedFlowField.fieldId, value: proposedFlowVersionId, optionSelections: [] },
+    ];
+
+    if (descriptionField) {
+      requestFields.push({
+        fieldId: descriptionField.fieldId,
+        value: args.request.description ?? null,
+        optionSelections: [],
+      });
+    }
+
     const requestArgs: NewRequestArgs = {
       flowId: flow.CurrentFlowVersion.evolveFlowId,
-      name: "Evolve Request - test",
-      requestFields: [
-        {
-          fieldId: currentFlowField.fieldId,
-          value: flow.CurrentFlowVersion.id,
-          optionSelections: [],
-        },
-        { fieldId: proposedFlowField.fieldId, value: proposedFlowVersionId, optionSelections: [] },
-      ],
+      name: args.request.name,
+      requestFields,
       requestDefinedOptions: [],
     };
 

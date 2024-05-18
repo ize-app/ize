@@ -70,8 +70,8 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
-  console.log("form state is ", useFormMethods.getValues());
-  console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("form state is ", useFormMethods.getValues());
+  // console.log("errors are ", useFormMethods.formState.errors);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,

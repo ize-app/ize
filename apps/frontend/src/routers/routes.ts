@@ -33,6 +33,7 @@ export enum NewCustomGroupRoute {
 
 export enum EvolveFlowRoute {
   Setup = "",
+  Context = "/context",
   Confirm = "/confirm",
 }
 

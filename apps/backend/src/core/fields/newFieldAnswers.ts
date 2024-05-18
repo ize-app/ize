@@ -28,8 +28,12 @@ export const newFieldAnswers = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
   // check whether that all required fields have answers
-
-  const answerFieldIds = fieldAnswers.map((a) => a.fieldId);
+  const fieldAnswersFiltered = fieldAnswers.filter(
+    (a) =>
+      (a.value !== null && a.value !== undefined) ||
+      (a.optionSelections && a.optionSelections.length > 0),
+  );
+  const answerFieldIds = fieldAnswersFiltered.map((a) => a.fieldId);
   const fields = fieldSet.FieldSetFields.map((f) => f.Field);
   if (fields.some((f) => f.required && !answerFieldIds.includes(f.id)))
     throw new GraphQLError("Missing required fields", {
@@ -37,7 +41,7 @@ export const newFieldAnswers = async ({
     });
   // iterate through each answer
   await Promise.all(
-    fieldAnswers.map(async (fieldAnswer) => {
+    fieldAnswersFiltered.map(async (fieldAnswer) => {
       const field = fields.find((field) => field.id === fieldAnswer.fieldId);
       if (!field)
         throw new GraphQLError(
@@ -49,7 +53,9 @@ export const newFieldAnswers = async ({
 
       switch (field.type) {
         case FieldType.FreeInput: {
-          if (!fieldAnswer.value)
+          // the value should never be empty because we filter out empty values above
+          // including this check here to make typescript happy
+          if (fieldAnswer.value === null || fieldAnswer.value === undefined)
             throw new GraphQLError(
               `Free input field answer is missing value. fieldId: ${fieldAnswer.fieldId}`,
               {

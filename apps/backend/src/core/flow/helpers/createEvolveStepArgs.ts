@@ -16,6 +16,13 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
   const requestFieldSetArgs: FieldArgs[] = [
     {
       type: FieldType.FreeInput,
+      fieldId: "proposed",
+      freeInputDataType: FieldDataType.FlowVersionId,
+      name: EvolveFlowFields.ProposedFlow,
+      required: true,
+    },
+    {
+      type: FieldType.FreeInput,
       fieldId: "current",
       freeInputDataType: FieldDataType.FlowVersionId,
       name: EvolveFlowFields.CurrentFlow,
@@ -23,10 +30,10 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     },
     {
       type: FieldType.FreeInput,
-      fieldId: "proposed",
-      freeInputDataType: FieldDataType.FlowVersionId,
-      name: EvolveFlowFields.ProposedFlow,
-      required: true,
+      fieldId: "description",
+      freeInputDataType: FieldDataType.String,
+      name: EvolveFlowFields.Description,
+      required: false,
     },
   ];
 
