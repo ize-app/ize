@@ -12,13 +12,7 @@ import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../../components/Loading";
-import {
-  EvolveFlowRoute,
-  evolveFlowRoute,
-  NewRequestRoute,
-  newRequestRoute,
-  Route,
-} from "@/routers/routes";
+import { EvolveFlowRoute, evolveFlowRoute, Route } from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import { Chip } from "@mui/material";
@@ -135,7 +129,6 @@ export const Flow = () => {
               </Box>
             )}
           </Box>
-          <br />
           <Box
             sx={{
               display: "flex",
@@ -155,8 +148,9 @@ export const Flow = () => {
                   }}
                   onClick={() =>
                     navigate(
-                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                      generatePath(Route.Flow, {
                         flowId: fullUUIDToShort(flow.flowId),
+                        flowVersionId: null,
                       }),
                     )
                   }
@@ -204,6 +198,26 @@ export const Flow = () => {
               </Button>
             )}
           </Box>
+          {flow.flowsEvolvedByThisFlow.length > 0 && (
+            <>
+              <Typography>This flow is responsible for evolving: </Typography>
+              <Box component="ul" sx={{ display: "flex", marginBlockStart: "0rem" }}>
+                {flow.flowsEvolvedByThisFlow.map((evolvedFlow) => (
+                  <Typography component="li">
+                    <Link
+                      key={evolvedFlow.flowId}
+                      to={generatePath(Route.Flow, {
+                        flowId: fullUUIDToShort(evolvedFlow.flowId),
+                        flowVersionId: null,
+                      })}
+                    >
+                      {evolvedFlow.flowName}
+                    </Link>
+                  </Typography>
+                ))}
+              </Box>
+            </>
+          )}
         </Box>
         <ConfigDiagramFlow flow={flow} />
         {isCurrentFlowVersion && <RequestStepsSearch userOnly={false} flowId={flow.flowId} />}

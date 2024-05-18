@@ -34,7 +34,16 @@ export const flowVersionInclude = Prisma.validator<Prisma.FlowVersionInclude>()(
   Steps: {
     include: stepInclude,
   },
-  Flow: true,
+  Flow: {
+    // if evolve flow, this will be array of all flow versions managed by that evolveflow
+    include: {
+      EvolveRightsForFlowVersions: {
+        include: {
+          Flow: true,
+        },
+      },
+    },
+  },
 });
 
 export type FlowVersionPrismaType = Prisma.FlowVersionGetPayload<{

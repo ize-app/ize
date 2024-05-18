@@ -263,10 +263,10 @@ model Flow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Creator                    User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  CurrentFlowVersion         FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
-  FlowVersions               FlowVersion[] @relation("FlowToAllFlowVersions")
-  EvolveRightsFoFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
+  Creator                     User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  CurrentFlowVersion          FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
+  FlowVersions                FlowVersion[] @relation("FlowToAllFlowVersions")
+  EvolveRightsForFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
 
   @@map("flows")
 }
@@ -279,7 +279,8 @@ model FlowVersion {
   flowId                   String  @map("flow_id") @db.Uuid
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
   evolveFlowId             String? @map("evolve_flow_id") @db.Uuid
-  // whether the flow version has been actually published 
+  // whether the flow version is live
+  // TODO: There should only be one active flow version per flow. In the future, we should enforce this constraint in the db
   active                   Boolean
   // this field is used for the evolve process so that a flow version and it's corresponding evolve flow can be evolved at the same time
   draftEvolveFlowVersionId String? @map("draft_evolve_flow_version_id") @db.Uuid

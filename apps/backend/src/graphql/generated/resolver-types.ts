@@ -244,6 +244,7 @@ export type Flow = {
   evolve?: Maybe<Flow>;
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
+  flowsEvolvedByThisFlow: Array<FlowReference>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
@@ -251,6 +252,12 @@ export type Flow = {
   type: FlowType;
   versionCreatedAt: Scalars['String']['output'];
   versionPublishedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type FlowReference = {
+  __typename?: 'FlowReference';
+  flowId: Scalars['String']['output'];
+  flowName: Scalars['String']['output'];
 };
 
 export type FlowSummary = {
@@ -1003,6 +1010,7 @@ export type ResolversTypes = {
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
   Flow: ResolverTypeWrapper<Flow>;
+  FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<FlowSummary>;
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
@@ -1112,6 +1120,7 @@ export type ResolversParentTypes = {
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   Flow: Flow;
+  FlowReference: FlowReference;
   FlowSummary: FlowSummary;
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
@@ -1303,6 +1312,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowsEvolvedByThisFlow?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1310,6 +1320,12 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
   versionCreatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   versionPublishedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FlowReferenceResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowReference'] = ResolversParentTypes['FlowReference']> = {
+  flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1696,6 +1712,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
+  FlowReference?: FlowReferenceResolvers<ContextType>;
   FlowSummary?: FlowSummaryResolvers<ContextType>;
   FreeInput?: FreeInputResolvers<ContextType>;
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;

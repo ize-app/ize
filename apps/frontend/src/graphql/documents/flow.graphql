@@ -45,12 +45,20 @@ fragment FlowFields on Flow {
   versionCreatedAt
   versionPublishedAt
   active
+  flowsEvolvedByThisFlow {
+    ...FlowRefernce
+  }
   type
   name
   reusable
   steps {
     ...Step
   }
+}
+
+fragment FlowRefernce on FlowReference {
+  flowId
+  flowName
 }
 
 fragment Step on Step {

@@ -34,6 +34,12 @@ export const flowResolver = ({
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
     name: flowNameOverride ?? flowVersion.name,
+    flowsEvolvedByThisFlow: flowVersion.Flow.EvolveRightsForFlowVersions.filter(
+      (fv) => fv.active && fv.Flow.type !== FlowType.Evolve,
+    ).map((fv) => ({
+      flowName: fv.name,
+      flowId: fv.Flow.id,
+    })),
     steps: flowVersion.Steps.map((step) =>
       stepResolver({
         step,

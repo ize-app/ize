@@ -20,6 +20,7 @@ type Flow {
   name: String!
   reusable: Boolean!
   steps: [Step!]!
+  flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
 }
 
@@ -31,6 +32,11 @@ type FlowSummary {
   # permission to trigger first step of the flow
   requestStep0Permission: Permission!
   userPermission: UserFlowPermission!
+}
+
+type FlowReference {
+  flowId: String!
+  flowName: String!
 }
 
 enum FlowType {
