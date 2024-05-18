@@ -8,6 +8,7 @@ export const flowResolver = ({
   userIdentityIds,
   userGroupIds,
   userId,
+  flowNameOverride,
   responseFieldsCache = [],
   resultConfigsCache = [],
 }: {
@@ -16,6 +17,7 @@ export const flowResolver = ({
   userIdentityIds: string[];
   userGroupIds: string[];
   userId: string | undefined;
+  flowNameOverride?: string;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
 }): Flow => {
@@ -31,7 +33,7 @@ export const flowResolver = ({
     draft: flowVersion.draft,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
-    name: flowVersion.name,
+    name: flowNameOverride ?? flowVersion.name,
     steps: flowVersion.Steps.map((step) =>
       stepResolver({
         step,

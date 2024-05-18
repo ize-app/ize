@@ -125,6 +125,11 @@ export const newEvolveRequest = async ({
       requestDefinedOptions: [],
     };
 
-    return await newRequest({ args: { request: requestArgs }, context, transaction });
+    return await newRequest({
+      args: { request: requestArgs },
+      context,
+      transaction,
+      proposedFlowVersionId,
+    });
   });
 };

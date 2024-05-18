@@ -14,10 +14,13 @@ import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 export const newRequest = async ({
   args,
   context,
+  // proposed flow version id is used when creating an evolution request
+  proposedFlowVersionId,
   transaction = prisma,
 }: {
   args: MutationNewRequestArgs;
   context: GraphqlRequestContext;
+  proposedFlowVersionId?: string;
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   const {
@@ -53,6 +56,7 @@ export const newRequest = async ({
       name: args.request.name,
       flowVersionId: flow.CurrentFlowVersion.id,
       creatorId: context.currentUser.id,
+      proposedFlowVersionId,
       final: false,
     },
   });

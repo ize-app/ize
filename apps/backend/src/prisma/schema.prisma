@@ -292,7 +292,10 @@ model FlowVersion {
   Flow                                         Flow          @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
   EvolveFlow                                   Flow?         @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
   Steps                                        Step[]
-  Request                                      Request[]
+  Request                                      Request[]     @relation("FlowVersion")
+  // The request that proposes this flow version as the next version
+  EvolutionRequest                             Request?      @relation("ProposedFlowVersionEvolution")
+  // When a draft flow version is created, it's draft evolve flow version is also created and referenced here
   DraftEvolveFlowVersion                       FlowVersion?  @relation("DraftEvolveFlowVersion", fields: [draftEvolveFlowVersionId], references: [id], onDelete: Cascade)
   FlowVersionsReferencingThisEvolveFlowVersion FlowVersion[] @relation("DraftEvolveFlowVersion")
 
@@ -684,18 +687,21 @@ model ActionExecution {
 }
 
 model Request {
-  id                   String   @id @default(uuid()) @db.Uuid
-  creatorId            String   @map("creator_id") @db.Uuid
-  flowVersionId        String   @map("flow_version_id") @db.Uuid
-  currentRequestStepId String?  @unique @map("current_request_step_id") @db.Uuid
-  name                 String
-  final                Boolean  @default(false)
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
+  id                    String   @id @default(uuid()) @db.Uuid
+  creatorId             String   @map("creator_id") @db.Uuid
+  flowVersionId         String   @map("flow_version_id") @db.Uuid
+  currentRequestStepId  String?  @unique @map("current_request_step_id") @db.Uuid
+  name                  String
+  final                 Boolean  @default(false)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+  // if a request is an "evolve" request, this field will include the proposed flow version id
+  proposedFlowVersionId String?  @unique @map("proposed_flow_version_id") @db.Uuid
 
-  FlowVersion        FlowVersion  @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  Creator            User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  CurrentRequestStep RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id], onDelete: Cascade)
+  FlowVersion                  FlowVersion  @relation("FlowVersion", fields: [flowVersionId], references: [id], onDelete: Cascade)
+  ProposedFlowVersionEvolution FlowVersion? @relation("ProposedFlowVersionEvolution", fields: [proposedFlowVersionId], references: [id], onDelete: Cascade)
+  Creator                      User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  CurrentRequestStep           RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id], onDelete: Cascade)
 
   // For when the options are request are created by the requestor or the previous step
   RequestSteps RequestStep[]

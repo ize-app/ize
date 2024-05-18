@@ -1,10 +1,11 @@
-import { Field, Request, ResultConfig } from "@/graphql/generated/resolver-types";
+import { Field, FlowType, Request, ResultConfig } from "@/graphql/generated/resolver-types";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { RequestPrismaType } from "../requestPrismaTypes";
 import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { requestStepResolver } from "./requestStepResolver";
 import { userResolver } from "@/core/user/userResolver";
+import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 
 export const requestResolver = ({
   req,
@@ -18,6 +19,13 @@ export const requestResolver = ({
   const responseFieldsCache: Field[] = [];
   const resultConfigsCache: ResultConfig[] = [];
   const identityIds = context.currentUser?.Identities.map((i) => i.id) ?? [];
+  let flowNameOverride: string | null = null;
+
+  if (req.FlowVersion.Flow.type === FlowType.Evolve) {
+    flowNameOverride = getEvolveRequestFlowName({
+      proposedFlowVersion: req.ProposedFlowVersionEvolution,
+    });
+  }
 
   // note: this call needs to happen before requestStepResolver is called
   // so that the response and result caches can be populated
@@ -26,6 +34,7 @@ export const requestResolver = ({
     userGroupIds,
     userId: context.currentUser?.id,
     userIdentityIds: identityIds,
+    flowNameOverride: flowNameOverride ?? undefined,
     responseFieldsCache,
     resultConfigsCache,
   });

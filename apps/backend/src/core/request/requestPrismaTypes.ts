@@ -18,6 +18,19 @@ export type RequestDefinedOptionSetPrismaType = Prisma.RequestDefinedOptionSetGe
   include: typeof requestDefinedOptionSetInclude;
 }>;
 
+// for evolution requests, we want the proposed flow version and that flow version's
+// corresponding flow and current flow version
+export const evolveRequestProposedFlowVersionInclude =
+  Prisma.validator<Prisma.FlowVersionInclude>()({
+    Flow: {
+      include: { CurrentFlowVersion: true },
+    },
+  });
+
+export type EvolveRequestProposedFlowVersionPrismaType = Prisma.FlowVersionGetPayload<{
+  include: typeof evolveRequestProposedFlowVersionInclude;
+}>;
+
 export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()({
   RequestFieldAnswers: {
     include: fieldAnswerInclude,
@@ -55,6 +68,9 @@ export const requestStepSummaryInclude = Prisma.validator<Prisma.RequestStepIncl
       Creator: {
         include: userInclude,
       },
+      ProposedFlowVersionEvolution: {
+        include: evolveRequestProposedFlowVersionInclude,
+      },
     },
   },
   Step: {
@@ -79,6 +95,9 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   },
   FlowVersion: {
     include: flowVersionInclude,
+  },
+  ProposedFlowVersionEvolution: {
+    include: evolveRequestProposedFlowVersionInclude,
   },
 });
 
