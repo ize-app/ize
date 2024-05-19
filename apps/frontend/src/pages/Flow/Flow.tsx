@@ -133,7 +133,7 @@ export const Flow = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              marginTop: "8px",
+              marginTop: "16px",
               gap: "16px",
             }}
           >

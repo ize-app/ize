@@ -7,6 +7,7 @@ import { parse } from "tldts";
 export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,
   responseFields: Field[] | undefined,
+  hideSensitiveInfo = true,
 ): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
@@ -31,7 +32,7 @@ export const actionResolver = (
 
   switch (action.type) {
     case ActionType.CallWebhook:
-      return callWebhookResolver(action, filterOption);
+      return callWebhookResolver(action, filterOption, hideSensitiveInfo);
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
@@ -52,6 +53,7 @@ export const actionResolver = (
 const callWebhookResolver = (
   action: ActionNewPrismaType,
   filterOption: Option | undefined,
+  obscureUri = true,
 ): CallWebhook => {
   const webhook = action.Webhook;
   if (!webhook)
@@ -60,7 +62,7 @@ const callWebhookResolver = (
     });
   return {
     __typename: "CallWebhook",
-    uri: "https://" + parse(webhook.uri).domain ?? "", // Only return the hostname for privacy
+    uri: obscureUri ? "https://" + parse(webhook.uri).domain ?? "" : webhook.uri, // Only return the hostname for privacy
     name: webhook.name,
     filterOption,
   };

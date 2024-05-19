@@ -2,8 +2,8 @@ mutation NewFlow($flow: NewFlowArgs!) {
   newFlow(flow: $flow)
 }
 
-query GetFlow($flowId: String, $flowVersionId: String) {
-  getFlow(flowId: $flowId, flowVersionId: $flowVersionId) {
+query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Boolean) {
+  getFlow(flowId: $flowId, flowVersionId: $flowVersionId, isForEvolveRequest: $isForEvolveRequest) {
     ...Flow
   }
 }

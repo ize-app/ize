@@ -13,6 +13,7 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
+  hideSensitiveInfo = true,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -20,6 +21,7 @@ export const stepResolver = ({
   userId: string | undefined;
   responseFieldsCache: Field[];
   resultConfigsCache: ResultConfig[];
+  hideSensitiveInfo?: boolean;
 }): Step => {
   const responseFields = fieldSetResolver({
     fieldSet: step.ResponseFieldSet,
@@ -46,7 +48,7 @@ export const stepResolver = ({
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
       fields: responseFields,
     },
-    action: actionResolver(step.Action, responseFieldsCache),
+    action: actionResolver(step.Action, responseFieldsCache, hideSensitiveInfo),
     result,
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,

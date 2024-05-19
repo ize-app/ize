@@ -630,6 +630,7 @@ export type QueryDiscordServerRolesArgs = {
 export type QueryGetFlowArgs = {
   flowId?: InputMaybe<Scalars['String']['input']>;
   flowVersionId?: InputMaybe<Scalars['String']['input']>;
+  isForEvolveRequest?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 

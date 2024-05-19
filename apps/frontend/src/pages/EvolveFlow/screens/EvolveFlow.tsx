@@ -35,6 +35,7 @@ export const EvolveFlow = () => {
   const { loading } = useQuery(GetFlowDocument, {
     variables: {
       flowId,
+      isForEvolveRequest: true,
     },
     onCompleted: (data) => {
       const formState = createFlowFormState(data.getFlow as FlowFragment);
@@ -58,7 +59,6 @@ export const EvolveFlow = () => {
   const onComplete = async () => {
     try {
       if (!me?.user.id) throw Error("Missing user Id");
-      
       await mutate({
         variables: {
           request: {

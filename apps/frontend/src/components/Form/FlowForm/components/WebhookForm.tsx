@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { ActionType, TestWebhookDocument } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
-import { Box, Button, FormHelperText } from "@mui/material";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { useMutation } from "@apollo/client";
 import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
@@ -78,6 +78,10 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           showLabel={false}
           name={`steps.${formIndex}.action.callWebhook.name`}
         />
+        <Typography>
+          This webhook will only be viewable by users who have rights to request an evolution for
+          this flow.
+        </Typography>
         <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <TextField<FlowSchemaType>
             control={formMethods.control}

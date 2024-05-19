@@ -9,6 +9,7 @@ export const flowResolver = ({
   userGroupIds,
   userId,
   flowNameOverride,
+  hideSensitiveInfo = true,
   responseFieldsCache = [],
   resultConfigsCache = [],
 }: {
@@ -20,6 +21,7 @@ export const flowResolver = ({
   flowNameOverride?: string;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
+  hideSensitiveInfo?: boolean;
 }): Flow => {
   return {
     __typename: "Flow",
@@ -48,6 +50,7 @@ export const flowResolver = ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
+        hideSensitiveInfo,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow
