@@ -11,6 +11,7 @@ export const createActionFormState = (action: Action | null | undefined): Action
         callWebhook: {
           name: action.name,
           uri: action.uri,
+          valid: true,
         },
       };
     case ActionType.TriggerStep:
