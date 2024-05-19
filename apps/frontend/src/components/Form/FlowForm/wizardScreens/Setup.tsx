@@ -20,8 +20,6 @@ import { WebhookForm } from "../components/WebhookForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
-import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
-import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 
 import {
   FlowConfigDiagramContainer,
@@ -32,6 +30,8 @@ import {
   PanelContainer,
   FlowStage,
 } from "@/components/ConfigDiagram";
+import { actionProperties } from "@/components/Action/actionProperties";
+import { DefaultOptionSelection } from "../formValidation/fields";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -70,10 +70,8 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
-  const hasWebhook = useFormMethods.watch("steps.0.action.type") === ActionType.CallWebhook;
-
-  console.log("form state is ", useFormMethods.getValues());
-  console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("form state is ", useFormMethods.getValues());
+  // console.log("errors are ", useFormMethods.formState.errors);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -84,6 +82,10 @@ export const Setup = () => {
     setFormState((prev) => ({ ...prev, ...data }));
     onNext();
   };
+
+  const hasWebhook =
+    useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action.type`) ===
+    ActionType.CallWebhook;
 
   return (
     <form style={{ height: "100%" }}>
@@ -122,10 +124,16 @@ export const Setup = () => {
                       index > 0
                         ? () => {
                             stepsArrayMethods.remove(index);
+                            setSelectedId("trigger0");
                           }
                         : undefined
                     }
-                    hasError={!!useFormMethods.formState.errors.steps?.[index]}
+                    hasError={
+                      !!useFormMethods.formState.errors.steps?.[index]?.root ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.response ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds ||
+                      !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses
+                    }
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
@@ -153,7 +161,12 @@ export const Setup = () => {
                 <AddStageButton
                   label={"Add collaborative step"}
                   onClick={() => {
+                    const secondToLastIndex = stepsArrayMethods.fields.length - 1;
                     stepsArrayMethods.append(defaultStepFormValues);
+                    useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
+                      filterOptionId: DefaultOptionSelection.None,
+                      type: ActionType.TriggerStep,
+                    });
                     // navigate to newly created step
                     setSelectedId(`step${stepsArrayMethods.fields.length}`);
                   }}
@@ -163,6 +176,7 @@ export const Setup = () => {
                   onClick={() => {
                     //@ts-ignore
                     useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
+                      filterOptionId: DefaultOptionSelection.None,
                       type: ActionType.CallWebhook,
                     });
                     setSelectedId("webhook");
@@ -171,19 +185,19 @@ export const Setup = () => {
               </Box>
             ) : (
               <FlowStage
-                label="Webhook"
+                label={actionProperties[ActionType.CallWebhook].label}
                 id={"webhook"}
+                icon={actionProperties[ActionType.CallWebhook].icon}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
                 deleteHandler={() => {
-                  console.log("deleting webhook");
                   setSelectedId("trigger0");
                   useFormMethods.setValue(
                     `steps.${stepsArrayMethods.fields.length - 1}.action`,
                     undefined,
                   );
                 }}
-                icon={PublicOutlinedIcon}
+                sx={{ marginBottom: "16px" }}
                 hasError={
                   !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
                     ?.action
@@ -195,7 +209,7 @@ export const Setup = () => {
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
-              icon={ChangeCircleOutlinedIcon}
+              icon={actionProperties[ActionType.EvolveFlow].icon}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7

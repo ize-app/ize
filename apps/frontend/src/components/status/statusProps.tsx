@@ -1,12 +1,13 @@
-import { RequestStatus } from "./type";
+import { Status } from "@/graphql/generated/graphql";
 import muiTheme from "@/style/muiTheme";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
 import HourglassTopOutlinedIcon from "@mui/icons-material/HourglassTopOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import { SvgIconProps } from "@mui/material";
 
 type RequestStatusProps = {
-  [key in RequestStatus]: {
+  [key in Status]: {
     color: string;
     backgroundColor: string;
     label: string;
@@ -14,23 +15,35 @@ type RequestStatusProps = {
   };
 };
 
-export const requestStatusProps: RequestStatusProps = {
-  [RequestStatus.Completed]: {
+export const statusProps: RequestStatusProps = {
+  [Status.Completed]: {
     color: "white",
     backgroundColor: muiTheme.palette.success.main,
     label: "Completed",
     icon: CheckCircleOutlineOutlinedIcon,
   },
-  [RequestStatus.InProgress]: {
+  [Status.InProgress]: {
     color: "white",
     backgroundColor: muiTheme.palette.info.main,
     label: "In progress",
     icon: HourglassTopOutlinedIcon,
   },
-  [RequestStatus.Pending]: {
+  [Status.NotAttempted]: {
     color: "white",
-    backgroundColor: muiTheme.palette.grey[300],
+    backgroundColor: muiTheme.palette.grey[700],
     label: "Pending",
     icon: RadioButtonUncheckedOutlinedIcon,
+  },
+  [Status.Failure]: {
+    color: "white",
+    backgroundColor: muiTheme.palette.error.main,
+    label: "Error",
+    icon: CloseIcon,
+  },
+  [Status.Cancelled]: {
+    color: "white",
+    backgroundColor: muiTheme.palette.grey[400],
+    label: "Cancelled",
+    icon: CloseIcon,
   },
 };

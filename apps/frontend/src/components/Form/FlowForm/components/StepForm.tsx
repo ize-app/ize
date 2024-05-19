@@ -2,11 +2,12 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FlowSchemaType } from "../formValidation/flow";
 import { Box } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select, Switch } from "../../formFields";
+import { RoleSearch, Select, Switch, TextField } from "../../formFields";
 import { PermissionType } from "../formValidation/permission";
 import { FormHelperText } from "@mui/material";
-import { ActionFilterForm } from "./ActionForm";
+import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
+import { ActionType } from "@/graphql/generated/graphql";
 
 interface StepFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -46,11 +47,17 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           {stepError?.root.message}
         </FormHelperText>
       )}
-      {formIndex > 0 && <ActionFilterForm formIndex={formIndex - 1} formMethods={formMethods} />}
+      {formIndex > 0 && (
+        <ActionFilterForm
+          formIndex={formIndex - 1}
+          formMethods={formMethods}
+          actionType={ActionType.TriggerStep}
+        />
+      )}
       <PanelAccordion
         title="Response permissions"
         hasError={
-          !!formMethods.formState.errors.steps?.[formIndex]?.response?.permission ||
+          !!formMethods.formState.errors.steps?.[formIndex]?.response ||
           !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
           !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
         }
@@ -110,6 +117,24 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           fieldsArrayMethods={fieldsArrayMethods}
         />
       </PanelAccordion>
+      <TextField<FlowSchemaType>
+        control={formMethods.control}
+        display={false}
+        label="Action type"
+        name={`steps.${formIndex}.action.type`}
+        size="small"
+        showLabel={false}
+        defaultValue=""
+      />
+      <TextField<FlowSchemaType>
+        control={formMethods.control}
+        display={false}
+        label="Action type"
+        name={`steps.${formIndex}.action.filterOptionId`}
+        size="small"
+        showLabel={false}
+        defaultValue=""
+      />
     </Box>
   );
 };

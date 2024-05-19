@@ -27,6 +27,13 @@ export type ActionArgs = {
   type: ActionType;
 };
 
+export type ActionExecution = {
+  __typename?: 'ActionExecution';
+  actionId: Scalars['String']['output'];
+  lastAttemptedAt?: Maybe<Scalars['String']['output']>;
+  status: Status;
+};
+
 export enum ActionType {
   CallWebhook = 'CallWebhook',
   EvolveFlow = 'EvolveFlow',
@@ -196,6 +203,7 @@ export type FieldArgs = {
 export enum FieldDataType {
   Date = 'Date',
   DateTime = 'DateTime',
+  FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',
   Uri = 'Uri'
@@ -230,15 +238,26 @@ export enum FieldType {
 
 export type Flow = {
   __typename?: 'Flow';
+  active: Scalars['Boolean']['output'];
+  createdAt: Scalars['String']['output'];
   currentFlowVersionId?: Maybe<Scalars['String']['output']>;
   evolve?: Maybe<Flow>;
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
+  flowsEvolvedByThisFlow: Array<FlowReference>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Step>;
   type: FlowType;
+  versionCreatedAt: Scalars['String']['output'];
+  versionPublishedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type FlowReference = {
+  __typename?: 'FlowReference';
+  flowId: Scalars['String']['output'];
+  flowName: Scalars['String']['output'];
 };
 
 export type FlowSummary = {
@@ -406,9 +425,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
+  newEvolveRequest: Scalars['String']['output'];
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
+  testWebhook: Scalars['Boolean']['output'];
 };
 
 
@@ -419,6 +440,11 @@ export type MutationNewCustomGroupArgs = {
 
 export type MutationNewEntitiesArgs = {
   entities: Array<NewEntityArgs>;
+};
+
+
+export type MutationNewEvolveRequestArgs = {
+  request: NewEvolveRequestArgs;
 };
 
 
@@ -434,6 +460,11 @@ export type MutationNewRequestArgs = {
 
 export type MutationNewResponseArgs = {
   response: NewResponseArgs;
+};
+
+
+export type MutationTestWebhookArgs = {
+  inputs: TestWebhookArgs;
 };
 
 export type NewEntityArgs = {
@@ -454,6 +485,14 @@ export enum NewEntityTypes {
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
 }
+
+export type NewEvolveRequestArgs = {
+  currentFlow: NewFlowArgs;
+  description?: InputMaybe<Scalars['String']['input']>;
+  flowId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  proposedFlow: NewFlowArgs;
+};
 
 export type NewFlowArgs = {
   evolve: EvolveFlowArgs;
@@ -589,8 +628,9 @@ export type QueryDiscordServerRolesArgs = {
 
 
 export type QueryGetFlowArgs = {
-  flowId: Scalars['String']['input'];
+  flowId?: InputMaybe<Scalars['String']['input']>;
   flowVersionId?: InputMaybe<Scalars['String']['input']>;
+  isForEvolveRequest?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -670,7 +710,7 @@ export type RequestDefinedOptionsArgs = {
 
 export type RequestStep = {
   __typename?: 'RequestStep';
-  actionsComplete: Scalars['Boolean']['output'];
+  actionExecution?: Maybe<ActionExecution>;
   createdAt: Scalars['String']['output'];
   expirationDate: Scalars['String']['output'];
   final: Scalars['Boolean']['output'];
@@ -754,6 +794,14 @@ export enum ResultType {
   Ranking = 'Ranking'
 }
 
+export enum Status {
+  Cancelled = 'Cancelled',
+  Completed = 'Completed',
+  Failure = 'Failure',
+  InProgress = 'InProgress',
+  NotAttempted = 'NotAttempted'
+}
+
 export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
@@ -775,6 +823,13 @@ export type StepRequestArgs = {
 export type StepResponseArgs = {
   fields: Array<FieldArgs>;
   permission: PermissionArgs;
+};
+
+export type TestWebhookArgs = {
+  flowName: Scalars['String']['input'];
+  requestFields: Array<WebhookValueArgs>;
+  results: Array<WebhookValueArgs>;
+  uri: Scalars['String']['input'];
 };
 
 export type TriggerStep = {
@@ -812,6 +867,27 @@ export type UserPermission = {
   __typename?: 'UserPermission';
   request: Scalars['Boolean']['output'];
   response: Scalars['Boolean']['output'];
+};
+
+export type WebhookPayload = {
+  __typename?: 'WebhookPayload';
+  createdAt: Scalars['String']['output'];
+  flowName: Scalars['String']['output'];
+  requestFields: Array<WebhookValue>;
+  requestName: Scalars['String']['output'];
+  results: Array<WebhookValue>;
+};
+
+export type WebhookValue = {
+  __typename?: 'WebhookValue';
+  fieldName: Scalars['String']['output'];
+  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type WebhookValueArgs = {
+  fieldName: Scalars['String']['input'];
+  fieldType: FieldType;
 };
 
 export type SetUpDiscordServerInput = {
@@ -902,6 +978,7 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
 export type ResolversTypes = {
   Action: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Action']>;
   ActionArgs: ActionArgs;
+  ActionExecution: ResolverTypeWrapper<ActionExecution>;
   ActionType: ActionType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
   AlchemyApiNftToken: ResolverTypeWrapper<AlchemyApiNftToken>;
@@ -934,6 +1011,7 @@ export type ResolversTypes = {
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
   Flow: ResolverTypeWrapper<Flow>;
+  FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<FlowSummary>;
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
@@ -964,6 +1042,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
   NewEntityTypes: NewEntityTypes;
+  NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -994,16 +1073,21 @@ export type ResolversTypes = {
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
+  Status: Status;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, result: Array<ResolversTypes['ResultConfig']> }>;
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  TestWebhookArgs: TestWebhookArgs;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   User: ResolverTypeWrapper<User>;
   UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer'> & { answer: ResolversTypes['FieldAnswer'] }>;
   UserFieldAnswers: ResolverTypeWrapper<UserFieldAnswers>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
+  WebhookPayload: ResolverTypeWrapper<WebhookPayload>;
+  WebhookValue: ResolverTypeWrapper<WebhookValue>;
+  WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
@@ -1011,6 +1095,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Action: ResolversUnionTypes<ResolversParentTypes>['Action'];
   ActionArgs: ActionArgs;
+  ActionExecution: ActionExecution;
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
@@ -1036,6 +1121,7 @@ export type ResolversParentTypes = {
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   Flow: Flow;
+  FlowReference: FlowReference;
   FlowSummary: FlowSummary;
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
@@ -1063,6 +1149,7 @@ export type ResolversParentTypes = {
   Me: Me;
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
+  NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -1095,17 +1182,28 @@ export type ResolversParentTypes = {
   StepRequestArgs: StepRequestArgs;
   StepResponseArgs: StepResponseArgs;
   String: Scalars['String']['output'];
+  TestWebhookArgs: TestWebhookArgs;
   TriggerStep: TriggerStep;
   User: User;
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer'> & { answer: ResolversParentTypes['FieldAnswer'] };
   UserFieldAnswers: UserFieldAnswers;
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
+  WebhookPayload: WebhookPayload;
+  WebhookValue: WebhookValue;
+  WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
 export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
   __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
+};
+
+export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
+  actionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastAttemptedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Status'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AlchemyApiNftContractResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftContract'] = ResolversParentTypes['AlchemyApiNftContract']> = {
@@ -1209,15 +1307,26 @@ export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentFlowVersionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   evolve?: Resolver<Maybe<ResolversTypes['Flow']>, ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowsEvolvedByThisFlow?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<ResolversTypes['Step']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
+  versionCreatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  versionPublishedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FlowReferenceResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowReference'] = ResolversParentTypes['FlowReference']> = {
+  flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1338,9 +1447,11 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
+  newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
+  testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
 };
 
 export type NftCollectionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['NftCollection'] = ResolversParentTypes['NftCollection']> = {
@@ -1409,7 +1520,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
-  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, RequireFields<QueryGetFlowArgs, 'flowId'>>;
+  getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'searchQuery' | 'userOnly'>>;
@@ -1449,7 +1560,7 @@ export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStep'] = ResolversParentTypes['RequestStep']> = {
-  actionsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  actionExecution?: Resolver<Maybe<ResolversTypes['ActionExecution']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1569,8 +1680,25 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookPayload'] = ResolversParentTypes['WebhookPayload']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestFields?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
+  requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type WebhookValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookValue'] = ResolversParentTypes['WebhookValue']> = {
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  optionSelections?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = GraphqlRequestContext> = {
   Action?: ActionResolvers<ContextType>;
+  ActionExecution?: ActionExecutionResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;
@@ -1585,6 +1713,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
+  FlowReference?: FlowReferenceResolvers<ContextType>;
   FlowSummary?: FlowSummaryResolvers<ContextType>;
   FreeInput?: FreeInputResolvers<ContextType>;
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;
@@ -1627,5 +1756,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   UserFieldAnswers?: UserFieldAnswersResolvers<ContextType>;
   UserFlowPermission?: UserFlowPermissionResolvers<ContextType>;
   UserPermission?: UserPermissionResolvers<ContextType>;
+  WebhookPayload?: WebhookPayloadResolvers<ContextType>;
+  WebhookValue?: WebhookValueResolvers<ContextType>;
 };
 

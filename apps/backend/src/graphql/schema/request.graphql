@@ -1,5 +1,6 @@
 type Mutation {
   newRequest(request: NewRequestArgs!): String!
+  newEvolveRequest(request: NewEvolveRequestArgs!): String!
   newResponse(response: NewResponseArgs!): String!
 }
 
@@ -21,6 +22,14 @@ input NewRequestArgs {
   requestDefinedOptions: [RequestDefinedOptionsArgs!]!
 }
 
+input NewEvolveRequestArgs {
+  flowId: String!
+  name: String!
+  description: String
+  proposedFlow: NewFlowArgs!
+  currentFlow: NewFlowArgs!
+}
+
 input RequestDefinedOptionsArgs {
   fieldId: String!
   options: [FieldOptionArgs!]!
@@ -29,6 +38,14 @@ input RequestDefinedOptionsArgs {
 input NewResponseArgs {
   requestStepId: String!
   answers: [FieldAnswerArgs!]!
+}
+
+enum Status {
+  NotAttempted
+  InProgress
+  Completed
+  Failure
+  Cancelled
 }
 
 type Request {
@@ -52,9 +69,9 @@ type RequestStep {
   responseFields: [Field!]!
   userResponses: [Response!]!
   results: [Result!]!
+  actionExecution: ActionExecution
   responseComplete: Boolean!
   resultsComplete: Boolean!
-  actionsComplete: Boolean!
   final: Boolean!
 }
 

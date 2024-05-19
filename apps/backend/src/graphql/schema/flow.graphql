@@ -3,7 +3,7 @@ type Mutation {
 }
 
 type Query {
-  getFlow(flowId: String!, flowVersionId: String): Flow!
+  getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
   getFlows: [FlowSummary!]!
 }
 
@@ -12,10 +12,15 @@ type Flow {
   flowId: String!
   flowVersionId: String!
   currentFlowVersionId: String
+  createdAt: String!
+  versionCreatedAt: String!
+  versionPublishedAt: String
+  active: Boolean!
   type: FlowType!
   name: String!
   reusable: Boolean!
   steps: [Step!]!
+  flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
 }
 
@@ -27,6 +32,11 @@ type FlowSummary {
   # permission to trigger first step of the flow
   requestStep0Permission: Permission!
   userPermission: UserFlowPermission!
+}
+
+type FlowReference {
+  flowId: String!
+  flowName: String!
 }
 
 enum FlowType {

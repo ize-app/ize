@@ -6,10 +6,10 @@ import {
 } from "@/components/ConfigDiagram";
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { Box, Typography } from "@mui/material";
-import { Permissions } from "../ConfigDiagramFlow/Permissions";
-import { ActionFilter } from "../ConfigDiagramFlow/Action/ActionFilter";
+import { Permissions } from "../../Permissions";
+import { ActionFilter } from "../../Action/ActionFilter";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { RequestStatusTag } from "@/components/status/RequestStatusTag";
+import { StatusTag } from "@/components/status/StatusTag";
 import { TimeLeft } from "./TimeLeft";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";
@@ -21,8 +21,10 @@ export const ConfigRequestStepPanel = ({
   triggeringAction,
   requestStepIndex,
   currentStepIndex,
+  requestFinal,
 }: {
   step: StepFragment;
+  requestFinal: boolean;
   requestStep: RequestStepFragment | null;
   triggeringAction: ActionFragment | null | undefined;
   requestStepIndex: number;
@@ -32,6 +34,7 @@ export const ConfigRequestStepPanel = ({
     requestStepIndex,
     requestStep?.resultsComplete ?? false,
     currentStepIndex,
+    requestFinal,
   );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
@@ -54,7 +57,7 @@ export const ConfigRequestStepPanel = ({
         <PanelAccordion title="Status" hasError={false}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
-            <RequestStatusTag status={status} />
+            <StatusTag status={status} />
           </Box>
           {requestStep && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>

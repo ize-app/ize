@@ -1,5 +1,5 @@
-import { Stage, StageProps } from "./Stage";
-import { StageMenu } from "./StageMenu";
+import { Stage, StageProps } from "../DiagramPanel/Stage";
+import { StageMenu } from "../DiagramPanel/StageMenu";
 import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
@@ -21,6 +21,7 @@ export const FlowStage = ({
   deleteHandler,
   entities = [],
   hasError = false,
+  sx = {},
   icon,
 }: FlowStageProps) => {
   const isSelected = selectedId === id;
@@ -36,6 +37,7 @@ export const FlowStage = ({
       }
       sx={{
         borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
+        ...sx,
       }}
     >
       <Box

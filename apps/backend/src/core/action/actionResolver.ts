@@ -2,10 +2,12 @@ import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { ActionType, FieldType } from "@prisma/client";
+import { parse } from "tldts";
 
-export const resolveAction = (
+export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,
   responseFields: Field[] | undefined,
+  hideSensitiveInfo = true,
 ): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
@@ -30,7 +32,7 @@ export const resolveAction = (
 
   switch (action.type) {
     case ActionType.CallWebhook:
-      return callWebhookResolver(action, filterOption);
+      return callWebhookResolver(action, filterOption, hideSensitiveInfo);
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
@@ -51,6 +53,7 @@ export const resolveAction = (
 const callWebhookResolver = (
   action: ActionNewPrismaType,
   filterOption: Option | undefined,
+  obscureUri = true,
 ): CallWebhook => {
   const webhook = action.Webhook;
   if (!webhook)
@@ -59,7 +62,7 @@ const callWebhookResolver = (
     });
   return {
     __typename: "CallWebhook",
-    uri: webhook.uri,
+    uri: obscureUri ? "https://" + parse(webhook.uri).domain ?? "" : webhook.uri, // Only return the hostname for privacy
     name: webhook.name,
     filterOption,
   };

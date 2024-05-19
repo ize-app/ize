@@ -1,151 +1,117 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/client";
-import { MutationNewRequestArgs } from "@graphql/generated/resolver-types";
+import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
 import { flowInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import { newOptionSet } from "../fields/newOptionSet";
-import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
+import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
 export const newRequest = async ({
   args,
   context,
+  // proposed flow version id is used when creating an evolution request
+  proposedFlowVersionId,
+  transaction = prisma,
 }: {
   args: MutationNewRequestArgs;
   context: GraphqlRequestContext;
+  proposedFlowVersionId?: string;
+  transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   const {
     request: { requestDefinedOptions, requestFields, flowId },
   } = args;
 
-  return await prisma.$transaction(async (transaction) => {
-    const flow = await transaction.flow.findUniqueOrThrow({
-      where: {
-        id: flowId,
-      },
-      include: flowInclude,
+  const flow = await transaction.flow.findUniqueOrThrow({
+    where: {
+      id: flowId,
+    },
+    include: flowInclude,
+  });
+
+  if (!flow.CurrentFlowVersion)
+    throw new GraphQLError("Missing current version of flow", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-    if (!flow.CurrentFlowVersion)
-      throw new GraphQLError("Missing current version of flow", {
+  if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
+    throw new GraphQLError(
+      `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
+      {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
-
-    const step = flow.CurrentFlowVersion.Steps[0];
-
-    if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-
-    const request = await transaction.request.create({
-      data: {
-        name: args.request.name,
-        flowVersionId: flow.CurrentFlowVersion.id,
-        creatorId: context.currentUser.id,
-        final: false,
       },
-    });
-
-    const requestStep = await transaction.requestStep.create({
-      data: {
-        expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
-        Request: {
-          connect: {
-            id: request.id,
-          },
-        },
-        Step: {
-          connect: {
-            id: step.id,
-          },
-        },
-        CurrentStepParent: {
-          connect: {
-            id: request.id,
-          },
-        },
-      },
-    });
-
-    const requestDefinedOptionSets = await Promise.all(
-      requestDefinedOptions.map(async (r) => {
-        if (!step.ResponseFieldSet)
-          throw new GraphQLError(
-            "Request defined options provided, but this flow step does not have response fields.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        const field = step.ResponseFieldSet.FieldSetFields.find((f) => f.fieldId === r.fieldId);
-        if (!field)
-          throw new GraphQLError(
-            "Cannot find flow field corresponding to request defined options.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        if (
-          !field.Field.FieldOptionsConfigs?.hasRequestOptions ||
-          !field.Field.FieldOptionsConfigs?.requestOptionsDataType
-        )
-          throw new GraphQLError(
-            "Request deifned options provided but this field does not allow request defined options.",
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        const optionSetId = await newOptionSet({
-          transaction,
-          options: r.options,
-          dataType: field.Field.FieldOptionsConfigs?.requestOptionsDataType,
-        });
-
-        return await transaction.requestDefinedOptionSet.create({
-          include: requestDefinedOptionSetInclude,
-          data: {
-            RequestStep: {
-              connect: {
-                id: requestStep.id,
-              },
-            },
-            Field: {
-              connect: {
-                id: r.fieldId,
-              },
-            },
-            FieldOptionSet: {
-              connect: {
-                id: optionSetId,
-              },
-            },
-          },
-        });
-      }),
     );
 
-    // TODO: if auto approve, just create the result
+  const step = flow.CurrentFlowVersion.Steps[0];
 
-    await newFieldAnswers({
-      fieldSet: step.RequestFieldSet,
-      fieldAnswers: requestFields,
-      requestDefinedOptionSets: requestDefinedOptionSets,
-      requestStepId: requestStep.id,
-      transaction,
+  if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-    return request.id;
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+
+  const request = await transaction.request.create({
+    data: {
+      name: args.request.name,
+      flowVersionId: flow.CurrentFlowVersion.id,
+      creatorId: context.currentUser.id,
+      proposedFlowVersionId,
+      final: false,
+    },
   });
+
+  const requestStep = await transaction.requestStep.create({
+    data: {
+      expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
+      Request: {
+        connect: {
+          id: request.id,
+        },
+      },
+      Step: {
+        connect: {
+          id: step.id,
+        },
+      },
+      CurrentStepParent: {
+        connect: {
+          id: request.id,
+        },
+      },
+    },
+  });
+
+  const requestDefinedOptionSets = await Promise.all(
+    requestDefinedOptions.map(async (r) => {
+      return await createRequestDefinedOptionSet({
+        step,
+        requestStepId: requestStep.id,
+        newOptionArgs: r.options,
+        fieldId: r.fieldId,
+        isTriggerDefinedOptions: true,
+        transaction,
+      });
+    }),
+  );
+
+  // TODO: if auto approve, just create the result
+
+  await newFieldAnswers({
+    fieldSet: step.RequestFieldSet,
+    fieldAnswers: requestFields,
+    requestDefinedOptionSets: requestDefinedOptionSets,
+    requestStepId: requestStep.id,
+    transaction,
+  });
+
+  return request.id;
 };

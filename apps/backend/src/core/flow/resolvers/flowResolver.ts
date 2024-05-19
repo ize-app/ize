@@ -8,24 +8,40 @@ export const flowResolver = ({
   userIdentityIds,
   userGroupIds,
   userId,
+  flowNameOverride,
+  hideSensitiveInfo = true,
+  responseFieldsCache = [],
+  resultConfigsCache = [],
 }: {
   flowVersion: FlowVersionPrismaType;
   evolveFlow?: FlowVersionPrismaType;
   userIdentityIds: string[];
   userGroupIds: string[];
   userId: string | undefined;
+  flowNameOverride?: string;
+  responseFieldsCache?: Field[];
+  resultConfigsCache?: ResultConfig[];
+  hideSensitiveInfo?: boolean;
 }): Flow => {
-  const responseFieldsCache: Field[] = [];
-  const resultConfigsCache: ResultConfig[] = [];
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
     flowId: flowVersion.Flow.id,
     flowVersionId: flowVersion.id,
     currentFlowVersionId: flowVersion.Flow.currentFlowVersionId,
+    createdAt: flowVersion.Flow.createdAt.toISOString(),
+    versionCreatedAt: flowVersion.createdAt.toISOString(),
+    versionPublishedAt: flowVersion.publishedAt && flowVersion.publishedAt.toISOString(),
+    active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
-    name: flowVersion.name,
+    name: flowNameOverride ?? flowVersion.name,
+    flowsEvolvedByThisFlow: flowVersion.Flow.EvolveRightsForFlowVersions.filter(
+      (fv) => fv.active && fv.Flow.type !== FlowType.Evolve,
+    ).map((fv) => ({
+      flowName: fv.name,
+      flowId: fv.Flow.id,
+    })),
     steps: flowVersion.Steps.map((step) =>
       stepResolver({
         step,
@@ -34,6 +50,7 @@ export const flowResolver = ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
+        hideSensitiveInfo,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow

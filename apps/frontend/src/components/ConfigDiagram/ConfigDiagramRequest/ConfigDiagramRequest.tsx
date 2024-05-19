@@ -10,11 +10,12 @@ import { useState } from "react";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 import { RequestFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { ConfigActionPanel } from "../ConfigDiagramFlow/ConfigActionPanel";
-import { RequestStatus } from "@/components/status/type";
+import { Status } from "@/graphql/generated/graphql";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
+import { actionProperties } from "@/components/Action/actionProperties";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -35,7 +36,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               label="Trigger"
               key="trigger0"
               id={"trigger0"}
-              status={RequestStatus.Completed}
+              status={Status.Completed}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
@@ -50,6 +51,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                       index,
                       request.steps[index]?.resultsComplete ?? false,
                       request.currentStepIndex,
+                      request.final,
                     )}
                     icon={Diversity3Outlined}
                     label={
@@ -73,12 +75,15 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <RequestStage
-                  status={RequestStatus.Pending}
-                  label={finalAction.__typename}
+                  status={
+                    request.steps[finalStepIndex]?.actionExecution?.status ??
+                    (request.final ? Status.Cancelled : Status.NotAttempted)
+                  }
+                  label={actionProperties[finalAction.__typename].label}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  //   icon={<PublicOutlinedIcon color="primary" />}
+                  icon={actionProperties[finalAction.__typename].icon}
                 />
               </>
             )}
@@ -101,11 +106,17 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 requestStepIndex={index}
                 currentStepIndex={request.currentStepIndex}
                 triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
+                requestFinal={request.final}
               />
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && (
+          <ConfigRequestActionPanel
+            action={finalAction}
+            actionExecution={request.steps[finalStepIndex]?.actionExecution ?? null}
+          />
+        )}
       </FlowConfigDiagramContainer>
     </Box>
   );

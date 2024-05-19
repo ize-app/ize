@@ -4,10 +4,20 @@ import { DefaultOptionSelection } from "./fields";
 
 export type ActionSchemaType = z.infer<typeof actionSchema>;
 
-const callWebhookSchema = z.object({
-  uri: z.string().url(),
-  name: z.string().min(1),
-});
+const callWebhookSchema = z
+  .object({
+    uri: z.string().url(),
+    name: z.string().min(1),
+    valid: z.boolean().optional(),
+  })
+  .refine(
+    (webhook) => {
+      if (!webhook.valid) {
+        return false;
+      } else return true;
+    },
+    { path: ["uri"], message: "Test this webhook successfully to continue" },
+  );
 
 export const actionSchema = z.discriminatedUnion("type", [
   z.object({

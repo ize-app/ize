@@ -1,16 +1,18 @@
-import { WebhookPrismaType } from "../actionPrismaTypes";
+import { WebhookPayload } from "@/graphql/generated/resolver-types";
 
 // TODO: create the payload for the webhook
 export const callWebhook = async ({
-  webhook,
+  uri,
+  payload,
 }: {
-  webhook: WebhookPrismaType;
+  uri: string;
+  payload?: WebhookPayload;
 }): Promise<boolean> => {
   // attempt to callWebhook with Results from previous step
   try {
-    const response = await fetch(webhook.uri, {
+    const response = await fetch(uri, {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify(payload ?? {}),
     });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);

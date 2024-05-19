@@ -80,11 +80,24 @@ export const getRequestSteps = async ({
             : {},
           args.flowId
             ? {
-                Request: {
-                  FlowVersion: {
-                    flowId: args.flowId,
+                OR: [
+                  {
+                    Request: {
+                      FlowVersion: {
+                        flowId: args.flowId,
+                      },
+                    },
                   },
-                },
+                  {
+                    Request: {
+                      ProposedFlowVersionEvolution: {
+                        Flow: {
+                          id: args.flowId,
+                        },
+                      },
+                    },
+                  },
+                ],
               }
             : {},
         ],

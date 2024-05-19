@@ -5,6 +5,7 @@ import { responseInclude } from "../response/responsePrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { userInclude } from "../user/userPrismaTypes";
 import { resultInclude } from "../result/resultPrismaTypes";
+import { actionExecutionInclude } from "../action/actionPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -15,6 +16,19 @@ export const requestDefinedOptionSetInclude =
 
 export type RequestDefinedOptionSetPrismaType = Prisma.RequestDefinedOptionSetGetPayload<{
   include: typeof requestDefinedOptionSetInclude;
+}>;
+
+// for evolution requests, we want the proposed flow version and that flow version's
+// corresponding flow and current flow version
+export const evolveRequestProposedFlowVersionInclude =
+  Prisma.validator<Prisma.FlowVersionInclude>()({
+    Flow: {
+      include: { CurrentFlowVersion: true },
+    },
+  });
+
+export type EvolveRequestProposedFlowVersionPrismaType = Prisma.FlowVersionGetPayload<{
+  include: typeof evolveRequestProposedFlowVersionInclude;
 }>;
 
 export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()({
@@ -34,6 +48,9 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
   Results: {
     include: resultInclude,
   },
+  ActionExecution: {
+    include: actionExecutionInclude,
+  },
 });
 
 export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
@@ -50,6 +67,9 @@ export const requestStepSummaryInclude = Prisma.validator<Prisma.RequestStepIncl
       },
       Creator: {
         include: userInclude,
+      },
+      ProposedFlowVersionEvolution: {
+        include: evolveRequestProposedFlowVersionInclude,
       },
     },
   },
@@ -75,6 +95,9 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   },
   FlowVersion: {
     include: flowVersionInclude,
+  },
+  ProposedFlowVersionEvolution: {
+    include: evolveRequestProposedFlowVersionInclude,
   },
 });
 

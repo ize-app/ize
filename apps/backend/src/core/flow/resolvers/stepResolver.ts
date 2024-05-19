@@ -2,7 +2,7 @@ import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 import { StepPrismaType } from "../flowPrismaTypes";
 import { permissionResolver } from "../../permission/permissionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
-import { resolveAction } from "../../action/resolveAction";
+import { actionResolver } from "../../action/actionResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 
@@ -13,6 +13,7 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
+  hideSensitiveInfo = true,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -20,6 +21,7 @@ export const stepResolver = ({
   userId: string | undefined;
   responseFieldsCache: Field[];
   resultConfigsCache: ResultConfig[];
+  hideSensitiveInfo?: boolean;
 }): Step => {
   const responseFields = fieldSetResolver({
     fieldSet: step.ResponseFieldSet,
@@ -46,13 +48,23 @@ export const stepResolver = ({
       permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
       fields: responseFields,
     },
-    action: resolveAction(step.Action, responseFieldsCache),
+    action: actionResolver(step.Action, responseFieldsCache, hideSensitiveInfo),
     result,
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,
     userPermission: {
-      request: hasReadPermission(step.RequestPermissions, userIdentityIds, userGroupIds, userId),
-      response: hasReadPermission(step.ResponsePermissions, userIdentityIds, userGroupIds, userId),
+      request: hasReadPermission({
+        permission: step.RequestPermissions,
+        identityIds: userIdentityIds,
+        groupIds: userGroupIds,
+        userId,
+      }),
+      response: hasReadPermission({
+        permission: step.ResponsePermissions,
+        identityIds: userIdentityIds,
+        groupIds: userGroupIds,
+        userId,
+      }),
     },
   };
 };

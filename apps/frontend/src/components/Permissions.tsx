@@ -1,5 +1,5 @@
 import { PermissionFragment } from "@/graphql/generated/graphql";
-import { AvatarWithName } from "../../Avatar/AvatarWithName";
+import { AvatarWithName } from "./Avatar/AvatarWithName";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 

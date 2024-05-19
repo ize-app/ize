@@ -127,6 +127,10 @@ export const router = createBrowserRouter([
             index: true,
           },
           {
+            path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Context),
+            element: <EvolveFlow.RequestContext />,
+          },
+          {
             path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Confirm),
             element: <EvolveFlow.Confirm />,
           },
@@ -144,6 +148,11 @@ export const router = createBrowserRouter([
       },
       {
         path: Routes.Route.Flow,
+        errorElement: <ErrorBoundary />,
+        element: <Flow />,
+      },
+      {
+        path: Routes.Route.FlowVersion,
         errorElement: <ErrorBoundary />,
         element: <Flow />,
       },

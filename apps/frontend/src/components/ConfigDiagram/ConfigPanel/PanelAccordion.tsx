@@ -7,15 +7,18 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { useState } from "react";
 import { WarningOutlined } from "@mui/icons-material";
+import { SxProps } from "@mui/material";
 
 export const PanelAccordion = ({
   children,
   title,
   hasError,
+  sx = {},
 }: {
   children: React.ReactNode;
   title: string;
   hasError: boolean;
+  sx?: SxProps;
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   return (
@@ -24,7 +27,7 @@ export const PanelAccordion = ({
       elevation={0}
       expanded={isExpanded}
       square
-      sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.1)", borderBottom: "none" }}
+      sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.1)", borderBottom: "none", ...sx }}
       onChange={() => {
         setIsExpanded(!isExpanded);
       }}

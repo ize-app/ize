@@ -1,15 +1,18 @@
 import { UseFormReturn } from "react-hook-form";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { Select, TextField } from "../../formFields";
-import { useEffect } from "react";
+import { TextField } from "../../formFields";
+import { useEffect, useState } from "react";
 
-import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, TestWebhookDocument } from "@/graphql/generated/graphql";
 import { DefaultOptionSelection } from "../formValidation/fields";
-import { SelectOption } from "../../formFields/Select";
-import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { Box, FormHelperText } from "@mui/material";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { useMutation } from "@apollo/client";
+import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
+import { Status } from "@/graphql/generated/graphql";
+import { statusProps } from "@/components/status/statusProps";
+import { ActionFilterForm } from "./ActionFilterForm";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -20,38 +23,43 @@ interface WebhookFormProps {
 export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) => {
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
+    formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
   }, []);
-  const actionType = formMethods.watch(`steps.${formIndex}.action.type`);
-  // const options = formMethods.watch(`steps.${formIndex}.response.field.optionsConfig.options`);
-  const results = formMethods.watch(`steps.${formIndex}.result`);
-  const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
 
-  const options: SelectOption[] = [];
+  const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
 
-  (results ?? [])
-    .filter((res) => res.type === ResultType.Decision)
-    .forEach((res, resIndex) => {
-      const field = responseFields.find((f) => f.fieldId === res.fieldId);
-      if (!field || field.type !== FieldType.Options) return;
-      field.optionsConfig.options.map((o) => {
-        options.push({
-          name: `Result ${resIndex}: "${o.name}"`,
-          value: o.optionId,
-        });
+  const WebhookStatusIcon = testWebhookStatus
+    ? statusProps[testWebhookStatus].icon
+    : statusProps.NotAttempted.icon;
+
+  const [testWebhook] = useMutation(TestWebhookDocument, {});
+
+  const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
+    const uri = formMethods.getValues(`steps.${formIndex}.action.callWebhook.uri`);
+    setTestWebhookStatus(Status.InProgress);
+    try {
+      const res = await testWebhook({
+        variables: {
+          inputs: createTestWebhookArgs(formMethods.getValues(), uri),
+        },
       });
-    });
-
-  const defaultOptionSelections: SelectOption[] = [...options];
-
-  defaultOptionSelections.unshift({
-    name: "Action runs for every result",
-    value: DefaultOptionSelection.None,
-  });
+      const success = res.data?.testWebhook ?? false;
+      formMethods.setValue(`steps.${formIndex}.action.callWebhook.valid`, success);
+      setTestWebhookStatus(success ? Status.Completed : Status.Failure);
+    } catch (e) {
+      console.log("Test webhook error: ", e);
+    }
+  };
 
   const webhookError = formMethods.formState.errors.steps?.[formIndex]?.action;
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
+      <ActionFilterForm
+        formMethods={formMethods}
+        formIndex={formIndex}
+        actionType={ActionType.CallWebhook}
+      />
       <PanelAccordion title="Setup" hasError={!!webhookError}>
         {!!webhookError?.root && (
           <FormHelperText
@@ -62,23 +70,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
             {webhookError.root?.message}
           </FormHelperText>
         )}
-        {(options ?? []).length > 0 && actionType !== ActionType.None && (
-          <>
-            <Select<FlowSchemaType>
-              control={formMethods.control}
-              label="When to run action"
-              renderValue={(val) => {
-                const optionName = getSelectOptionName(options, val);
-                if (optionName) {
-                  return "Only run action on: " + optionName;
-                } else return "Run action on all options";
-              }}
-              selectOptions={defaultOptionSelections}
-              displayLabel={false}
-              name={`steps.${formIndex}.action.filterOptionId`}
-            />
-          </>
-        )}
         <TextField<FlowSchemaType>
           control={formMethods.control}
           label="What does this webhook do?"
@@ -87,14 +78,51 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           showLabel={false}
           name={`steps.${formIndex}.action.callWebhook.name`}
         />
-        <TextField<FlowSchemaType>
-          control={formMethods.control}
-          label="Url"
-          size="small"
-          showLabel={false}
-          placeholderText="Webhook Uri (not displayed publicly)"
-          name={`steps.${formIndex}.action.callWebhook.uri`}
-        />
+        <Typography>
+          This webhook will only be viewable by users who have rights to request an evolution for
+          this flow.
+        </Typography>
+        <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <TextField<FlowSchemaType>
+            control={formMethods.control}
+            label="Url"
+            size="small"
+            showLabel={false}
+            placeholderText="Webhook Uri (not displayed publicly)"
+            name={`steps.${formIndex}.action.callWebhook.uri`}
+          />
+          <TextField<FlowSchemaType>
+            control={formMethods.control}
+            label="Valid webhook"
+            size="small"
+            showLabel={false}
+            display={false}
+            placeholderText="Valid webhook"
+            name={`steps.${formIndex}.action.callWebhook.valid`}
+          />
+          <Button
+            variant="outlined"
+            sx={{ width: "60px" }}
+            size={"small"}
+            endIcon={
+              <WebhookStatusIcon
+                sx={{
+                  color: testWebhookStatus
+                    ? statusProps[testWebhookStatus].backgroundColor
+                    : statusProps.NotAttempted.backgroundColor,
+                }}
+                // color={
+                //   testWebhookStatus
+                //     ? actionExecutionStatusProps[testWebhookStatus].color
+                //     : actionExecutionStatusProps.NotAttempted.color
+                // }
+              />
+            }
+            onClick={handleTestWebhook}
+          >
+            Test
+          </Button>
+        </Box>
       </PanelAccordion>
     </Box>
   );

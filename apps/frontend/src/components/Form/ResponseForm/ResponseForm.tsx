@@ -17,6 +17,7 @@ import { Button } from "@mui/material";
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import { useContext, useEffect } from "react";
 import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
+import { useNavigate } from "react-router-dom";
 
 export const ResponseForm = ({
   responseFields,
@@ -26,12 +27,13 @@ export const ResponseForm = ({
   requestStepId: string;
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const navigate = useNavigate();
   const [mutate] = useMutation(NewResponseDocument, {
     onCompleted: (_data) => {
+      navigate(0);
+      // TODO: maybe add a 1 second timer here so that the user can see the success message
       setSnackbarOpen(true);
       setSnackbarData({ message: "Response submitted!", type: "success" });
-      console.log("successfully submitted response");
-      // window.location.reload();
     },
     onError: (data) => {
       console.log("Error submitting response: ", data.message);

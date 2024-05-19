@@ -12,7 +12,8 @@ import { FlowFragment } from "@/graphql/generated/graphql";
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import { ConfigFlowTriggerPanel } from "./ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "./ConfigStepPanel";
-import { ConfigActionPanel } from "./ConfigActionPanel";
+import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
+import { actionProperties } from "@/components/Action/actionProperties";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config
@@ -21,7 +22,6 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
 
   const finalStepIndex = flow.steps.length - 1;
   const finalAction = flow.steps[finalStepIndex]?.action ?? null;
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       {/* <PanelHeader>Header</PanelHeader> */}
@@ -67,10 +67,11 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <StageConnectorButton key={"connector-final"} />
                 <FlowStage
                   hasError={false}
-                  label={finalAction.__typename}
+                  label={actionProperties[finalAction.__typename].label}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
+                  icon={actionProperties[finalAction.__typename].icon}
                 />
               </>
             )}
@@ -88,7 +89,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && <ConfigFlowActionPanel action={finalAction} />}
       </FlowConfigDiagramContainer>
     </Box>
   );

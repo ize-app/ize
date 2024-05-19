@@ -1,12 +1,14 @@
 import { GraphqlRequestContext } from "../context";
 
 import { newRequest as newRequestService } from "@/core/request/newRequest";
+import { newEvolveRequest as newEvolveRequestService } from "@/core/request/newEvolveRequest";
 import { newResponse as newResponseService } from "@/core/response/newResponse";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { getRequest as getRequestService } from "@/core/request/getRequest";
 import { getRequestSteps as getRequestStepsService } from "@/core/request/getRequestSteps";
 
 import {
+  MutationNewEvolveRequestArgs,
   MutationNewRequestArgs,
   MutationNewResponseArgs,
   MutationResolvers,
@@ -31,6 +33,18 @@ const newRequest: MutationResolvers["newRequest"] = async (
     args,
     context,
   });
+};
+
+const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
+  root: unknown,
+  args: MutationNewEvolveRequestArgs,
+  context: GraphqlRequestContext,
+): Promise<string> => {
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+  return await newEvolveRequestService({ args, context });
 };
 
 const getRequest: QueryResolvers["getRequest"] = async (
@@ -67,4 +81,4 @@ export const requestQueries = {
   getRequestSteps,
 };
 
-export const requestMutations = { newRequest, newResponse };
+export const requestMutations = { newRequest, newEvolveRequest, newResponse };

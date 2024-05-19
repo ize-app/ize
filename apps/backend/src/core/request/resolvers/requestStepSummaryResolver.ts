@@ -3,6 +3,7 @@ import { RequestStepSummaryPrismaType } from "../requestPrismaTypes";
 import { userResolver } from "@/core/user/userResolver";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
+import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 
 export const requestStepSummaryResolver = ({
   requestStepSummary,
@@ -22,7 +23,10 @@ export const requestStepSummaryResolver = ({
     requestId: r.Request.id,
     flowId: r.Request.FlowVersion.Flow.id,
     requestName: r.Request.name,
-    flowName: r.Request.FlowVersion.name,
+    flowName:
+      getEvolveRequestFlowName({
+        proposedFlowVersion: r.Request.ProposedFlowVersionEvolution,
+      }) ?? r.Request.FlowVersion.name,
     creator: userResolver(r.Request.Creator),
     stepIndex: r.Step.index,
     totalSteps: r.Request.FlowVersion.totalSteps,
@@ -33,11 +37,11 @@ export const requestStepSummaryResolver = ({
     actionsComplete: r.actionsComplete,
     final: r.final,
     respondPermission: permissionResolver(r.Step.ResponsePermissions, identityIds),
-    userRespondPermission: hasReadPermission(
-      r.Step.ResponsePermissions,
-      groupIds,
-      identityIds,
+    userRespondPermission: hasReadPermission({
+      permission: r.Step.ResponsePermissions,
+      groupIds: groupIds,
+      identityIds: identityIds,
       userId,
-    ),
+    }),
   };
 };
