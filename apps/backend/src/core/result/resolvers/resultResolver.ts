@@ -7,6 +7,7 @@ export const resultResolver = (result: ResultPrismaType): Result => {
     id: result.id,
     createdAt: result.createdAt.toISOString(),
     resultConfigId: result.resultConfigId,
+    hasResult: result.hasResult,
     resultItems: result.ResultItems.map(
       (resultItem): ResultItem => ({
         id: resultItem.id,

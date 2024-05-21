@@ -787,6 +787,7 @@ model ResultConfigSetResultConfigs {
 // there is a single results record for a given request step + results Config 
 // so if a step has two result Configs, there will be two Results every time that Result rows
 // A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
+// The result model is an attempt of a result creation, but there may not actually be results in this attempt (e.g. the minimum vote threshold isn't hit for a decision)
 model Result {
   id             String   @id @default(uuid()) @db.Uuid
   complete       Boolean  @default(false)
@@ -794,6 +795,8 @@ model Result {
   resultConfigId String   @map("result_config_id") @db.Uuid
   // Number of items within result array
   itemCount      Int      @map("itemCount")
+  // 
+  hasResult      Boolean  @map("has_result")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 

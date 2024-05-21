@@ -5,7 +5,6 @@ import { runResultsAndActions } from "../result/newResults/runResultsAndActions"
 
 // run results and actions on newly expired requests
 export const handleExpiredResults = async ({}: {}) => {
-  console.log("inside handle expired requests");
   await prisma.$transaction(async (transaction) => {
     const now = new Date();
 
@@ -47,3 +46,5 @@ export const handleExpiredResults = async ({}: {}) => {
     );
   });
 };
+
+handleExpiredResults({});

@@ -12,7 +12,13 @@ import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import Loading from "../../components/Loading";
-import { EvolveFlowRoute, evolveFlowRoute, Route } from "@/routers/routes";
+import {
+  EvolveFlowRoute,
+  evolveFlowRoute,
+  NewRequestRoute,
+  newRequestRoute,
+  Route,
+} from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import { Chip } from "@mui/material";
@@ -148,9 +154,8 @@ export const Flow = () => {
                   }}
                   onClick={() =>
                     navigate(
-                      generatePath(Route.Flow, {
+                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
                         flowId: fullUUIDToShort(flow.flowId),
-                        flowVersionId: null,
                       }),
                     )
                   }

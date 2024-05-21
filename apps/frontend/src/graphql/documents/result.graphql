@@ -15,6 +15,7 @@ fragment Result on Result {
   id
   createdAt
   resultConfigId
+  hasResult
   resultItems {
     ...ResultItem
   }

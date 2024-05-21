@@ -762,6 +762,7 @@ export type ResponseConfig = {
 export type Result = {
   __typename?: 'Result';
   createdAt: Scalars['String']['output'];
+  hasResult: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
   resultItems: Array<ResultItem>;
@@ -1612,6 +1613,7 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hasResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;

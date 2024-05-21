@@ -2,6 +2,7 @@ type Result {
   id: String!
   createdAt: String!
   resultConfigId: String!
+  hasResult: Boolean!
   resultItems: [ResultItem!]!
 }
 
