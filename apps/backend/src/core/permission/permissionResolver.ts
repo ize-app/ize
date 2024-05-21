@@ -5,10 +5,10 @@ import { identityResolver } from "../entity/identity/identityResolver";
 import { groupResolver } from "../entity/group/groupResolver";
 
 export const permissionResolver = (
-  permission: PermissionPrismaType | null,
+  permission: PermissionPrismaType,
   userIdentityIds: string[],
 ): Permission => {
-  if (!permission) return { stepTriggered: false, anyone: false, entities: [] };
+  if (!permission) return { stepTriggered: true, anyone: false, entities: [] };
 
   const entities = permission.EntitySet
     ? permission.EntitySet.EntitySetEntities.map((entity) => {
@@ -23,7 +23,7 @@ export const permissionResolver = (
     : [];
 
   return {
-    stepTriggered: permission.stepTriggered,
+    stepTriggered: false,
     anyone: permission.anyone,
     entities,
   };

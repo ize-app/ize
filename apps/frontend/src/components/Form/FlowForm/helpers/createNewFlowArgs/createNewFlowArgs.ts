@@ -19,18 +19,23 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
     steps: formState.steps.map((step, index) => {
       return {
         ...step,
-        request: {
-          fields: createFieldsArgs(step.request?.fields ?? [], resultConfigCache),
+        request: step.request && {
+          fields: createFieldsArgs(step.request.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(
             step.request?.permission,
             index === 0 ? userId : undefined,
-          ),
+        ),
         },
         response: step.response && {
           fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.response.permission),
         },
-        result: createResultsArgs(step.result, step.response?.fields, index, resultConfigCache),
+        result: createResultsArgs(
+          step.result,
+          step.response?.fields ?? [],
+          index,
+          resultConfigCache,
+        ),
         action: step.action ? createActionArgs(step.action, step.response?.fields) : null,
         expirationSeconds: step.expirationSeconds ?? null,
       };

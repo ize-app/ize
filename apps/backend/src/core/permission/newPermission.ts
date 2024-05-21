@@ -28,7 +28,6 @@ export const newPermission = async ({
   const permission = await transaction.permission.create({
     data: {
       anyone: args.anyone,
-      stepTriggered: stepIndex > 0,
       entitySetId,
       userId: args.userId,
     },

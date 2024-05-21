@@ -36,12 +36,13 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
-              entities={flow.steps[0].request.permission.entities}
+              entities={flow.steps[0].request.permission?.entities}
             />
-            <StageConnectorButton />
             {flow.steps.map((step, index) => {
+              if (step.response.fields.length === 0) return null;
               return (
                 <Box key={index}>
+                  <StageConnectorButton key={"connector-" + index.toString()} />
                   <FlowStage
                     icon={Diversity3Outlined}
                     label={
@@ -54,11 +55,8 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
-                    entities={flow.steps[0].response.permission.entities}
+                    entities={flow.steps[0].response.permission?.entities}
                   />
-                  {index < finalStepIndex && (
-                    <StageConnectorButton key={"connector-" + index.toString()} />
-                  )}
                 </Box>
               );
             })}

@@ -17,10 +17,12 @@ const stepSchema = z
         fields: fieldsSchema,
       })
       .optional(),
-    response: z.object({
-      permission: permissionSchema,
-      fields: fieldsSchema,
-    }),
+    response: z
+      .object({
+        permission: permissionSchema,
+        fields: fieldsSchema,
+      })
+      .optional(),
     result: resultsSchema,
     action: actionSchema.optional(),
     allowMultipleResponses: z.boolean().default(false),
@@ -44,8 +46,7 @@ const stepSchema = z
   })
   .refine(
     (step) => {
-      if (step.response.permission.type !== PermissionType.NA && step.response.fields.length === 0)
-        return false;
+      if (step.response && step.response.fields.length === 0) return false;
       else return true;
     },
     {
@@ -54,8 +55,7 @@ const stepSchema = z
   )
   .refine(
     (step) => {
-      if (step.response.permission.type !== PermissionType.NA && !step.expirationSeconds)
-        return false;
+      if (step.response && !step.expirationSeconds) return false;
       else return true;
     },
     {

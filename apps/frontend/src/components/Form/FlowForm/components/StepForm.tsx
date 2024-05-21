@@ -69,10 +69,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           selectOptions={[
             { name: "Certain people can respond", value: PermissionType.Entities },
             { name: "Anyone can respond", value: PermissionType.Anyone },
-            {
-              name: "No response: Automatically approve request",
-              value: PermissionType.NA,
-            },
           ]}
           label="Who can respond?"
           displayLabel={false}

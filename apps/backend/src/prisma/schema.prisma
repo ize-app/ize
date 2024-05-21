@@ -313,7 +313,7 @@ model Step {
   index                  Int
   expirationSeconds      Int?    @default(0) @map("request_expiration_seconds")
   allowMultipleResponses Boolean @default(false) @map("allow_multiple_responses")
-  requestPermissionsId   String  @map("request_permissions_id") @db.Uuid
+  requestPermissionsId   String? @map("request_permissions_id") @db.Uuid
   responsePermissionsId  String? @map("response_permissions_id") @db.Uuid
   requestFieldSetId      String? @map("request_field_set_id") @db.Uuid
   responseFieldSetId     String? @map("response_field_set_id") @db.Uuid
@@ -323,7 +323,7 @@ model Step {
   createdAt DateTime @default(now()) @map("created_at")
 
   FlowVersion         FlowVersion      @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  RequestPermissions  Permission       @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
+  RequestPermissions  Permission?      @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
   RequestFieldSet     FieldSet?        @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
   ResponseFieldSet    FieldSet?        @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
   ResponsePermissions Permission?      @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
@@ -339,7 +339,6 @@ model Permission {
   id String @id @default(uuid()) @db.Uuid
 
   entitySetId   String?  @map("entity_set_id") @db.Uuid
-  stepTriggered Boolean  @map("step_triggered")
   anyone        Boolean  @default(false)
   userId        String?  @map("user_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")

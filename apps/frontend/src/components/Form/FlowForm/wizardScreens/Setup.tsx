@@ -73,6 +73,8 @@ export const Setup = () => {
   // console.log("form state is ", useFormMethods.getValues());
   // console.log("errors are ", useFormMethods.formState.errors);
 
+  const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
+
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
     name: fieldArrayName,
@@ -115,33 +117,39 @@ export const Setup = () => {
             <StageConnectorButton />
             {stepsArrayMethods.fields.map((item, index) => {
               return (
-                <Box key={item.id}>
-                  <FlowStage
-                    icon={Diversity3OutlinedIcon}
-                    label={"Collaboration " + (index + 1).toString()}
-                    key={"stage-" + item.id.toString() + index.toString()}
-                    deleteHandler={
-                      index > 0
-                        ? () => {
-                            stepsArrayMethods.remove(index);
-                            setSelectedId("trigger0");
-                          }
-                        : undefined
-                    }
-                    hasError={
-                      !!useFormMethods.formState.errors.steps?.[index]?.root ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.response ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds ||
-                      !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses
-                    }
-                    id={"step" + index.toString()}
-                    setSelectedId={setSelectedId}
-                    selectedId={selectedId}
-                  />
-                  <StageConnectorButton
-                    key={"connector-" + item.id.toString() + index.toString()}
-                  />
-                </Box>
+                (index > 0 || hasStep0Response) && (
+                  <Box key={item.id}>
+                    <FlowStage
+                      icon={Diversity3OutlinedIcon}
+                      label={"Collaboration " + (index + 1).toString()}
+                      key={"stage-" + item.id.toString() + index.toString()}
+                      deleteHandler={
+                        index > 0
+                          ? () => {
+                              stepsArrayMethods.remove(index);
+                              setSelectedId("trigger0");
+                            }
+                          : () => {
+                              console.log(`deleting step ${index} response`);
+                              useFormMethods.setValue(`steps.${index}.response`, undefined);
+                              setSelectedId("trigger0");
+                            }
+                      }
+                      hasError={
+                        !!useFormMethods.formState.errors.steps?.[index]?.root ||
+                        !!useFormMethods.formState.errors.steps?.[index]?.response ||
+                        !!useFormMethods.formState.errors.steps?.[index]?.expirationSeconds ||
+                        !!useFormMethods.formState.errors.steps?.[index]?.allowMultipleResponses
+                      }
+                      id={"step" + index.toString()}
+                      setSelectedId={setSelectedId}
+                      selectedId={selectedId}
+                    />
+                    <StageConnectorButton
+                      key={"connector-" + item.id.toString() + index.toString()}
+                    />
+                  </Box>
+                )
               );
             })}
             {!hasWebhook ? (
@@ -161,14 +169,21 @@ export const Setup = () => {
                 <AddStageButton
                   label={"Add collaborative step"}
                   onClick={() => {
-                    const secondToLastIndex = stepsArrayMethods.fields.length - 1;
-                    stepsArrayMethods.append(defaultStepFormValues);
-                    useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
-                      filterOptionId: DefaultOptionSelection.None,
-                      type: ActionType.TriggerStep,
-                    });
-                    // navigate to newly created step
-                    setSelectedId(`step${stepsArrayMethods.fields.length}`);
+                    if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) {
+                      useFormMethods.setValue(
+                        `steps.${0}.response`,
+                        defaultStepFormValues.response,
+                      );
+                    } else {
+                      const secondToLastIndex = stepsArrayMethods.fields.length - 1;
+                      stepsArrayMethods.append(defaultStepFormValues);
+                      useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
+                        filterOptionId: DefaultOptionSelection.None,
+                        type: ActionType.TriggerStep,
+                      });
+                      // navigate to newly created step
+                      setSelectedId(`step${stepsArrayMethods.fields.length}`);
+                    }
                   }}
                 />
                 <AddStageButton
@@ -230,6 +245,7 @@ export const Setup = () => {
               show={selectedId === "trigger0"}
             />
             {stepsArrayMethods.fields.map((item, index) => {
+              if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) return null;
               return (
                 <StepForm
                   // id={item.id}

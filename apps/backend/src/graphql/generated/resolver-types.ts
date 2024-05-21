@@ -517,7 +517,7 @@ export type NewStepArgs = {
   action?: InputMaybe<ActionArgs>;
   allowMultipleResponses: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
-  request: StepRequestArgs;
+  request?: InputMaybe<StepRequestArgs>;
   response?: InputMaybe<StepResponseArgs>;
   result: Array<ResultArgs>;
 };
@@ -700,7 +700,7 @@ export type Request = {
 export type RequestConfig = {
   __typename?: 'RequestConfig';
   fields: Array<Field>;
-  permission: Permission;
+  permission?: Maybe<Permission>;
 };
 
 export type RequestDefinedOptionsArgs = {
@@ -737,7 +737,7 @@ export type RequestStepSummary = {
   requestId: Scalars['String']['output'];
   requestName: Scalars['String']['output'];
   requestStepId: Scalars['String']['output'];
-  respondPermission: Permission;
+  respondPermission?: Maybe<Permission>;
   responseComplete: Scalars['Boolean']['output'];
   resultsComplete: Scalars['Boolean']['output'];
   stepIndex: Scalars['Int']['output'];
@@ -756,7 +756,7 @@ export type Response = {
 export type ResponseConfig = {
   __typename?: 'ResponseConfig';
   fields: Array<Field>;
-  permission: Permission;
+  permission?: Maybe<Permission>;
 };
 
 export type Result = {
@@ -1556,7 +1556,7 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
 
 export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestConfig'] = ResolversParentTypes['RequestConfig']> = {
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
-  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  permission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1588,7 +1588,7 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  respondPermission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  respondPermission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
   responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1607,7 +1607,7 @@ export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType ex
 
 export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseConfig'] = ResolversParentTypes['ResponseConfig']> = {
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
-  permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
+  permission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
