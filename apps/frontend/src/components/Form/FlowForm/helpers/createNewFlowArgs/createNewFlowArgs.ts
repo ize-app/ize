@@ -24,7 +24,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
           permission: createPermissionArgs(
             step.request?.permission,
             index === 0 ? userId : undefined,
-        ),
+          ),
         },
         response: step.response && {
           fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),

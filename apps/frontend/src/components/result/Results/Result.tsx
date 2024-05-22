@@ -29,7 +29,7 @@ export const Result = ({
         resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
       />
       <Typography variant="description">{createResultConfigDescription(resultConfig)}</Typography>
-      {!result?.hasResult && (
+      {result && !result?.hasResult && (
         <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
           <DoNotDisturbIcon color="warning" fontSize="small" />
           <Typography variant="description" color={(theme) => theme.palette.warning.main}>

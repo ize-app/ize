@@ -10,7 +10,7 @@ import {
   FieldType,
   NewResponseDocument,
 } from "../../../graphql/generated/graphql";
-import { DatePicker, DateTimePicker, MultiSelect, TextField } from "../formFields";
+import { DatePicker, DateTimePicker, MultiSelect, SortableList, TextField } from "../formFields";
 import { ResponseSchemaType, responseSchema } from "./formValidation";
 import { Radio } from "../formFields/Radio";
 import { Button } from "@mui/material";
@@ -65,7 +65,6 @@ export const ResponseForm = ({
   });
 
   // console.log("errors are", formMethods.formState.errors);
-  // console.log("formstate is ", formMethods.getValues());
 
   const onSubmit = async (data: ResponseSchemaType) => {
     await mutate({
@@ -171,7 +170,19 @@ export const ResponseForm = ({
                   );
                 }
                 case FieldOptionsSelectionType.Rank: {
-                  return null;
+                  return (
+                    <SortableList<ResponseSchemaType>
+                      control={formMethods.control}
+                      label={name}
+                      key={fieldId}
+                      formMethods={formMethods}
+                      name={`responseFields.${field.fieldId}.optionSelections`}
+                      options={options.map((option) => ({
+                        label: option.name,
+                        value: option.optionId,
+                      }))}
+                    />
+                  );
                 }
               }
             }

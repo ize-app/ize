@@ -23,6 +23,7 @@ interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   size?: "small" | "medium";
   sx?: SxProps;
   displayEmpty?: boolean;
+  display?: boolean;
 }
 
 export const Select = <T extends FieldValues>({
@@ -38,7 +39,7 @@ export const Select = <T extends FieldValues>({
   loading = false,
   variant = "outlined",
   size = "small",
-
+  display = true,
   ...props
 }: SelectProps<T>): JSX.Element => (
   <Controller
@@ -47,7 +48,7 @@ export const Select = <T extends FieldValues>({
     render={({ field, fieldState: { error } }) => {
       return (
         <FormControl
-          sx={{ textAlign: "left", flexGrow: 1, ...sx }}
+          sx={{ textAlign: "left", flexGrow: 1, display: display ? "flex" : "none", ...sx }}
           error={Boolean(error)}
           required={required}
         >

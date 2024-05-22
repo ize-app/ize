@@ -52,17 +52,25 @@ export const FieldOptions = ({
   if (onlyShowSelections) {
     return (
       <FieldOptionsContainer>
-        {optionSelections?.map((os) => {
+        {optionSelections?.map((os, index) => {
           const option = options.find((o) => o.optionId === os.optionId);
           if (!option) return null;
-          return <FieldOption key={os.optionId} value={option.name} dataType={option.dataType} />;
+          return (
+            <FieldOption
+              key={os.optionId}
+              value={option.name}
+              dataType={option.dataType}
+              selectionType={fieldOptions.selectionType}
+              index={index}
+            />
+          );
         })}
       </FieldOptionsContainer>
     );
   } else
     return (
       <FieldOptionsContainer>
-        {options.map((option) => {
+        {options.map((option, index) => {
           const isSelected =
             optionSelections?.some((os) => os.optionId === option.optionId) ?? false;
           return (
@@ -70,15 +78,19 @@ export const FieldOptions = ({
               key={option.optionId}
               isSelected={isSelected}
               value={option.name}
+              index={index}
+              selectionType={fieldOptions.selectionType}
               dataType={option.dataType as FieldDataType}
             />
           );
         })}
         {!final && hasRequestOptions && requestOptionsDataType && (
           <FieldOption
+            selectionType={fieldOptions.selectionType}
             sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
             value={`Additional ${requestOptionsDataType} options defined by triggerer`}
             dataType={FieldDataType.String}
+            index={null}
           />
         )}
         {!final &&
@@ -86,8 +98,10 @@ export const FieldOptions = ({
             return (
               <FieldOption
                 key={lr.resultConfigId + lr.fieldId}
+                selectionType={fieldOptions.selectionType}
                 sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
                 value={linkedResultDescription(lr)}
+                index={null}
                 dataType={FieldDataType.String}
               />
             );

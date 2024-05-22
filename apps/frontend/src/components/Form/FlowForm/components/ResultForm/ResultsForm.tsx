@@ -6,7 +6,12 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { Select, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 
-import { ResultType } from "@/graphql/generated/graphql";
+import {
+  DecisionType,
+  FieldOptionsSelectionType,
+  FieldType,
+  ResultType,
+} from "@/graphql/generated/graphql";
 import { Box, FormHelperText } from "@mui/material";
 import {
   defaultDecisionResult,
@@ -114,6 +119,9 @@ const ResultForm = ({
 }: ResultFormProps) => {
   const result = formMethods.watch(`steps.${formIndex}.result.${resultIndex}`);
   const resultType = result.type;
+  const resultField = formMethods.watch(`steps.${formIndex}.response.fields.${resultIndex}`);
+  const optionSelectionType =
+    resultField.type === FieldType.Options ? resultField.optionsConfig.selectionType : null;
 
   const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(undefined);
 
@@ -140,7 +148,30 @@ const ResultForm = ({
     setPrevResultType(resultType);
   }, [resultType]);
 
-  const resultField = formMethods.watch(`steps.${formIndex}.response.fields.${resultIndex}`);
+  useEffect(() => {
+    if (optionSelectionType) {
+      if (optionSelectionType === FieldOptionsSelectionType.Rank) {
+        formMethods.setValue(
+          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.maxSelections`,
+          undefined,
+        );
+        formMethods.setValue(
+          `steps.${formIndex}.result.${resultIndex}.decision.type`,
+          DecisionType.WeightedAverage,
+        );
+      } else if (optionSelectionType === FieldOptionsSelectionType.Select) {
+        formMethods.setValue(
+          `steps.${formIndex}.result.${resultIndex}.decision.type`,
+          DecisionType.NumberThreshold,
+        );
+      } else if (optionSelectionType === FieldOptionsSelectionType.MultiSelect) {
+        formMethods.setValue(
+          `steps.${formIndex}.result.${resultIndex}.decision.type`,
+          DecisionType.WeightedAverage,
+        );
+      }
+    }
+  }, [optionSelectionType]);
 
   const resultError =
     formMethods.getFieldState(`steps.${formIndex}.result.${resultIndex}`).error?.root?.message ??
