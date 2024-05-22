@@ -338,10 +338,10 @@ model Step {
 model Permission {
   id String @id @default(uuid()) @db.Uuid
 
-  entitySetId   String?  @map("entity_set_id") @db.Uuid
-  anyone        Boolean  @default(false)
-  userId        String?  @map("user_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
+  entitySetId String?  @map("entity_set_id") @db.Uuid
+  anyone      Boolean  @default(false)
+  userId      String?  @map("user_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
 
   EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
@@ -535,6 +535,8 @@ model AnswerOptionSelection {
   fieldAnswerId     String   @map("field_answer_id") @db.Uuid
   fieldOptionId     String   @map("field_option_id") @db.Uuid
   answerFreeInputId String?  @unique @map("answer_free_input_id") @db.Uuid
+  // score used determining relative weight of option selections (e.g. ranking). higher weight = stronger preference 
+  weight            Int      @default(1)
   createdAt         DateTime @default(now()) @map("created_at")
 
   FieldOption     FieldOption      @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)

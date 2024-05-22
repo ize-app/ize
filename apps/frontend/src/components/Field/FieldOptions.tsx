@@ -59,6 +59,7 @@ export const FieldOptions = ({
             <FieldOption
               key={os.optionId}
               value={option.name}
+              final={final}
               dataType={option.dataType}
               selectionType={fieldOptions.selectionType}
               index={index}
@@ -79,6 +80,7 @@ export const FieldOptions = ({
               isSelected={isSelected}
               value={option.name}
               index={index}
+              final={final}
               selectionType={fieldOptions.selectionType}
               dataType={option.dataType as FieldDataType}
             />
@@ -91,6 +93,7 @@ export const FieldOptions = ({
             value={`Additional ${requestOptionsDataType} options defined by triggerer`}
             dataType={FieldDataType.String}
             index={null}
+            final={final}
           />
         )}
         {!final &&
@@ -102,6 +105,7 @@ export const FieldOptions = ({
                 sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
                 value={linkedResultDescription(lr)}
                 index={null}
+                final={final}
                 dataType={FieldDataType.String}
               />
             );

@@ -26,6 +26,7 @@ export const newResults = async ({
   const resultConfigs =
     step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
+  
   // run results from each
   const possibleResults = await Promise.all(
     resultConfigs.map(async (resultConfig) => {

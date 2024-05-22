@@ -42,7 +42,7 @@ export const newDecisionResult = async ({
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
   // only create a record of a decision if the minimum number of answers have been provided and there is a decision
-  if (decisionOptionId && fieldAnswers.length < resultConfig.minAnswers) {
+  if (decisionOptionId && fieldAnswers.length >= resultConfig.minAnswers) {
     decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
       where: {
         id: decisionOptionId,

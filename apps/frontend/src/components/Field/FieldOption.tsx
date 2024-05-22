@@ -8,6 +8,7 @@ export const FieldOption = ({
   dataType,
   selectionType,
   index,
+  final,
   sx = {},
 }: {
   isSelected?: boolean;
@@ -15,6 +16,7 @@ export const FieldOption = ({
   dataType: FieldDataType;
   selectionType: FieldOptionsSelectionType;
   index: number | null;
+  final: boolean;
   sx?: SxProps;
 }) => {
   return (
@@ -31,9 +33,9 @@ export const FieldOption = ({
       color={isSelected ? "primary" : "secondary"}
       fontSize={".875rem"}
     >
-      {selectionType === FieldOptionsSelectionType.Rank && (
+      {selectionType === FieldOptionsSelectionType.Rank && typeof index === "number" && final && (
         <Typography fontSize={".875rem"} fontWeight={700} marginRight="4px">
-          {index}.
+          {index + 1}.
         </Typography>
       )}
       {renderFreeInputValue(value, dataType)}
