@@ -96,7 +96,11 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
           variant="outlined"
           size="small"
           onClick={() => {
-            const field = defaultOptionsField(formIndex, results.length);
+            const field = defaultOptionsField(
+              formIndex,
+              results.length,
+              FieldOptionsSelectionType.Select,
+            );
             fieldsArrayMethods.append(field);
             const result = defaultDecisionResult(formIndex, results.length, field.fieldId);
             resultsArrayMethods.append(result);
@@ -129,12 +133,12 @@ const ResultForm = ({
     // only run logic if result type has changed, but not on first render
     if (prevResultType && resultType !== prevResultType) {
       if (resultType === ResultType.Decision) {
-        const field = defaultOptionsField(formIndex, resultIndex);
+        const field = defaultOptionsField(formIndex, resultIndex, FieldOptionsSelectionType.Select);
         formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
         const result = defaultDecisionResult(formIndex, resultIndex, field.fieldId);
         formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
       } else if (resultType === ResultType.Ranking) {
-        const field = defaultOptionsField(formIndex, resultIndex);
+        const field = defaultOptionsField(formIndex, resultIndex, FieldOptionsSelectionType.Rank);
         formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
         const result = defaultRankingResult(formIndex, resultIndex, field.fieldId);
         formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);

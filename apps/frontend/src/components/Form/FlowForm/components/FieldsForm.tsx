@@ -20,7 +20,11 @@ interface FieldsFormProps {
   branch: "request" | "response";
 }
 
-export const defaultOptionsField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
+export const defaultOptionsField = (
+  stepIndex: number,
+  fieldIndex: number,
+  selectionType: FieldOptionsSelectionType,
+): FieldSchemaType => ({
   fieldId: "new." + stepIndex + "." + fieldIndex,
   type: FieldType.Options,
   name: "",
@@ -28,9 +32,14 @@ export const defaultOptionsField = (stepIndex: number, fieldIndex: number): Fiel
   optionsConfig: {
     options: [],
     hasRequestOptions: false,
-    selectionType: FieldOptionsSelectionType.Select,
+    selectionType,
     previousStepOptions: false,
-    maxSelections: 1,
+    maxSelections:
+      selectionType === FieldOptionsSelectionType.MultiSelect
+        ? 3
+        : selectionType === FieldOptionsSelectionType.Select
+          ? 1
+          : null,
     linkedResultOptions: [],
   },
 });

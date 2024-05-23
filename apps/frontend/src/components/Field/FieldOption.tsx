@@ -2,6 +2,7 @@ import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/gr
 import { SxProps, Typography } from "@mui/material";
 import { renderFreeInputValue } from "./renderFreeInputValue";
 
+// amdmittedly, this component is kind of convulted. due for a refactor
 export const FieldOption = ({
   isSelected = false,
   value,

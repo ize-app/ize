@@ -10,7 +10,7 @@
     "build": "tsc --project ./",
     "start:dev": "nodemon src/express/server.ts",
     "start:prod": "node dist/express/server.js",
-    "handle-expired-request-steps": "npx ts-node src/core/request/handleExpiredRequest.ts"
+    "handle-expired-request-steps": "npx ts-node src/core/request/handleExpiredRequests.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.5",

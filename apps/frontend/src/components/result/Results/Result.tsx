@@ -39,7 +39,11 @@ export const Result = ({
         </Box>
       )}
       {field && field.__typename === FieldType.Options && (
-        <FieldOptions fieldOptions={field} final={false} optionSelections={result?.resultItems} />
+        <FieldOptions
+          fieldOptions={field}
+          final={!!result}
+          optionSelections={result?.resultItems}
+        />
       )}
     </Box>
   );

@@ -51,7 +51,10 @@ export type ResultConfigSetPrismaType = Prisma.ResultConfigSetGetPayload<{
 }>;
 
 export const resultInclude = Prisma.validator<Prisma.ResultInclude>()({
-  ResultItems: true,
+  ResultItems: {
+    // heighest weight = highest preference
+    orderBy: { weight: "desc" },
+  },
 });
 
 export type ResultPrismaType = Prisma.ResultGetPayload<{

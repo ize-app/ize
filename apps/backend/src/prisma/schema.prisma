@@ -796,7 +796,6 @@ model Result {
   resultConfigId String   @map("result_config_id") @db.Uuid
   // Number of items within result array
   itemCount      Int      @map("itemCount")
-  // 
   hasResult      Boolean  @map("has_result")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
@@ -814,6 +813,8 @@ model ResultItems {
   dataType      FieldDataType @map("data_type")
   fieldOptionId String?       @map("field_option_id") @db.Uuid
   resultId      String        @db.Uuid
+  // used for ranking results. higher weight = stronger preference
+  weight        Float         @default(1)
   createdAt     DateTime      @default(now()) @map("created_at")
 
   Result Result       @relation(fields: [resultId], references: [id], onDelete: Cascade)

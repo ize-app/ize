@@ -1,6 +1,7 @@
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
+import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
 export const determineDecision = ({
   decisionConfig,
@@ -13,7 +14,7 @@ export const determineDecision = ({
 
   const totalAnswerCount = answers.length;
 
-  const optionCount = getOptionWeights({ answers });
+  const optionCount = calculateAggregateOptionWeights({ answers });
 
   switch (decisionConfig.type) {
     case DecisionType.NumberThreshold: {
@@ -38,40 +39,18 @@ export const determineDecision = ({
       break;
     }
     case DecisionType.WeightedAverage: {
-      console.log("inside weighted average");
       let maxWeight: number = 0;
       let maxWeightOptionId: string | null = null;
       // find the option with the heightest count
       for (const [optionId, count] of Object.entries(optionCount)) {
-        console.log("evaluating option", optionId, count);
         if (!maxWeightOptionId || maxWeight < count) {
           maxWeight = count;
           maxWeightOptionId = optionId;
         }
       }
-      console.log("maxWeightOptionId", maxWeightOptionId);
       decisionOptionId = maxWeightOptionId;
       break;
     }
   }
-  console.log("decisionOptionId", decisionOptionId);
   return decisionOptionId;
-};
-
-// generic function for determining relative priority between options
-// for a single select or multiselect, all weights will be 1, so this is effectively an option count
-// for a ranking, there are higher weights for higher ranked options
-const getOptionWeights = ({
-  answers,
-}: {
-  answers: FieldAnswerPrismaType[];
-}): { [key: string]: number } => {
-  const optionCount: { [key: string]: number } = {};
-
-  answers.forEach((a) => {
-    a.AnswerOptionSelections.forEach((o) => {
-      optionCount[o.fieldOptionId] = (optionCount[o.fieldOptionId] || 0) + o.weight;
-    });
-  });
-  return optionCount;
 };

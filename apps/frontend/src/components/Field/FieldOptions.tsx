@@ -36,6 +36,7 @@ const FieldOptionsContainer = ({ children }: { children: ReactNode }) => {
 
 // renders only the full list of options for a field and option selections, if they are provided
 // if final, displays the final list of options. if not final, displays how additional options are created during a request
+// this form is brittle and slow. due for a rework
 export const FieldOptions = ({
   fieldOptions,
   optionSelections,
@@ -49,6 +50,8 @@ export const FieldOptions = ({
 }) => {
   const { options, requestOptionsDataType, hasRequestOptions, linkedResultOptions } = fieldOptions;
 
+  // intended for showing a field answer without the other options
+  // used for displaying user field answers in both request and response
   if (onlyShowSelections) {
     return (
       <FieldOptionsContainer>
@@ -68,7 +71,50 @@ export const FieldOptions = ({
         })}
       </FieldOptionsContainer>
     );
-  } else
+  }
+  // if result is for a final ranking, display options that are part of result first and other options
+  else if (fieldOptions.selectionType === "Rank" && final) {
+    const nonResultOptions = options.filter((option) => {
+      return !optionSelections?.some((os) => os.optionId === option.optionId);
+    });
+    return (
+      <FieldOptionsContainer>
+        {optionSelections?.map((os, index) => {
+          const option = options.find((o) => o.optionId === os.optionId);
+          if (!option) return null;
+          return (
+            <FieldOption
+              isSelected={true}
+              key={os.optionId}
+              value={option.name}
+              final={final}
+              dataType={option.dataType}
+              selectionType={fieldOptions.selectionType}
+              index={index}
+            />
+          );
+        })}
+        {nonResultOptions?.map((os) => {
+          const option = options.find((o) => o.optionId === os.optionId);
+          if (!option) return null;
+          return (
+            <FieldOption
+              isSelected={false}
+              key={os.optionId}
+              value={option.name}
+              index={null}
+              final={final}
+              dataType={option.dataType}
+              selectionType={fieldOptions.selectionType}
+            />
+          );
+        })}
+      </FieldOptionsContainer>
+    );
+  }
+  // shows all options for a field
+  // if it's not final, it will also describe how options can be created in the option list
+  else
     return (
       <FieldOptionsContainer>
         {options.map((option, index) => {
