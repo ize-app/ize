@@ -38,7 +38,7 @@ export const newResults = async ({
           return await newDecisionResult({ resultConfig, responses, requestStepId });
         }
         case ResultType.LlmSummary: {
-          return await newLlmSummaryResult({ step, responses });
+          return await newLlmSummaryResult({ resultConfig, responses, requestStepId });
         }
         case ResultType.Ranking: {
           return await newRankingResult({ resultConfig, responses, requestStepId });

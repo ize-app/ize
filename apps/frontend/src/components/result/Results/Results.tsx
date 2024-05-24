@@ -78,7 +78,7 @@ export const Results = ({
             >
               <Result resultConfig={resultConfig} field={field} result={result} />
               {fieldAnswers && field && (
-                <UserFieldAnswers userFieldAnswers={fieldAnswers} field={field} />
+                <UserFieldAnswers userFieldAnswers={fieldAnswers} field={field} key={result?.id} />
               )}
             </LabeledGroupedInputs>
           </Box>

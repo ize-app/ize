@@ -289,6 +289,12 @@ export type FreeInputFieldAnswer = {
   value: Scalars['String']['output'];
 };
 
+export type GenericFieldAndValue = {
+  __typename?: 'GenericFieldAndValue';
+  fieldName: Scalars['String']['output'];
+  value: Array<Scalars['String']['output']>;
+};
+
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -1017,6 +1023,7 @@ export type ResolversTypes = {
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
+  GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
@@ -1126,6 +1133,7 @@ export type ResolversParentTypes = {
   FlowSummary: FlowSummary;
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
+  GenericFieldAndValue: GenericFieldAndValue;
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
@@ -1352,6 +1360,12 @@ export type FreeInputResolvers<ContextType = GraphqlRequestContext, ParentType e
 export type FreeInputFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FreeInputFieldAnswer'] = ResolversParentTypes['FreeInputFieldAnswer']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GenericFieldAndValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GenericFieldAndValue'] = ResolversParentTypes['GenericFieldAndValue']> = {
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  value?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1719,6 +1733,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   FlowSummary?: FlowSummaryResolvers<ContextType>;
   FreeInput?: FreeInputResolvers<ContextType>;
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;
+  GenericFieldAndValue?: GenericFieldAndValueResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
   GroupCustom?: GroupCustomResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;

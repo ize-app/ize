@@ -11,6 +11,7 @@ import { createResultConfigDescription } from "../createResultConfigDescription"
 import { resultTypeDisplay } from "../resultTypeDisplay";
 import { ResultName } from "../ResultName";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 
 export const Result = ({
   resultConfig,
@@ -45,6 +46,11 @@ export const Result = ({
           optionSelections={result?.resultItems}
         />
       )}
+      {field &&
+        field.__typename === FieldType.FreeInput &&
+        result?.resultItems.map((item) => (
+          <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
+        ))}
     </Box>
   );
 };

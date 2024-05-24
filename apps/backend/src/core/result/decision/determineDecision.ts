@@ -38,6 +38,7 @@ export const determineDecision = ({
       }
       break;
     }
+    // note: if there is a tie, this arbitarily picks the first option
     case DecisionType.WeightedAverage: {
       let maxWeight: number = 0;
       let maxWeightOptionId: string | null = null;

@@ -288,6 +288,12 @@ export type FreeInputFieldAnswer = {
   value: Scalars['String']['output'];
 };
 
+export type GenericFieldAndValue = {
+  __typename?: 'GenericFieldAndValue';
+  fieldName: Scalars['String']['output'];
+  value: Array<Scalars['String']['output']>;
+};
+
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -1588,6 +1594,12 @@ export type FreeInputFieldAnswer = {
   __typename?: 'FreeInputFieldAnswer';
   fieldId: Scalars['String']['output'];
   value: Scalars['String']['output'];
+};
+
+export type GenericFieldAndValue = {
+  __typename?: 'GenericFieldAndValue';
+  fieldName: Scalars['String']['output'];
+  value: Array<Scalars['String']['output']>;
 };
 
 export type Group = {

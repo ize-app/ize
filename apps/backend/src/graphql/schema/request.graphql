@@ -102,3 +102,8 @@ type Response {
   user: User!
   answers: [FieldAnswer!]!
 }
+
+type GenericFieldAndValue {
+  fieldName: String!
+  value: [String!]!
+}
