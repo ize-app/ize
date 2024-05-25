@@ -13,19 +13,18 @@ import {
   ResultType,
 } from "@/graphql/generated/graphql";
 import { Box, FormHelperText } from "@mui/material";
-import {
-  defaultDecisionResult,
-  defaultLlmSummaryResult,
-  defaultRankingResult,
-} from "../../formValidation/result";
+import { ResultSchemaType } from "../../formValidation/result";
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { FieldOptionsForm } from "../FieldOptionsForm";
 import Close from "@mui/icons-material/Close";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldsForm, defaultFreeInputField, defaultOptionsField } from "../FieldsForm";
+import { FieldsForm } from "../FieldsForm";
 import { useEffect, useState } from "react";
+import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
+import { FieldSchemaType } from "../../formValidation/fields";
+import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -34,7 +33,9 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
     case ResultType.Ranking:
       return "Describe what you're trying to rank";
     case ResultType.LlmSummary:
-      return "What's your question?";
+      return "What's your question to the group?";
+    case ResultType.LlmSummaryList:
+      return "What's your question to the group?";
     default:
       return "What's your question?";
   }
@@ -96,13 +97,19 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
           variant="outlined"
           size="small"
           onClick={() => {
-            const field = defaultOptionsField(
-              formIndex,
-              results.length,
-              FieldOptionsSelectionType.Select,
-            );
+            const field = createDefaultFieldState({
+              fieldType: FieldType.Options,
+              stepIndex: formIndex,
+              fieldIndex: results.length,
+              selectionType: FieldOptionsSelectionType.Select,
+            });
             fieldsArrayMethods.append(field);
-            const result = defaultDecisionResult(formIndex, results.length, field.fieldId);
+            const result = createDefaultResultState({
+              resultType: ResultType.Decision,
+              stepIndex: formIndex,
+              resultIndex: results.length,
+              fieldId: field.fieldId,
+            });
             resultsArrayMethods.append(result);
           }}
         >
@@ -131,23 +138,45 @@ const ResultForm = ({
 
   useEffect(() => {
     // only run logic if result type has changed, but not on first render
-    if (prevResultType && resultType !== prevResultType) {
+    if (prevResultType && resultType && resultType !== prevResultType) {
+      let field: FieldSchemaType;
       if (resultType === ResultType.Decision) {
-        const field = defaultOptionsField(formIndex, resultIndex, FieldOptionsSelectionType.Select);
-        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
-        const result = defaultDecisionResult(formIndex, resultIndex, field.fieldId);
-        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
+        field = createDefaultFieldState({
+          fieldType: FieldType.Options,
+          stepIndex: formIndex,
+          fieldIndex: resultIndex,
+          selectionType: FieldOptionsSelectionType.Select,
+        });
       } else if (resultType === ResultType.Ranking) {
-        const field = defaultOptionsField(formIndex, resultIndex, FieldOptionsSelectionType.Rank);
-        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
-        const result = defaultRankingResult(formIndex, resultIndex, field.fieldId);
-        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
+        field = createDefaultFieldState({
+          fieldType: FieldType.Options,
+          stepIndex: formIndex,
+          fieldIndex: resultIndex,
+          selectionType: FieldOptionsSelectionType.Rank,
+        });
       } else if (resultType === ResultType.LlmSummary) {
-        const field = defaultFreeInputField(formIndex, resultIndex);
-        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
-        const result = defaultLlmSummaryResult(formIndex, resultIndex, field.fieldId);
-        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
+        field = createDefaultFieldState({
+          fieldType: FieldType.FreeInput,
+          stepIndex: formIndex,
+          fieldIndex: resultIndex,
+        });
+      } else if (resultType === ResultType.LlmSummaryList) {
+        field = createDefaultFieldState({
+          fieldType: FieldType.FreeInput,
+          stepIndex: formIndex,
+          fieldIndex: resultIndex,
+        });
+      } else {
+        throw new Error(`Unknown result type ${resultType}`);
       }
+      let result: ResultSchemaType = createDefaultResultState({
+        resultType,
+        stepIndex: formIndex,
+        resultIndex: resultIndex,
+        fieldId: field.fieldId,
+      });
+      formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
+      formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
     }
     setPrevResultType(resultType);
   }, [resultType]);
@@ -231,7 +260,8 @@ const ResultForm = ({
               selectOptions={[
                 { name: "Decision", value: ResultType.Decision },
                 { name: "Ranked list", value: ResultType.Ranking },
-                { name: "AI summary", value: ResultType.LlmSummary },
+                { name: "AI generated summary", value: ResultType.LlmSummary },
+                { name: "AI generated list", value: ResultType.LlmSummaryList },
               ]}
               name={`steps.${formIndex}.result.${resultIndex}.type`}
               size="small"
@@ -270,7 +300,10 @@ const ResultForm = ({
             formIndex={formIndex}
             formMethods={formMethods}
             resultIndex={resultIndex}
-            display={result.type === ResultType.LlmSummary}
+            display={
+              result.type === ResultType.LlmSummary || result.type === ResultType.LlmSummaryList
+            }
+            type={result.type}
           />
 
           <PrioritizationForm

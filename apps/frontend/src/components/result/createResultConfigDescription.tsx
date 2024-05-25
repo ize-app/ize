@@ -48,5 +48,9 @@ export const createResultConfigDescription = (resultConfig: ResultConfigFragment
       return `All responses will be summarized with AI using the following prompt: "
       ${resultConfig.prompt}"`;
     }
+    case ResultType.LlmSummaryList: {
+      return `All responses will be summarized with AI using the following prompt: "
+      ${resultConfig.prompt}"`;
+    }
   }
 };

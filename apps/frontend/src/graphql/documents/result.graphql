@@ -9,6 +9,9 @@ fragment ResultConfig on ResultConfig {
   ... on LlmSummary {
     ...LlmSummary
   }
+  ... on LlmSummaryList {
+    ...LlmSummaryList
+  }
 }
 
 fragment Result on Result {
@@ -49,4 +52,12 @@ fragment LlmSummary on LlmSummary {
   fieldId
   resultConfigId
   prompt
+  example
+}
+
+fragment LlmSummaryList on LlmSummaryList {
+  fieldId
+  resultConfigId
+  prompt
+  example
 }

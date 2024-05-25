@@ -55,7 +55,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         />
       )}
       <PanelAccordion
-        title="Response permissions"
+        title="Permissions"
         hasError={
           !!formMethods.formState.errors.steps?.[formIndex]?.response ||
           !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
@@ -103,7 +103,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         />
       </PanelAccordion>
       <PanelAccordion
-        title="Results"
+        title="Collaborations"
         hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
       >
         <ResultsForm

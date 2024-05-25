@@ -56,8 +56,8 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                     )}
                     icon={Diversity3Outlined}
                     label={
-                      request.flow.steps[0].result[0]
-                        ? request.flow.steps[0].result[0].__typename
+                      request.flow.steps[index].result[0]
+                        ? request.flow.steps[index].result[0].__typename
                         : "Collaboration " + (index + 1).toString()
                     }
                     key={"stage-" + step?.id}

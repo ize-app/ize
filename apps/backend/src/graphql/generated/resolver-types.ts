@@ -405,14 +405,25 @@ export type LinkedResultOptionsArgs = {
 
 export type LlmSummary = {
   __typename?: 'LlmSummary';
+  example?: Maybe<Scalars['String']['output']>;
   fieldId?: Maybe<Scalars['String']['output']>;
   minimumAnswers: Scalars['Int']['output'];
-  prompt?: Maybe<Scalars['String']['output']>;
+  prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
 };
 
 export type LlmSummaryArgs = {
-  prompt?: InputMaybe<Scalars['String']['input']>;
+  example?: InputMaybe<Scalars['String']['input']>;
+  prompt: Scalars['String']['input'];
+};
+
+export type LlmSummaryList = {
+  __typename?: 'LlmSummaryList';
+  example?: Maybe<Scalars['String']['output']>;
+  fieldId?: Maybe<Scalars['String']['output']>;
+  minimumAnswers: Scalars['Int']['output'];
+  prompt: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
 };
 
 export enum LlmSummaryType {
@@ -785,7 +796,7 @@ export type ResultArgs = {
   type: ResultType;
 };
 
-export type ResultConfig = Decision | LlmSummary | Ranking;
+export type ResultConfig = Decision | LlmSummary | LlmSummaryList | Ranking;
 
 export type ResultItem = {
   __typename?: 'ResultItem';
@@ -798,6 +809,7 @@ export type ResultItem = {
 export enum ResultType {
   Decision = 'Decision',
   LlmSummary = 'LlmSummary',
+  LlmSummaryList = 'LlmSummaryList',
   Ranking = 'Ranking'
 }
 
@@ -977,7 +989,7 @@ export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
-  ResultConfig: ( Decision ) | ( LlmSummary ) | ( Ranking );
+  ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
 };
 
 
@@ -1045,6 +1057,7 @@ export type ResolversTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
   LlmSummaryArgs: LlmSummaryArgs;
+  LlmSummaryList: ResolverTypeWrapper<LlmSummaryList>;
   LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Me>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -1155,6 +1168,7 @@ export type ResolversParentTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
+  LlmSummaryList: LlmSummaryList;
   Me: Me;
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
@@ -1445,9 +1459,19 @@ export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentTyp
 };
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
+  example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  prompt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummaryList'] = ResolversParentTypes['LlmSummaryList']> = {
+  example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1635,7 +1659,7 @@ export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
-  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'LlmSummaryList' | 'Ranking', ParentType, ContextType>;
 };
 
 export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultItem'] = ResolversParentTypes['ResultItem']> = {
@@ -1745,6 +1769,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityType?: IdentityTypeResolvers<ContextType>;
   LinkedResult?: LinkedResultResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
+  LlmSummaryList?: LlmSummaryListResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NftCollection?: NftCollectionResolvers<ContextType>;

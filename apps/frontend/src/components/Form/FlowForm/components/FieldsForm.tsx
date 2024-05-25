@@ -12,6 +12,7 @@ import { Box } from "@mui/material";
 import { FieldOptionsForm } from "./FieldOptionsForm";
 import { FieldSchemaType } from "../formValidation/fields";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
+import { createDefaultFieldState } from "../helpers/defaultFormState/createDefaultFieldState";
 
 interface FieldsFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -19,30 +20,6 @@ interface FieldsFormProps {
   formIndex: number;
   branch: "request" | "response";
 }
-
-export const defaultOptionsField = (
-  stepIndex: number,
-  fieldIndex: number,
-  selectionType: FieldOptionsSelectionType,
-): FieldSchemaType => ({
-  fieldId: "new." + stepIndex + "." + fieldIndex,
-  type: FieldType.Options,
-  name: "",
-  required: true,
-  optionsConfig: {
-    options: [],
-    hasRequestOptions: false,
-    selectionType,
-    previousStepOptions: false,
-    maxSelections:
-      selectionType === FieldOptionsSelectionType.MultiSelect
-        ? 3
-        : selectionType === FieldOptionsSelectionType.Select
-          ? 1
-          : null,
-    linkedResultOptions: [],
-  },
-});
 
 export const defaultFreeInputField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
   fieldId: "new." + stepIndex + "." + fieldIndex,
@@ -216,7 +193,13 @@ export const FieldsForm = ({
             flexGrow: 0,
           }}
           onClick={() => {
-            fieldsArrayMethods.append(defaultFreeInputField(formIndex, numFields));
+            fieldsArrayMethods.append(
+              createDefaultFieldState({
+                stepIndex: formIndex,
+                fieldIndex: numFields,
+                fieldType: FieldType.FreeInput,
+              }),
+            );
           }}
         >
           Add field

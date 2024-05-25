@@ -14,14 +14,22 @@ export const newLlmSummaryResult = async ({
   resultConfig,
   responses,
   requestStepId,
+  type,
 }: {
   resultConfig: ResultConfigPrismaType;
   responses: ResponsePrismaType[];
   requestStepId: string;
+  type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }): Promise<ResultPrismaType> => {
   const llmConfig = resultConfig.ResultConfigLlm;
 
-  if (resultConfig.resultType !== ResultType.LlmSummary || !llmConfig)
+  if (
+    !(
+      resultConfig.resultType === ResultType.LlmSummary ||
+      resultConfig.resultType === ResultType.LlmSummaryList
+    ) ||
+    !llmConfig
+  )
     throw new GraphQLError(
       `Cannot create llm result without a llm config. resultConfigId: ${resultConfig.id}`,
       {
@@ -86,7 +94,9 @@ export const newLlmSummaryResult = async ({
     requestTriggerAnswers,
     requestResults,
     fieldName,
-    summaryPrompt: llmConfig.prompt ?? "Please summarize", // TODO remove
+    type,
+    exampleOutput: llmConfig.example,
+    summaryPrompt: llmConfig.prompt,
     responses: responsesCleaned
       .filter((r) => r.AnswerFreeInput.length > 0)
       .map((r) => r.AnswerFreeInput[0].value),

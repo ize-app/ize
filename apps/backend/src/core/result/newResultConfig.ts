@@ -90,11 +90,23 @@ export const newResultConfig = async ({
         transaction,
         responseField: responseField as FieldPrismaType,
       });
+      break;
+    case ResultType.LlmSummaryList:
+      if (!resultArgs.llmSummary)
+        throw new GraphQLError("Missing LLM Summary config", {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        });
+      llmId = await newLlmSummaryConfig({
+        llmArgs: resultArgs.llmSummary,
+        transaction,
+        responseField: responseField as FieldPrismaType,
+      });
+      break;
   }
 
   const resultConfig = await transaction.resultConfig.create({
     data: {
-      resultType: resultArgs.type,
+      resultType: resultArgs.type as ResultType,
       minAnswers: resultArgs.minimumAnswers ?? undefined,
       fieldId: responseField?.id,
       decisionId,
