@@ -15,7 +15,7 @@ export const newDecisionResult = async ({
   resultConfig: ResultConfigPrismaType;
   responses: ResponsePrismaType[];
   requestStepId: string;
-}): Promise<ResultPrismaType | null> => {
+}): Promise<ResultPrismaType> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
   let decisionFieldOption: FieldOption | null = null;
 
@@ -37,38 +37,37 @@ export const newDecisionResult = async ({
 
   const fieldAnswers = getFieldAnswersFromResponses({ fieldId: resultConfig.fieldId, responses });
 
-  if (fieldAnswers.length < resultConfig.minAnswers) return null;
-
   // find the decision and choose default option if no decision was made
   let decisionOptionId =
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
-  if (decisionOptionId) {
+  // only create a record of a decision if the minimum number of answers have been provided and there is a decision
+  if (decisionOptionId && fieldAnswers.length >= resultConfig.minAnswers) {
     decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
       where: {
         id: decisionOptionId,
       },
     });
-
-    ////// create results for that decision
-    return await prisma.result.create({
-      include: resultInclude,
-      data: {
-        itemCount: 1,
-        requestStepId,
-        resultConfigId: resultConfig.id,
-        complete: true,
-        ResultItems: {
-          create: {
-            dataType: decisionFieldOption.dataType,
-            value: decisionFieldOption.name,
-            fieldOptionId: decisionFieldOption.id,
-          },
-        },
-      },
-    });
   }
 
-  ////// end the requestStep (potentially tricky --> need to make sure other results are calcualted)
-  return null;
+  ////// create results for that decision
+  return await prisma.result.create({
+    include: resultInclude,
+    data: {
+      itemCount: decisionFieldOption ? 1 : 0,
+      requestStepId,
+      resultConfigId: resultConfig.id,
+      complete: true,
+      hasResult: !!decisionFieldOption,
+      ResultItems: decisionFieldOption
+        ? {
+            create: {
+              dataType: decisionFieldOption.dataType,
+              value: decisionFieldOption.name,
+              fieldOptionId: decisionFieldOption.id,
+            },
+          }
+        : undefined,
+    },
+  });
 };

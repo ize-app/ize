@@ -71,7 +71,7 @@ export const newResponse = async ({
         },
       );
 
-    if (requestStep.responseComplete || requestStep.final || requestStep.final)
+    if (requestStep.responseComplete || requestStep.final || requestStep.Request.final)
       throw new GraphQLError(
         "Response received for reqeust step that is no longer accepting responses",
         {

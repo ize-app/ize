@@ -3,6 +3,7 @@ import {
   DecisionType,
   Field,
   LlmSummary,
+  LlmSummaryList,
   Option,
   Ranking,
   ResultConfig,
@@ -22,6 +23,8 @@ export const resultConfigResolver = (
       return resultConfigRankResolver(resultConfig);
     case ResultType.LlmSummary:
       return resultConfigLlmResolver(resultConfig);
+    case ResultType.LlmSummaryList:
+      return resultConfigLlmListResolver(resultConfig);
     default:
       throw new GraphQLError("Invalid result type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -94,5 +97,22 @@ const resultConfigLlmResolver = (resultConfig: ResultConfigPrismaType): LlmSumma
     minimumAnswers: resultConfig.minAnswers,
     fieldId: resultConfig.fieldId,
     prompt: llmConfig.prompt,
+    example: llmConfig.example,
+  };
+};
+
+const resultConfigLlmListResolver = (resultConfig: ResultConfigPrismaType): LlmSummaryList => {
+  const llmConfig = resultConfig.ResultConfigLlm;
+  if (!llmConfig)
+    throw new GraphQLError("Missing llm config.", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    });
+  return {
+    __typename: "LlmSummaryList",
+    resultConfigId: resultConfig.id,
+    minimumAnswers: resultConfig.minAnswers,
+    fieldId: resultConfig.fieldId,
+    prompt: llmConfig.prompt,
+    example: llmConfig.example,
   };
 };

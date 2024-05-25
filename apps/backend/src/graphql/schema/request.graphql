@@ -83,7 +83,7 @@ type RequestStepSummary {
   # user who triggered the first step of this request
   creator: User!
   requestName: String!
-  respondPermission: Permission!
+  respondPermission: Permission
   userRespondPermission: Boolean!
   flowName: String!
   stepIndex: Int!
@@ -101,4 +101,9 @@ type Response {
   createdAt: String!
   user: User!
   answers: [FieldAnswer!]!
+}
+
+type GenericFieldAndValue {
+  fieldName: String!
+  value: [String!]!
 }

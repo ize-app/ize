@@ -16,10 +16,12 @@ export const hasWritePermission = async ({
   context,
   transaction = prisma,
 }: {
-  permission: PermissionPrismaType;
+  permission: PermissionPrismaType | null;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
+  if (!permission) return false;
+
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },

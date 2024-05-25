@@ -1,6 +1,5 @@
 import * as z from "zod";
 import { ResultType, DecisionType } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection } from "./fields";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
@@ -48,7 +47,8 @@ const prioritizationSchema = z.object({
 });
 
 const llmSchema = z.object({
-  prompt: z.string().optional(),
+  prompt: z.string(),
+  example: z.string().optional(),
 });
 
 const decisionResultSchema = z.object({
@@ -67,6 +67,14 @@ const llmResultSchema = z.object({
   llmSummary: llmSchema,
 });
 
+const llmListResultSchema = z.object({
+  type: z.literal(ResultType.LlmSummaryList),
+  resultId: z.string(),
+  fieldId: z.string().nullable(),
+  minimumAnswers: z.coerce.number().int().positive().default(1),
+  llmSummary: llmSchema,
+});
+
 const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
   resultId: z.string(),
@@ -79,48 +87,7 @@ export const resultSchema = z.discriminatedUnion("type", [
   decisionResultSchema,
   rankingResultSchema,
   llmResultSchema,
+  llmListResultSchema,
 ]);
 
 export const resultsSchema = z.array(resultSchema).default([]);
-
-export const defaultDecisionResult = (
-  stepIndex: number,
-  resultIndex: number,
-  fieldId: string,
-): ResultSchemaType => ({
-  resultId: "new." + stepIndex + "." + resultIndex,
-  type: ResultType.Decision,
-  fieldId,
-  minimumAnswers: 1,
-  decision: {
-    type: DecisionType.NumberThreshold,
-    threshold: 1,
-    defaultOptionId: DefaultOptionSelection.None,
-  },
-});
-
-export const defaultRankingResult = (
-  stepIndex: number,
-  resultIndex: number,
-  fieldId: string,
-): ResultSchemaType => ({
-  resultId: "new." + stepIndex + "." + resultIndex,
-  type: ResultType.Ranking,
-  fieldId,
-  minimumAnswers: 1,
-  prioritization: { numPrioritizedItems: 3 },
-});
-
-export const defaultLlmSummaryResult = (
-  stepIndex: number,
-  resultIndex: number,
-  fieldId: string,
-): ResultSchemaType => ({
-  resultId: "new." + stepIndex + "." + resultIndex,
-  type: ResultType.LlmSummary,
-  fieldId,
-  minimumAnswers: 1,
-  llmSummary: {
-    prompt: "test prmpt",
-  },
-});

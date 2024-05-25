@@ -73,7 +73,8 @@ const createFieldOptionsConfig = async ({
   const optionSetId = await newOptionSet({ options, transaction });
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
     data: {
-      maxSelections,
+      maxSelections:
+        selectionType === "MultiSelect" ? maxSelections : selectionType === "Select" ? 1 : null,
       hasRequestOptions,
       requestOptionsDataType,
       selectionType,

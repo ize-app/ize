@@ -5,43 +5,44 @@ import { runResultsAndActions } from "../result/newResults/runResultsAndActions"
 
 // run results and actions on newly expired requests
 export const handleExpiredResults = async ({}: {}) => {
-  await prisma.$transaction(async (transaction) => {
-    const now = new Date();
+  const now = new Date();
 
-    // get request steps that are past expiration date but haven't been processed yet
-    const newlyExpiredSteps = await transaction.requestStep.findMany({
-      where: {
-        expired: false,
-        expirationDate: { lte: now },
+  // get request steps that are past expiration date but haven't been processed yet
+  const newlyExpiredSteps = await prisma.requestStep.findMany({
+    where: {
+      responseComplete: false,
+      expirationDate: { lte: now },
+    },
+    include: {
+      Responses: {
+        include: responseInclude,
       },
-      include: {
-        Responses: {
-          include: responseInclude,
-        },
-        Step: {
-          include: stepInclude,
-        },
+      Step: {
+        include: stepInclude,
       },
-    });
-
-    await transaction.requestStep.updateMany({
-      where: {
-        expired: false,
-        expirationDate: { lte: now },
-      },
-      data: {
-        expired: true,
-      },
-    });
-
-    await Promise.all(
-      newlyExpiredSteps.map(async (requestStep) => {
-        await runResultsAndActions({
-          requestStepId: requestStep.id,
-          step: requestStep.Step,
-          responses: requestStep.Responses,
-        });
-      }),
-    );
+    },
   });
+
+  // stop allowing responses on expired requests
+  await prisma.requestStep.updateMany({
+    where: {
+      responseComplete: false,
+      expirationDate: { lte: now },
+    },
+    data: {
+      responseComplete: true,
+    },
+  });
+
+  return await Promise.all(
+    newlyExpiredSteps.map(async (requestStep) => {
+      return await runResultsAndActions({
+        requestStepId: requestStep.id,
+        step: requestStep.Step,
+        responses: requestStep.Responses,
+      });
+    }),
+  );
 };
+
+handleExpiredResults({});

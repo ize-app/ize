@@ -7,7 +7,7 @@ import { createEvolveFormState } from "./createEvolveFormState";
 export const createFlowFormState = (flow: FlowFragment): FlowSchemaType => {
   return {
     name: flow.name,
-    steps: flow.steps.map((step) => createStepFormState(step as Step)),
+  steps: flow.steps.map((step) => createStepFormState(step as Step)),
     evolve: createEvolveFormState(flow.evolve as FlowFragment),
   };
 };

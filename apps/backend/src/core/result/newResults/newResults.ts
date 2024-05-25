@@ -8,6 +8,7 @@ import { newDecisionResult } from "../decision/newDecisionResult";
 import { newLlmSummaryResult } from "../llm/newLlmSummaryResult";
 import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
+import { newRankingResult } from "../ranking/newRankingResult";
 
 // return type should distinguish between what completed and what didn't run yet
 export const newResults = async ({
@@ -34,10 +35,26 @@ export const newResults = async ({
       // TODO set result status to complete on success
       switch (resultConfig.resultType) {
         case ResultType.Decision: {
-          return newDecisionResult({ resultConfig, responses, requestStepId });
+          return await newDecisionResult({ resultConfig, responses, requestStepId });
         }
         case ResultType.LlmSummary: {
-          return newLlmSummaryResult({ step, responses });
+          return await newLlmSummaryResult({
+            resultConfig,
+            responses,
+            requestStepId,
+            type: ResultType.LlmSummary,
+          });
+        }
+        case ResultType.LlmSummaryList: {
+          return await newLlmSummaryResult({
+            resultConfig,
+            responses,
+            requestStepId,
+            type: ResultType.LlmSummaryList,
+          });
+        }
+        case ResultType.Ranking: {
+          return await newRankingResult({ resultConfig, responses, requestStepId });
         }
         default: {
           throw Error("");

@@ -1,4 +1,4 @@
-import { FieldAnswerArgs } from "@/graphql/generated/resolver-types";
+import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
@@ -124,6 +124,7 @@ export const newFieldAnswers = async ({
             : [];
 
           const options = [...stepDefinedOptions, ...requestDefinedOptions];
+          const totalOptionCount = options.length;
 
           if (
             fieldOptionsConfig.maxSelections &&
@@ -155,8 +156,12 @@ export const newFieldAnswers = async ({
               responseId,
               AnswerOptionSelections: {
                 createMany: {
-                  data: fieldAnswer.optionSelections.map((optionSelectionArgs) => ({
+                  data: fieldAnswer.optionSelections.map((optionSelectionArgs, index) => ({
                     fieldOptionId: optionSelectionArgs.optionId,
+                    weight:
+                      field.FieldOptionsConfigs?.selectionType === FieldOptionsSelectionType.Rank
+                        ? totalOptionCount - index
+                        : 1,
                   })),
                 },
               },

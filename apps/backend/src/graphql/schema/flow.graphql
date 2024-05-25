@@ -57,12 +57,12 @@ type Step {
 }
 
 type RequestConfig {
-  permission: Permission!
+  permission: Permission
   fields: [Field!]!
 }
 
 type ResponseConfig {
-  permission: Permission!
+  permission: Permission
   fields: [Field!]!
 }
 
@@ -83,7 +83,7 @@ input NewFlowArgs {
 }
 
 input NewStepArgs {
-  request: StepRequestArgs!
+  request: StepRequestArgs
   response: StepResponseArgs
   result: [ResultArgs!]!
   action: ActionArgs

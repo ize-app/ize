@@ -92,6 +92,7 @@ export const CreateRequestForm = () => {
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
       ...prev,
+      flow,
       name: data.name,
       requestFields: data.requestFields ?? undefined,
       requestDefinedOptions: data.requestDefinedOptions ?? [],
@@ -221,7 +222,7 @@ export const CreateRequestForm = () => {
                       return (
                         <SortableList<RequestSchemaType>
                           control={formMethods.control}
-                          label="Example label"
+                          label={name}
                           key={fieldId}
                           formMethods={formMethods}
                           name={`requestFields.${field.fieldId}.optionSelections`}

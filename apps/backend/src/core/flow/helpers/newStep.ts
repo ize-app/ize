@@ -35,11 +35,13 @@ export const newStep = async ({
     ? await newFieldSet({ fields: args.response.fields, transaction, createdSteps })
     : null;
 
-  const requestPermissionsId = await newPermission({
-    permission: args.request.permission,
-    stepIndex: index,
-    transaction,
-  });
+  const requestPermissionsId = args.request
+    ? await newPermission({
+        permission: args.request.permission,
+        stepIndex: index,
+        transaction,
+      })
+    : null;
 
   const responsePermissionsId = args.response
     ? await newPermission({

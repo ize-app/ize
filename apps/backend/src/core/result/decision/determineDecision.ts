@@ -1,6 +1,7 @@
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
+import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
 export const determineDecision = ({
   decisionConfig,
@@ -11,15 +12,9 @@ export const determineDecision = ({
 }): string | null => {
   let decisionOptionId: string | null = null;
 
-  const optionCount: { [key: string]: number } = {};
-
-  answers.forEach((a) => {
-    a.AnswerOptionSelections.forEach((o) => {
-      optionCount[o.fieldOptionId] = (optionCount[o.fieldOptionId] || 0) + 1;
-    });
-  });
-
   const totalAnswerCount = answers.length;
+
+  const optionCount = calculateAggregateOptionWeights({ answers });
 
   switch (decisionConfig.type) {
     case DecisionType.NumberThreshold: {
@@ -41,6 +36,20 @@ export const determineDecision = ({
           break;
         }
       }
+      break;
+    }
+    // note: if there is a tie, this arbitarily picks the first option
+    case DecisionType.WeightedAverage: {
+      let maxWeight: number = 0;
+      let maxWeightOptionId: string | null = null;
+      // find the option with the heightest count
+      for (const [optionId, count] of Object.entries(optionCount)) {
+        if (!maxWeightOptionId || maxWeight < count) {
+          maxWeight = count;
+          maxWeightOptionId = optionId;
+        }
+      }
+      decisionOptionId = maxWeightOptionId;
       break;
     }
   }

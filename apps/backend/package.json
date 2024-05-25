@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc --project ./",
     "start:dev": "nodemon src/express/server.ts",
-    "start:prod": "node dist/express/server.js"
+    "start:prod": "node dist/express/server.js",
+    "handle-expired-request-steps": "npx ts-node src/core/request/handleExpiredRequests.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.5",
@@ -33,6 +34,7 @@
     "graphql": "^16.7.1",
     "jsonwebtoken": "^9.0.1",
     "nanoid": "^3.3.6",
+    "openai": "^4.47.1",
     "pg": "^8.11.1",
     "prisma": "^5.8.1",
     "reflect-metadata": "^0.1.13",

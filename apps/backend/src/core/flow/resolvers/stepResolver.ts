@@ -37,7 +37,9 @@ export const stepResolver = ({
     id: step.id,
     index: step.index,
     request: {
-      permission: permissionResolver(step.RequestPermissions, userIdentityIds),
+      permission: step.RequestPermissions
+        ? permissionResolver(step.RequestPermissions, userIdentityIds)
+        : null,
       fields: fieldSetResolver({
         fieldSet: step.RequestFieldSet,
         responseFieldsCache,
@@ -45,7 +47,9 @@ export const stepResolver = ({
       }),
     },
     response: {
-      permission: permissionResolver(step.ResponsePermissions, userIdentityIds),
+      permission: step.ResponsePermissions
+        ? permissionResolver(step.ResponsePermissions, userIdentityIds)
+        : null,
       fields: responseFields,
     },
     action: actionResolver(step.Action, responseFieldsCache, hideSensitiveInfo),

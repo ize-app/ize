@@ -1,4 +1,4 @@
-import { Step } from "@/graphql/generated/graphql";
+import { PermissionFragment, Step } from "@/graphql/generated/graphql";
 import { StepSchemaType } from "../../formValidation/flow";
 import { createPermissionFormState } from "./createPermissionFormState";
 import { createFieldsFormState } from "./createFieldsFormState";
@@ -6,15 +6,22 @@ import { createResultFormState } from "./createResultsFormState";
 import { createActionFormState } from "./createActionFormState";
 
 export const createStepFormState = (step: Step): StepSchemaType => {
+  console.log("creating step,", step);
   return {
-    request: {
-      permission: createPermissionFormState(step.request.permission),
-      fields: createFieldsFormState(step.request.fields),
-    },
-    response: {
-      permission: createPermissionFormState(step.response.permission),
-      fields: createFieldsFormState(step.response.fields),
-    },
+    request:
+      !step.request.permission && step.request.fields.length === 0
+        ? undefined
+        : {
+            permission: createPermissionFormState(step.request.permission as PermissionFragment),
+            fields: createFieldsFormState(step.request.fields),
+          },
+    response:
+      !step.response.permission && step.response.fields.length === 0
+        ? undefined
+        : {
+            permission: createPermissionFormState(step.response.permission as PermissionFragment),
+            fields: createFieldsFormState(step.response.fields),
+          },
     result: createResultFormState(step.result),
     action: createActionFormState(step.action),
     expirationSeconds: step.expirationSeconds ?? undefined,

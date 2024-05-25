@@ -6,16 +6,12 @@ export type PermissionSchemaType = z.infer<typeof permissionSchema>;
 export enum PermissionType {
   Entities = "Entities",
   Anyone = "Anyone",
-  Process = "Process",
-  NA = "NA",
 }
 
 export const permissionSchema = z
   .object({
     type: z.nativeEnum(PermissionType),
-    entities: z
-      .array(entityFormSchema)
-      .optional(),
+    entities: z.array(entityFormSchema).optional(),
   })
   .refine(
     (permission) => {

@@ -1,10 +1,9 @@
-import { Permission } from "@/graphql/generated/graphql";
+import { PermissionFragment } from "@/graphql/generated/graphql";
 import { PermissionSchemaType, PermissionType } from "../../formValidation/permission";
 import { EntitySchemaType } from "../../../formValidation/entity";
 
-export const createPermissionFormState = (permission: Permission): PermissionSchemaType => {
+export const createPermissionFormState = (permission: PermissionFragment): PermissionSchemaType => {
   if (permission.anyone) return { type: PermissionType.Anyone };
-  else if (permission.stepTriggered) return { type: PermissionType.Process };
   else
     return {
       type: PermissionType.Entities,

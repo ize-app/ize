@@ -8,6 +8,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { hasWritePermission } from "../permission/hasWritePermission";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
+import { executeAction } from "../action/executeActions/executeAction";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -69,9 +70,13 @@ export const newRequest = async ({
     },
   });
 
+  const hasResponseFields = !!step.ResponseFieldSet;
+
   const requestStep = await transaction.requestStep.create({
     data: {
       expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
+      responseComplete: !hasResponseFields,
+      resultsComplete: !hasResponseFields,
       Request: {
         connect: {
           id: request.id,
@@ -89,6 +94,10 @@ export const newRequest = async ({
       },
     },
   });
+
+  if (!hasResponseFields) {
+    await executeAction({ step, results: [], requestStepId: requestStep.id });
+  }
 
   const requestDefinedOptionSets = await Promise.all(
     requestDefinedOptions.map(async (r) => {

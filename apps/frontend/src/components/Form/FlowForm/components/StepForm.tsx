@@ -55,7 +55,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         />
       )}
       <PanelAccordion
-        title="Response permissions"
+        title="Permissions"
         hasError={
           !!formMethods.formState.errors.steps?.[formIndex]?.response ||
           !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
@@ -69,10 +69,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           selectOptions={[
             { name: "Certain people can respond", value: PermissionType.Entities },
             { name: "Anyone can respond", value: PermissionType.Anyone },
-            {
-              name: "No response: Automatically approve request",
-              value: PermissionType.NA,
-            },
           ]}
           label="Who can respond?"
           displayLabel={false}
@@ -107,7 +103,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         />
       </PanelAccordion>
       <PanelAccordion
-        title="Results"
+        title="Collaborations"
         hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
       >
         <ResultsForm

@@ -313,7 +313,7 @@ model Step {
   index                  Int
   expirationSeconds      Int?    @default(0) @map("request_expiration_seconds")
   allowMultipleResponses Boolean @default(false) @map("allow_multiple_responses")
-  requestPermissionsId   String  @map("request_permissions_id") @db.Uuid
+  requestPermissionsId   String? @map("request_permissions_id") @db.Uuid
   responsePermissionsId  String? @map("response_permissions_id") @db.Uuid
   requestFieldSetId      String? @map("request_field_set_id") @db.Uuid
   responseFieldSetId     String? @map("response_field_set_id") @db.Uuid
@@ -323,7 +323,7 @@ model Step {
   createdAt DateTime @default(now()) @map("created_at")
 
   FlowVersion         FlowVersion      @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  RequestPermissions  Permission       @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
+  RequestPermissions  Permission?      @relation("RequestPermissions", fields: [requestPermissionsId], references: [id], onDelete: Cascade)
   RequestFieldSet     FieldSet?        @relation("RequestFieldSet", fields: [requestFieldSetId], references: [id], onDelete: Cascade)
   ResponseFieldSet    FieldSet?        @relation("ResponseFieldSet", fields: [responseFieldSetId], references: [id], onDelete: Cascade)
   ResponsePermissions Permission?      @relation("ResponsePermissions", fields: [responsePermissionsId], references: [id], onDelete: Cascade)
@@ -338,11 +338,10 @@ model Step {
 model Permission {
   id String @id @default(uuid()) @db.Uuid
 
-  entitySetId   String?  @map("entity_set_id") @db.Uuid
-  stepTriggered Boolean  @map("step_triggered")
-  anyone        Boolean  @default(false)
-  userId        String?  @map("user_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
+  entitySetId String?  @map("entity_set_id") @db.Uuid
+  anyone      Boolean  @default(false)
+  userId      String?  @map("user_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
 
   EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
@@ -536,6 +535,8 @@ model AnswerOptionSelection {
   fieldAnswerId     String   @map("field_answer_id") @db.Uuid
   fieldOptionId     String   @map("field_option_id") @db.Uuid
   answerFreeInputId String?  @unique @map("answer_free_input_id") @db.Uuid
+  // score used determining relative weight of option selections (e.g. ranking). higher weight = stronger preference 
+  weight            Int      @default(1)
   createdAt         DateTime @default(now()) @map("created_at")
 
   FieldOption     FieldOption      @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
@@ -559,11 +560,10 @@ model AnswerFreeInput {
 }
 
 enum ResultType {
-  Raw
   Decision
   Ranking
   LlmSummary
-  AutoApprove
+  LlmSummaryList
 }
 
 // Describes how and when a final result is created
@@ -628,7 +628,8 @@ enum LlmSummaryType {
 model ResultConfigLlm {
   id        String         @id @default(uuid()) @db.Uuid
   type      LlmSummaryType
-  prompt    String?
+  prompt    String
+  example   String?
   createdAt DateTime       @default(now()) @map("created_at")
 
   ResultConfigs ResultConfig[]
@@ -787,6 +788,7 @@ model ResultConfigSetResultConfigs {
 // there is a single results record for a given request step + results Config 
 // so if a step has two result Configs, there will be two Results every time that Result rows
 // A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
+// The result model is an attempt of a result creation, but there may not actually be results in this attempt (e.g. the minimum vote threshold isn't hit for a decision)
 model Result {
   id             String   @id @default(uuid()) @db.Uuid
   complete       Boolean  @default(false)
@@ -794,6 +796,7 @@ model Result {
   resultConfigId String   @map("result_config_id") @db.Uuid
   // Number of items within result array
   itemCount      Int      @map("itemCount")
+  hasResult      Boolean  @map("has_result")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
@@ -810,6 +813,8 @@ model ResultItems {
   dataType      FieldDataType @map("data_type")
   fieldOptionId String?       @map("field_option_id") @db.Uuid
   resultId      String        @db.Uuid
+  // used for ranking results. higher weight = stronger preference
+  weight        Float         @default(1)
   createdAt     DateTime      @default(now()) @map("created_at")
 
   Result Result       @relation(fields: [resultId], references: [id], onDelete: Cascade)

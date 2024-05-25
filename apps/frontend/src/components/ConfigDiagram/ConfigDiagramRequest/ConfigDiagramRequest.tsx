@@ -40,12 +40,13 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
-              entities={request.flow.steps[0].request.permission.entities}
+              entities={request.flow.steps[0].request.permission?.entities}
             />
-            <StageConnectorButton />
             {request.flow.steps.map((step, index) => {
+              if (step.response.fields.length === 0) return null;
               return (
                 <Box key={index}>
+                  <StageConnectorButton key={"connector-" + index.toString()} />
                   <RequestStage
                     status={determineRequestStepStatus(
                       index,
@@ -55,19 +56,16 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                     )}
                     icon={Diversity3Outlined}
                     label={
-                      request.flow.steps[0].result[0]
-                        ? request.flow.steps[0].result[0].__typename
+                      request.flow.steps[index].result[0]
+                        ? request.flow.steps[index].result[0].__typename
                         : "Collaboration " + (index + 1).toString()
                     }
                     key={"stage-" + step?.id}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
-                    entities={request.flow.steps[0].response.permission.entities}
+                    entities={request.flow.steps[0].response.permission?.entities}
                   />
-                  {index < finalStepIndex && (
-                    <StageConnectorButton key={"connector-" + index.toString()} />
-                  )}
                 </Box>
               );
             })}
