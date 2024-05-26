@@ -1,6 +1,7 @@
+// browser environment config
 {
-  // inherits from parent tsconfig
-  "extends": "../../tsconfig.json",
+  // TODO: delete this comment once I'm sure it shouldn't be there
+  // "extends": "../../tsconfig.json",
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
