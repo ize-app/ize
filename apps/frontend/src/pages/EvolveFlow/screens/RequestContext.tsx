@@ -17,7 +17,7 @@ export const RequestContext = () => {
   console.log("formState is ", formState);
 
   const formMethods = useForm({
-    defaultValues: { requestName: formState.requestName } ?? {},
+    defaultValues: formState.requestName ? { requestName: formState.requestName } : {},
     resolver: zodResolver(evolveRequestContextSchema),
     shouldUnregister: true,
   });
