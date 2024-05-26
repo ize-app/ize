@@ -10,7 +10,6 @@
     "apps/backend"
   ],
   "scripts": {
-    
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
     "codegen": "graphql-codegen --config codegen.ts && ts-node scripts/ignoreCodegenTSErrors.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
