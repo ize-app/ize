@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { fieldsSchema } from "./fields";
-import { PermissionType, permissionSchema } from "./permission";
+import { permissionSchema } from "./permission";
 import { resultsSchema } from "./result";
 import { actionSchema } from "./action";
 import { evolveFlowSchema } from "./evolve";

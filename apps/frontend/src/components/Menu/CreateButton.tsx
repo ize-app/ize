@@ -3,11 +3,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React, { useState } from "react";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import { Link } from "react-router-dom";
-import { colors } from "@/style/style";
 
 import {
   NewCustomGroupRoute,
@@ -69,20 +65,6 @@ export const CreateListButton = (): JSX.Element => {
 
   return (
     <>
-      {/* <ListItemButton color="primary" onClick={handleClick}>
-        <ListItemIcon>
-          <Add color="primary" width="10px" />
-        </ListItemIcon>
-        <ListItemText
-          primary={"Create"}
-          sx={{
-            color: colors.primary,
-            "& > span": {
-              fontWeight: "800",
-            },
-          }}
-        />
-      </ListItemButton> */}
       <Button
         onClick={handleClick}
         variant="contained"

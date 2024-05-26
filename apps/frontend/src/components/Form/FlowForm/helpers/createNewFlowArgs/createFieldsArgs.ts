@@ -33,6 +33,12 @@ export const createFieldArgs = (
       name,
       optionsConfig: {
         ...optionsConfig,
+        options: optionsConfig.options.map((option) => {
+          return {
+            ...option,
+            name: option.name,
+          };
+        }),
         linkedResultOptions: optionsConfig.linkedResultOptions.map((linkedResult) => {
           const resultConfigLocation = resultConfigCache.find((r) => r.id === linkedResult.id);
           if (!resultConfigLocation)

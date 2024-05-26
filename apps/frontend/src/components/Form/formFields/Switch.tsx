@@ -7,7 +7,6 @@ import { SxProps } from "@mui/material";
 
 interface SwitchProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
-  width?: string;
   sx?: SxProps;
 }
 
@@ -16,7 +15,6 @@ export const Switch = <T extends FieldValues>({
   name,
   control,
   sx = {},
-  width = "300px",
 }: SwitchProps<T>) => {
   return (
     <Controller

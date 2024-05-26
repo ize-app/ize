@@ -18,9 +18,11 @@ export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
-        <PanelAccordion title="Trigger permission" hasError={false}>
-          <Permissions permission={step.request.permission} type="request" />
-        </PanelAccordion>
+        {step.request.permission && (
+          <PanelAccordion title="Trigger permission" hasError={false}>
+            <Permissions permission={step.request.permission} type="request" />
+          </PanelAccordion>
+        )}
         {step.request.fields.length > 0 && (
           <PanelAccordion title="Request fields" hasError={false}>
             <Typography variant="description">

@@ -32,7 +32,9 @@ export const ConfigStepPanel = ({
           </PanelAccordion>
         )}
         <PanelAccordion title="Respond permission" hasError={false}>
-          <Permissions permission={step.response.permission} type="response" />
+          {step.response.permission && (
+            <Permissions permission={step.response.permission} type="response" />
+          )}
           {step.expirationSeconds &&
             `Respondants have ${intervalToIntuitiveTimeString(
               step.expirationSeconds,

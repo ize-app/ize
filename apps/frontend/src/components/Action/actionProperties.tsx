@@ -1,5 +1,4 @@
 import { ActionType } from "@/graphql/generated/graphql";
-import muiTheme from "@/style/muiTheme";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
