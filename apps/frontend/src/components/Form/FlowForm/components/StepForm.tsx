@@ -28,7 +28,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
   // console.log("form state for ", formIndex, " is ", formMethods.getValues());
   // console.log("errors are ", formMethods.formState.errors.steps?.[formIndex]);
   const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
-  const stepError = formMethods.getFieldState(`steps.${formIndex}`).error;
+  const stepError = formMethods.formState.errors.steps?.[formIndex];
 
   const fieldsArrayMethods = useFieldArray({
     control: formMethods.control,

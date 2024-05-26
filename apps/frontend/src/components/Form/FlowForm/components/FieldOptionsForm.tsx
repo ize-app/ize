@@ -105,8 +105,7 @@ export const FieldOptionsForm = ({
     ) ?? [];
 
   const optionsError =
-    formMethods.getFieldState(`steps.${formIndex}.${branch}.fields.${fieldIndex}`).error?.message ??
-    "";
+    formMethods.formState.errors?.steps?.[formIndex]?.[branch]?.fields?.[fieldIndex]?.message ?? "";
 
   const optionSelectionType = formMethods.watch(
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,

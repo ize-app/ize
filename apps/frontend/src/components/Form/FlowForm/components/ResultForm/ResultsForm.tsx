@@ -207,8 +207,7 @@ const ResultForm = ({
   }, [optionSelectionType]);
 
   const resultError =
-    formMethods.getFieldState(`steps.${formIndex}.result.${resultIndex}`).error?.root?.message ??
-    "";
+    formMethods.formState.errors?.steps?.[formIndex]?.result?.[resultIndex]?.root?.message;
 
   return (
     <Box
