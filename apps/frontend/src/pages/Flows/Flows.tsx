@@ -8,7 +8,7 @@ import PageContainer from "@/layout/PageContainer";
 import CreateButton from "@/components/Menu/CreateButton";
 import Loading from "@/components/Loading";
 import Search from "@/components/Tables/Search";
-import { FlowsTable } from "./flowsTable";
+import { FlowsTable } from "./FlowsTable.tsx";
 import { filterFlows } from "./flowSearch";
 
 export const Flows = () => {

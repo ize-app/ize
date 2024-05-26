@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 
-import { Select } from "../../../FormFields";
+import { Select } from "@/components/Form/formFields";
 
 import { FlowSchemaType } from "../../formValidation/flow";
 import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
