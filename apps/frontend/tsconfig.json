@@ -1,6 +1,8 @@
 {
   // inherits from parent tsconfig
   "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -9,6 +11,8 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "strict": true,
+    "isolatedModules": true, // necessary for vite
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["*"]
     },
@@ -17,7 +21,6 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
 
