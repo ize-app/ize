@@ -25,14 +25,16 @@ import { createDiscordIdentity } from "../stytch/createDiscordIdentity";
 import { redirectAtLogin } from "../stytch/redirectAtLogin";
 import { OAuthProvider } from "stytch";
 import { expressGloalErrorHandler } from "./error";
+const path = require("path");
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-
+const frontendPath = path.join(__dirname, "../../../frontend/dist");
 const app = express();
 
 app.use(cookieParser());
 app.use(authenticateSession);
+app.use(express.static(frontendPath));
 
 const sessionValue = {
   secret: process.env.SESSION_SECRET as string,
@@ -185,6 +187,11 @@ const server = new ApolloServer<GraphqlRequestContext>({
 
     return formattedError;
   },
+});
+
+// Serve the index.html file for any unknown paths (for SPA)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 app.use(expressGloalErrorHandler);
