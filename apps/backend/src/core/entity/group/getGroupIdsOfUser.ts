@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "@/prisma/client";
+
 import { MePrismaType } from "@/core/user/userPrismaTypes";
+import { prisma } from "@/prisma/client";
 
 export const getGroupIdsOfUser = async ({
   user,

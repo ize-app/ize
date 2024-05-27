@@ -1,15 +1,16 @@
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import { FlowSummaryFragment, GetFlowsDocument } from "@/graphql/generated/graphql";
 import { useQuery } from "@apollo/client";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { ChangeEvent, useState } from "react";
 
-import PageContainer from "@/layout/PageContainer";
-import CreateButton from "@/components/Menu/CreateButton";
 import Loading from "@/components/Loading";
+import CreateButton from "@/components/Menu/CreateButton";
 import Search from "@/components/Tables/Search";
-import { FlowsTable } from "./FlowsTable.tsx";
+import { FlowSummaryFragment, GetFlowsDocument } from "@/graphql/generated/graphql";
+import PageContainer from "@/layout/PageContainer";
+
 import { filterFlows } from "./flowSearch";
+import { FlowsTable } from "./FlowsTable.tsx";
 
 export const Flows = () => {
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,10 +1,11 @@
-import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { RoleSearch, Select } from "../../formFields";
-import { PermissionType } from "../formValidation/permission";
-import { FlowSchemaType } from "../formValidation/flow";
-import { FieldsForm } from "./FieldsForm";
 import { Box } from "@mui/material";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
+
+import { FieldsForm } from "./FieldsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { RoleSearch, Select } from "../../formFields";
+import { FlowSchemaType } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
 
 interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

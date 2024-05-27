@@ -1,8 +1,13 @@
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
+import { ResponseSchemaType, responseSchema } from "./formValidation";
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import {
   FieldDataType,
   FieldFragment,
@@ -11,13 +16,8 @@ import {
   NewResponseDocument,
 } from "../../../graphql/generated/graphql";
 import { DatePicker, DateTimePicker, MultiSelect, SortableList, TextField } from "../formFields";
-import { ResponseSchemaType, responseSchema } from "./formValidation";
 import { Radio } from "../formFields/Radio";
-import { Button } from "@mui/material";
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { useContext, useEffect } from "react";
 import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
-import { useNavigate } from "react-router-dom";
 
 export const ResponseForm = ({
   responseFields,

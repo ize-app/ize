@@ -1,5 +1,6 @@
 import * as z from "zod";
-import { ResultType, DecisionType } from "@/graphql/generated/graphql";
+
+import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;

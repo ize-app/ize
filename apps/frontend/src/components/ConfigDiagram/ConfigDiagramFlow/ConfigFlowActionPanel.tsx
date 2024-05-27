@@ -1,3 +1,6 @@
+import { Typography } from "@mui/material";
+
+import { actionProperties } from "@/components/Action/actionProperties";
 import {
   ConfigurationPanel,
   PanelAccordion,
@@ -5,10 +8,9 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { ActionFragment } from "@/graphql/generated/graphql";
-import { Typography } from "@mui/material";
+
 import { ActionConfig } from "../../Action/ActionConfig";
 import { ActionFilter } from "../../Action/ActionFilter";
-import { actionProperties } from "@/components/Action/actionProperties";
 
 export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) => {
   return (

@@ -1,17 +1,18 @@
+import { Box, Typography } from "@mui/material";
+
+import { AvatarWithName } from "@/components/Avatar";
 import {
   ConfigurationPanel,
   PanelAccordion,
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
+import { Fields } from "@/components/Field/Fields";
 import {
   RequestStepFragment,
   StepFragment,
   UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
-import { Box, Typography } from "@mui/material";
-import { Fields } from "@/components/Field/Fields";
-import { AvatarWithName } from "@/components/Avatar";
 
 export const ConfigRequestTriggerPanel = ({
   step,

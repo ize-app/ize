@@ -3,13 +3,14 @@ import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
 
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
+
 import {
   EntitySummaryPartsFragment,
   UserSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 // import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 import { AvatarGroup } from "../AvatarOld";
-import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;

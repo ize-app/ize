@@ -2,9 +2,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useContext, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CurrentUserContext } from "../contexts/current_user_context";
-import { Route } from "@/routers/routes";
+
 import { LoginButton } from "@/components/Auth/LoginButton";
+import { Route } from "@/routers/routes";
+
+import { CurrentUserContext } from "../contexts/current_user_context";
 
 const UnauthenticatedHome = () => {
   return (

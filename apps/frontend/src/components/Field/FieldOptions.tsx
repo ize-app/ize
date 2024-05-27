@@ -1,3 +1,6 @@
+import { Box } from "@mui/material";
+import { ReactNode } from "react";
+
 import {
   FieldDataType,
   LinkedResult,
@@ -5,10 +8,9 @@ import {
   Options,
   ResultItemFragment,
 } from "@/graphql/generated/graphql";
-import { Box } from "@mui/material";
-import { FieldOption } from "./FieldOption";
 import muiTheme from "@/style/muiTheme";
-import { ReactNode } from "react";
+
+import { FieldOption } from "./FieldOption";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
   return `${linkedResult.resultType} from "${linkedResult.fieldName}"`;

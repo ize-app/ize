@@ -1,6 +1,7 @@
-import { FieldsSchemaType, FieldSchemaType } from "../../formValidation/fields";
 import { FieldArgs, FieldType } from "@/graphql/generated/graphql";
+
 import { ResultConfigCache } from "./createNewFlowArgs";
+import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
 
 export const createFieldsArgs = (
   fields: FieldsSchemaType,

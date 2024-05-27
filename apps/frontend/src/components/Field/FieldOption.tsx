@@ -1,5 +1,7 @@
-import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 import { SxProps, Typography } from "@mui/material";
+
+import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+
 import { renderFreeInputValue } from "./renderFreeInputValue";
 
 // amdmittedly, this component is kind of convulted. due for a refactor

@@ -1,19 +1,21 @@
+import { Box, Typography } from "@mui/material";
+
 import {
   ConfigurationPanel,
   PanelAccordion,
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
-import { Box, Typography } from "@mui/material";
-import { Permissions } from "../../Permissions";
-import { ActionFilter } from "../../Action/ActionFilter";
-import { intervalToIntuitiveTimeString } from "@/utils/inputs";
-import { StatusTag } from "@/components/status/StatusTag";
-import { TimeLeft } from "./TimeLeft";
-import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { Results } from "@/components/result/Results";
+import { StatusTag } from "@/components/status/StatusTag";
+import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
+
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { remainingTimeToRespond } from "./remainingTimeToRespond";
+import { TimeLeft } from "./TimeLeft";
+import { ActionFilter } from "../../Action/ActionFilter";
+import { Permissions } from "../../Permissions";
 
 export const ConfigRequestStepPanel = ({
   step,

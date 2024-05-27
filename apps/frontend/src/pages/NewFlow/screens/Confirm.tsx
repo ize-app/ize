@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { WizardBody, WizardNav } from "../../../components/Wizard";
-import Typography from "@mui/material/Typography";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const Confirm = () => {

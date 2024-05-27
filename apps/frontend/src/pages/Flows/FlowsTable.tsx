@@ -10,9 +10,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { FlowSummaryFragment } from "@/graphql/generated/graphql";
-import { TableCellHideable, AvatarsCell } from "@/components/Tables/TableCells";
 import { generatePath, useNavigate } from "react-router-dom";
+
+import { AvatarsCell, TableCellHideable } from "@/components/Tables/TableCells";
+import { FlowSummaryFragment } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 

@@ -1,6 +1,7 @@
-import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 import { AccessAlarm } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
+
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 // takes milleseconds left and returns a string representation of the time left
 export const TimeLeft = ({ msLeft }: { msLeft: number }) => {

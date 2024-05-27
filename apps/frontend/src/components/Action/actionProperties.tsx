@@ -1,9 +1,10 @@
-import { ActionType } from "@/graphql/generated/graphql";
-import CloseIcon from "@mui/icons-material/Close";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
+import CloseIcon from "@mui/icons-material/Close";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { SvgIconProps } from "@mui/material";
+
+import { ActionType } from "@/graphql/generated/graphql";
 
 type ActionProps = {
   [key in ActionType]: {

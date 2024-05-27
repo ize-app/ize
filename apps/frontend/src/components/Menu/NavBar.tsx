@@ -1,10 +1,11 @@
-import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton } from "@mui/material";
-
+import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { UserDropDown } from "./UserDropDown";
+
 import { MePartsFragment } from "@/graphql/generated/graphql";
+
+import { UserDropDown } from "./UserDropDown";
 
 export const NavBar = ({
   handleMenuToggle,

@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -7,17 +8,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
-import { RequestStepSummaryFragment } from "@/graphql/generated/graphql";
-import {
-  TableCellHideable,
-  AvatarsCell,
-  TwoTierCell,
-  StatusCell,
-} from "@/components/Tables/TableCells";
 import { generatePath, useNavigate } from "react-router-dom";
+
+import {
+  AvatarsCell,
+  StatusCell,
+  TableCellHideable,
+  TwoTierCell,
+} from "@/components/Tables/TableCells";
+import { RequestStepSummaryFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
-import { Button } from "@mui/material";
 
 export const RequestStepsTable = ({
   requestSteps,

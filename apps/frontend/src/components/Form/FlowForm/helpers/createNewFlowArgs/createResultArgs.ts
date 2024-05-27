@@ -1,7 +1,8 @@
 import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
-import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
-import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+
 import { ResultConfigCache } from "./createNewFlowArgs";
+import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
 
 export const createResultArgs = (
   result: ResultSchemaType,
@@ -9,7 +10,7 @@ export const createResultArgs = (
 ): ResultArgs => {
   if (!responseFields) throw Error("Missing response fields for result>");
 
-  let responseFieldIndex = responseFields
+  const responseFieldIndex = responseFields
     ? responseFields.findIndex((f) => f.fieldId === result.fieldId)
     : null;
 

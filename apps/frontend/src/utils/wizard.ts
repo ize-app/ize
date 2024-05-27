@@ -80,7 +80,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     ? wizard.onComplete
     : nextStep
       ? () => {
-          navigate(generatePath(nextStep!.path, params));
+          navigate(generatePath(nextStep.path, params));
         }
       : undefined;
 
@@ -88,7 +88,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
 
   const onPrev = prevStep
     ? () => {
-        navigate(generatePath(prevStep!.path, params));
+        navigate(generatePath(prevStep.path, params));
       }
     : undefined;
 

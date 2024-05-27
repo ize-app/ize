@@ -1,14 +1,14 @@
-import { UseFormReturn } from "react-hook-form";
-import { Select, TextField } from "../../../formFields";
-import { FlowSchemaType } from "../../formValidation/flow";
-
-import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { InputAdornment, Typography } from "@mui/material";
+import { UseFormReturn } from "react-hook-form";
 
-import { DecisionType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
-import { SelectOption } from "../../../formFields/Select";
-import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
+import { DecisionType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+
+import { Select, TextField } from "../../../formFields";
+import { SelectOption } from "../../../formFields/Select";
+import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
+import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
+import { FlowSchemaType } from "../../formValidation/flow";
 
 interface DecisionConfigFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

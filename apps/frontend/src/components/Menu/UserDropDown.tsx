@@ -1,13 +1,14 @@
 import Logout from "@mui/icons-material/Logout";
+import { Box } from "@mui/material";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useStytch } from "@stytch/react";
 import { useState } from "react";
 
-import { Avatar } from "../Avatar";
-import { useStytch } from "@stytch/react";
-import { Box } from "@mui/material";
 import { MePartsFragment } from "@/graphql/generated/graphql";
+
+import { Avatar } from "../Avatar";
 
 interface UserDropDownProps {
   me: MePartsFragment;

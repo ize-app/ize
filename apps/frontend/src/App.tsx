@@ -1,19 +1,18 @@
 import { ApolloProvider } from "@apollo/client";
 import { Global } from "@emotion/react";
-import { StytchProvider } from "@stytch/react";
-
 import { ThemeProvider } from "@mui/material/styles";
+import { StytchProvider } from "@stytch/react";
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router-dom";
 
-import { apolloClient } from "./graphql/apollo";
-import { stytchClient } from "./stytch";
 import { CurrentUserProvider } from "./contexts/current_user_context";
+import { RecentAgentsProvider } from "./contexts/RecentAgentContext";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
+import { apolloClient } from "./graphql/apollo";
 import { router } from "./routers/router";
 import GlobalStyles from "./style/global";
 import muiTheme from "./style/muiTheme";
-import { RecentAgentsProvider } from "./contexts/RecentAgentContext";
+import { stytchClient } from "./stytch";
 
 function App() {
   return (

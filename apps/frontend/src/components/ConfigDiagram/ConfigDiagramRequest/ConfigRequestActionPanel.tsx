@@ -1,3 +1,7 @@
+import { Typography } from "@mui/material";
+
+import { ActionExecution } from "@/components/Action/ActionExecution";
+import { actionProperties } from "@/components/Action/actionProperties";
 import {
   ConfigurationPanel,
   PanelAccordion,
@@ -5,10 +9,8 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { ActionExecutionFragment, ActionFragment } from "@/graphql/generated/graphql";
-import { Typography } from "@mui/material";
+
 import { ActionFilter } from "../../Action/ActionFilter";
-import { actionProperties } from "@/components/Action/actionProperties";
-import { ActionExecution } from "@/components/Action/ActionExecution";
 
 export const ConfigRequestActionPanel = ({
   action,

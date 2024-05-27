@@ -1,4 +1,5 @@
 import { SvgIcon } from "@mui/material";
+
 import { colors } from "@/style/style";
 
 const NftSvg = ({ color = colors.primary }: { color?: string }) => {

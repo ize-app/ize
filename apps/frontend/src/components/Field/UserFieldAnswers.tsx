@@ -1,12 +1,14 @@
+import { Box, Button, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+
+import { CurrentUserContext } from "@/contexts/current_user_context";
 import {
   FieldFragment,
   UserFieldAnswerFragment,
   UserFieldAnswersFragment,
 } from "@/graphql/generated/graphql";
-import { Box, Button, Typography } from "@mui/material";
+
 import { UserFieldAnswer } from "./UserFieldAnswer";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { useContext, useState } from "react";
 
 export const UserFieldAnswers = ({
   userFieldAnswers,

@@ -1,11 +1,12 @@
 import { Prisma } from "@prisma/client";
 
-import { prisma } from "../../../prisma/client";
+import { DiscordApi } from "@/discord/api";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
-import { DiscordApi } from "@/discord/api";
-import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
+
 import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
+import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
+import { prisma } from "../../../prisma/client";
 
 export const updateUserDiscordGroups = async ({
   context,

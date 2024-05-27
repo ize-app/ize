@@ -1,6 +1,7 @@
 import { FlowFragment, PermissionFragment, ResultType } from "@/graphql/generated/graphql";
-import { EvolveSchemaType } from "../../formValidation/evolve";
+
 import { createPermissionFormState } from "./createPermissionFormState";
+import { EvolveSchemaType } from "../../formValidation/evolve";
 
 export const createEvolveFormState = (flow: FlowFragment): EvolveSchemaType => {
   if (

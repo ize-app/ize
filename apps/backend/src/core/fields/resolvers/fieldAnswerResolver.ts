@@ -1,11 +1,12 @@
 import {
-  FieldType,
   FieldAnswer,
-  OptionFieldAnswer,
+  FieldType,
   FreeInputFieldAnswer,
+  OptionFieldAnswer,
   OptionFieldAnswerSelection,
 } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { FieldAnswerPrismaType } from "../fieldPrismaTypes";
 
 export const fieldAnswerResolver = ({

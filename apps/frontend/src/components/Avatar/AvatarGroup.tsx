@@ -1,5 +1,7 @@
-import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import MuiAvatarGroup from "@mui/material/AvatarGroup";
+
+import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+
 import { Avatar } from "./Avatar";
 // import { useState } from "react";
 

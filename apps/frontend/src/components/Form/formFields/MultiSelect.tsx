@@ -1,14 +1,12 @@
 import { SxProps } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, UseControllerProps, useWatch } from "react-hook-form";
 
-import FormGroup from "@mui/material/FormGroup";
-import Checkbox from "@mui/material/Checkbox";
-
-import { useWatch } from "react-hook-form";
 import { OptionSelectionSchemaType, OptionSelectionsSchemaType } from "../formValidation/field";
 
 interface MultiSelectProps<T extends FieldValues> extends UseControllerProps<T> {

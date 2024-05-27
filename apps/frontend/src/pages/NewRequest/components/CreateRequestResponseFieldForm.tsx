@@ -1,8 +1,5 @@
-import { Field, FieldType } from "@/graphql/generated/graphql";
-import { LabeledGroupedInputs } from "../../../components/Form/formLayout/LabeledGroupedInputs";
-import Typography from "@mui/material/Typography";
-
 import HighlightOffOutlined from "@mui/icons-material/HighlightOffOutlined";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
@@ -10,12 +7,13 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { TextField, DatePicker, DateTimePicker } from "../../../components/Form/formFields";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
-import Box from "@mui/material/Box";
+import { Field, FieldDataType, FieldType } from "@/graphql/generated/graphql";
 
+import { DatePicker, DateTimePicker, TextField } from "../../../components/Form/formFields";
+import { LabeledGroupedInputs } from "../../../components/Form/formLayout/LabeledGroupedInputs";
 import { RequestDefinedOptionSchemaType, RequestSchemaType } from "../formValidation";
 
 export const CreateRequestResponseFieldForm = ({

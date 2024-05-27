@@ -1,6 +1,7 @@
 import { ActionArgs, ActionType, CallWebhookArgs, FieldType } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+
 import { ActionSchemaType } from "../../formValidation/action";
+import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
 
 export const createActionArgs = (
   action: ActionSchemaType,

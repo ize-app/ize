@@ -1,12 +1,13 @@
+import { Prisma } from "@prisma/client";
+
 import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
+import { chainMap } from "@/blockchain/chainMap";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 
-import { Prisma } from "@prisma/client";
-import { prisma } from "../../../prisma/client";
-import { chainMap } from "@/blockchain/chainMap";
-import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
 import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
+import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
+import { prisma } from "../../../prisma/client";
 
 export const updateUserNftGroups = async ({
   context,
@@ -63,7 +64,7 @@ const getUserNftGroupsForChain = async ({
     omitMetadata: true,
   });
 
-  let contractAddresses = new Set<string>();
+  const contractAddresses = new Set<string>();
   ownedNfts.forEach((nft) => contractAddresses.add(nft.contractAddress));
 
   // get all groups that have a tokenId associated with them

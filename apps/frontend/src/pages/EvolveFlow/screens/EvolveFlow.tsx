@@ -7,8 +7,12 @@ import Typography from "@mui/material/Typography";
 import { useContext, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { EVOLVE_FLOW_PROGRESS_BAR_STEPS, EVOLVE_FLOW_WIZARD_STEPS } from "../evolveFlowWizard";
-import { EvolveExistingFlowSchemaType } from "../formValidation";
+import createFlowFormState from "@/components/Form/FlowForm/helpers/createFlowFormState";
+import { createNewFlowArgs } from "@/components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
+
+import Loading from "../../../components/Loading";
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import {
   FlowFragment,
@@ -18,12 +22,8 @@ import {
 import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { Wizard, useWizard } from "../../../utils/wizard";
-
-import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
-import Loading from "../../../components/Loading";
-import createFlowFormState from "@/components/Form/FlowForm/helpers/createFlowFormState";
-import { createNewFlowArgs } from "@/components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
-import { CurrentUserContext } from "@/contexts/current_user_context";
+import { EVOLVE_FLOW_PROGRESS_BAR_STEPS, EVOLVE_FLOW_WIZARD_STEPS } from "../evolveFlowWizard";
+import { EvolveExistingFlowSchemaType } from "../formValidation";
 
 export const EvolveFlow = () => {
   const navigate = useNavigate();

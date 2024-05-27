@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 
 import { getAvatarString } from "@/components/Avatar/getAvatarString";
 import { stringToColor } from "@/components/Avatar/stringToColor";
+
 import { ParentProps } from "../../components/AvatarOld";
 
 interface BannerWithIconProps {

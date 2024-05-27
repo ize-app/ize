@@ -1,7 +1,7 @@
-import { Box, Typography } from "@mui/material";
-import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import { Box, Typography } from "@mui/material";
 
 export interface SortableItemProps {
   id: string;

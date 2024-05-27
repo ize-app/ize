@@ -1,30 +1,31 @@
-import cookieParser from "cookie-parser";
-import express from "express";
-import session from "express-session";
-import cors from "cors";
-import { json } from "body-parser";
-
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { loadFilesSync } from "@graphql-tools/load-files";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import { mergeTypeDefs } from "@graphql-tools/merge";
-
-import { resolvers } from "../graphql/resolvers/queryResolvers";
-import { authenticateSession } from "../stytch/authenticateSession";
-import { GraphqlRequestContext } from "../graphql/context";
-import { DiscordApi } from "../discord/api";
-import { prisma } from "../prisma/client";
-import { stytchClient, sessionDurationMinutes } from "../stytch/stytchClient";
-import { MePrismaType } from "@/core/user/userPrismaTypes";
-import { createBlockchainIdentitiesForUser } from "../stytch/createBlockchainIdentities";
-import { createEmailIdentities } from "../stytch/createEmailIdentities";
-import { upsertUser } from "../stytch/upsertUser";
-import { upsertOauthToken } from "../stytch/upsertOauthToken";
-import { createDiscordIdentity } from "../stytch/createDiscordIdentity";
-import { redirectAtLogin } from "../stytch/redirectAtLogin";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { json } from "body-parser";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
+import session from "express-session";
 import { OAuthProvider } from "stytch";
+
+import { MePrismaType } from "@/core/user/userPrismaTypes";
+
 import { expressGloalErrorHandler } from "./error";
+import { DiscordApi } from "../discord/api";
+import { GraphqlRequestContext } from "../graphql/context";
+import { resolvers } from "../graphql/resolvers/queryResolvers";
+import { prisma } from "../prisma/client";
+import { authenticateSession } from "../stytch/authenticateSession";
+import { createBlockchainIdentitiesForUser } from "../stytch/createBlockchainIdentities";
+import { createDiscordIdentity } from "../stytch/createDiscordIdentity";
+import { createEmailIdentities } from "../stytch/createEmailIdentities";
+import { redirectAtLogin } from "../stytch/redirectAtLogin";
+import { sessionDurationMinutes, stytchClient } from "../stytch/stytchClient";
+import { upsertOauthToken } from "../stytch/upsertOauthToken";
+import { upsertUser } from "../stytch/upsertUser";
+
 const path = require("path");
 
 const host = process.env.HOST ?? "::1";

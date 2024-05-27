@@ -1,9 +1,9 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import { default as MuiSwitch } from "@mui/material/Switch";
-import FormHelperText from "@mui/material/FormHelperText";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 import { SxProps } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import { default as MuiSwitch } from "@mui/material/Switch";
+import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
 interface SwitchProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;

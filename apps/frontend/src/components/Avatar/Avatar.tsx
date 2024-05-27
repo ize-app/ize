@@ -1,9 +1,11 @@
-import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+import { SxProps } from "@mui/material";
 import MuiAvatar, { AvatarProps as MuiAvatarProps } from "@mui/material/Avatar";
 import Blockies from "react-blockies";
+
+import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+
 import { getAvatarString } from "./getAvatarString";
 import { stringToColor } from "./stringToColor";
-import { SxProps } from "@mui/material";
 
 export interface AvatarProps extends MuiAvatarProps {
   avatar: EntityFragment | UserSummaryPartsFragment;

@@ -1,13 +1,14 @@
+import { MailOutline } from "@mui/icons-material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { MailOutline } from "@mui/icons-material";
+import { useContext, useState } from "react";
 import {
   Controller,
   FieldValues,
@@ -15,7 +16,10 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
-import { useContext, useState } from "react";
+
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
+import { dedupEntities } from "@/utils/dedupEntities";
 
 import {
   EntitySummaryPartsFragment,
@@ -23,11 +27,9 @@ import {
   NewEntityTypes,
 } from "../../../graphql/generated/graphql";
 import { Avatar } from "../../AvatarOld";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { EntityModal } from "../EntityModal/EntityModal";
 import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
-import { RecentAgentsContext, dedupOptions } from "@/contexts/RecentAgentContext";
 import NftSvg from "../../icons/NftSvg";
+import { EntityModal } from "../EntityModal/EntityModal";
 
 interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T> {
   label?: string;
@@ -64,7 +66,7 @@ export const EntitySearch = <T extends FieldValues>({
     setRecentAgents(value);
 
     const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
-    const newAgents = dedupOptions([...(currentState ?? []), ...(value ?? [])]);
+    const newAgents = dedupEntities([...(currentState ?? []), ...(value ?? [])]);
 
     //@ts-ignore
     setFieldValue(name, newAgents);

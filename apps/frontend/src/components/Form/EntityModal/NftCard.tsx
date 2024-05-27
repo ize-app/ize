@@ -1,8 +1,12 @@
+import { useLazyQuery } from "@apollo/client";
+import { Box, debounce } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Box, debounce } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+
+import Loading from "@/components/Loading";
 import {
   AlchemyApiNftContract,
   AlchemyApiNftToken,
@@ -12,9 +16,6 @@ import {
   NftContractDocument,
   NftTokenDocument,
 } from "@/graphql/generated/graphql";
-import Loading from "@/components/Loading";
-import { useEffect, useMemo, useState } from "react";
-import { useLazyQuery } from "@apollo/client";
 
 export const NftCard = ({
   address,

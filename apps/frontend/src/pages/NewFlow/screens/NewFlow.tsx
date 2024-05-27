@@ -1,18 +1,20 @@
+import { ApolloError, useMutation } from "@apollo/client";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+
+import { WizardContainer } from "@/components/Wizard";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { NewFlowDocument } from "@/graphql/generated/graphql";
+import { fullUUIDToShort } from "@/utils/inputs";
+import { Wizard, useWizard } from "@/utils/wizard";
+
+import { FlowSchemaType } from "../../../components/Form/FlowForm/formValidation/flow";
+import { createNewFlowArgs } from "../../../components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
-import { Wizard, useWizard } from "@/utils/wizard";
 import { NEW_FLOW_PROGRESS_BAR_STEPS, NEW_FLOW_WIZARD_STEPS } from "../newFlowWizard";
-import { FlowSchemaType } from "../../../components/Form/FlowForm/formValidation/flow";
-import { NewFlowDocument } from "@/graphql/generated/graphql";
-import { ApolloError, useMutation } from "@apollo/client";
-import { createNewFlowArgs } from "../../../components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
-import { fullUUIDToShort } from "@/utils/inputs";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { WizardContainer } from "@/components/Wizard";
 
 export const NewFlow = () => {
   const navigate = useNavigate();

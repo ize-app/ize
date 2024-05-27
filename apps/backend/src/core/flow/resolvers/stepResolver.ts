@@ -1,10 +1,11 @@
-import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
-import { StepPrismaType } from "../flowPrismaTypes";
-import { permissionResolver } from "../../permission/permissionResolver";
-import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
-import { actionResolver } from "../../action/actionResolver";
-import { hasReadPermission } from "../../permission/hasReadPermission";
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
+import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
+
+import { actionResolver } from "../../action/actionResolver";
+import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
+import { hasReadPermission } from "../../permission/hasReadPermission";
+import { permissionResolver } from "../../permission/permissionResolver";
+import { StepPrismaType } from "../flowPrismaTypes";
 
 export const stepResolver = ({
   step,

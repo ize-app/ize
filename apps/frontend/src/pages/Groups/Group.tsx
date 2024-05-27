@@ -5,14 +5,14 @@ import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import Loading from "../../components/Loading";
+import TabPanel from "../../components/Tables/TabPanel";
+import { TabProps, Tabs } from "../../components/Tables/Tabs";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { GroupDocument, GroupSummaryPartsFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
-import Loading from "../../components/Loading";
-import TabPanel from "../../components/Tables/TabPanel";
-import { TabProps, Tabs } from "../../components/Tables/Tabs";
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();

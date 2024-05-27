@@ -1,6 +1,8 @@
-import { FieldAnswerFragment, FieldFragment } from "@/graphql/generated/graphql";
-import { Field } from "./Field";
 import Box from "@mui/material/Box";
+
+import { FieldAnswerFragment, FieldFragment } from "@/graphql/generated/graphql";
+
+import { Field } from "./Field";
 
 export const Fields = ({
   fields,

@@ -1,30 +1,30 @@
+import Close from "@mui/icons-material/Close";
+import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import { FlowSchemaType } from "../../formValidation/flow";
+import { useEffect, useState } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { Select, TextField } from "../../../formFields";
-import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
-
+import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import {
   DecisionType,
   FieldOptionsSelectionType,
   FieldType,
   ResultType,
 } from "@/graphql/generated/graphql";
-import { Box, FormHelperText } from "@mui/material";
-import { ResultSchemaType } from "../../formValidation/result";
+
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
-import { FieldOptionsForm } from "../FieldOptionsForm";
-import Close from "@mui/icons-material/Close";
-import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldsForm } from "../FieldsForm";
-import { useEffect, useState } from "react";
-import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
+import { Select, TextField } from "../../../formFields";
+import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FieldSchemaType } from "../../formValidation/fields";
+import { FlowSchemaType } from "../../formValidation/flow";
+import { ResultSchemaType } from "../../formValidation/result";
+import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
+import { FieldOptionsForm } from "../FieldOptionsForm";
+import { FieldsForm } from "../FieldsForm";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -167,9 +167,9 @@ const ResultForm = ({
           fieldIndex: resultIndex,
         });
       } else {
-        throw new Error(`Unknown result type ${resultType}`);
+        throw new Error(`Unknown result type `);
       }
-      let result: ResultSchemaType = createDefaultResultState({
+      const result: ResultSchemaType = createDefaultResultState({
         resultType,
         stepIndex: formIndex,
         resultIndex: resultIndex,

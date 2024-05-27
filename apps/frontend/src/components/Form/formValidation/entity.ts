@@ -1,6 +1,7 @@
-import * as z from "zod";
-import { Blockchain, NewEntityTypes, EntityType } from "@/graphql/generated/graphql";
 import { ethers } from "ethers";
+import * as z from "zod";
+
+import { Blockchain, EntityType, NewEntityTypes } from "@/graphql/generated/graphql";
 
 export type EntitySchemaType = z.infer<typeof entityFormSchema>;
 

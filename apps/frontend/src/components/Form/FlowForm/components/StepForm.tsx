@@ -1,13 +1,14 @@
+import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { FlowSchemaType } from "../formValidation/flow";
-import { Box } from "@mui/material";
-import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select, Switch, TextField } from "../../formFields";
-import { PermissionType } from "../formValidation/permission";
-import { FormHelperText } from "@mui/material";
+
+import { ActionType } from "@/graphql/generated/graphql";
+
 import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
-import { ActionType } from "@/graphql/generated/graphql";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { RoleSearch, Select, Switch, TextField } from "../../formFields";
+import { FlowSchemaType } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
 
 interface StepFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

@@ -1,4 +1,5 @@
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
+
 import { DefaultOptionSelection } from "../../formValidation/fields";
 import { ResultSchemaType } from "../../formValidation/result";
 

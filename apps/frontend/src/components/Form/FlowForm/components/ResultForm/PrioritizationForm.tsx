@@ -1,14 +1,14 @@
+import Typography from "@mui/material/Typography";
 import { UseFormReturn } from "react-hook-form";
 
 import { Select } from "@/components/Form/formFields";
-
-import { FlowSchemaType } from "../../formValidation/flow";
-import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
-import Typography from "@mui/material/Typography";
-import { ResponsiveFormRow } from "@/components/Form/formLayout/ResponsiveFormRow";
-import { ResultListCountLimit } from "../../formValidation/result";
-import { FieldSchemaType } from "../../formValidation/fields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
+import { ResponsiveFormRow } from "@/components/Form/formLayout/ResponsiveFormRow";
+import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+
+import { FieldSchemaType } from "../../formValidation/fields";
+import { FlowSchemaType } from "../../formValidation/flow";
+import { ResultListCountLimit } from "../../formValidation/result";
 
 interface PrioritizationFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

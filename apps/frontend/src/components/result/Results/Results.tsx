@@ -1,16 +1,18 @@
+import { Chip } from "@mui/material";
+import Box from "@mui/material/Box";
+
+import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
+import { statusProps } from "@/components/status/statusProps";
 import {
   FieldFragment,
   ResultConfigFragment,
   ResultFragment,
+  Status,
   UserFieldAnswersFragment,
 } from "@/graphql/generated/graphql";
-import Box from "@mui/material/Box";
+
 import { Result } from "./Result";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
-import { Status } from "@/graphql/generated/graphql";
-import { Chip } from "@mui/material";
-import { statusProps } from "@/components/status/statusProps";
-import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
 
 export const Results = ({
   resultConfigs,
@@ -29,10 +31,10 @@ export const Results = ({
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       {resultConfigs.map((resultConfig) => {
         let field: FieldFragment | null = null;
-        let result: ResultFragment | null =
+        const result: ResultFragment | null =
           results.find((r) => r.resultConfigId === resultConfig.resultConfigId) ?? null;
 
-        let fieldAnswers: UserFieldAnswersFragment | undefined = fieldsAnswers.find((answer) => {
+        const fieldAnswers: UserFieldAnswersFragment | undefined = fieldsAnswers.find((answer) => {
           return answer.fieldId === resultConfig.fieldId;
         });
 

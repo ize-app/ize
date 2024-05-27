@@ -1,5 +1,7 @@
 import { Chip } from "@mui/material";
+
 import { Status } from "@/graphql/generated/graphql";
+
 import { statusProps } from "./statusProps";
 
 export const StatusTag = ({ status }: { status: Status }) => {

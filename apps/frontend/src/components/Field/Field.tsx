@@ -1,10 +1,12 @@
-import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
+
+import { AnswerFreeInput } from "./AnswerFreeInput";
 import { FieldOptions } from "./FieldOptions";
 import { formatDataTypeName } from "./formatDataTypeName";
 import { formatOptionSelectionType } from "./formatOptionSelectionType";
-import { AnswerFreeInput } from "./AnswerFreeInput";
 
 // renders name of the field and answer, if it exists.
 // option fields show all options

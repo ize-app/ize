@@ -1,14 +1,16 @@
+import { Box, Typography } from "@mui/material";
+
+import { FieldOptions } from "@/components/Field/FieldOptions";
 import {
   FieldFragment,
   FieldType,
   ResultConfigFragment,
   ResultType,
 } from "@/graphql/generated/graphql";
-import { Box, Typography } from "@mui/material";
-import { FieldOptions } from "@/components/Field/FieldOptions";
+
 import { createResultConfigDescription } from "../createResultConfigDescription";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 import { ResultName } from "../ResultName";
+import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const ResultConfig = ({
   resultConfig,

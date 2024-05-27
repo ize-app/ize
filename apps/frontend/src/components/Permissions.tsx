@@ -1,7 +1,9 @@
-import { PermissionFragment } from "@/graphql/generated/graphql";
-import { AvatarWithName } from "./Avatar/AvatarWithName";
-import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+
+import { PermissionFragment } from "@/graphql/generated/graphql";
+
+import { AvatarWithName } from "./Avatar/AvatarWithName";
 
 export const Permissions = ({
   permission,

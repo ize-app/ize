@@ -1,6 +1,6 @@
 import { PermissionArgs } from "@/graphql/generated/graphql";
-import { PermissionSchemaType } from "../../formValidation/permission";
-import { PermissionType } from "../../formValidation/permission";
+
+import { PermissionSchemaType, PermissionType } from "../../formValidation/permission";
 
 export const createPermissionArgs = (
   permission: PermissionSchemaType | undefined,

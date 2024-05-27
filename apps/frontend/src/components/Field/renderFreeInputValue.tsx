@@ -1,12 +1,13 @@
-import { FieldDataType } from "@/graphql/generated/graphql";
-import { Typography } from "@mui/material";
-import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
+import { Typography } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { ReactElement } from "react";
 import { Link, generatePath } from "react-router-dom";
+
+import { FieldDataType } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 dayjs.extend(utc);

@@ -1,3 +1,8 @@
+import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import { Box, Typography } from "@mui/material";
+
+import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
+import { FieldOptions } from "@/components/Field/FieldOptions";
 import {
   FieldFragment,
   FieldType,
@@ -5,13 +10,10 @@ import {
   ResultFragment,
   ResultType,
 } from "@/graphql/generated/graphql";
-import { Box, Typography } from "@mui/material";
-import { FieldOptions } from "@/components/Field/FieldOptions";
+
 import { createResultConfigDescription } from "../createResultConfigDescription";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 import { ResultName } from "../ResultName";
-import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
+import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const Result = ({
   resultConfig,

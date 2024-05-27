@@ -1,17 +1,18 @@
 import {
   Field,
-  FieldType,
-  FreeInput,
-  Options,
   FieldDataType,
   FieldOptionsSelectionType,
+  FieldType,
+  FreeInput,
   Option,
+  Options,
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { FieldSetPrismaType } from "../fieldPrismaTypes";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTypes";
+import { FieldSetPrismaType } from "../fieldPrismaTypes";
 
 export const fieldSetResolver = ({
   fieldSet,

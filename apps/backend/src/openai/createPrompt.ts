@@ -1,5 +1,4 @@
-import { GenericFieldAndValue } from "@/graphql/generated/resolver-types";
-import { ResultType } from "@/graphql/generated/resolver-types";
+import { GenericFieldAndValue, ResultType } from "@/graphql/generated/resolver-types";
 
 export const createPrompt = ({
   flowName,

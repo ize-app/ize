@@ -1,10 +1,12 @@
-import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
-import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
+
+import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { newDecisionConfig } from "./decision/newDecisionConfig";
-import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./decision/newLlmSummaryConfig";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { newRankConfig } from "./decision/newRankConfig";
+import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newResultConfigSet = async ({
   resultsArgs,

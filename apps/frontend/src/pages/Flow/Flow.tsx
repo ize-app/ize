@@ -1,37 +1,38 @@
 import { useQuery } from "@apollo/client";
+import { Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import { CurrentUserContext } from "@/contexts/current_user_context";
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import {
+  EvolveFlowRoute,
+  NewRequestRoute,
+  Route,
+  evolveFlowRoute,
+  newRequestRoute,
+} from "@/routers/routes";
+
+import Loading from "../../components/Loading";
 import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import Loading from "../../components/Loading";
-import {
-  EvolveFlowRoute,
-  evolveFlowRoute,
-  NewRequestRoute,
-  newRequestRoute,
-  Route,
-} from "@/routers/routes";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
-import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
-import { Chip } from "@mui/material";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
-  let { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
+  const { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
 
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
 
-  const flowId: string | null = flowIdShort ? shortUUIDToFull(flowIdShort as string) : null;
+  const flowId: string | null = flowIdShort ? shortUUIDToFull(flowIdShort) : null;
   const flowVersionId: string | null = flowVersionIdShort
-    ? shortUUIDToFull(flowVersionIdShort as string)
+    ? shortUUIDToFull(flowVersionIdShort)
     : null;
 
   const navigate = useNavigate();

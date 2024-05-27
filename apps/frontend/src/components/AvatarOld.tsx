@@ -10,13 +10,13 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import Blockies from "react-blockies";
 
+import { getAvatarString } from "./Avatar/getAvatarString";
+import { stringToColor } from "./Avatar/stringToColor";
 import {
   EntitySummaryPartsFragment,
   EntityType,
   UserSummaryPartsFragment,
 } from "../graphql/generated/graphql";
-import { getAvatarString } from "./Avatar/getAvatarString";
-import { stringToColor } from "./Avatar/stringToColor";
 
 export interface AvatarWithNameProps {
   id: string;

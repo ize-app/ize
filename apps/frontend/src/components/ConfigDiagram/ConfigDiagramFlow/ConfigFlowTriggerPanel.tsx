@@ -1,13 +1,15 @@
+import { Typography } from "@mui/material";
+
 import {
   ConfigurationPanel,
   PanelAccordion,
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { StepFragment } from "@/graphql/generated/graphql";
-import { Typography } from "@mui/material";
-import { Permissions } from "../../Permissions";
 import { Fields } from "@/components/Field/Fields";
+import { StepFragment } from "@/graphql/generated/graphql";
+
+import { Permissions } from "../../Permissions";
 
 export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
   return (

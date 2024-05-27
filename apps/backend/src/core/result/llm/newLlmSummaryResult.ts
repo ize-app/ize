@@ -1,14 +1,15 @@
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
-import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { prisma } from "@/prisma/client";
-import { generateAiSummary } from "@/openai/generateAiSummary";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { getRequestResults } from "@/core/request/utils/getRequestResults";
 import { getRequestTriggerFieldAnswers } from "@/core/request/utils/getRequestTriggerFieldAnswers";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
+import { generateAiSummary } from "@/openai/generateAiSummary";
+import { prisma } from "@/prisma/client";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
+import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 export const newLlmSummaryResult = async ({
   resultConfig,

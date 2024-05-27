@@ -1,13 +1,15 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import {
   ActionExecutionFragment,
-  Status,
   ActionFragment,
   ActionType,
   FieldDataType,
+  Status,
 } from "@/graphql/generated/graphql";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import { DataTable } from "@/components/Tables/DataTable/DataTable";
+
 import { renderFreeInputValue } from "../Field/renderFreeInputValue";
 import { StatusTag } from "../status/StatusTag";
 

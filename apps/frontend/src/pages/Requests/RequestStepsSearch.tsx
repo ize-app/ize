@@ -1,17 +1,18 @@
+import { useLazyQuery } from "@apollo/client";
+import { Button, debounce } from "@mui/material";
+import Box from "@mui/material/Box";
+import { ChangeEvent, useEffect, useState } from "react";
+
+import Loading from "@/components/Loading";
+import CreateButton from "@/components/Menu/CreateButton";
+import Search from "@/components/Tables/Search";
 import {
   GetRequestStepsDocument,
   GetRequestStepsQueryVariables,
   RequestStepSummaryFragment,
 } from "@/graphql/generated/graphql";
-import Box from "@mui/material/Box";
-import { useLazyQuery } from "@apollo/client";
-import { ChangeEvent, useEffect, useState } from "react";
 
-import CreateButton from "@/components/Menu/CreateButton";
-import Loading from "@/components/Loading";
-import Search from "@/components/Tables/Search";
 import { RequestStepsTable } from "./RequestStepsTable";
-import { Button, debounce } from "@mui/material";
 
 export const RequestStepsSearch = ({
   userOnly,

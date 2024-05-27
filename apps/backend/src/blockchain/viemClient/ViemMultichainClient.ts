@@ -1,8 +1,9 @@
-import { Blockchain } from "@/graphql/generated/resolver-types";
-import { chainMap } from "../chainMap";
-
-import { createPublicClient, http, PublicClient } from "viem";
+import { PublicClient, createPublicClient, http } from "viem";
 import { Chain } from "viem/chains";
+
+import { Blockchain } from "@/graphql/generated/resolver-types";
+
+import { chainMap } from "../chainMap";
 
 export class ViemMultichainClient {
   private readonly instances: Map<Chain, PublicClient> = new Map();

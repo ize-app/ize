@@ -9,7 +9,8 @@ import {
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { ResultConfigPrismaType } from "../resultPrismaTypes";
 
 export const resultConfigResolver = (

@@ -1,19 +1,21 @@
-import {
-  FlowConfigDiagramContainer,
-  DiagramPanel,
-  PanelContainer,
-  FlowStage,
-} from "@/components/ConfigDiagram";
+import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
+
+import { actionProperties } from "@/components/Action/actionProperties";
+import {
+  DiagramPanel,
+  FlowConfigDiagramContainer,
+  FlowStage,
+  PanelContainer,
+} from "@/components/ConfigDiagram";
 import { FlowFragment } from "@/graphql/generated/graphql";
-import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
+
+import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
 import { ConfigFlowTriggerPanel } from "./ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "./ConfigStepPanel";
-import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
-import { actionProperties } from "@/components/Action/actionProperties";
+import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config

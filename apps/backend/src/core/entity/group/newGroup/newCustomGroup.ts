@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
+
 import { GraphqlRequestContext } from "@/graphql/context";
-import { prisma } from "@/prisma/client";
 import { EntityType, MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 
 export const newCustomGroup = async ({
   context,

@@ -1,8 +1,11 @@
-import { FieldDataType } from "@/graphql/generated/graphql";
 import * as z from "zod";
-import { evaluateMultiTypeInput } from "../../components/Form/formValidation/field";
 
-import { fieldAnswerRecordSchema } from "../../components/Form/formValidation/field";
+import { FieldDataType } from "@/graphql/generated/graphql";
+
+import {
+  evaluateMultiTypeInput,
+  fieldAnswerRecordSchema,
+} from "../../components/Form/formValidation/field";
 
 export type RequestDefinedOptionSchemaType = z.infer<typeof requestDefinedOptionSchema>;
 export type RequestDefinedOptionsSchemaType = z.infer<typeof requestDefinedOptionsSchema>;

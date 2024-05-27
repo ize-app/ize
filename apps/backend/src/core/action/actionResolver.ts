@@ -1,8 +1,10 @@
-import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { ActionType, FieldType } from "@prisma/client";
 import { parse } from "tldts";
+
+import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
+import { ActionNewPrismaType } from "./actionPrismaTypes";
 
 export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,

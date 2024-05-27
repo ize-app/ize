@@ -1,7 +1,8 @@
+import * as z from "zod";
+
+import { NewCustomGroupSchemaType, newCustomGroupFormSchema } from "./formValidation";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 import { WizardSteps, useWizardFormState } from "../../utils/wizard";
-import * as z from "zod";
-import { newCustomGroupFormSchema, NewCustomGroupSchemaType } from "./formValidation";
 
 export type NewCustomGroupFormFields = z.infer<typeof newCustomGroupFormSchema>;
 

@@ -1,8 +1,9 @@
-import { Request, QueryGetRequestArgs } from "@/graphql/generated/resolver-types";
-import { prisma } from "../../prisma/client";
-import { GraphqlRequestContext } from "../../graphql/context";
+import { QueryGetRequestArgs, Request } from "@/graphql/generated/resolver-types";
+
 import { requestInclude } from "./requestPrismaTypes";
 import { requestResolver } from "./resolvers/requestResolver";
+import { GraphqlRequestContext } from "../../graphql/context";
+import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 
 export const getRequest = async ({

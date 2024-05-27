@@ -1,6 +1,7 @@
 import { Action, ActionType } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection } from "../../formValidation/fields";
+
 import { ActionSchemaType } from "../../formValidation/action";
+import { DefaultOptionSelection } from "../../formValidation/fields";
 
 export const createActionFormState = (action: Action | null | undefined): ActionSchemaType => {
   switch (action?.__typename) {

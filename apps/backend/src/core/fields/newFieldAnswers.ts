@@ -1,7 +1,9 @@
-import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
+
+import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 import { validateInput } from "./validation/validateInput";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
 

@@ -1,5 +1,6 @@
-import { ActionFragment } from "@/graphql/generated/graphql";
 import Typography from "@mui/material/Typography";
+
+import { ActionFragment } from "@/graphql/generated/graphql";
 
 export const ActionFilter = ({ action }: { action: ActionFragment }) => {
   if (!action.filterOption) return null;
