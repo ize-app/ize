@@ -19,7 +19,7 @@ Individual identities or "groups" can have roles (e.g. request/respond) on a pro
 
 ## Running Ize
 
-### Setting up local dev environment 
+### Setting up local dev environment
 
 Install Homebrew
 
@@ -63,7 +63,7 @@ Build the database and run the backend
 
 `cd apps/backend && npx prisma db push && npm run start:dev`
 
-Navigate to [localhost:5173](http://localhost:5173/) 
+Navigate to [localhost:5173](http://localhost:5173/)
 
 ### Testing production build locally
 
@@ -73,13 +73,11 @@ Build backend and frontend
 
 Start the express server
 
-`cd apps/backend && node dist/express/server.js`    
+`cd apps/backend && node dist/express/server.js`
 
-Navigate to [localhost:3000](http://localhost:3000/) 
+Navigate to [localhost:3000](http://localhost:3000/)
 
-This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [localhost:5173](http://localhost:5173/) 
-
-
+This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [localhost:5173](http://localhost:5173/)
 
 ## Building a fullstack feature:
 

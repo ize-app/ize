@@ -7,8 +7,7 @@ export const createResultArgs = (
   result: ResultSchemaType,
   responseFields: FieldsSchemaType | undefined | null,
 ): ResultArgs => {
-  if (!responseFields)
-    throw Error("Missing response fields for result>");
+  if (!responseFields) throw Error("Missing response fields for result>");
 
   let responseFieldIndex = responseFields
     ? responseFields.findIndex((f) => f.fieldId === result.fieldId)

@@ -6,7 +6,7 @@ export const Requests = () => {
   return (
     <PageContainer>
       <Typography variant="h1">Requests</Typography>
-      <RequestStepsSearch userOnly  />
+      <RequestStepsSearch userOnly />
     </PageContainer>
   );
 };

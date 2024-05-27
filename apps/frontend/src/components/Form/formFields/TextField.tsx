@@ -33,7 +33,7 @@ export const TextField = <T extends FieldValues>({
   display = true,
   sx = {},
 }: TextFieldProps<T>) => {
-  const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none"};
+  const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
     <Controller
