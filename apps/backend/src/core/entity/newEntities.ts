@@ -69,6 +69,6 @@ export const newEntities = async (
       }
     }),
   );
-  //@ts-ignore
+
   return agents;
 };

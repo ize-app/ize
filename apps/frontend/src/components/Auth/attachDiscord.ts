@@ -16,7 +16,7 @@ export const attachDiscord = async () => {
   const loginRedirectUrl = "http://localhost:5173/api/auth/token?next_route=/"; //+ window.location.pathname;
   const signupRedirectUrl = "http://localhost:5173/api/auth/token?next_route=/"; //+ window.location.pathname;
   const baseUrl = new URL("https://test.stytch.com/v1/public/oauth/discord/start");
-  //@ts-ignore
+
   baseUrl.searchParams.append("public_token", import.meta.env.VITE_STYTCH_PUBLIC_TOKEN as string);
   baseUrl.searchParams.append("login_redirect_url", loginRedirectUrl);
   baseUrl.searchParams.append("signup_redirect_url", signupRedirectUrl);

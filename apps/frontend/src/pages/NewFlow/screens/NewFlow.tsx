@@ -56,7 +56,7 @@ export const NewFlow = () => {
   const newFlowWizard: Wizard<FlowSchemaType> = {
     steps: NEW_FLOW_WIZARD_STEPS,
     onComplete,
-    //@ts-ignore
+    //@ts-expect-error TODO: fix initial state
     initialFormState: {},
   };
 

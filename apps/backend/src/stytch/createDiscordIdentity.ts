@@ -6,7 +6,7 @@ import { APIUser } from "discord.js";
 export const createDiscordIdentity = async ({
   userId,
   accessToken,
-  transaction = prisma,
+  // transaction = prisma,
 }: {
   userId: string;
   accessToken: string;

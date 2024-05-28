@@ -52,8 +52,7 @@ export const RequestContext = () => {
             variant="outlined"
             placeholderText="Summarize this evolution request"
             showLabel={true}
-            //TODO: not sure why this is giving ts error
-            //@ts-ignore
+            //@ts-expect-error TODO: not sure why this is giving ts error
             control={formMethods.control}
             name={`requestName`}
             defaultValue=""
@@ -65,8 +64,7 @@ export const RequestContext = () => {
             variant="outlined"
             placeholderText="Give additional context on why this change is being requested"
             showLabel={true}
-            //TODO: not sure why this is giving ts error
-            //@ts-ignore
+            //@ts-expect-error TODO: not sure why this is giving ts error
             control={formMethods.control}
             name={`requestDescription`}
             defaultValue=""
@@ -76,8 +74,7 @@ export const RequestContext = () => {
         </Box>
       </WizardScreenBodyNarrow>
       <WizardNav
-        //TODO: not sure why this is giving ts error
-        //@ts-ignore
+        //@ts-expect-error TODO: not sure why this is giving ts error
         onNext={formMethods.handleSubmit(onSubmit)}
         onPrev={onPrev}
         nextLabel={nextLabel}

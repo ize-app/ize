@@ -35,7 +35,9 @@ export const FlowStage = ({
       icon={icon}
       color={colors.primary}
       statusIcon={
-        hasError && <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />
+        hasError ? (
+          <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />
+        ) : undefined
       }
       sx={{
         borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense

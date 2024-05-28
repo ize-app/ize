@@ -12,4 +12,5 @@ module.exports = {
   rules: {
     // Backend-specific rules (if any)
   },
+  ignorePatterns: ["src/graphql/"],
 };

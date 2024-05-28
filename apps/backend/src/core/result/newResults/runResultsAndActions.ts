@@ -2,7 +2,6 @@ import { newResults } from "./newResults";
 import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultPrismaType } from "../resultPrismaTypes";
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
-import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
 import { executeAction } from "@/core/action/executeActions/executeAction";
 
@@ -12,7 +11,6 @@ export const runResultsAndActions = async ({
   step,
   responses,
   existingResults = [],
-  transaction = prisma,
 }: {
   requestStepId: string;
   step: StepPrismaType;

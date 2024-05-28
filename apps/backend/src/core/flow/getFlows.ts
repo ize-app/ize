@@ -9,13 +9,7 @@ import { MePrismaType } from "../user/userPrismaTypes";
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
 // TODO: In the future, this query will only pull flows that user has interacted with or created
-export const getFlows = async ({
-  args,
-  user,
-}: {
-  args: {};
-  user: MePrismaType;
-}): Promise<FlowSummary[]> => {
+export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user.Identities.map((id) => id.id);
 

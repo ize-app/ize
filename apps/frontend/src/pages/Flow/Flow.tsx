@@ -209,7 +209,7 @@ export const Flow = () => {
               <Typography>This flow is responsible for evolving: </Typography>
               <Box component="ul" sx={{ display: "flex", marginBlockStart: "0rem" }}>
                 {flow.flowsEvolvedByThisFlow.map((evolvedFlow) => (
-                  <Typography component="li">
+                  <Typography component="li" key={evolvedFlow.flowId}>
                     <Link
                       key={evolvedFlow.flowId}
                       to={generatePath(Route.Flow, {

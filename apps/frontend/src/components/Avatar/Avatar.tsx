@@ -22,17 +22,16 @@ export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
   return (
     <MuiAvatar
       src={avatar.icon ?? ""}
-      children={
-        avatar.__typename === "Identity" &&
-        avatar.identityType.__typename === "IdentityBlockchain" ? (
-          <Blockies seed={avatar.identityType.address} />
-        ) : (
-          getAvatarString(avatar.name.toUpperCase())
-        )
-      }
       alt={avatar.name}
       {...props}
       sx={{ ...defaultStyles, ...sx }}
-    />
+    >
+      {avatar.__typename === "Identity" &&
+      avatar.identityType.__typename === "IdentityBlockchain" ? (
+        <Blockies seed={avatar.identityType.address} />
+      ) : (
+        getAvatarString(avatar.name.toUpperCase())
+      )}
+    </MuiAvatar>
   );
 };

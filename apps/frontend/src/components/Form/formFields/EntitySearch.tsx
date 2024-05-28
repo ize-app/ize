@@ -68,7 +68,7 @@ export const EntitySearch = <T extends FieldValues>({
     const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
     const newAgents = dedupEntities([...(currentState ?? []), ...(value ?? [])]);
 
-    //@ts-ignore
+    //@ts-expect-error TODO
     setFieldValue(name, newAgents);
   };
   return me ? (
@@ -200,6 +200,7 @@ export const EntitySearch = <T extends FieldValues>({
                         label={option.name}
                         color="primary"
                         {...getTagProps({ index })}
+                        key={option.id}
                       />
                     );
                   })

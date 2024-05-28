@@ -85,7 +85,6 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
             <Tooltip title="Trigger flow">
               <span>
                 <IconButton
-                  children={<Add />}
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(
@@ -96,7 +95,9 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
                   }}
                   color={"primary"}
                   disabled={!flow.userPermission.request}
-                />
+                >
+                  <Add />
+                </IconButton>
               </span>
             </Tooltip>
           </Box>

@@ -64,14 +64,10 @@ export const CreateRequestForm = () => {
       setFormState((prev) => ({ ...prev, flow: flow }));
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
         } else if (field.__typename === FieldType.Options) {
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.selectionType`, field.selectionType);
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.maxSelections`, field.maxSelections);
         }
       });

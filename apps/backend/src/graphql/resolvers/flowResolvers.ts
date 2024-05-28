@@ -27,7 +27,7 @@ const getFlows: QueryResolvers["getFlows"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  return await getFlowsService({ args, user: context.currentUser });
+  return await getFlowsService({ user: context.currentUser });
 };
 
 const newFlow: MutationResolvers["newFlow"] = async (

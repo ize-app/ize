@@ -191,7 +191,7 @@ export const Setup = () => {
                 <AddStageButton
                   label={"Trigger webhook"}
                   onClick={() => {
-                    //@ts-ignore
+                    //@ts-expect-error TODO
                     useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
                       filterOptionId: DefaultOptionSelection.None,
                       type: ActionType.CallWebhook,

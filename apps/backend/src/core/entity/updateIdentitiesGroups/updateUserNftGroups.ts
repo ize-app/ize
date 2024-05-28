@@ -28,7 +28,7 @@ export const updateUserNftGroups = async ({
     // iterate through each chain and get identity's NFT groups
     const res = await Promise.all(
       Array.from(chainMap).map(
-        async ([chain, val]) => await getUserNftGroupsForChain({ chain, address, transaction }),
+        async ([chain]) => await getUserNftGroupsForChain({ chain, address, transaction }),
       ),
     );
 

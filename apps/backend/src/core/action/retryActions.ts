@@ -3,7 +3,7 @@ import { prisma } from "../../prisma/client";
 import { stepInclude } from "../flow/flowPrismaTypes";
 import { resultInclude } from "../result/resultPrismaTypes";
 
-export const retryActions = async ({}: {}) => {
+export const retryActions = async () => {
   //  check if there are any request steps that don't have completed actions
   const stepsWithoutActions = await prisma.requestStep.findMany({
     where: {

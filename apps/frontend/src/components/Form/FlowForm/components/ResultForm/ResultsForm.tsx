@@ -86,7 +86,7 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
             resultIndex={resultIndex}
             fieldsArrayMethods={fieldsArrayMethods}
             id={item.id}
-            //@ts-ignore
+            //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
         );

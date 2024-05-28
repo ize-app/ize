@@ -45,14 +45,14 @@ export const ResponseForm = ({
   useEffect(() => {
     responseFields.forEach((field) => {
       if (field.__typename === FieldType.FreeInput) {
-        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.dataType`, field.dataType);
-        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.required`, field.required);
       } else if (field.__typename === FieldType.Options) {
-        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.selectionType`, field.selectionType);
-        // @ts-ignore not sure why react hook forms isn't picking up on record type
+        // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.maxSelections`, field.maxSelections);
       }
     });
@@ -185,6 +185,7 @@ export const ResponseForm = ({
                   );
                 }
               }
+              break;
             }
             default:
               throw Error("Invalid field type");

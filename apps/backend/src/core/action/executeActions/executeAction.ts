@@ -50,7 +50,7 @@ export const executeAction = async ({
   // if the action filter isn't passed, end the request step and request
   if (action.filterOptionId) {
     let passesFilter = false;
-    for (let result of results) {
+    for (const result of results) {
       if (result.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId)) {
         passesFilter = true;
         break;

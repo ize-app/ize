@@ -5,7 +5,7 @@ import { User as StytchUser } from "stytch";
 
 export const upsertUser = async ({
   stytchUser,
-  transaction = prisma,
+  // transaction = prisma,
 }: {
   stytchUser: StytchUser;
   transaction?: Prisma.TransactionClient;

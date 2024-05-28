@@ -69,14 +69,14 @@ export const SortableList = <T extends FieldValues>({
           {fields.map((field, index) => {
             const label =
               options.find((o) => {
-                // @ts-ignore
+                // @ts-expect-error //@ts-expect-error TODO unclear why this error is happening
                 return field.optionId === o.value;
               })?.label ?? "";
 
             return (
               <>
                 <TextField<T>
-                  //@ts-ignore
+                  //@ts-expect-error TODO unclear why this error is happening
                   name={`${name}.${index}.optionId`}
                   key={"optionId" + name + index}
                   control={control}

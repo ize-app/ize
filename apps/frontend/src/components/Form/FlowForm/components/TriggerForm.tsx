@@ -53,7 +53,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
             formIndex={formIndex}
             branch={"request"}
             formMethods={formMethods}
-            //@ts-ignore
+            //@ts-expect-error TODO
             fieldsArrayMethods={fieldsArrayMethods}
           />
         </PanelAccordion>

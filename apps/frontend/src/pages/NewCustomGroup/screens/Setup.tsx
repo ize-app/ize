@@ -9,7 +9,7 @@ import { WizardNav } from "../../../components/Wizard";
 import { newCustomGroupFormSchema } from "../formValidation";
 import { NewCustomGroupFormFields, useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
-export const Setup = ({}) => {
+export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
 
   const {

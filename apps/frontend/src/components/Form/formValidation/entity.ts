@@ -60,6 +60,8 @@ export const newEntityFormSchema = z.object({
               (value) => {
                 const isAddress = ethers.isAddress(value);
                 const ensRegex =
+                  // will revisit this useless escape letter later - don't know enough regex to evaluate
+                  // eslint-disable-next-line no-useless-escape
                   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
                 const isEns = !!value.match(ensRegex);
                 return isAddress || isEns;

@@ -84,7 +84,7 @@ export const EvolveFlow = () => {
   const editProcessWizard: Wizard<EvolveExistingFlowSchemaType> = {
     steps: EVOLVE_FLOW_WIZARD_STEPS,
     onComplete,
-    //@ts-ignore
+    //@ts-expect-error TODO fix
     initialFormState: {},
   };
 

@@ -1,3 +1,5 @@
+const { ignorePatterns } = require("../../.eslintrc.cjs");
+
 /* eslint-env node */
 module.exports = {
   extends: [
@@ -23,4 +25,5 @@ module.exports = {
     "react/prop-types": "off", // Disable prop-types as we use TypeScript for type checking
     "react/react-in-jsx-scope": "off", // Not needed with React 17+
   },
+  ignorePatterns: ["vite.config.ts", "src/graphql/"],
 };

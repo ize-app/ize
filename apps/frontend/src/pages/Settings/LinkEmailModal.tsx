@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Typography } from "@mui/material";
 
-// import { NewAgentType } from "../types";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -11,7 +10,6 @@ import { useStytch } from "@stytch/react";
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-// import { DevTool } from "@hookform/devtools";
 
 const formSchema = z.object({
   emailAddress: z.string().trim().email(),
@@ -129,7 +127,8 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
           </Box>
           {success && (
             <Typography>
-              Check your email! We've sent you a link to authenticate your email address with Ize.
+              Check your email! We&apos;ve sent you a link to authenticate your email address with
+              Ize.
             </Typography>
           )}
         </form>

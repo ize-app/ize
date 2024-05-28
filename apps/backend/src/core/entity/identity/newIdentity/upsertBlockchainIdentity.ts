@@ -19,7 +19,10 @@ export const upsertBlockchainIdentity = async ({
     throw Error("ERROR: upsertIdentityBlockchain - missing identityBlockchain");
 
   const isWallet = isAddress(newEntity.identityBlockchain.address);
+
   const ensRegex =
+    // TODO not sure how to evaluate with escape char is actually useless
+    // eslint-disable-next-line no-useless-escape
     /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
   const isEns = !!newEntity.identityBlockchain.address.match(ensRegex);
   if (!isWallet && !isEns) throw Error("Error: Invalid address / ens input");

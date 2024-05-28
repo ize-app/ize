@@ -3,7 +3,6 @@ import MuiAvatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 
-import { getAvatarString } from "@/components/Avatar/getAvatarString";
 import { stringToColor } from "@/components/Avatar/stringToColor";
 
 import { ParentProps } from "../../components/AvatarOld";
@@ -122,7 +121,6 @@ const BannerWithAvatar = ({
                 <MuiAvatar
                   alt={name}
                   src={parent.avatarUrl ?? undefined}
-                  children={getAvatarString(name.toUpperCase())}
                   sx={(theme) => ({
                     border: "2px solid white",
                     [theme.breakpoints.up("sm")]: {
@@ -134,21 +132,19 @@ const BannerWithAvatar = ({
                       height: "2rem",
                     },
                   })}
-                />
+                >
+                  getAvatarString(name.toUpperCase())
+                </MuiAvatar>
               }
             >
-              <MuiAvatar
-                src={avatarUrl}
-                children={getAvatarString(name.toUpperCase())}
-                sx={avatarStyles as SxProps}
-              />
+              <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
+                getAvatarString(name.toUpperCase())
+              </MuiAvatar>
             </Badge>
           ) : (
-            <MuiAvatar
-              src={avatarUrl}
-              children={getAvatarString(name.toUpperCase())}
-              sx={avatarStyles as SxProps}
-            />
+            <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
+              getAvatarString(name.toUpperCase())
+            </MuiAvatar>
           )}
         </Box>
       </Box>

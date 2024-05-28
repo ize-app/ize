@@ -36,7 +36,7 @@ export const AvatarGroup = ({ avatars, size }: AvatarProps) => {
         // onMouseLeave={handlePopperClose}
       >
         {avatars.map((a) => {
-          return <Avatar avatar={a} size={size} />;
+          return <Avatar avatar={a} size={size} key={a.id} />;
         })}
       </MuiAvatarGroup>
       {/* <AvatarPopper avatars={avatars} anchorEl={anchorEl} open={open} /> */}

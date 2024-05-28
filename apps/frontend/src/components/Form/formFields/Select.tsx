@@ -35,7 +35,6 @@ export const Select = <T extends FieldValues>({
   selectOptions,
   displayEmpty = false,
   renderValue,
-  displayLabel = true,
   required = false,
   loading = false,
   variant = "outlined",

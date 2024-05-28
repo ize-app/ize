@@ -37,7 +37,7 @@ export const AvatarPopper = ({
           elevation={4}
         >
           {avatars.map((a) => (
-            <AvatarWithName avatar={a} />
+            <AvatarWithName avatar={a} key={a.id} />
           ))}
         </Paper>
       </Fade>

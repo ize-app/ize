@@ -7,7 +7,7 @@ import { encrypt } from "@/prisma/encrypt";
 export const upsertOauthToken = async ({
   stytchOAuthentication,
   user,
-  transaction = prisma,
+  // transaction = prisma,
 }: {
   user: UserPrismaType;
   stytchOAuthentication: OAuthAuthenticateResponse;

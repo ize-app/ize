@@ -29,7 +29,7 @@ export const createActionArgs = (
     }
   }
 
-  //@ts-ignore
+  //@ts-expect-error TODO
   delete action.filterOptionId;
   return {
     type: action.type,

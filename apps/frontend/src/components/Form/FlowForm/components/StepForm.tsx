@@ -110,7 +110,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         <ResultsForm
           formIndex={formIndex}
           formMethods={formMethods}
-          //@ts-ignore
+          //@ts-expect-error TODO
           fieldsArrayMethods={fieldsArrayMethods}
         />
       </PanelAccordion>

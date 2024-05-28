@@ -10,7 +10,7 @@ export interface StageProps {
   sx?: SxProps;
   icon?: React.ComponentType<SvgIconProps>;
   color?: string;
-  statusIcon?: any;
+  statusIcon?: React.ReactElement;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
   selectedId: string | false;
 }
