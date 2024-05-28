@@ -21,19 +21,16 @@ import { CurrentUserContext } from "@/contexts/current_user_context";
 import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
-import { StreamlinedTextField } from "../../formFields";
-import { FlowSchemaType } from "../formValidation/flow";
-
-import { flowSchema } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
-
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { TriggerForm } from "../components/TriggerForm";
-import { StepForm } from "../components/StepForm";
 import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
-import { WebhookForm } from "../components/WebhookForm";
+import { StreamlinedTextField } from "../../formFields";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
+import { StepForm } from "../components/StepForm";
+import { TriggerForm } from "../components/TriggerForm";
+import { WebhookForm } from "../components/WebhookForm";
 import { DefaultOptionSelection } from "../formValidation/fields";
+import { FlowSchemaType , flowSchema } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
+import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();

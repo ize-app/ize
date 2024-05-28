@@ -1,13 +1,16 @@
+import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
+import { Prisma } from "@prisma/client";
+
+import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
+import { getNftContract } from "@/blockchain/getNftContract";
+import { getNftToken } from "@/blockchain/getNftToken";
 import { Blockchain, Group, NftTypes } from "@/graphql/generated/resolver-types";
+
 import { GraphqlRequestContext } from "../../../../graphql/context";
 import { prisma } from "../../../../prisma/client";
-import { Prisma } from "@prisma/client";
-import { getNftToken } from "@/blockchain/getNftToken";
-import { getNftContract } from "@/blockchain/getNftContract";
-import { groupResolver } from "../groupResolver";
 import { groupInclude } from "../groupPrismaTypes";
-import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
-import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
+import { groupResolver } from "../groupResolver";
+
 
 export const newNftGroup = async ({
   chain,

@@ -1,10 +1,11 @@
-import { prisma } from "../../../../prisma/client";
-import { GraphqlRequestContext } from "../../../../graphql/context";
-import { Blockchain, NewEntityArgs } from "@graphql/generated/resolver-types";
+import { isAddress } from "viem";
+import { normalize } from "viem/ens";
 
 import { viemClient } from "@/blockchain/viemClient/viemClient";
-import { normalize } from "viem/ens";
-import { isAddress } from "viem";
+import { Blockchain, NewEntityArgs } from "@graphql/generated/resolver-types";
+
+import { GraphqlRequestContext } from "../../../../graphql/context";
+import { prisma } from "../../../../prisma/client";
 import { IdentityPrismaType } from "../identityPrismaTypes";
 import { identityResolver } from "../identityResolver";
 

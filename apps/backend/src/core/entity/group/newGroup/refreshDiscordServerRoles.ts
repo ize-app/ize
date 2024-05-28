@@ -1,7 +1,9 @@
-import { DiscordApi } from "@/discord/api";
-import { GraphqlRequestContext } from "../../../../graphql/context";
-import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
+
+import { DiscordApi } from "@/discord/api";
+import { prisma } from "@/prisma/client";
+
+import { GraphqlRequestContext } from "../../../../graphql/context";
 
 // adds all roles from a server with the Ize bot to Ize
 // this function is only called for servers that have added the Ize bot

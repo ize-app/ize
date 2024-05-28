@@ -1,7 +1,10 @@
-import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { FieldDataType, Prisma } from "@prisma/client";
+
+import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { validateInput } from "./validation/validateInput";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+
 
 export const newOptionSet = async ({
   options,

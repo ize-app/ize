@@ -1,6 +1,7 @@
-import { prisma } from "@/prisma/client";
-import { UserPrismaType } from "@/core/user/userPrismaTypes";
 import { Email } from "stytch";
+
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
+import { prisma } from "@/prisma/client";
 
 // creates email identities in db if they don't exist yet
 // TODO: passing in the profilePictureURL is a hack and

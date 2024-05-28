@@ -1,7 +1,8 @@
+import { Prisma } from "@prisma/client";
+
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { FieldType, LlmSummaryArgs, LlmSummaryType } from "@/graphql/generated/resolver-types";
-import { Prisma } from "@prisma/client";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newLlmSummaryConfig = async ({
   llmArgs,

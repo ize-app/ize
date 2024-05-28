@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { permissionInclude } from "../permission/permissionPrismaTypes";
-import { fieldSetInclude } from "../fields/fieldPrismaTypes";
+
 import { actionInclude } from "../action/actionPrismaTypes";
+import { fieldSetInclude } from "../fields/fieldPrismaTypes";
+import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { resultConfigSetInclude } from "../result/resultPrismaTypes";
 import { userInclude } from "../user/userPrismaTypes";
 

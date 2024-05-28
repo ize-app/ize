@@ -1,5 +1,5 @@
-import * as z from "zod";
 import { FieldDataType } from "@prisma/client";
+import * as z from "zod";
 
 export const validateInput = (value: string, dataType: FieldDataType): boolean => {
   let pass = false;

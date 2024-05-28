@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+
 import { userInclude } from "../user/userPrismaTypes";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({

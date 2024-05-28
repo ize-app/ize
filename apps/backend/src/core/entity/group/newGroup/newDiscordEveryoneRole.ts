@@ -1,6 +1,8 @@
-import { GraphqlRequestContext } from "../../../../graphql/context";
-import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
+
+import { prisma } from "@/prisma/client";
+
+import { GraphqlRequestContext } from "../../../../graphql/context";
 
 // this function upserts @everyone role for servers that have not yet
 // added the Ize bots (meaning we can't see their roles / roleIds via the Discord API)

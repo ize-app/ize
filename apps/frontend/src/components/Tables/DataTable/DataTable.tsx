@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
 
 interface DataTable {
   data: { label: string; value: React.ReactElement }[];

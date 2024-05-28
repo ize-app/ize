@@ -1,9 +1,10 @@
-import { FlowSummary } from "@/graphql/generated/resolver-types";
-import { FlowSummaryPrismaType } from "../flowPrismaTypes";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { permissionResolver } from "@/core/permission/permissionResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
+import { permissionResolver } from "@/core/permission/permissionResolver";
 import { userResolver } from "@/core/user/userResolver";
+import { FlowSummary } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
+import { FlowSummaryPrismaType } from "../flowPrismaTypes";
 
 export const flowSummaryResolver = ({
   flow,

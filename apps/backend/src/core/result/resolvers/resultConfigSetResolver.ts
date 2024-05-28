@@ -1,8 +1,9 @@
-import { ResultConfig, Field } from "@/graphql/generated/resolver-types";
-import { ResultConfigSetPrismaType } from "../resultPrismaTypes";
-import { resultConfigResolver } from "./resultConfigResolver";
+import { Field, ResultConfig } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { resultConfigResolver } from "./resultConfigResolver";
+import { ResultConfigSetPrismaType } from "../resultPrismaTypes";
+
 
 export const resultsConfigSetResolver = (
   resultConfigSet: ResultConfigSetPrismaType | null | undefined,

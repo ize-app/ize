@@ -1,5 +1,7 @@
-import { NewFlowArgs } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
+
+import { NewFlowArgs } from "@/graphql/generated/resolver-types";
+
 import { newStep } from "./newStep";
 import { StepPrismaType } from "../flowPrismaTypes";
 

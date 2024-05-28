@@ -1,7 +1,8 @@
-import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
-import { userInclude, UserPrismaType } from "@/core/user/userPrismaTypes";
 import { User as StytchUser } from "stytch";
+
+import { UserPrismaType, userInclude } from "@/core/user/userPrismaTypes";
+import { prisma } from "@/prisma/client";
 
 export const upsertUser = async ({
   stytchUser,
