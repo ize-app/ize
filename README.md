@@ -100,3 +100,5 @@ Next make a _frontend_ graphql file that will define your query. I.e `apps/front
 Next run this command from the _frontend_ directory: `npm run codegen`. This will generate all response types, query documents and input types for you.
 
 From there it's just react!
+
+eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint-plugin-react-hooks eslint-plugin-react-refresh typescript-eslint eslint prettier @typescript-eslint/parser  @typescript-eslint/eslint-plugin @typescript-eslint/parser
