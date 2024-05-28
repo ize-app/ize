@@ -1,5 +1,3 @@
-// needs to distn
-
 import { Prisma } from "@prisma/client";
 
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";

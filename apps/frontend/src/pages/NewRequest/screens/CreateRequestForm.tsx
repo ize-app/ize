@@ -235,6 +235,7 @@ export const CreateRequestForm = () => {
                       );
                     }
                   }
+                  break;
                 }
                 default:
                   throw Error("Invalid field type");

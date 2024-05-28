@@ -66,7 +66,7 @@ const formatRequestContext = ({
 };
 
 const formatResponses = (responses: string[]): string => {
-  return responses.reduce((acc, response, index) => `${acc}- ${response}\n`, "");
+  return responses.reduce((acc, response) => `${acc}- ${response}\n`, "");
 };
 
 const formatSummaryInstructions = (

@@ -1,3 +1,5 @@
+import path from "path";
+
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { loadFilesSync } from "@graphql-tools/load-files";
@@ -25,8 +27,6 @@ import { redirectAtLogin } from "../stytch/redirectAtLogin";
 import { sessionDurationMinutes, stytchClient } from "../stytch/stytchClient";
 import { upsertOauthToken } from "../stytch/upsertOauthToken";
 import { upsertUser } from "../stytch/upsertUser";
-
-const path = require("path");
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
