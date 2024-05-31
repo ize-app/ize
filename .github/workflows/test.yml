@@ -54,7 +54,7 @@ jobs:
 
       - name: Lint
         run: npm run lint
-        working-directory: ./apps/backend
+        working-directory: ./
 
       # - name: Build and push Docker images
       #   uses: docker/build-push-action@v2
