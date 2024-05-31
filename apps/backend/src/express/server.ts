@@ -47,6 +47,11 @@ if (app.get("env") === "production") {
   sessionValue.cookie.secure = true; // serve secure cookies
 }
 
+// Healthcheck endpoint used by Render
+app.get("/healthcheck", async (_req, res) => {
+  res.status(200).send();
+});
+
 // handles login / signup for all auth flows that user a access token (oauth / magiclink)
 // creates session and also creates appropriate identities for user
 app.get("/auth/token", async (req, res, next) => {
