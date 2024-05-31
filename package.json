@@ -14,7 +14,7 @@
     "codegen": "graphql-codegen --config codegen.ts && ts-node scripts/ignoreCodegenTSErrors.ts",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier . --write",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
