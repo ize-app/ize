@@ -1,0 +1,72 @@
+# .github/workflows/deploy.yml
+name: Test, lint and push to main
+
+on:
+  push:
+    branches:
+      - gitactions # temporary branch for testing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./apps/backend
+
+      - name: Generate GraphQL code
+        run: npm run codegen
+        working-directory: ./
+
+      - name: Create tables in the database and database types
+        run: npx prisma db push
+        working-directory: ./apps/backend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: ./apps/backend
+
+      # - name: Build and push Docker images
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: ./apps/backend
+      #     push: true
+      #     tags: your-docker-repo/backend:latest
+      #   env:
+      #     DOCKER_BUILDKIT: 1
+      #     DOCKER_CLI_EXPERIMENTAL: enabled
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+      # - name: Deploy to Render
+      #   run: |
+      #     # Deploy command for Render
+      #     curl -X POST https://api.render.com/deploy ...

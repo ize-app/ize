@@ -1,0 +1,20 @@
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL} # Use an environment variable for the managed database URL
+    ports:
+      - "3000:3000" # Express server
+    depends_on:
+      - frontend
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
