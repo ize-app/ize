@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./apps/backend
+        working-directory: ./
 
       - name: Generate GraphQL code
         run: npm run codegen
