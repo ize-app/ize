@@ -2,12 +2,15 @@
 name: Test, lint and push to main
 
 on:
+  pull_request:
+    branches:
+      - "**"
   push:
     branches:
-      - gitactions # temporary branch for testing
+      - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     # Service containers to run with `container-job`
     services:
@@ -55,20 +58,15 @@ jobs:
       - name: Lint
         run: npm run lint
         working-directory: ./
-
-      # - name: Build and push Docker images
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./apps/backend
-      #     push: true
-      #     tags: your-docker-repo/backend:latest
-      #   env:
-      #     DOCKER_BUILDKIT: 1
-      #     DOCKER_CLI_EXPERIMENTAL: enabled
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-
-      # - name: Deploy to Render
-      #   run: |
-      #     # Deploy command for Render
-      #     curl -X POST https://api.render.com/deploy ...
+  deploy:
+    # only deploys if push to the main branch
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # only runs if build-and-test job is successful
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$RENDER_DEPLOY_HOOK_URL"
