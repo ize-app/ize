@@ -1,7 +1,6 @@
-import { GraphqlRequestContext } from "@graphql/context";
-
-import { DiscordApi } from "@/discord/api";
 import { GroupDiscordPrismaType } from "@/core/entity/group/groupPrismaTypes";
+import { DiscordApi } from "@/discord/api";
+import { GraphqlRequestContext } from "@graphql/context";
 
 // checks whether user has permission according to their discord @roles
 // for a given set of request or respond roles.
@@ -54,7 +53,7 @@ export const hasDiscordRoleGroupPermission = async ({
   const userServerMembers = await Promise.all(
     serverIdsForOtherRoles.map(async (server) => {
       return botApi.getDiscordGuildMember({
-        serverId: server as string,
+        serverId: server,
         memberId: userDiscordIdentity?.IdentityDiscord?.discordUserId as string,
       });
     }),

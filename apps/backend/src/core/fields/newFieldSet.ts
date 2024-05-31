@@ -1,10 +1,12 @@
-import { FieldArgs, FieldOptionsConfigArgs } from "@/graphql/generated/resolver-types";
-import { prisma } from "../../prisma/client";
 import { Prisma } from "@prisma/client";
+
+import { FieldArgs, FieldOptionsConfigArgs } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { FieldSetPrismaType, fieldSetInclude } from "./fieldPrismaTypes";
 import { newOptionSet } from "./newOptionSet";
+import { prisma } from "../../prisma/client";
 import { StepPrismaType } from "../flow/flowPrismaTypes";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
 
 export const newFieldSet = async ({
   fields,

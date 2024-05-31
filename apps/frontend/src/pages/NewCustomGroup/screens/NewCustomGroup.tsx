@@ -2,21 +2,23 @@ import { ApolloError, useMutation } from "@apollo/client";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+
+import { WizardContainer } from "@/components/Wizard";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { Wizard, useWizard } from "@/utils/wizard";
+
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import { NewCustomGroupDocument } from "../../../graphql/generated/graphql";
+import Head from "../../../layout/Head";
+import PageContainer from "../../../layout/PageContainer";
+import { fullUUIDToShort } from "../../../utils/inputs";
+import { createNewCustomGroupMutation } from "../createNewCustomGroupMutation";
 import {
   NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS,
   NEW_CUSTOM_GROUP_WIZARD_STEPS,
   NewCustomGroupFormFields,
   newCustomGroupFormFieldsDefault,
 } from "../newCustomGroupWizard";
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { NewCustomGroupDocument } from "../../../graphql/generated/graphql";
-import Head from "../../../layout/Head";
-import PageContainer from "../../../layout/PageContainer";
-import { fullUUIDToShort } from "../../../utils/inputs";
-import { Wizard, useWizard } from "@/utils/wizard";
-import { WizardContainer } from "@/components/Wizard";
-import { createNewCustomGroupMutation } from "../createNewCustomGroupMutation";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const NewCustomGroup = () => {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
+
+import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
 export const determineDecision = ({

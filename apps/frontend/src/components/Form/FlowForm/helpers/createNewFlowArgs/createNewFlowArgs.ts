@@ -1,9 +1,10 @@
-import { FlowSchemaType } from "../../formValidation/flow";
 import { DecisionArgs, NewFlowArgs } from "@/graphql/generated/graphql";
+
+import { createActionArgs } from "./createActionArgs";
 import { createFieldsArgs } from "./createFieldsArgs";
 import { createPermissionArgs } from "./createPermissionsArgs";
-import { createActionArgs } from "./createActionArgs";
 import { createResultsArgs } from "./createResultArgs";
+import { FlowSchemaType } from "../../formValidation/flow";
 
 export interface ResultConfigCache {
   id: string;

@@ -1,12 +1,13 @@
-import { prisma } from "../../prisma/client";
-import { GraphqlRequestContext } from "../context";
-import { Me, Identity } from "@graphql/generated/resolver-types";
-import { userInclude } from "@/core/user/userPrismaTypes";
-import { userResolver } from "@/core/user/userResolver";
 import { identityResolver } from "@/core/entity/identity/identityResolver";
-import { getDiscordServers } from "@/discord/getDiscordServers";
 import { updateUserDiscordGroups } from "@/core/entity/updateIdentitiesGroups/updateUserDiscordGroups";
 import { updateUserNftGroups } from "@/core/entity/updateIdentitiesGroups/updateUserNftGroups";
+import { userInclude } from "@/core/user/userPrismaTypes";
+import { userResolver } from "@/core/user/userResolver";
+import { getDiscordServers } from "@/discord/getDiscordServers";
+import { Identity, Me } from "@graphql/generated/resolver-types";
+
+import { prisma } from "../../prisma/client";
+import { GraphqlRequestContext } from "../context";
 
 const me = async (
   root: unknown,

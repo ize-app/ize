@@ -1,8 +1,9 @@
 import { QueryGetRequestStepsArgs, RequestStepSummary } from "@/graphql/generated/resolver-types";
-import { prisma } from "../../prisma/client";
+
 import { requestStepSummaryInclude } from "./requestPrismaTypes";
-import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
+import { prisma } from "../../prisma/client";
+import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { MePrismaType } from "../user/userPrismaTypes";
 
 export const getRequestSteps = async ({

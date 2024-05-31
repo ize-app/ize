@@ -1,18 +1,17 @@
+import { useMutation } from "@apollo/client";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { FlowSchemaType } from "../formValidation/flow";
-import { TextField } from "../../formFields";
-import { useEffect, useState } from "react";
-
-import { ActionType, TestWebhookDocument } from "@/graphql/generated/graphql";
-import { DefaultOptionSelection } from "../formValidation/fields";
-import { Box, Button, FormHelperText, Typography } from "@mui/material";
-import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { useMutation } from "@apollo/client";
-import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
-import { Status } from "@/graphql/generated/graphql";
 import { statusProps } from "@/components/status/statusProps";
+import { ActionType, Status, TestWebhookDocument } from "@/graphql/generated/graphql";
+
 import { ActionFilterForm } from "./ActionFilterForm";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { TextField } from "../../formFields";
+import { DefaultOptionSelection } from "../formValidation/fields";
+import { FlowSchemaType } from "../formValidation/flow";
+import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

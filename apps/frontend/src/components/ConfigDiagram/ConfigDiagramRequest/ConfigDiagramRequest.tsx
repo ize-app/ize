@@ -1,21 +1,22 @@
-import {
-  FlowConfigDiagramContainer,
-  DiagramPanel,
-  PanelContainer,
-  RequestStage,
-} from "@/components/ConfigDiagram";
+import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
-import { RequestFragment } from "@/graphql/generated/graphql";
-import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import { Status } from "@/graphql/generated/graphql";
-import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
-import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
-import { determineRequestStepStatus } from "./determineRequestStepStatus";
-import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
+
 import { actionProperties } from "@/components/Action/actionProperties";
+import {
+  DiagramPanel,
+  FlowConfigDiagramContainer,
+  PanelContainer,
+  RequestStage,
+} from "@/components/ConfigDiagram";
+import { RequestFragment, Status } from "@/graphql/generated/graphql";
+
+import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
+import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
+import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
+import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {

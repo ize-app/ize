@@ -1,10 +1,10 @@
-import { Blockchain } from "@/graphql/generated/resolver-types";
 import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
 
 import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
-import { GroupNftPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { hatsClient } from "@/blockchain/hatsClient/hatsClient";
+import { GroupNftPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
+import { Blockchain } from "@/graphql/generated/resolver-types";
 
 // checks whether user has permission according to their discord @roles
 // for a given set of request or respond roles.
@@ -42,10 +42,10 @@ export const hasNftGroupPermission = async ({
   });
 
   // get owners NFts by chain
-  for (let [chain, nfts] of tokensByChain.entries()) {
+  for (const [chain, nfts] of tokensByChain.entries()) {
     if (foundRole === true) break;
     // create unique list of collections that are assigned roles
-    let contractAddresses = new Set<string>();
+    const contractAddresses = new Set<string>();
     nfts.forEach((nft) => contractAddresses.add(nft.NftCollection.address));
     // get all of a user's nfts
     const { ownedNfts } = await alchemyClient.forChain(chain).nft.getNftsForOwner(userAddress, {

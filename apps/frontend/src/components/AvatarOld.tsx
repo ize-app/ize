@@ -10,13 +10,13 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import Blockies from "react-blockies";
 
+import { getAvatarString } from "./Avatar/getAvatarString";
+import { stringToColor } from "./Avatar/stringToColor";
 import {
   EntitySummaryPartsFragment,
   EntityType,
   UserSummaryPartsFragment,
 } from "../graphql/generated/graphql";
-import { getAvatarString } from "./Avatar/getAvatarString";
-import { stringToColor } from "./Avatar/stringToColor";
 
 export interface AvatarWithNameProps {
   id: string;
@@ -109,7 +109,7 @@ export const Avatar = ({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       badgeContent={
         // TODO: Going to rebuild this avatar component soon, so holding off on fixing this ts error
-        //@ts-ignore
+        //@ts-expect-error TODO
         <Avatar
           id={parent.name}
           name={parent.name}
@@ -122,26 +122,14 @@ export const Avatar = ({
         />
       }
     >
-      <MuiAvatar
-        src={avatarUrl ?? ""}
-        children={
-          cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())
-        }
-        alt={name}
-        {...props}
-        sx={styles}
-      />
+      <MuiAvatar src={avatarUrl ?? ""} alt={name} {...props} sx={styles}>
+        {cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())}
+      </MuiAvatar>
     </Badge>
   ) : (
-    <MuiAvatar
-      src={avatarUrl ?? ""}
-      alt={name}
-      children={
-        cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())
-      }
-      {...props}
-      sx={styles}
-    />
+    <MuiAvatar src={avatarUrl ?? ""} alt={name} {...props} sx={styles}>
+      {cryptoWallet ? <Blockies seed={cryptoWallet} /> : getAvatarString(name.toUpperCase())}
+    </MuiAvatar>
   );
 };
 

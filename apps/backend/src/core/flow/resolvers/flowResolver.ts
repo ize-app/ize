@@ -1,6 +1,7 @@
 import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
-import { FlowVersionPrismaType } from "../flowPrismaTypes";
+
 import { stepResolver } from "./stepResolver";
+import { FlowVersionPrismaType } from "../flowPrismaTypes";
 
 export const flowResolver = ({
   flowVersion,

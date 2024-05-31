@@ -1,9 +1,9 @@
-import { PermissionArgs } from "@/graphql/generated/resolver-types";
 import { Prisma } from "@prisma/client";
+
+import { PermissionArgs } from "@/graphql/generated/resolver-types";
 
 export const newPermission = async ({
   permission: args,
-  stepIndex,
   transaction,
 }: {
   permission: PermissionArgs;

@@ -1,14 +1,15 @@
+import { FormHelperText } from "@mui/material";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { FlowSchemaType } from "../formValidation/flow";
-import { Select, TextField } from "../../formFields";
 import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { Select, TextField } from "../../formFields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { FormHelperText } from "@mui/material";
 import { DefaultOptionSelection } from "../formValidation/fields";
-import { useEffect } from "react";
+import { FlowSchemaType } from "../formValidation/flow";
 
 interface ActionFilterFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -22,7 +23,7 @@ export const ActionFilterForm = ({ formMethods, formIndex, actionType }: ActionF
       filterOptionId: DefaultOptionSelection.None,
       type: ActionType.TriggerStep,
     });
-  }, [actionType]);
+  }, [actionType, formIndex, formMethods]);
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 

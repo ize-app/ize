@@ -10,9 +10,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { FlowSummaryFragment } from "@/graphql/generated/graphql";
-import { TableCellHideable, AvatarsCell } from "@/components/Tables/TableCells";
 import { generatePath, useNavigate } from "react-router-dom";
+
+import { AvatarsCell, TableCellHideable } from "@/components/Tables/TableCells";
+import { FlowSummaryFragment } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
@@ -84,7 +85,6 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
             <Tooltip title="Trigger flow">
               <span>
                 <IconButton
-                  children={<Add />}
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(
@@ -95,7 +95,9 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
                   }}
                   color={"primary"}
                   disabled={!flow.userPermission.request}
-                />
+                >
+                  <Add />
+                </IconButton>
               </span>
             </Tooltip>
           </Box>

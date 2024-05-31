@@ -1,5 +1,4 @@
-import { GenericFieldAndValue } from "@/graphql/generated/resolver-types";
-import { ResultType } from "@/graphql/generated/resolver-types";
+import { GenericFieldAndValue, ResultType } from "@/graphql/generated/resolver-types";
 
 export const createPrompt = ({
   flowName,
@@ -67,7 +66,7 @@ const formatRequestContext = ({
 };
 
 const formatResponses = (responses: string[]): string => {
-  return responses.reduce((acc, response, index) => `${acc}- ${response}\n`, "");
+  return responses.reduce((acc, response) => `${acc}- ${response}\n`, "");
 };
 
 const formatSummaryInstructions = (

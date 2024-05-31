@@ -1,7 +1,8 @@
+import { APIGuild } from "discord.js";
+
 import { DiscordApi } from "@/discord/api";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
-import { APIGuild } from "discord.js";
 
 export const getDiscordServers = async ({
   context,

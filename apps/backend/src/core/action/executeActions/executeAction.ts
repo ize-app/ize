@@ -1,12 +1,14 @@
+import { Prisma } from "@prisma/client";
+
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
-import { triggerNextStep } from "./triggerNextStep";
-import { callWebhook } from "../webhook/callWebhook";
-import { prisma } from "../../../prisma/client";
+
 import { evolveFlow } from "./evolveFlow";
+import { triggerNextStep } from "./triggerNextStep";
+import { prisma } from "../../../prisma/client";
+import { callWebhook } from "../webhook/callWebhook";
 import { createWebhookPayload } from "../webhook/createWebhookPayload";
-import { Prisma } from "@prisma/client";
 
 // Executes an action if it exists
 // since the action is the last execution component of a request step,
@@ -50,7 +52,7 @@ export const executeAction = async ({
   // if the action filter isn't passed, end the request step and request
   if (action.filterOptionId) {
     let passesFilter = false;
-    for (let result of results) {
+    for (const result of results) {
       if (result.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId)) {
         passesFilter = true;
         break;

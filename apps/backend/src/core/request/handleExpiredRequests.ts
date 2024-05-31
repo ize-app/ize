@@ -4,7 +4,7 @@ import { responseInclude } from "../response/responsePrismaTypes";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
 // run results and actions on newly expired requests
-export const handleExpiredResults = async ({}: {}) => {
+export const handleExpiredResults = async () => {
   const now = new Date();
 
   // get request steps that are past expiration date but haven't been processed yet
@@ -45,4 +45,4 @@ export const handleExpiredResults = async ({}: {}) => {
   );
 };
 
-handleExpiredResults({});
+handleExpiredResults();

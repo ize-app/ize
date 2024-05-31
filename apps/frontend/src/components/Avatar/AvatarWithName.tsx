@@ -1,7 +1,7 @@
-import { AvatarProps } from "./Avatar";
-import { Avatar } from "./Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+
+import { Avatar, AvatarProps } from "./Avatar";
 
 export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
   return (

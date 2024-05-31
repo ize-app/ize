@@ -1,5 +1,7 @@
-import { FieldFragment, ResultConfigFragment } from "@/graphql/generated/graphql";
 import Box from "@mui/material/Box";
+
+import { FieldFragment, ResultConfigFragment } from "@/graphql/generated/graphql";
+
 import { ResultConfig } from "./ResultConfig";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 

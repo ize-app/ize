@@ -6,7 +6,18 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useNewRequestWizardState } from "../newRequestWizard";
+import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
+
+import {
+  DatePicker,
+  DateTimePicker,
+  MultiSelect,
+  SortableList,
+  TextField,
+} from "../../../components/Form/formFields";
+import { Radio } from "../../../components/Form/formFields/Radio";
+import Loading from "../../../components/Loading";
+import { WizardNav } from "../../../components/Wizard";
 import {
   FieldDataType,
   FieldOptionsSelectionType,
@@ -17,19 +28,9 @@ import {
 } from "../../../graphql/generated/graphql";
 import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
-import Loading from "../../../components/Loading";
-import { WizardNav } from "../../../components/Wizard";
-import {
-  DatePicker,
-  DateTimePicker,
-  MultiSelect,
-  SortableList,
-  TextField,
-} from "../../../components/Form/formFields";
 import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "../formValidation";
-import { Radio } from "../../../components/Form/formFields/Radio";
-import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
+import { useNewRequestWizardState } from "../newRequestWizard";
 
 export const CreateRequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel, setParams } =
@@ -63,14 +64,10 @@ export const CreateRequestForm = () => {
       setFormState((prev) => ({ ...prev, flow: flow }));
       step.request.fields.forEach((field) => {
         if (field.__typename === FieldType.FreeInput) {
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
         } else if (field.__typename === FieldType.Options) {
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.selectionType`, field.selectionType);
-          // @ts-ignore not sure why react hook forms isn't picking up on record type
           formMethods.setValue(`requestFields.${field.fieldId}.maxSelections`, field.maxSelections);
         }
       });
@@ -234,6 +231,7 @@ export const CreateRequestForm = () => {
                       );
                     }
                   }
+                  break;
                 }
                 default:
                   throw Error("Invalid field type");

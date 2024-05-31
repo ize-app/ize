@@ -1,6 +1,8 @@
-import { FieldAnswerArgs } from "@/graphql/generated/graphql";
-import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "../formValidation/field";
 import { Dayjs } from "dayjs";
+
+import { FieldAnswerArgs } from "@/graphql/generated/graphql";
+
+import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "../formValidation/field";
 
 export const createFieldAnswersArgs = (
   fieldAnswers: FieldAnswerRecordSchemaType | undefined,
@@ -18,13 +20,12 @@ export const createFieldAnswersArgs = (
 
 const formatAnswerValue = (fieldAnswer: FieldAnswerSchemaType) => {
   if (fieldAnswer.value) {
+    const date = fieldAnswer.value as Dayjs;
     switch (fieldAnswer.dataType) {
       case "Date":
-        const date = fieldAnswer.value as Dayjs;
         return date.utc().format("YYYY-MM-DD"); // 2019-03-06
       case "DateTime":
-        const datetime = fieldAnswer.value as Dayjs;
-        return datetime.utc().format(); // 2019-03-06T00:00:00Z
+        return date.utc().format(); // 2019-03-06T00:00:00Z
       default:
         return fieldAnswer.value;
     }

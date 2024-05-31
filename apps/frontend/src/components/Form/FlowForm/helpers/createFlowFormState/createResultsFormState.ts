@@ -4,6 +4,7 @@ import {
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/graphql";
+
 import { DefaultOptionSelection } from "../../formValidation/fields";
 import {
   DecisionResultSchemaType,
@@ -22,30 +23,27 @@ export const createResultFormState = (results: ResultConfig[]): ResultSchemaType
     };
     switch (result.__typename) {
       case ResultType.Decision:
-        const dec: DecisionResultSchemaType = {
+        return {
           type: ResultType.Decision,
           ...resultBase,
           decision: createDecisionFormState(result),
-        };
-        return dec;
+        } as DecisionResultSchemaType;
       case ResultType.Ranking:
-        const rank: RankingResultSchemaType = {
+        return {
           type: ResultType.Ranking,
           ...resultBase,
           prioritization: {
             numPrioritizedItems: result.numOptionsToInclude ?? null,
           },
-        };
-        return rank;
+        } as RankingResultSchemaType;
       case ResultType.LlmSummary:
-        const llm: LlmSummaryResultSchemaType = {
+        return {
           type: ResultType.LlmSummary,
           ...resultBase,
           llmSummary: {
             prompt: result.prompt ?? undefined,
           },
-        };
-        return llm;
+        } as LlmSummaryResultSchemaType;
       default:
         throw Error("Unknown result type");
     }

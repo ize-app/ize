@@ -1,9 +1,9 @@
 import { ApolloQueryResult, useQuery } from "@apollo/client";
+import { useStytchUser } from "@stytch/react";
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from "react";
+import { Exact } from "utility-types/dist/mapped-types";
 
 import { MeDocument, MePartsFragment, MeQuery } from "../graphql/generated/graphql";
-import { useStytchUser } from "@stytch/react";
-import { Exact } from "utility-types/dist/mapped-types";
 
 interface CurrentUserContextValue {
   me: MePartsFragment | undefined | null;
@@ -33,7 +33,7 @@ export const CurrentUserContext = createContext<CurrentUserContextValue>({
   meLoading: false,
   refetch: null,
   authModalOpen: false,
-  setAuthModalOpen: () => {
+  setAuthModalOpen: (): void => {
     return;
   },
   // groups: {

@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-
 import { useRouteError } from "react-router-dom";
 
 export const ErrorBoundary = () => {

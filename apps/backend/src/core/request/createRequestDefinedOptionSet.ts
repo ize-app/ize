@@ -1,10 +1,12 @@
-import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
-import { StepPrismaType } from "../flow/flowPrismaTypes";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { newOptionSet } from "../fields/newOptionSet";
-import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
+
+import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
+import { newOptionSet } from "../fields/newOptionSet";
+import { StepPrismaType } from "../flow/flowPrismaTypes";
 
 // creates dynamic additional options to be appended to field's predefined options
 export const createRequestDefinedOptionSet = async ({

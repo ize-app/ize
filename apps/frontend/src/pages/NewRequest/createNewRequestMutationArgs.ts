@@ -1,11 +1,12 @@
-import {
-  NewRequestArgs,
-  FieldAnswerArgs,
-  RequestDefinedOptionsArgs,
-  FieldOptionArgs,
-} from "@/graphql/generated/graphql";
-import { NewRequestFormSchema } from "./newRequestWizard";
 import { createFieldAnswersArgs } from "@/components/Form/utils/createFieldAnswers";
+import {
+  FieldAnswerArgs,
+  FieldOptionArgs,
+  NewRequestArgs,
+  RequestDefinedOptionsArgs,
+} from "@/graphql/generated/graphql";
+
+import { NewRequestFormSchema } from "./newRequestWizard";
 
 export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): NewRequestArgs => {
   if (!formState.flow || !formState.name) throw Error("createNewRequestMutationArgs: Missing Flow");
@@ -21,7 +22,7 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
             options: formState.requestDefinedOptions.map(
               (option): FieldOptionArgs => ({ name: option.name, dataType: option.dataType }),
             ),
-            fieldId: formState.flow.steps[0]?.response.fields[0].fieldId as string,
+            fieldId: formState.flow.steps[0]?.response.fields[0].fieldId,
           },
         ]
       : [];

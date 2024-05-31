@@ -1,14 +1,10 @@
 import { useState } from "react";
 
-import PageContainer from "../../layout/PageContainer";
+import CreateButton from "../../components/Menu/CreateButton";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-// import { CurrentUserContext } from "../../contexts/current_user_context";
-// import { useContext } from "react";
-import CreateButton from "../../components/Menu/CreateButton";
-
+import PageContainer from "../../layout/PageContainer";
 const Dashboard = () => {
-  // const { me } = useContext(CurrentUserContext);
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {

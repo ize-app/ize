@@ -1,14 +1,15 @@
 import { Prisma } from "@prisma/client";
 
-import { prisma } from "../../../prisma/client";
 import {
-  GroupPrismaType,
   GroupCustomPrismaType,
-  GroupNftPrismaType,
   GroupDiscordPrismaType,
+  GroupNftPrismaType,
+  GroupPrismaType,
+  groupInclude,
 } from "@/core/entity/group/groupPrismaTypes";
-import { groupInclude } from "@/core/entity/group/groupPrismaTypes";
-import { identityInclude, IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
+import { IdentityPrismaType, identityInclude } from "@/core/entity/identity/identityPrismaTypes";
+
+import { prisma } from "../../../prisma/client";
 import { PermissionPrismaType } from "../permissionPrismaTypes";
 
 // creates unique list of different group / identity types for a given permission set
@@ -37,9 +38,9 @@ export const resolveEntitySet = async ({
   const identities = new Set<IdentityPrismaType>();
 
   const sortGroup = (group: GroupPrismaType) => {
-    if (!!group.GroupCustom) customGroups.add(group.GroupCustom);
-    else if (!!group.GroupDiscordRole) discordRoleGroups.add(group.GroupDiscordRole);
-    else if (!!group.GroupNft) nftGroups.add(group.GroupNft);
+    if (group.GroupCustom) customGroups.add(group.GroupCustom);
+    else if (group.GroupDiscordRole) discordRoleGroups.add(group.GroupDiscordRole);
+    else if (group.GroupNft) nftGroups.add(group.GroupNft);
   };
 
   groups.forEach((group) => sortGroup(group));

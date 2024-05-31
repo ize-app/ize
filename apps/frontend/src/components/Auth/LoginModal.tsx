@@ -1,17 +1,18 @@
-import { useContext } from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
 import { StytchLogin } from "@stytch/react";
 import {
+  Callbacks,
   OAuthProviders,
   Products,
-  StytchLoginConfig,
   StyleConfig,
-  StytchEvent,
   StytchError,
-  Callbacks,
+  StytchEvent,
   StytchEventType,
+  StytchLoginConfig,
 } from "@stytch/vanilla-js";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
+import { useContext } from "react";
+
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
 const config: StytchLoginConfig = {
@@ -84,18 +85,18 @@ const LoginModal = () => {
   // Oauth/Magiclink are already redirected to backend endpoint by stytch
   // so these callbacks call backend for crypto wallets / passwords to create the identity if it doesn't exist already
   const callBacks: Callbacks = {
-    onEvent: async (message: StytchEvent) => {
+    onEvent: (message: StytchEvent) => {
       switch (message.type) {
         case StytchEventType.CryptoWalletAuthenticate:
-          await fetch("/api/auth/crypto", { method: "POST" });
+          fetch("/api/auth/crypto", { method: "POST" });
           if (refetch) {
-            await refetch();
+            refetch();
           }
           return;
         case StytchEventType.PasswordCreate:
-          await fetch("/api/auth/password", { method: "POST" });
+          fetch("/api/auth/password", { method: "POST" });
           if (refetch) {
-            await refetch();
+            refetch();
           }
           return;
       }
@@ -107,13 +108,15 @@ const LoginModal = () => {
   return (
     <Modal
       open={authModalOpen}
-      onClose={() => setAuthModalOpen(false)}
+      onClose={() => {
+        setAuthModalOpen(false);
+      }}
       aria-labelledby="login-modal"
       aria-describedby="login-modal"
     >
       <Box
         sx={{
-          position: "absolute" as "absolute",
+          position: "absolute" as const,
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",

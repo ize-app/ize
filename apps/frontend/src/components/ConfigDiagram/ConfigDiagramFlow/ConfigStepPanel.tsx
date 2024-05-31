@@ -1,3 +1,5 @@
+import { Typography } from "@mui/material";
+
 import {
   ConfigurationPanel,
   PanelAccordion,
@@ -5,11 +7,11 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { ActionFragment, StepFragment } from "@/graphql/generated/graphql";
-import { Typography } from "@mui/material";
+import { intervalToIntuitiveTimeString } from "@/utils/inputs";
+
+import { ActionFilter } from "../../Action/ActionFilter";
 import { Permissions } from "../../Permissions";
 import { ResultConfigs } from "../../result/ResultConfigs/ResultConfigs";
-import { ActionFilter } from "../../Action/ActionFilter";
-import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 export const ConfigStepPanel = ({
   step,
@@ -32,7 +34,9 @@ export const ConfigStepPanel = ({
           </PanelAccordion>
         )}
         <PanelAccordion title="Respond permission" hasError={false}>
-          <Permissions permission={step.response.permission} type="response" />
+          {step.response.permission && (
+            <Permissions permission={step.response.permission} type="response" />
+          )}
           {step.expirationSeconds &&
             `Respondants have ${intervalToIntuitiveTimeString(
               step.expirationSeconds,

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
-import { useState, useEffect } from "react";
-import { Products, StyleConfig, StytchLoginConfig } from "@stytch/vanilla-js";
 import { StytchPasswordReset } from "@stytch/react";
+import { Products, StyleConfig, StytchLoginConfig } from "@stytch/vanilla-js";
+import { useEffect, useState } from "react";
 
 const config: StytchLoginConfig = {
   passwordOptions: {

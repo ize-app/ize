@@ -1,5 +1,6 @@
-import { Blockchain } from "@/graphql/generated/resolver-types";
 import { HatsClient } from "@hatsprotocol/sdk-v1-core";
+
+import { Blockchain } from "@/graphql/generated/resolver-types";
 
 import { chainMap } from "../chainMap";
 import { viemClient } from "../viemClient/viemClient";

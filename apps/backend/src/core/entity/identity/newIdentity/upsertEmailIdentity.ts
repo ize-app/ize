@@ -1,8 +1,9 @@
 import * as z from "zod";
 
-import { prisma } from "../../../../prisma/client";
-import { GraphqlRequestContext } from "../../../../graphql/context";
 import { NewEntityArgs } from "@graphql/generated/resolver-types";
+
+import { GraphqlRequestContext } from "../../../../graphql/context";
+import { prisma } from "../../../../prisma/client";
 import { IdentityPrismaType } from "../identityPrismaTypes";
 import { identityResolver } from "../identityResolver";
 

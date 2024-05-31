@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 
-import { useNewRequestWizardState } from "../newRequestWizard";
 import { WizardBody, WizardNav } from "../../../components/Wizard";
+import { useNewRequestWizardState } from "../newRequestWizard";
 
 export const Confirm = () => {
   const { onNext, onPrev, nextLabel } = useNewRequestWizardState();

@@ -1,9 +1,11 @@
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { FieldOption, ResultType } from "@prisma/client";
-import { prisma } from "../../../prisma/client";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { determineDecision } from "./determineDecision";
+import { prisma } from "../../../prisma/client";
+import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // returns result if there is no result
@@ -38,7 +40,7 @@ export const newDecisionResult = async ({
   const fieldAnswers = getFieldAnswersFromResponses({ fieldId: resultConfig.fieldId, responses });
 
   // find the decision and choose default option if no decision was made
-  let decisionOptionId =
+  const decisionOptionId =
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
   // only create a record of a decision if the minimum number of answers have been provided and there is a decision

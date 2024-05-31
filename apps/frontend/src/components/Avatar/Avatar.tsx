@@ -1,9 +1,11 @@
-import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+import { SxProps } from "@mui/material";
 import MuiAvatar, { AvatarProps as MuiAvatarProps } from "@mui/material/Avatar";
 import Blockies from "react-blockies";
+
+import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+
 import { getAvatarString } from "./getAvatarString";
 import { stringToColor } from "./stringToColor";
-import { SxProps } from "@mui/material";
 
 export interface AvatarProps extends MuiAvatarProps {
   avatar: EntityFragment | UserSummaryPartsFragment;
@@ -20,17 +22,16 @@ export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
   return (
     <MuiAvatar
       src={avatar.icon ?? ""}
-      children={
-        avatar.__typename === "Identity" &&
-        avatar.identityType.__typename === "IdentityBlockchain" ? (
-          <Blockies seed={avatar.identityType.address} />
-        ) : (
-          getAvatarString(avatar.name.toUpperCase())
-        )
-      }
       alt={avatar.name}
       {...props}
       sx={{ ...defaultStyles, ...sx }}
-    />
+    >
+      {avatar.__typename === "Identity" &&
+      avatar.identityType.__typename === "IdentityBlockchain" ? (
+        <Blockies seed={avatar.identityType.address} />
+      ) : (
+        getAvatarString(avatar.name.toUpperCase())
+      )}
+    </MuiAvatar>
   );
 };

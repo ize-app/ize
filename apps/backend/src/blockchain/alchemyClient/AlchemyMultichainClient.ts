@@ -1,5 +1,7 @@
-import { Blockchain } from "@/graphql/generated/resolver-types";
 import { Alchemy, AlchemySettings, Network } from "alchemy-sdk";
+
+import { Blockchain } from "@/graphql/generated/resolver-types";
+
 import { chainMap } from "../chainMap";
 /**
  * This is a wrapper around the Alchemy class that allows you to use the same

@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -8,14 +9,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { FlowSummaryFragment, GetFlowsDocument } from "@/graphql/generated/graphql";
 
-import { useNewRequestWizardState } from "../newRequestWizard";
-import { fullUUIDToShort } from "../../../utils/inputs";
 import Loading from "../../../components/Loading";
 import Search from "../../../components/Tables/Search";
 import { WizardBody } from "../../../components/Wizard";
-import { useQuery } from "@apollo/client";
+import { fullUUIDToShort } from "../../../utils/inputs";
+import { useNewRequestWizardState } from "../newRequestWizard";
 
 export const SelectFlow = () => {
   const navigate = useNavigate();

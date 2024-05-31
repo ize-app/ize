@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+
 import { userInclude } from "@/core/user/userPrismaTypes";
 
 export const groupNftInclude = Prisma.validator<Prisma.GroupNftInclude>()({

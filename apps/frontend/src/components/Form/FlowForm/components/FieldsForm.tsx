@@ -1,17 +1,17 @@
 import CloseIcon from "@mui/icons-material/Close";
+import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { FlowSchemaType } from "../formValidation/flow";
-
-import { Select, TextField } from "../../formFields";
-import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
-import { Box } from "@mui/material";
+
 import { FieldOptionsForm } from "./FieldOptionsForm";
-import { FieldSchemaType } from "../formValidation/fields";
+import { Select, TextField } from "../../formFields";
+import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
+import { FieldSchemaType } from "../formValidation/fields";
+import { FlowSchemaType } from "../formValidation/flow";
 import { createDefaultFieldState } from "../helpers/defaultFormState/createDefaultFieldState";
 
 interface FieldsFormProps {

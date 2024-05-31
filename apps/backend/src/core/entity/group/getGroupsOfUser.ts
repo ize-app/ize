@@ -1,10 +1,11 @@
 import { Prisma } from "@prisma/client";
+
 import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
 
+import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
 import { groupInclude } from "./groupPrismaTypes";
 import { groupResolver } from "./groupResolver";
-import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
 
 export const getGroupsOfUser = async ({
   context,

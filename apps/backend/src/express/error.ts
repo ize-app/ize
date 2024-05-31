@@ -1,6 +1,6 @@
 import { ErrorRequestHandler } from "express";
 
-export const expressGloalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const expressGloalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   console.error(err.stack);
 
   const statusCode = err.status || 500;

@@ -1,5 +1,5 @@
 import { GenericFieldAndValue, Request } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const getRequestResults = ({ request }: { request: Request }): GenericFieldAndValue[] => {
   const results: GenericFieldAndValue[] = [];

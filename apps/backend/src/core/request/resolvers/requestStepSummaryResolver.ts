@@ -1,9 +1,11 @@
-import { RequestStepSummary } from "@/graphql/generated/resolver-types";
-import { RequestStepSummaryPrismaType } from "../requestPrismaTypes";
-import { userResolver } from "@/core/user/userResolver";
-import { permissionResolver } from "@/core/permission/permissionResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
+import { permissionResolver } from "@/core/permission/permissionResolver";
+import { userResolver } from "@/core/user/userResolver";
+import { RequestStepSummary } from "@/graphql/generated/resolver-types";
+
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
+import { RequestStepSummaryPrismaType } from "../requestPrismaTypes";
+
 
 export const requestStepSummaryResolver = ({
   requestStepSummary,

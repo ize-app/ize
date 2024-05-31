@@ -1,40 +1,25 @@
 /* eslint-env node */
-
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint", "prettier", "import"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended",
-    "prettier",
+    "prettier", // Integrate with Prettier for code formatting
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
-  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: true,
+    project: "./tsconfig.json",
     tsconfigRootDir: __dirname,
+    sourceType: "module",
   },
-  plugins: ["react-refresh", "@typescript-eslint", "prettier", "import"],
-
   rules: {
-    "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-    "@typescript-eslint/no-misused-promises": [
-      2,
-      {
-        checksVoidReturn: {
-          attributes: false,
-        },
-      },
-    ],
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-floating-promises": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
+    // Common rules
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "sort-imports": [
       "error",
       {
@@ -76,9 +61,9 @@ module.exports = {
     // use tsconfigs of root project and packages to determine import resolution
     "import/resolver": {
       typescript: {
-        project: ["./tsconfig.json"],
+        project: ["./tsconfig.json", "./apps/**/tsconfig.json", "./apps/**/tsconfig.node.json"],
       },
     },
   },
-  ignorePatterns: ["**/graphql/generated/*.ts"],
+  ignorePatterns: ["node_modules/", "dist/", "build/", ".eslintrc.cjs"],
 };

@@ -1,20 +1,19 @@
-import { GraphqlRequestContext } from "@graphql/context";
-import { prisma } from "@/prisma/client";
-import { newEntities as newEntitiesService } from "@/core/entity/newEntities";
-import { groupResolver } from "@/core/entity/group/groupResolver";
-import { groupInclude, GroupPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
-
+import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
+import { groupResolver } from "@/core/entity/group/groupResolver";
+import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
+import { newEntities as newEntitiesService } from "@/core/entity/newEntities";
+import { prisma } from "@/prisma/client";
+import { GraphqlRequestContext } from "@graphql/context";
 import {
   Entity,
   Group,
-  MutationNewEntitiesArgs,
   MutationNewCustomGroupArgs,
+  MutationNewEntitiesArgs,
+  MutationResolvers,
   QueryGroupArgs,
   QueryResolvers,
-  MutationResolvers,
 } from "@graphql/generated/resolver-types";
-import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
 
 const newEntities: MutationResolvers["newEntities"] = async (
   root: unknown,

@@ -1,7 +1,9 @@
-import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
+
+import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+
 import { AvatarWithName } from "./AvatarWithName";
 
 export const AvatarPopper = ({
@@ -35,7 +37,7 @@ export const AvatarPopper = ({
           elevation={4}
         >
           {avatars.map((a) => (
-            <AvatarWithName avatar={a} />
+            <AvatarWithName avatar={a} key={a.id} />
           ))}
         </Paper>
       </Fade>

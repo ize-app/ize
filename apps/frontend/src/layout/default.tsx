@@ -1,16 +1,17 @@
+import { CssBaseline } from "@mui/material";
 import Box from "@mui/material/Box";
-import { Outlet } from "react-router-dom";
 import { styled } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import { useContext, useState } from "react";
+import { Outlet } from "react-router-dom";
+
+import LoginModal from "@/components/Auth/LoginModal";
+import { Menu } from "@/components/Menu/Menu";
+import { NavBar } from "@/components/Menu/NavBar";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+
 import Head from "./Head";
 import Snackbar from "../components/Snackbar";
-import { Menu } from "@/components/Menu/Menu";
-import { CssBaseline } from "@mui/material";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { useContext, useState } from "react";
-import LoginModal from "@/components/Auth/LoginModal";
-
-import Toolbar from "@mui/material/Toolbar";
-import { NavBar } from "@/components/Menu/NavBar";
 
 const drawerWidth = 240;
 

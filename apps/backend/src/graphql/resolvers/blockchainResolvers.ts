@@ -1,3 +1,9 @@
+import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
+import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
+import { getNftContract } from "@/blockchain/getNftContract";
+import { getNftToken } from "@/blockchain/getNftToken";
+import { nftContractResolver } from "@/blockchain/resolvers/nftContractResolver";
+
 import { GraphqlRequestContext } from "../context";
 import {
   AlchemyApiNftContract,
@@ -8,12 +14,6 @@ import {
   QueryNftTokenArgs,
   QuerySearchNftContractsArgs,
 } from "../generated/resolver-types";
-
-import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
-import { nftContractResolver } from "@/blockchain/resolvers/nftContractResolver";
-import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
-import { getNftContract } from "@/blockchain/getNftContract";
-import { getNftToken } from "@/blockchain/getNftToken";
 
 const nftContract = async (
   root: unknown,

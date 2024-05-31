@@ -1,8 +1,9 @@
 import { NftTokenType } from "alchemy-sdk";
 
 import { GraphqlRequestContext } from "@/graphql/context";
-import { alchemyClient } from "./alchemyClient/alchemyClient";
 import { Blockchain } from "@/graphql/generated/resolver-types";
+
+import { alchemyClient } from "./alchemyClient/alchemyClient";
 import { nftContractResolver } from "./resolvers/nftContractResolver";
 
 export const getNftContract = async ({

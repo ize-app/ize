@@ -1,0 +1,13 @@
+// ts config for vite backend server
+{
+  // inherits from parent tsconfig
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    //   "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}

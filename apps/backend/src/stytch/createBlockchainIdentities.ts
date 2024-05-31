@@ -1,6 +1,7 @@
-import { prisma } from "@/prisma/client";
-import { UserPrismaType } from "@/core/user/userPrismaTypes";
 import { CryptoWallet } from "stytch";
+
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
+import { prisma } from "@/prisma/client";
 
 // creates blockchain identities in db if they don't exist yet
 export const createBlockchainIdentitiesForUser = async (

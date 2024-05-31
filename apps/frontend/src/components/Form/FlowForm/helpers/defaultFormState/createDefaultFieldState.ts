@@ -1,4 +1,5 @@
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+
 import { FieldSchemaType } from "../../formValidation/fields";
 
 interface DefaultOptionFieldStateProps {

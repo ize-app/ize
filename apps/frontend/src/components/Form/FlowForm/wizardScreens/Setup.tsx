@@ -1,37 +1,36 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import Box from "@mui/material/Box";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
-import { FlowSchemaType } from "../formValidation/flow";
-
-import { WizardNav } from "@/components/Wizard";
-import { flowSchema } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
-import { StreamlinedTextField } from "../../formFields";
-import { EntityType, DecisionType, ActionType } from "@/graphql/generated/graphql";
-import { useContext, useState } from "react";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
-import { Typography } from "@mui/material";
-import { TriggerForm } from "../components/TriggerForm";
-import { StepForm } from "../components/StepForm";
-import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
-import { WebhookForm } from "../components/WebhookForm";
-import { EvolveFlowForm } from "../components/EvolveFlowForm";
-import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
+import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+import { Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import { useContext, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 
+import { actionProperties } from "@/components/Action/actionProperties";
 import {
-  FlowConfigDiagramContainer,
-  PanelHeader,
+  AddStageButton,
   ConfigurationPanel,
   DiagramPanel,
-  AddStageButton,
-  PanelContainer,
+  FlowConfigDiagramContainer,
   FlowStage,
+  PanelContainer,
+  PanelHeader,
 } from "@/components/ConfigDiagram";
-import { actionProperties } from "@/components/Action/actionProperties";
+import { WizardNav } from "@/components/Wizard";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
+import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
+
+import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
+import { StreamlinedTextField } from "../../formFields";
+import { EvolveFlowForm } from "../components/EvolveFlowForm";
+import { StepForm } from "../components/StepForm";
+import { TriggerForm } from "../components/TriggerForm";
+import { WebhookForm } from "../components/WebhookForm";
 import { DefaultOptionSelection } from "../formValidation/fields";
+import { FlowSchemaType , flowSchema } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
+import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
@@ -189,7 +188,7 @@ export const Setup = () => {
                 <AddStageButton
                   label={"Trigger webhook"}
                   onClick={() => {
-                    //@ts-ignore
+                    //@ts-expect-error TODO
                     useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
                       filterOptionId: DefaultOptionSelection.None,
                       type: ActionType.CallWebhook,

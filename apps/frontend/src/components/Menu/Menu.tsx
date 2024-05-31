@@ -1,21 +1,20 @@
-import { useTheme } from "@mui/material/styles";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import EmailIcon from "@mui/icons-material/Email";
+import GroupIcon from "@mui/icons-material/Group";
+import { Box, Toolbar } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import GroupIcon from "@mui/icons-material/Group";
-import EmailIcon from "@mui/icons-material/Email";
-import { CreateListButton } from "./CreateButton";
-import { Dispatch, SetStateAction } from "react";
-
-import { Box, Toolbar } from "@mui/material";
-import { Route } from "@/routers/routes";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+
+import { Route } from "@/routers/routes";
+
+import { CreateListButton } from "./CreateButton";
 
 interface MenuProps {
   open: boolean;

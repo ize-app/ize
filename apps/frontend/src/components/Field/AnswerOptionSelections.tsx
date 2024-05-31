@@ -1,5 +1,7 @@
-import { FieldDataType } from "@/graphql/generated/graphql";
 import { Box } from "@mui/material";
+
+import { FieldDataType } from "@/graphql/generated/graphql";
+
 import { renderFreeInputValue } from "./renderFreeInputValue";
 
 export const AnswerOptionSelections = ({

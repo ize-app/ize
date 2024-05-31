@@ -1,23 +1,27 @@
+// browser environment config
 {
-  // inherits from parent tsconfig
-  "extends": "../../tsconfig.json",
+  // TODO: delete this comment once I'm sure it shouldn't be there
+  // "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "baseUrl": "./src",
     "strict": true,
+    "isolatedModules": true, // necessary for vite
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["*"]
     },
 
-    /* Bundler mode */
+    /* Bundler mode - necessary for vite*/
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
 

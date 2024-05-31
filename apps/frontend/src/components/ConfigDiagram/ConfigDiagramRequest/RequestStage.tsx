@@ -1,10 +1,14 @@
-import { Stage, StageProps } from "../DiagramPanel/Stage";
-import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
-import { AvatarGroup } from "@/components/Avatar";
 import { Box, Typography } from "@mui/material";
 
+import { AvatarGroup } from "@/components/Avatar";
 import { statusProps } from "@/components/status/statusProps";
-import { Status } from "@/graphql/generated/graphql";
+import {
+  EntitySummaryPartsFragment,
+  Status,
+  UserSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
+
+import { Stage, StageProps } from "../DiagramPanel/Stage";
 
 interface RequestStageProps extends StageProps {
   label: string;

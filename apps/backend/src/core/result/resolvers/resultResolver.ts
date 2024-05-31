@@ -1,4 +1,5 @@
 import { FieldDataType, Result, ResultItem } from "@/graphql/generated/resolver-types";
+
 import { ResultPrismaType } from "../resultPrismaTypes";
 
 export const resultResolver = (result: ResultPrismaType): Result => {

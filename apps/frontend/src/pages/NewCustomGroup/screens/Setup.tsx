@@ -1,13 +1,15 @@
-import { Controller, useForm } from "react-hook-form";
-import { WizardNav } from "../../../components/Wizard";
-import { useNewCustomGroupWizardState, NewCustomGroupFormFields } from "../newCustomGroupWizard";
-import { newCustomGroupFormSchema } from "../formValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RoleSearch } from "../../../components/Form/formFields";
 import { FormControl, FormHelperText, TextField } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
-export const Setup = ({}) => {
+import { RoleSearch } from "../../../components/Form/formFields";
+import { WizardNav } from "../../../components/Wizard";
+import { newCustomGroupFormSchema } from "../formValidation";
+import { NewCustomGroupFormFields, useNewCustomGroupWizardState } from "../newCustomGroupWizard";
+
+export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
 
   const {

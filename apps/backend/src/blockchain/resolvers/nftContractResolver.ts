@@ -1,5 +1,6 @@
-import { AlchemyApiNftContract, Blockchain, NftTypes } from "@/graphql/generated/resolver-types";
 import { NftContract } from "alchemy-sdk";
+
+import { AlchemyApiNftContract, Blockchain, NftTypes } from "@/graphql/generated/resolver-types";
 
 export const nftContractResolver = (
   contract: NftContract,

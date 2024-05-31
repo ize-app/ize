@@ -1,6 +1,8 @@
-import OpenAI from "openai";
 import dotenv from "dotenv";
+import { default as OpenAI } from "openai";
+
 import { GenericFieldAndValue, ResultType } from "@/graphql/generated/resolver-types";
+
 import { createPrompt } from "./createPrompt";
 dotenv.config();
 
@@ -27,8 +29,8 @@ export const generateAiSummary = async ({
   exampleOutput,
   responses,
   type, //   maxTokensPerCall = 1500,
-} //   summaryTokens = 150,
-: {
+  //   summaryTokens = 150,
+}: {
   requestName: string;
   flowName: string;
   fieldName: string;

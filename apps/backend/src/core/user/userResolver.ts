@@ -1,6 +1,7 @@
-import { User } from "@graphql/generated/resolver-types";
-import { UserPrismaType } from "./userPrismaTypes";
 import { DiscordApi } from "@/discord/api";
+import { User } from "@graphql/generated/resolver-types";
+
+import { UserPrismaType } from "./userPrismaTypes";
 
 export const userResolver = (user: UserPrismaType): User => {
   return {

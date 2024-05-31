@@ -1,13 +1,14 @@
+import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { FlowSchemaType } from "../formValidation/flow";
-import { Box } from "@mui/material";
-import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select, Switch, TextField } from "../../formFields";
-import { PermissionType } from "../formValidation/permission";
-import { FormHelperText } from "@mui/material";
+
+import { ActionType } from "@/graphql/generated/graphql";
+
 import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
-import { ActionType } from "@/graphql/generated/graphql";
+import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { RoleSearch, Select, Switch, TextField } from "../../formFields";
+import { FlowSchemaType } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
 
 interface StepFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -28,7 +29,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
   // console.log("form state for ", formIndex, " is ", formMethods.getValues());
   // console.log("errors are ", formMethods.formState.errors.steps?.[formIndex]);
   const responseTrigger = formMethods.watch(`steps.${formIndex}.response.permission.type`);
-  const stepError = formMethods.getFieldState(`steps.${formIndex}`).error;
+  const stepError = formMethods.formState.errors.steps?.[formIndex];
 
   const fieldsArrayMethods = useFieldArray({
     control: formMethods.control,
@@ -109,7 +110,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         <ResultsForm
           formIndex={formIndex}
           formMethods={formMethods}
-          //@ts-ignore
+          //@ts-expect-error TODO
           fieldsArrayMethods={fieldsArrayMethods}
         />
       </PanelAccordion>

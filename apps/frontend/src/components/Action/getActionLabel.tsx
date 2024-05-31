@@ -1,4 +1,5 @@
 import { ActionFragment } from "@/graphql/generated/graphql";
+
 import { actionProperties } from "./actionProperties";
 
 export const getActionLabel = (action: ActionFragment) => {

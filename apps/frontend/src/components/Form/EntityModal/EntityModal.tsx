@@ -1,34 +1,36 @@
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import {
-  EntitySummaryPartsFragment,
-  NewEntitiesDocument,
-  MutationNewEntitiesArgs,
-  NewEntityTypes,
-  DiscordServerRolesDocument,
-  Me,
-  Blockchain,
-} from "@/graphql/generated/graphql";
-import { Button, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Switch } from "../formFields";
-import { newEntityFormSchema } from "../formValidation/entity";
+import { Button, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useContext, useState } from "react";
-import { CurrentUserContext } from "@/contexts/current_user_context";
+
 import { attachDiscord } from "@/components/Auth/attachDiscord";
-import { DiscordLogoSvg } from "@/components/icons";
 import botInviteUrl from "@/components/Auth/botInviteUrl";
+import { DiscordLogoSvg } from "@/components/icons";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+import {
+  Blockchain,
+  DiscordServerRolesDocument,
+  EntitySummaryPartsFragment,
+  Me,
+  MutationNewEntitiesArgs,
+  NewEntitiesDocument,
+  NewEntityTypes,
+} from "@/graphql/generated/graphql";
+
 import { HatsTokenCard, NftCard } from "./NftCard";
+import { Switch, TextField } from "../formFields";
 import { Select, SelectOption } from "../formFields/Select";
 import { ResponsiveFormRow } from "../formLayout/ResponsiveFormRow";
+import { newEntityFormSchema } from "../formValidation/entity";
 
 type FormFields = z.infer<typeof newEntityFormSchema>;
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -95,7 +97,7 @@ const createNewAgentArgs = (data: FormFields): MutationNewEntitiesArgs => {
               {
                 groupNft: {
                   chain: data.nft.chain as Blockchain,
-                  address: data.nft.contractAddress as string,
+                  address: data.nft.contractAddress,
                   tokenId: data.nft.tokenId,
                 },
               },
@@ -197,7 +199,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
   const hatChain = watch("hat.chain");
 
   const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
-    (server) => server.id === discordServerId && server.hasCultsBot,
+    (server) => server.id === discordServerId && !!server.hasCultsBot,
   );
 
   const defaultServerRoleOptions: SelectOption[] = [{ name: "@everyone", value: "@everyone" }];

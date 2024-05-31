@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
-import Typography from "@mui/material/Typography";
 
 export const Confirm = () => {
   const { onNext, formState, onPrev, nextLabel } = useNewCustomGroupWizardState();

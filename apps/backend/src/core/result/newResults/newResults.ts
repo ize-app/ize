@@ -1,14 +1,14 @@
-// needs to distn
+import { Prisma } from "@prisma/client";
 
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
-import { ResultPrismaType } from "../resultPrismaTypes";
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
+
 import { newDecisionResult } from "../decision/newDecisionResult";
 import { newLlmSummaryResult } from "../llm/newLlmSummaryResult";
-import { prisma } from "@/prisma/client";
-import { Prisma } from "@prisma/client";
 import { newRankingResult } from "../ranking/newRankingResult";
+import { ResultPrismaType } from "../resultPrismaTypes";
 
 // return type should distinguish between what completed and what didn't run yet
 export const newResults = async ({
@@ -65,7 +65,7 @@ export const newResults = async ({
 
   // remove result configs that did not produce a result
   // but keep resultsConfigs that were supposed to create a result but didn't complete
-  const attemptedResults = possibleResults.filter((r) => r !== null) as ResultPrismaType[];
+  const attemptedResults = possibleResults.filter((r) => r !== null);
 
   // update request step with outcome
   await transaction.requestStep.update({

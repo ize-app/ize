@@ -1,16 +1,17 @@
-import { useEffect } from "react";
-import {
-  useFieldArray,
-  FieldValues,
-  UseControllerProps,
-  ArrayPath,
-  UseFormReturn,
-  FieldArray,
-} from "react-hook-form";
-import { Box, Typography } from "@mui/material";
-import { SortableItem } from "./SortableItem";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
+import { Box, Typography } from "@mui/material";
+import { useEffect } from "react";
+import {
+  ArrayPath,
+  FieldArray,
+  FieldValues,
+  UseControllerProps,
+  UseFormReturn,
+  useFieldArray,
+} from "react-hook-form";
+
+import { SortableItem } from "./SortableItem";
 import { TextField } from "../TextField";
 
 export interface OptionProps {
@@ -68,14 +69,14 @@ export const SortableList = <T extends FieldValues>({
           {fields.map((field, index) => {
             const label =
               options.find((o) => {
-                // @ts-ignore
+                // @ts-expect-error //@ts-expect-error TODO unclear why this error is happening
                 return field.optionId === o.value;
               })?.label ?? "";
 
             return (
               <>
                 <TextField<T>
-                  //@ts-ignore
+                  //@ts-expect-error TODO unclear why this error is happening
                   name={`${name}.${index}.optionId`}
                   key={"optionId" + name + index}
                   control={control}

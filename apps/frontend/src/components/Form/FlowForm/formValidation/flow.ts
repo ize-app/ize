@@ -1,10 +1,12 @@
 import * as z from "zod";
-import { fieldsSchema } from "./fields";
-import { PermissionType, permissionSchema } from "./permission";
-import { resultsSchema } from "./result";
+
+import { FieldType, ResultType } from "@/graphql/generated/graphql";
+
 import { actionSchema } from "./action";
 import { evolveFlowSchema } from "./evolve";
-import { FieldType, ResultType } from "@/graphql/generated/graphql";
+import { fieldsSchema } from "./fields";
+import { permissionSchema } from "./permission";
+import { resultsSchema } from "./result";
 
 export type FlowSchemaType = z.infer<typeof flowSchema>;
 export type StepSchemaType = z.infer<typeof stepSchema>;

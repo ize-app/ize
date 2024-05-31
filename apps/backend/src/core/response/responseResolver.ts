@@ -1,4 +1,5 @@
-import { UserFieldAnswers, UserFieldAnswer, Response } from "@/graphql/generated/resolver-types";
+import { Response, UserFieldAnswer, UserFieldAnswers } from "@/graphql/generated/resolver-types";
+
 import { ResponsePrismaType } from "./responsePrismaTypes";
 import { fieldAnswerResolver } from "../fields/resolvers/fieldAnswerResolver";
 import { userResolver } from "../user/userResolver";

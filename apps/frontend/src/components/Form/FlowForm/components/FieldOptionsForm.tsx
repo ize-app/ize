@@ -1,17 +1,17 @@
 import CloseIcon from "@mui/icons-material/Close";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields";
+import { FieldDataType, FieldOptionsSelectionType, ResultType } from "@/graphql/generated/graphql";
 
-import { FieldOptionSchemaType, OptionSelectionCountLimit } from "../formValidation/fields";
-import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
-import { Box, FormHelperText, Typography } from "@mui/material";
+import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields";
 import { SelectOption } from "../../formFields/Select";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
+import { FieldOptionSchemaType, OptionSelectionCountLimit } from "../formValidation/fields";
+import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];
@@ -21,7 +21,7 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
     s.result.forEach((r, resultIndex) => {
       results.push({
         name: `Include  result from "Step ${stepIndex + 1}, Result ${resultIndex + 1}: ${
-          r.type
+          r.type as ResultType
         }" as options`,
         value: r.resultId,
       });
@@ -77,14 +77,14 @@ export const FieldOptionsForm = ({
   const steps = formMethods.watch(`steps`);
   const possibleLinkOptions = createLinkOptions(steps, formIndex);
 
-  const enableRequestCreatedOptions = (_event: React.MouseEvent<HTMLElement>) => {
+  const enableRequestCreatedOptions = () => {
     formMethods.setValue(
       `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
       true,
     );
   };
 
-  const disableRequestCreatedOptions = (_event: React.MouseEvent<HTMLElement>) => {
+  const disableRequestCreatedOptions = () => {
     formMethods.setValue(
       `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
       false,
@@ -105,8 +105,7 @@ export const FieldOptionsForm = ({
     ) ?? [];
 
   const optionsError =
-    formMethods.getFieldState(`steps.${formIndex}.${branch}.fields.${fieldIndex}`).error?.message ??
-    "";
+    formMethods.formState.errors?.steps?.[formIndex]?.[branch]?.fields?.[fieldIndex]?.message ?? "";
 
   const optionSelectionType = formMethods.watch(
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,

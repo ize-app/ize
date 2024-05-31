@@ -1,6 +1,7 @@
-import { Blockchain } from "@/graphql/generated/resolver-types";
 import { Network } from "alchemy-sdk";
-import { mainnet, polygon, arbitrum, base, optimism, Chain } from "viem/chains";
+import { Chain, arbitrum, base, mainnet, optimism, polygon } from "viem/chains";
+
+import { Blockchain } from "@/graphql/generated/resolver-types";
 
 interface ChainAttributes {
   chainId: number;

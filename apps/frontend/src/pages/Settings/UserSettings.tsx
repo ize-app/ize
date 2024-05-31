@@ -1,16 +1,18 @@
-import Typography from "@mui/material/Typography";
+import { MailOutline } from "@mui/icons-material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useStytch } from "@stytch/react";
 import { useCallback, useContext, useState } from "react";
-import PageContainer from "@/layout/PageContainer";
-import { AvatarWithName } from "../../components/AvatarOld";
-import { EntityType } from "@/graphql/generated/graphql";
+
 import { CurrentUserContext } from "@/contexts/current_user_context";
-import Box from "@mui/material/Box";
-import { DiscordLogoSvg, EthLogoSvg } from "../../components/icons";
-import { MailOutline } from "@mui/icons-material";
+import { EntityType } from "@/graphql/generated/graphql";
+import PageContainer from "@/layout/PageContainer";
+
 import { LinkEmailModal } from "./LinkEmailModal";
 import { attachDiscord } from "../../components/Auth/attachDiscord";
+import { AvatarWithName } from "../../components/AvatarOld";
+import { DiscordLogoSvg, EthLogoSvg } from "../../components/icons";
 
 export const UserSettings = () => {
   const stytchClient = useStytch();

@@ -1,6 +1,8 @@
 import { Box, Typography } from "@mui/material";
+
 import { AvatarWithName } from "@/components/Avatar";
 import { FieldFragment, UserFieldAnswerFragment } from "@/graphql/generated/graphql";
+
 import { Answer } from "./Answer";
 
 export const UserFieldAnswer = ({

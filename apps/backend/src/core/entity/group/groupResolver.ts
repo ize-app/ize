@@ -1,8 +1,10 @@
-import { GroupPrismaType } from "./groupPrismaTypes";
-import { Group, GroupType } from "@/graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
+import { Group, GroupType } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
+import { GroupPrismaType } from "./groupPrismaTypes";
 import { userResolver } from "../../user/userResolver";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+
 
 export const groupResolver = (group: GroupPrismaType): Group => {
   if (group.GroupDiscordRole) {

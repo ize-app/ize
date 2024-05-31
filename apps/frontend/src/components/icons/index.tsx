@@ -1,2 +1,2 @@
-export { default as DiscordLogoSvg } from "./DiscordLogoSVG";
-export { default as EthLogoSvg } from "./EthLogoSVG";
+export { default as DiscordLogoSvg } from "./DiscordLogoSvg.tsx";
+export { default as EthLogoSvg } from "./EthLogoSvg.tsx";

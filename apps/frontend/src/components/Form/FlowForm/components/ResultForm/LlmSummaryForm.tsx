@@ -1,10 +1,11 @@
+import { Typography } from "@mui/material";
 import { UseFormReturn } from "react-hook-form";
+
+import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
+import { ResultType } from "@/graphql/generated/graphql";
 
 import { TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { Typography } from "@mui/material";
-import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { ResultType } from "@/graphql/generated/graphql";
 
 interface LlmSummaryProps {
   formMethods: UseFormReturn<FlowSchemaType>;

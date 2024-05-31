@@ -1,13 +1,12 @@
+import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
 import { UseFormReturn } from "react-hook-form";
 
-import { FlowSchemaType } from "../formValidation/flow";
 import { RoleSearch, Select, TextField } from "@/components/Form/formFields";
-import { PermissionType } from "../formValidation/permission";
-
-import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
-
 import { DecisionType } from "@/graphql/generated/graphql";
+
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
+import { FlowSchemaType } from "../formValidation/flow";
+import { PermissionType } from "../formValidation/permission";
 
 interface EvolveProcessFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;

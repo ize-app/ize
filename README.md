@@ -17,7 +17,9 @@ Individual identities or "groups" can have roles (e.g. request/respond) on a pro
 - Discord roles
 - NFT collections (721/1155 - including ENS/Hats, etc)
 
-## Running Ize for the first time
+## Running Ize
+
+### Setting up local dev environment
 
 Install Homebrew
 
@@ -47,7 +49,11 @@ Add a DB URL to /backend/.env (may actually be able to do `prisma init`)
 DATABASE_URL="postgresql://<username>@localhost:5432/cults_development"
 ```
 
-Ask David Or Tyler for Sample .env to fill in discord details (put in shared 1password).
+Ask Tyler for fample .env to fill in discord details (put in shared 1password).
+
+### Running in dev
+
+Runs in dev mode with hot module reloading on both the backend server and frontend Vite server. Note that frontend assets are served differently in dev than during production. In development, a Vite server serves static assets whereas in production, these assets are served by express server
 
 Run the frontend
 
@@ -57,9 +63,21 @@ Build the database and run the backend
 
 `cd apps/backend && npx prisma db push && npm run start:dev`
 
-## Deleting Groups or Processes
+Navigate to [localhost:5173](http://localhost:5173/)
 
-The easiest way to delete groups and processes is to use your Postgresql GUI and delete the records manually. All the associated records will be deleted due to `CASCADE DELETE` foreign keys
+### Testing production build locally
+
+Build backend and frontend
+
+`npm run build`
+
+Start the express server
+
+`cd apps/backend && node dist/express/server.js`
+
+Navigate to [localhost:3000](http://localhost:3000/)
+
+This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [localhost:5173](http://localhost:5173/)
 
 ## Building a fullstack feature:
 
@@ -83,7 +101,4 @@ Next run this command from the _frontend_ directory: `npm run codegen`. This wil
 
 From there it's just react!
 
-
-## style
-
-- No default exports
+eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint-plugin-react-hooks eslint-plugin-react-refresh typescript-eslint eslint prettier @typescript-eslint/parser  @typescript-eslint/eslint-plugin @typescript-eslint/parser

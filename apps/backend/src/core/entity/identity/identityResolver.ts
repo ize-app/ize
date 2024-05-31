@@ -1,6 +1,7 @@
-import { Identity } from "@graphql/generated/resolver-types";
 import { DiscordApi } from "@/discord/api";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+import { Identity } from "@graphql/generated/resolver-types";
+
 import { IdentityPrismaType } from "./identityPrismaTypes";
 
 export const identityResolver = (

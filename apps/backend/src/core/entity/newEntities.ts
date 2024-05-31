@@ -1,15 +1,14 @@
-import { prisma } from "../../prisma/client";
-import { GraphqlRequestContext } from "../../graphql/context";
-import { MutationNewEntitiesArgs, Entity } from "@graphql/generated/resolver-types";
-
-import { refreshDiscordServerRoles } from "@/core/entity/group/newGroup/refreshDiscordServerRoles";
 import { newDiscordEveryoneRole } from "@/core/entity/group/newGroup/newDiscordEveryoneRole";
-import { groupResolver } from "./group/groupResolver";
-import { groupInclude } from "./group/groupPrismaTypes";
-
 import { createHatsGroup, newNftGroup } from "@/core/entity/group/newGroup/newNftGroup";
+import { refreshDiscordServerRoles } from "@/core/entity/group/newGroup/refreshDiscordServerRoles";
+import { Entity, MutationNewEntitiesArgs } from "@graphql/generated/resolver-types";
+
+import { groupInclude } from "./group/groupPrismaTypes";
+import { groupResolver } from "./group/groupResolver";
 import { upsertBlockchainIdentity } from "./identity/newIdentity/upsertBlockchainIdentity";
 import { upsertEmailIdentity } from "./identity/newIdentity/upsertEmailIdentity";
+import { GraphqlRequestContext } from "../../graphql/context";
+import { prisma } from "../../prisma/client";
 
 export const newEntities = async (
   args: MutationNewEntitiesArgs,
@@ -70,6 +69,6 @@ export const newEntities = async (
       }
     }),
   );
-  //@ts-ignore
+
   return agents;
 };

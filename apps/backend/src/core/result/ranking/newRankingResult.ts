@@ -1,10 +1,12 @@
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { ResultType } from "@prisma/client";
+
+import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { prisma } from "../../../prisma/client";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
+import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
+import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // returns result if there is no result
 export const newRankingResult = async ({

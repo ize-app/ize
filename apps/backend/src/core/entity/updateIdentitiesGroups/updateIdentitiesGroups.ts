@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+
 import { prisma } from "../../../prisma/client";
 
 // this query updates cache mapping of groupIds to identities

@@ -1,8 +1,9 @@
 import { Permission } from "@/graphql/generated/resolver-types";
-import { GraphQLError, ApolloServerErrorCode } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+
 import { PermissionPrismaType } from "./permissionPrismaTypes";
-import { identityResolver } from "../entity/identity/identityResolver";
 import { groupResolver } from "../entity/group/groupResolver";
+import { identityResolver } from "../entity/identity/identityResolver";
 
 export const permissionResolver = (
   permission: PermissionPrismaType,

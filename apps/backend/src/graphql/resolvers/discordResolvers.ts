@@ -1,11 +1,13 @@
-import { GraphqlRequestContext } from "../context";
 import { APIGuild } from "discord.js";
+
 import { DiscordApi } from "@discord/api";
 import {
-  QueryDiscordServerRolesArgs,
   DiscordServer,
   DiscordServerOnboarded,
+  QueryDiscordServerRolesArgs,
 } from "@graphql/generated/resolver-types";
+
+import { GraphqlRequestContext } from "../context";
 
 // Returns all of a users discord servers, regardless of whether they connected Ize bot
 export const discordServers = async (
