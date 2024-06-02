@@ -232,7 +232,7 @@ model NftCollection {
   GroupNft GroupNft[]
 
   @@unique([chain, address])
-  @@map("nft_collection")
+  @@map("nft_collections")
 }
 
 model DiscordServer {

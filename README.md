@@ -25,13 +25,17 @@ Install Homebrew
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
-Install Postgres
+Install Postgres 16 
 
-`brew install postgresql`
+`brew install postgresql@16`
 
 Run Postgres
 
-`brew services start postgresql`
+`brew services start postgresql@16`
+
+Create database
+
+`createdb izedev`
 
 Install nvm
 
@@ -41,15 +45,17 @@ Install packages
 
 `npm i`
 
+Update local database schema with prisma schema
+
+`cd apps/backend && npx prisma db push`
+
 Create a .env file in /backend
 
-Add a DB URL to /backend/.env (may actually be able to do `prisma init`)
-
 ```
-DATABASE_URL="postgresql://<username>@localhost:5432/cults_development"
+DATABASE_URL="postgresql://<username>@localhost:5432/izedev"
 ```
 
-Ask Tyler for fample .env to fill in discord details (put in shared 1password).
+Ask Tyler for a sample .env to fill in discord details (put in shared 1password).
 
 ### Running in dev
 
