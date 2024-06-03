@@ -21,6 +21,6 @@ services:
           name: izedb
           property: connectionString
     region: oregon
-    buildCommand: npm install && npm run codegen && cd apps/backend && npx prisma migrate deploy && cd ../.. &&  npm run build
+    buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-migrate-deploy && npm run prisma-generate && cd ../.. &&  npm run build
     startCommand: cd apps/backend && npm run start:prod
 version: "1"
