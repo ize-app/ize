@@ -28,6 +28,9 @@ import { sessionDurationMinutes, stytchClient } from "../stytch/stytchClient";
 import { upsertOauthToken } from "../stytch/upsertOauthToken";
 import { upsertUser } from "../stytch/upsertUser";
 
+console.log("host env", process.env.HOST);
+console.log("port env", process.env.PORT);
+
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const frontendPath = path.join(__dirname, "../../frontend");
