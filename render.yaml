@@ -20,6 +20,9 @@ services:
         fromDatabase:
           name: izedb
           property: connectionString
+      # note: render sets the PORT env var automatically to 10000
+      - key: HOST
+        value: 0.0.0.0
     region: oregon
     buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-migrate-deploy && npm run prisma-generate && cd ../.. &&  npm run build
     startCommand: cd apps/backend && npm run start:prod
