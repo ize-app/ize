@@ -982,9 +982,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping of union types */
-export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
+export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
-  Entity: ( Omit<Group, 'groupType'> & { groupType: RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: RefType['IdentityType'] } );
+  Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
