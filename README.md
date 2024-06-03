@@ -25,7 +25,7 @@ Install Homebrew
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
-Install Postgres 16 
+Install Postgres 16
 
 `brew install postgresql@16`
 
@@ -73,13 +73,15 @@ Navigate to [localhost:5173](http://localhost:5173/)
 
 ### Testing production build locally
 
-Build backend and frontend
+Build backend and frontend.
 
 `npm run build`
 
+This will build both the frontend and backend. Frontend dist files are output in backend dist folder.
+
 Start the express server
 
-`cd apps/backend && node dist/express/server.js`
+`cd apps/backend && npm run start:prod`
 
 Navigate to [localhost:3000](http://localhost:3000/)
 
@@ -107,4 +109,4 @@ Next run this command from the _frontend_ directory: `npm run codegen`. This wil
 
 From there it's just react!
 
-eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint-plugin-react-hooks eslint-plugin-react-refresh typescript-eslint eslint prettier @typescript-eslint/parser  @typescript-eslint/eslint-plugin @typescript-eslint/parser
+eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint-plugin-react-hooks eslint-plugin-react-refresh typescript-eslint eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin @typescript-eslint/parser

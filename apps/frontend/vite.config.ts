@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tsconfigPaths()],
+    build: {
+      outDir: "../backend/dist/frontend",
+    },
     server: {
       port: 5173,
       proxy: {
