@@ -14,7 +14,7 @@ services:
     runtime: node
     repo: https://github.com/ize-app/ize
     plan: starter
-    branch: main
+    branch: gitactions # to change
     envVars:
       - key: DATABASE_URL
         fromDatabase:
