@@ -5,6 +5,7 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 interface ImportMetaEnv {
   readonly VITE_CULTS_API_BASE_URL: string;
   readonly VITE_STYTCH_PUBLIC_TOKEN: string;
+  readonly VITE_DISCORD_BOT_CLIENT_ID: string;
   // more env variables...
 }
 
