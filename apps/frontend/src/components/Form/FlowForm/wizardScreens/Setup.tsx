@@ -28,7 +28,7 @@ import { StepForm } from "../components/StepForm";
 import { TriggerForm } from "../components/TriggerForm";
 import { WebhookForm } from "../components/WebhookForm";
 import { DefaultOptionSelection } from "../formValidation/fields";
-import { FlowSchemaType , flowSchema } from "../formValidation/flow";
+import { FlowSchemaType, flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 

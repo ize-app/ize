@@ -6,11 +6,9 @@ import { useEffect, useState } from "react";
 const config: StytchLoginConfig = {
   passwordOptions: {
     loginExpirationMinutes: 30,
-    loginRedirectURL:
-      "http://localhost:5173/api/auth/password?next_route=" + window.location.pathname, //"http://localhost:5173
+    loginRedirectURL: `${window.location.origin}/api/auth/password?next_route=${window.location.pathname}`,
     resetPasswordExpirationMinutes: 30,
-    resetPasswordRedirectURL:
-      "http://localhost:5173/api/auth?next_route=" + window.location.pathname,
+    resetPasswordRedirectURL: `${window.location.origin}/api/auth?next_route=${window.location.pathname}`,
   },
   products: [Products.passwords, Products.emailMagicLinks],
 };
