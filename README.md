@@ -49,13 +49,13 @@ Update local database schema with prisma schema
 
 `cd apps/backend && npx prisma db push`
 
-Create a .env file in /backend
+Add database URL to your backend env file.
 
 ```
 DATABASE_URL="postgresql://<username>@localhost:5432/izedev"
 ```
 
-Ask Tyler for a sample .env to fill in discord details (put in shared 1password).
+Use .env.sample to create rest of your backend env file. 
 
 ### Running in dev
 

@@ -20,12 +20,39 @@ services:
         fromDatabase:
           name: izedb
           property: connectionString
-      # note: render sets the PORT env var automatically to 10000
+      - key: LOCAL_URL
+        value: "http://localhost:5173"
+      - key: PROD_URL
+        value: "https://ize.space"
+      - key: PROD_RENDER_URL
+        value: "https://ize.onrender.com"
       - key: HOST
         value: 0.0.0.0
       - key: PORT
         value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
       - key: OPEN_AI_KEY
+        sync: false
+      - key: ALCHEMY_API_KEY_ETHEREUM
+        sync: false
+      - key: ALCHEMY_API_KEY_BASE
+        sync: false
+      - key: ALCHEMY_API_KEY_POLYGON
+        sync: false
+      - key: ALCHEMY_API_KEY_ARBITRUM
+        sync: false
+      - key: ALCHEMY_API_KEY_OPTIMISM
+        sync: false
+      - key: STYTCH_PROJECT_ID
+        sync: false
+      - key: STYTCH_PROJECT_SECRET
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ENCRYPTION_IV
+        sync: false
+      - key: DISCORD_IZE_BOT_API_TOKEN
         sync: false
     region: oregon
     buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-migrate-deploy && npm run prisma-generate && cd ../.. &&  npm run build
