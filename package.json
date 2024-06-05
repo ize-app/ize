@@ -10,7 +10,7 @@
     "apps/backend"
   ],
   "engines": {
-    "node": ">=20.13.1 <11.0.0"
+    "node": ">=20.13.1 <21.0.0"
   },
   "scripts": {
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",

@@ -15,6 +15,7 @@ import { OAuthProvider } from "stytch";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 
 import { expressGloalErrorHandler } from "./error";
+import { validOrigins } from "./origins";
 import { DiscordApi } from "../discord/api";
 import { GraphqlRequestContext } from "../graphql/context";
 import { resolvers } from "../graphql/resolvers/queryResolvers";
@@ -30,11 +31,6 @@ import { upsertUser } from "../stytch/upsertUser";
 
 const host = process.env.HOST ?? "::1";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-
-const prodRenderUrl = process.env.PROD_RENDER_URL ?? "https://ize.onrender.com";
-const localUrl = process.env.LOCAL_URL ?? "http://localhost:5173";
-export const prodUrl = process.env.PROD_URL ?? "https://ize.space";
-export const validOrigins = [prodUrl, prodRenderUrl, localUrl];
 
 const frontendPath = path.join(__dirname, "../../frontend");
 const app = express();
@@ -229,7 +225,13 @@ server.start().then(() => {
     }),
   );
 
-  app.listen(port, host, () => {
+  const expressServer = app.listen(port, host, () => {
     console.log(`[ API Ready ] http://${host}:${port}`);
+  });
+
+  process.on("SIGTERM", () => {
+    expressServer.close(() => {
+      console.log("Process terminated");
+    });
   });
 });
