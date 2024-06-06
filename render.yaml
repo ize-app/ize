@@ -16,6 +16,8 @@ services:
     plan: starter
     branch: gitactions # to change
     envVars:
+      - key: MODE
+        value: "production"
       - key: DATABASE_URL
         fromDatabase:
           name: izedb
