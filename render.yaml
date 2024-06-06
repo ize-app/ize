@@ -14,7 +14,7 @@ services:
     runtime: node
     repo: https://github.com/ize-app/ize
     plan: starter
-    branch: gitactions # to change
+    branch: main
     envVars:
       - key: MODE
         value: "production"
