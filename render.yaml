@@ -1,0 +1,62 @@
+databases:
+  - name: izedb
+    databaseName: izedb
+    user: izedb_user
+    plan: starter
+    region: oregon
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    postgresMajorVersion: "16"
+services:
+  - type: web
+    name: ize
+    runtime: node
+    repo: https://github.com/ize-app/ize
+    plan: starter
+    branch: main
+    envVars:
+      - key: MODE
+        value: "production"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: izedb
+          property: connectionString
+      - key: LOCAL_URL
+        value: "http://localhost:5173"
+      - key: PROD_URL
+        value: "https://ize.space"
+      - key: PROD_RENDER_URL
+        value: "https://ize.onrender.com"
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: OPEN_AI_KEY
+        sync: false
+      - key: ALCHEMY_API_KEY_ETHEREUM
+        sync: false
+      - key: ALCHEMY_API_KEY_BASE
+        sync: false
+      - key: ALCHEMY_API_KEY_POLYGON
+        sync: false
+      - key: ALCHEMY_API_KEY_ARBITRUM
+        sync: false
+      - key: ALCHEMY_API_KEY_OPTIMISM
+        sync: false
+      - key: STYTCH_PROJECT_ID
+        sync: false
+      - key: STYTCH_PROJECT_SECRET
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ENCRYPTION_IV
+        sync: false
+      - key: DISCORD_IZE_BOT_API_TOKEN
+        sync: false
+    region: oregon
+    buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-migrate-deploy && npm run prisma-generate && cd ../.. &&  npm run build
+    startCommand: cd apps/backend && npm run start:prod
+version: "1"

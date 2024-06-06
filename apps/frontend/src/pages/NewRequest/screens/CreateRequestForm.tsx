@@ -67,6 +67,7 @@ export const CreateRequestForm = () => {
           formMethods.setValue(`requestFields.${field.fieldId}.dataType`, field.dataType);
           formMethods.setValue(`requestFields.${field.fieldId}.required`, field.required);
         } else if (field.__typename === FieldType.Options) {
+          //@ts-expect-error TODO
           formMethods.setValue(`requestFields.${field.fieldId}.selectionType`, field.selectionType);
           formMethods.setValue(`requestFields.${field.fieldId}.maxSelections`, field.maxSelections);
         }

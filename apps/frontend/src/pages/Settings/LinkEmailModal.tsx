@@ -50,8 +50,8 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
       stytchClient.magicLinks.email.send(email, {
         login_expiration_minutes: 60,
         signup_expiration_minutes: 60,
-        login_magic_link_url: "http://localhost:5173/settings",
-        signup_magic_link_url: "http://localhost:5173/settings",
+        login_magic_link_url: `${window.location.origin}/settings`,
+        signup_magic_link_url: `${window.location.origin}/settings`,
       });
     },
     [stytchClient],

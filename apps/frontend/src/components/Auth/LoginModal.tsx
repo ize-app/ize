@@ -27,22 +27,19 @@ const config: StytchLoginConfig = {
         custom_scopes: ["identify", "guilds"],
       },
     ],
-    loginRedirectURL: "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
-    signupRedirectURL:
-      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
+    loginRedirectURL: `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`,
+    signupRedirectURL: `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`,
   },
   passwordOptions: {
-    loginRedirectURL:
-      "http://localhost:5173/api/auth/password?next_route=" + window.location.pathname, //"http://localhost:5173
-    resetPasswordRedirectURL: "http://localhost:5173/resetpassword",
+    loginRedirectURL: `${window.location.origin}/api/auth/password?next_route=${window.location.pathname}`,
+    resetPasswordRedirectURL: `${window.location.origin}/resetpassword`,
     loginExpirationMinutes: 30,
     resetPasswordExpirationMinutes: 30,
   },
   emailMagicLinksOptions: {
-    loginRedirectURL: "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
+    loginRedirectURL: `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`,
     loginExpirationMinutes: 30,
-    signupRedirectURL:
-      "http://localhost:5173/api/auth/token?next_route=" + window.location.pathname,
+    signupRedirectURL: `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`,
     signupExpirationMinutes: 30,
   },
 };

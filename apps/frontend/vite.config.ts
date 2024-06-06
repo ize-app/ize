@@ -8,13 +8,16 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tsconfigPaths()],
+    build: {
+      outDir: "../backend/dist/frontend",
+    },
     server: {
       port: 5173,
       proxy: {
         "/api": {
-          target: env.VITE_CULTS_API_BASE_URL,
+          target: env.VITE_LOCAL_BACKEND_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
+          // rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
     },
