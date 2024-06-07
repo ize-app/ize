@@ -45,12 +45,17 @@ export const NavBar = ({
             edge="start"
             sx={{
               width: "60px",
-              mr: 2,
+              // mr: 2,
             }}
           >
             <MenuIcon fontSize="small" />
           </IconButton>
-          <img src="/logo-yellow.png" style={{ height: "20px", width: "auto" }} />
+          <img
+            src="./ize-logo-textonly.svg"
+            style={{
+              height: "40px",
+            }}
+          />
         </Box>
         <UserDropDown me={me} />
       </Toolbar>

@@ -18,28 +18,26 @@ const UnauthenticatedHome = () => {
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
+        backgroundImage: "url(./ize-repeat.svg)",
+        backgroundSize: "300px",
       }}
     >
-      <img
-        src="./logo-yellow@2x.png"
-        style={{
-          width: "90%",
-          height: "auto",
-          marginBottom: "50px",
-        }}
-      />
       <Box
         sx={(theme) => ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: "white",
+          padding: "30px",
           gap: "20px",
+          borderRadius: "10px",
+          // border: "#6750A4 1px solid",
           [theme.breakpoints.down("sm")]: {
             flexDirection: "column",
           },
         })}
       >
-        <Button variant="contained" color="primary" href="/">
+        <Button variant="contained" color="primary" href="/" sx={{ width: "160px" }}>
           Join Alpha Waitlist
         </Button>
         <LoginButton />
