@@ -12,6 +12,7 @@ export const LoginButton = () => {
       }}
       variant="outlined"
       color="secondary"
+      sx={{ width: "160px" }}
     >
       Login
     </Button>
