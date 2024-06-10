@@ -14,7 +14,7 @@ services:
     runtime: node
     repo: https://github.com/ize-app/ize
     plan: starter
-    branch: cron2
+    branch: main
     envVars:
       - fromGroup: ize-env-group
     region: oregon
@@ -26,7 +26,7 @@ services:
     runtime: node
     repo: https://github.com/ize-app/ize
     plan: starter
-    branch: cron2
+    branch: main
     envVars:
       - fromGroup: ize-env-group
     region: oregon
