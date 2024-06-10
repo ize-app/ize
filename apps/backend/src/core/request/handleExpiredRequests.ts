@@ -45,4 +45,3 @@ export const handleExpiredResults = async () => {
   );
 };
 
-handleExpiredResults();
