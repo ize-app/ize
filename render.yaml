@@ -22,7 +22,7 @@ services:
     startCommand: cd apps/backend && npm run start:prod
   - type: cron
     name: ize-cron
-    schedule: "*/5 * * * *" # every 5 minutes
+    schedule: "*/10 * * * *" # every 10 minutes
     runtime: node
     repo: https://github.com/ize-app/ize
     plan: starter
@@ -30,7 +30,7 @@ services:
     envVars:
       - fromGroup: ize-env-group
     region: oregon
-    buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-generate && npm run build
+    buildCommand: npm install && npm run codegen && cd apps/backend && npm run prisma-migrate-deploy && npm run prisma-generate && cd ../.. &&  npm run build
     startCommand: cd apps/backend && npm run cron
 version: "1"
 envVarGroups:
