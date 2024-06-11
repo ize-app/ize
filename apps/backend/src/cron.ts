@@ -1,11 +1,11 @@
-import { retryActions } from "./core/action/retryActions";
+// import { retryActions } from "./core/action/retryActions";
 import { handleExpiredResults } from "./core/request/handleExpiredRequests";
-import { retryNewResults } from "./core/result/newResults/retryNewResults";
+// import { retryNewResults } from "./core/result/newResults/retryNewResults";
 
 const cron = async () => {
   await handleExpiredResults();
-  await retryNewResults();
-  await retryActions();
+//   await retryNewResults();
+//   await retryActions();
 };
 
 cron();
