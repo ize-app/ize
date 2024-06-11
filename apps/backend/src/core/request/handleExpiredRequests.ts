@@ -5,6 +5,7 @@ import { runResultsAndActions } from "../result/newResults/runResultsAndActions"
 
 // run results and actions on newly expired requests
 export const handleExpiredResults = async () => {
+  console.log("inside handleExpiredResults");
   const now = new Date();
 
   // get request steps that are past expiration date but haven't been processed yet
@@ -44,4 +45,3 @@ export const handleExpiredResults = async () => {
     }),
   );
 };
-
