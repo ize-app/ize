@@ -1,23 +1,6 @@
 # Ize
 
-## Concepts
-
-### Identities and Groups
-
-Users authenticate into Ize via Identities. Identities we currently support are:
-
-- Email
-- EVM address
-- Discord account
-
-Users can have multiple identities.
-
-Individual identities or "groups" can have roles (e.g. request/respond) on a process. When a group has a role on aprocess, Ize checks whether one of a given user's identities is part of that group. The current group types we support are:
-
-- Discord roles
-- NFT collections (721/1155 - including ENS/Hats, etc)
-
-## Running Ize
+## Running Ize locally
 
 ### Setting up local dev environment
 
@@ -55,9 +38,9 @@ Add database URL to your backend env file.
 DATABASE_URL="postgresql://<username>@localhost:5432/izedev"
 ```
 
-Use .env.sample to create rest of your backend env file. 
+Use .env.sample to create rest of your backend env file.
 
-### Running in dev
+### Running in dev mode
 
 Runs in dev mode with hot module reloading on both the backend server and frontend Vite server. Note that frontend assets are served differently in dev than during production. In development, a Vite server serves static assets whereas in production, these assets are served by express server
 
@@ -87,26 +70,78 @@ Navigate to [localhost:3000](http://localhost:3000/)
 
 This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [localhost:5173](http://localhost:5173/)
 
-## Building a fullstack feature:
+## Debugging production build
 
-Make DB updates...
-Update the `apps/backend/src/prisma/schema.prisma` with whatever schema updates you want.
-Right now we are _not_ using migrations because there is no production data that needs to be maintained. So to update the schema in the database just run `npx prisma db push`
+### Monitoring
 
-This will automatically update the prisma client and the associated types
+- [Sentry](https://ize.sentry.io/issues/): Error monitoring for FE and BE
+- [Google Analytics](https://analytics.google.com/analytics/web/#/p445559371/reports/intelligenthome): Basic traffic monitoring. Fully client-side so some traffic is being blocked but it gives us a "good enough" answer for now.
+- [Render](https://dashboard.render.com/): Basic performance monitoring and logs
 
-Add a query resolver. There are already a few resolver files. If the new query/mutation belongs in there, make a new function and add it to the exports.
+### Connecting to prod db
 
-Implement whatever method for the resolver. You'll see examples of using prisma to make db updates or using the discord Api to fetch certain records
+For most queries, you should be using the read-only `analytics_user`. To connect to the db via the command line.
 
-After you've written your resolver, add an associated graphql file in backend that defines the types that correspond to your resolver.
+`psql -h <hostname> -U analytics_user izedb`
 
-I.e. `apps/backend/src/graphql/group.graphql` : `apps/backend/src/graphql/resolvers/group_resolvers.ts`
+Find the hostname in the dashboard for izedb on Render.
 
-Next make a _frontend_ graphql file that will define your query. I.e `apps/frontend/src/graphql/group.graphql`
+In the rare case you need to write to the db, you can find the superuser credentials on Render.
 
-Next run this command from the _frontend_ directory: `npm run codegen`. This will generate all response types, query documents and input types for you.
+## Development workflow
 
-From there it's just react!
+### Updating database schema
 
-eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint-plugin-react-hooks eslint-plugin-react-refresh typescript-eslint eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin @typescript-eslint/parser
+Ize uses Prisma as its ORM. The database schema is defined via the Prisma schema at `apps/backend/src/prisma/schema.prisma`. 
+
+
+To quickly prototype schema changes during development, run `npx prisma db push` from `apps/backend` to update the schema of your local db and prisma client. This command is only to be used during development, as it doesn't track database changes that can later be applied to the production db via a schema migration.
+
+`prisma migrate dev` is used in dev when you do want to keep track of changes so that they can be applied by `prisma migrate deploy` later in CI. this command creates migration file, applies them to database, and updates pigrations table. you can use `--create-only` flag to edit a migration (e.g. so you don't get data loss during the migration).
+
+Migrations are applied to the production database automatically via `prisma migrate deploy`
+
+
+### Updating GraphQL 
+
+When you make an update to the GraphQL schema or queries, run  `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
+
+
+## Concepts
+
+### Users and Identities
+
+Users authenticate into Ize via identities. Users can have multiple identities. Identities we currently support are:
+
+- Email
+- EVM address
+- Discord account
+
+### Groups
+
+Groups are shorthand for a set of identities. There are multiple ways a group can be defined.
+
+- **Custom Ize group**: A list of Ize identites and groups
+- **NFT**: A blockchain identity is part of this group if it currently owns that 721/1155 NFT (validated by Alchemy)
+- **Hats**: A blockchain identity is part of this group if it is assigned that particular Hat and that Hat is active
+- **Discord Role**: A Discord idenity is part of this group if it holds a particular discord Role
+- **Discord Server**: A Discord idenity is part of this group if it is part of a Discord server.
+
+### Flows
+
+Flows define how a particular identities/groups collaborate to complete some kind of task. Flows have the following components
+
+- **Request permissions**: Identities/groups that can trigger this flow (i.e. create a request)
+- **Request fields**: Information that is required for someone to trigger the flow
+- **Response permissions**: Identities/groups that can respond a 
+- **Response fields**: Information that is required on a response
+- **Results**: How response fields are aggregated into a final result (e.g. decision, AI summary, prioritization, etc)
+- **Actions**: Automated actions that occur when a request complets (e.g. fire a webhook, evolve a flow, etc)
+
+Everything that happens in Ize happens via collaborative flows. Even the process to evolve a flow happens via another flow.
+
+### Requests
+
+An instance of a flow being triggered is a request. There can be many requests to a single flow.
+
+Requests can (but don't necessarily) have responses.
