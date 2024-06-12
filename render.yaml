@@ -74,3 +74,5 @@ envVarGroups:
         sync: false
       - key: DISCORD_IZE_BOT_API_TOKEN
         sync: false
+      - key: SENTRY_AUTH_TOKEN
+        sync: false

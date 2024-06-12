@@ -25,7 +25,12 @@
 
     // "Composite" and "declaration" are necessary so this app can be referenced as a npm package
     "composite": true,
-    "declaration": true
+    "declaration": true,
+
+    // For sentry source map
+    "inlineSources": true,
+    // Set `sourceRoot` to  "/" to strip the build path prefix in source map for better Sentry error grouping.
+    "sourceRoot": "/"
   },
   // "include": ["src/**/*.ts"],
   "ts-node": {
