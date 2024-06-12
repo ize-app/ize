@@ -7,13 +7,14 @@
     "schema": "src/prisma/schema.prisma"
   },
   "scripts": {
-    "build": "tsc --project ./",
+    "build": "tsc --project ./ && npm run sentry:sourcemaps",
     "start:dev": "nodemon src/express/server.ts",
     "start:prod": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/src/express/server.js",
     "cron": "npx ts-node src/cron.ts",
     "prisma-migrate-dev": "npx prisma migrate dev",
     "prisma-migrate-deploy": "npx prisma migrate deploy",
-    "prisma-generate": "npx prisma generate"
+    "prisma-generate": "npx prisma generate",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ize --project ize-backend ./dist && sentry-cli sourcemaps upload --org ize --project ize-backend ./dist"
   },
   "dependencies": {
     "@apollo/server": "^4.7.5",
@@ -23,6 +24,7 @@
     "@hatsprotocol/sdk-v1-core": "^0.8.1",
     "@hatsprotocol/sdk-v1-subgraph": "^0.4.3",
     "@prisma/client": "^5.8.1",
+    "@sentry/cli": "^2.32.1",
     "@sentry/node": "^8.9.2",
     "@sentry/profiling-node": "^8.9.2",
     "@types/jsonwebtoken": "^9.0.2",

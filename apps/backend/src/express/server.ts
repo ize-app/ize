@@ -1,6 +1,6 @@
 import path from "path";
 
-import "../sentry/instrument.js";
+import "../sentry/instrument";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { loadFilesSync } from "@graphql-tools/load-files";
