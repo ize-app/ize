@@ -5,6 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 
+import usePageTracking from "@/analytics/usePageTracking";
 import LoginModal from "@/components/Auth/LoginModal";
 import { Menu } from "@/components/Menu/Menu";
 import { NavBar } from "@/components/Menu/NavBar";
@@ -18,6 +19,7 @@ const drawerWidth = 240;
 export const DefaultLayout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { me } = useContext(CurrentUserContext);
+  usePageTracking();
 
   const handleMenuToggle = () => {
     setMenuOpen(!menuOpen);
