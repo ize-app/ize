@@ -32,6 +32,7 @@ jobs:
           - 5432:5432
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.SENTRY_AUTH_TOKEN }}
       # Avoids installing husky during CI
       HUSKY: 0
     steps:

@@ -20,6 +20,7 @@
     "@mui/material": "^5.14.7",
     "@mui/x-date-pickers": "^6.19.3",
     "@sentry/react": "^8.9.2",
+    "@sentry/vite-plugin": "^2.18.0",
     "@stytch/react": "^12.0.0",
     "@stytch/vanilla-js": "^3.2.5",
     "dayjs": "^1.11.10",

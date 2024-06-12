@@ -3,6 +3,9 @@ dist
 .env
 ./**/.env.*
 
+# Sentry Config File
+.env.sentry-build-plugin
+
 # Logs
 logs
 *.log
