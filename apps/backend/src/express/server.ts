@@ -10,7 +10,7 @@ import * as Sentry from "@sentry/node";
 import { json } from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import session from "express-session";
 
 import { MePrismaType } from "@/core/user/userPrismaTypes";
@@ -75,15 +75,6 @@ app.get("*", (req, res) => {
 
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
-
-// Optional fallthrough error handler
-app.use(function onError(_req: Request, res: Response, _next: NextFunction) {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
-  res.statusCode = 500;
-  //@ts-expect-error not sure how to create this type with Sentry
-  res.end(res.sentry + "\n");
-});
 
 app.use(expressGloalErrorHandler);
 
