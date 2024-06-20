@@ -1,5 +1,6 @@
 export enum Route {
   Home = "/",
+  About = "/about",
   Requests = "/requests",
   Flows = "/flows",
   Identities = "/identities",

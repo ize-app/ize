@@ -4,6 +4,7 @@ import { ResetPassword } from "@/components/Auth/ResetPassword";
 import { Setup as FlowSetup } from "@/components/Form/FlowForm/wizardScreens/Setup";
 import { DefaultLayout } from "@/layout/default";
 import { _404 } from "@/pages/404";
+import { About } from "@/pages/About";
 import { ErrorBoundary } from "@/pages/ErrorBoundary";
 import * as EvolveFlow from "@/pages/EvolveFlow";
 import { Flow } from "@/pages/Flow/Flow";
@@ -27,6 +28,11 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.Home,
         element: <Home />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.About,
+        element: <About />,
         errorElement: <ErrorBoundary />,
       },
       {

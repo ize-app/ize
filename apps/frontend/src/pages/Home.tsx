@@ -4,24 +4,14 @@ import { useContext, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { LoginButton } from "@/components/Auth/LoginButton";
+import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 import { Route } from "@/routers/routes";
 
 import { CurrentUserContext } from "../contexts/current_user_context";
 
 const UnauthenticatedHome = () => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundImage: "url(./ize-repeat.svg)",
-        backgroundSize: "300px",
-      }}
-    >
+    <IzeLogoBackground>
       <Box
         sx={(theme) => ({
           display: "flex",
@@ -42,7 +32,7 @@ const UnauthenticatedHome = () => {
         </Button>
         <LoginButton />
       </Box>
-    </Box>
+    </IzeLogoBackground>
   );
 };
 
