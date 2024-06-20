@@ -2,17 +2,20 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import { Link } from "react-router-dom";
 
+import logoUrl from "@/assets/ize-logo-textonly.svg";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 
 import { UserDropDown } from "./UserDropDown";
+import { LoginButton } from "../Auth/LoginButton";
 
 export const NavBar = ({
   handleMenuToggle,
   me,
 }: {
   handleMenuToggle: () => void;
-  me: MePartsFragment;
+  me: MePartsFragment | undefined | null;
 }) => {
   return (
     <AppBar
@@ -36,28 +39,35 @@ export const NavBar = ({
           paddingRight: "16px",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            color="primary"
-            size="small"
-            aria-label="open drawer"
-            onClick={handleMenuToggle}
-            edge="start"
-            sx={{
-              width: "60px",
-              // mr: 2,
-            }}
-          >
-            <MenuIcon fontSize="small" />
-          </IconButton>
-          <img
-            src="./ize-logo-textonly.svg"
-            style={{
-              height: "40px",
-            }}
-          />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            paddingLeft: "1rem",
+          }}
+        >
+          {me && (
+            <IconButton
+              color="primary"
+              size="small"
+              aria-label="open drawer"
+              onClick={handleMenuToggle}
+              edge="start"
+            >
+              <MenuIcon fontSize="small" />
+            </IconButton>
+          )}
+          <Link to="/">
+            <img
+              src={logoUrl}
+              style={{
+                height: "40px",
+              }}
+            />
+          </Link>
         </Box>
-        <UserDropDown me={me} />
+        {me ? <UserDropDown me={me} /> : <LoginButton />}
       </Toolbar>
     </AppBar>
   );

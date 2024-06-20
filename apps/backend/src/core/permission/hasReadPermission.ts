@@ -11,6 +11,7 @@ export const hasReadPermission = ({
   identityIds: string[] | null;
   userId: string | undefined;
 }): boolean => {
+  if (!userId) return false; // if not logged in, no permission
   if (!permission) return false;
   if (permission.anyone) return true;
   if (permission.userId && permission.userId === userId) return true;

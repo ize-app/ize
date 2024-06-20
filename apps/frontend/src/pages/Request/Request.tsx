@@ -16,12 +16,10 @@ import { Route } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GetRequestDocument, ResponseFragment , Status } from "../../graphql/generated/graphql";
+import { GetRequestDocument, ResponseFragment, Status } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-
-
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();

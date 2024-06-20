@@ -18,11 +18,11 @@ export const redirectAtLogin = ({ req, res }: { req: Request; res: Response }) =
   const validHosts = validOrigins.map((origin) => new URL(origin).host);
   const requestHost = req.headers.host;
 
-  if (requestHost && validHosts.includes(requestHost)) {
+  if (isDev) {
+    redirectURL = new URL(nextRoutePath, localUrl);
+  } else if (requestHost && validHosts.includes(requestHost)) {
     const origin = req.headers.origin || `https://${requestHost}`;
     redirectURL = new URL(nextRoutePath, origin);
-  } else if (isDev) {
-    redirectURL = new URL(nextRoutePath, localUrl);
   } else {
     redirectURL = new URL(nextRoutePath, prodUrl);
   }
