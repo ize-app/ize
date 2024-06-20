@@ -3,6 +3,7 @@ import { Box, IconButton } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 
+import logoUrl from "@/assets/ize-logo-textonly.svg";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 
 import { UserDropDown } from "./UserDropDown";
@@ -50,7 +51,7 @@ export const NavBar = ({
             </IconButton>
           )}
           <img
-            src="./ize-logo-textonly.svg"
+            src={logoUrl}
             style={{
               height: "40px",
             }}
