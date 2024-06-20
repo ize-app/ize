@@ -2,6 +2,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Box, IconButton } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import { Link } from "react-router-dom";
 
 import logoUrl from "@/assets/ize-logo-textonly.svg";
 import { MePartsFragment } from "@/graphql/generated/graphql";
@@ -38,7 +39,14 @@ export const NavBar = ({
           paddingRight: "16px",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: "1rem", paddingLeft: "1rem" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            paddingLeft: "1rem",
+          }}
+        >
           {me && (
             <IconButton
               color="primary"
@@ -50,12 +58,14 @@ export const NavBar = ({
               <MenuIcon fontSize="small" />
             </IconButton>
           )}
-          <img
-            src={logoUrl}
-            style={{
-              height: "40px",
-            }}
-          />
+          <Link to="/">
+            <img
+              src={logoUrl}
+              style={{
+                height: "40px",
+              }}
+            />
+          </Link>
         </Box>
         {me ? <UserDropDown me={me} /> : <LoginButton />}
       </Toolbar>

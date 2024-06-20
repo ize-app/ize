@@ -1,5 +1,7 @@
 import Box from "@mui/material/Box";
 
+import logoRepeatUrl from "@/assets/ize-repeat.svg";
+
 export const IzeLogoBackground = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
@@ -10,7 +12,7 @@ export const IzeLogoBackground = ({ children }: { children: React.ReactNode }) =
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        backgroundImage: "url(./ize-repeat.svg)",
+        backgroundImage: `url(${logoRepeatUrl})`,
         backgroundSize: "300px",
       }}
     >
