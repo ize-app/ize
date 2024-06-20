@@ -29,7 +29,7 @@ export const DefaultLayout = () => {
     <>
       <Head title="Ize" description="Distributed sensemaking" />
       <CssBaseline />
-      {me && <NavBar handleMenuToggle={handleMenuToggle} me={me} />}
+      <NavBar handleMenuToggle={handleMenuToggle} me={me} />
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         {me && menuOpen && (
           <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />

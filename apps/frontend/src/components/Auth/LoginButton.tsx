@@ -1,9 +1,8 @@
-import Button from "@mui/material/Button";
+import Button, { ButtonProps } from "@mui/material/Button";
 import { useContext } from "react";
 
 import { CurrentUserContext } from "@/contexts/current_user_context";
-
-export const LoginButton = () => {
+export const LoginButton = (props: ButtonProps) => {
   const { setAuthModalOpen } = useContext(CurrentUserContext);
   return (
     <Button
@@ -12,7 +11,8 @@ export const LoginButton = () => {
       }}
       variant="outlined"
       color="secondary"
-      sx={{ width: "160px" }}
+      size="small"
+      {...props}
     >
       Login
     </Button>

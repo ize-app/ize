@@ -6,13 +6,14 @@ import Toolbar from "@mui/material/Toolbar";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 
 import { UserDropDown } from "./UserDropDown";
+import { LoginButton } from "../Auth/LoginButton";
 
 export const NavBar = ({
   handleMenuToggle,
   me,
 }: {
   handleMenuToggle: () => void;
-  me: MePartsFragment;
+  me: MePartsFragment | undefined | null;
 }) => {
   return (
     <AppBar
@@ -36,20 +37,18 @@ export const NavBar = ({
           paddingRight: "16px",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            color="primary"
-            size="small"
-            aria-label="open drawer"
-            onClick={handleMenuToggle}
-            edge="start"
-            sx={{
-              width: "60px",
-              // mr: 2,
-            }}
-          >
-            <MenuIcon fontSize="small" />
-          </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center", gap: "1rem", paddingLeft: "1rem" }}>
+          {me && (
+            <IconButton
+              color="primary"
+              size="small"
+              aria-label="open drawer"
+              onClick={handleMenuToggle}
+              edge="start"
+            >
+              <MenuIcon fontSize="small" />
+            </IconButton>
+          )}
           <img
             src="./ize-logo-textonly.svg"
             style={{
@@ -57,7 +56,7 @@ export const NavBar = ({
             }}
           />
         </Box>
-        <UserDropDown me={me} />
+        {me ? <UserDropDown me={me} /> : <LoginButton />}
       </Toolbar>
     </AppBar>
   );
