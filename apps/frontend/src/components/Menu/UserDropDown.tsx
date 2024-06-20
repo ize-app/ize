@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useStytch } from "@stytch/react";
 import { useState } from "react";
 
+import { apolloClient } from "@/graphql/apollo";
 import { MePartsFragment } from "@/graphql/generated/graphql";
 
 import { Avatar } from "../Avatar";
@@ -25,9 +26,12 @@ export const UserDropDown = ({ me }: UserDropDownProps): JSX.Element => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleLogout = () => {
-    stytch.session.revoke();
+  const handleLogout = async () => {
+    await stytch.session.revoke();
+    await apolloClient.clearStore();
+    // await apolloClient.resetStore();
     handleClose();
+    await window.location.reload();
   };
 
   return (
