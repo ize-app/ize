@@ -13,7 +13,6 @@ import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import { StatusTag } from "@/components/status/StatusTag";
-import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import { Route } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
@@ -89,14 +88,28 @@ export const Request = () => {
       />
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Box>
-          <Box>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography variant={"body1"} fontWeight={600} color="primary">
               Request
             </Typography>
-            <Typography variant={"h1"} marginTop="8px">
+            <Typography variant={"h1"} marginBottom={".75rem"}>
               {request.name}
             </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant={"h3"}>
+              <Link
+                to={generatePath(Route.Flow, {
+                  flowId: fullUUIDToShort(request.flow.flowId),
+                  // Link to old version of flow if request is made from an older version
+                  flowVersionId:
+                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                      ? fullUUIDToShort(request.flow.flowVersionId)
+                      : null,
+                })}
+              >
+                {request.flow.name}
+              </Link>
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
               <Box
                 sx={{
                   display: "flex",
@@ -109,55 +122,6 @@ export const Request = () => {
                 <Box
                   sx={{
                     outline: "1px solid rgba(0, 0, 0, 0.1)",
-                    // width: "40%",
-                    padding: "16px 24px 16px 16px",
-                    // marginTop: "8px",
-                    // minWidth: "400px",
-                  }}
-                >
-                  <DataTable
-                    data={[
-                      {
-                        label: "Flow",
-                        value: (
-                          <Link
-                            to={generatePath(Route.Flow, {
-                              flowId: fullUUIDToShort(request.flow.flowId),
-                              // Link to old version of flow if request is made from an older version
-                              flowVersionId:
-                                request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                                  ? fullUUIDToShort(request.flow.flowVersionId)
-                                  : null,
-                            })}
-                          >
-                            {request.flow.name}
-                          </Link>
-                        ),
-                      },
-                      {
-                        label: "Status",
-                        value: (
-                          <StatusTag
-                            status={request.final ? Status.Completed : Status.NotAttempted}
-                          />
-                        ),
-                      },
-                      { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
-                      {
-                        label: "Created at",
-                        value: (
-                          <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
-                        ),
-                      },
-                    ]}
-                    ariaLabel="Request context table"
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    // width: "100%",
-                    outline: "1px solid rgba(0, 0, 0, 0.1)",
-                    // width: "40%",
                     padding: "16px 24px 16px 16px",
                     marginTop: "8px",
                     display: "flex",
@@ -167,16 +131,26 @@ export const Request = () => {
                   <Typography color="primary" variant="label" marginBottom="8px">
                     Request Context
                   </Typography>
-                  <Fields
-                    fields={request.flow.steps[0].request.fields}
-                    fieldAnswers={request.steps[0].requestFieldAnswers}
-                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Box sx={{ display: "flex", gap: "8px" }}>
+                        <Typography>Created by{"  "}</Typography>
+                        <AvatarWithName avatar={request.creator} />
+                        <Typography>
+                          at {new Date(request.createdAt).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                      <StatusTag status={request.final ? Status.Completed : Status.NotAttempted} />
+                    </Box>
+                    <Fields
+                      fields={request.flow.steps[0].request.fields}
+                      fieldAnswers={request.steps[0].requestFieldAnswers}
+                    />
+                  </Box>
                 </Box>
                 <Box
                   sx={{
-                    // width: "100%",
                     outline: "1px solid rgba(0, 0, 0, 0.1)",
-                    // width: "40%",
                     padding: "16px 24px 16px 16px",
                     marginTop: "8px",
                     display: "flex",
