@@ -7,9 +7,11 @@ import { useContext } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
-import { PanelHeader } from "@/components/ConfigDiagram";
+// import { PanelHeader } from "@/components/ConfigDiagram";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
+import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import { Route } from "@/routers/routes";
@@ -20,6 +22,25 @@ import { GetRequestDocument, ResponseFragment, Status } from "../../graphql/gene
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
+
+export const SectionHeader = ({ title }: { title: string }) => {
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        // outline: "1px solid rgba(0, 0, 0, 0.1)",
+        padding: "1rem",
+      }}
+    >
+      <Typography color="primary" variant="label">
+        {title}
+      </Typography>
+    </Box>
+  );
+};
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();
@@ -75,62 +96,107 @@ export const Request = () => {
             <Typography variant={"h1"} marginTop="8px">
               {request.name}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box
                 sx={{
-                  outline: "1px solid rgba(0, 0, 0, 0.1)",
-                  width: "40%",
-                  padding: "12px",
-                  marginTop: "8px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "30px",
                   minWidth: "400px",
+                  maxWidth: "800px",
                 }}
               >
-                <DataTable
-                  data={[
-                    {
-                      label: "Flow",
-                      value: (
-                        <Link
-                          to={generatePath(Route.Flow, {
-                            flowId: fullUUIDToShort(request.flow.flowId),
-                            // Link to old version of flow if request is made from an older version
-                            flowVersionId:
-                              request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                                ? fullUUIDToShort(request.flow.flowVersionId)
-                                : null,
-                          })}
-                        >
-                          {request.flow.name}
-                        </Link>
-                      ),
-                    },
-                    {
-                      label: "Status",
-                      value: (
-                        <StatusTag
-                          status={request.final ? Status.Completed : Status.NotAttempted}
-                        />
-                      ),
-                    },
-                    { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
-                    {
-                      label: "Created at",
-                      value: (
-                        <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
-                      ),
-                    },
-                  ]}
-                  ariaLabel="Request context table"
-                />
+                <Box
+                  sx={{
+                    outline: "1px solid rgba(0, 0, 0, 0.1)",
+                    // width: "40%",
+                    padding: "16px 24px 16px 16px",
+                    // marginTop: "8px",
+                    // minWidth: "400px",
+                  }}
+                >
+                  <DataTable
+                    data={[
+                      {
+                        label: "Flow",
+                        value: (
+                          <Link
+                            to={generatePath(Route.Flow, {
+                              flowId: fullUUIDToShort(request.flow.flowId),
+                              // Link to old version of flow if request is made from an older version
+                              flowVersionId:
+                                request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                                  ? fullUUIDToShort(request.flow.flowVersionId)
+                                  : null,
+                            })}
+                          >
+                            {request.flow.name}
+                          </Link>
+                        ),
+                      },
+                      {
+                        label: "Status",
+                        value: (
+                          <StatusTag
+                            status={request.final ? Status.Completed : Status.NotAttempted}
+                          />
+                        ),
+                      },
+                      { label: "Created by", value: <AvatarWithName avatar={request.creator} /> },
+                      {
+                        label: "Created at",
+                        value: (
+                          <Typography>{new Date(request.createdAt).toLocaleString()}</Typography>
+                        ),
+                      },
+                    ]}
+                    ariaLabel="Request context table"
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    // width: "100%",
+                    outline: "1px solid rgba(0, 0, 0, 0.1)",
+                    // width: "40%",
+                    padding: "16px 24px 16px 16px",
+                    marginTop: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Typography color="primary" variant="label" marginBottom="8px">
+                    Request context
+                  </Typography>
+                  <Fields
+                    fields={request.flow.steps[0].request.fields}
+                    fieldAnswers={request.steps[0].requestFieldAnswers}
+                  />
+                  <RequestStepResults
+                    resultConfigs={request.flow.steps[0].result}
+                    responseFields={request.flow.steps[0].response.fields}
+                    results={request.steps[0].results ?? []}
+                    requestStatus={Status.Completed}
+                    fieldsAnswers={request.steps[0].responseFieldAnswers ?? []}
+                  />
+                </Box>
               </Box>
               {canRespond &&
                 ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
-                  <Paper sx={{ flexGrow: 1, width: "60%", minWidth: "400px" }}>
-                    <PanelHeader>
+                  <Paper
+                    sx={{
+                      flexGrow: 1,
+                      width: "60%",
+                      minWidth: "300px",
+                      maxWidth: "500px",
+                      border: "solid purple 1px",
+                      marginLeft: "2rem",
+                    }}
+                  >
+                    {/* <PanelHeader>
                       <Typography color="primary" variant="label">
                         Respond
                       </Typography>
-                    </PanelHeader>
+                    </PanelHeader> */}
                     <ResponseForm
                       requestStepId={request.steps[request.currentStepIndex].requestStepId}
                       responseFields={request.steps[request.currentStepIndex].responseFields}

@@ -6,7 +6,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { Results } from "@/components/result/Results";
+import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
@@ -98,7 +98,7 @@ export const ConfigRequestStepPanel = ({
         </PanelAccordion>
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
-          <Results
+          <RequestStepResults
             resultConfigs={step.result}
             responseFields={step.response.fields}
             results={requestStep?.results ?? []}

@@ -21,6 +21,7 @@ export const AnswerFreeInput = ({
         borderRadius: "4px",
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         padding: "6px",
+        background: "white",
       }}
     >
       {renderFreeInputValue(answer, dataType)}
