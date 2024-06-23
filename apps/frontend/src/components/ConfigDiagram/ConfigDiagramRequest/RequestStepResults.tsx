@@ -1,8 +1,5 @@
-import { Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 
-import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
-import { statusProps } from "@/components/status/statusProps";
 import {
   FieldFragment,
   ResultConfigFragment,
@@ -11,7 +8,6 @@ import {
   UserFieldAnswersFragment,
 } from "@/graphql/generated/graphql";
 
-import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { Result } from "../../result/Results/Result";
 
 export const RequestStepResults = ({
@@ -28,7 +24,7 @@ export const RequestStepResults = ({
   fieldsAnswers: UserFieldAnswersFragment[];
 }) => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {resultConfigs.map((resultConfig) => {
         let field: FieldFragment | null = null;
         const result: ResultFragment | null =
@@ -43,47 +39,15 @@ export const RequestStepResults = ({
         }
 
         return (
-          <Box
+          <Result
             key={resultConfig.resultConfigId}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-              alignItems: "flex-start",
-            }}
-          >
-            <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
-              <Chip
-                label={statusProps[requestStatus].label}
-                sx={{
-                  backgroundColor: statusProps[requestStatus].backgroundColor,
-                  color: statusProps[requestStatus].color,
-                }}
-                size="small"
-              />
-            </Box>
-            <LabeledGroupedInputs
-              sx={{
-                padding: "8px 16px 16px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-                borderColor: statusProps[requestStatus].backgroundColor,
-                backgroundColor:
-                  requestStatus === Status.Completed
-                    ? "#f5faf5"
-                    : requestStatus === Status.InProgress
-                      ? "#f3f8fb"
-                      : "white",
-              }}
-              key={resultConfig.resultConfigId}
-            >
-              <Result resultConfig={resultConfig} field={field} result={result} />
-              {fieldAnswers && field && (
-                <UserFieldAnswers userFieldAnswers={fieldAnswers} field={field} key={result?.id} />
-              )}
-            </LabeledGroupedInputs>
-          </Box>
+            resultConfig={resultConfig}
+            result={result}
+            field={field}
+            requestStepStatus={requestStatus}
+            fieldAnswers={fieldAnswers}
+            displayDescripton={true}
+          />
         );
       })}
     </Box>

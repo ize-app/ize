@@ -11,7 +11,7 @@ import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
-import { RequestStepResults } from "@/components/result/Results";
+import { RequestResults } from "@/components/result/Results/RequestResults";
 import { StatusTag } from "@/components/status/StatusTag";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import { Route } from "@/routers/routes";
@@ -165,19 +165,32 @@ export const Request = () => {
                   }}
                 >
                   <Typography color="primary" variant="label" marginBottom="8px">
-                    Request context
+                    Request Context
                   </Typography>
                   <Fields
                     fields={request.flow.steps[0].request.fields}
                     fieldAnswers={request.steps[0].requestFieldAnswers}
                   />
-                  <RequestStepResults
-                    resultConfigs={request.flow.steps[0].result}
-                    responseFields={request.flow.steps[0].response.fields}
-                    results={request.steps[0].results ?? []}
-                    requestStatus={Status.Completed}
-                    fieldsAnswers={request.steps[0].responseFieldAnswers ?? []}
-                  />
+                </Box>
+                <Box
+                  sx={{
+                    // width: "100%",
+                    outline: "1px solid rgba(0, 0, 0, 0.1)",
+                    // width: "40%",
+                    padding: "16px 24px 16px 16px",
+                    marginTop: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Typography color="primary" variant="label" marginBottom="8px">
+                    Results
+                  </Typography>
+                  {/* <Fields
+                    fields={request.flow.steps[0].request.fields}
+                    fieldAnswers={request.steps[0].requestFieldAnswers}
+                  /> */}
+                  <RequestResults request={request} />
                 </Box>
               </Box>
               {canRespond &&
