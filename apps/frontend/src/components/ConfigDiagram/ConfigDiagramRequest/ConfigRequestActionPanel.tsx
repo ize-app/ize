@@ -1,13 +1,6 @@
-import { Typography } from "@mui/material";
-
 import { ActionExecution } from "@/components/Action/ActionExecution";
 import { actionProperties } from "@/components/Action/actionProperties";
-import {
-  ConfigurationPanel,
-  PanelAccordion,
-  PanelContainer,
-  PanelHeader,
-} from "@/components/ConfigDiagram";
+import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import { ActionExecutionFragment, ActionFragment } from "@/graphql/generated/graphql";
 
 import { ActionFilter } from "../../Action/ActionFilter";
@@ -21,11 +14,11 @@ export const ConfigRequestActionPanel = ({
 }) => {
   return (
     <PanelContainer>
-      <PanelHeader>
+      {/* <PanelHeader>
         <Typography color="primary" variant="label">
           {actionProperties[action.__typename].label + " configuration"}
         </Typography>
-      </PanelHeader>
+      </PanelHeader> */}
       <ConfigurationPanel>
         {action.filterOption && (
           <PanelAccordion title="Filter" hasError={false}>

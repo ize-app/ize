@@ -1,11 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-import {
-  ConfigurationPanel,
-  PanelAccordion,
-  PanelContainer,
-  PanelHeader,
-} from "@/components/ConfigDiagram";
+import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
@@ -50,11 +45,11 @@ export const ConfigRequestStepPanel = ({
 
   return (
     <PanelContainer>
-      <PanelHeader>
+      {/* <PanelHeader>
         <Typography color="primary" variant="label">
           Step configuration
         </Typography>{" "}
-      </PanelHeader>
+      </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Status" hasError={false}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>

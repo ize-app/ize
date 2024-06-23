@@ -15,7 +15,10 @@ export const ResultHeader = ({
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box sx={{ display: "flex", gap: "8px" }}>
-        <Chip label={resultType} size="small" /> <Typography variant="label">{name}</Typography>
+        <Chip label={resultType} size="small" />{" "}
+        <Typography color="primary" fontSize=".875rem">
+          {name}
+        </Typography>
       </Box>
       {requestStatus && (
         <Chip

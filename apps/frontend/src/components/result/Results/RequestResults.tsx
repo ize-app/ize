@@ -46,6 +46,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
           key={resultData.resultConfig.resultConfigId}
           {...resultData}
           displayDescripton={false}
+          onlyShowSelections={true}
         />
       ))}
     </Box>

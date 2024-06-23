@@ -27,12 +27,14 @@ export const Result = ({
   requestStepStatus,
   fieldAnswers,
   displayDescripton,
+  onlyShowSelections = false,
 }: {
   resultConfig: ResultConfigFragment;
   field: FieldFragment | null;
   result: ResultFragment | null;
   requestStepStatus: Status;
   fieldAnswers?: UserFieldAnswersFragment | undefined;
+  onlyShowSelections?: boolean;
   displayDescripton: boolean;
 }) => {
   console.log("result is ", result);
@@ -78,6 +80,7 @@ export const Result = ({
             fieldOptions={field}
             final={!!result}
             optionSelections={result?.resultItems}
+            onlyShowSelections={onlyShowSelections}
           />
         )}
         {field &&

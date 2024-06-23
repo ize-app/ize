@@ -7,17 +7,15 @@ import { useContext } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
-// import { PanelHeader } from "@/components/ConfigDiagram";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
-import { StatusTag } from "@/components/status/StatusTag";
 import { Route } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GetRequestDocument, ResponseFragment, Status } from "../../graphql/generated/graphql";
+import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -86,140 +84,110 @@ export const Request = () => {
         title={"Request for " + request.flow.name}
         description={"Request for " + request.flow.name}
       />
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-        <Box>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography variant={"body1"} fontWeight={600} color="primary">
-              Request
-            </Typography>
-            <Typography variant={"h1"} marginBottom={".75rem"}>
-              {request.name}
-            </Typography>
-            <Typography variant={"h3"}>
-              <Link
-                to={generatePath(Route.Flow, {
-                  flowId: fullUUIDToShort(request.flow.flowId),
-                  // Link to old version of flow if request is made from an older version
-                  flowVersionId:
-                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                      ? fullUUIDToShort(request.flow.flowVersionId)
-                      : null,
-                })}
-              >
-                {request.flow.name}
-              </Link>
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "30px",
-                  minWidth: "400px",
-                  maxWidth: "800px",
-                }}
-              >
-                <Box
-                  sx={{
-                    outline: "1px solid rgba(0, 0, 0, 0.1)",
-                    padding: "16px 24px 16px 16px",
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography color="primary" variant="label" marginBottom="8px">
-                    Request Context
-                  </Typography>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <Box sx={{ display: "flex", gap: "8px" }}>
-                        <Typography>Created by{"  "}</Typography>
-                        <AvatarWithName avatar={request.creator} />
-                        <Typography>
-                          at {new Date(request.createdAt).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                      <StatusTag status={request.final ? Status.Completed : Status.NotAttempted} />
-                    </Box>
-                    <Fields
-                      fields={request.flow.steps[0].request.fields}
-                      fieldAnswers={request.steps[0].requestFieldAnswers}
-                    />
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    outline: "1px solid rgba(0, 0, 0, 0.1)",
-                    padding: "16px 24px 16px 16px",
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography color="primary" variant="label" marginBottom="8px">
-                    Results
-                  </Typography>
-                  {/* <Fields
-                    fields={request.flow.steps[0].request.fields}
-                    fieldAnswers={request.steps[0].requestFieldAnswers}
-                  /> */}
-                  <RequestResults request={request} />
-                </Box>
-              </Box>
-              {canRespond &&
-                ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
-                  <Paper
-                    sx={{
-                      flexGrow: 1,
-                      width: "60%",
-                      minWidth: "300px",
-                      maxWidth: "500px",
-                      border: "solid purple 1px",
-                      marginLeft: "2rem",
-                    }}
-                  >
-                    {/* <PanelHeader>
-                      <Typography color="primary" variant="label">
-                        Respond
-                      </Typography>
-                    </PanelHeader> */}
-                    <ResponseForm
-                      requestStepId={request.steps[request.currentStepIndex].requestStepId}
-                      responseFields={request.steps[request.currentStepIndex].responseFields}
-                    />
-                  </Paper>
-                )}
-            </Box>
-          </Box>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography variant={"body1"} fontWeight={600} color="primary">
+            Request
+          </Typography>
+          <Typography variant={"h1"} marginBottom={".75rem"}>
+            {request.name}
+          </Typography>
+          <Typography variant={"h3"}>
+            <Link
+              to={generatePath(Route.Flow, {
+                flowId: fullUUIDToShort(request.flow.flowId),
+                // Link to old version of flow if request is made from an older version
+                flowVersionId:
+                  request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                    ? fullUUIDToShort(request.flow.flowVersionId)
+                    : null,
+              })}
+            >
+              {request.flow.name}
+            </Link>
+          </Typography>
         </Box>
-        <ConfigDiagramRequest request={request} />
         <Box
-          sx={(theme) => ({
+          sx={{
             display: "flex",
-            gap: "100px",
             justifyContent: "space-between",
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column-reverse",
-              gap: "24px",
-            },
-          })}
+            marginTop: "24px",
+            marginBottom: "60px",
+          }}
         >
           <Box
-            sx={(theme) => ({
-              [theme.breakpoints.up("md")]: {
-                flex: "1 400px",
-              },
-            })}
-          ></Box>
-          <Box
             sx={{
-              [theme.breakpoints.up("md")]: {
-                flex: "2 300px",
-              },
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+              minWidth: "400px",
+              maxWidth: "800px",
             }}
-          ></Box>
+          >
+            <Box
+              sx={{
+                outline: "1px solid rgba(0, 0, 0, 0.1)",
+                padding: "16px 24px 16px 16px",
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography color="primary" variant="label" marginBottom="12px">
+                Request
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <Box sx={{ display: "flex", gap: "6px" }}>
+                  <Typography fontSize={".875rem"}>Created by{"  "}</Typography>
+                  <AvatarWithName avatar={request.creator} />
+                  <Typography fontSize={".875rem"}>
+                    on {new Date(request.createdAt).toLocaleDateString()}
+                  </Typography>
+                </Box>
+                <Fields
+                  fields={request.flow.steps[0].request.fields}
+                  fieldAnswers={request.steps[0].requestFieldAnswers}
+                  onlyShowSelections={true}
+                />
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                outline: "1px solid rgba(0, 0, 0, 0.1)",
+                padding: "16px 24px 16px 16px",
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography color="primary" variant="label" marginBottom="12px">
+                Results
+              </Typography>
+              <RequestResults request={request} />
+            </Box>
+          </Box>
+          {canRespond &&
+            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+              <Paper
+                sx={{
+                  flexGrow: 1,
+                  width: "60%",
+                  minWidth: "300px",
+                  maxWidth: "500px",
+                  border: "solid purple 1px",
+                  marginLeft: "2rem",
+                }}
+              >
+                <ResponseForm
+                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
+                  responseFields={request.steps[request.currentStepIndex].responseFields}
+                />
+              </Paper>
+            )}
         </Box>
+        <ConfigDiagramRequest request={request} />
       </Box>
     </PageContainer>
   );

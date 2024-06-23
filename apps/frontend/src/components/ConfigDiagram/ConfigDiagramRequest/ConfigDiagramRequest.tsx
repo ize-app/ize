@@ -1,6 +1,6 @@
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
@@ -8,6 +8,7 @@ import {
   DiagramPanel,
   FlowConfigDiagramContainer,
   PanelContainer,
+  PanelHeader,
   RequestStage,
 } from "@/components/ConfigDiagram";
 import { RequestFragment, Status } from "@/graphql/generated/graphql";
@@ -29,6 +30,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       {/* <PanelHeader>Header</PanelHeader> */}
+      <PanelHeader>
+        <Typography color="primary" variant="label">
+          Flow details
+        </Typography>{" "}
+      </PanelHeader>
       <FlowConfigDiagramContainer>
         <PanelContainer>
           {/* <PanelHeader>Header</PanelHeader> */}
