@@ -28,6 +28,7 @@ export const Result = ({
   fieldAnswers,
   displayDescripton,
   onlyShowSelections = false,
+  displayFieldOptionsIfNoResult = true,
 }: {
   resultConfig: ResultConfigFragment;
   field: FieldFragment | null;
@@ -36,12 +37,13 @@ export const Result = ({
   fieldAnswers?: UserFieldAnswersFragment | undefined;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
+  displayFieldOptionsIfNoResult?: boolean;
 }) => {
   console.log("result is ", result);
   return (
     <LabeledGroupedInputs
       sx={{
-        padding: "8px 16px 16px",
+        padding: "12px 16px 12px",
         display: "flex",
         flexDirection: "column",
         gap: "12px",
@@ -75,14 +77,16 @@ export const Result = ({
             </Typography>
           </Box>
         )}
-        {field && field.__typename === FieldType.Options && (
-          <FieldOptions
-            fieldOptions={field}
-            final={!!result}
-            optionSelections={result?.resultItems}
-            onlyShowSelections={onlyShowSelections}
-          />
-        )}
+        {field &&
+          field.__typename === FieldType.Options &&
+          (result || (!result && displayFieldOptionsIfNoResult)) && (
+            <FieldOptions
+              fieldOptions={field}
+              final={!!result}
+              optionSelections={result?.resultItems}
+              onlyShowSelections={onlyShowSelections}
+            />
+          )}
         {field &&
           field.__typename === FieldType.FreeInput &&
           result?.resultItems.map((item) => (

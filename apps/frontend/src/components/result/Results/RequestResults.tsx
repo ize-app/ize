@@ -14,7 +14,7 @@ import { Result } from "./Result";
 interface HydratedResultData {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
-  result: ResultFragment;
+  result: ResultFragment | null;
   requestStepStatus: Status;
 }
 
@@ -32,10 +32,11 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
 
     step.result.forEach((resultConfig) => {
       const field = step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
-      const result = request.steps[stepIndex].results.find(
-        (result) => result.resultConfigId === resultConfig.resultConfigId,
-      );
-      if (field && result) hydratedResults.push({ field, resultConfig, result, requestStepStatus });
+      const result =
+        request.steps[stepIndex].results.find(
+          (result) => result.resultConfigId === resultConfig.resultConfigId,
+        ) ?? null;
+      if (field) hydratedResults.push({ field, resultConfig, result, requestStepStatus });
     });
   });
 
@@ -47,6 +48,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
           {...resultData}
           displayDescripton={false}
           onlyShowSelections={true}
+          displayFieldOptionsIfNoResult={false}
         />
       ))}
     </Box>
