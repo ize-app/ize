@@ -12,6 +12,7 @@ import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import { Route } from "@/routers/routes";
+import { colors } from "@/style/style";
 
 import Loading from "../../components/Loading";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
@@ -113,6 +114,10 @@ export const Request = () => {
             justifyContent: "space-between",
             marginTop: "24px",
             marginBottom: "60px",
+            [theme.breakpoints.down("md")]: {
+              flexDirection: "column-reverse",
+              gap: "24px",
+            },
           }}
         >
           <Box
@@ -120,7 +125,7 @@ export const Request = () => {
               display: "flex",
               flexDirection: "column",
               gap: "18px",
-              minWidth: "400px",
+              minWidth: "350px",
               maxWidth: "800px",
             }}
           >
@@ -173,11 +178,15 @@ export const Request = () => {
               <Paper
                 sx={{
                   flexGrow: 1,
-                  width: "60%",
-                  minWidth: "300px",
-                  maxWidth: "500px",
-                  border: "solid purple 1px",
+                  minWidth: "250px",
+                  maxWidth: "600px",
+                  border: `solid ${colors.primaryContainer} 2px`,
                   marginLeft: "2rem",
+                  [theme.breakpoints.down("md")]: {
+                    width: "100%",
+                    marginLeft: 0,
+                    maxWidth: "100%",
+                  },
                 }}
               >
                 <ResponseForm
