@@ -11,7 +11,6 @@ import { json } from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import session from "express-session";
 
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 
@@ -29,21 +28,10 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const frontendPath = path.join(__dirname, "../../frontend");
 const app = express();
 
-const sessionValue = {
-  secret: process.env.SESSION_SECRET as string,
-  cookie: { secure: false },
-};
-
 app.use(cookieParser());
 app.use(authenticateSession);
-app.use(session(sessionValue));
 app.use("/api/auth", authRouter);
 app.use(express.static(frontendPath));
-
-if (app.get("env") === "production") {
-  app.set("trust proxy", 1); // trust first proxy
-  sessionValue.cookie.secure = true; // serve secure cookies
-}
 
 // Healthcheck endpoint used by Render
 app.get("/healthcheck", async (_req, res) => {
