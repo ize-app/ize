@@ -54,15 +54,7 @@ envVarGroups:
         sync: false
       - key: OPEN_AI_KEY
         sync: false
-      - key: ALCHEMY_API_KEY_ETHEREUM
-        sync: false
-      - key: ALCHEMY_API_KEY_BASE
-        sync: false
-      - key: ALCHEMY_API_KEY_POLYGON
-        sync: false
-      - key: ALCHEMY_API_KEY_ARBITRUM
-        sync: false
-      - key: ALCHEMY_API_KEY_OPTIMISM
+      - key: ALCHEMY_API_KEY
         sync: false
       - key: STYTCH_PROJECT_ID
         sync: false

@@ -59,7 +59,10 @@ export class AlchemyMultichainClient {
         this.overrides && this.overrides[network]
           ? { ...this.overrides[network], network }
           : { ...this.settings, network };
-      this.instances.set(network, new Alchemy(alchemySettings));
+      this.instances.set(
+        network,
+        new Alchemy({ apiKey: process.env.ALCHEMY_API_KEY, ...alchemySettings }),
+      );
     }
     return this.instances.get(network) as Alchemy;
   }
