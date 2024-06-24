@@ -13,9 +13,11 @@ import { formatOptionSelectionType } from "./formatOptionSelectionType";
 export const Field = ({
   field,
   fieldAnswer,
+  onlyShowSelections = false,
 }: {
   field: FieldFragment;
   fieldAnswer?: FieldAnswerFragment | undefined;
+  onlyShowSelections?: boolean;
 }) => {
   switch (field.__typename) {
     case FieldType.FreeInput: {
@@ -54,6 +56,7 @@ export const Field = ({
             </span>
           </Typography>
           <FieldOptions
+            onlyShowSelections={onlyShowSelections}
             fieldOptions={field}
             optionSelections={optionSelections}
             final={!!optionSelections} // TODO: revisit this

@@ -1,12 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
-import {
-  ConfigurationPanel,
-  PanelAccordion,
-  PanelContainer,
-  PanelHeader,
-} from "@/components/ConfigDiagram";
-import { Results } from "@/components/result/Results";
+import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
+import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
@@ -50,11 +45,11 @@ export const ConfigRequestStepPanel = ({
 
   return (
     <PanelContainer>
-      <PanelHeader>
+      {/* <PanelHeader>
         <Typography color="primary" variant="label">
           Step configuration
         </Typography>{" "}
-      </PanelHeader>
+      </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Status" hasError={false}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -98,7 +93,7 @@ export const ConfigRequestStepPanel = ({
         </PanelAccordion>
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
-          <Results
+          <RequestStepResults
             resultConfigs={step.result}
             responseFields={step.response.fields}
             results={requestStep?.results ?? []}

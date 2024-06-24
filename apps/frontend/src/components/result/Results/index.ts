@@ -1,2 +1,2 @@
 export { Result } from "./Result";
-export { Results } from "./Results";
+export { RequestStepResults } from "../../ConfigDiagram/ConfigDiagramRequest/RequestStepResults";

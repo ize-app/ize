@@ -1,0 +1,55 @@
+import Box from "@mui/material/Box";
+
+import {
+  FieldFragment,
+  ResultConfigFragment,
+  ResultFragment,
+  Status,
+  UserFieldAnswersFragment,
+} from "@/graphql/generated/graphql";
+
+import { Result } from "../../result/Results/Result";
+
+export const RequestStepResults = ({
+  resultConfigs,
+  responseFields,
+  results,
+  requestStatus,
+  fieldsAnswers,
+}: {
+  resultConfigs: ResultConfigFragment[];
+  responseFields: FieldFragment[];
+  results: ResultFragment[];
+  requestStatus: Status;
+  fieldsAnswers: UserFieldAnswersFragment[];
+}) => {
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {resultConfigs.map((resultConfig) => {
+        let field: FieldFragment | null = null;
+        const result: ResultFragment | null =
+          results.find((r) => r.resultConfigId === resultConfig.resultConfigId) ?? null;
+
+        const fieldAnswers: UserFieldAnswersFragment | undefined = fieldsAnswers.find((answer) => {
+          return answer.fieldId === resultConfig.fieldId;
+        });
+
+        if (resultConfig.fieldId) {
+          field = responseFields.find((field) => field.fieldId === resultConfig.fieldId) ?? null;
+        }
+
+        return (
+          <Result
+            key={resultConfig.resultConfigId}
+            resultConfig={resultConfig}
+            result={result}
+            field={field}
+            requestStepStatus={requestStatus}
+            fieldAnswers={fieldAnswers}
+            displayDescripton={true}
+          />
+        );
+      })}
+    </Box>
+  );
+};

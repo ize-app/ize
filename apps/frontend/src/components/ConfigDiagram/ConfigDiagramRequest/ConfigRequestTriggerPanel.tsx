@@ -1,12 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
 import { AvatarWithName } from "@/components/Avatar";
-import {
-  ConfigurationPanel,
-  PanelAccordion,
-  PanelContainer,
-  PanelHeader,
-} from "@/components/ConfigDiagram";
+import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import { Fields } from "@/components/Field/Fields";
 import {
   RequestStepFragment,
@@ -25,11 +20,11 @@ export const ConfigRequestTriggerPanel = ({
 }) => {
   return (
     <PanelContainer>
-      <PanelHeader>
+      {/* <PanelHeader>
         <Typography color="primary" variant="label">
           Trigger configuration
         </Typography>
-      </PanelHeader>
+      </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Trigger permission" hasError={false}>
           {/* <Permissions permission={step.request.permission} type="request" /> */}

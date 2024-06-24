@@ -9,7 +9,7 @@ import {
 } from "@/graphql/generated/graphql";
 
 import { createResultConfigDescription } from "../createResultConfigDescription";
-import { ResultName } from "../ResultName";
+import { ResultHeader } from "../ResultName";
 import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const ResultConfig = ({
@@ -21,7 +21,7 @@ export const ResultConfig = ({
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <ResultName
+      <ResultHeader
         name={field?.name}
         resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
       />

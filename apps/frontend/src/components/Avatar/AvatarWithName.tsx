@@ -11,7 +11,7 @@ export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
         // width: "100%",
         justifyContent: "left",
         alignItems: "center",
-        gap: "12px",
+        gap: "6px",
         verticalAlign: "middle",
       }}
     >

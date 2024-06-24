@@ -68,7 +68,7 @@ export const About = () => {
         <p>
           If software created the crisis of modern work, could it somehow be used to fix it? Our
           current set of online tools only seem to make the problem worse. Each new tool is yet
-          another demand on our our attentional reserves.
+          another demand on our limited attentional reserves.
         </p>
         <p>
           A solution would need to reduce our attentional overhead while enabling new modes of
