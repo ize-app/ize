@@ -52,7 +52,7 @@ const stepSchema = z
       else return true;
     },
     {
-      message: "Either add response fields or set this step to 'No response'",
+      message: "Add a result to this collaboration step",
     },
   )
   .refine(
