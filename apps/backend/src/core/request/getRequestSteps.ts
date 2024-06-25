@@ -11,10 +11,10 @@ export const getRequestSteps = async ({
   user,
 }: {
   args: QueryGetRequestStepsArgs;
-  user: MePrismaType;
+  user: MePrismaType | undefined | null;
 }): Promise<RequestStepSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
-  const identityIds: string[] = user.Identities.map((id) => id.id);
+  const identityIds: string[] = user?.Identities.map((id) => id.id) ?? [];
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.requestStep.findMany({
       take: args.limit,
@@ -44,7 +44,7 @@ export const getRequestSteps = async ({
                 },
               }
             : {},
-          args.userOnly
+          args.userOnly && user?.id
             ? {
                 Request: {
                   OR: [
@@ -115,7 +115,7 @@ export const getRequestSteps = async ({
         requestStepSummary: requestStep,
         identityIds,
         groupIds,
-        userId: user.id,
+        userId: user?.id,
       }),
     );
   });

@@ -6,7 +6,6 @@ import { RequestStepSummary } from "@/graphql/generated/resolver-types";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestStepSummaryPrismaType } from "../requestPrismaTypes";
 
-
 export const requestStepSummaryResolver = ({
   requestStepSummary,
   identityIds,
@@ -16,7 +15,7 @@ export const requestStepSummaryResolver = ({
   requestStepSummary: RequestStepSummaryPrismaType;
   identityIds: string[];
   groupIds: string[];
-  userId: string;
+  userId: string | undefined;
 }): RequestStepSummary => {
   const r = requestStepSummary;
   return {
