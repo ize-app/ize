@@ -207,8 +207,8 @@ export const EntitySearch = <T extends FieldValues>({
                 }
                 renderOption={(props, option) => (
                   <Box
+                    {...props}
                     component="li"
-                    key={"option" + option.id}
                     sx={{
                       display: "flex",
                       width: "100%",
@@ -217,7 +217,7 @@ export const EntitySearch = <T extends FieldValues>({
                       gap: "16px",
                       verticalAlign: "middle",
                     }}
-                    {...props}
+                    key={"option" + option.id}
                   >
                     <Avatar
                       id={option.id}

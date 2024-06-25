@@ -72,7 +72,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
             { name: "Anyone can respond", value: PermissionType.Anyone },
           ]}
           label="Who can respond?"
-          displayLabel={false}
           size="small"
         />
         {responseTrigger === PermissionType.Entities && (
@@ -94,7 +93,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           }}
           selectOptions={requestExpirationOptions}
           name={`steps.${formIndex}.expirationSeconds`}
-          displayLabel={false}
           size={"small"}
         />
         <Switch<FlowSchemaType>

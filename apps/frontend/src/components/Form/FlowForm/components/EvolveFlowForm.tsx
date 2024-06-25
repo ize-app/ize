@@ -105,7 +105,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
           ]}
           name={`evolve.decision.type`}
           size="small"
-          displayLabel={false}
         />
 
         {decisionType === DecisionType.NumberThreshold && (

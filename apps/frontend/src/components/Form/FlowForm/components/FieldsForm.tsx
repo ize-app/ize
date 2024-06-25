@@ -92,7 +92,6 @@ export const FieldsForm = ({
                 <ResponsiveFormRow>
                   <Select<FlowSchemaType>
                     control={control}
-                    displayLabel={false}
                     size={"small"}
                     disabled={noEdit}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
@@ -109,7 +108,6 @@ export const FieldsForm = ({
                     sx={{
                       display: fieldType === FieldType.FreeInput ? "flex" : "none",
                     }}
-                    displayLabel={false}
                     size={"small"}
                     disabled={noEdit}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
@@ -131,7 +129,6 @@ export const FieldsForm = ({
                       display: fieldType === FieldType.Options ? "flex" : "none",
                     }}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`}
-                    displayLabel={false}
                     size="small"
                     selectOptions={[
                       {
