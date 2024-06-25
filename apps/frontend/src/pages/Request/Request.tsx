@@ -125,7 +125,8 @@ export const Request = () => {
               display: "flex",
               flexDirection: "column",
               gap: "18px",
-              minWidth: "350px",
+              minWidth: "400px",
+              width: "100%",
               maxWidth: "800px",
             }}
           >
@@ -180,6 +181,7 @@ export const Request = () => {
                   flexGrow: 1,
                   minWidth: "250px",
                   maxWidth: "600px",
+                  width: "100%",
                   border: `solid ${colors.primaryContainer} 2px`,
                   marginLeft: "2rem",
                   [theme.breakpoints.down("md")]: {
