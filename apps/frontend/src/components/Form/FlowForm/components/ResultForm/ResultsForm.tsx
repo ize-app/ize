@@ -264,7 +264,6 @@ const ResultForm = ({
               ]}
               name={`steps.${formIndex}.result.${resultIndex}.type`}
               size="small"
-              displayLabel={false}
               defaultValue=""
             />
             <TextField<FlowSchemaType>

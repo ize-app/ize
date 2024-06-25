@@ -15,7 +15,7 @@ export interface SelectOption {
 
 interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
-  // displayLabel?: boolean;
+
   selectOptions: SelectOption[];
   required?: boolean;
   loading?: boolean;

@@ -81,7 +81,6 @@ export const ActionFilterForm = ({ formMethods, formIndex, actionType }: ActionF
           } else return "Run action on all options";
         }}
         selectOptions={[...filterOptions]}
-        displayLabel={false}
         defaultValue=""
         name={`steps.${formIndex}.action.filterOptionId`}
       />

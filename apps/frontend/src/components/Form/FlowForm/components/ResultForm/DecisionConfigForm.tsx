@@ -73,7 +73,6 @@ export const DecisionConfigForm = ({
         <Select<FlowSchemaType>
           control={formMethods.control}
           name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
-          displayLabel={false}
           size="small"
           defaultValue=""
           selectOptions={[
@@ -103,7 +102,6 @@ export const DecisionConfigForm = ({
           defaultValue=""
           name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
-          displayLabel={false}
         />
       </ResponsiveFormRow>
       <ResponsiveFormRow>
@@ -161,7 +159,6 @@ export const DecisionConfigForm = ({
           } else return "No default result";
         }}
         selectOptions={defaultDecisionOptions}
-        displayLabel={false}
         name={`steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`}
       />
     </FieldBlock>

@@ -61,7 +61,6 @@ export const PrioritizationForm = ({
           }}
           selectOptions={maxListItemsOptions}
           name={`steps.${formIndex}.result.${resultIndex}.prioritization.numPrioritizedItems`}
-          displayLabel={false}
           size={"small"}
           defaultValue=""
         />
