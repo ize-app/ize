@@ -39,7 +39,7 @@ export const ConfigStepPanel = ({
           )}
           {step.expirationSeconds &&
             `Respondants have ${intervalToIntuitiveTimeString(
-              step.expirationSeconds,
+              step.expirationSeconds * 1000,
             )} to respond and can respond ${
               step.allowMultipleResponses ? "multiple times" : "only once"
             }`}
