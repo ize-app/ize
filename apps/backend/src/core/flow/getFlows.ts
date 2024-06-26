@@ -60,20 +60,6 @@ export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSu
                         },
                       },
                     ],
-                    RequestPermissions: {
-                      EntitySet: {
-                        EntitySetEntities: {
-                          some: {
-                            Entity: {
-                              OR: [
-                                { Group: { id: { in: groupIds } } },
-                                { Identity: { id: { in: identityIds } } },
-                              ],
-                            },
-                          },
-                        },
-                      },
-                    },
                   },
                 },
               },
