@@ -47,7 +47,15 @@ export const createResultConfigDescription = (resultConfig: ResultConfigFragment
     case ResultType.LlmSummary: {
       return `All responses will be summarized with AI using the following prompt: 
       
-      "${resultConfig.prompt}"
+      "${resultConfig.prompt}"${
+        resultConfig.example
+          ? `
+      
+      Example output: 
+
+      "${resultConfig.example}"`
+          : ""
+      }
 
       ${minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
       `;
