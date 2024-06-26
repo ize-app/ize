@@ -52,7 +52,7 @@ export const getRequestSteps = async ({
                       FlowVersion: {
                         Steps: {
                           some: {
-                            RequestPermissions: {
+                            ResponsePermissions: {
                               EntitySet: {
                                 EntitySetEntities: {
                                   some: {
