@@ -136,7 +136,7 @@ export const DecisionConfigForm = ({
           showLabel={false}
           size={"small"}
           defaultValue=""
-          endAdornment={<InputAdornment position="end">responses minimum to decide</InputAdornment>}
+          endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
           name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
       </ResponsiveFormRow>

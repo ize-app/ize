@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { InputAdornment, Typography } from "@mui/material";
 import { UseFormReturn } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
@@ -56,6 +56,15 @@ export const LlmSummaryForm = ({
         size="small"
         showLabel={false}
         defaultValue="test"
+      />
+      <TextField<FlowSchemaType>
+        control={formMethods.control}
+        label="Minimum # of responses for a result"
+        showLabel={false}
+        size={"small"}
+        defaultValue=""
+        endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+        name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
       />
     </FieldBlock>
   );

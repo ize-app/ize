@@ -13,6 +13,10 @@ const GlobalStyles = css`
     font-family: ${style.fontFamily};
     background-color: #fffbff;
   }
+  .MuiTypography-root {
+    // Your custom styles here
+    white-space: pre-line;
+  }
   #root {
     width: 100%;
     height: 100%;

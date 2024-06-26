@@ -45,12 +45,20 @@ export const createResultConfigDescription = (resultConfig: ResultConfigFragment
         : "All options will be included in the final result. ";
     }
     case ResultType.LlmSummary: {
-      return `All responses will be summarized with AI using the following prompt: "
-      ${resultConfig.prompt}"`;
+      return `All responses will be summarized with AI using the following prompt: 
+      
+      "${resultConfig.prompt}"
+
+      ${minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
+      `;
     }
     case ResultType.LlmSummaryList: {
-      return `All responses will be summarized with AI using the following prompt: "
-      ${resultConfig.prompt}"`;
+      return `All responses will be summarized with AI using the following prompt: 
+      
+      "${resultConfig.prompt}"
+
+      ${minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
+      `;
     }
   }
 };
