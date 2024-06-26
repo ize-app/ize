@@ -54,7 +54,7 @@ const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragme
   const navigate = useNavigate();
 
   const stepProgress =
-    requestStep.totalSteps > 0
+    requestStep.totalSteps > 1
       ? ` (Step ${requestStep.stepIndex + 1} of ${requestStep.totalSteps})`
       : ``;
 

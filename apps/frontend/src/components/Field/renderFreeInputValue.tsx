@@ -19,7 +19,11 @@ export const renderFreeInputValue = (
 ): ReactElement => {
   switch (type) {
     case FieldDataType.String:
-      return <Typography fontSize={fontSize}>{value}</Typography>;
+      return (
+        <Typography fontSize={fontSize} sx={{ whiteSpace: "pre-line" }}>
+          {value}
+        </Typography>
+      );
     case FieldDataType.Number:
       return <Typography>{value}</Typography>;
     case FieldDataType.Date:
