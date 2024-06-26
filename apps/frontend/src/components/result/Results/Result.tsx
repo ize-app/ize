@@ -63,7 +63,7 @@ export const Result = ({
           requestStatus={requestStepStatus}
         />
         {displayDescripton && (
-          <Typography variant="description">
+          <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
             {createResultConfigDescription(resultConfig)}
           </Typography>
         )}

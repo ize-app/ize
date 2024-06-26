@@ -25,7 +25,9 @@ export const ResultConfig = ({
         name={field?.name}
         resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
       />
-      <Typography variant="description">{createResultConfigDescription(resultConfig)}</Typography>
+      <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
+        {createResultConfigDescription(resultConfig)}
+      </Typography>
       {field && field.__typename === FieldType.Options && (
         <FieldOptions fieldOptions={field} final={false} />
       )}
