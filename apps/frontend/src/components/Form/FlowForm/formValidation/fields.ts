@@ -88,7 +88,7 @@ export const fieldSchema = z
     z.object({
       type: z.literal(FieldType.FreeInput),
       fieldId: z.string(),
-      name: z.string().min(1),
+      name: z.any(),
       required: z.boolean().optional().default(true),
       freeInputDataType: z.nativeEnum(FieldDataType),
     }),
@@ -112,6 +112,10 @@ export const fieldSchema = z
       return true;
     },
     { path: [""], message: "Add options or allow requestor to create their own options." },
-  );
+  )
+  .superRefine((field, ctx) => {
+    if (field.type === FieldType.FreeInput)
+      evaluateMultiTypeInput(field.name, field.freeInputDataType, ["name"], ctx);
+  });
 
 export const fieldsSchema = z.array(fieldSchema).default([]);

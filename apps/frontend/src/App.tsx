@@ -1,6 +1,8 @@
 import { ApolloProvider } from "@apollo/client";
 import { Global } from "@emotion/react";
 import { ThemeProvider } from "@mui/material/styles";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StytchProvider } from "@stytch/react";
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router-dom";
@@ -21,13 +23,15 @@ function App() {
         <HelmetProvider>
           <Global styles={GlobalStyles} />
           <ThemeProvider theme={muiTheme}>
-            <CurrentUserProvider>
-              <SnackbarProvider>
-                <RecentAgentsProvider>
-                  <RouterProvider router={router} />
-                </RecentAgentsProvider>
-              </SnackbarProvider>
-            </CurrentUserProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <CurrentUserProvider>
+                <SnackbarProvider>
+                  <RecentAgentsProvider>
+                    <RouterProvider router={router} />
+                  </RecentAgentsProvider>
+                </SnackbarProvider>
+              </CurrentUserProvider>
+            </LocalizationProvider>
           </ThemeProvider>
         </HelmetProvider>
       </ApolloProvider>
