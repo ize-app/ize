@@ -5,43 +5,49 @@ import { runResultsAndActions } from "../result/newResults/runResultsAndActions"
 
 // run results and actions on newly expired requests
 export const handleExpiredResults = async () => {
-  console.log("inside handleExpiredResults");
   const now = new Date();
-
-  // get request steps that are past expiration date but haven't been processed yet
-  const newlyExpiredSteps = await prisma.requestStep.findMany({
-    where: {
-      responseComplete: false,
-      expirationDate: { lte: now },
-    },
-    include: {
-      Responses: {
-        include: responseInclude,
+  try {
+    // get request steps that are past expiration date but haven't been processed yet
+    const newlyExpiredSteps = await prisma.requestStep.findMany({
+      where: {
+        responseComplete: false,
+        expirationDate: { lte: now },
       },
-      Step: {
-        include: stepInclude,
+      include: {
+        Responses: {
+          include: responseInclude,
+        },
+        Step: {
+          include: stepInclude,
+        },
       },
-    },
-  });
+    });
 
-  // stop allowing responses on expired requests
-  await prisma.requestStep.updateMany({
-    where: {
-      responseComplete: false,
-      expirationDate: { lte: now },
-    },
-    data: {
-      responseComplete: true,
-    },
-  });
+    // stop allowing responses on expired requests
+    await prisma.requestStep.updateMany({
+      where: {
+        responseComplete: false,
+        expirationDate: { lte: now },
+      },
+      data: {
+        responseComplete: true,
+      },
+    });
 
-  return await Promise.all(
-    newlyExpiredSteps.map(async (requestStep) => {
-      return await runResultsAndActions({
-        requestStepId: requestStep.id,
-        step: requestStep.Step,
-        responses: requestStep.Responses,
-      });
-    }),
-  );
+    return await Promise.all(
+      newlyExpiredSteps.map(async (requestStep) => {
+        return await runResultsAndActions({
+          requestStepId: requestStep.id,
+          step: requestStep.Step,
+          responses: requestStep.Responses,
+        });
+      }),
+    );
+  } catch (error) {
+    console.error("Error in handleExpiredResults:", error);
+    throw error;
+  } finally {
+    // Ensure all connections are properly closed
+    await prisma.$disconnect();
+  }
 };
