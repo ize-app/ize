@@ -18,7 +18,7 @@ export const validateInput = (value: string, dataType: FieldDataType): boolean =
       pass = z.string().pipe(z.coerce.date()).safeParse(value).success;
       break;
     case FieldDataType.DateTime:
-      pass = z.string().datetime().safeParse(value).success;
+      pass = z.string().pipe(z.coerce.date()).safeParse(value).success;
       break;
     case FieldDataType.FlowVersionId:
       pass = z.string().uuid().safeParse(value).success;
