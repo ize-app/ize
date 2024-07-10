@@ -12,6 +12,7 @@ type Query {
     userOnly: Boolean!
     flowId: String
     searchQuery: String!
+    filter: RequestStepFilter!
   ): [RequestStepSummary!]!
 }
 
@@ -46,6 +47,12 @@ enum Status {
   Completed
   Failure
   Cancelled
+}
+
+enum RequestStepFilter {
+  All
+  Open
+  Closed
 }
 
 type Request {

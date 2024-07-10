@@ -1,6 +1,7 @@
 import { useLazyQuery } from "@apollo/client";
-import { Button, Typography, debounce } from "@mui/material";
+import { Button, MenuItem, Typography, debounce } from "@mui/material";
 import Box from "@mui/material/Box";
+import Select from "@mui/material/Select";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link, generatePath } from "react-router-dom";
 
@@ -11,12 +12,19 @@ import Search from "@/components/Tables/Search";
 import {
   GetRequestStepsDocument,
   GetRequestStepsQueryVariables,
+  RequestStepFilter,
   RequestStepSummaryFragment,
 } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
+
+const filters = [
+  { label: "All", value: RequestStepFilter.All },
+  { label: "Open", value: RequestStepFilter.Open },
+  { label: "Closed", value: RequestStepFilter.Closed },
+];
 
 export const RequestStepsSearch = ({
   userOnly,
@@ -27,6 +35,7 @@ export const RequestStepsSearch = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
+  const [filter, setFilter] = useState<RequestStepFilter>(RequestStepFilter.Open);
   const queryResultLimit = 20;
 
   const queryVars: GetRequestStepsQueryVariables = {
@@ -34,6 +43,7 @@ export const RequestStepsSearch = ({
     flowId,
     searchQuery,
     limit: queryResultLimit,
+    filter,
   };
 
   // const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
@@ -41,12 +51,13 @@ export const RequestStepsSearch = ({
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestStepsDocument);
 
   const debouncedRefetch = debounce(() => {
+    setOldCursor(undefined);
     getResults({ variables: queryVars });
   }, 1000);
 
   useEffect(() => {
     debouncedRefetch();
-  }, [searchQuery]);
+  }, [searchQuery, filter]);
 
   useEffect(() => {
     getResults({ variables: queryVars });
@@ -90,7 +101,25 @@ export const RequestStepsSearch = ({
               setSearchQuery(event.target.value);
             }}
           />
-
+          <Select
+            sx={{
+              width: "140px",
+            }}
+            inputProps={{ multiline: "true" }}
+            aria-label={"Request step filter"}
+            defaultValue={filter}
+            size={"small"}
+            onChange={(event) => {
+              setFilter(event.target.value as RequestStepFilter);
+              return;
+            }}
+          >
+            {filters.map((filter) => (
+              <MenuItem key={filter.value} value={filter.value}>
+                {filter.label}
+              </MenuItem>
+            ))}
+          </Select>
           {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>
         <CreateButton />

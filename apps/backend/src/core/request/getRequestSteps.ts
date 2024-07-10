@@ -1,4 +1,8 @@
-import { QueryGetRequestStepsArgs, RequestStepSummary } from "@/graphql/generated/resolver-types";
+import {
+  QueryGetRequestStepsArgs,
+  RequestStepFilter,
+  RequestStepSummary,
+} from "@/graphql/generated/resolver-types";
 
 import { requestStepSummaryInclude } from "./requestPrismaTypes";
 import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
@@ -100,6 +104,9 @@ export const getRequestSteps = async ({
                   },
                 ],
               }
+            : {},
+          args.filter !== RequestStepFilter.All
+            ? { final: args.filter === RequestStepFilter.Closed }
             : {},
         ],
       },
