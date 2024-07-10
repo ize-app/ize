@@ -14,6 +14,7 @@ const Search = ({ searchQuery, changeHandler }: SearchProps) => {
         "& .MuiOutlinedInput-notchedOutline": {
           borderRadius: "100px",
         },
+        minWidth: "140px",
       }}
       id="search"
       type="search"

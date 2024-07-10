@@ -23,11 +23,11 @@ export const RequestStepsTable = ({
   requestSteps: RequestStepSummaryFragment[];
 }) => {
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Request Table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCellHideable>Request</TableCellHideable>
+            <TableCellHideable sx={{ minWidth: "140px" }}>Request</TableCellHideable>
             <TableCellHideable align="center" width={"100px"}>
               Status
             </TableCellHideable>

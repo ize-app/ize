@@ -19,18 +19,16 @@ import { fullUUIDToShort } from "@/utils/inputs";
 
 export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCellHideable sx={{ minWidth: "60%" }}>Flow</TableCellHideable>
+            <TableCellHideable sx={{ minWidth: "140px" }}>Flow</TableCellHideable>
             <TableCellHideable align="right" width={"60px"}>
               Creator
             </TableCellHideable>
 
-            <TableCell align="right" width={"60px"}>
-              {/* Trigger */}
-            </TableCell>
+            <TableCellHideable align="right" width={"60px"} hideOnSmallScreen></TableCellHideable>
           </TableRow>
         </TableHead>
         <TableBody>
