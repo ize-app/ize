@@ -767,6 +767,7 @@ export type RequestStepSummary = {
   stepIndex: Scalars['Int']['output'];
   totalSteps: Scalars['Int']['output'];
   userRespondPermission: Scalars['Boolean']['output'];
+  userResponded: Scalars['Boolean']['output'];
 };
 
 export type Response = {
@@ -1640,6 +1641,7 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalSteps?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userResponded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

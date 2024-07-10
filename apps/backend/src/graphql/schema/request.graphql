@@ -92,6 +92,7 @@ type RequestStepSummary {
   requestName: String!
   respondPermission: Permission
   userRespondPermission: Boolean!
+  userResponded: Boolean!
   flowName: String!
   stepIndex: Int!
   totalSteps: Int!

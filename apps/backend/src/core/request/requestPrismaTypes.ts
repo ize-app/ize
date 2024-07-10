@@ -58,33 +58,42 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const requestStepSummaryInclude = Prisma.validator<Prisma.RequestStepInclude>()({
-  Request: {
-    include: {
-      FlowVersion: {
-        include: {
-          Flow: true,
+export const createRequestStepSummaryInclude = (userId: string) =>
+  Prisma.validator<Prisma.RequestStepInclude>()({
+    Request: {
+      include: {
+        FlowVersion: {
+          include: {
+            Flow: true,
+          },
+        },
+        Creator: {
+          include: userInclude,
+        },
+        ProposedFlowVersionEvolution: {
+          include: evolveRequestProposedFlowVersionInclude,
         },
       },
-      Creator: {
-        include: userInclude,
-      },
-      ProposedFlowVersionEvolution: {
-        include: evolveRequestProposedFlowVersionInclude,
+    },
+    Responses: {
+      where: {
+        creatorId: {
+          equals: userId,
+        },
       },
     },
-  },
-  Step: {
-    include: {
-      ResponsePermissions: {
-        include: permissionInclude,
+    Step: {
+      include: {
+        ResponsePermissions: {
+          include: permissionInclude,
+        },
       },
     },
-  },
-});
+  });
+const exampleRequestStepSummaryInclude = createRequestStepSummaryInclude("userId");
 
 export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
-  include: typeof requestStepSummaryInclude;
+  include: typeof exampleRequestStepSummaryInclude;
 }>;
 
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({

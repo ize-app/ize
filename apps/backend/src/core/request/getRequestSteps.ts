@@ -4,7 +4,7 @@ import {
   RequestStepSummary,
 } from "@/graphql/generated/resolver-types";
 
-import { requestStepSummaryInclude } from "./requestPrismaTypes";
+import { createRequestStepSummaryInclude } from "./requestPrismaTypes";
 import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -110,7 +110,7 @@ export const getRequestSteps = async ({
             : {},
         ],
       },
-      include: requestStepSummaryInclude,
+      include: createRequestStepSummaryInclude(user?.id ?? ""),
       // TODO revisit the ordering logic here
       orderBy: {
         expirationDate: "asc",

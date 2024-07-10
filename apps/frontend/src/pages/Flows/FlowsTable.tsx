@@ -29,7 +29,7 @@ export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
             </TableCellHideable>
 
             <TableCell align="right" width={"60px"}>
-              Trigger
+              {/* Trigger */}
             </TableCell>
           </TableRow>
         </TableHead>
