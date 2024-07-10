@@ -60,10 +60,6 @@ const getRequestSteps: QueryResolvers["getRequestSteps"] = async (
   args: QueryGetRequestStepsArgs,
   context: GraphqlRequestContext,
 ): Promise<RequestStepSummary[]> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
   return await getRequestStepsService({ args, user: context.currentUser });
 };
 

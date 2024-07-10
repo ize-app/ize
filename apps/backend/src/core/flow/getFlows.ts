@@ -26,20 +26,40 @@ export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSu
                 Steps: {
                   some: {
                     index: 0,
-                    RequestPermissions: {
-                      EntitySet: {
-                        EntitySetEntities: {
-                          some: {
-                            Entity: {
-                              OR: [
-                                { Group: { id: { in: groupIds } } },
-                                { Identity: { id: { in: identityIds } } },
-                              ],
+                    OR: [
+                      {
+                        RequestPermissions: {
+                          EntitySet: {
+                            EntitySetEntities: {
+                              some: {
+                                Entity: {
+                                  OR: [
+                                    { Group: { id: { in: groupIds } } },
+                                    { Identity: { id: { in: identityIds } } },
+                                  ],
+                                },
+                              },
                             },
                           },
                         },
                       },
-                    },
+                      {
+                        ResponsePermissions: {
+                          EntitySet: {
+                            EntitySetEntities: {
+                              some: {
+                                Entity: {
+                                  OR: [
+                                    { Group: { id: { in: groupIds } } },
+                                    { Identity: { id: { in: identityIds } } },
+                                  ],
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    ],
                   },
                 },
               },

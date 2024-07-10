@@ -1,16 +1,20 @@
 import { useLazyQuery } from "@apollo/client";
-import { Button, debounce } from "@mui/material";
+import { Button, Typography, debounce } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent, useEffect, useState } from "react";
+import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
+import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
 import {
   GetRequestStepsDocument,
   GetRequestStepsQueryVariables,
   RequestStepSummaryFragment,
 } from "@/graphql/generated/graphql";
+import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
+import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
 
@@ -59,6 +63,7 @@ export const RequestStepsSearch = ({
         display: "flex",
         flexDirection: "column",
         gap: "30px",
+        height: "100%",
       }}
     >
       <Box
@@ -90,7 +95,32 @@ export const RequestStepsSearch = ({
         </Box>
         <CreateButton />
       </Box>
-      {loading ? <Loading /> : <RequestStepsTable requestSteps={requestSteps} />}
+      {loading ? (
+        <Loading />
+      ) : requestSteps.length > 0 ? (
+        <RequestStepsTable requestSteps={requestSteps} />
+      ) : (
+        <EmptyTablePlaceholder>
+          {!flowId ? (
+            <Typography>
+              You don&apos;t have any requests. Create a <Link to={Route.NewFlow}>flow</Link> first
+              or a <Link to={Route.NewRequest}>request</Link> or for an existing flow.
+            </Typography>
+          ) : (
+            <Typography>
+              You don&apos;t have any requests for this flow. Create a{" "}
+              <Link
+                to={generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                  flowId: fullUUIDToShort(flowId),
+                })}
+              >
+                request
+              </Link>{" "}
+              for this flow.
+            </Typography>
+          )}
+        </EmptyTablePlaceholder>
+      )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}
       {oldCursor !== newCursor && (data?.getRequestSteps.length ?? 0) >= queryResultLimit && (
         <Button

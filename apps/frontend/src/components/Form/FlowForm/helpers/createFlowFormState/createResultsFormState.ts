@@ -42,6 +42,7 @@ export const createResultFormState = (results: ResultConfig[]): ResultSchemaType
           ...resultBase,
           llmSummary: {
             prompt: result.prompt ?? undefined,
+            example: result.example ?? undefined,
           },
         } as LlmSummaryResultSchemaType;
       default:

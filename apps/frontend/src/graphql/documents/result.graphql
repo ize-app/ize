@@ -46,6 +46,7 @@ fragment Ranking on Ranking {
   fieldId
   resultConfigId
   numOptionsToInclude
+  minimumAnswers
 }
 
 fragment LlmSummary on LlmSummary {
@@ -53,6 +54,7 @@ fragment LlmSummary on LlmSummary {
   resultConfigId
   prompt
   example
+  minimumAnswers
 }
 
 fragment LlmSummaryList on LlmSummaryList {
@@ -60,4 +62,5 @@ fragment LlmSummaryList on LlmSummaryList {
   resultConfigId
   prompt
   example
+  minimumAnswers
 }

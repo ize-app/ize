@@ -64,7 +64,7 @@ const llmResultSchema = z.object({
   type: z.literal(ResultType.LlmSummary),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(1),
+  minimumAnswers: z.coerce.number().int().positive().default(2),
   llmSummary: llmSchema,
 });
 
@@ -72,7 +72,7 @@ const llmListResultSchema = z.object({
   type: z.literal(ResultType.LlmSummaryList),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(1),
+  minimumAnswers: z.coerce.number().int().positive().default(2),
   llmSummary: llmSchema,
 });
 
@@ -80,15 +80,23 @@ const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().default(1),
+  minimumAnswers: z.coerce.number().default(2),
   prioritization: prioritizationSchema,
 });
 
-export const resultSchema = z.discriminatedUnion("type", [
-  decisionResultSchema,
-  rankingResultSchema,
-  llmResultSchema,
-  llmListResultSchema,
-]);
+export const resultSchema = z
+  .discriminatedUnion("type", [
+    decisionResultSchema,
+    rankingResultSchema,
+    llmResultSchema,
+    llmListResultSchema,
+  ])
+  .refine(
+    (result) => {
+      if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
+      return true;
+    },
+    { message: "There must be at least 2 responses to create a result" },
+  );
 
 export const resultsSchema = z.array(resultSchema).default([]);

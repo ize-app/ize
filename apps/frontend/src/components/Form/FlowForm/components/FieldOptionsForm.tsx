@@ -209,7 +209,6 @@ export const FieldOptionsForm = ({
         }}
         selectOptions={multiSelectOptions}
         name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.maxSelections`}
-        displayLabel={false}
         size={"small"}
       />
       <Typography variant={"label2"}>Available options</Typography>
@@ -239,7 +238,6 @@ export const FieldOptionsForm = ({
                 </Box>
                 <Select<FlowSchemaType>
                   control={control}
-                  displayLabel={false}
                   size={"small"}
                   sx={{ flexBasis: "100px", flexGrow: 1 }}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
@@ -274,7 +272,6 @@ export const FieldOptionsForm = ({
               <Box key={item.id} sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
                 <Select<FlowSchemaType>
                   control={control}
-                  displayLabel={false}
                   sx={{}}
                   size={"small"}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
@@ -327,7 +324,6 @@ export const FieldOptionsForm = ({
                 size="small"
                 sx={{ width: "100px", flexGrow: 0 }}
                 variant="standard"
-                displayLabel={false}
               />
             </Box>
           </ResponsiveFormRow>

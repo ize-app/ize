@@ -34,7 +34,7 @@ export const createDefaultResultState = ({
         resultId: "new." + stepIndex + "." + resultIndex,
         type: ResultType.Ranking,
         fieldId,
-        minimumAnswers: 1,
+        minimumAnswers: 2,
         prioritization: { numPrioritizedItems: 3 },
       };
     case ResultType.LlmSummary:
@@ -42,7 +42,7 @@ export const createDefaultResultState = ({
         resultId: "new." + stepIndex + "." + resultIndex,
         type: ResultType.LlmSummary,
         fieldId,
-        minimumAnswers: 1,
+        minimumAnswers: 2,
         llmSummary: {
           prompt:
             "Write a summary of all the responses that describes the overall thoughts and sentiment of the group, common points of disagreement, and next steps.",
@@ -54,7 +54,7 @@ export const createDefaultResultState = ({
         resultId: "new." + stepIndex + "." + resultIndex,
         type: ResultType.LlmSummaryList,
         fieldId,
-        minimumAnswers: 1,
+        minimumAnswers: 2,
         llmSummary: {
           prompt: "Synthesize the responses into a list of conise key points.",
           example: undefined,

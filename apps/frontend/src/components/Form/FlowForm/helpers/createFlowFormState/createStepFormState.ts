@@ -7,7 +7,6 @@ import { createResultFormState } from "./createResultsFormState";
 import { StepSchemaType } from "../../formValidation/flow";
 
 export const createStepFormState = (step: Step): StepSchemaType => {
-  console.log("creating step,", step);
   return {
     request:
       !step.request.permission && step.request.fields.length === 0

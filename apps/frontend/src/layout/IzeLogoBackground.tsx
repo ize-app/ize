@@ -1,8 +1,15 @@
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 
 import logoRepeatUrl from "@/assets/ize-repeat.svg";
 
-export const IzeLogoBackground = ({ children }: { children: React.ReactNode }) => {
+export const IzeLogoBackground = ({
+  children,
+  sx = {},
+}: {
+  children: React.ReactNode;
+  sx?: SxProps;
+}) => {
   return (
     <Box
       sx={{
@@ -14,6 +21,7 @@ export const IzeLogoBackground = ({ children }: { children: React.ReactNode }) =
         justifyContent: "center",
         backgroundImage: `url(${logoRepeatUrl})`,
         backgroundSize: "300px",
+        ...sx,
       }}
     >
       {children}

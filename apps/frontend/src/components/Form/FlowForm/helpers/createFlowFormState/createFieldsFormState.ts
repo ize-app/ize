@@ -1,4 +1,6 @@
-import { Field, FieldType } from "@/graphql/generated/graphql";
+import dayjs from "dayjs";
+
+import { Field, FieldDataType, FieldType } from "@/graphql/generated/graphql";
 
 import {
   FieldOptionSchemaType,
@@ -38,7 +40,7 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
           options: field.options.map(
             (o): FieldOptionSchemaType => ({
               optionId: o.optionId,
-              name: o.name,
+              name: createDataType(o.name, o.dataType),
               dataType: o.dataType,
             }),
           ),
@@ -47,4 +49,10 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
     default:
       throw Error("Invalid field type");
   }
+};
+
+const createDataType = (value: string, dataType: FieldDataType) => {
+  if (dataType === FieldDataType.Date || dataType === FieldDataType.DateTime) {
+    return dayjs.utc(value);
+  } else return value;
 };

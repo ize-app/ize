@@ -30,7 +30,7 @@ export const createPrompt = ({
 
   const formattedResponses = formatResponses(responses);
 
-  const prompt = `${context}\n\n Each response was to the following question: ${fieldName}. \n\n Summarization instructions:\n ${formatSummaryInstructions(
+  const prompt = `${context}\n\n Each response had the following instructions: ${fieldName}. \n\n Summarization instructions:\n ${formatSummaryInstructions(
     type,
     summaryPrompt,
     exampleOutput,
@@ -75,7 +75,7 @@ const formatSummaryInstructions = (
   exampleOutput?: string | null,
 ): string => {
   if (type === ResultType.LlmSummary) {
-    return `Your goal is to create a consise summary of the reponses as a whole, not necessarily each response individually. The requestor provided this additional context on how to generate the summary: ${summaryPrompt} \n\n ${
+    return `Your goal is to create a consise summary of the reponses as a whole, not each response individually. The requestor provided this additional context on how to generate the summary: ${summaryPrompt} \n\n ${
       exampleOutput
         ? `Here's an example of what this summary can look like:\n ${exampleOutput}`
         : ""

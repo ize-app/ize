@@ -81,8 +81,8 @@ export const About = () => {
           Ize is the first platform for building and evolving collaborative workflows. A{" "}
           <strong>collaborative workflow</strong> defines how a group of people harness their
           collective attention to do a particular task. For example, you might define workflows to
-          add a calendar invite to a shared calendar, run a sprint retro, publish a blog post,
-          approve an expense, change someone&#39;s Discord permissions, prioritize on team
+          approve an expense, cancel a meeting that isn&#39;t a good use of team time, run a sprint
+          retro, publish a blog post, change someone&#39;s Discord permissions, prioritize team
           objectives, etc.{" "}
         </p>
         <p>
@@ -91,17 +91,17 @@ export const About = () => {
         </p>
         <ul>
           <li>
-            <em>Requests</em>: Who can trigger the workflow (e.g. a set of email addresses, Discord
-            Roles, or NFTs)
+            <strong>Requests:</strong> Who can trigger the workflow (e.g. a set of email addresses,
+            Discord Roles, or NFTs)
           </li>
           <li>
-            <em>Response</em>: Who can respond and what response is being asked for - a vote, ranked
-            priorities, a free text response, etc.
+            <strong>Response:</strong> Who can respond and what response is being asked for - a
+            vote, ranked priorities, a free text response, etc.
           </li>
           <li>
-            <em>Result</em>: How those responses come to a final output (e.g. a decision, an LLM
-            summary, etc) and action (e.g. take an action in another platform, trigger a webhook,
-            evolve a workflow).
+            <strong>Result:</strong> How those responses come to a final output (e.g. a decision, an
+            LLM summary, etc) and action (e.g. take an action in another platform, trigger a
+            webhook, evolve a workflow).
           </li>
         </ul>
         <p>
@@ -130,6 +130,7 @@ export const About = () => {
         <p>
           This mycelial network extends to how Ize evolves itself over the time. The vision is for
           Ize to become an open standard and plugin ecosystem for defining collaborative process.
+          Teams will interact with Ize natively within their existing toolset.
         </p>
         <p>
           Ize is a pardigm shift in collaborative tooling. It is cross-tool, distributed,

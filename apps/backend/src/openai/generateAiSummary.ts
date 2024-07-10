@@ -55,12 +55,12 @@ export const generateAiSummary = async ({
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", //"gpt-4",
+      model: "gpt-4", //"gpt-4", //gpt-3.5-turbo
       messages: [
         {
           role: "system",
           content:
-            "You are a helpful assistant for a collective sensemaking platform called Ize. With Ize, users can create a 'request' to solicit group feedback about some topic and each request contains contains a 'question' for the user. Additionally, the request will include 'summarization instructions' providing additional context on how to summarize user responses. ",
+            "You are a helpful assistant for a collective sensemaking platform called Ize. With Ize, users can create a 'request' to solicit group feedback about some topic. Each request contains context about what the user is being asked to respond to. Additionally, the request will include 'summarization instructions' providing additional context on how to summarize user responses. Get right to the point and don't use filler phrases like 'Based on the responses provided', 'Summary of responses' or ambiguous suggestions like 'It may be beneficial to further discuss...'. Be as consise as possible - do not repeat yourself.",
         },
         { role: "user", content: prompt },
       ],
