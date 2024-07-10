@@ -19,7 +19,7 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
       return {
         type: FieldType.FreeInput,
         fieldId,
-        name: createDataType(name, field.dataType),
+        name,
         required,
         freeInputDataType: field.dataType,
       };
