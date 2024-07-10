@@ -112,9 +112,14 @@ export const getRequestSteps = async ({
       },
       include: createRequestStepSummaryInclude(user?.id ?? ""),
       // TODO revisit the ordering logic here
-      orderBy: {
-        expirationDate: "asc",
-      },
+      orderBy: [
+        {
+          final: "asc",
+        },
+        {
+          expirationDate: "desc",
+        },
+      ],
     });
 
     return requestSteps.map((requestStep) =>
