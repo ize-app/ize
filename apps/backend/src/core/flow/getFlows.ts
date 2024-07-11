@@ -73,6 +73,9 @@ export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSu
         },
       ],
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return flows.map((flow) => flowSummaryResolver({ flow, identityIds, groupIds, userId: user.id }));

@@ -22,6 +22,7 @@ query getRequestSteps(
   $userOnly: Boolean!
   $flowId: String
   $searchQuery: String!
+  $filter: RequestStepFilter!
 ) {
   getRequestSteps(
     cursor: $cursor
@@ -29,6 +30,7 @@ query getRequestSteps(
     userOnly: $userOnly
     flowId: $flowId
     searchQuery: $searchQuery
+    filter: $filter
   ) {
     ...RequestStepSummary
   }
@@ -85,6 +87,7 @@ fragment RequestStepSummary on RequestStepSummary {
   flowId
   requestName
   flowName
+  userResponded
   creator {
     ...UserSummaryParts
   }

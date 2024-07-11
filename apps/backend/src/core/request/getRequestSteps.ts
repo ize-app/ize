@@ -1,6 +1,10 @@
-import { QueryGetRequestStepsArgs, RequestStepSummary } from "@/graphql/generated/resolver-types";
+import {
+  QueryGetRequestStepsArgs,
+  RequestStepFilter,
+  RequestStepSummary,
+} from "@/graphql/generated/resolver-types";
 
-import { requestStepSummaryInclude } from "./requestPrismaTypes";
+import { createRequestStepSummaryInclude } from "./requestPrismaTypes";
 import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -101,13 +105,21 @@ export const getRequestSteps = async ({
                 ],
               }
             : {},
+          args.filter !== RequestStepFilter.All
+            ? { final: args.filter === RequestStepFilter.Closed }
+            : {},
         ],
       },
-      include: requestStepSummaryInclude,
+      include: createRequestStepSummaryInclude(user?.id ?? ""),
       // TODO revisit the ordering logic here
-      orderBy: {
-        expirationDate: "asc",
-      },
+      orderBy: [
+        {
+          final: "asc",
+        },
+        {
+          expirationDate: "desc",
+        },
+      ],
     });
 
     return requestSteps.map((requestStep) =>

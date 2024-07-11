@@ -23,7 +23,7 @@ export const apolloClient = new ApolloClient({
       Query: {
         fields: {
           getRequestSteps: {
-            keyArgs: ["userOnly", "flowId", "searchQuery"],
+            keyArgs: ["userOnly", "flowId", "searchQuery", "filter"],
             merge(existing, incoming, { args, readField }) {
               const cursor = args && args.cursor;
               const merged = existing ? existing.slice(0) : [];

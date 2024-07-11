@@ -7,10 +7,12 @@ import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 import {
   EntitySummaryPartsFragment,
+  Status,
   UserSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
 // import { intervalToIntuitiveTimeString } from "../../utils/inputs";
 import { AvatarGroup } from "../AvatarOld";
+import { statusProps } from "../status/statusProps";
 
 interface TableCellHideableProps extends TableCellProps {
   hideOnSmallScreen?: boolean;
@@ -70,7 +72,8 @@ export const TwoTierCell = ({
         }}
       >
         <Typography
-          variant="label"
+          variant="description"
+          color="primary"
           sx={{
             ...topStyleOverrides,
             display: "-webkit-box",
@@ -126,23 +129,32 @@ export const StatusCell = ({
 }: StatusCellProps): JSX.Element => {
   const now = new Date();
   const timeLeft = expirationDate.getTime() - now.getTime();
-  const timeLeftStr = intervalToIntuitiveTimeString(timeLeft);
+  const timeLeftStr = intervalToIntuitiveTimeString(Math.max(timeLeft, 0));
 
   // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
   if (final) {
-    // TODO: include the result here
-    return <TwoTierCell topText="Final decision" bottomText={"Final"} {...props} />;
-  } else if (timeLeft < 0) {
     return (
-      <TableCellHideable align="center">
-        <Typography color="red">Expired</Typography>
-      </TableCellHideable>
+      <TwoTierCell
+        topText="Closed"
+        align="center"
+        bottomText={expirationDate.toLocaleDateString()}
+        topStyleOverrides={{
+          color: statusProps[Status.NotAttempted].backgroundColor,
+          fontWeight: "bold",
+        }}
+        {...props}
+      />
     );
   } else {
     return (
       <TwoTierCell
         topText="Open"
+        align="center"
         bottomText={timeLeftStr}
+        topStyleOverrides={{
+          color: statusProps[Status.InProgress].backgroundColor,
+          fontWeight: "bold",
+        }}
         bottomStyleOverrides={{
           color: alreadyResponded || timeLeft > 1000 * 60 * 60 * 24 ? "" : "red",
         }}

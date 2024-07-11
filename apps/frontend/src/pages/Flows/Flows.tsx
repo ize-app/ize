@@ -45,6 +45,7 @@ export const Flows = () => {
                 justifyContent: "space-between",
                 flexDirection: "row",
                 gap: "16px",
+                minWidth: "360px",
               }}
             >
               <Box

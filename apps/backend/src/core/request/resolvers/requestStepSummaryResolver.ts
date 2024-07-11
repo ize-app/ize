@@ -37,6 +37,7 @@ export const requestStepSummaryResolver = ({
     resultsComplete: r.resultsComplete,
     actionsComplete: r.actionsComplete,
     final: r.final,
+    userResponded: r.Responses.length > 0,
     respondPermission: r.Step.ResponsePermissions
       ? permissionResolver(r.Step.ResponsePermissions, identityIds)
       : null,
