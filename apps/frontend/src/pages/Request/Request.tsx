@@ -46,6 +46,7 @@ export const Request = () => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
 
+  let acceptingNewResponses = false;
   let canRespond: boolean = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
@@ -68,6 +69,7 @@ export const Request = () => {
   // console.log(request);
 
   if (request) {
+    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete ?? false;
     canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
     userResponses = request.steps[request.currentStepIndex].userResponses;
     allowMultipleResponses =
@@ -175,6 +177,7 @@ export const Request = () => {
             </Box>
           </Box>
           {canRespond &&
+            acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
                 sx={{
