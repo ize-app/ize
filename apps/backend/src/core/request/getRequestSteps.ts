@@ -106,7 +106,7 @@ export const getRequestSteps = async ({
               }
             : {},
           args.filter !== RequestStepFilter.All
-            ? { final: args.filter === RequestStepFilter.Closed }
+            ? { responseComplete: args.filter === RequestStepFilter.Closed }
             : {},
         ],
       },

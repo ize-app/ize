@@ -81,7 +81,9 @@ export const executeAction = async ({
     case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
       const payload = await createWebhookPayload({ requestStepId, transaction });
-      actionComplete = await callWebhook({ uri: action.Webhook.uri, payload });
+      if (payload) {
+        actionComplete = await callWebhook({ uri: action.Webhook.uri, payload });
+      }
       break;
     }
     case ActionType.TriggerStep: {

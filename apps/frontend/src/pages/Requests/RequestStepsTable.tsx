@@ -79,7 +79,7 @@ const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragme
         />
         <StatusCell
           expirationDate={new Date(requestStep.expirationDate)}
-          final={requestStep.final}
+          responseComplete={requestStep.responseComplete}
           alreadyResponded={false}
         />
         <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>

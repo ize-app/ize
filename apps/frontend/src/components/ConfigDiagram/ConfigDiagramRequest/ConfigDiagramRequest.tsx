@@ -25,7 +25,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;
 
-  console.log("request is", request);
+  // console.log("request is", request);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
