@@ -28,7 +28,7 @@ interface TwoTierCellProps extends TableCellHideableProps {
 interface StatusCellProps extends TableCellHideableProps {
   expirationDate: Date;
   alreadyResponded: boolean;
-  final: boolean;
+  responseComplete: boolean;
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
@@ -124,7 +124,7 @@ export const AvatarsCell = ({
 export const StatusCell = ({
   expirationDate,
   alreadyResponded,
-  final,
+  responseComplete,
   ...props
 }: StatusCellProps): JSX.Element => {
   const now = new Date();
@@ -132,7 +132,7 @@ export const StatusCell = ({
   const timeLeftStr = intervalToIntuitiveTimeString(Math.max(timeLeft, 0));
 
   // TODO: this sbhould actually be the lesser of the expirationDate and when the decision was made
-  if (final) {
+  if (responseComplete) {
     return (
       <TwoTierCell
         topText="Closed"
