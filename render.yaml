@@ -25,7 +25,7 @@ services:
     schedule: "*/10 * * * *" # every 10 minutes
     runtime: node
     repo: https://github.com/ize-app/ize
-    plan: starter
+    plan: standard
     branch: main
     envVars:
       - fromGroup: ize-env-group
@@ -48,8 +48,6 @@ envVarGroups:
         value: 0.0.0.0
       - key: PORT
         value: 10000
-      - key: NODE_OPTIONS
-        value: "--max-old-space-size=512"
       - key: DATABASE_URL
         sync: false
       - key: OPEN_AI_KEY
