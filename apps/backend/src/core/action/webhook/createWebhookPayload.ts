@@ -36,7 +36,11 @@ export const createWebhookPayload = async ({
       const answer = formattedRequest.steps[0].requestFieldAnswers.find(
         (fa) => fa.fieldId === field.fieldId,
       );
-      if (!answer) throw Error("");
+      if (!answer)
+        return {
+          fieldName: field.name,
+          value: null,
+        };
       if (field.__typename === FieldType.FreeInput) {
         if (answer.__typename !== "FreeInputFieldAnswer")
           throw new GraphQLError(
