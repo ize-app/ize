@@ -4,7 +4,13 @@ import { updateUserNftGroups } from "@/core/entity/updateIdentitiesGroups/update
 import { userInclude } from "@/core/user/userPrismaTypes";
 import { userResolver } from "@/core/user/userResolver";
 import { getDiscordServers } from "@/discord/getDiscordServers";
-import { Identity, Me, QueryResolvers, UpdateProfileArgs } from "@graphql/generated/resolver-types";
+import {
+  Identity,
+  Me,
+  MutationResolvers,
+  MutationUpdateProfileArgs,
+  QueryResolvers,
+} from "@graphql/generated/resolver-types";
 
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
@@ -44,9 +50,9 @@ const me: QueryResolvers["me"] = async (
   };
 };
 
-export const updateProfile = async (
+export const updateProfile: MutationResolvers["updateProfile"] = async (
   root: unknown,
-  args: UpdateProfileArgs,
+  args: MutationUpdateProfileArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
   if (!context.currentUser)
@@ -61,5 +67,5 @@ export const userQueries = {
 };
 
 export const userMutations = {
-  updateProfile
+  updateProfile,
 };

@@ -447,6 +447,7 @@ export type Mutation = {
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
   testWebhook: Scalars['Boolean']['output'];
+  updateProfile: Scalars['Boolean']['output'];
 };
 
 
@@ -482,6 +483,11 @@ export type MutationNewResponseArgs = {
 
 export type MutationTestWebhookArgs = {
   inputs: TestWebhookArgs;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  profile: UpdateProfileArgs;
 };
 
 export type NewEntityArgs = {
@@ -1506,6 +1512,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
+  updateProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
 };
 
 export type NftCollectionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['NftCollection'] = ResolversParentTypes['NftCollection']> = {

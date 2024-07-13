@@ -4,11 +4,9 @@ query Me {
   }
 }
 
-type Mutation {
-  updateProfile(profile: UpdateProfileArgs!): Boolean!
+mutation UpdateProfile($profile: UpdateProfileArgs!) {
+  updateProfile(profile: $profile)
 }
-
-
 
 fragment MeParts on Me {
   user {

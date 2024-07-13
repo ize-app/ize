@@ -2,8 +2,8 @@ type Query {
   me: Me
 }
 
-mutation UpdateProfile($profile: UpdateProfileArgs!) {
-  updateProfile(profile: $profile)
+type Mutation {
+  updateProfile(profile: UpdateProfileArgs!): Boolean!
 }
 
 type Me {
