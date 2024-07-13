@@ -864,6 +864,10 @@ export type TriggerStep = {
   filterOption?: Maybe<Option>;
 };
 
+export type UpdateProfileArgs = {
+  name: Scalars['String']['input'];
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -1110,6 +1114,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   TestWebhookArgs: TestWebhookArgs;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
+  UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
   UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer'> & { answer: ResolversTypes['FieldAnswer'] }>;
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
@@ -1216,6 +1221,7 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   TestWebhookArgs: TestWebhookArgs;
   TriggerStep: TriggerStep;
+  UpdateProfileArgs: UpdateProfileArgs;
   User: User;
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer'> & { answer: ResolversParentTypes['FieldAnswer'] };
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };

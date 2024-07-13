@@ -20,7 +20,6 @@ export const newResponse = async ({
   args: MutationNewResponseArgs;
   context: GraphqlRequestContext;
 }): Promise<string> => {
-  args.response.answers;
   const {
     response: { answers, requestStepId },
   } = args;

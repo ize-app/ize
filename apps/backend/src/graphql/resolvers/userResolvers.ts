@@ -4,12 +4,15 @@ import { updateUserNftGroups } from "@/core/entity/updateIdentitiesGroups/update
 import { userInclude } from "@/core/user/userPrismaTypes";
 import { userResolver } from "@/core/user/userResolver";
 import { getDiscordServers } from "@/discord/getDiscordServers";
-import { Identity, Me } from "@graphql/generated/resolver-types";
+import { Identity, Me, QueryResolvers, UpdateProfileArgs } from "@graphql/generated/resolver-types";
 
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
+import { updateProfile as updateProfileService } from "@/core/user/updateProfile";
+import { GraphQLError } from "graphql";
+import { CustomErrorCodes } from "../errors";
 
-const me = async (
+const me: QueryResolvers["me"] = async (
   root: unknown,
   args: Record<string, never>,
   context: GraphqlRequestContext,
@@ -41,6 +44,22 @@ const me = async (
   };
 };
 
+export const updateProfile = async (
+  root: unknown,
+  args: UpdateProfileArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+  return await updateProfileService({ args, context });
+};
+
 export const userQueries = {
   me,
+};
+
+export const userMutations = {
+  updateProfile
 };

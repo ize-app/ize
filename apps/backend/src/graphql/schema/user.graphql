@@ -2,6 +2,10 @@ type Query {
   me: Me
 }
 
+mutation UpdateProfile($profile: UpdateProfileArgs!) {
+  updateProfile(profile: $profile)
+}
+
 type Me {
   user: User!
   identities: [Identity!]!
@@ -13,4 +17,8 @@ type User {
   name: String!
   icon: String
   createdAt: String!
+}
+
+input UpdateProfileArgs {
+  name: String!
 }

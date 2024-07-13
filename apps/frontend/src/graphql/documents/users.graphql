@@ -4,6 +4,12 @@ query Me {
   }
 }
 
+type Mutation {
+  updateProfile(profile: UpdateProfileArgs!): Boolean!
+}
+
+
+
 fragment MeParts on Me {
   user {
     ...UserSummaryParts

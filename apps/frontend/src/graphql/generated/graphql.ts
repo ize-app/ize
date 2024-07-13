@@ -863,6 +863,10 @@ export type TriggerStep = {
   filterOption?: Maybe<Option>;
 };
 
+export type UpdateProfileArgs = {
+  name: Scalars['String']['input'];
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -2196,6 +2200,10 @@ export type TestWebhookArgs = {
 export type TriggerStep = {
   __typename?: 'TriggerStep';
   filterOption?: Maybe<Option>;
+};
+
+export type UpdateProfileArgs = {
+  name: Scalars['String']['input'];
 };
 
 export type User = {
