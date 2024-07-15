@@ -19,8 +19,7 @@ export const upsertUser = async ({
     update: {},
     create: {
       stytchId: stytchUser.user_id,
-      firstName: stytchUser.name?.first_name ?? null,
-      lastName: stytchUser.name?.last_name ?? null,
+      name: (stytchUser.name?.first_name + " " ?? "") + (stytchUser.name?.last_name ?? ""),
     },
   });
   return user;

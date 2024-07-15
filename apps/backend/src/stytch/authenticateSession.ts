@@ -29,8 +29,7 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
       update: {},
       create: {
         stytchId: session.user.user_id,
-        firstName: session.user.name?.first_name,
-        lastName: session.user.name?.last_name,
+        name: session.user.name?.first_name,
       },
     });
 

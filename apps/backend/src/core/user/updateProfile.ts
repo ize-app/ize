@@ -23,7 +23,7 @@ export const updateProfile = async ({
       id: context.currentUser.id,
     },
     data: {
-      firstName: args.profile.name,
+      name: args.profile.name,
     },
   });
   return true;

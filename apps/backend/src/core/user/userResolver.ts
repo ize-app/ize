@@ -6,7 +6,7 @@ import { UserPrismaType } from "./userPrismaTypes";
 export const userResolver = (user: UserPrismaType): User => {
   return {
     id: user.id,
-    name: user.firstName ? user.firstName + " " + user.lastName : "User",
+    name: user.name,
     createdAt: user.createdAt.toString(),
     icon: findFirstIdentityIcon(user),
   };
