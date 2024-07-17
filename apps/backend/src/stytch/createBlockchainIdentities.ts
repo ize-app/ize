@@ -9,7 +9,7 @@ export const createBlockchainIdentitiesForUser = async (
   stytchWallets: CryptoWallet[],
 ) => {
   stytchWallets.forEach(async (wallet) => {
-    const userWallet = user.Identities.find((identity) => {
+    const userWallet = (user.Identities ?? []).find((identity) => {
       identity.IdentityBlockchain?.address === wallet.crypto_wallet_address;
     });
 

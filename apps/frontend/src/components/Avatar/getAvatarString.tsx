@@ -5,7 +5,9 @@ const findFirstLetter = (name: string): string => {
 };
 
 export const getAvatarString = (name: string) => {
-  return `${findFirstLetter(name.split(" ")[0])}${
+  if (!name) return "";
+  const avatarString = `${findFirstLetter(name.split(" ")[0])}${
     name.split(" ").length > 1 ? findFirstLetter(name.split(" ")[1]) : ""
   }`;
+  return avatarString;
 };

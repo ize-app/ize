@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { StytchError } from "stytch";
 
-import { meInclude } from "@/core/user/userPrismaTypes";
-
 import { sessionDurationMinutes, stytchClient } from "./stytchClient";
-import { prisma } from "../prisma/client";
+import { upsertUser } from "./upsertUser";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,19 +18,7 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
       session_duration_minutes: sessionDurationMinutes,
     });
 
-    // find or create user
-    const user = await prisma.user.upsert({
-      include: meInclude,
-      where: {
-        stytchId: session.user.user_id,
-      },
-      update: {},
-      create: {
-        stytchId: session.user.user_id,
-        name: session.user.name?.first_name,
-      },
-    });
-
+    const user = await upsertUser({ stytchUser: session.user, res });
     res.locals.user = user;
   } catch (error) {
     res.locals.user = null;

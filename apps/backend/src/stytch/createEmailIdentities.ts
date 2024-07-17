@@ -12,7 +12,7 @@ export const createEmailIdentities = async (
   profilePictureURL?: string | undefined,
 ) => {
   stytchEmails.forEach(async (email) => {
-    const userEmail = user.Identities.find((identity) => {
+    const userEmail = (user.Identities ?? []).find((identity) => {
       identity.IdentityEmail?.email === email.email && email.verified;
     });
 
