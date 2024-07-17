@@ -31,7 +31,6 @@ export const UserSettings = () => {
             hasBlockchainIdentity = true;
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
@@ -44,7 +43,6 @@ export const UserSettings = () => {
           case "IdentityEmail": {
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
@@ -57,7 +55,6 @@ export const UserSettings = () => {
             hasDiscordIdentity = true;
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
