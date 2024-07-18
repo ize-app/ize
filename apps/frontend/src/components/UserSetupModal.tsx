@@ -40,8 +40,6 @@ export function UserSetupModal() {
     shouldUnregister: true,
   });
 
-  console.log("me", me);
-
   useEffect(() => {
     Cookies.get("new_user") === "true" && !!me?.user && setOpen(true);
   }, [me]);
