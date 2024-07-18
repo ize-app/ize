@@ -25,12 +25,12 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
     // create identities if they don't already exist
     // TODO: create Discord identity if it doesn't exist
     if (session.user.emails.length !== user.Identities.filter((id) => id.IdentityEmail).length)
-      createEmailIdentities(user, session.user.emails);
+      await createEmailIdentities(user, session.user.emails);
     if (
       session.user.crypto_wallets.length !==
       user.Identities.filter((id) => id.IdentityBlockchain).length
     )
-      createBlockchainIdentitiesForUser(user, session.user.crypto_wallets);
+      await createBlockchainIdentitiesForUser(user, session.user.crypto_wallets);
 
     res.locals.user = user;
   } catch (error) {

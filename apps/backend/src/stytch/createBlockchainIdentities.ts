@@ -21,33 +21,42 @@ export const createBlockchainIdentitiesForUser = async (
       });
       if (!existingIdentity) {
         // if there isn't an existing identity for this address, create it
-        await prisma.identity.create({
-          data: {
-            User: {
-              connect: {
-                id: user.id,
+        try {
+          await prisma.identity.create({
+            data: {
+              User: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              Entity: {
+                create: {},
+              },
+              IdentityBlockchain: {
+                create: {
+                  address: wallet.crypto_wallet_address.toLowerCase(),
+                },
               },
             },
-            Entity: {
-              create: {},
-            },
-            IdentityBlockchain: {
-              create: {
-                address: wallet.crypto_wallet_address.toLowerCase(),
-              },
-            },
-          },
-        });
+          });
+        } catch (e) {
+          console.error("Error creating blockchain identity", e);
+        }
       } else {
         // otherwise associate existing identity with this user
-        await prisma.identity.update({
-          where: {
-            id: existingIdentity.identityId,
-          },
-          data: {
-            userId: user.id,
-          },
-        });
+
+        try {
+          await prisma.identity.update({
+            where: {
+              id: existingIdentity.identityId,
+            },
+            data: {
+              userId: user.id,
+            },
+          });
+        } catch (e) {
+          console.error("Error associating blockchain identity with user", e);
+        }
       }
     }
   });

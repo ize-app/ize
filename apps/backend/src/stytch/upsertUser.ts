@@ -14,6 +14,7 @@ export const upsertUser = async ({
   res: Response;
   transaction?: Prisma.TransactionClient;
 }): Promise<UserPrismaType> => {
+  // finding user first so we can distinguish new user
   let user = await prisma.user.findFirst({
     include: meInclude,
     where: {
@@ -22,17 +23,23 @@ export const upsertUser = async ({
   });
 
   if (!user) {
-    res.cookie("new_user", "true", { maxAge: 1000 * 60 * 24 });
-
-    user = await prisma.user.create({
-      data: {
+    // using upsert for race condition safety
+    user = await prisma.user.upsert({
+      include: meInclude,
+      where: {
+        stytchId: stytchUser.user_id,
+      },
+      update: {},
+      create: {
         stytchId: stytchUser.user_id,
         name:
           (stytchUser.name?.first_name ? stytchUser.name?.first_name + " " : "") +
           (stytchUser.name?.last_name ?? ""),
       },
-      include: meInclude,
     });
+
+    // for displaying new user modal
+    res.cookie("new_user", "true", { maxAge: 1000 * 60 * 24 });
   }
 
   return user;

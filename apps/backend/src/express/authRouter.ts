@@ -96,7 +96,6 @@ authRouter.post("/attach-discord", async (req, res, next) => {
 // session already created for user on FE --> user also already created via authenticateSession
 authRouter.post("/crypto", async (req, res, next) => {
   try {
-    console.log("inside /crypto");
     const session_token = req.cookies["stytch_session"];
     const sessionData = await stytchClient.sessions.authenticate({
       session_token,
