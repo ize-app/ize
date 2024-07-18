@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-
 import { flowInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
@@ -97,10 +96,6 @@ export const newRequest = async ({
     },
   });
 
-  if (!hasResponseFields) {
-    await executeAction({ step, results: [], requestStepId: requestStep.id });
-  }
-
   const requestDefinedOptionSets = await Promise.all(
     requestDefinedOptions.map(async (r) => {
       return await createRequestDefinedOptionSet({
@@ -123,6 +118,10 @@ export const newRequest = async ({
     requestStepId: requestStep.id,
     transaction,
   });
+
+  if (!hasResponseFields) {
+    await executeAction({ step, results: [], requestStepId: requestStep.id });
+  }
 
   return request.id;
 };
