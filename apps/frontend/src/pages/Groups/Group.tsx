@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { WatchGroupButton } from "@/components/group/WatchGroupButton/WatchGroupButton";
+
 import BannerWithAvatar from "./BannerWithAvatar";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
@@ -75,7 +77,11 @@ export const Group = () => {
             }
           }
         >
-          <Typography variant="h1">{group.name}</Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <Typography variant="h1">{group.name}</Typography>
+
+            <WatchGroupButton isWatched={false} groupId={""} size="medium" />
+          </Box>
           <Box
             sx={{
               display: "flex",

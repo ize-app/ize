@@ -50,7 +50,13 @@ export const Setup = () => {
             control={control}
             render={({ field, fieldState: { error } }) => (
               <FormControl>
-                <TextField {...field} label={"Group name"} required error={Boolean(error)} />
+                <TextField
+                  {...field}
+                  label={"Group name"}
+                  size="small"
+                  required
+                  error={Boolean(error)}
+                />
                 <FormHelperText
                   sx={{
                     color: "error.main",

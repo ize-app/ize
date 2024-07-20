@@ -1,8 +1,8 @@
 import { SxProps, Theme } from "@mui/material";
 import MuiAvatar from "@mui/material/Avatar";
-import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 
+import { getAvatarString } from "@/components/Avatar/getAvatarString";
 import { stringToColor } from "@/components/Avatar/stringToColor";
 
 import { ParentProps } from "../../components/AvatarOld";
@@ -21,7 +21,6 @@ const BannerWithAvatar = ({
   bannerUrl,
   avatarUrl,
   name,
-  parent,
   color,
 }: BannerWithIconProps): JSX.Element => {
   const avatarStyles = (theme: Theme): SxProps => ({
@@ -113,39 +112,36 @@ const BannerWithAvatar = ({
         })}
       >
         <Box>
-          {parent ? (
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              badgeContent={
-                <MuiAvatar
-                  alt={name}
-                  src={parent.avatarUrl ?? undefined}
-                  sx={(theme) => ({
-                    border: "2px solid white",
-                    [theme.breakpoints.up("sm")]: {
-                      width: "4rem",
-                      height: "4rem",
-                    },
-                    [theme.breakpoints.down("sm")]: {
-                      width: "2rem",
-                      height: "2rem",
-                    },
-                  })}
-                >
-                  getAvatarString(name.toUpperCase())
-                </MuiAvatar>
-              }
-            >
-              <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
-                getAvatarString(name.toUpperCase())
-              </MuiAvatar>
-            </Badge>
-          ) : (
-            <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
-              getAvatarString(name.toUpperCase())
-            </MuiAvatar>
-          )}
+          <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
+            {getAvatarString(name.toUpperCase())}
+          </MuiAvatar>
+          {/* //   </Box></Box>Badge
+            //   overlap="circular"
+            //   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            //   badgeContent={
+            //     <MuiAvatar
+            //       alt={name}
+            //       src={parent.avatarUrl ?? undefined}
+            //       sx={(theme) => ({
+            //         border: "2px solid white",
+            //         [theme.breakpoints.up("sm")]: {
+            //           width: "3rem",
+            //           height: "3rem",
+            //         },
+            //         [theme.breakpoints.down("sm")]: {
+            //           width: "2rem",
+            //           height: "2rem",
+            //         },
+            //       })}
+            //     >
+            //       {getAvatarString(name.toUpperCase())}
+            //     </MuiAvatar>
+            //   }
+            // >
+            //   <MuiAvatar src={avatarUrl} sx={avatarStyles as SxProps}>
+            //     {getAvatarString(name.toUpperCase())}
+            //   </MuiAvatar>
+            // </Badge> */}
         </Box>
       </Box>
     </>
