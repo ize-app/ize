@@ -22,8 +22,17 @@ export const requestDefinedOptionSchema = z
 
 export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
 
-export const requestSchema = z.object({
-  name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
-  requestFields: fieldAnswerRecordSchema.optional(),
-  requestDefinedOptions: requestDefinedOptionsSchema.optional(),
-});
+export const requestSchema = z
+  .object({
+    // strangely, making this field required creates other errors so I made the field required via the refine method
+    name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
+    requestFields: fieldAnswerRecordSchema.optional(),
+    requestDefinedOptions: requestDefinedOptionsSchema.optional(),
+  })
+  .refine(
+    (req) => {
+      if (!req.name) return false;
+      else return true;
+    },
+    { message: "Required", path: ["name"] },
+  );
