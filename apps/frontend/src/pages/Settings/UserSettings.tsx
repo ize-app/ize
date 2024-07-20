@@ -7,6 +7,7 @@ import { useCallback, useContext, useState } from "react";
 
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { EntityType } from "@/graphql/generated/graphql";
+import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
 import { LinkEmailModal } from "./LinkEmailModal";
@@ -101,6 +102,7 @@ export const UserSettings = () => {
 
   return (
     <>
+      <Head title={"Settings"} description={"Ize Settings"} />
       <LinkEmailModal open={emailModalOpen} setOpen={setEmailModalOpen} />
       <PageContainer>
         <Typography variant="h1">Settings</Typography>
