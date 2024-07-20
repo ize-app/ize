@@ -11,8 +11,7 @@ datasource db {
 model User {
   id           String       @id @default(uuid()) @db.Uuid
   stytchId     String       @unique @map("stytch_id")
-  firstName    String?
-  lastName     String?
+  name         String       @default("")
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
   Group        Group[]

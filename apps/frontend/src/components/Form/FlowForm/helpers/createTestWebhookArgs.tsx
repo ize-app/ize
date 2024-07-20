@@ -19,7 +19,7 @@ const createResultsArgs = (formState: FlowSchemaType): WebhookValueArgs[] => {
 
   formState.steps.forEach((step) => {
     const fields = step.response?.fields ?? [];
-    step.result.forEach((result) => {
+    (step.result ?? []).forEach((result) => {
       const field = fields.find((f) => f.fieldId === result.fieldId);
       results.push({
         fieldName: field?.name ?? "Field name",

@@ -82,7 +82,7 @@ export const createWebhookPayload = async ({
     const results: WebhookValue[] = [];
 
     formattedRequest.steps.map((step, stepIndex) => {
-      step.results.forEach((result) => {
+      (step.results ?? []).forEach((result) => {
         const resultConfig = formattedRequest.flow.steps[stepIndex].result.find((r) => {
           return r.resultConfigId === result.resultConfigId;
         });

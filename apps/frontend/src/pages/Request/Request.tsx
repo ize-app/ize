@@ -114,8 +114,9 @@ export const Request = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: "24px",
+            marginTop: "36px",
             marginBottom: "60px",
+            gap: "24px",
             [theme.breakpoints.down("md")]: {
               flexDirection: "column-reverse",
               gap: "24px",
@@ -127,7 +128,7 @@ export const Request = () => {
               display: "flex",
               flexDirection: "column",
               gap: "18px",
-              minWidth: "400px",
+              minWidth: "300px",
               width: "100%",
               maxWidth: "800px",
             }}
@@ -182,8 +183,8 @@ export const Request = () => {
               <Paper
                 sx={{
                   flexGrow: 1,
-                  minWidth: "250px",
-                  maxWidth: "600px",
+                  minWidth: "300px",
+                  maxWidth: "800px",
                   width: "100%",
                   border: `solid ${colors.primaryContainer} 2px`,
                   marginLeft: "2rem",

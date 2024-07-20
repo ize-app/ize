@@ -92,20 +92,17 @@ In the rare case you need to write to the db, you can find the superuser credent
 
 ### Updating database schema
 
-Ize uses Prisma as its ORM. The database schema is defined via the Prisma schema at `apps/backend/src/prisma/schema.prisma`. 
-
+Ize uses Prisma as its ORM. The database schema is defined via the Prisma schema at `apps/backend/src/prisma/schema.prisma`.
 
 To quickly prototype schema changes during development, run `npx prisma db push` from `apps/backend` to update the schema of your local db and prisma client. This command is only to be used during development, as it doesn't track database changes that can later be applied to the production db via a schema migration.
 
-`prisma migrate dev` is used in dev when you do want to keep track of changes so that they can be applied by `prisma migrate deploy` later in CI. this command creates migration file, applies them to database, and updates pigrations table. you can use `--create-only` flag to edit a migration (e.g. so you don't get data loss during the migration).
+`prisma migrate dev --name [[name]]` is used in dev when you do want to keep track of changes so that they can be applied by `prisma migrate deploy` later in CI. this command creates migration file, applies them to database, and updates pigrations table. you can use `--create-only` flag to edit a migration so you don't get data loss during the migration (learn more [here](https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations)).
 
 Migrations are applied to the production database automatically via `prisma migrate deploy`
 
+### Updating GraphQL
 
-### Updating GraphQL 
-
-When you make an update to the GraphQL schema or queries, run  `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
-
+When you make an update to the GraphQL schema or queries, run `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
 
 ## Concepts
 
@@ -133,7 +130,7 @@ Flows define how a particular identities/groups collaborate to complete some kin
 
 - **Request permissions**: Identities/groups that can trigger this flow (i.e. create a request)
 - **Request fields**: Information that is required for someone to trigger the flow
-- **Response permissions**: Identities/groups that can respond a 
+- **Response permissions**: Identities/groups that can respond a
 - **Response fields**: Information that is required on a response
 - **Results**: How response fields are aggregated into a final result (e.g. decision, AI summary, prioritization, etc)
 - **Actions**: Automated actions that occur when a request complets (e.g. fire a webhook, evolve a flow, etc)

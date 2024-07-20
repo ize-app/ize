@@ -20,7 +20,7 @@ export const attachDiscord = async () => {
   const scopes = ["identify", "guilds"];
   const loginRedirectUrl = `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`;
   const signupRedirectUrl = `${window.location.origin}/api/auth/token?next_route=${window.location.pathname}`;
-  const baseUrl = new URL(baseUrlString); 
+  const baseUrl = new URL(baseUrlString);
 
   baseUrl.searchParams.append("public_token", import.meta.env.VITE_STYTCH_PUBLIC_TOKEN as string);
   baseUrl.searchParams.append("login_redirect_url", loginRedirectUrl);

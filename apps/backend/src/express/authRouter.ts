@@ -13,7 +13,7 @@ import { upsertUser } from "../stytch/upsertUser";
 const authRouter = Router();
 
 // handles login / signup for all auth flows that user a access token (oauth / magiclink)
-// creates session and also creates appropriate identities for user
+// creates session, user, and identities for user
 authRouter.get("/token", async (req, res, next) => {
   try {
     const { stytch_token_type, token } = req.query;
@@ -30,7 +30,7 @@ authRouter.get("/token", async (req, res, next) => {
         });
 
         sessionToken = stytchOAuthentication.session_token;
-        const user = await upsertUser({ stytchUser: stytchOAuthentication.user, transaction });
+        const user = await upsertUser({ stytchUser: stytchOAuthentication.user, res, transaction });
         await upsertOauthToken({ stytchOAuthentication, user });
 
         // create Discord username identity (if it doesn't already exist) and tie it to that user
@@ -60,7 +60,11 @@ authRouter.get("/token", async (req, res, next) => {
           session_duration_minutes: sessionDurationMinutes,
         });
         sessionToken = stytchMagicAuthentication.session_token;
-        const user = await upsertUser({ stytchUser: stytchMagicAuthentication.user, transaction });
+        const user = await upsertUser({
+          stytchUser: stytchMagicAuthentication.user,
+          res,
+          transaction,
+        });
         await createEmailIdentities(user, stytchMagicAuthentication.user.emails);
       }
     });
@@ -89,7 +93,7 @@ authRouter.post("/attach-discord", async (req, res, next) => {
 });
 
 // creates blockchain identities for user on authentication
-// session already created for user on FE
+// session already created for user on FE --> user also already created via authenticateSession
 authRouter.post("/crypto", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];
@@ -103,14 +107,15 @@ authRouter.post("/crypto", async (req, res, next) => {
     // create blockchain identities if they don't already exist
     await createBlockchainIdentitiesForUser(res.locals.user, sessionData.user.crypto_wallets);
 
-    res.status(200).send();
+    redirectAtLogin({ req, res });
+    // res.status(200).send();
   } catch (e) {
     next(e);
   }
 });
 
 // creates email identities for user on authentication
-// session already created for user on FE
+// session already created for user on FE --> user also already created via authenticateSession
 authRouter.post("/password", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];

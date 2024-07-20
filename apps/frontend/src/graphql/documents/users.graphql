@@ -4,6 +4,10 @@ query Me {
   }
 }
 
+mutation UpdateProfile($profile: UpdateProfileArgs!) {
+  updateProfile(profile: $profile)
+}
+
 fragment MeParts on Me {
   user {
     ...UserSummaryParts

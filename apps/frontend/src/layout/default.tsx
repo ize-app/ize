@@ -9,6 +9,7 @@ import usePageTracking from "@/analytics/usePageTracking";
 import LoginModal from "@/components/Auth/LoginModal";
 import { Menu } from "@/components/Menu/Menu";
 import { NavBar } from "@/components/Menu/NavBar";
+import { UserSetupModal } from "@/components/UserSetupModal";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
 import Head from "./Head";
@@ -19,6 +20,7 @@ const drawerWidth = 240;
 export const DefaultLayout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { me } = useContext(CurrentUserContext);
+
   usePageTracking();
 
   const handleMenuToggle = () => {
@@ -30,6 +32,7 @@ export const DefaultLayout = () => {
       <Head title="Ize" description="Distributed sensemaking" />
       <CssBaseline />
       <NavBar handleMenuToggle={handleMenuToggle} me={me} />
+      <UserSetupModal />
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         {me && menuOpen && (
           <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />

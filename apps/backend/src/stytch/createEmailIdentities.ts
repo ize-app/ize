@@ -12,7 +12,7 @@ export const createEmailIdentities = async (
   profilePictureURL?: string | undefined,
 ) => {
   stytchEmails.forEach(async (email) => {
-    const userEmail = user.Identities.find((identity) => {
+    const userEmail = (user.Identities ?? []).find((identity) => {
       identity.IdentityEmail?.email === email.email && email.verified;
     });
 
@@ -24,34 +24,42 @@ export const createEmailIdentities = async (
       });
       if (!existingIdentity) {
         // if there isn't an existing identity for this address, create it
-        await prisma.identity.create({
-          data: {
-            User: {
-              connect: {
-                id: user.id,
+        try {
+          await prisma.identity.create({
+            data: {
+              User: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              Entity: {
+                create: {},
+              },
+              IdentityEmail: {
+                create: {
+                  email: email.email,
+                  icon: profilePictureURL ?? null,
+                },
               },
             },
-            Entity: {
-              create: {},
-            },
-            IdentityEmail: {
-              create: {
-                email: email.email,
-                icon: profilePictureURL ?? null,
-              },
-            },
-          },
-        });
+          });
+        } catch (e) {
+          console.error("Error creating email identity", e);
+        }
       } else {
         // otherwise associate existing identity with this user
-        await prisma.identity.update({
-          where: {
-            id: existingIdentity.identityId,
-          },
-          data: {
-            userId: user.id,
-          },
-        });
+        try {
+          await prisma.identity.update({
+            where: {
+              id: existingIdentity.identityId,
+            },
+            data: {
+              userId: user.id,
+            },
+          });
+        } catch (e) {
+          console.error("Error associating email identity with user", e);
+        }
       }
     }
   });

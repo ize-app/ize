@@ -19,8 +19,7 @@ export const About = () => {
           [theme.breakpoints.down("sm")]: { width: "90%" },
         })}
       >
-        <Typography variant="h1">Ize 👀</Typography>
-        <Typography variant="h2">Collaborative, evolutionary, cross-tool workflows </Typography>
+        <Typography variant="h1">Ize 👀: The Art of Collective Attention</Typography>
         <p>
           <strong>TL;DR</strong> Ize is a platform for collaborative, cross-tool, evolutionary
           workflows. These workflows define how collaborators get shit done via collaborative
@@ -32,8 +31,8 @@ export const About = () => {
           defining collaborative workflows across various tools.
         </p>
         <p>
-          Ize unlocks new possibilities for organizational power dynamics and collective
-          intelligence. If this vision excites you, email us at{" "}
+          Ize unlocks new possibilities for collective attention, intelligence, and power dynamics.
+          If this vision excites you, email us at{" "}
           <a href="mailto:&#x68;&#97;&#114;&#109;&#111;&#x6e;&#x40;&#x69;&#122;&#101;&#46;&#x73;&#x70;&#97;&#x63;&#101;">
             &#x68;&#97;&#114;&#109;&#111;&#x6e;&#x40;&#x69;&#122;&#101;&#46;&#x73;&#x70;&#97;&#x63;&#101;
           </a>
@@ -44,10 +43,11 @@ export const About = () => {
         <br />
         <br />
         <p>
-          The human brain isn&#39;t cut out for the accelerating fragmentation, information
-          overload, and change of modern life. This is especially true for modern online work. While
-          early humans could once count on a stable set of collaborators, tools, and information,
-          online collaboration is exponentially more complex.{" "}
+          We are in a collective attention crisis. The human brain isn&#39;t cut out for the
+          accelerating fragmentation, information overload, and change of modern life. This is
+          especially true for modern online collaboration. While early humans could once count on a
+          stable set of teammates, tools, and information, online collaboration is exponentially
+          more complex.{" "}
         </p>
         <ul>
           <li>
@@ -66,9 +66,14 @@ export const About = () => {
           </li>
         </ul>
         <p>
-          If software created the crisis of modern work, could it somehow be used to fix it? Our
-          current set of online tools only seem to make the problem worse. Each new tool is yet
-          another demand on our limited attentional reserves.
+          This dissipation of our collective attention is a immeasurable waste of our collective
+          energy. To build anything meaningful together, we need to be focus our attention on the
+          same thing at the same time.
+        </p>
+        <p>
+          If software created the crisis of collective attention, could it somehow be used to fix
+          it? Our current set of online tools only seem to make the problem worse. Each new tool is
+          yet another demand on our limited attentional reserves.
         </p>
         <p>
           A solution would need to reduce our attentional overhead while enabling new modes of
@@ -92,11 +97,12 @@ export const About = () => {
         <ul>
           <li>
             <strong>Requests:</strong> Who can trigger the workflow (e.g. a set of email addresses,
-            Discord Roles, or NFTs)
+            Discord Roles, or NFTs) and what information needs to be provided to trigger the
+            workflow.
           </li>
           <li>
-            <strong>Response:</strong> Who can respond and what response is being asked for - a
-            vote, ranked priorities, a free text response, etc.
+            <strong>Response:</strong> Who can respond to a request and what response is being asked
+            for - a vote, ranked priorities, a free text response, etc.
           </li>
           <li>
             <strong>Result:</strong> How those responses come to a final output (e.g. a decision, an
@@ -105,14 +111,22 @@ export const About = () => {
           </li>
         </ul>
         <p>
-          By making it easy to explicitly define any collaborative online process, Ize introduces
-          radical new possibilities for how power can flow and how collective intelligence can be
-          harnessed. Teams can take action without being blocked by bottlenecks. Leaders can regain
-          sanity with transparent, auditable process. Contibutors can quickly find discover ways to
-          take action and make their voice heard. Organizers can craft coalitions across inter/intra
-          organizational boundaries.
+          By making collaborative process explicit, we can signal for and filter by{" "}
+          <em>relevance</em>. Ize workflows make it clear whether you are actually relevant for any
+          given process, whether your input is still needed, specifically what input you are being
+          asked to give, and how time-sensitive that workflow is. Being able to filter by relevance
+          is a critical step out of the collective attention crisis.
         </p>
         <p>
+          Explicitly defining collaborative process also introduces radical new possibilities for
+          how power can flow and how collective intelligence can be harnessed. Teams can take action
+          without being blocked by bottlenecks. Leaders can regain sanity with transparent,
+          auditable process. Contributors can quickly find discover ways to take action and make
+          their voice heard. Organizers can craft coalitions across inter/intra organizational
+          boundaries.
+        </p>
+        <p>
+          Defining collaborative process explicitly also includes the process to change process.
           With the accelerating pace of change of modern life, any collaborative process needs to be
           able to quickly adapt. Ize workflows are built for change. The process to evolve a
           workflow is, itself, a collaborative workflow. In fact, everything in Ize is a workflow.
@@ -121,11 +135,18 @@ export const About = () => {
         </p>
         <p>
           Because the fundamental unit of Ize is the &quot;workflow&quot; rather than an
-          &quot;organization&quot;, Ize is structured closer to a mycelial network than a tradtional
-          SaaS dominator heirarchy. Ize workflows can combine otherwise online identities and groups
-          into a coherent process. For example, an &quot;Approve expense&quot; workflow could be
-          triggered by a Discord server&#39;s @contributor role, approved by holders of a particular
-          Hats NFT, and evolved by a set of email addresseses.
+          &quot;organization&quot;, Ize is structured closer to a mycelial network than a{" "}
+          <a
+            href={"https://osf.io/preprints/mediarxiv/sf432"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            traditional SaaS dominator hierarchy.
+          </a>
+          . Ize workflows can combine otherwise online identities and groups into a coherent
+          process. For example, an &quot;Approve expense&quot; workflow could be triggered by a
+          Discord server&#39;s @contributor role, approved by holders of a particular Hats NFT, and
+          evolved by a set of email addresses.
         </p>
         <p>
           This mycelial network extends to how Ize evolves itself over the time. The vision is for
@@ -133,7 +154,7 @@ export const About = () => {
           Teams will interact with Ize natively within their existing toolset.
         </p>
         <p>
-          Ize is a pardigm shift in collaborative tooling. It is cross-tool, distributed,
+          Ize is a paradigm shift in collaborative tooling. It is cross-tool, distributed,
           asynchronous, and evolutionary. Though it is a new category of tool, it draws inspiration
           from its predecessors. It&#39;s like a DAO tool (Snapshot, DAOHaus), but with
           task-specific, highly-flexible, evolutionary subDAOs. It&#39;s like an automation tool

@@ -162,8 +162,18 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         element: <Flow />,
       },
+      // TODO: remove Identities route
       {
         path: Routes.Route.Identities,
+        errorElement: <ErrorBoundary />,
+        element: (
+          <AuthRoute>
+            <UserSettings />
+          </AuthRoute>
+        ),
+      },
+      {
+        path: Routes.Route.Settings,
         errorElement: <ErrorBoundary />,
         element: (
           <AuthRoute>

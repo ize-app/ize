@@ -10,6 +10,7 @@ import { EntityType } from "@/graphql/generated/graphql";
 import PageContainer from "@/layout/PageContainer";
 
 import { LinkEmailModal } from "./LinkEmailModal";
+import { ProfileForm } from "./ProfileForm";
 import { attachDiscord } from "../../components/Auth/attachDiscord";
 import { AvatarWithName } from "../../components/AvatarOld";
 import { DiscordLogoSvg, EthLogoSvg } from "../../components/icons";
@@ -30,7 +31,6 @@ export const UserSettings = () => {
             hasBlockchainIdentity = true;
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
@@ -43,7 +43,6 @@ export const UserSettings = () => {
           case "IdentityEmail": {
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
@@ -56,7 +55,6 @@ export const UserSettings = () => {
             hasDiscordIdentity = true;
             return (
               <AvatarWithName
-                color={"transparent"}
                 id={identity.id}
                 key={identity.id}
                 name={identity.name}
@@ -106,6 +104,8 @@ export const UserSettings = () => {
       <LinkEmailModal open={emailModalOpen} setOpen={setEmailModalOpen} />
       <PageContainer>
         <Typography variant="h1">Settings</Typography>
+        <Typography variant="h2">Profile</Typography>
+        <ProfileForm />
         <Typography variant="h2">Connected accounts</Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "12px", margin: "16px 0px" }}>
           {identities}
