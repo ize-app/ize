@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { Chip } from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
+import { Chip, IconButton, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -49,7 +50,7 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-  // console.log("flow is ", flow);
+  console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
@@ -105,8 +106,12 @@ export const Flow = () => {
                   <Chip label={"Active"} size="small" />
                   {flow.versionPublishedAt && (
                     <Typography>
-                      Most recent version published at{" "}
-                      {new Date(flow.versionPublishedAt).toLocaleString()}
+                      Most recent version published on{" "}
+                      {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
+                        year: "numeric",
+                        day: "numeric",
+                        month: "long",
+                      })}
                     </Typography>
                   )}
                 </Box>
@@ -118,7 +123,12 @@ export const Flow = () => {
                   <Chip label={"Old version"} size="small" />
                   {flow.versionPublishedAt && (
                     <Typography>
-                      This version published at {new Date(flow.versionPublishedAt).toLocaleString()}
+                      This version published on{" "}
+                      {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
+                        year: "numeric",
+                        day: "numeric",
+                        month: "long",
+                      })}
                     </Typography>
                   )}
                 </Box>
@@ -133,6 +143,28 @@ export const Flow = () => {
                     current published version of this flow.
                   </Link>
                 </Typography>
+              </Box>
+            )}
+            {flow.evolve && (
+              <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
+                <Typography>
+                  <Link
+                    to={generatePath(Route.Flow, {
+                      flowId: fullUUIDToShort(flow.evolve.flowId),
+                      flowVersionId: flow.evolve.currentFlowVersionId
+                        ? fullUUIDToShort(flow.evolve.currentFlowVersionId)
+                        : null,
+                      // flowVersionId: null,
+                    })}
+                  >
+                    How this flow evolves
+                  </Link>
+                </Typography>
+                <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
+                  <IconButton size="small">
+                    <InfoOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </Box>
             )}
           </Box>
