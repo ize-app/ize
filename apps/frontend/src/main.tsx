@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/react";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import * as ReactGA from "react-ga";
+import ReactGA from "react-ga4";
 
 import App from "./App.tsx";
 

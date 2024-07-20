@@ -9,6 +9,7 @@ import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder.tsx";
 import Search from "@/components/Tables/Search";
 import { FlowSummaryFragment, GetFlowsDocument } from "@/graphql/generated/graphql";
+import Head from "@/layout/Head.tsx";
 import PageContainer from "@/layout/PageContainer";
 import { Route } from "@/routers/routes.ts";
 
@@ -25,6 +26,7 @@ export const Flows = () => {
   const filteredFlows = filterFlows({ flows, searchQuery });
   return (
     <PageContainer>
+      <Head title={"Flows"} description={"View and trigger your collaborative flows."} />
       <Typography variant="h1">Flows</Typography>
       {loading ? (
         <Loading />
