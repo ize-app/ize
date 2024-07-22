@@ -14,8 +14,18 @@ query Group($id: String!) {
   }
 }
 
-query Groups {
-  groupsForCurrentUser {
+query Groups(
+  $cursor: String
+  $limit: Int!
+  $searchQuery: String!
+  $watchFilter: WatchGroupFilter!
+) {
+  groupsForCurrentUser(
+    cursor: $cursor
+    limit: $limit
+    searchQuery: $searchQuery
+    watchFilter: $watchFilter
+  ) {
     ...GroupSummaryParts
   }
 }
@@ -38,7 +48,8 @@ fragment GroupSummaryParts on Group {
   icon
   memberCount
   color
-  watched
+  isWatched
+  isMember
   createdAt
   groupType {
     ...GroupTypeSummaryParts

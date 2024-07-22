@@ -10,7 +10,12 @@ type Mutation {
 
 type Query {
   group(id: String!): Group!
-  groupsForCurrentUser: [Group!]!
+  groupsForCurrentUser(
+    cursor: String
+    limit: Int!
+    searchQuery: String!
+    watchFilter: WatchGroupFilter!
+  ): [Group!]!
 }
 
 enum NewEntityTypes {
@@ -25,6 +30,12 @@ enum NewEntityTypes {
 enum EntityType {
   Group
   Identity
+}
+
+enum WatchGroupFilter {
+  All
+  Watched
+  Unwatched
 }
 
 union Entity = Identity | Group
@@ -70,7 +81,8 @@ type Group {
   organization: Organization
   createdAt: String!
   groupType: GroupType!
-  watched: Boolean!
+  isMember: Boolean!
+  isWatched: Boolean!
 }
 
 type Organization {

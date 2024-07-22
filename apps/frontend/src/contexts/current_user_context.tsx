@@ -48,6 +48,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const { user } = useStytchUser();
   const { data: medata, loading: meLoading, refetch } = useQuery(MeDocument);
   const me = medata?.me;
+  console.log("me", me);
 
   // const { data: groupsData, loading: groupsLoading } = useQuery(GroupsDocument, {
   //   skip: !me,

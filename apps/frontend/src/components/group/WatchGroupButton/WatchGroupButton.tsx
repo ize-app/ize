@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Icon, IconButton, IconButtonOwnProps, Tooltip } from "@mui/material";
-import { useContext, useState } from "react";
+import { MouseEventHandler, useContext, useState } from "react";
 
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
 import eyeInactiveUrl from "@/assets/ize-eye-inactive.svg";
@@ -16,7 +16,6 @@ export const WatchGroupButton = ({
   watched: boolean;
   size?: IconButtonOwnProps["size"];
 }) => {
-  console.log("group id", groupId);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const [isWatched, setIsWatched] = useState(watched);
 
@@ -45,20 +44,15 @@ export const WatchGroupButton = ({
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.stopPropagation();
     await mutate({
       variables: { groupId, watch: !watched },
     });
   };
 
   return (
-    <Tooltip
-      title={
-        isWatched
-          ? "Stop watching requests created by this group"
-          : "Watch requests created by this group"
-      }
-    >
+    <Tooltip title={isWatched ? "Stop watching this group" : "Watch this group"}>
       <IconButton size={size} onClick={onSubmit}>
         <Icon fontSize={size}>
           {isWatched ? <img src={eyeActiveUrl} /> : <img src={eyeInactiveUrl} />}

@@ -12,6 +12,7 @@ import {
   MutationNewEntitiesArgs,
   MutationResolvers,
   QueryGroupArgs,
+  QueryGroupsForCurrentUserArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 
@@ -34,6 +35,7 @@ const group: QueryResolvers["group"] = async (
   });
 
   let isWatched = false;
+  let isMember = false;
 
   if (context.currentUser) {
     const watchRecord = await prisma.usersWatchedGroups.findUnique({
@@ -44,19 +46,32 @@ const group: QueryResolvers["group"] = async (
         },
       },
     });
+
+    const groupMember = await prisma.identityGroup.findFirst({
+      where: {
+        groupId: args.id,
+        identityId: { in: context.currentUser.Identities.map((id) => id.id) },
+      },
+    });
+
     if (watchRecord) {
       isWatched = watchRecord.watched;
     }
+
+    if (groupMember) {
+      isMember = true;
+    }
   }
 
-  return groupResolver(group, isWatched);
+  return groupResolver(group, isWatched, isMember);
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (
   root: unknown,
+  args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<Group[]> => {
-  return await getGroupsOfUser({ context });
+  return await getGroupsOfUser({ args, context });
 };
 
 export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (

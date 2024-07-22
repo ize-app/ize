@@ -19,6 +19,7 @@ import { GraphqlRequestContext } from "../context";
 import { updateProfile as updateProfileService } from "@/core/user/updateProfile";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
+import { updateUserCustomGroups } from "@/core/entity/updateIdentitiesGroups/updateUserCustomGroups";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
@@ -27,9 +28,12 @@ const me: QueryResolvers["me"] = async (
 ): Promise<Me | null> => {
   if (!context.currentUser) return null;
 
+  console.log("insede me resolver");
+
   const discordServers = await getDiscordServers({ context });
   await updateUserDiscordGroups({ context, discordServers });
   await updateUserNftGroups({ context });
+  await updateUserCustomGroups({ context });
 
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return identityResolver(
