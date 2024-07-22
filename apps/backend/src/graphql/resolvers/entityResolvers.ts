@@ -26,13 +26,30 @@ const newEntities: MutationResolvers["newEntities"] = async (
 const group: QueryResolvers["group"] = async (
   root: unknown,
   args: QueryGroupArgs,
+  context: GraphqlRequestContext,
 ): Promise<Group> => {
   const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
     include: groupInclude,
     where: { id: args.id },
   });
 
-  return groupResolver(group);
+  let isWatched = false;
+
+  if (context.currentUser) {
+    const watchRecord = await prisma.usersWatchedGroups.findUnique({
+      where: {
+        userId_groupId: {
+          groupId: args.id,
+          userId: context.currentUser.id,
+        },
+      },
+    });
+    if (watchRecord) {
+      isWatched = watchRecord.watched;
+    }
+  }
+
+  return groupResolver(group, isWatched);
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (

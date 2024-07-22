@@ -70,6 +70,7 @@ type Group {
   organization: Organization
   createdAt: String!
   groupType: GroupType!
+  watched: Boolean!
 }
 
 type Organization {

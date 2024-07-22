@@ -8,6 +8,10 @@ mutation UpdateProfile($profile: UpdateProfileArgs!) {
   updateProfile(profile: $profile)
 }
 
+mutation WatchGroup($groupId: String!, $watch: Boolean!) {
+  watchGroup(groupId: $groupId, watch: $watch)
+}
+
 fragment MeParts on Me {
   user {
     ...UserSummaryParts

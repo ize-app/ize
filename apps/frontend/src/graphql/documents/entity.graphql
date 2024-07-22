@@ -38,6 +38,7 @@ fragment GroupSummaryParts on Group {
   icon
   memberCount
   color
+  watched
   createdAt
   groupType {
     ...GroupTypeSummaryParts

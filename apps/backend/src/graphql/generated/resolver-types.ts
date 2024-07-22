@@ -307,6 +307,7 @@ export type Group = {
   memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   organization?: Maybe<Organization>;
+  watched: Scalars['Boolean']['output'];
 };
 
 export type GroupCustom = {
@@ -448,6 +449,7 @@ export type Mutation = {
   newResponse: Scalars['String']['output'];
   testWebhook: Scalars['Boolean']['output'];
   updateProfile: Scalars['Boolean']['output'];
+  watchGroup: Scalars['Boolean']['output'];
 };
 
 
@@ -488,6 +490,12 @@ export type MutationTestWebhookArgs = {
 
 export type MutationUpdateProfileArgs = {
   profile: UpdateProfileArgs;
+};
+
+
+export type MutationWatchGroupArgs = {
+  groupId: Scalars['String']['input'];
+  watch: Scalars['Boolean']['input'];
 };
 
 export type NewEntityArgs = {
@@ -1415,6 +1423,7 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   memberCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
+  watched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1513,6 +1522,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
   updateProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
+  watchGroup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationWatchGroupArgs, 'groupId' | 'watch'>>;
 };
 
 export type NftCollectionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['NftCollection'] = ResolversParentTypes['NftCollection']> = {

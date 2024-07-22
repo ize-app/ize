@@ -9,18 +9,19 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(uuid()) @db.Uuid
-  stytchId     String       @unique @map("stytch_id")
-  name         String       @default("")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
-  Group        Group[]
-  Identities   Identity[]
-  Oauths       Oauths[]
-  Request      Request[]
-  Response     Response[]
-  Permission   Permission[]
-  CreatedFlows Flow[]
+  id                 String               @id @default(uuid()) @db.Uuid
+  stytchId           String               @unique @map("stytch_id")
+  name               String               @default("")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  Group              Group[]
+  Identities         Identity[]
+  Oauths             Oauths[]
+  Request            Request[]
+  Response           Response[]
+  Permission         Permission[]
+  CreatedFlows       Flow[]
+  UsersWatchedGroups UsersWatchedGroups[]
 
   @@map("users")
 }
@@ -136,6 +137,7 @@ model Group {
   IdentitiesGroups        IdentityGroup[]
   CustomGroupMemberGroups CustomGroupMemberGroup[]
   GroupCustom             GroupCustom?
+  UsersWatchedGroups      UsersWatchedGroups[]
 
   @@map("groups")
 }
@@ -820,4 +822,16 @@ model ResultItems {
   Option FieldOption? @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
 
   @@map("result_items")
+}
+
+model UsersWatchedGroups {
+  userId  String  @map("user_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@map("users_watched_groups")
 }

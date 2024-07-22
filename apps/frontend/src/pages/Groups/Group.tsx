@@ -80,7 +80,7 @@ export const Group = () => {
           <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <Typography variant="h1">{group.name}</Typography>
 
-            <WatchGroupButton isWatched={false} groupId={""} size="medium" />
+            <WatchGroupButton watched={group.watched} groupId={group.id} size="medium" />
           </Box>
           <Box
             sx={{

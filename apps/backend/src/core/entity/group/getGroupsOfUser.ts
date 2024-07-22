@@ -27,6 +27,15 @@ export const getGroupsOfUser = async ({
     include: groupInclude,
   });
 
-  const formattedGroups = groups.map((group) => groupResolver(group));
+  const watchRecords = await transaction.usersWatchedGroups.findMany({
+    where: {
+      userId: context.currentUser.id,
+    },
+  });
+
+  const formattedGroups = groups.map((group) => {
+    const watchRecord = watchRecords.find((record) => record.groupId === group.id);
+    return groupResolver(group, watchRecord?.watched ?? false);
+  });
   return formattedGroups;
 };
