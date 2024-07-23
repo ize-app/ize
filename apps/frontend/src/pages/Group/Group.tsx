@@ -34,6 +34,8 @@ export const Group = () => {
 
   const group = data?.group as IzeGroupFragment;
 
+  // console.log("group is ", group);
+
   const [currentTabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -125,6 +127,11 @@ export const Group = () => {
               </Box>
             )}
           </Box>
+          {group.description && (
+            <Typography variant="description" marginTop="8px">
+              {group.description}
+            </Typography>
+          )}
         </Box>
         <Tabs
           tabs={tabs}

@@ -92,6 +92,7 @@ export type CallWebhookArgs = {
 };
 
 export type CustomGroupArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
   members: Array<CustomGroupMembersArgs>;
   name: Scalars['String']['input'];
 };
@@ -394,6 +395,7 @@ export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
 export type IzeGroup = {
   __typename?: 'IzeGroup';
+  description?: Maybe<Scalars['String']['output']>;
   group: Group;
   members: Array<Entity>;
 };
@@ -1513,6 +1515,7 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
 };
 
 export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

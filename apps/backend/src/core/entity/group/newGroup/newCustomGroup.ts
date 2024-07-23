@@ -26,6 +26,7 @@ export const newCustomGroup = async ({
           GroupCustom: {
             create: {
               name: args.inputs.name,
+              description: args.inputs.description,
               CustomGroupMemberGroups: {
                 createMany: {
                   data: args.inputs.members

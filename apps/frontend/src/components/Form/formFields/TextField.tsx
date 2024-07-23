@@ -13,6 +13,7 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
   multiline?: boolean;
+  rows?: number;
   size?: "small" | "medium";
   sx?: SxProps;
   display?: boolean;
@@ -27,6 +28,7 @@ export const TextField = <T extends FieldValues>({
   size = "small",
   multiline = false,
   variant = "outlined",
+  rows,
   endAdornment,
   startAdornment,
   placeholderText,
@@ -50,6 +52,7 @@ export const TextField = <T extends FieldValues>({
             required={required}
             multiline={multiline}
             size={size}
+            rows={rows}
             placeholder={placeholderText}
             error={Boolean(error)}
             InputProps={{

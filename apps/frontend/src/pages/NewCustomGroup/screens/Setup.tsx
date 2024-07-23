@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormControl, FormHelperText, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
-import { RoleSearch } from "../../../components/Form/formFields";
+import { RoleSearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
-import { newCustomGroupFormSchema } from "../formValidation";
-import { NewCustomGroupFormFields, useNewCustomGroupWizardState } from "../newCustomGroupWizard";
+import { NewCustomGroupSchemaType, newCustomGroupFormSchema } from "../formValidation";
+import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
@@ -17,16 +16,17 @@ export const Setup = () => {
     handleSubmit,
     setValue: setFieldValue,
     getValues: getFieldValues,
-  } = useForm<NewCustomGroupFormFields>({
+  } = useForm<NewCustomGroupSchemaType>({
     defaultValues: {
-      name: formState.name ?? [],
+      name: formState.name ?? "",
+      description: formState.description ?? "",
       members: formState.members ?? [],
     },
     resolver: zodResolver(newCustomGroupFormSchema),
     shouldUnregister: true,
   });
 
-  const onSubmit = (data: NewCustomGroupFormFields) => {
+  const onSubmit = (data: NewCustomGroupSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       ...data,
@@ -42,31 +42,32 @@ export const Setup = () => {
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            gap: "12px",
           }}
         >
-          <Controller
-            name={"name"}
+          <TextField<NewCustomGroupSchemaType>
+            name="name"
             control={control}
-            render={({ field, fieldState: { error } }) => (
-              <FormControl>
-                <TextField
-                  {...field}
-                  label={"Group name"}
-                  size="small"
-                  required
-                  error={Boolean(error)}
-                />
-                <FormHelperText
-                  sx={{
-                    color: "error.main",
-                  }}
-                >
-                  {error?.message ?? ""}
-                </FormHelperText>
-              </FormControl>
-            )}
+            size="small"
+            label="Group name"
+            placeholderText="Group name"
+            defaultValue={""}
+            required
+            showLabel={true}
+            variant="outlined"
           />
+          <TextField<NewCustomGroupSchemaType>
+            name="description"
+            control={control}
+            size="small"
+            label="Description"
+            showLabel={true}
+            rows={2}
+            multiline
+            placeholderText="What's the purpose of this group?"
+            defaultValue={""}
+          />
+
           <RoleSearch
             ariaLabel={"Individuals and groups to add to custom group"}
             control={control}

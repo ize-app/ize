@@ -95,7 +95,11 @@ const group: QueryResolvers["group"] = async (
     ) ?? []),
   ];
 
-  return { group: groupResolver(group, isWatched, isMember), members };
+  return {
+    group: groupResolver(group, isWatched, isMember),
+    members,
+    description: group.GroupCustom?.description,
+  };
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (

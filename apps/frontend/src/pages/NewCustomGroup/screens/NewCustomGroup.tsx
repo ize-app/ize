@@ -13,10 +13,10 @@ import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { fullUUIDToShort } from "../../../utils/inputs";
 import { createNewCustomGroupMutation } from "../createNewCustomGroupMutation";
+import { NewCustomGroupSchemaType } from "../formValidation";
 import {
   NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS,
   NEW_CUSTOM_GROUP_WIZARD_STEPS,
-  NewCustomGroupFormFields,
   newCustomGroupFormFieldsDefault,
 } from "../newCustomGroupWizard";
 
@@ -56,7 +56,7 @@ export const NewCustomGroup = () => {
     }
   };
 
-  const newCustomGroupWizard: Wizard<NewCustomGroupFormFields> = {
+  const newCustomGroupWizard: Wizard<NewCustomGroupSchemaType> = {
     steps: NEW_CUSTOM_GROUP_WIZARD_STEPS,
     onComplete,
     initialFormState: newCustomGroupFormFieldsDefault,
