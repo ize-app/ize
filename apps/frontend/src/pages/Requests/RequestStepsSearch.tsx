@@ -29,8 +29,10 @@ const filters = [
 export const RequestStepsSearch = ({
   userOnly,
   flowId,
+  groupId,
 }: {
   userOnly: boolean;
+  groupId?: string;
   flowId?: string;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +43,7 @@ export const RequestStepsSearch = ({
   const queryVars: GetRequestStepsQueryVariables = {
     userOnly,
     flowId,
+    groupId,
     searchQuery,
     limit: queryResultLimit,
     filter,

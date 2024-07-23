@@ -10,7 +10,7 @@ function a11yProps(index: number) {
 
 export interface TabProps {
   title: string;
-  content: JSX.Element;
+  content: JSX.Element | null;
 }
 
 export interface TabsProps {

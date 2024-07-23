@@ -4,7 +4,7 @@ type Mutation {
 
 type Query {
   getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
-  getFlows: [FlowSummary!]!
+  getFlows(groupId: String): [FlowSummary!]!
 }
 
 type Flow {

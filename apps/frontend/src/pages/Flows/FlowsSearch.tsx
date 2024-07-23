@@ -13,10 +13,14 @@ import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 
-export const FlowsSearch = () => {
+export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, loading } = useQuery(GetFlowsDocument); // { fetchPolicy: "network-only" }
+  const { data, loading } = useQuery(GetFlowsDocument, {
+    variables: {
+      groupId,
+    },
+  }); // { fetchPolicy: "network-only" }
 
   const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
 

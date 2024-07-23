@@ -11,6 +11,7 @@ type Query {
     limit: Int!
     userOnly: Boolean!
     flowId: String
+    groupId: String
     searchQuery: String!
     filter: RequestStepFilter!
   ): [RequestStepSummary!]!

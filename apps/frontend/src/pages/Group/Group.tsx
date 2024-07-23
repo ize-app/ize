@@ -49,10 +49,13 @@ export const Group = () => {
   if (error) onError();
 
   const tabs: TabProps[] = [
-    { title: "Requests", content: <RequestStepsSearch userOnly /> },
+    {
+      title: "Requests",
+      content: !loading ? <RequestStepsSearch userOnly={false} groupId={groupId} /> : null,
+    },
     {
       title: "Flows",
-      content: <FlowsSearch />,
+      content: !loading ? <FlowsSearch groupId={groupId} /> : null,
     },
   ];
 

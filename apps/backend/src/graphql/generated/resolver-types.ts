@@ -673,6 +673,11 @@ export type QueryGetFlowArgs = {
 };
 
 
+export type QueryGetFlowsArgs = {
+  groupId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryGetRequestArgs = {
   requestId: Scalars['String']['input'];
 };
@@ -682,6 +687,7 @@ export type QueryGetRequestStepsArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   filter: RequestStepFilter;
   flowId?: InputMaybe<Scalars['String']['input']>;
+  groupId?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
   userOnly: Scalars['Boolean']['input'];
@@ -1625,7 +1631,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
-  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, Partial<QueryGetFlowsArgs>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'filter' | 'limit' | 'searchQuery' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
