@@ -5,10 +5,10 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { AvatarWithName } from "@/components/Avatar";
 import { WatchGroupButton } from "@/components/group/WatchGroupButton/WatchGroupButton";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
@@ -79,7 +79,13 @@ export const Group = () => {
             gap: "8px",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
             <Typography variant="h1">{group.group.name}</Typography>
 
             <WatchGroupButton
@@ -89,26 +95,25 @@ export const Group = () => {
             />
           </Box>
           <Box
-            sx={{
+            sx={(theme) => ({
               display: "flex",
+              justifyContent: "space-between",
               gap: "8px",
-              // justifyContent: "space-between",
-              flexWrap: "wrap",
-            }}
+              [theme.breakpoints.down("sm")]: {
+                flexDirection: "column",
+              },
+            })}
           >
-            {group.members.map((avatar) => (
-              // TODO: popover
-              <AvatarWithName key={avatar.entityId} avatar={avatar} />
-            ))}
+            <MembersList members={group.members} />
+            {group.group.isMember && (
+              <Box sx={{ display: "flex", gap: "8px" }}>
+                <CheckCircleOutline color="primary" fontSize="small" />
+                <Typography variant="description" color="primary">
+                  You are a member
+                </Typography>
+              </Box>
+            )}
           </Box>
-          {group.group.isMember && (
-            <Box sx={{ display: "flex", gap: "8px" }}>
-              <CheckCircleOutline color="primary" fontSize="small" />
-              <Typography variant="description" color="primary">
-                You are a member
-              </Typography>
-            </Box>
-          )}
         </Box>
         <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
         {tabs.map((tab: TabProps, index) => (
