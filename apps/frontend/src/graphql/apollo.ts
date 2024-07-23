@@ -17,6 +17,7 @@ export const apolloClient = new ApolloClient({
       Action: ["CallWebhook", "EvolveFlow", "TriggerStep"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
+      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
       FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer"],
     },
     typePolicies: {

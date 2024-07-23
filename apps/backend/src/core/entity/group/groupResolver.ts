@@ -113,6 +113,7 @@ const resolveGroupCustom = (
   const { GroupCustom: custom } = group;
   return {
     ...group,
+    __typename: "Group",
     creator: userResolver(group.creator),
     name: custom.name,
     createdAt: group.createdAt.toString(),
