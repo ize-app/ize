@@ -442,6 +442,7 @@ export enum LlmSummaryType {
 export type Me = {
   __typename?: 'Me';
   discordServers: Array<DiscordServer>;
+  groups: Array<Group>;
   identities: Array<Identity>;
   user: User;
 };
@@ -1107,7 +1108,7 @@ export type ResolversTypes = {
   LlmSummaryArgs: LlmSummaryArgs;
   LlmSummaryList: ResolverTypeWrapper<LlmSummaryList>;
   LlmSummaryType: LlmSummaryType;
-  Me: ResolverTypeWrapper<Omit<Me, 'identities'> & { identities: Array<ResolversTypes['Identity']> }>;
+  Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']> }>;
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
   NewEntityTypes: NewEntityTypes;
@@ -1221,7 +1222,7 @@ export type ResolversParentTypes = {
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
   LlmSummaryList: LlmSummaryList;
-  Me: Omit<Me, 'identities'> & { identities: Array<ResolversParentTypes['Identity']> };
+  Me: Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']> };
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
@@ -1539,6 +1540,7 @@ export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
+  groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

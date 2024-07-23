@@ -22,6 +22,9 @@ fragment MeParts on Me {
   identities {
     ...IdentitySummaryParts
   }
+  groups {
+    ...GroupSummaryParts
+  }
 }
 
 fragment UserSummaryParts on User {

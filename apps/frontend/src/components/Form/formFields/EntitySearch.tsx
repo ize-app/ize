@@ -57,7 +57,7 @@ export const EntitySearch = <T extends FieldValues>({
       )
     : [];
 
-  const options = [...userIdentities, ...recentAgents];
+  const options = [...userIdentities, ...recentAgents, ...(me?.groups ?? [])];
 
   const [open, setOpen] = useState(false);
   const [roleModalType, setRoleModalType] = useState(NewEntityTypes.IdentityEmail);

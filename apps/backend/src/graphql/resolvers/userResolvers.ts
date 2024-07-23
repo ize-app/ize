@@ -11,6 +11,7 @@ import {
   MutationUpdateProfileArgs,
   MutationWatchGroupArgs,
   QueryResolvers,
+  WatchGroupFilter,
 } from "@graphql/generated/resolver-types";
 import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
 
@@ -20,6 +21,7 @@ import { updateProfile as updateProfileService } from "@/core/user/updateProfile
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
 import { updateUserCustomGroups } from "@/core/entity/updateIdentitiesGroups/updateUserCustomGroups";
+import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
@@ -41,6 +43,11 @@ const me: QueryResolvers["me"] = async (
     );
   });
 
+  const groups = await getGroupsOfUser({
+    context,
+    args: { limit: 10, searchQuery: "", watchFilter: WatchGroupFilter.Watched },
+  });
+
   const userData = await prisma.user.findFirstOrThrow({
     include: userInclude,
     where: { id: context.currentUser.id },
@@ -50,6 +57,7 @@ const me: QueryResolvers["me"] = async (
   return {
     user,
     discordServers,
+    groups,
     identities: [...identities],
   };
 };
