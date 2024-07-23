@@ -17,6 +17,8 @@ import { GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
+import { FlowsSearch } from "../Flows/FlowsSearch";
+import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();
@@ -46,7 +48,13 @@ export const Group = () => {
 
   if (error) onError();
 
-  const tabs: TabProps[] = [];
+  const tabs: TabProps[] = [
+    { title: "Requests", content: <RequestStepsSearch userOnly /> },
+    {
+      title: "Flows",
+      content: <FlowsSearch />,
+    },
+  ];
 
   return loading || !group ? (
     <Loading />
@@ -115,7 +123,12 @@ export const Group = () => {
             )}
           </Box>
         </Box>
-        <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
+        <Tabs
+          tabs={tabs}
+          currentTabIndex={currentTabIndex}
+          handleChange={handleChange}
+          sx={{ marginTop: "24px" }}
+        />
         {tabs.map((tab: TabProps, index) => (
           <TabPanel value={currentTabIndex} index={index} key={index}>
             {tab.content}
