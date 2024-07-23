@@ -28,8 +28,6 @@ const me: QueryResolvers["me"] = async (
 ): Promise<Me | null> => {
   if (!context.currentUser) return null;
 
-  console.log("insede me resolver");
-
   const discordServers = await getDiscordServers({ context });
   await updateUserDiscordGroups({ context, discordServers });
   await updateUserNftGroups({ context });

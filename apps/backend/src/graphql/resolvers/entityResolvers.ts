@@ -2,12 +2,15 @@ import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
 import { groupResolver } from "@/core/entity/group/groupResolver";
 import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
+import { identityInclude } from "@/core/entity/identity/identityPrismaTypes";
+import { identityResolver } from "@/core/entity/identity/identityResolver";
 import { newEntities as newEntitiesService } from "@/core/entity/newEntities";
 import { prisma } from "@/prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
 import {
   Entity,
   Group,
+  IzeGroup,
   MutationNewCustomGroupArgs,
   MutationNewEntitiesArgs,
   MutationResolvers,
@@ -28,7 +31,7 @@ const group: QueryResolvers["group"] = async (
   root: unknown,
   args: QueryGroupArgs,
   context: GraphqlRequestContext,
-): Promise<Group> => {
+): Promise<IzeGroup> => {
   const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
     include: groupInclude,
     where: { id: args.id },
@@ -63,7 +66,36 @@ const group: QueryResolvers["group"] = async (
     }
   }
 
-  return groupResolver(group, isWatched, isMember);
+  const membersRes = await prisma.groupCustom.findUnique({
+    where: {
+      groupId: args.id,
+    },
+    include: {
+      CustomGroupMemberGroups: {
+        include: {
+          Group: { include: groupInclude },
+        },
+      },
+      CustomGroupMemberIdentities: {
+        include: {
+          Identity: { include: identityInclude },
+        },
+      },
+    },
+  });
+
+  const members = [
+    ...(membersRes?.CustomGroupMemberGroups.map((member) => groupResolver(member.Group)) ?? []),
+    ...(membersRes?.CustomGroupMemberIdentities.map((member) =>
+      identityResolver(
+        member.Identity,
+        context.currentUser?.Identities.map((id) => id.id) ?? [],
+        true,
+      ),
+    ) ?? []),
+  ];
+
+  return { group: groupResolver(group, isWatched, isMember), members };
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (

@@ -10,7 +10,7 @@ mutation NewCustomGroup($inputs: CustomGroupArgs!) {
 
 query Group($id: String!) {
   group(id: $id) {
-    ...GroupSummaryParts
+    ...IzeGroup
   }
 }
 
@@ -56,6 +56,15 @@ fragment GroupSummaryParts on Group {
   }
   organization {
     ...OrganizationParts
+  }
+}
+
+fragment IzeGroup on IzeGroup {
+  group {
+    ...GroupSummaryParts
+  }
+  members {
+    ...EntitySummaryParts
   }
 }
 

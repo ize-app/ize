@@ -392,6 +392,12 @@ export type IdentityEmailArgs = {
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
 
+export type IzeGroup = {
+  __typename?: 'IzeGroup';
+  group: Group;
+  members: Array<Entity>;
+};
+
 export type LinkedResult = {
   __typename?: 'LinkedResult';
   fieldId: Scalars['String']['output'];
@@ -644,7 +650,7 @@ export type Query = {
   getFlows: Array<FlowSummary>;
   getRequest: Request;
   getRequestSteps: Array<RequestStepSummary>;
-  group: Group;
+  group: IzeGroup;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
   me?: Maybe<Me>;
@@ -1094,6 +1100,7 @@ export type ResolversTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']> }>;
   LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
@@ -1208,6 +1215,7 @@ export type ResolversParentTypes = {
   IdentityEmailArgs: IdentityEmailArgs;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
+  IzeGroup: Omit<IzeGroup, 'group' | 'members'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']> };
   LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
@@ -1497,6 +1505,12 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
   __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
 };
 
+export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
+  group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LinkedResult'] = ResolversParentTypes['LinkedResult']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1612,7 +1626,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'filter' | 'limit' | 'searchQuery' | 'userOnly'>>;
-  group?: Resolver<ResolversTypes['Group'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
+  group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
@@ -1817,6 +1831,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
+  IzeGroup?: IzeGroupResolvers<ContextType>;
   LinkedResult?: LinkedResultResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
   LlmSummaryList?: LlmSummaryListResolvers<ContextType>;

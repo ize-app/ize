@@ -1,9 +1,11 @@
 import { useQuery } from "@apollo/client";
+import { CheckCircleOutline } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { AvatarWithName } from "@/components/Avatar";
 import { WatchGroupButton } from "@/components/group/WatchGroupButton/WatchGroupButton";
 
 import BannerWithAvatar from "./BannerWithAvatar";
@@ -11,7 +13,7 @@ import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GroupDocument, GroupSummaryPartsFragment } from "../../graphql/generated/graphql";
+import { GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
@@ -28,7 +30,7 @@ export const Group = () => {
     },
   });
 
-  const group = data?.group as GroupSummaryPartsFragment;
+  const group = data?.group as IzeGroupFragment;
 
   const [currentTabIndex, setTabIndex] = useState(0);
 
@@ -51,45 +53,62 @@ export const Group = () => {
   ) : (
     <>
       <Head
-        title={group.name}
-        description={`Where ${group.name} makes decisions and evolves their process`}
+        title={group.group.name}
+        description={`Where ${group.group.name} makes decisions and evolves their process`}
       />
       <BannerWithAvatar
         bannerUrl={""}
-        avatarUrl={group.icon ?? ""}
-        name={group.name}
-        color={group.color}
+        avatarUrl={group.group.icon ?? ""}
+        name={group.group.name}
+        color={group.group.color}
         parent={
-          group?.organization
+          group.group.organization
             ? {
-                name: group?.organization?.name,
-                avatarUrl: group?.organization?.icon,
+                name: group.group.organization?.name,
+                avatarUrl: group.group.organization?.icon,
               }
             : undefined
         }
-        id={group.id}
+        id={group.group.id}
       />
       <PageContainer>
         <Box
-          sx={
-            {
-              // paddingLeft: "1.5rem",
-            }
-          }
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Typography variant="h1">{group.name}</Typography>
+            <Typography variant="h1">{group.group.name}</Typography>
 
-            <WatchGroupButton watched={group.isWatched} groupId={group.id} size="medium" />
+            <WatchGroupButton
+              watched={group.group.isWatched}
+              groupId={group.group.id}
+              size="medium"
+            />
           </Box>
           <Box
             sx={{
               display: "flex",
               gap: "8px",
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
               flexWrap: "wrap",
             }}
-          ></Box>
+          >
+            {group.members.map((avatar) => (
+              // TODO: popover
+              <AvatarWithName key={avatar.entityId} avatar={avatar} />
+            ))}
+          </Box>
+          {group.group.isMember && (
+            <Box sx={{ display: "flex", gap: "8px" }}>
+              <CheckCircleOutline color="primary" fontSize="small" />
+              <Typography variant="description" color="primary">
+                You are a member
+              </Typography>
+            </Box>
+          )}
         </Box>
         <Tabs tabs={tabs} currentTabIndex={currentTabIndex} handleChange={handleChange} />
         {tabs.map((tab: TabProps, index) => (

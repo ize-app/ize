@@ -9,7 +9,7 @@ type Mutation {
 }
 
 type Query {
-  group(id: String!): Group!
+  group(id: String!): IzeGroup!
   groupsForCurrentUser(
     cursor: String
     limit: Int!
@@ -83,6 +83,14 @@ type Group {
   groupType: GroupType!
   isMember: Boolean!
   isWatched: Boolean!
+}
+
+# IzeGroup only applies to the GroupCustom entity type
+# IzeGroup is a more fully hydrated version of this entity
+# TODO: There's probably a more elegant way to model this
+type IzeGroup {
+  group: Group!
+  members: [Entity!]!
 }
 
 type Organization {
