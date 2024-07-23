@@ -48,5 +48,13 @@ export const newCustomGroup = async ({
     },
   });
 
+  await transaction.usersWatchedGroups.create({
+    data: {
+      userId: context.currentUser.id,
+      groupId: customGroupEntity.Group?.id as string,
+      watched: true,
+    },
+  });
+
   return customGroupEntity.Group?.id as string;
 };
