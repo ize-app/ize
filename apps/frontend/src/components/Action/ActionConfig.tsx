@@ -27,7 +27,14 @@ export const ActionConfig = ({ action }: { action: ActionFragment }) => {
     case ActionType.EvolveFlow: {
       return (
         <>
-          <Typography>Evolve flow</Typography>
+          <Typography>The flow is updated to use the proposed flow version.</Typography>
+        </>
+      );
+    }
+    case ActionType.GroupUpdateMetadata: {
+      return (
+        <>
+          <Typography>The group&apos;s metadata is updated to use the proposed values.</Typography>
         </>
       );
     }

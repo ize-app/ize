@@ -18,7 +18,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type Action = CallWebhook | EvolveFlow | TriggerStep;
+export type Action = CallWebhook | EvolveFlow | GroupUpdateMetadata | TriggerStep;
 
 export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
@@ -37,6 +37,7 @@ export type ActionExecution = {
 export enum ActionType {
   CallWebhook = 'CallWebhook',
   EvolveFlow = 'EvolveFlow',
+  GroupUpdateMetadata = 'GroupUpdateMetadata',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -273,7 +274,8 @@ export type FlowSummary = {
 
 export enum FlowType {
   Custom = 'Custom',
-  Evolve = 'Evolve'
+  Evolve = 'Evolve',
+  GroupUpdateMetadata = 'GroupUpdateMetadata'
 }
 
 export type FreeInput = {
@@ -348,6 +350,11 @@ export type GroupNftArgs = {
 };
 
 export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft;
+
+export type GroupUpdateMetadata = {
+  __typename?: 'GroupUpdateMetadata';
+  filterOption?: Maybe<Option>;
+};
 
 export type Identity = {
   __typename?: 'Identity';
@@ -1039,7 +1046,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
-  Action: ( CallWebhook ) | ( EvolveFlow ) | ( TriggerStep );
+  Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMetadata ) | ( TriggerStep );
   Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
@@ -1100,6 +1107,7 @@ export type ResolversTypes = {
   GroupNft: ResolverTypeWrapper<GroupNft>;
   GroupNftArgs: GroupNftArgs;
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
+  GroupUpdateMetadata: ResolverTypeWrapper<GroupUpdateMetadata>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
   IdentityBlockchainArgs: IdentityBlockchainArgs;
@@ -1215,6 +1223,7 @@ export type ResolversParentTypes = {
   GroupNft: GroupNft;
   GroupNftArgs: GroupNftArgs;
   GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
+  GroupUpdateMetadata: GroupUpdateMetadata;
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
   IdentityBlockchainArgs: IdentityBlockchainArgs;
@@ -1281,7 +1290,7 @@ export type ResolversParentTypes = {
 };
 
 export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
-  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'TriggerStep', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'GroupUpdateMetadata' | 'TriggerStep', ParentType, ContextType>;
 };
 
 export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
@@ -1478,6 +1487,11 @@ export type GroupNftResolvers<ContextType = GraphqlRequestContext, ParentType ex
 
 export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupType'] = ResolversParentTypes['GroupType']> = {
   __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupCustom' | 'GroupNft', ParentType, ContextType>;
+};
+
+export type GroupUpdateMetadataResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateMetadata'] = ResolversParentTypes['GroupUpdateMetadata']> = {
+  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
@@ -1837,6 +1851,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   GroupCustom?: GroupCustomResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;
   GroupType?: GroupTypeResolvers<ContextType>;
+  GroupUpdateMetadata?: GroupUpdateMetadataResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;

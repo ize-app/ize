@@ -19,6 +19,9 @@ fragment Action on Action {
   ... on TriggerStep {
     ...TriggerStep
   }
+  ... on GroupUpdateMetadata {
+    ...GroupUpdateMetadata
+  }
 }
 
 fragment CallWebhook on CallWebhook {
@@ -36,6 +39,12 @@ fragment EvolveFlow on EvolveFlow {
 }
 
 fragment TriggerStep on TriggerStep {
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateMetadata on GroupUpdateMetadata {
   filterOption {
     ...Option
   }

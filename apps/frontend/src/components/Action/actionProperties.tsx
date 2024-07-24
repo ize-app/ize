@@ -1,5 +1,6 @@
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import CloseIcon from "@mui/icons-material/Close";
+import DataObjectIcon from "@mui/icons-material/DataObject";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { SvgIconProps } from "@mui/material";
@@ -25,6 +26,10 @@ export const actionProperties: ActionProps = {
   [ActionType.TriggerStep]: {
     label: "Trigger a new step",
     icon: ArrowCircleRightIcon,
+  },
+  [ActionType.GroupUpdateMetadata]: {
+    label: "Update group metadata",
+    icon: DataObjectIcon,
   },
   [ActionType.None]: {
     label: "None",

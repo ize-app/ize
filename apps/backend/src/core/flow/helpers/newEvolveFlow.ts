@@ -12,7 +12,7 @@ export const newEvolveFlow = async ({
   evolveArgs: EvolveFlowArgs;
   creatorId: string;
   transaction: Prisma.TransactionClient;
-}): Promise<string | null> => {
+}): Promise<string> => {
   const flow = await transaction.flow.create({
     data: { type: FlowType.Evolve, creatorId },
   });

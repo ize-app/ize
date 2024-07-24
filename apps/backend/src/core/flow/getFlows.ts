@@ -1,4 +1,4 @@
-import { FlowSummary } from "@/graphql/generated/resolver-types";
+import { FlowSummary, QueryGetFlowsArgs } from "@/graphql/generated/resolver-types";
 
 import { FlowSummaryPrismaType, flowSummaryInclude } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
@@ -9,7 +9,13 @@ import { MePrismaType } from "../user/userPrismaTypes";
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
 // TODO: In the future, this query will only pull flows that user has interacted with or created
-export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSummary[]> => {
+export const getFlows = async ({
+  args,
+  user,
+}: {
+  args: QueryGetFlowsArgs;
+  user: MePrismaType;
+}): Promise<FlowSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user.Identities.map((id) => id.id);
 
@@ -18,59 +24,61 @@ export const getFlows = async ({ user }: { user: MePrismaType }): Promise<FlowSu
     where: {
       // id: args.flowId,
       AND: [
-        { type: "Custom" },
-        {
-          OR: [
-            {
-              CurrentFlowVersion: {
-                Steps: {
-                  some: {
-                    index: 0,
-                    OR: [
-                      {
-                        RequestPermissions: {
-                          EntitySet: {
-                            EntitySetEntities: {
-                              some: {
-                                Entity: {
-                                  OR: [
-                                    { Group: { id: { in: groupIds } } },
-                                    { Identity: { id: { in: identityIds } } },
-                                  ],
+        { type: { not: "Evolve" } },
+        args.groupId
+          ? { groupId: args.groupId }
+          : {
+              OR: [
+                {
+                  CurrentFlowVersion: {
+                    Steps: {
+                      some: {
+                        index: 0,
+                        OR: [
+                          {
+                            RequestPermissions: {
+                              EntitySet: {
+                                EntitySetEntities: {
+                                  some: {
+                                    Entity: {
+                                      OR: [
+                                        { Group: { id: { in: groupIds } } },
+                                        { Identity: { id: { in: identityIds } } },
+                                      ],
+                                    },
+                                  },
                                 },
                               },
                             },
                           },
-                        },
-                      },
-                      {
-                        ResponsePermissions: {
-                          EntitySet: {
-                            EntitySetEntities: {
-                              some: {
-                                Entity: {
-                                  OR: [
-                                    { Group: { id: { in: groupIds } } },
-                                    { Identity: { id: { in: identityIds } } },
-                                  ],
+                          {
+                            ResponsePermissions: {
+                              EntitySet: {
+                                EntitySetEntities: {
+                                  some: {
+                                    Entity: {
+                                      OR: [
+                                        { Group: { id: { in: groupIds } } },
+                                        { Identity: { id: { in: identityIds } } },
+                                      ],
+                                    },
+                                  },
                                 },
                               },
                             },
                           },
-                        },
+                        ],
                       },
-                    ],
+                    },
                   },
                 },
-              },
+                {
+                  Creator: {
+                    id: user.id,
+                  },
+                },
+              ],
             },
-            {
-              Creator: {
-                id: user.id,
-              },
-            },
-          ],
-        },
       ],
     },
     orderBy: {

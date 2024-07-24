@@ -30,6 +30,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "GroupUpdateMetadata",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "TriggerStep",
             "ofType": null
           }
@@ -172,6 +177,12 @@
           },
           {
             "name": "EvolveFlow",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GroupUpdateMetadata",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2318,6 +2329,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "GroupUpdateMetadata",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -3008,6 +3025,30 @@
             "ofType": null
           }
         ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "GroupUpdateMetadata",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "filterOption",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Option",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
       },
       {
         "kind": "OBJECT",

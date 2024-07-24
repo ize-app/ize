@@ -45,6 +45,11 @@ export const actionResolver = (
         __typename: "EvolveFlow",
         filterOption,
       };
+    case ActionType.GroupUpdateMetadata:
+      return {
+        __typename: "GroupUpdateMetadata",
+        filterOption,
+      };
     default:
       throw new GraphQLError("Invalid action type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

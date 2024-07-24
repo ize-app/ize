@@ -138,6 +138,7 @@ model Group {
   CustomGroupMemberGroups CustomGroupMemberGroup[]
   GroupCustom             GroupCustom?
   UsersWatchedGroups      UsersWatchedGroups[]
+  OwnedFlows              Flow[]
 
   @@map("groups")
 }
@@ -253,10 +254,12 @@ model DiscordServer {
 enum FlowType {
   Custom
   Evolve
+  GroupUpdateMetadata
 }
 
 model Flow {
   id        String   @id @default(uuid()) @db.Uuid
+  groupId   String?  @map("custom_group_id") @db.Uuid
   type      FlowType
   creatorId String   @map("creator_id") @db.Uuid
 
@@ -266,6 +269,7 @@ model Flow {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   Creator                     User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  OwnerGroup                  Group?        @relation(fields: [groupId], references: [id], onDelete: Cascade)
   CurrentFlowVersion          FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
   FlowVersions                FlowVersion[] @relation("FlowToAllFlowVersions")
   EvolveRightsForFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
@@ -643,6 +647,7 @@ enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+  GroupUpdateMetadata
 
   @@map("ActionType")
 }
