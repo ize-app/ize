@@ -10,9 +10,9 @@ import { newRequest } from "./newRequest";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { EvolveFlowFields } from "../flow/helpers/EvolveFlowFields";
-import { newCustomFlowVersion } from "../flow/helpers/newCustomFlowVersion";
-import { newEvolveFlowVersion } from "../flow/helpers/newEvolveFlowVersion";
+import { newCustomFlowVersion } from "../flow/customFlow/newCustomFlowVersion";
+import { EvolveFlowFields } from "../flow/evolveFlow/EvolveFlowFields";
+import { newEvolveFlowVersion } from "../flow/evolveFlow/newEvolveFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options

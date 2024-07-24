@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { EvolveFlowArgs } from "@/graphql/generated/resolver-types";
 
 import { createEvolveStepArgs } from "./createEvolveStepArgs";
-import { newStep } from "./newStep";
+import { newStep } from "../helpers/newStep";
 
 export const newEvolveFlowVersion = async ({
   transaction,

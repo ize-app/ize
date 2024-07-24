@@ -1,6 +1,6 @@
 import { getFlow as getFlowService } from "@/core/flow/getFlow";
 import { getFlows as getFlowsService } from "@/core/flow/getFlows";
-import { newCustomFlow as newCustomFlowService } from "@/core/flow/newCustomFlow";
+import { newCustomFlow as newCustomFlowService } from "@/core/flow/customFlow/newCustomFlow";
 import { GraphqlRequestContext } from "@graphql/context";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import {

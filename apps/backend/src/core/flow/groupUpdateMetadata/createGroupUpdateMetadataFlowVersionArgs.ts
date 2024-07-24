@@ -17,7 +17,7 @@ import {
 
 import { GroupMetadataFields } from "./GroupMetdataFields";
 
-export const createGroupUpdateMetadataFlowVersion = ({
+export const createGroupUpdateMetadataFlowVersionArgs = ({
   groupEntityId,
   context,
 }: {
@@ -33,14 +33,14 @@ export const createGroupUpdateMetadataFlowVersion = ({
     {
       type: FieldType.FreeInput,
       fieldId: "name",
-      freeInputDataType: FieldDataType.FlowVersionId,
+      freeInputDataType: FieldDataType.String,
       name: GroupMetadataFields.Name,
       required: true,
     },
     {
       type: FieldType.FreeInput,
       fieldId: "description",
-      freeInputDataType: FieldDataType.FlowVersionId,
+      freeInputDataType: FieldDataType.String,
       name: GroupMetadataFields.Description,
       required: false,
     },

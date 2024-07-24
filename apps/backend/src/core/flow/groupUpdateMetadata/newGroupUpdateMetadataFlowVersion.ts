@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 
-import { createGroupUpdateMetadataFlowVersion } from "./createGroupUpdateMetadataFlowVersion";
+import { createGroupUpdateMetadataFlowVersionArgs } from "./createGroupUpdateMetadataFlowVersionArgs";
 import { newStep } from "../helpers/newStep";
 
 export const newGroupUpdateMetadataFlowVersion = async ({
@@ -49,7 +49,7 @@ export const newGroupUpdateMetadataFlowVersion = async ({
   });
 
   await newStep({
-    args: createGroupUpdateMetadataFlowVersion({ groupEntityId, context }),
+    args: createGroupUpdateMetadataFlowVersionArgs({ groupEntityId, context }),
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,

@@ -3,9 +3,9 @@ import { FlowType } from "@prisma/client";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { newCustomFlowVersion } from "./helpers/newCustomFlowVersion";
-import { newEvolveFlow } from "./helpers/newEvolveFlow";
-import { prisma } from "../../prisma/client";
+import { newCustomFlowVersion } from "./newCustomFlowVersion";
+import { prisma } from "../../../prisma/client";
+import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
 
 export const newCustomFlow = async ({
   args,
