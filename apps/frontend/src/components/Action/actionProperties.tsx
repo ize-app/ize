@@ -1,6 +1,7 @@
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import CloseIcon from "@mui/icons-material/Close";
 import DataObjectIcon from "@mui/icons-material/DataObject";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { SvgIconProps } from "@mui/material";
@@ -30,6 +31,10 @@ export const actionProperties: ActionProps = {
   [ActionType.GroupUpdateMetadata]: {
     label: "Update group metadata",
     icon: DataObjectIcon,
+  },
+  [ActionType.GroupUpdateMembership]: {
+    label: "Update group membership",
+    icon: GroupAddIcon,
   },
   [ActionType.None]: {
     label: "None",

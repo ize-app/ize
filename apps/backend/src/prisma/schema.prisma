@@ -255,6 +255,7 @@ enum FlowType {
   Custom
   Evolve
   GroupUpdateMetadata
+  GroupUpdateMembership
 }
 
 model Flow {
@@ -422,6 +423,7 @@ enum FieldDataType {
   Date
   DateTime
   FlowVersionId
+  Entities
 }
 
 enum FieldType {
@@ -648,6 +650,8 @@ enum ActionType {
   TriggerStep
   EvolveFlow
   GroupUpdateMetadata
+  GroupUpdateMembership
+  
 
   @@map("ActionType")
 }

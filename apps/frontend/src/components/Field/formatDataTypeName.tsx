@@ -14,5 +14,7 @@ export const formatDataTypeName = (dataType: FieldDataType): string => {
       return "link";
     case FieldDataType.FlowVersionId:
       return "flow version";
+    case FieldDataType.Entities:
+      return "identities and roles ";
   }
 };

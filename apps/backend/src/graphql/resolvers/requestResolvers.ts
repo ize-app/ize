@@ -50,6 +50,7 @@ const getRequest: QueryResolvers["getRequest"] = async (
   root: unknown,
   args: QueryGetRequestArgs,
   context: GraphqlRequestContext,
+  
 ): Promise<Request> => {
   return await getRequestService({ args, context });
 };

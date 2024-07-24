@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { EntitySearch } from "@/components/Form/formFields/EntitySearch";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import {
@@ -84,9 +85,6 @@ export const CreateRequestForm = () => {
   console.log("form state is ", formMethods.getValues());
   console.log("errors are  ", formMethods.formState.errors);
 
-  // console.log("errors are", formMethods.formState.errors);
-  // console.log("formstate is ", formMethods.getValues());
-
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
       ...prev,
@@ -164,6 +162,20 @@ export const CreateRequestForm = () => {
                           key={fieldId}
                           control={formMethods.control}
                           // showLabel={false}
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.FlowVersionId:
+                      throw Error("Flow version Id cannot be directly editted");
+                    case FieldDataType.Entities:
+                      return (
+                        <EntitySearch
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          ariaLabel={name}
+                          setFieldValue={formMethods.setValue}
+                          getFieldValues={formMethods.getValues}
+                          control={formMethods.control}
                           label={name}
                         />
                       );

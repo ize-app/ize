@@ -3,6 +3,8 @@ import * as z from "zod";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
+import { entityFormSchema } from "./entity";
+
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
 export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
 
@@ -61,6 +63,14 @@ export const evaluateMultiTypeInput = (
       return;
     case FieldDataType.DateTime:
       if (!zodDay.safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid datetime",
+          path: errorPath,
+        });
+      return;
+    case FieldDataType.Entities:
+      if (!z.array(entityFormSchema).safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid datetime",

@@ -43,6 +43,7 @@ enum FlowType {
   Custom
   Evolve
   GroupUpdateMetadata
+  GroupUpdateMembership
 }
 
 type Step {

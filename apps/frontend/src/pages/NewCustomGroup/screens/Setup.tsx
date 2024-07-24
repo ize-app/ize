@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
-import { RoleSearch, TextField } from "../../../components/Form/formFields";
+import { EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
 import { NewCustomGroupSchemaType, newCustomGroupFormSchema } from "../formValidation";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
@@ -68,7 +68,7 @@ export const Setup = () => {
             defaultValue={""}
           />
 
-          <RoleSearch
+          <EntitySearch
             ariaLabel={"Individuals and groups to add to custom group"}
             control={control}
             name={"members"}

@@ -30,6 +30,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "GroupUpdateMembership",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "GroupUpdateMetadata",
             "ofType": null
           },
@@ -177,6 +182,12 @@
           },
           {
             "name": "EvolveFlow",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GroupUpdateMembership",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -1649,6 +1660,12 @@
             "deprecationReason": null
           },
           {
+            "name": "Entities",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "FlowVersionId",
             "description": null,
             "isDeprecated": false,
@@ -2326,6 +2343,12 @@
           },
           {
             "name": "Evolve",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "GroupUpdateMembership",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3025,6 +3048,30 @@
             "ofType": null
           }
         ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "GroupUpdateMembership",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "filterOption",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Option",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
       },
       {
         "kind": "OBJECT",

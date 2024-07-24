@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 import { flowInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
@@ -18,110 +16,110 @@ export const newRequest = async ({
   context,
   // proposed flow version id is used when creating an evolution request
   proposedFlowVersionId,
-  transaction = prisma,
 }: {
   args: MutationNewRequestArgs;
   context: GraphqlRequestContext;
   proposedFlowVersionId?: string;
-  transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
-  const {
-    request: { requestDefinedOptions, requestFields, flowId },
-  } = args;
+  return await prisma.$transaction(async (transaction) => {
+    const {
+      request: { requestDefinedOptions, requestFields, flowId },
+    } = args;
 
-  const flow = await transaction.flow.findUniqueOrThrow({
-    where: {
-      id: flowId,
-    },
-    include: flowInclude,
-  });
-
-  if (!flow.CurrentFlowVersion)
-    throw new GraphQLError("Missing current version of flow", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    const flow = await transaction.flow.findUniqueOrThrow({
+      where: {
+        id: flowId,
+      },
+      include: flowInclude,
     });
 
-  if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
-    throw new GraphQLError(
-      `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
-      {
+    if (!flow.CurrentFlowVersion)
+      throw new GraphQLError("Missing current version of flow", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
+
+    if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
+      throw new GraphQLError(
+        `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
+
+    const step = flow.CurrentFlowVersion.Steps[0];
+
+    if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    const request = await transaction.request.create({
+      data: {
+        name: args.request.name,
+        flowVersionId: flow.CurrentFlowVersion.id,
+        creatorId: context.currentUser.id,
+        proposedFlowVersionId,
+        final: false,
       },
+    });
+
+    const hasResponseFields = !!step.ResponseFieldSet;
+
+    const requestStep = await transaction.requestStep.create({
+      data: {
+        expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
+        responseComplete: !hasResponseFields,
+        resultsComplete: !hasResponseFields,
+        Request: {
+          connect: {
+            id: request.id,
+          },
+        },
+        Step: {
+          connect: {
+            id: step.id,
+          },
+        },
+        CurrentStepParent: {
+          connect: {
+            id: request.id,
+          },
+        },
+      },
+    });
+
+    const requestDefinedOptionSets = await Promise.all(
+      requestDefinedOptions.map(async (r) => {
+        return await createRequestDefinedOptionSet({
+          step,
+          requestStepId: requestStep.id,
+          newOptionArgs: r.options,
+          fieldId: r.fieldId,
+          isTriggerDefinedOptions: true,
+          transaction,
+        });
+      }),
     );
 
-  const step = flow.CurrentFlowVersion.Steps[0];
+    // TODO: if auto approve, just create the result
 
-  if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+    await newFieldAnswers({
+      fieldSet: step.RequestFieldSet,
+      fieldAnswers: requestFields,
+      requestDefinedOptionSets: requestDefinedOptionSets,
+      requestStepId: requestStep.id,
+      transaction,
     });
 
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
+    if (!hasResponseFields) {
+      await executeAction({ step, results: [], requestStepId: requestStep.id });
+    }
 
-  const request = await transaction.request.create({
-    data: {
-      name: args.request.name,
-      flowVersionId: flow.CurrentFlowVersion.id,
-      creatorId: context.currentUser.id,
-      proposedFlowVersionId,
-      final: false,
-    },
+    return request.id;
   });
-
-  const hasResponseFields = !!step.ResponseFieldSet;
-
-  const requestStep = await transaction.requestStep.create({
-    data: {
-      expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
-      responseComplete: !hasResponseFields,
-      resultsComplete: !hasResponseFields,
-      Request: {
-        connect: {
-          id: request.id,
-        },
-      },
-      Step: {
-        connect: {
-          id: step.id,
-        },
-      },
-      CurrentStepParent: {
-        connect: {
-          id: request.id,
-        },
-      },
-    },
-  });
-
-  const requestDefinedOptionSets = await Promise.all(
-    requestDefinedOptions.map(async (r) => {
-      return await createRequestDefinedOptionSet({
-        step,
-        requestStepId: requestStep.id,
-        newOptionArgs: r.options,
-        fieldId: r.fieldId,
-        isTriggerDefinedOptions: true,
-        transaction,
-      });
-    }),
-  );
-
-  // TODO: if auto approve, just create the result
-
-  await newFieldAnswers({
-    fieldSet: step.RequestFieldSet,
-    fieldAnswers: requestFields,
-    requestDefinedOptionSets: requestDefinedOptionSets,
-    requestStepId: requestStep.id,
-    transaction,
-  });
-
-  if (!hasResponseFields) {
-    await executeAction({ step, results: [], requestStepId: requestStep.id });
-  }
-
-  return request.id;
 };

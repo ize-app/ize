@@ -6,7 +6,7 @@ import { ActionType } from "@/graphql/generated/graphql";
 import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select, Switch, TextField } from "../../formFields";
+import { EntitySearch, Select, Switch, TextField } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 
@@ -75,7 +75,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           size="small"
         />
         {responseTrigger === PermissionType.Entities && (
-          <RoleSearch<FlowSchemaType>
+          <EntitySearch<FlowSchemaType>
             key="responseRoleSearch"
             ariaLabel={"Individuals and groups who can respond"}
             name={`steps.${formIndex}.response.permission.entities`}

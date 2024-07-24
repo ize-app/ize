@@ -2,7 +2,7 @@ type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
 }
 
-union Action = CallWebhook | EvolveFlow | TriggerStep | GroupUpdateMetadata
+union Action = CallWebhook | EvolveFlow | TriggerStep | GroupUpdateMetadata | GroupUpdateMembership
 
 type ActionExecution {
   actionId: String!
@@ -28,12 +28,17 @@ type GroupUpdateMetadata {
   filterOption: Option
 }
 
+type GroupUpdateMembership {
+  filterOption: Option
+}
+
 # mirrors Prisma type + "None" type
 enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
   GroupUpdateMetadata
+  GroupUpdateMembership
   None
 }
 

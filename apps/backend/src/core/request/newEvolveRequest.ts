@@ -143,7 +143,6 @@ export const newEvolveRequest = async ({
     return await newRequest({
       args: { request: requestArgs },
       context,
-      transaction,
       proposedFlowVersionId,
     });
   });

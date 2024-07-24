@@ -38,6 +38,13 @@ export const ActionConfig = ({ action }: { action: ActionFragment }) => {
         </>
       );
     }
+    case ActionType.GroupUpdateMembership: {
+      return (
+        <>
+          <Typography>The group&apos;s membership rules are updated.</Typography>
+        </>
+      );
+    }
     default:
   }
 };
