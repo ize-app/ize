@@ -18,7 +18,7 @@ export const apolloClient = new ApolloClient({
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
       GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
-      FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer"],
+      FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer", "EntitiesFieldAnswer"],
     },
     typePolicies: {
       Query: {

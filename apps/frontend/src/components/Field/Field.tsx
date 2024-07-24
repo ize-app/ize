@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
-import { AnswerFreeInput } from "./AnswerFreeInput";
+import { Answer } from "./Answer";
 import { FieldOptions } from "./FieldOptions";
 import { formatDataTypeName } from "./formatDataTypeName";
 import { formatOptionSelectionType } from "./formatOptionSelectionType";
@@ -21,19 +21,13 @@ export const Field = ({
 }) => {
   switch (field.__typename) {
     case FieldType.FreeInput: {
-      const freeInputAnswer =
-        fieldAnswer && fieldAnswer.__typename === "FreeInputFieldAnswer"
-          ? fieldAnswer.value
-          : undefined;
       return (
         <Box>
           <Typography color="primary" fontSize=".875rem">
             {field.name}
             <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span>
           </Typography>
-          {freeInputAnswer && (
-            <AnswerFreeInput answer={freeInputAnswer} dataType={field.dataType} />
-          )}
+          {fieldAnswer && <Answer field={field} fieldAnswer={fieldAnswer} />}
         </Box>
       );
     }

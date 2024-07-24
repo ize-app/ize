@@ -65,7 +65,7 @@ enum FieldOptionsSelectionType {
   Select
 }
 
-union FieldAnswer = OptionFieldAnswer | FreeInputFieldAnswer
+union FieldAnswer = OptionFieldAnswer | FreeInputFieldAnswer | EntitiesFieldAnswer
 
 type OptionFieldAnswer {
   fieldId: String!
@@ -75,6 +75,11 @@ type OptionFieldAnswer {
 type FreeInputFieldAnswer {
   fieldId: String!
   value: String!
+}
+
+type EntitiesFieldAnswer {
+  fieldId: String!
+  entities: [Entity!]!
 }
 
 type UserFieldAnswer {

@@ -2,6 +2,7 @@ import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generat
 
 import { AnswerFreeInput } from "./AnswerFreeInput";
 import { FieldOptions } from "./FieldOptions";
+import { EntityList } from "../EntityList";
 
 export const Answer = ({
   field,
@@ -12,8 +13,11 @@ export const Answer = ({
 }) => {
   switch (field.__typename) {
     case FieldType.FreeInput: {
-      if (fieldAnswer.__typename !== "FreeInputFieldAnswer") return null;
-      return <AnswerFreeInput answer={fieldAnswer.value} dataType={field.dataType} />;
+      if (fieldAnswer.__typename === "FreeInputFieldAnswer")
+        return <AnswerFreeInput answer={fieldAnswer.value} dataType={field.dataType} />;
+      else if (fieldAnswer.__typename === "EntitiesFieldAnswer") {
+        return <EntityList entities={fieldAnswer.entities} />;
+      } else return null;
     }
     case FieldType.Options: {
       if (fieldAnswer.__typename !== "OptionFieldAnswer") return null;

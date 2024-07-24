@@ -162,6 +162,12 @@ export type DiscordServerOnboarded = {
   name: Scalars['String']['output'];
 };
 
+export type EntitiesFieldAnswer = {
+  __typename?: 'EntitiesFieldAnswer';
+  entities: Array<Entity>;
+  fieldId: Scalars['String']['output'];
+};
+
 export type Entity = Group | Identity;
 
 export type EntityArgs = {
@@ -186,7 +192,7 @@ export type EvolveFlowArgs = {
 
 export type Field = FreeInput | Options;
 
-export type FieldAnswer = FreeInputFieldAnswer | OptionFieldAnswer;
+export type FieldAnswer = EntitiesFieldAnswer | FreeInputFieldAnswer | OptionFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
@@ -1057,7 +1063,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( TriggerStep );
   Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
-  FieldAnswer: ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
+  FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
@@ -1086,6 +1092,7 @@ export type ResolversTypes = {
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
   DiscordServer: ResolverTypeWrapper<DiscordServer>;
   DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
+  EntitiesFieldAnswer: ResolverTypeWrapper<Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   Entity: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Entity']>;
   EntityArgs: EntityArgs;
   EntityType: EntityType;
@@ -1208,6 +1215,7 @@ export type ResolversParentTypes = {
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
   DiscordServerOnboarded: DiscordServerOnboarded;
+  EntitiesFieldAnswer: Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   Entity: ResolversUnionTypes<ResolversParentTypes>['Entity'];
   EntityArgs: EntityArgs;
   EvolveFlow: EvolveFlow;
@@ -1393,6 +1401,12 @@ export type DiscordServerOnboardedResolvers<ContextType = GraphqlRequestContext,
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type EntitiesFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EntitiesFieldAnswer'] = ResolversParentTypes['EntitiesFieldAnswer']> = {
+  entities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EntityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Entity'] = ResolversParentTypes['Entity']> = {
   __resolveType: TypeResolveFn<'Group' | 'Identity', ParentType, ContextType>;
 };
@@ -1407,7 +1421,7 @@ export type FieldResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FieldAnswer'] = ResolversParentTypes['FieldAnswer']> = {
-  __resolveType: TypeResolveFn<'FreeInputFieldAnswer' | 'OptionFieldAnswer', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer', ParentType, ContextType>;
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
@@ -1852,6 +1866,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;
   DiscordServer?: DiscordServerResolvers<ContextType>;
   DiscordServerOnboarded?: DiscordServerOnboardedResolvers<ContextType>;
+  EntitiesFieldAnswer?: EntitiesFieldAnswerResolvers<ContextType>;
   Entity?: EntityResolvers<ContextType>;
   EvolveFlow?: EvolveFlowResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;

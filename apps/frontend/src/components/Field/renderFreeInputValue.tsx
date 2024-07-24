@@ -58,6 +58,10 @@ export const renderFreeInputValue = (
           </Typography>
         </>
       );
+    // this case statement shouldn't be hit because it's handled upstream
+    // TODO: make this not as janky
+    case FieldDataType.Entities:
+      return <div></div>;
     case FieldDataType.FlowVersionId:
       return (
         <>

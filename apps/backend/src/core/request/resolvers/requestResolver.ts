@@ -8,7 +8,7 @@ import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestPrismaType } from "../requestPrismaTypes";
 
-export const requestResolver = ({
+export const requestResolver = async ({
   req,
   userGroupIds,
   context,
@@ -16,7 +16,7 @@ export const requestResolver = ({
   req: RequestPrismaType;
   userGroupIds: string[];
   context: GraphqlRequestContext;
-}): Request => {
+}): Promise<Request> => {
   const responseFieldsCache: Field[] = [];
   const resultConfigsCache: ResultConfig[] = [];
   const identityIds = context.currentUser?.Identities.map((i) => i.id) ?? [];
@@ -40,29 +40,32 @@ export const requestResolver = ({
     resultConfigsCache,
   });
 
-  const requestSteps = req.RequestSteps.sort((a, b) => {
-    const aIndex = req.FlowVersion.Steps.find((step) => step.id === a.stepId);
-    const bIndex = req.FlowVersion.Steps.find((step) => step.id === b.stepId);
-    if (!aIndex || !bIndex)
-      throw new GraphQLError("Cannot find corresponding flow step for request step.", {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+  const requestSteps = await Promise.all(
+    req.RequestSteps.sort((a, b) => {
+      const aIndex = req.FlowVersion.Steps.find((step) => step.id === a.stepId);
+      const bIndex = req.FlowVersion.Steps.find((step) => step.id === b.stepId);
+      if (!aIndex || !bIndex)
+        throw new GraphQLError("Cannot find corresponding flow step for request step.", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+      return aIndex.index - bIndex.index;
+    }).map(async (reqStep) => {
+      const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);
+      if (!step)
+        throw new GraphQLError("Cannot find corresponding flow step for request step.", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+      return await requestStepResolver({
+        reqStep,
+        step,
+        userId: context.currentUser?.id,
+        responseFieldsCache,
+        resultConfigsCache,
+        requestFinal: req.final,
+        context,
       });
-    return aIndex.index - bIndex.index;
-  }).map((reqStep) => {
-    const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);
-    if (!step)
-      throw new GraphQLError("Cannot find corresponding flow step for request step.", {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
-    return requestStepResolver({
-      reqStep,
-      step,
-      userId: context.currentUser?.id,
-      responseFieldsCache,
-      resultConfigsCache,
-      requestFinal: req.final,
-    });
-  });
+    }),
+  );
 
   const Request: Request = {
     name: req.name,

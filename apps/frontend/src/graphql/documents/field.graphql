@@ -70,6 +70,9 @@ fragment FieldAnswer on FieldAnswer {
   ... on FreeInputFieldAnswer {
     ...FreeInputFieldAnswer
   }
+  ... on EntitiesFieldAnswer {
+    ...EntitiesFieldAnswer
+  }
 }
 
 fragment OptionFieldAnswer on OptionFieldAnswer {
@@ -82,6 +85,13 @@ fragment OptionFieldAnswer on OptionFieldAnswer {
 fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
   fieldId
   value
+}
+
+fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
+  fieldId
+  entities {
+    ...EntitySummaryParts
+  }
 }
 
 fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
