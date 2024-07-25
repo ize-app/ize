@@ -9,10 +9,10 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
+import { Avatar } from "@/components/Avatar";
 import useFlowsSearch from "@/pages/Flows/useFlowsSearch";
 
-import { EntityType, FlowSummaryFragment } from "../../../graphql/generated/graphql";
-import { Avatar } from "../../AvatarOld";
+import { FlowSummaryFragment } from "../../../graphql/generated/graphql";
 
 interface FlowSearchProps<T extends FieldValues> extends UseControllerProps<T> {
   label?: string;
@@ -94,15 +94,7 @@ export const FlowSearch = <T extends FieldValues>({
                   value.map((option: FlowSummaryFragment, index: number) => {
                     return (
                       <Chip
-                        avatar={
-                          <Avatar
-                            id={option.flowId}
-                            backgroundColor={undefined}
-                            name={option.name}
-                            avatarUrl={""}
-                            type={EntityType.Group}
-                          />
-                        }
+                        avatar={option.group ? <Avatar avatar={option.group} /> : undefined}
                         variant="filled"
                         label={option.name}
                         color="primary"
@@ -126,13 +118,7 @@ export const FlowSearch = <T extends FieldValues>({
                     }}
                     key={"option" + option.flowId}
                   >
-                    <Avatar
-                      id={option.flowId}
-                      key={"avatar" + option.flowId}
-                      name={option.name}
-                      backgroundColor={undefined}
-                      type={EntityType.Group}
-                    />
+                    {option.group ? <Avatar avatar={option.group} /> : undefined}
                     <Typography
                       variant="body1"
                       sx={{

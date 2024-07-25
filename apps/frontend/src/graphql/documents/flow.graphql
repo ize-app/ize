@@ -28,6 +28,9 @@ fragment FlowSummary on FlowSummary {
   creator {
     ...UserSummaryParts
   }
+  group {
+    ...GroupSummaryParts
+  }
   requestStep0Permission {
     ...Permission
   }
@@ -41,6 +44,9 @@ fragment FlowFields on Flow {
   flowId
   flowVersionId
   currentFlowVersionId
+  group {
+    ...GroupSummaryParts
+  }
   createdAt
   versionCreatedAt
   versionPublishedAt

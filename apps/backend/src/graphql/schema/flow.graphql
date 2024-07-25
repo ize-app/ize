@@ -4,12 +4,7 @@ type Mutation {
 
 type Query {
   getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
-  getFlows(
-    cursor: String
-    limit: Int!
-    groupId: String
-    searchQuery: String!
-  ): [FlowSummary!]!
+  getFlows(cursor: String, limit: Int!, groupId: String, searchQuery: String!): [FlowSummary!]!
 }
 
 type Flow {
@@ -17,6 +12,7 @@ type Flow {
   flowId: String!
   flowVersionId: String!
   currentFlowVersionId: String
+  group: Group
   createdAt: String!
   versionCreatedAt: String!
   versionPublishedAt: String
@@ -32,6 +28,7 @@ type Flow {
 type FlowSummary {
   flowId: String!
   name: String!
+  group: Group
   creator: User!
   createdAt: String!
   # permission to trigger first step of the flow

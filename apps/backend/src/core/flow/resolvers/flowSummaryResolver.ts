@@ -1,3 +1,4 @@
+import { groupResolver } from "@/core/entity/group/groupResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { userResolver } from "@/core/user/userResolver";
@@ -50,6 +51,7 @@ export const flowSummaryResolver = ({
     createdAt: flow.createdAt.toISOString(),
     creator: userResolver(flow.Creator),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),
+    group: flow.OwnerGroup ? groupResolver(flow.OwnerGroup) : null,
     userPermission: {
       request: hasReadPermission({
         permission: flow.CurrentFlowVersion?.Steps[0].RequestPermissions,

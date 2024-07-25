@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { actionInclude } from "../action/actionPrismaTypes";
+import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { resultConfigSetInclude } from "../result/resultPrismaTypes";
@@ -44,9 +45,7 @@ export const flowVersionInclude = Prisma.validator<Prisma.FlowVersionInclude>()(
         },
       },
       OwnerGroup: {
-        include: {
-          GroupCustom: true,
-        },
+        include: groupInclude,
       },
     },
   },
@@ -82,9 +81,7 @@ export const flowSummaryInclude = Prisma.validator<Prisma.FlowInclude>()({
     include: userInclude,
   },
   OwnerGroup: {
-    include: {
-      GroupCustom: true,
-    },
+    include: groupInclude,
   },
 });
 

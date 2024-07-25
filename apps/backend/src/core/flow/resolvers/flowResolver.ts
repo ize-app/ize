@@ -1,3 +1,4 @@
+import { groupResolver } from "@/core/entity/group/groupResolver";
 import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
 
 import { stepResolver } from "./stepResolver";
@@ -30,6 +31,7 @@ export const flowResolver = ({
     id: flowVersion.Flow.id,
     flowId: flowVersion.Flow.id,
     flowVersionId: flowVersion.id,
+    group: flowVersion.Flow.OwnerGroup ? groupResolver(flowVersion.Flow.OwnerGroup) : null,
     currentFlowVersionId: flowVersion.Flow.currentFlowVersionId,
     createdAt: flowVersion.Flow.createdAt.toISOString(),
     versionCreatedAt: flowVersion.createdAt.toISOString(),

@@ -252,6 +252,7 @@ export type Flow = {
   flowId: Scalars['String']['output'];
   flowVersionId: Scalars['String']['output'];
   flowsEvolvedByThisFlow: Array<FlowReference>;
+  group?: Maybe<Group>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
@@ -272,6 +273,7 @@ export type FlowSummary = {
   createdAt: Scalars['String']['output'];
   creator: User;
   flowId: Scalars['String']['output'];
+  group?: Maybe<Group>;
   name: Scalars['String']['output'];
   requestStep0Permission: Permission;
   userPermission: UserFlowPermission;
@@ -1067,7 +1069,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupWatchFlow ) | ( TriggerStep );
-  Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
+  Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator: _RefType['User'], groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
@@ -1112,14 +1114,14 @@ export type ResolversTypes = {
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
-  Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'steps'> & { evolve?: Maybe<ResolversTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversTypes['FlowReference']>, steps: Array<ResolversTypes['Step']> }>;
+  Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversTypes['FlowReference']>, group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']> }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
-  FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'requestStep0Permission'> & { requestStep0Permission: ResolversTypes['Permission'] }>;
+  FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversTypes['User'], group?: Maybe<ResolversTypes['Group']>, requestStep0Permission: ResolversTypes['Permission'] }>;
   FlowType: FlowType;
   FreeInput: ResolverTypeWrapper<FreeInput>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
-  Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
+  Group: ResolverTypeWrapper<Omit<Group, 'creator' | 'groupType'> & { creator: ResolversTypes['User'], groupType: ResolversTypes['GroupType'] }>;
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1146,7 +1148,7 @@ export type ResolversTypes = {
   LlmSummaryArgs: LlmSummaryArgs;
   LlmSummaryList: ResolverTypeWrapper<LlmSummaryList>;
   LlmSummaryType: LlmSummaryType;
-  Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']> }>;
+  Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']>, user: ResolversTypes['User'] }>;
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
   NewEntityTypes: NewEntityTypes;
@@ -1169,13 +1171,13 @@ export type ResolversTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
-  Request: ResolverTypeWrapper<Omit<Request, 'flow' | 'steps'> & { flow: ResolversTypes['Flow'], steps: Array<ResolversTypes['RequestStep']> }>;
+  Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'steps'> & { creator: ResolversTypes['User'], flow: ResolversTypes['Flow'], steps: Array<ResolversTypes['RequestStep']> }>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields' | 'permission'> & { fields: Array<ResolversTypes['Field']>, permission?: Maybe<ResolversTypes['Permission']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversTypes['UserFieldAnswers']>, responseFields: Array<ResolversTypes['Field']>, userResponses: Array<ResolversTypes['Response']> }>;
   RequestStepFilter: RequestStepFilter;
-  RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'respondPermission'> & { respondPermission?: Maybe<ResolversTypes['Permission']> }>;
-  Response: ResolverTypeWrapper<Omit<Response, 'answers'> & { answers: Array<ResolversTypes['FieldAnswer']> }>;
+  RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['User'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
+  Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversTypes['FieldAnswer']>, user: ResolversTypes['User'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversTypes['Field']>, permission?: Maybe<ResolversTypes['Permission']> }>;
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
@@ -1191,7 +1193,7 @@ export type ResolversTypes = {
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
-  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer'> & { answer: ResolversTypes['FieldAnswer'] }>;
+  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversTypes['FieldAnswer'], user: ResolversTypes['User'] }>;
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
@@ -1231,13 +1233,13 @@ export type ResolversParentTypes = {
   FieldArgs: FieldArgs;
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
-  Flow: Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'steps'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversParentTypes['FlowReference']>, steps: Array<ResolversParentTypes['Step']> };
+  Flow: Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversParentTypes['FlowReference']>, group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']> };
   FlowReference: FlowReference;
-  FlowSummary: Omit<FlowSummary, 'requestStep0Permission'> & { requestStep0Permission: ResolversParentTypes['Permission'] };
+  FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversParentTypes['User'], group?: Maybe<ResolversParentTypes['Group']>, requestStep0Permission: ResolversParentTypes['Permission'] };
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
-  Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
+  Group: Omit<Group, 'creator' | 'groupType'> & { creator: ResolversParentTypes['User'], groupType: ResolversParentTypes['GroupType'] };
   GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1263,7 +1265,7 @@ export type ResolversParentTypes = {
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
   LlmSummaryList: LlmSummaryList;
-  Me: Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']> };
+  Me: Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']>, user: ResolversParentTypes['User'] };
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
@@ -1284,12 +1286,12 @@ export type ResolversParentTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: {};
   Ranking: Ranking;
-  Request: Omit<Request, 'flow' | 'steps'> & { flow: ResolversParentTypes['Flow'], steps: Array<ResolversParentTypes['RequestStep']> };
+  Request: Omit<Request, 'creator' | 'flow' | 'steps'> & { creator: ResolversParentTypes['User'], flow: ResolversParentTypes['Flow'], steps: Array<ResolversParentTypes['RequestStep']> };
   RequestConfig: Omit<RequestConfig, 'fields' | 'permission'> & { fields: Array<ResolversParentTypes['Field']>, permission?: Maybe<ResolversParentTypes['Permission']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, responseFields: Array<ResolversParentTypes['Field']>, userResponses: Array<ResolversParentTypes['Response']> };
-  RequestStepSummary: Omit<RequestStepSummary, 'respondPermission'> & { respondPermission?: Maybe<ResolversParentTypes['Permission']> };
-  Response: Omit<Response, 'answers'> & { answers: Array<ResolversParentTypes['FieldAnswer']> };
+  RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['User'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
+  Response: Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, user: ResolversParentTypes['User'] };
   ResponseConfig: Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversParentTypes['Field']>, permission?: Maybe<ResolversParentTypes['Permission']> };
   Result: Result;
   ResultArgs: ResultArgs;
@@ -1303,7 +1305,7 @@ export type ResolversParentTypes = {
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
   User: User;
-  UserFieldAnswer: Omit<UserFieldAnswer, 'answer'> & { answer: ResolversParentTypes['FieldAnswer'] };
+  UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversParentTypes['FieldAnswer'], user: ResolversParentTypes['User'] };
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
@@ -1438,6 +1440,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowsEvolvedByThisFlow?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
+  group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1458,6 +1461,7 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStep0Permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   userPermission?: Resolver<ResolversTypes['UserFlowPermission'], ParentType, ContextType>;
