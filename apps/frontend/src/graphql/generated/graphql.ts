@@ -94,13 +94,8 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  members: Array<CustomGroupMembersArgs>;
+  members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-};
-
-export type CustomGroupMembersArgs = {
-  entityType: EntityType;
-  id: Scalars['String']['input'];
 };
 
 export type Decision = {
@@ -1541,13 +1536,8 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  members: Array<CustomGroupMembersArgs>;
+  members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-};
-
-export type CustomGroupMembersArgs = {
-  entityType: EntityType;
-  id: Scalars['String']['input'];
 };
 
 export type Decision = {

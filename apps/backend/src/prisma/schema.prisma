@@ -34,13 +34,12 @@ model Identity {
   // TODO make this field required
   entityId  String   @unique @map("entity_id") @db.Uuid
 
-  User                        User?                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  IdentityEmail               IdentityEmail?
-  IdentityBlockchain          IdentityBlockchain?
-  IdentityDiscord             IdentityDiscord?
-  IdentitiesGroups            IdentityGroup[]
-  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
-  Entity                      Entity                      @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  User               User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  IdentityEmail      IdentityEmail?
+  IdentityBlockchain IdentityBlockchain?
+  IdentityDiscord    IdentityDiscord?
+  IdentitiesGroups   IdentityGroup[]
+  Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("identities")
 }
@@ -123,22 +122,21 @@ model Oauths {
 }
 
 model Group {
-  id                      String                   @id @default(uuid()) @db.Uuid
-  creator                 User                     @relation(fields: [creatorId], references: [id])
-  creatorId               String                   @map("creator_id") @db.Uuid
-  entityId                String                   @unique @map("entity_id") @db.Uuid
-  createdAt               DateTime                 @default(now()) @map("created_at")
-  updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at")
-  activeAt                DateTime?
-  deactivatedat           DateTime?
-  Entity                  Entity                   @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  GroupDiscordRole        GroupDiscordRole?
-  GroupNft                GroupNft?
-  IdentitiesGroups        IdentityGroup[]
-  CustomGroupMemberGroups CustomGroupMemberGroup[]
-  GroupCustom             GroupCustom?
-  UsersWatchedGroups      UsersWatchedGroups[]
-  OwnedFlows              Flow[]
+  id                 String               @id @default(uuid()) @db.Uuid
+  creator            User                 @relation(fields: [creatorId], references: [id])
+  creatorId          String               @map("creator_id") @db.Uuid
+  entityId           String               @unique @map("entity_id") @db.Uuid
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  activeAt           DateTime?
+  deactivatedat      DateTime?
+  Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  GroupDiscordRole   GroupDiscordRole?
+  GroupNft           GroupNft?
+  IdentitiesGroups   IdentityGroup[]
+  GroupCustom        GroupCustom?
+  UsersWatchedGroups UsersWatchedGroups[]
+  OwnedFlows         Flow[]
 
   @@map("groups")
 }
@@ -181,32 +179,12 @@ model GroupCustom {
   name        String
   description String?
   groupId     String  @unique @map("group_id") @db.Uuid
+  entitySetId String  @map("entity_set_id") @db.Uuid
 
-  group                       Group                       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
-  CustomGroupMemberGroups     CustomGroupMemberGroup[]
+  MemberEntitySet EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
+  group           Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("groups_custom")
-}
-
-model CustomGroupMemberGroup {
-  groupId       String      @map("group_id") @db.Uuid
-  groupCustomId String      @map("group_custom_id") @db.Uuid
-  Group         Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
-
-  @@unique([groupId, groupCustomId])
-  @@map("custom_group_group_members")
-}
-
-model CustomGroupMemberIdentity {
-  identityId    String      @map("identity_id") @db.Uuid
-  groupCustomId String      @map("group_custom_id") @db.Uuid
-  Identity      Identity    @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
-
-  @@unique([identityId, groupCustomId])
-  @@map("custom_group_identity_members")
 }
 
 model GroupNft {
@@ -364,6 +342,7 @@ model EntitySet {
   Permissions       Permission[]
   createdAt         DateTime            @default(now()) @map("created_at")
   EntitySetEntities EntitySetEntities[]
+  GroupCustom       GroupCustom[]
 
   @@map("entity_sets")
 }
@@ -651,7 +630,6 @@ enum ActionType {
   EvolveFlow
   GroupUpdateMetadata
   GroupUpdateMembership
-  
 
   @@map("ActionType")
 }

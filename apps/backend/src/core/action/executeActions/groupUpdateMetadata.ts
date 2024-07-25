@@ -22,7 +22,15 @@ export const groupUpdateMetadata = async ({
           include: {
             FlowVersion: {
               include: {
-                Flow: true,
+                Flow: {
+                  include: {
+                    OwnerGroup: {
+                      include: {
+                        GroupCustom: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -51,24 +59,20 @@ export const groupUpdateMetadata = async ({
       }
     });
 
-    const groupId = requestStep.Step.FlowVersion.Flow.groupId;
+    const customGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupCustom?.id;
 
-    if (!groupId)
-      throw new GraphQLError(`Cannot find group for request step ${requestStepId}`, {
+    if (!customGroupId)
+      throw new GraphQLError(`Cannot find custom group for request step ${requestStepId}`, {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    await transaction.group.update({
+    await transaction.groupCustom.update({
       where: {
-        id: groupId,
+        id: customGroupId,
       },
       data: {
-        GroupCustom: {
-          update: {
-            name: name?.AnswerFreeInput[0].value,
-            description: description?.AnswerFreeInput[0].value,
-          },
-        },
+        name: name?.AnswerFreeInput[0].value,
+        description: description?.AnswerFreeInput[0].value,
       },
     });
 

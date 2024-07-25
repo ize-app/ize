@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client";
 
 import { PermissionArgs } from "@/graphql/generated/resolver-types";
 
+import { newEntitySet } from "../entity/newEntitySet";
+
 export const newPermission = async ({
   permission: args,
   transaction,
@@ -13,16 +15,7 @@ export const newPermission = async ({
   let entitySetId = undefined;
 
   if (!!args.entities && args.entities.length > 0) {
-    const entitySet = await transaction.entitySet.create({
-      data: {
-        EntitySetEntities: {
-          createMany: {
-            data: args.entities.map((entity) => ({ entityId: entity.id })),
-          },
-        },
-      },
-    });
-    entitySetId = entitySet.id;
+    entitySetId = await newEntitySet({ entityArgs: args.entities, transaction });
   }
 
   const permission = await transaction.permission.create({

@@ -3,8 +3,10 @@ import { Prisma } from "@prisma/client";
 import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
 import { newGroupUpdateMetadataFlow } from "@/core/flow/groupUpdateMetadata/newGroupUpdateMetadataFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { EntityType, MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
+import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
+
+import { newEntitySet } from "../../newEntitySet";
 
 export const newCustomGroup = async ({
   context,
@@ -16,6 +18,8 @@ export const newCustomGroup = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  const entitySetId = await newEntitySet({ entityArgs: args.inputs.members, transaction });
 
   const customGroupEntity = await transaction.entity.create({
     select: {
@@ -29,20 +33,7 @@ export const newCustomGroup = async ({
             create: {
               name: args.inputs.name,
               description: args.inputs.description,
-              CustomGroupMemberGroups: {
-                createMany: {
-                  data: args.inputs.members
-                    .filter((members) => members.entityType === EntityType.Group)
-                    .map((memberGroup) => ({ groupId: memberGroup.id })),
-                },
-              },
-              CustomGroupMemberIdentities: {
-                createMany: {
-                  data: args.inputs.members
-                    .filter((members) => members.entityType === EntityType.Identity)
-                    .map((memberIdentity) => ({ identityId: memberIdentity.id })),
-                },
-              },
+              entitySetId,
             },
           },
         },

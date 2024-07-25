@@ -95,13 +95,8 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  members: Array<CustomGroupMembersArgs>;
+  members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-};
-
-export type CustomGroupMembersArgs = {
-  entityType: EntityType;
-  id: Scalars['String']['input'];
 };
 
 export type Decision = {
@@ -1084,7 +1079,6 @@ export type ResolversTypes = {
   CallWebhook: ResolverTypeWrapper<CallWebhook>;
   CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
-  CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: ResolverTypeWrapper<Decision>;
   DecisionArgs: DecisionArgs;
   DecisionType: DecisionType;
@@ -1208,7 +1202,6 @@ export type ResolversParentTypes = {
   CallWebhook: CallWebhook;
   CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
-  CustomGroupMembersArgs: CustomGroupMembersArgs;
   Decision: Decision;
   DecisionArgs: DecisionArgs;
   DiscordAPIServerRole: DiscordApiServerRole;

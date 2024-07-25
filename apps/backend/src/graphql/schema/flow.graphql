@@ -109,6 +109,3 @@ input StepResponseArgs {
   permission: PermissionArgs!
 }
 
-input EntityArgs {
-  id: String!
-}

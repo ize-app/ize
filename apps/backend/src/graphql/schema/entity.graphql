@@ -140,6 +140,11 @@ type OnboardedDiscordServer {
   banner: String
 }
 
+# used for associating an existing entity with some other object
+input EntityArgs {
+  id: String!
+}
+
 input IdentityBlockchainArgs {
   address: String!
 }
@@ -155,12 +160,7 @@ input IdentityEmailArgs {
 input CustomGroupArgs {
   name: String!
   description: String
-  members: [CustomGroupMembersArgs!]!
-}
-
-input CustomGroupMembersArgs {
-  id: String!
-  entityType: EntityType!
+  members: [EntityArgs!]!
 }
 
 input NewEntityArgs {
