@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { EntitySearch } from "@/components/Form/formFields/EntitySearch";
+import { FlowSearch } from "@/components/Form/formFields/FlowSearch";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import {
@@ -176,6 +177,16 @@ export const CreateRequestForm = () => {
                           hideCustomGroups={true}
                           setFieldValue={formMethods.setValue}
                           getFieldValues={formMethods.getValues}
+                          control={formMethods.control}
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.FlowIds:
+                      return (
+                        <FlowSearch
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          ariaLabel={name}
                           control={formMethods.control}
                           label={name}
                         />
