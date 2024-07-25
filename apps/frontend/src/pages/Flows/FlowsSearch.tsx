@@ -1,60 +1,31 @@
-import { useLazyQuery } from "@apollo/client";
-import { Button, MenuItem, debounce } from "@mui/material";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
-import {
-  FlowSummaryFragment,
-  GetFlowsDocument,
-  GetFlowsQueryVariables,
-  RequestStepFilter,
-} from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
-
-const filters = [
-  { label: "All", value: RequestStepFilter.All },
-  { label: "Open", value: RequestStepFilter.Open },
-  { label: "Closed", value: RequestStepFilter.Closed },
-];
+import useFlowsSearch from "./useFlowsSearch.ts";
 
 export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [filter, setFilter] = useState<RequestStepFilter>(RequestStepFilter.Open);
   const queryResultLimit = 20;
-
-  const queryVars: GetFlowsQueryVariables = {
-    groupId,
+  const {
     searchQuery,
-    limit: queryResultLimit,
-  };
-
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
-
-  const debouncedRefetch = debounce(() => {
-    setOldCursor(undefined);
-    getResults({ variables: queryVars });
-  }, 1000);
-
-  useEffect(() => {
-    debouncedRefetch();
-  }, [searchQuery, filter]);
-
-  useEffect(() => {
-    getResults({ variables: queryVars });
-  }, []);
-
-  const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";
-  const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
+    setSearchQuery,
+    oldCursor,
+    setOldCursor,
+    newCursor,
+    flows,
+    loading,
+    fetchMore,
+    queryVars,
+  } = useFlowsSearch({ groupId, queryResultLimit });
 
   return (
     <Box
@@ -90,26 +61,6 @@ export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
               setSearchQuery(event.target.value);
             }}
           />
-          <Select
-            sx={{
-              width: "140px",
-            }}
-            inputProps={{ multiline: "true" }}
-            aria-label={"Request step filter"}
-            defaultValue={filter}
-            size={"small"}
-            onChange={(event) => {
-              setFilter(event.target.value as RequestStepFilter);
-              return;
-            }}
-          >
-            {filters.map((filter) => (
-              <MenuItem key={filter.value} value={filter.value}>
-                {filter.label}
-              </MenuItem>
-            ))}
-          </Select>
-          {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>
         <CreateButton />
       </Box>
@@ -145,7 +96,7 @@ export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}
-      {oldCursor !== newCursor && (data?.getFlows.length ?? 0) >= queryResultLimit && (
+      {oldCursor !== newCursor && (flows.length ?? 0) >= queryResultLimit && (
         <Button
           onClick={() => {
             setOldCursor(newCursor);

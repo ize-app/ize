@@ -25,9 +25,32 @@ export const getFlows = async ({
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
-      // id: args.flowId,
       AND: [
         { type: { not: "Evolve" } },
+        args.searchQuery !== ""
+          ? {
+              OR: [
+                {
+                  CurrentFlowVersion: {
+                    name: {
+                      contains: args.searchQuery,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+                {
+                  OwnerGroup: {
+                    GroupCustom: {
+                      name: {
+                        contains: args.searchQuery,
+                        mode: "insensitive",
+                      },
+                    },
+                  },
+                },
+              ],
+            }
+          : {},
         args.groupId
           ? { groupId: args.groupId }
           : // switch out to be flows user is watching or any of their groups are watching
