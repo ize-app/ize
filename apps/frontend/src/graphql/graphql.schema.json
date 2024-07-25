@@ -1679,7 +1679,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Entities",
+            "name": "EntityIds",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

@@ -207,7 +207,7 @@ export type FieldArgs = {
 export enum FieldDataType {
   Date = 'Date',
   DateTime = 'DateTime',
-  Entities = 'Entities',
+  EntityIds = 'EntityIds',
   FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',
@@ -1651,7 +1651,7 @@ export type FieldArgs = {
 export enum FieldDataType {
   Date = 'Date',
   DateTime = 'DateTime',
-  Entities = 'Entities',
+  EntityIds = 'EntityIds',
   FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',

@@ -58,7 +58,7 @@ export const groupUpdateMembership = async ({
       }
     });
 
-    if (members?.AnswerFreeInput[0].dataType !== FieldDataType.Entities)
+    if (members?.AnswerFreeInput[0].dataType !== FieldDataType.EntityIds)
       throw new GraphQLError(
         `Cannot find field for groupUpdateMetadata request step ${requestStepId}`,
         {

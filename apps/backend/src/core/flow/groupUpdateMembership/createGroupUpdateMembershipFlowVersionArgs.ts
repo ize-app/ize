@@ -33,7 +33,7 @@ export const createGroupUpdateMembershipFlowVersionArgs = ({
     {
       type: FieldType.FreeInput,
       fieldId: "members",
-      freeInputDataType: FieldDataType.Entities,
+      freeInputDataType: FieldDataType.EntityIds,
       name: GroupMembershipFields.Members,
       required: true,
     },

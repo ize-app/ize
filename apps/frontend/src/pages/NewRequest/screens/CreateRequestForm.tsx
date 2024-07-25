@@ -167,7 +167,7 @@ export const CreateRequestForm = () => {
                       );
                     case FieldDataType.FlowVersionId:
                       throw Error("Flow version Id cannot be directly editted");
-                    case FieldDataType.Entities:
+                    case FieldDataType.EntityIds:
                       return (
                         <EntitySearch
                           name={`requestFields.${field.fieldId}.value`}
