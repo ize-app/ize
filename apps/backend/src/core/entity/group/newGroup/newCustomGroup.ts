@@ -7,6 +7,7 @@ import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { newEntitySet } from "../../newEntitySet";
+import { checkEntitiesForCustomGroups } from "../checkEntitiesForCustomGroups";
 
 export const newCustomGroup = async ({
   context,
@@ -18,6 +19,11 @@ export const newCustomGroup = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+
+  await checkEntitiesForCustomGroups({
+    entityIds: args.inputs.members.map((entity) => entity.id),
+    transaction,
+  });
 
   const entitySetId = await newEntitySet({ entityArgs: args.inputs.members, transaction });
 

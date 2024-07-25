@@ -72,6 +72,7 @@ export const Setup = () => {
             ariaLabel={"Individuals and groups to add to custom group"}
             control={control}
             name={"members"}
+            hideCustomGroups={true}
             label={"Group members"}
             setFieldValue={setFieldValue}
             getFieldValues={getFieldValues}

@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 
+import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
 import { GroupMembershipFields } from "@/core/flow/groupUpdateMembership/GroupMembershipFields";
 import { FieldDataType } from "@/graphql/generated/resolver-types";
@@ -15,7 +16,6 @@ export const groupUpdateMembership = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
   try {
-    console.log;
     // find the current / proposed fields in the request
     const requestStep = await transaction.requestStep.findFirstOrThrow({
       include: {
@@ -74,6 +74,11 @@ export const groupUpdateMembership = async ({
       });
 
     const entityIds = JSON.parse(members.AnswerFreeInput[0].value) as string[];
+
+    await checkEntitiesForCustomGroups({
+      entityIds: entityIds,
+      transaction,
+    });
 
     const entitySetId = await newEntitySet({
       entityArgs: entityIds.map((id) => ({

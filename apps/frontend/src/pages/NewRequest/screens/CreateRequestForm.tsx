@@ -82,8 +82,8 @@ export const CreateRequestForm = () => {
     shouldUnregister: true,
   });
 
-  console.log("form state is ", formMethods.getValues());
-  console.log("errors are  ", formMethods.formState.errors);
+  // console.log("form state is ", formMethods.getValues());
+  // console.log("errors are  ", formMethods.formState.errors);
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
@@ -173,6 +173,7 @@ export const CreateRequestForm = () => {
                           name={`requestFields.${field.fieldId}.value`}
                           key={fieldId}
                           ariaLabel={name}
+                          hideCustomGroups={true}
                           setFieldValue={formMethods.setValue}
                           getFieldValues={formMethods.getValues}
                           control={formMethods.control}

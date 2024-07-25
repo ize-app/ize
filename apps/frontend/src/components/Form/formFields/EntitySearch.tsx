@@ -35,6 +35,7 @@ interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T>
   label?: string;
   ariaLabel: string;
   placeholderText?: string;
+  hideCustomGroups?: boolean;
   setFieldValue: UseFormSetValue<T>;
   getFieldValues: UseFormGetValues<T>;
 }
@@ -44,6 +45,7 @@ export const EntitySearch = <T extends FieldValues>({
   name,
   label,
   ariaLabel,
+  hideCustomGroups = false,
   setFieldValue,
   getFieldValues,
   ...props
@@ -57,7 +59,9 @@ export const EntitySearch = <T extends FieldValues>({
       )
     : [];
 
-  const options = [...userIdentities, ...recentAgents, ...(me?.groups ?? [])];
+  const customGroups = hideCustomGroups ? [] : me?.groups ?? [];
+
+  const options = [...userIdentities, ...recentAgents, ...customGroups];
 
   const [open, setOpen] = useState(false);
   const [roleModalType, setRoleModalType] = useState(NewEntityTypes.IdentityEmail);
