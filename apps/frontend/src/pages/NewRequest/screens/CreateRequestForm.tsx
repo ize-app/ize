@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { EntitySearch } from "@/components/Form/formFields/EntitySearch";
-import { FlowSearch } from "@/components/Form/formFields/FlowSearch";
+import { EntitiesSearchField } from "@/components/Form/formFields/EntitiesSearchField";
+import { FlowsSearchField } from "@/components/Form/formFields/FlowsSearchField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import {
@@ -170,7 +170,7 @@ export const CreateRequestForm = () => {
                       throw Error("Flow version Id cannot be directly editted");
                     case FieldDataType.EntityIds:
                       return (
-                        <EntitySearch
+                        <EntitiesSearchField
                           name={`requestFields.${field.fieldId}.value`}
                           key={fieldId}
                           ariaLabel={name}
@@ -183,7 +183,7 @@ export const CreateRequestForm = () => {
                       );
                     case FieldDataType.FlowIds:
                       return (
-                        <FlowSearch
+                        <FlowsSearchField
                           name={`requestFields.${field.fieldId}.value`}
                           key={fieldId}
                           ariaLabel={name}

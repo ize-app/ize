@@ -1,6 +1,6 @@
 export { Select } from "./Select";
 export { TextField } from "./TextField";
-export { EntitySearch } from "./EntitySearch";
+export { EntitiesSearchField as EntitySearch } from "./EntitiesSearchField";
 export { Checkbox } from "./Checkbox";
 export { DatePicker } from "./DatePicker";
 export { DateTimePicker } from "./DateTimePicker";

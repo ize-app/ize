@@ -20,7 +20,7 @@ interface FlowSearchProps<T extends FieldValues> extends UseControllerProps<T> {
   placeholderText?: string;
 }
 
-export const FlowSearch = <T extends FieldValues>({
+export const FlowsSearchField = <T extends FieldValues>({
   control,
   name,
   label,

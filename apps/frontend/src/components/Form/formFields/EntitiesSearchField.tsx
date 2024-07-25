@@ -40,7 +40,7 @@ interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T>
   getFieldValues: UseFormGetValues<T>;
 }
 
-export const EntitySearch = <T extends FieldValues>({
+export const EntitiesSearchField = <T extends FieldValues>({
   control,
   name,
   label,
