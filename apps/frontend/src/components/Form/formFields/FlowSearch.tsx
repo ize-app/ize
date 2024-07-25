@@ -1,4 +1,3 @@
-import { MailOutline } from "@mui/icons-material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -9,6 +8,8 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+
+import useFlowsSearch from "@/pages/Flows/useFlowsSearch";
 
 import { EntityType, FlowSummaryFragment } from "../../../graphql/generated/graphql";
 import { Avatar } from "../../AvatarOld";
@@ -26,9 +27,11 @@ export const FlowSearch = <T extends FieldValues>({
   ariaLabel,
   ...props
 }: FlowSearchProps<T>) => {
-  const options: FlowSummaryFragment[] = [];
+  const queryResultLimit = 20;
+  const { setSearchQuery, oldCursor, setOldCursor, newCursor, flows, fetchMore, queryVars } =
+    useFlowsSearch({ queryResultLimit });
 
-  
+  const options: FlowSummaryFragment[] = [...flows];
 
   return (
     <>
@@ -39,6 +42,8 @@ export const FlowSearch = <T extends FieldValues>({
           return (
             <FormControl required>
               <Autocomplete
+                // need to override autocomplete filtering behavior for async options
+                filterOptions={(x) => x}
                 includeInputInList={true}
                 multiple
                 aria-label={ariaLabel}
@@ -48,31 +53,40 @@ export const FlowSearch = <T extends FieldValues>({
                 {...props}
                 options={options}
                 getOptionLabel={(option: FlowSummaryFragment) => option.name}
-                onChange={(_event, data) => field.onChange(data)}
+                onChange={(_event, data) => {
+                  return field.onChange(data);
+                }}
                 isOptionEqualToValue={(option: FlowSummaryFragment, value: FlowSummaryFragment) => {
                   return option.flowId === value.flowId;
                 }}
                 PaperComponent={({ children }) => {
                   return (
                     <Paper>
-                      <Box
-                        sx={{
-                          padding: "8px 12px",
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "8px",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <Button
-                          variant="outlined"
-                          startIcon={<MailOutline color="primary" />}
-                          onMouseDown={() => {}}
-                        >
-                          Load more
-                        </Button>
-                      </Box>
                       {children}
+                      {oldCursor !== newCursor && (flows.length ?? 0) >= queryResultLimit && (
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              setOldCursor(newCursor);
+                              return fetchMore({
+                                variables: {
+                                  ...queryVars,
+                                  cursor: newCursor,
+                                },
+                              });
+                            }}
+                          >
+                            Load more
+                          </Button>
+                        </Box>
+                      )}
                     </Paper>
                   );
                 }}
@@ -133,6 +147,9 @@ export const FlowSearch = <T extends FieldValues>({
                 )}
                 renderInput={(params) => (
                   <TextField
+                    onChange={(event) => {
+                      setSearchQuery(event.target.value);
+                    }}
                     {...params}
                     label={label}
                     placeholder="Add a group or identity..."
