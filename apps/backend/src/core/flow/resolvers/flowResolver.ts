@@ -2,6 +2,7 @@ import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolve
 
 import { stepResolver } from "./stepResolver";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
+import { getFlowName } from "../helpers/getFlowName";
 
 export const flowResolver = ({
   flowVersion,
@@ -36,7 +37,11 @@ export const flowResolver = ({
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
-    name: flowNameOverride ?? flowVersion.name,
+    name: getFlowName({
+      flowName: flowVersion.name,
+      ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+      flowNameOverride,
+    }),
     flowsEvolvedByThisFlow: flowVersion.Flow.EvolveRightsForFlowVersions.filter(
       (fv) => fv.active && fv.Flow.type !== FlowType.Evolve,
     ).map((fv) => ({

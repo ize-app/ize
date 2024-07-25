@@ -8,8 +8,8 @@ query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Bool
   }
 }
 
-query GetFlows($groupId: String) {
-  getFlows(groupId: $groupId) {
+query GetFlows($cursor: String, $limit: Int!, $groupId: String, $searchQuery: String!) {
+  getFlows(cursor: $cursor, limit: $limit, groupId: $groupId, searchQuery: $searchQuery) {
     ...FlowSummary
   }
 }

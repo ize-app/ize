@@ -5,6 +5,7 @@ import { FlowSummary } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { FlowSummaryPrismaType } from "../flowPrismaTypes";
+import { getFlowName } from "../helpers/getFlowName";
 
 export const flowSummaryResolver = ({
   flow,
@@ -42,7 +43,10 @@ export const flowSummaryResolver = ({
 
   return {
     flowId: flow.id,
-    name: flow.CurrentFlowVersion?.name,
+    name: getFlowName({
+      flowName: flow.CurrentFlowVersion.name,
+      ownerGroupName: flow.OwnerGroup?.GroupCustom?.name,
+    }),
     createdAt: flow.createdAt.toISOString(),
     creator: userResolver(flow.Creator),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),

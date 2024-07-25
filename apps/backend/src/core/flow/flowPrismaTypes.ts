@@ -43,6 +43,11 @@ export const flowVersionInclude = Prisma.validator<Prisma.FlowVersionInclude>()(
           Flow: true,
         },
       },
+      OwnerGroup: {
+        include: {
+          GroupCustom: true,
+        },
+      },
     },
   },
 });
@@ -75,6 +80,11 @@ export const flowSummaryInclude = Prisma.validator<Prisma.FlowInclude>()({
   },
   Creator: {
     include: userInclude,
+  },
+  OwnerGroup: {
+    include: {
+      GroupCustom: true,
+    },
   },
 });
 

@@ -21,64 +21,69 @@ export const getFlows = async ({
 
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
     include: flowSummaryInclude,
+    take: args.limit,
+    skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
+    cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
       // id: args.flowId,
       AND: [
         { type: { not: "Evolve" } },
         args.groupId
           ? { groupId: args.groupId }
-          : {
-              OR: [
-                {
-                  CurrentFlowVersion: {
-                    Steps: {
-                      some: {
-                        index: 0,
-                        OR: [
-                          {
-                            RequestPermissions: {
-                              EntitySet: {
-                                EntitySetEntities: {
-                                  some: {
-                                    Entity: {
-                                      OR: [
-                                        { Group: { id: { in: groupIds } } },
-                                        { Identity: { id: { in: identityIds } } },
-                                      ],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                          {
-                            ResponsePermissions: {
-                              EntitySet: {
-                                EntitySetEntities: {
-                                  some: {
-                                    Entity: {
-                                      OR: [
-                                        { Group: { id: { in: groupIds } } },
-                                        { Identity: { id: { in: identityIds } } },
-                                      ],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-                {
-                  Creator: {
-                    id: user.id,
-                  },
-                },
-              ],
-            },
+          : // switch out to be flows user is watching or any of their groups are watching
+            {},
+        // {
+        //     OR: [
+        //       {
+        //         CurrentFlowVersion: {
+        //           Steps: {
+        //             some: {
+        //               index: 0,
+        //               OR: [
+        //                 {
+        //                   RequestPermissions: {
+        //                     EntitySet: {
+        //                       EntitySetEntities: {
+        //                         some: {
+        //                           Entity: {
+        //                             OR: [
+        //                               { Group: { id: { in: groupIds } } },
+        //                               { Identity: { id: { in: identityIds } } },
+        //                             ],
+        //                           },
+        //                         },
+        //                       },
+        //                     },
+        //                   },
+        //                 },
+        //                 {
+        //                   ResponsePermissions: {
+        //                     EntitySet: {
+        //                       EntitySetEntities: {
+        //                         some: {
+        //                           Entity: {
+        //                             OR: [
+        //                               { Group: { id: { in: groupIds } } },
+        //                               { Identity: { id: { in: identityIds } } },
+        //                             ],
+        //                           },
+        //                         },
+        //                       },
+        //                     },
+        //                   },
+        //                 },
+        //               ],
+        //             },
+        //           },
+        //         },
+        //       },
+        //       {
+        //         Creator: {
+        //           id: user.id,
+        //         },
+        //       },
+        //     ],
+        //   },
       ],
     },
     orderBy: {
