@@ -52,6 +52,7 @@ enum FieldDataType {
   DateTime
   FlowVersionId
   EntityIds
+  FlowIds
 }
 
 enum FieldType {

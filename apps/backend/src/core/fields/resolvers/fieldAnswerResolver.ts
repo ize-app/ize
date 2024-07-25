@@ -23,7 +23,7 @@ export const fieldAnswerResolver = async ({
 }): Promise<FieldAnswer> => {
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
-      if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.Entities) {
+      if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.EntityIds) {
         const entityIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
         const entities = await prisma.entity.findMany({
           include: entityInclude,

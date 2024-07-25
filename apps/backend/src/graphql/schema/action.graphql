@@ -2,7 +2,13 @@ type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
 }
 
-union Action = CallWebhook | EvolveFlow | TriggerStep | GroupUpdateMetadata | GroupUpdateMembership
+union Action =
+  | CallWebhook
+  | EvolveFlow
+  | TriggerStep
+  | GroupUpdateMetadata
+  | GroupUpdateMembership
+  | GroupWatchFlow
 
 type ActionExecution {
   actionId: String!
@@ -29,6 +35,10 @@ type GroupUpdateMetadata {
 }
 
 type GroupUpdateMembership {
+  filterOption: Option
+}
+
+type GroupWatchFlow {
   filterOption: Option
 }
 

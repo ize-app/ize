@@ -33,16 +33,16 @@ export const createGroupWatchFlowArgs = ({
     {
       type: FieldType.FreeInput,
       fieldId: "watchFlow",
-      freeInputDataType: FieldDataType.EntityIds,
+      freeInputDataType: FieldDataType.FlowIds,
       name: GroupWatchFlowFields.WatchFlow,
-      required: true,
+      required: false,
     },
     {
       type: FieldType.FreeInput,
       fieldId: "unwatchFlow",
-      freeInputDataType: FieldDataType.EntityIds,
+      freeInputDataType: FieldDataType.FlowIds,
       name: GroupWatchFlowFields.UnwatchFlow,
-      required: true,
+      required: false,
     },
   ];
 

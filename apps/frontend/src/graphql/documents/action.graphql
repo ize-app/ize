@@ -22,6 +22,12 @@ fragment Action on Action {
   ... on GroupUpdateMetadata {
     ...GroupUpdateMetadata
   }
+  ... on GroupUpdateMembership {
+    ...GroupUpdateMembership
+  }
+  ... on GroupWatchFlow {
+    ...GroupWatchFlow
+  }
 }
 
 fragment CallWebhook on CallWebhook {
@@ -45,6 +51,18 @@ fragment TriggerStep on TriggerStep {
 }
 
 fragment GroupUpdateMetadata on GroupUpdateMetadata {
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateMembership on GroupUpdateMembership {
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupWatchFlow on GroupWatchFlow {
   filterOption {
     ...Option
   }

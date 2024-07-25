@@ -40,6 +40,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "GroupWatchFlow",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "TriggerStep",
             "ofType": null
           }
@@ -1685,6 +1690,12 @@
             "deprecationReason": null
           },
           {
+            "name": "FlowIds",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "FlowVersionId",
             "description": null,
             "isDeprecated": false,
@@ -3101,6 +3112,30 @@
       {
         "kind": "OBJECT",
         "name": "GroupUpdateMetadata",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "filterOption",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Option",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "GroupWatchFlow",
         "description": null,
         "isOneOf": null,
         "fields": [
