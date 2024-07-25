@@ -234,6 +234,7 @@ enum FlowType {
   Evolve
   GroupUpdateMetadata
   GroupUpdateMembership
+  GroupWatchFlow
 }
 
 model Flow {
@@ -630,6 +631,7 @@ enum ActionType {
   EvolveFlow
   GroupUpdateMetadata
   GroupUpdateMembership
+  GroupWatchFlow
 
   @@map("ActionType")
 }

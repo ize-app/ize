@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
 import { newGroupUpdateMetadataFlow } from "@/core/flow/groupUpdateMetadata/newGroupUpdateMetadataFlow";
+import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -63,6 +64,13 @@ export const newCustomGroup = async ({
   });
 
   await newGroupUpdateMembershipFlow({
+    transaction,
+    context,
+    groupEntityId: customGroupEntity.Group?.entityId as string,
+    groupId: customGroupEntity.Group?.id as string,
+  });
+
+  await newGroupWatchFlowFlow({
     transaction,
     context,
     groupEntityId: customGroupEntity.Group?.entityId as string,

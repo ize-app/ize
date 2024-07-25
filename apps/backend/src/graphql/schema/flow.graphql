@@ -44,6 +44,7 @@ enum FlowType {
   Evolve
   GroupUpdateMetadata
   GroupUpdateMembership
+  GroupWatchFlow
 }
 
 type Step {
@@ -108,4 +109,3 @@ input StepResponseArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
 }
-

@@ -38,6 +38,7 @@ export enum ActionType {
   EvolveFlow = 'EvolveFlow',
   GroupUpdateMembership = 'GroupUpdateMembership',
   GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupWatchFlow = 'GroupWatchFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -278,7 +279,8 @@ export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve',
   GroupUpdateMembership = 'GroupUpdateMembership',
-  GroupUpdateMetadata = 'GroupUpdateMetadata'
+  GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupWatchFlow = 'GroupWatchFlow'
 }
 
 export type FreeInput = {
@@ -1480,6 +1482,7 @@ export enum ActionType {
   EvolveFlow = 'EvolveFlow',
   GroupUpdateMembership = 'GroupUpdateMembership',
   GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupWatchFlow = 'GroupWatchFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
 }
@@ -1720,7 +1723,8 @@ export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve',
   GroupUpdateMembership = 'GroupUpdateMembership',
-  GroupUpdateMetadata = 'GroupUpdateMetadata'
+  GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupWatchFlow = 'GroupWatchFlow'
 }
 
 export type FreeInput = {

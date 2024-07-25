@@ -2,10 +2,10 @@ import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 
-import { createGroupUpdateMembershipFlowVersionArgs } from "./createGroupUpdateMembershipFlowVersionArgs";
+import { createGroupWatchFlowArgs } from "./createGroupWatchFlowArgs";
 import { newStep } from "../helpers/newStep";
 
-export const newGroupUpdateMembershipFlowVersion = async ({
+export const newGroupWatchFlowFlowVersion = async ({
   transaction,
   flowId,
   evolveFlowId,
@@ -22,7 +22,7 @@ export const newGroupUpdateMembershipFlowVersion = async ({
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
-      name: "Add/remove group members",
+      name: "Watch/unwatch flow",
       totalSteps: 1,
       reusable: true,
       active,
@@ -49,7 +49,7 @@ export const newGroupUpdateMembershipFlowVersion = async ({
   });
 
   await newStep({
-    args: createGroupUpdateMembershipFlowVersionArgs({ groupEntityId, context }),
+    args: createGroupWatchFlowArgs({ groupEntityId, context }),
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,
