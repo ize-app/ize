@@ -106,7 +106,7 @@ export const Request = () => {
                     : null,
               })}
             >
-              {request.flow.name}
+              {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
             </Link>
           </Typography>
         </Box>

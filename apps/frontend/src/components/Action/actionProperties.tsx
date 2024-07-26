@@ -38,7 +38,7 @@ export const actionProperties: ActionProps = {
     icon: GroupAddIcon,
   },
   [ActionType.GroupWatchFlow]: {
-    label: "Watch/unwatch flow for group",
+    label: "Watch/unwatch flow",
     icon: VisibilityIcon,
   },
   [ActionType.None]: {

@@ -6,7 +6,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -21,16 +20,14 @@ export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
-        <TableHead>
+        {/* <TableHead>
           <TableRow>
+            <TableCellHideable align="right" width={"60px"}></TableCellHideable>
             <TableCellHideable sx={{ minWidth: "140px" }}>Flow</TableCellHideable>
-            <TableCellHideable align="right" width={"60px"}>
-              Creator
-            </TableCellHideable>
 
             <TableCellHideable align="right" width={"60px"} hideOnSmallScreen></TableCellHideable>
           </TableRow>
-        </TableHead>
+        </TableHead> */}
         <TableBody>
           {flows.map((flow) => (
             <FlowRow key={flow.flowId} flow={flow} />
@@ -56,6 +53,12 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
           )
         }
       >
+        <AvatarsCell
+          align="center"
+          width={"60px"}
+          avatars={flow.group ? [flow.group] : null}
+          hideOnSmallScreen={true}
+        />
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
@@ -77,7 +80,7 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
             </Typography>
           </Box>
         </TableCell>
-        <AvatarsCell align="center" avatars={[flow.creator]} hideOnSmallScreen={true} />
+
         <TableCellHideable align={"right"}>
           <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
             <Tooltip title="Trigger flow">

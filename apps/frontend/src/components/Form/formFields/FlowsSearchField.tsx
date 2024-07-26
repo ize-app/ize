@@ -9,7 +9,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
-import { Avatar } from "@/components/Avatar";
+import { Avatar, AvatarGroup } from "@/components/Avatar";
 import useFlowsSearch from "@/pages/Flows/useFlowsSearch";
 
 import { FlowSummaryFragment } from "../../../graphql/generated/graphql";
@@ -119,7 +119,7 @@ export const FlowsSearchField = <T extends FieldValues>({
                     }}
                     key={"option" + option.flowId}
                   >
-                    {option.group ? <Avatar avatar={option.group} /> : undefined}
+                    {option.group ? <AvatarGroup avatars={[option.group]} /> : undefined}
                     <Typography
                       variant="body1"
                       sx={{

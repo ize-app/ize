@@ -10,8 +10,7 @@ import {
   Status,
   UserSummaryPartsFragment,
 } from "../../graphql/generated/graphql";
-// import { intervalToIntuitiveTimeString } from "../../utils/inputs";
-import { AvatarGroup } from "../AvatarOld";
+import { AvatarGroup } from "../Avatar";
 import { statusProps } from "../status/statusProps";
 
 interface TableCellHideableProps extends TableCellProps {
@@ -32,7 +31,7 @@ interface StatusCellProps extends TableCellHideableProps {
 }
 
 interface AvatarsCellProps extends TableCellHideableProps {
-  avatars: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
+  avatars: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[] | null | undefined;
   align: "center" | "left";
 }
 
@@ -115,7 +114,7 @@ export const AvatarsCell = ({
           justifyContent: align === "center" ? "center" : "flex-start",
         }}
       >
-        <AvatarGroup agents={avatars} />
+        {avatars ? <AvatarGroup avatars={avatars} /> : null}
       </Box>
     </TableCellHideable>
   );

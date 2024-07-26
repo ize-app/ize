@@ -20,7 +20,7 @@ export const FlowsList = ({ flows }: { flows: FlowSummaryFragment[] }) => (
             flowVersionId: null,
           })}
         >
-          {flow.name}
+          {flow.name + (flow.group ? ` (${flow.group.name})` : "")}
         </Link>
       </Typography>
     ))}

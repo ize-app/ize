@@ -50,7 +50,6 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-  console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
@@ -79,11 +78,46 @@ export const Flow = () => {
             <Typography variant={"h1"} marginTop="8px">
               {flow.name}
             </Typography>
+            {/* {flow.evolve && (
+              <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
+                <Typography>
+                  <Link
+                    to={generatePath(Route.Flow, {
+                      flowId: fullUUIDToShort(flow.evolve.flowId),
+                      flowVersionId: flow.evolve.currentFlowVersionId
+                        ? fullUUIDToShort(flow.evolve.currentFlowVersionId)
+                        : null,
+                      // flowVersionId: null,
+                    })}
+                  >
+                    How this flow evolves
+                  </Link>
+                </Typography>
+                <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
+                  <IconButton size="small">
+                    <InfoOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )} */}
+            {flow.group && (
+              <Typography variant="description">
+                Modifies{" "}
+                <Link
+                  style={{ color: "inherit" }}
+                  to={generatePath(Route.Group, {
+                    groupId: fullUUIDToShort(flow.group.id),
+                  })}
+                >
+                  {flow.group.name}
+                </Link>
+              </Typography>
+            )}
             {isDraft && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 <Box sx={{ display: "flex", gap: "8px" }}>
                   <Chip label={"Draft"} size="small" />
-                  <Typography>
+                  <Typography variant="description">
                     Version created on {new Date(flow.versionCreatedAt).toLocaleString()}
                   </Typography>
                 </Box>
@@ -103,10 +137,9 @@ export const Flow = () => {
             {isCurrentFlowVersion && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 <Box sx={{ display: "flex", gap: "8px" }}>
-                  <Chip label={"Active"} size="small" />
                   {flow.versionPublishedAt && (
-                    <Typography>
-                      Most recent version published on{" "}
+                    <Typography variant="description">
+                      Version published on{" "}
                       {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
                         year: "numeric",
                         day: "numeric",
@@ -114,6 +147,7 @@ export const Flow = () => {
                       })}
                     </Typography>
                   )}
+                  <Chip label={"Active"} size="small" />
                 </Box>
               </Box>
             )}

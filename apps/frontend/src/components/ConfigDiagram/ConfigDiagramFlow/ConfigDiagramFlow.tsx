@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
+import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -67,7 +68,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <StageConnectorButton key={"connector-final"} />
                 <FlowStage
                   hasError={false}
-                  label={actionProperties[finalAction.__typename].label}
+                  label={getActionLabel(finalAction, flow.group)}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
@@ -89,7 +90,9 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             )
           );
         })}
-        {selectedId === "action" && finalAction && <ConfigFlowActionPanel action={finalAction} />}
+        {selectedId === "action" && finalAction && (
+          <ConfigFlowActionPanel action={finalAction} group={flow.group} />
+        )}
       </FlowConfigDiagramContainer>
     </Box>
   );
