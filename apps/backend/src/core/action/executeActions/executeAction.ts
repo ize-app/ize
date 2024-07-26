@@ -7,6 +7,7 @@ import { ActionType } from "@/graphql/generated/resolver-types";
 import { evolveFlow } from "./evolveFlow";
 import { groupUpdateMembership } from "./groupUpdateMembership";
 import { groupUpdateMetadata } from "./groupUpdateMetadata";
+import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
 import { callWebhook } from "../webhook/callWebhook";
@@ -102,6 +103,10 @@ export const executeAction = async ({
     }
     case ActionType.GroupUpdateMembership: {
       actionComplete = await groupUpdateMembership({ requestStepId, transaction });
+      break;
+    }
+    case ActionType.GroupWatchFlow: {
+      actionComplete = await groupWatchFlow({ requestStepId, transaction });
       break;
     }
     default:

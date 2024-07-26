@@ -4,6 +4,7 @@ import * as z from "zod";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
 import { entityFormSchema } from "./entity";
+import { flowSummarySchema } from "./flowSummary";
 
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
 export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
@@ -69,13 +70,22 @@ export const evaluateMultiTypeInput = (
           path: errorPath,
         });
       return;
-    case FieldDataType.Entities:
+    case FieldDataType.EntityIds:
       if (!z.array(entityFormSchema).safeParse(value).success)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Invalid datetime",
+          message: "Invalid groups and identities",
           path: errorPath,
         });
+      return;
+    case FieldDataType.FlowIds:
+      if (!z.array(flowSummarySchema).safeParse(value).success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid flows.",
+          path: errorPath,
+        });
+      }
       return;
     default:
       ctx.addIssue({

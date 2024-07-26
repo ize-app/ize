@@ -26,6 +26,9 @@ export const validateInput = (value: string, dataType: FieldDataType): boolean =
     case FieldDataType.EntityIds:
       pass = z.array(z.string().uuid()).safeParse(JSON.parse(value)).success;
       break;
+    case FieldDataType.FlowIds:
+      pass = z.array(z.string().uuid()).safeParse(JSON.parse(value)).success;
+      break;
     default:
       break;
   }

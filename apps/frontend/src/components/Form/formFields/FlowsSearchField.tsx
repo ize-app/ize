@@ -45,6 +45,7 @@ export const FlowsSearchField = <T extends FieldValues>({
                 // need to override autocomplete filtering behavior for async options
                 filterOptions={(x) => x}
                 includeInputInList={true}
+                defaultValue={[]}
                 multiple
                 aria-label={ariaLabel}
                 id="tags-filled"

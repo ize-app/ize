@@ -1,6 +1,11 @@
 import { Dayjs } from "dayjs";
 
-import { Entity, FieldAnswerArgs, FieldDataType } from "@/graphql/generated/graphql";
+import {
+  Entity,
+  FieldAnswerArgs,
+  FieldDataType,
+  FlowSummaryFragment,
+} from "@/graphql/generated/graphql";
 
 import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "../formValidation/field";
 
@@ -25,8 +30,10 @@ const formatAnswerValue = (fieldAnswer: FieldAnswerSchemaType) => {
         return (fieldAnswer.value as Dayjs).utc().format("YYYY-MM-DD"); // 2019-03-06
       case FieldDataType.DateTime:
         return (fieldAnswer.value as Dayjs).utc().format(); // 2019-03-06T00:00:00Z
-      case FieldDataType.Entities:
+      case FieldDataType.EntityIds:
         return JSON.stringify((fieldAnswer.value as Entity[]).map((e) => e.entityId));
+      case FieldDataType.FlowIds:
+        return JSON.stringify((fieldAnswer.value as FlowSummaryFragment[]).map((f) => f.flowId));
       default:
         return fieldAnswer.value;
     }

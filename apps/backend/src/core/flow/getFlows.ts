@@ -52,7 +52,18 @@ export const getFlows = async ({
             }
           : {},
         args.groupId
-          ? { groupId: args.groupId }
+          ? {
+              OR: [
+                { groupId: args.groupId },
+                {
+                  GroupsWatchedFlows: {
+                    some: {
+                      groupId: args.groupId,
+                    },
+                  },
+                },
+              ],
+            }
           : // switch out to be flows user is watching or any of their groups are watching
             {},
         // {

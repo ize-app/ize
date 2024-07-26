@@ -13,7 +13,6 @@ export const groupUpdateMetadata = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
   try {
-    console.log;
     // find the current / proposed fields in the request
     const requestStep = await transaction.requestStep.findFirstOrThrow({
       include: {

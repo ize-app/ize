@@ -137,6 +137,8 @@ model Group {
   GroupCustom        GroupCustom?
   UsersWatchedGroups UsersWatchedGroups[]
   OwnedFlows         Flow[]
+  GroupsWatchedFlows GroupsWatchedFlows[]
+  UsersWatchedFlows  UsersWatchedFlows[]
 
   @@map("groups")
 }
@@ -248,11 +250,13 @@ model Flow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Creator                     User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  OwnerGroup                  Group?        @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  CurrentFlowVersion          FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
-  FlowVersions                FlowVersion[] @relation("FlowToAllFlowVersions")
-  EvolveRightsForFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
+  Creator                     User                 @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  OwnerGroup                  Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
+  FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
+  EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
+  GroupsWatchedFlows          GroupsWatchedFlows[]
+  UsersWatchedFlows           UsersWatchedFlows[]
 
   @@map("flows")
 }
@@ -825,4 +829,28 @@ model UsersWatchedGroups {
 
   @@unique([userId, groupId])
   @@map("users_watched_groups")
+}
+
+model UsersWatchedFlows {
+  flowId  String  @map("flow_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([flowId, groupId])
+  @@map("users_watched_flows")
+}
+
+model GroupsWatchedFlows {
+  flowId  String  @map("flow_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([flowId, groupId])
+  @@map("groups_watched_flows")
 }
