@@ -188,7 +188,7 @@ export type EvolveFlowArgs = {
 
 export type Field = FreeInput | Options;
 
-export type FieldAnswer = EntitiesFieldAnswer | FreeInputFieldAnswer | OptionFieldAnswer;
+export type FieldAnswer = EntitiesFieldAnswer | FlowsFieldAnswer | FreeInputFieldAnswer | OptionFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
@@ -286,6 +286,12 @@ export enum FlowType {
   GroupUpdateMetadata = 'GroupUpdateMetadata',
   GroupWatchFlow = 'GroupWatchFlow'
 }
+
+export type FlowsFieldAnswer = {
+  __typename?: 'FlowsFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  flows: Array<FlowSummary>;
+};
 
 export type FreeInput = {
   __typename?: 'FreeInput';
@@ -1071,7 +1077,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupWatchFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator: _RefType['User'], groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
-  FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
+  FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
@@ -1118,6 +1124,7 @@ export type ResolversTypes = {
   FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversTypes['User'], group?: Maybe<ResolversTypes['Group']>, requestStep0Permission: ResolversTypes['Permission'] }>;
   FlowType: FlowType;
+  FlowsFieldAnswer: ResolverTypeWrapper<Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<ResolversTypes['FlowSummary']> }>;
   FreeInput: ResolverTypeWrapper<FreeInput>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
@@ -1236,6 +1243,7 @@ export type ResolversParentTypes = {
   Flow: Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversParentTypes['FlowReference']>, group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']> };
   FlowReference: FlowReference;
   FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversParentTypes['User'], group?: Maybe<ResolversParentTypes['Group']>, requestStep0Permission: ResolversParentTypes['Permission'] };
+  FlowsFieldAnswer: Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<ResolversParentTypes['FlowSummary']> };
   FreeInput: FreeInput;
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
@@ -1429,7 +1437,7 @@ export type FieldResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FieldAnswer'] = ResolversParentTypes['FieldAnswer']> = {
-  __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FlowsFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer', ParentType, ContextType>;
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
@@ -1465,6 +1473,12 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStep0Permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   userPermission?: Resolver<ResolversTypes['UserFlowPermission'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FlowsFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowsFieldAnswer'] = ResolversParentTypes['FlowsFieldAnswer']> = {
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1889,6 +1903,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Flow?: FlowResolvers<ContextType>;
   FlowReference?: FlowReferenceResolvers<ContextType>;
   FlowSummary?: FlowSummaryResolvers<ContextType>;
+  FlowsFieldAnswer?: FlowsFieldAnswerResolvers<ContextType>;
   FreeInput?: FreeInputResolvers<ContextType>;
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;
   GenericFieldAndValue?: GenericFieldAndValueResolvers<ContextType>;

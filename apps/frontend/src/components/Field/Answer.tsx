@@ -3,6 +3,7 @@ import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generat
 import { AnswerFreeInput } from "./AnswerFreeInput";
 import { FieldOptions } from "./FieldOptions";
 import { EntityList } from "../EntityList";
+import { FlowsList } from "../FlowsList";
 
 export const Answer = ({
   field,
@@ -17,7 +18,11 @@ export const Answer = ({
         return <AnswerFreeInput answer={fieldAnswer.value} dataType={field.dataType} />;
       else if (fieldAnswer.__typename === "EntitiesFieldAnswer") {
         return <EntityList entities={fieldAnswer.entities} />;
-      } else return null;
+      } 
+      else if (fieldAnswer.__typename === "FlowsFieldAnswer") {
+        return <FlowsList flows={fieldAnswer.flows} />;
+      } 
+      else return null;
     }
     case FieldType.Options: {
       if (fieldAnswer.__typename !== "OptionFieldAnswer") return null;

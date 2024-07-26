@@ -62,6 +62,13 @@ fragment UserFieldAnswers on UserFieldAnswers {
   }
 }
 
+fragment FlowsFieldAnswer on FlowsFieldAnswer {
+  fieldId
+  flows {
+    ...FlowSummary
+  }
+}
+
 fragment FieldAnswer on FieldAnswer {
   __typename
   ... on OptionFieldAnswer {
@@ -72,6 +79,9 @@ fragment FieldAnswer on FieldAnswer {
   }
   ... on EntitiesFieldAnswer {
     ...EntitiesFieldAnswer
+  }
+  ... on FlowsFieldAnswer {
+    ...FlowsFieldAnswer
   }
 }
 

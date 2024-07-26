@@ -10,6 +10,7 @@ import { Link, generatePath } from "react-router-dom";
 import { FieldDataType } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
+
 dayjs.extend(utc);
 
 export const renderFreeInputValue = (
@@ -60,7 +61,9 @@ export const renderFreeInputValue = (
       );
     // this case statement shouldn't be hit because it's handled upstream
     // TODO: make this not as janky
-    case FieldDataType.Entities:
+    case FieldDataType.EntityIds:
+      return <div></div>;
+    case FieldDataType.FlowIds:
       return <div></div>;
     case FieldDataType.FlowVersionId:
       return (

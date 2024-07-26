@@ -1,5 +1,7 @@
 import { entityInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
+import { flowSummaryInclude } from "@/core/flow/flowPrismaTypes";
+import { flowSummaryResolver } from "@/core/flow/resolvers/flowSummaryResolver";
 import {
   EntitiesFieldAnswer,
   FieldAnswer,
@@ -36,6 +38,24 @@ export const fieldAnswerResolver = async ({
           entities: entities.map((entity) => entityResolver({ entity, userIdentityIds })),
         };
         return entityAnswer;
+      } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.FlowIds) {
+        const flowIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
+        const flows = await prisma.flow.findMany({
+          include: flowSummaryInclude,
+          where: { id: { in: flowIds } },
+        });
+        return {
+          __typename: "FlowsFieldAnswer",
+          fieldId: fieldAnswer.fieldId,
+          flows: flows.map((flow) =>
+            flowSummaryResolver({
+              flow,
+              identityIds: userIdentityIds ?? [],
+              groupIds: [], // TODO pass this in properly
+              userId: "", // TODO pass this in properly
+            }),
+          ),
+        };
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",
