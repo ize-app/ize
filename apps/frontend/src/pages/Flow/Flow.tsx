@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
+import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import {
@@ -75,9 +76,19 @@ export const Flow = () => {
             <Typography variant={"body1"} fontWeight={600} color="primary">
               Flow
             </Typography>
-            <Typography variant={"h1"} marginTop="8px">
-              {flow.name}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <Typography variant={"h1"} margin="8px 0px">
+                {flow.name}
+              </Typography>
+
+              <WatchFlowButton watched={false} flowId={flow.id} size="medium" />
+            </Box>
             {/* {flow.evolve && (
               <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
                 <Typography>

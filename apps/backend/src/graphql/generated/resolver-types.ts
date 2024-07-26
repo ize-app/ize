@@ -491,6 +491,7 @@ export type Mutation = {
   newResponse: Scalars['String']['output'];
   testWebhook: Scalars['Boolean']['output'];
   updateProfile: Scalars['Boolean']['output'];
+  watchFlow: Scalars['Boolean']['output'];
   watchGroup: Scalars['Boolean']['output'];
 };
 
@@ -532,6 +533,12 @@ export type MutationTestWebhookArgs = {
 
 export type MutationUpdateProfileArgs = {
   profile: UpdateProfileArgs;
+};
+
+
+export type MutationWatchFlowArgs = {
+  flowId: Scalars['String']['input'];
+  watch: Scalars['Boolean']['input'];
 };
 
 
@@ -1636,6 +1643,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
   updateProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
+  watchFlow?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationWatchFlowArgs, 'flowId' | 'watch'>>;
   watchGroup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationWatchGroupArgs, 'groupId' | 'watch'>>;
 };
 

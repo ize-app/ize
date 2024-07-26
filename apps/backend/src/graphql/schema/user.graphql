@@ -5,6 +5,7 @@ type Query {
 type Mutation {
   updateProfile(profile: UpdateProfileArgs!): Boolean!
   watchGroup(groupId: String!, watch: Boolean!): Boolean!
+  watchFlow(flowId: String!, watch: Boolean!): Boolean!
 }
 
 type Me {

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { WatchGroupButton } from "@/components/group/WatchGroupButton/WatchGroupButton";
+import { WatchGroupButton } from "@/components/watchButton/WatchGroupButton";
 
 import BannerWithAvatar from "./BannerWithAvatar";
 import { MembersList } from "./MembersList";

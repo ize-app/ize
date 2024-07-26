@@ -9,11 +9,13 @@ import {
   Me,
   MutationResolvers,
   MutationUpdateProfileArgs,
+  MutationWatchFlowArgs,
   MutationWatchGroupArgs,
   QueryResolvers,
   WatchGroupFilter,
 } from "@graphql/generated/resolver-types";
 import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
+import { watchFlow as watchFlowService } from "@/core/user/watchFlow";
 
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
@@ -86,6 +88,18 @@ export const watchGroup: MutationResolvers["watchGroup"] = async (
   return await watchGroupService({ args, context });
 };
 
+export const watchFlow: MutationResolvers["watchFlow"] = async (
+  root: unknown,
+  args: MutationWatchFlowArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+  return await watchFlowService({ args, context });
+};
+
 export const userQueries = {
   me,
 };
@@ -93,4 +107,5 @@ export const userQueries = {
 export const userMutations = {
   updateProfile,
   watchGroup,
+  watchFlow,
 };

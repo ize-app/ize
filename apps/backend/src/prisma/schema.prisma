@@ -22,6 +22,7 @@ model User {
   Permission         Permission[]
   CreatedFlows       Flow[]
   UsersWatchedGroups UsersWatchedGroups[]
+  UsersWatchedFlows  UsersWatchedFlows[]
 
   @@map("users")
 }
@@ -138,7 +139,6 @@ model Group {
   UsersWatchedGroups UsersWatchedGroups[]
   OwnedFlows         Flow[]
   GroupsWatchedFlows GroupsWatchedFlows[]
-  UsersWatchedFlows  UsersWatchedFlows[]
 
   @@map("groups")
 }
@@ -832,14 +832,14 @@ model UsersWatchedGroups {
 }
 
 model UsersWatchedFlows {
+  userId  String  @map("user_id") @db.Uuid
   flowId  String  @map("flow_id") @db.Uuid
-  groupId String  @map("group_id") @db.Uuid
   watched Boolean
 
-  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
-  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Flow Flow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([flowId, groupId])
+  @@unique([userId, flowId])
   @@map("users_watched_flows")
 }
 

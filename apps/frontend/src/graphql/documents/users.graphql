@@ -12,6 +12,10 @@ mutation WatchGroup($groupId: String!, $watch: Boolean!) {
   watchGroup(groupId: $groupId, watch: $watch)
 }
 
+mutation WatchFlow($flowId: String!, $watch: Boolean!) {
+  watchFlow(flowId: $flowId, watch: $watch)
+}
+
 fragment MeParts on Me {
   user {
     ...UserSummaryParts
