@@ -12,7 +12,8 @@ import Search from "@/components/Tables/Search";
 import {
   GetRequestStepsDocument,
   GetRequestStepsQueryVariables,
-  RequestStepFilter,
+  RequestStepRespondPermissionFilter,
+  RequestStepStatusFilter,
   RequestStepSummaryFragment,
 } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
@@ -20,24 +21,36 @@ import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
 
-const filters = [
-  { label: "All", value: RequestStepFilter.All },
-  { label: "Open", value: RequestStepFilter.Open },
-  { label: "Closed", value: RequestStepFilter.Closed },
+const requestStepStatusFilters = [
+  { label: "All", value: RequestStepStatusFilter.All },
+  { label: "Open", value: RequestStepStatusFilter.Open },
+  { label: "Closed", value: RequestStepStatusFilter.Closed },
+];
+
+const requestStepPermissionFilters = [
+  { label: "All", value: RequestStepRespondPermissionFilter.All },
+  { label: "Respond permission", value: RequestStepRespondPermissionFilter.RespondPermission },
+  { label: "Cannot respond", value: RequestStepRespondPermissionFilter.NoRespondPermission },
 ];
 
 export const RequestStepsSearch = ({
   userOnly,
   flowId,
   groupId,
+  initialRespondPermissionFilter = RequestStepRespondPermissionFilter.RespondPermission,
 }: {
   userOnly: boolean;
   groupId?: string;
   flowId?: string;
+  initialRespondPermissionFilter?: RequestStepRespondPermissionFilter;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [filter, setFilter] = useState<RequestStepFilter>(RequestStepFilter.Open);
+  const [statusFilter, setStatusFilter] = useState<RequestStepStatusFilter>(
+    RequestStepStatusFilter.Open,
+  );
+  const [respondPermissionFilter, setRespondPermissionFilter] =
+    useState<RequestStepRespondPermissionFilter>(initialRespondPermissionFilter);
   const queryResultLimit = 20;
 
   const queryVars: GetRequestStepsQueryVariables = {
@@ -46,7 +59,8 @@ export const RequestStepsSearch = ({
     groupId,
     searchQuery,
     limit: queryResultLimit,
-    filter,
+    statusFilter,
+    respondPermissionFilter,
   };
 
   // const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
@@ -60,7 +74,7 @@ export const RequestStepsSearch = ({
 
   useEffect(() => {
     debouncedRefetch();
-  }, [searchQuery, filter]);
+  }, [searchQuery, statusFilter, respondPermissionFilter]);
 
   useEffect(() => {
     getResults({ variables: queryVars });
@@ -91,13 +105,16 @@ export const RequestStepsSearch = ({
         }}
       >
         <Box
-          sx={{
+          sx={(theme) => ({
             display: "flex",
             flexDirection: "row",
             gap: "16px",
             width: "100%",
-            maxWidth: "500px",
-          }}
+            // maxWidth: "500px",
+            [theme.breakpoints.down("sm")]: {
+              flexDirection: "column",
+            },
+          })}
         >
           <Search
             searchQuery={searchQuery}
@@ -105,25 +122,47 @@ export const RequestStepsSearch = ({
               setSearchQuery(event.target.value);
             }}
           />
-          <Select
-            sx={{
-              width: "140px",
-            }}
-            inputProps={{ multiline: "true" }}
-            aria-label={"Request step filter"}
-            defaultValue={filter}
-            size={"small"}
-            onChange={(event) => {
-              setFilter(event.target.value as RequestStepFilter);
-              return;
-            }}
-          >
-            {filters.map((filter) => (
-              <MenuItem key={filter.value} value={filter.value}>
-                {filter.label}
-              </MenuItem>
-            ))}
-          </Select>
+          <Box sx={{ display: "flex", gap: "8px" }}>
+            <Select
+              sx={{
+                width: "100px",
+              }}
+              inputProps={{ multiline: "true" }}
+              aria-label={"Request step open/closed filter"}
+              defaultValue={statusFilter}
+              size={"small"}
+              onChange={(event) => {
+                setStatusFilter(event.target.value as RequestStepStatusFilter);
+                return;
+              }}
+            >
+              {requestStepStatusFilters.map((filter) => (
+                <MenuItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <Select
+              sx={{
+                width: "200px",
+              }}
+              aria-label={"Request step respond permission filter"}
+              defaultValue={respondPermissionFilter}
+              size={"small"}
+              onChange={(event) => {
+                setRespondPermissionFilter(
+                  event.target.value as RequestStepRespondPermissionFilter,
+                );
+                return;
+              }}
+            >
+              {requestStepPermissionFilters.map((filter) => (
+                <MenuItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
           {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>
         <CreateButton />

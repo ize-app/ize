@@ -13,7 +13,12 @@ import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { GroupDocument, IzeGroupFragment, WatchFilter } from "../../graphql/generated/graphql";
+import {
+  GroupDocument,
+  IzeGroupFragment,
+  RequestStepRespondPermissionFilter,
+  WatchFilter,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { shortUUIDToFull } from "../../utils/inputs";
@@ -53,7 +58,13 @@ export const Group = () => {
   const tabs: TabProps[] = [
     {
       title: "Requests",
-      content: !loading ? <RequestStepsSearch userOnly={false} groupId={groupId} /> : null,
+      content: !loading ? (
+        <RequestStepsSearch
+          userOnly={false}
+          groupId={groupId}
+          initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
+        />
+      ) : null,
     },
     {
       title: "Flows",

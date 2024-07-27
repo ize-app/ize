@@ -1,6 +1,7 @@
 import {
   QueryGetRequestStepsArgs,
-  RequestStepFilter,
+  RequestStepRespondPermissionFilter,
+  RequestStepStatusFilter,
   RequestStepSummary,
 } from "@/graphql/generated/resolver-types";
 
@@ -69,39 +70,6 @@ export const getRequestSteps = async ({
                     },
                   },
                 ],
-                // TODO: add back in the old logic for getting request steps by request permissions
-                // old logic for getting request steps by permissions
-                // Request: {
-                //   OR: [
-                //     true && {
-                //       FlowVersion: {
-                //         Steps: {
-                //           some: {
-                //             ResponsePermissions: {
-                //               EntitySet: {
-                //                 EntitySetEntities: {
-                //                   some: {
-                //                     Entity: {
-                //                       OR: [
-                //                         { Group: { id: { in: groupIds } } },
-                //                         { Identity: { id: { in: identityIds } } },
-                //                       ],
-                //                     },
-                //                   },
-                //                 },
-                //               },
-                //             },
-                //           },
-                //         },
-                //       },
-                //     },
-                //     {
-                //       Creator: {
-                //         id: user.id,
-                //       },
-                //     },
-                //   ],
-                // },
               }
             : {},
           // if getting requests for a specific flow, then get request steps for that flow or its corresponding evolve flow
@@ -147,8 +115,39 @@ export const getRequestSteps = async ({
                 },
               }
             : {},
-          args.filter !== RequestStepFilter.All
-            ? { responseComplete: args.filter === RequestStepFilter.Closed }
+          args.statusFilter !== RequestStepStatusFilter.All
+            ? { responseComplete: args.statusFilter === RequestStepStatusFilter.Closed }
+            : {},
+          args.respondPermissionFilter !== RequestStepRespondPermissionFilter.All && user
+            ? {
+                Request: {
+                  [args.respondPermissionFilter ===
+                  RequestStepRespondPermissionFilter.RespondPermission
+                    ? "is"
+                    : "NOT"]: {
+                    FlowVersion: {
+                      Steps: {
+                        some: {
+                          ResponsePermissions: {
+                            EntitySet: {
+                              EntitySetEntities: {
+                                some: {
+                                  Entity: {
+                                    OR: [
+                                      { Group: { id: { in: groupIds } } },
+                                      { Identity: { id: { in: identityIds } } },
+                                    ],
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              }
             : {},
         ],
       },

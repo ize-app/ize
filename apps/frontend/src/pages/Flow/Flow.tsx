@@ -20,7 +20,12 @@ import {
 } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
-import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  FlowType,
+  GetFlowDocument,
+  RequestStepRespondPermissionFilter,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -282,7 +287,13 @@ export const Flow = () => {
           )}
         </Box>
         <ConfigDiagramFlow flow={flow} />
-        {isCurrentFlowVersion && <RequestStepsSearch userOnly={false} flowId={flow.flowId} />}
+        {isCurrentFlowVersion && (
+          <RequestStepsSearch
+            userOnly={false}
+            flowId={flow.flowId}
+            initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
+          />
+        )}
       </Box>
     </PageContainer>
   );
