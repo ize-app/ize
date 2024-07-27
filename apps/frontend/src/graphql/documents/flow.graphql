@@ -49,6 +49,7 @@ fragment FlowSummary on FlowSummary {
   userPermission {
     ...UserFlowPermission
   }
+  isWatched
 }
 
 fragment FlowFields on Flow {

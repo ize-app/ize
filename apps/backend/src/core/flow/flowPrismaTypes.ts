@@ -65,24 +65,75 @@ export type FlowPrismaType = Prisma.FlowGetPayload<{
   include: typeof flowInclude;
 }>;
 
-export const flowSummaryInclude = Prisma.validator<Prisma.FlowInclude>()({
-  CurrentFlowVersion: {
-    include: {
-      Steps: {
-        include: {
-          RequestPermissions: {
-            include: permissionInclude,
+export const createFlowSummaryInclude = (userId: string | undefined) =>
+  Prisma.validator<Prisma.FlowInclude>()({
+    CurrentFlowVersion: {
+      include: {
+        Steps: {
+          include: {
+            RequestPermissions: {
+              include: permissionInclude,
+            },
           },
         },
       },
     },
-  },
-  Creator: {
-    include: userInclude,
-  },
-  OwnerGroup: {
-    include: groupInclude,
-  },
-});
+    Creator: {
+      include: userInclude,
+    },
+    OwnerGroup: {
+      include: {
+        ...groupInclude,
+        UsersWatchedGroups: {
+          where: {
+            userId: userId,
+            watched: true,
+          },
+        },
+      },
+    },
+    GroupsWatchedFlows: {
+      where: {
+        Group: {
+          UsersWatchedGroups: {
+            some: {
+              userId: userId,
+              watched: true,
+            },
+          },
+        },
+      },
+    },
 
-export type FlowSummaryPrismaType = Prisma.FlowGetPayload<{ include: typeof flowSummaryInclude }>;
+    UsersWatchedFlows: {
+      where: {
+        userId: userId,
+      },
+    },
+  });
+
+export const flowSummaryExampleInclude = createFlowSummaryInclude("userId");
+
+// export const flowSummaryExampleInclude = Prisma.validator<Prisma.FlowInclude>()({
+// CurrentFlowVersion: {
+//   include: {
+//     Steps: {
+//       include: {
+//         RequestPermissions: {
+//           include: permissionInclude,
+//         },
+//       },
+//     },
+//   },
+// },
+// Creator: {
+//   include: userInclude,
+// },
+// OwnerGroup: {
+//   include: groupInclude,
+// },
+// });
+
+export type FlowSummaryPrismaType = Prisma.FlowGetPayload<{
+  include: typeof flowSummaryExampleInclude;
+}>;

@@ -21,14 +21,16 @@ export const responsesResolver = async (
           createdAt: response.createdAt.toISOString(),
           user: userResolver(response.User),
           answers: await Promise.all(
-            response.Answers.map(async (a) => await fieldAnswerResolver({ fieldAnswer: a })),
+            response.Answers.map(
+              async (a) => await fieldAnswerResolver({ fieldAnswer: a, userId }),
+            ),
           ),
         });
 
       await Promise.all(
         Answers.map(async (a) => {
           const { fieldId } = a;
-          const answer = await fieldAnswerResolver({ fieldAnswer: a });
+          const answer = await fieldAnswerResolver({ fieldAnswer: a, userId: userId ?? undefined });
           const payload: UserFieldAnswer = {
             answer,
             user,

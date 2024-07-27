@@ -56,7 +56,7 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
         }
       >
         <TableCell width="60px">
-          <WatchFlowButton size="small" flowId={flow.flowId} watched={false} />
+          <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
         </TableCell>
         {/* <AvatarsCell
           align="center"

@@ -275,6 +275,7 @@ export type FlowSummary = {
   creator: User;
   flowId: Scalars['String']['output'];
   group?: Maybe<Group>;
+  isWatched: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   requestStep0Permission: Permission;
   userPermission: UserFlowPermission;
@@ -1480,6 +1481,7 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
+  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestStep0Permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   userPermission?: Resolver<ResolversTypes['UserFlowPermission'], ParentType, ContextType>;

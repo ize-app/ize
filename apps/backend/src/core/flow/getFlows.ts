@@ -1,6 +1,6 @@
 import { FlowSummary, QueryGetFlowsArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 
-import { FlowSummaryPrismaType, flowSummaryInclude } from "./flowPrismaTypes";
+import { FlowSummaryPrismaType, createFlowSummaryInclude } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -20,7 +20,7 @@ export const getFlows = async ({
   const identityIds: string[] = user.Identities.map((id) => id.id);
 
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: flowSummaryInclude,
+    include: createFlowSummaryInclude(user.id),
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
@@ -69,15 +69,6 @@ export const getFlows = async ({
                                 watched: true,
                               },
                             },
-                            OR: [
-                              {
-                                GroupsWatchedFlows: {
-                                  some: {
-                                    watched: true,
-                                  },
-                                },
-                              },
-                            ],
                           },
                         }, // TODO switch out for watched groups
                       },

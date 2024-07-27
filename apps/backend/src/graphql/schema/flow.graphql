@@ -41,6 +41,7 @@ type FlowSummary {
   # permission to trigger first step of the flow
   requestStep0Permission: Permission!
   userPermission: UserFlowPermission!
+  isWatched: Boolean!
 }
 
 type FlowReference {

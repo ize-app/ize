@@ -7,6 +7,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { FlowSummaryPrismaType } from "../flowPrismaTypes";
 import { getFlowName } from "../helpers/getFlowName";
+import { isWatchedFlowSummary } from "../helpers/isWatchedFlowSummary";
 
 export const flowSummaryResolver = ({
   flow,
@@ -48,6 +49,7 @@ export const flowSummaryResolver = ({
       flowName: flow.CurrentFlowVersion.name,
       ownerGroupName: flow.OwnerGroup?.GroupCustom?.name,
     }),
+    isWatched: isWatchedFlowSummary({ flowSummary: flow, userId }),
     createdAt: flow.createdAt.toISOString(),
     creator: userResolver(flow.Creator),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),

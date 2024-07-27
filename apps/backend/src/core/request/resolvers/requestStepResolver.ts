@@ -16,6 +16,7 @@ export const requestStepResolver = async ({
   context,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  userId,
   // refers to whether request as a whole, rather than just the request step is final
   requestFinal,
 }: {
@@ -41,6 +42,7 @@ export const requestStepResolver = async ({
           await fieldAnswerResolver({
             fieldAnswer: rfa,
             userIdentityIds: context.currentUser?.Identities.map((id) => id.id),
+            userId: userId ?? undefined,
           }),
       ),
     ),
