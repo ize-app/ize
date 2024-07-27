@@ -8,6 +8,7 @@ import { createRequestStepSummaryInclude } from "./requestPrismaTypes";
 import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
+import { createGroupWatchedFlowFilter, createUserWatchedFlowFilter } from "../flow/flowPrismaTypes";
 import { MePrismaType } from "../user/userPrismaTypes";
 
 export const getRequestSteps = async ({
@@ -48,41 +49,62 @@ export const getRequestSteps = async ({
                 },
               }
             : {},
+          // if getting request steps for user, then get requests steps for flows (or corresponding evolve flows) they are watching
+          // or that groups they are watching own/watch themselves
           args.userOnly && user?.id
             ? {
-                Request: {
-                  OR: [
-                    true && {
+                OR: [
+                  {
+                    Request: {
                       FlowVersion: {
-                        Steps: {
-                          some: {
-                            ResponsePermissions: {
-                              EntitySet: {
-                                EntitySetEntities: {
-                                  some: {
-                                    Entity: {
-                                      OR: [
-                                        { Group: { id: { in: groupIds } } },
-                                        { Identity: { id: { in: identityIds } } },
-                                      ],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
+                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
                       },
                     },
-                    {
-                      Creator: {
-                        id: user.id,
+                  },
+                  {
+                    Request: {
+                      ProposedFlowVersionEvolution: {
+                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
                       },
                     },
-                  ],
-                },
+                  },
+                ],
+                // TODO: add back in the old logic for getting request steps by request permissions
+                // old logic for getting request steps by permissions
+                // Request: {
+                //   OR: [
+                //     true && {
+                //       FlowVersion: {
+                //         Steps: {
+                //           some: {
+                //             ResponsePermissions: {
+                //               EntitySet: {
+                //                 EntitySetEntities: {
+                //                   some: {
+                //                     Entity: {
+                //                       OR: [
+                //                         { Group: { id: { in: groupIds } } },
+                //                         { Identity: { id: { in: identityIds } } },
+                //                       ],
+                //                     },
+                //                   },
+                //                 },
+                //               },
+                //             },
+                //           },
+                //         },
+                //       },
+                //     },
+                //     {
+                //       Creator: {
+                //         id: user.id,
+                //       },
+                //     },
+                //   ],
+                // },
               }
             : {},
+          // if getting requests for a specific flow, then get request steps for that flow or its corresponding evolve flow
           args.flowId
             ? {
                 OR: [
@@ -103,6 +125,26 @@ export const getRequestSteps = async ({
                     },
                   },
                 ],
+              }
+            : {},
+          // if getting request steps for a specific group, then get request steps
+          // for that the group watches or owns
+          args.groupId
+            ? {
+                Request: {
+                  OR: [
+                    {
+                      ProposedFlowVersionEvolution: {
+                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
+                      },
+                    },
+                    {
+                      FlowVersion: {
+                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
+                      },
+                    },
+                  ],
+                },
               }
             : {},
           args.filter !== RequestStepFilter.All

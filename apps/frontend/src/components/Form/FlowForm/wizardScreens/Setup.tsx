@@ -129,7 +129,6 @@ export const Setup = () => {
                               setSelectedId("trigger0");
                             }
                           : () => {
-                              console.log(`deleting step ${index} response`);
                               useFormMethods.setValue(`steps.${index}.response`, undefined);
                               setSelectedId("trigger0");
                             }

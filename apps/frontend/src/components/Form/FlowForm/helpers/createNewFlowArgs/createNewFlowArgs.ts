@@ -48,6 +48,5 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),
     },
   };
-  console.log("created args are ", args);
   return args;
 };

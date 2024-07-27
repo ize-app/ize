@@ -100,6 +100,69 @@ const flowExampleInclude = Prisma.validator<Prisma.FlowInclude>()({
 export type FlowPrismaType = Prisma.FlowGetPayload<{
   include: typeof flowExampleInclude;
 }>;
+// used for getting flows that a user is watching as well as request steps from flows they are watching
+export const createUserWatchedFlowFilter = ({
+  userId,
+  watched,
+}: {
+  userId: string;
+  watched: boolean;
+}) =>
+  Prisma.validator<Prisma.FlowWhereInput>()({
+    [watched ? "OR" : "NOT"]: [
+      // flow is watched if either
+      // 1) user is watching that flow
+      // 2) The user did not unwatch that flow that they are watching
+      //    a group that is watching that flow
+      {
+        UsersWatchedFlows: {
+          some: {
+            userId: userId,
+            watched: true,
+          },
+        },
+      },
+      {
+        UsersWatchedFlows: {
+          none: {
+            userId: userId,
+            watched: false,
+          },
+        },
+        OR: [
+          {
+            OwnerGroup: {
+              UsersWatchedGroups: {
+                some: {
+                  userId: userId,
+                  watched: true,
+                },
+              },
+            },
+          },
+          {
+            GroupsWatchedFlows: {
+              some: {
+                Group: {
+                  UsersWatchedGroups: {
+                    some: {
+                      userId: userId,
+                      watched: true,
+                    },
+                  },
+                },
+              }, // TODO switch out for watched groups
+            },
+          },
+        ],
+      },
+    ],
+  });
+
+export const createGroupWatchedFlowFilter = ({ groupId }: { groupId: string }) =>
+  Prisma.validator<Prisma.FlowWhereInput>()({
+    OR: [{ OwnerGroup: { id: groupId } }, { GroupsWatchedFlows: { some: { groupId: groupId } } }],
+  });
 
 export const createFlowSummaryInclude = (userId: string | undefined) =>
   Prisma.validator<Prisma.FlowInclude>()({

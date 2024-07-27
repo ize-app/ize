@@ -42,8 +42,8 @@ export const newEvolveRequest = async ({
       throw new GraphQLError(`Flow does not have an evolve flow. FlowId ${flowId}`, {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
-    // currently, we're only allowing evolve requests to be created for custom flows
-    // in the future, we'll allow evolve flows to evolve themselves independent of the custom flow
+    // currently, we're only allowing evolve requests to be created for non-evolve flow
+    // in the future, we'll allow evolve flows to evolve themselves independent of whatever flow it evolves
     // but this is a simplifying assumption for v1 because allowing this could result in invalid evolve flows
     if (flow.type === FlowType.Evolve)
       throw new GraphQLError(
@@ -144,6 +144,7 @@ export const newEvolveRequest = async ({
       args: { request: requestArgs },
       context,
       proposedFlowVersionId,
+      transaction,
     });
   });
 };

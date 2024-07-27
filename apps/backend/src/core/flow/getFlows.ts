@@ -1,6 +1,10 @@
 import { FlowSummary, QueryGetFlowsArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 
-import { FlowSummaryPrismaType, createFlowSummaryInclude } from "./flowPrismaTypes";
+import {
+  FlowSummaryPrismaType,
+  createFlowSummaryInclude,
+  createUserWatchedFlowFilter,
+} from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -27,62 +31,18 @@ export const getFlows = async ({
     where: {
       AND: [
         args.watchFilter !== WatchFilter.All
-          ? {
-              [args.watchFilter === WatchFilter.Watched ? "OR" : "NOT"]: [
-                // flow is watched if either
-                // 1) user is watching that flow
-                // 2) The user did not unwatch that flow that they are watching
-                //    a group that is watching that flow
-                {
-                  UsersWatchedFlows: {
-                    some: {
-                      userId: user.id,
-                      watched: true,
-                    },
-                  },
-                },
-                {
-                  UsersWatchedFlows: {
-                    none: {
-                      userId: user.id,
-                      watched: false,
-                    },
-                  },
-                  OR: [
-                    {
-                      OwnerGroup: {
-                        UsersWatchedGroups: {
-                          some: {
-                            userId: user.id,
-                            watched: true,
-                          },
-                        },
-                      },
-                    },
-                    {
-                      GroupsWatchedFlows: {
-                        some: {
-                          Group: {
-                            UsersWatchedGroups: {
-                              some: {
-                                userId: user.id,
-                                watched: true,
-                              },
-                            },
-                          },
-                        }, // TODO switch out for watched groups
-                      },
-                    },
-                  ],
-                },
-              ],
-            }
+          ? createUserWatchedFlowFilter({
+              userId: user.id,
+              watched: args.watchFilter === WatchFilter.Watched,
+            })
           : {},
         { type: { not: "Evolve" } },
         args.searchQuery !== ""
           ? {
               OR: [
                 {
+                  //@ts-expect-error - this is a valid query but I believe the createWatchedFlowFilter
+                  // OR/NOT logic is breaking the type checking
                   CurrentFlowVersion: {
                     name: {
                       contains: args.searchQuery,
@@ -118,6 +78,7 @@ export const getFlows = async ({
             }
           : // switch out to be flows user is watching or any of their groups are watching
             {},
+        // TODO: add filter for getting flows that user has permissions on, regardless of whether they are watching
         // {
         //     OR: [
         //       {
