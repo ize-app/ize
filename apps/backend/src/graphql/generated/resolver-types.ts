@@ -720,6 +720,7 @@ export type QueryGetFlowsArgs = {
   groupId?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
+  watchFilter: WatchFilter;
 };
 
 
@@ -748,7 +749,7 @@ export type QueryGroupsForCurrentUserArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
-  watchFilter: WatchGroupFilter;
+  watchFilter: WatchFilter;
 };
 
 
@@ -981,7 +982,7 @@ export type UserPermission = {
   response: Scalars['Boolean']['output'];
 };
 
-export enum WatchGroupFilter {
+export enum WatchFilter {
   All = 'All',
   Unwatched = 'Unwatched',
   Watched = 'Watched'
@@ -1212,7 +1213,7 @@ export type ResolversTypes = {
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
-  WatchGroupFilter: WatchGroupFilter;
+  WatchFilter: WatchFilter;
   WebhookPayload: ResolverTypeWrapper<WebhookPayload>;
   WebhookValue: ResolverTypeWrapper<WebhookValue>;
   WebhookValueArgs: WebhookValueArgs;
@@ -1716,7 +1717,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
-  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery'>>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'filter' | 'limit' | 'searchQuery' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;

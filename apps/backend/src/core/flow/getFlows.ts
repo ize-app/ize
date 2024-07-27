@@ -1,4 +1,4 @@
-import { FlowSummary, QueryGetFlowsArgs } from "@/graphql/generated/resolver-types";
+import { FlowSummary, QueryGetFlowsArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 
 import { FlowSummaryPrismaType, flowSummaryInclude } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
@@ -26,6 +26,67 @@ export const getFlows = async ({
     cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
       AND: [
+        args.watchFilter !== WatchFilter.All
+          ? {
+              [args.watchFilter === WatchFilter.Watched ? "OR" : "NOT"]: [
+                // flow is watched if either
+                // 1) user is watching that flow
+                // 2) The user did not unwatch that flow that they are watching
+                //    a group that is watching that flow
+                {
+                  UsersWatchedFlows: {
+                    some: {
+                      userId: user.id,
+                      watched: true,
+                    },
+                  },
+                },
+                {
+                  UsersWatchedFlows: {
+                    none: {
+                      userId: user.id,
+                      watched: false,
+                    },
+                  },
+                  OR: [
+                    {
+                      OwnerGroup: {
+                        UsersWatchedGroups: {
+                          some: {
+                            userId: user.id,
+                            watched: true,
+                          },
+                        },
+                      },
+                    },
+                    {
+                      GroupsWatchedFlows: {
+                        some: {
+                          Group: {
+                            UsersWatchedGroups: {
+                              some: {
+                                userId: user.id,
+                                watched: true,
+                              },
+                            },
+                            OR: [
+                              {
+                                GroupsWatchedFlows: {
+                                  some: {
+                                    watched: true,
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        }, // TODO switch out for watched groups
+                      },
+                    },
+                  ],
+                },
+              ],
+            }
+          : {},
         { type: { not: "Evolve" } },
         args.searchQuery !== ""
           ? {

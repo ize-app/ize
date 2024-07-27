@@ -1,10 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
-import {
-  QueryGroupsForCurrentUserArgs,
-  WatchGroupFilter,
-} from "@/graphql/generated/resolver-types";
+import { QueryGroupsForCurrentUserArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
@@ -38,13 +35,13 @@ export const getGroupsOfUser = async ({
               },
             }
           : {},
-        args.watchFilter !== WatchGroupFilter.All
+        args.watchFilter !== WatchFilter.All
           ? {
               group: {
                 UsersWatchedGroups: {
                   some: {
                     userId: context.currentUser.id,
-                    watched: args.watchFilter === WatchGroupFilter.Watched,
+                    watched: args.watchFilter === WatchFilter.Watched,
                   },
                 },
               },

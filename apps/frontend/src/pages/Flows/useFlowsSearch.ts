@@ -6,6 +6,7 @@ import {
   FlowSummaryFragment,
   GetFlowsDocument,
   GetFlowsQueryVariables,
+  WatchFilter,
 } from "@/graphql/generated/graphql";
 
 const useFlowsSearch = ({
@@ -17,10 +18,12 @@ const useFlowsSearch = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
+  const [watchFilter, setWatchFilter] = useState<WatchFilter>(WatchFilter.Watched);
 
   const queryVarsRef = useRef<GetFlowsQueryVariables>({
     groupId,
     searchQuery,
+    watchFilter,
     limit: queryResultLimit,
   });
 
@@ -28,9 +31,10 @@ const useFlowsSearch = ({
     queryVarsRef.current = {
       groupId,
       searchQuery,
+      watchFilter,
       limit: queryResultLimit,
     };
-  }, [groupId, searchQuery, queryResultLimit]);
+  }, [groupId, searchQuery, queryResultLimit, watchFilter]);
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
 
@@ -44,7 +48,7 @@ const useFlowsSearch = ({
 
   useEffect(() => {
     debouncedRefetch();
-  }, [searchQuery, debouncedRefetch]);
+  }, [searchQuery, debouncedRefetch, watchFilter]);
 
   useEffect(() => {
     getResults({ variables: queryVarsRef.current });
@@ -56,6 +60,8 @@ const useFlowsSearch = ({
   return {
     searchQuery,
     setSearchQuery,
+    watchFilter,
+    setWatchFilter,
     setOldCursor,
     oldCursor,
     newCursor,

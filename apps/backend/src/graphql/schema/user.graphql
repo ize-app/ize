@@ -25,3 +25,10 @@ type User {
 input UpdateProfileArgs {
   name: String!
 }
+
+
+enum WatchFilter {
+  All
+  Watched
+  Unwatched
+}

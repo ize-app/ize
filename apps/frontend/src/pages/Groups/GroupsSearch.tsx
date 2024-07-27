@@ -13,22 +13,22 @@ import {
   GroupSummaryPartsFragment,
   GroupsDocument,
   GroupsQueryVariables,
-  WatchGroupFilter,
+  WatchFilter,
 } from "@/graphql/generated/graphql";
 import { NewCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
 
 const filters = [
-  { label: "All", value: WatchGroupFilter.All },
-  { label: "Watched", value: WatchGroupFilter.Watched },
-  { label: "Unwatched", value: WatchGroupFilter.Unwatched },
+  { label: "All", value: WatchFilter.All },
+  { label: "Watched", value: WatchFilter.Watched },
+  { label: "Unwatched", value: WatchFilter.Unwatched },
 ];
 
 export const GroupsSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [watchFilter, setWatchFilter] = useState<WatchGroupFilter>(WatchGroupFilter.Watched);
+  const [watchFilter, setWatchFilter] = useState<WatchFilter>(WatchFilter.Watched);
   const queryResultLimit = 20;
 
   const queryVars: GroupsQueryVariables = {
@@ -102,7 +102,7 @@ export const GroupsSearch = () => {
             defaultValue={watchFilter}
             size={"small"}
             onChange={(event) => {
-              setWatchFilter(event.target.value as WatchGroupFilter);
+              setWatchFilter(event.target.value as WatchFilter);
               return;
             }}
           >

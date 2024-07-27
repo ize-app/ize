@@ -1,5 +1,6 @@
-import { Button } from "@mui/material";
+import { Button, MenuItem } from "@mui/material";
 import Box from "@mui/material/Box";
+import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
@@ -8,14 +9,23 @@ import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
+import { WatchFilter } from "@/graphql/generated/graphql.ts";
 import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 import useFlowsSearch from "./useFlowsSearch.ts";
 
+const filters = [
+  { label: "All", value: WatchFilter.All },
+  { label: "Watched", value: WatchFilter.Watched },
+  { label: "Unwatched", value: WatchFilter.Unwatched },
+];
+
 export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
   const queryResultLimit = 20;
   const {
+    watchFilter,
+    setWatchFilter,
     searchQuery,
     setSearchQuery,
     oldCursor,
@@ -61,6 +71,25 @@ export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
               setSearchQuery(event.target.value);
             }}
           />
+          <Select
+            sx={{
+              width: "140px",
+            }}
+            inputProps={{ multiline: "true" }}
+            aria-label={"Request step filter"}
+            defaultValue={watchFilter}
+            size={"small"}
+            onChange={(event) => {
+              setWatchFilter(event.target.value as WatchFilter);
+              return;
+            }}
+          >
+            {filters.map((filter) => (
+              <MenuItem key={filter.value} value={filter.value}>
+                {filter.label}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
         <CreateButton />
       </Box>

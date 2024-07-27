@@ -14,7 +14,7 @@ type Query {
     cursor: String
     limit: Int!
     searchQuery: String!
-    watchFilter: WatchGroupFilter!
+    watchFilter: WatchFilter!
   ): [Group!]!
 }
 
@@ -30,12 +30,6 @@ enum NewEntityTypes {
 enum EntityType {
   Group
   Identity
-}
-
-enum WatchGroupFilter {
-  All
-  Watched
-  Unwatched
 }
 
 union Entity = Identity | Group

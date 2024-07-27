@@ -12,7 +12,7 @@ import {
   MutationWatchFlowArgs,
   MutationWatchGroupArgs,
   QueryResolvers,
-  WatchGroupFilter,
+  WatchFilter,
 } from "@graphql/generated/resolver-types";
 import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
 import { watchFlow as watchFlowService } from "@/core/user/watchFlow";
@@ -47,7 +47,7 @@ const me: QueryResolvers["me"] = async (
 
   const groups = await getGroupsOfUser({
     context,
-    args: { limit: 10, searchQuery: "", watchFilter: WatchGroupFilter.Watched },
+    args: { limit: 10, searchQuery: "", watchFilter: WatchFilter.Watched },
   });
 
   const userData = await prisma.user.findFirstOrThrow({

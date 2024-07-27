@@ -6009,6 +6009,22 @@
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
+              },
+              {
+                "name": "watchFilter",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "WatchFilter",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
               }
             ],
             "type": {
@@ -6278,7 +6294,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "ENUM",
-                    "name": "WatchGroupFilter",
+                    "name": "WatchFilter",
                     "ofType": null
                   }
                 },
@@ -8618,7 +8634,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "WatchGroupFilter",
+        "name": "WatchFilter",
         "description": null,
         "isOneOf": null,
         "fields": null,
