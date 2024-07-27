@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { actionExecutionInclude } from "../action/actionPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
-import { flowVersionInclude } from "../flow/flowPrismaTypes";
+import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
 import { resultInclude } from "../result/resultPrismaTypes";
@@ -81,7 +81,6 @@ export const createRequestStepSummaryInclude = (userId: string) =>
           equals: userId,
         },
       },
-      
     },
     Step: {
       include: {
@@ -105,7 +104,7 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
     include: userInclude,
   },
   FlowVersion: {
-    include: flowVersionInclude,
+    include: createFlowVersionInclude(undefined), // TODO: switch this out for the actual userId
   },
   ProposedFlowVersionEvolution: {
     include: evolveRequestProposedFlowVersionInclude,

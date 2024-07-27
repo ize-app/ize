@@ -32,8 +32,6 @@ export const flowResolver = async ({
   hideSensitiveInfo?: boolean;
   transaction?: Prisma.TransactionClient;
 }): Promise<Flow> => {
-  const isWatched = await isWatchedFlow({ flowVersion, userId, transaction });
-
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
@@ -47,7 +45,7 @@ export const flowResolver = async ({
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
-    isWatched,
+    isWatched: isWatchedFlow({ flowVersion: flowVersion, userId }),
     name: getFlowName({
       flowName: flowVersion.name,
       ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,

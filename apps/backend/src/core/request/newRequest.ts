@@ -1,4 +1,4 @@
-import { flowInclude } from "@/core/flow/flowPrismaTypes";
+import { createFlowInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
@@ -30,7 +30,7 @@ export const newRequest = async ({
       where: {
         id: flowId,
       },
-      include: flowInclude,
+      include: createFlowInclude(context.currentUser?.id),
     });
 
     if (!flow.CurrentFlowVersion)

@@ -32,37 +32,73 @@ export type StepPrismaType = Prisma.StepGetPayload<{
   include: typeof stepInclude;
 }>;
 
-export const flowVersionInclude = Prisma.validator<Prisma.FlowVersionInclude>()({
-  Steps: {
-    include: stepInclude,
-  },
-  Flow: {
-    // if evolve flow, this will be array of all flow versions managed by that evolveflow
-    include: {
-      EvolveRightsForFlowVersions: {
-        include: {
-          Flow: true,
+export const createFlowVersionInclude = (userId: string | undefined) =>
+  Prisma.validator<Prisma.FlowVersionInclude>()({
+    Steps: {
+      include: stepInclude,
+    },
+    Flow: {
+      // if evolve flow, this will be array of all flow versions managed by that evolveflow
+      include: {
+        EvolveRightsForFlowVersions: {
+          include: {
+            Flow: true,
+          },
+        },
+        OwnerGroup: {
+          include: {
+            ...groupInclude,
+            UsersWatchedGroups: {
+              where: {
+                userId: userId,
+                watched: true,
+              },
+            },
+          },
+        },
+        GroupsWatchedFlows: {
+          where: {
+            Group: {
+              UsersWatchedGroups: {
+                some: {
+                  userId: userId,
+                  watched: true,
+                },
+              },
+            },
+          },
+        },
+
+        UsersWatchedFlows: {
+          where: {
+            userId: userId,
+          },
         },
       },
-      OwnerGroup: {
-        include: groupInclude,
-      },
     },
-  },
-});
+  });
+
+const flowVersionExampleInclude = createFlowVersionInclude("userId");
 
 export type FlowVersionPrismaType = Prisma.FlowVersionGetPayload<{
-  include: typeof flowVersionInclude;
+  include: typeof flowVersionExampleInclude;
 }>;
 
-export const flowInclude = Prisma.validator<Prisma.FlowInclude>()({
+export const createFlowInclude = (userId: string | undefined) =>
+  Prisma.validator<Prisma.FlowInclude>()({
+    CurrentFlowVersion: {
+      include: createFlowVersionInclude(userId),
+    },
+  });
+
+const flowExampleInclude = Prisma.validator<Prisma.FlowInclude>()({
   CurrentFlowVersion: {
-    include: flowVersionInclude,
+    include: flowVersionExampleInclude,
   },
 });
 
 export type FlowPrismaType = Prisma.FlowGetPayload<{
-  include: typeof flowInclude;
+  include: typeof flowExampleInclude;
 }>;
 
 export const createFlowSummaryInclude = (userId: string | undefined) =>
