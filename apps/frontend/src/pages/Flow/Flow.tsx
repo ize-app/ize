@@ -91,30 +91,8 @@ export const Flow = () => {
 
               <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
             </Box>
-            {/* {flow.evolve && (
-              <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
-                <Typography>
-                  <Link
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(flow.evolve.flowId),
-                      flowVersionId: flow.evolve.currentFlowVersionId
-                        ? fullUUIDToShort(flow.evolve.currentFlowVersionId)
-                        : null,
-                      // flowVersionId: null,
-                    })}
-                  >
-                    How this flow evolves
-                  </Link>
-                </Typography>
-                <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
-                  <IconButton size="small">
-                    <InfoOutlined fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            )} */}
             {flow.group && (
-              <Typography variant="description">
+              <Typography variant="description" lineHeight={"24px"}>
                 Modifies{" "}
                 <Link
                   style={{ color: "inherit" }}
@@ -148,28 +126,26 @@ export const Flow = () => {
               </Box>
             )}
             {isCurrentFlowVersion && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <Box sx={{ display: "flex", gap: "8px" }}>
-                  {flow.versionPublishedAt && (
-                    <Typography variant="description">
-                      Version published on{" "}
-                      {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
-                        year: "numeric",
-                        day: "numeric",
-                        month: "long",
-                      })}
-                    </Typography>
-                  )}
-                  <Chip label={"Active"} size="small" />
-                </Box>
+              <Box sx={{ display: "flex", gap: "8px" }}>
+                {flow.versionPublishedAt && (
+                  <Typography variant="description" lineHeight={"24px"}>
+                    Version published on{" "}
+                    {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
+                      year: "numeric",
+                      day: "numeric",
+                      month: "long",
+                    })}
+                  </Typography>
+                )}
+                <Chip label={"Active"} size="small" />
               </Box>
             )}
             {isOldVersion && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <>
                 <Box sx={{ display: "flex", gap: "8px" }}>
                   <Chip label={"Old version"} size="small" />
                   {flow.versionPublishedAt && (
-                    <Typography>
+                    <Typography variant="description" lineHeight={"24px"}>
                       This version published on{" "}
                       {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
                         year: "numeric",
@@ -179,7 +155,7 @@ export const Flow = () => {
                     </Typography>
                   )}
                 </Box>
-                <Typography>
+                <Typography variant="description" lineHeight={"24px"}>
                   This is an old version of this flow. See the{" "}
                   <Link
                     to={generatePath(Route.Flow, {
@@ -190,12 +166,13 @@ export const Flow = () => {
                     current published version of this flow.
                   </Link>
                 </Typography>
-              </Box>
+              </>
             )}
             {flow.evolve && (
-              <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
-                <Typography>
+              <Box sx={{ display: "flex", alignItems: "Center" }}>
+                <Typography variant="description" lineHeight={"24px"}>
                   <Link
+                    style={{ color: "inherit" }}
                     to={generatePath(Route.Flow, {
                       flowId: fullUUIDToShort(flow.evolve.flowId),
                       flowVersionId: flow.evolve.currentFlowVersionId
@@ -208,8 +185,8 @@ export const Flow = () => {
                   </Link>
                 </Typography>
                 <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
-                  <IconButton size="small">
-                    <InfoOutlined fontSize="small" />
+                  <IconButton size="small" sx={{ padding: "4px" }}>
+                    <InfoOutlined sx={{ fontSize: "16px" }} />
                   </IconButton>
                 </Tooltip>
               </Box>
