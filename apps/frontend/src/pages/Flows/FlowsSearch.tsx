@@ -9,16 +9,22 @@ import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
-import { WatchFilter } from "@/graphql/generated/graphql.ts";
+import { FlowTriggerPermissionFilter, WatchFilter } from "@/graphql/generated/graphql.ts";
 import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 import useFlowsSearch from "./useFlowsSearch.ts";
 
-const filters = [
+const watchFilters = [
   { label: "All", value: WatchFilter.All },
   { label: "Watched", value: WatchFilter.Watched },
   { label: "Unwatched", value: WatchFilter.Unwatched },
+];
+
+const triggerFilters = [
+  { label: "All", value: FlowTriggerPermissionFilter.All },
+  { label: "Trigger permission", value: FlowTriggerPermissionFilter.TriggerPermission },
+  { label: "Cannot trigger", value: FlowTriggerPermissionFilter.NoTriggerPermission },
 ];
 
 export const FlowsSearch = ({
@@ -32,6 +38,8 @@ export const FlowsSearch = ({
   const {
     watchFilter,
     setWatchFilter,
+    triggerPermissionFilter,
+    setTriggerPermissionFilter,
     searchQuery,
     setSearchQuery,
     oldCursor,
@@ -63,13 +71,16 @@ export const FlowsSearch = ({
         }}
       >
         <Box
-          sx={{
+          sx={(theme) => ({
             display: "flex",
             flexDirection: "row",
             gap: "16px",
             width: "100%",
-            maxWidth: "500px",
-          }}
+            // maxWidth: "500px",
+            [theme.breakpoints.down("sm")]: {
+              flexDirection: "column",
+            },
+          })}
         >
           <Search
             searchQuery={searchQuery}
@@ -77,25 +88,46 @@ export const FlowsSearch = ({
               setSearchQuery(event.target.value);
             }}
           />
-          <Select
-            sx={{
-              width: "140px",
-            }}
-            inputProps={{ multiline: "true" }}
-            aria-label={"Request step filter"}
-            defaultValue={watchFilter}
-            size={"small"}
-            onChange={(event) => {
-              setWatchFilter(event.target.value as WatchFilter);
-              return;
-            }}
-          >
-            {filters.map((filter) => (
-              <MenuItem key={filter.value} value={filter.value}>
-                {filter.label}
-              </MenuItem>
-            ))}
-          </Select>
+          <Box sx={{ display: "flex", gap: "8px" }}>
+            <Select
+              sx={{
+                width: "140px",
+              }}
+              inputProps={{ multiline: "true" }}
+              aria-label={"Request step filter"}
+              defaultValue={watchFilter}
+              size={"small"}
+              onChange={(event) => {
+                setWatchFilter(event.target.value as WatchFilter);
+                return;
+              }}
+            >
+              {watchFilters.map((filter) => (
+                <MenuItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <Select
+              sx={{
+                width: "140px",
+              }}
+              inputProps={{ multiline: "true" }}
+              aria-label={"Request step filter"}
+              defaultValue={triggerPermissionFilter}
+              size={"small"}
+              onChange={(event) => {
+                setTriggerPermissionFilter(event.target.value as FlowTriggerPermissionFilter);
+                return;
+              }}
+            >
+              {triggerFilters.map((filter) => (
+                <MenuItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
         </Box>
         <CreateButton />
       </Box>

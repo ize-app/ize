@@ -128,19 +128,24 @@ export const getRequestSteps = async ({
                     FlowVersion: {
                       Steps: {
                         some: {
-                          ResponsePermissions: {
-                            EntitySet: {
-                              EntitySetEntities: {
-                                some: {
-                                  Entity: {
-                                    OR: [
-                                      { Group: { id: { in: groupIds } } },
-                                      { Identity: { id: { in: identityIds } } },
-                                    ],
+                          RespondPermissions: {
+                            OR: [
+                              { anyone: true },
+                              {
+                                EntitySet: {
+                                  EntitySetEntities: {
+                                    some: {
+                                      Entity: {
+                                        OR: [
+                                          { Group: { id: { in: groupIds } } },
+                                          { Identity: { id: { in: identityIds } } },
+                                        ],
+                                      },
+                                    },
                                   },
                                 },
                               },
-                            },
+                            ],
                           },
                         },
                       },

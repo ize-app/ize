@@ -1,4 +1,9 @@
-import { FlowSummary, QueryGetFlowsArgs, WatchFilter } from "@/graphql/generated/resolver-types";
+import {
+  FlowSummary,
+  FlowTriggerPermissionFilter,
+  QueryGetFlowsArgs,
+  WatchFilter,
+} from "@/graphql/generated/resolver-types";
 
 import {
   FlowSummaryPrismaType,
@@ -78,59 +83,45 @@ export const getFlows = async ({
             }
           : // switch out to be flows user is watching or any of their groups are watching
             {},
-        // TODO: add filter for getting flows that user has permissions on, regardless of whether they are watching
-        // {
-        //     OR: [
-        //       {
-        //         CurrentFlowVersion: {
-        //           Steps: {
-        //             some: {
-        //               index: 0,
-        //               OR: [
-        //                 {
-        //                   RequestPermissions: {
-        //                     EntitySet: {
-        //                       EntitySetEntities: {
-        //                         some: {
-        //                           Entity: {
-        //                             OR: [
-        //                               { Group: { id: { in: groupIds } } },
-        //                               { Identity: { id: { in: identityIds } } },
-        //                             ],
-        //                           },
-        //                         },
-        //                       },
-        //                     },
-        //                   },
-        //                 },
-        //                 {
-        //                   ResponsePermissions: {
-        //                     EntitySet: {
-        //                       EntitySetEntities: {
-        //                         some: {
-        //                           Entity: {
-        //                             OR: [
-        //                               { Group: { id: { in: groupIds } } },
-        //                               { Identity: { id: { in: identityIds } } },
-        //                             ],
-        //                           },
-        //                         },
-        //                       },
-        //                     },
-        //                   },
-        //                 },
-        //               ],
-        //             },
-        //           },
-        //         },
-        //       },
-        //       {
-        //         Creator: {
-        //           id: user.id,
-        //         },
-        //       },
-        //     ],
-        //   },
+        // TODO: reduce some non-DRY code with requestSteps permission logic
+        args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
+          ? {
+              CurrentFlowVersion: {
+                [args.triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
+                  ? "is"
+                  : "NOT"]: {
+                  Steps: {
+                    some: {
+                      index: 0,
+                      OR: [
+                        {
+                          RequestPermissions: {
+                            OR: [
+                              { anyone: true },
+                              {
+                                EntitySet: {
+                                  EntitySetEntities: {
+                                    some: {
+                                      Entity: {
+                                        OR: [
+                                          { Group: { id: { in: groupIds } } },
+                                          { Identity: { id: { in: identityIds } } },
+                                        ],
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            }
+          : {},
       ],
     },
     orderBy: {

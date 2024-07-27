@@ -281,6 +281,12 @@ export type FlowSummary = {
   userPermission: UserFlowPermission;
 };
 
+export enum FlowTriggerPermissionFilter {
+  All = 'All',
+  NoTriggerPermission = 'NoTriggerPermission',
+  TriggerPermission = 'TriggerPermission'
+}
+
 export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve',
@@ -721,6 +727,7 @@ export type QueryGetFlowsArgs = {
   groupId?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
+  triggerPermissionFilter: FlowTriggerPermissionFilter;
   watchFilter: WatchFilter;
 };
 
@@ -1140,6 +1147,7 @@ export type ResolversTypes = {
   Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversTypes['FlowReference']>, group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']> }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversTypes['User'], group?: Maybe<ResolversTypes['Group']>, requestStep0Permission: ResolversTypes['Permission'] }>;
+  FlowTriggerPermissionFilter: FlowTriggerPermissionFilter;
   FlowType: FlowType;
   FlowsFieldAnswer: ResolverTypeWrapper<Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<ResolversTypes['FlowSummary']> }>;
   FreeInput: ResolverTypeWrapper<FreeInput>;
@@ -1727,7 +1735,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
-  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'triggerPermissionFilter' | 'watchFilter'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'respondPermissionFilter' | 'searchQuery' | 'statusFilter' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;

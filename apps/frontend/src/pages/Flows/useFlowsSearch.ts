@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   FlowSummaryFragment,
+  FlowTriggerPermissionFilter,
   GetFlowsDocument,
   GetFlowsQueryVariables,
   WatchFilter,
@@ -13,19 +14,24 @@ const useFlowsSearch = ({
   groupId,
   queryResultLimit,
   initialWatchFilter = WatchFilter.Watched,
+  initialTriggerPermissionFilter = FlowTriggerPermissionFilter.All,
 }: {
   groupId?: string;
   queryResultLimit: number;
   initialWatchFilter?: WatchFilter;
+  initialTriggerPermissionFilter?: FlowTriggerPermissionFilter;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
   const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
+  const [triggerPermissionFilter, setTriggerPermissionFilter] =
+    useState<FlowTriggerPermissionFilter>(initialTriggerPermissionFilter);
 
   const queryVarsRef = useRef<GetFlowsQueryVariables>({
     groupId,
     searchQuery,
     watchFilter,
+    triggerPermissionFilter,
     limit: queryResultLimit,
   });
 
@@ -34,9 +40,10 @@ const useFlowsSearch = ({
       groupId,
       searchQuery,
       watchFilter,
+      triggerPermissionFilter,
       limit: queryResultLimit,
     };
-  }, [groupId, searchQuery, queryResultLimit, watchFilter]);
+  }, [groupId, searchQuery, queryResultLimit, watchFilter, triggerPermissionFilter]);
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
 
@@ -50,7 +57,7 @@ const useFlowsSearch = ({
 
   useEffect(() => {
     debouncedRefetch();
-  }, [searchQuery, debouncedRefetch, watchFilter]);
+  }, [searchQuery, debouncedRefetch, watchFilter, triggerPermissionFilter]);
 
   useEffect(() => {
     getResults({ variables: queryVarsRef.current });
@@ -62,6 +69,8 @@ const useFlowsSearch = ({
   return {
     searchQuery,
     setSearchQuery,
+    triggerPermissionFilter,
+    setTriggerPermissionFilter,
     watchFilter,
     setWatchFilter,
     setOldCursor,

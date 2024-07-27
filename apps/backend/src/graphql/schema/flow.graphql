@@ -10,6 +10,7 @@ type Query {
     groupId: String
     searchQuery: String!
     watchFilter: WatchFilter!
+    triggerPermissionFilter: FlowTriggerPermissionFilter!
   ): [FlowSummary!]!
 }
 
@@ -118,4 +119,10 @@ input StepRequestArgs {
 input StepResponseArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
+}
+
+enum FlowTriggerPermissionFilter {
+  All
+  TriggerPermission
+  NoTriggerPermission
 }
