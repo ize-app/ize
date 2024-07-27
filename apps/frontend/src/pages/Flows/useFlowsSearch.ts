@@ -12,13 +12,15 @@ import {
 const useFlowsSearch = ({
   groupId,
   queryResultLimit,
+  initialWatchFilter = WatchFilter.Watched,
 }: {
   groupId?: string;
   queryResultLimit: number;
+  initialWatchFilter?: WatchFilter;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [watchFilter, setWatchFilter] = useState<WatchFilter>(WatchFilter.Watched);
+  const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
 
   const queryVarsRef = useRef<GetFlowsQueryVariables>({
     groupId,

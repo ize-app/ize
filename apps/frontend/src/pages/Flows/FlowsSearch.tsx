@@ -21,7 +21,13 @@ const filters = [
   { label: "Unwatched", value: WatchFilter.Unwatched },
 ];
 
-export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
+export const FlowsSearch = ({
+  groupId,
+  initialWatchFilter = WatchFilter.Watched,
+}: {
+  groupId?: string;
+  initialWatchFilter?: WatchFilter;
+}) => {
   const queryResultLimit = 20;
   const {
     watchFilter,
@@ -35,7 +41,7 @@ export const FlowsSearch = ({ groupId }: { groupId?: string }) => {
     loading,
     fetchMore,
     queryVars,
-  } = useFlowsSearch({ groupId, queryResultLimit });
+  } = useFlowsSearch({ groupId, queryResultLimit, initialWatchFilter });
 
   return (
     <Box
