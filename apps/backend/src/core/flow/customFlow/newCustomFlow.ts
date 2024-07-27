@@ -1,5 +1,6 @@
 import { FlowType } from "@prisma/client";
 
+import { watchFlow } from "@/core/user/watchFlow";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -32,6 +33,8 @@ export const newCustomFlow = async ({
     const flow = await transaction.flow.create({
       data: { type: FlowType.Custom, creatorId },
     });
+
+    await watchFlow({ flowId: flow.id, watch: true, userId: creatorId, transaction });
 
     await newCustomFlowVersion({
       transaction,

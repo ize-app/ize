@@ -10,6 +10,7 @@ import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { hasWritePermission } from "../permission/hasWritePermission";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { watchFlow } from "../user/watchFlow";
 
 // creates a new response for a given request step
 // validates/creates field answers
@@ -33,7 +34,11 @@ export const newResponse = async ({
         Step: {
           include: stepInclude,
         },
-        Request: true,
+        Request: {
+          include: {
+            FlowVersion: true,
+          },
+        },
         Responses: {
           include: responseInclude,
         },
@@ -112,6 +117,13 @@ export const newResponse = async ({
       where: {
         requestStepId,
       },
+    });
+
+    await watchFlow({
+      flowId: requestStep.Request.FlowVersion.flowId,
+      watch: true,
+      userId: context.currentUser.id,
+      transaction,
     });
 
     if (checkIfEarlyResult({ step: requestStep.Step, responses: allResponses })) {

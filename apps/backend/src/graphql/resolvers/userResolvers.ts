@@ -93,11 +93,18 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
   args: MutationWatchFlowArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  return await prisma.$transaction(async (transaction) => {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    return await watchFlowService({
+      flowId: args.flowId,
+      watch: args.watch,
+      userId: context.currentUser.id,
+      transaction,
     });
-  return await watchFlowService({ args, context });
+  });
 };
 
 export const userQueries = {

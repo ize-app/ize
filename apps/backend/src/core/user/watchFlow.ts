@@ -1,32 +1,25 @@
-import { GraphQLError } from "graphql";
-
-import { CustomErrorCodes } from "@/graphql/errors";
-import { MutationWatchFlowArgs } from "@graphql/generated/resolver-types";
-
-import { GraphqlRequestContext } from "../../graphql/context";
-import { prisma } from "../../prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const watchFlow = async ({
-  args,
-  context,
+  flowId,
+  userId,
+  watch,
+  transaction,
 }: {
-  args: MutationWatchFlowArgs;
-  context: GraphqlRequestContext;
+  flowId: string;
+  userId: string;
+  watch: boolean;
+  transaction: Prisma.TransactionClient;
 }): Promise<boolean> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
-
-  await prisma.usersWatchedFlows.upsert({
+  await transaction.usersWatchedFlows.upsert({
     where: {
       userId_flowId: {
-        flowId: args.flowId,
-        userId: context.currentUser.id,
+        flowId,
+        userId,
       },
     },
-    create: { flowId: args.flowId, userId: context.currentUser.id, watched: args.watch },
-    update: { watched: args.watch },
+    create: { flowId: flowId, userId, watched: watch },
+    update: { watched: watch },
   });
-  return args.watch;
+  return watch;
 };

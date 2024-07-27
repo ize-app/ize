@@ -9,6 +9,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { hasWritePermission } from "../permission/hasWritePermission";
+import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -121,6 +122,8 @@ export const newRequest = async ({
   if (!hasResponseFields) {
     await executeAction({ step, results: [], requestStepId: requestStep.id });
   }
+
+  await watchFlow({ flowId: flow.id, watch: true, userId: context.currentUser.id, transaction });
 
   return request.id;
   // });
