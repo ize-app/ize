@@ -1,11 +1,15 @@
+import { Prisma } from "@prisma/client";
+
 import { groupResolver } from "@/core/entity/group/groupResolver";
 import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
 import { getFlowName } from "../helpers/getFlowName";
+import { isWatchedFlow } from "../helpers/isWatchedFlow";
 
-export const flowResolver = ({
+export const flowResolver = async ({
   flowVersion,
   evolveFlow,
   userIdentityIds,
@@ -15,6 +19,7 @@ export const flowResolver = ({
   hideSensitiveInfo = true,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  transaction = prisma,
 }: {
   flowVersion: FlowVersionPrismaType;
   evolveFlow?: FlowVersionPrismaType;
@@ -25,7 +30,10 @@ export const flowResolver = ({
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
   hideSensitiveInfo?: boolean;
-}): Flow => {
+  transaction?: Prisma.TransactionClient;
+}): Promise<Flow> => {
+  const isWatched = await isWatchedFlow({ flowVersion, userId, transaction });
+
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
@@ -39,6 +47,7 @@ export const flowResolver = ({
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
+    isWatched,
     name: getFlowName({
       flowName: flowVersion.name,
       ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,
@@ -62,7 +71,13 @@ export const flowResolver = ({
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow
-      ? flowResolver({ flowVersion: evolveFlow, userIdentityIds, userGroupIds, userId })
+      ? await flowResolver({
+          flowVersion: evolveFlow,
+          userIdentityIds,
+          userGroupIds,
+          userId,
+          transaction,
+        })
       : null,
   };
 };

@@ -254,6 +254,7 @@ export type Flow = {
   flowsEvolvedByThisFlow: Array<FlowReference>;
   group?: Maybe<Group>;
   id: Scalars['String']['output'];
+  isWatched: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Step>;
@@ -1457,6 +1458,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   flowsEvolvedByThisFlow?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<ResolversTypes['Step']>, ParentType, ContextType>;

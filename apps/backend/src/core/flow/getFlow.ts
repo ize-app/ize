@@ -91,7 +91,7 @@ export const getFlow = async ({
 
   const userGroupIds = await getGroupIdsOfUser({ user });
 
-  const res = flowResolver({
+  const res = await flowResolver({
     flowVersion: flowVersion,
     evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,

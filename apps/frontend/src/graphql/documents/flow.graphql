@@ -60,6 +60,7 @@ fragment FlowFields on Flow {
   steps {
     ...Step
   }
+  isWatched
 }
 
 fragment FlowRefernce on FlowReference {

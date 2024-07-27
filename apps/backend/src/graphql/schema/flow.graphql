@@ -23,6 +23,7 @@ type Flow {
   steps: [Step!]!
   flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
+  isWatched: Boolean!
 }
 
 type FlowSummary {

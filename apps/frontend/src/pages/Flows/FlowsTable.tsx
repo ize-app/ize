@@ -11,7 +11,9 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { AvatarsCell, TableCellHideable } from "@/components/Tables/TableCells";
+import { AvatarGroup } from "@/components/Avatar";
+import { TableCellHideable } from "@/components/Tables/TableCells";
+import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { FlowSummaryFragment } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
@@ -53,19 +55,24 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
           )
         }
       >
-        <AvatarsCell
+        <TableCell width="60px">
+          <WatchFlowButton size="small" flowId={flow.flowId} watched={false} />
+        </TableCell>
+        {/* <AvatarsCell
           align="center"
           width={"60px"}
           avatars={flow.group ? [flow.group] : null}
           hideOnSmallScreen={true}
-        />
+        /> */}
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
+              gap: "8px",
             }}
           >
+            {flow.group ? <AvatarGroup avatars={[flow.group]} /> : null}
             <Typography
               variant={"body1"}
               sx={{

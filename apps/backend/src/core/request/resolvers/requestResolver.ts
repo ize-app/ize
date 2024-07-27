@@ -30,7 +30,7 @@ export const requestResolver = async ({
 
   // note: this call needs to happen before requestStepResolver is called
   // so that the response and result caches can be populated
-  const flow = flowResolver({
+  const flow = await flowResolver({
     flowVersion: req.FlowVersion,
     userGroupIds,
     userId: context.currentUser?.id,
