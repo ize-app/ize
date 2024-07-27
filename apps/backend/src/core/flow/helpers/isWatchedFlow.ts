@@ -38,9 +38,29 @@ export const isWatchedFlow = async ({
       where: {
         UsersWatchedGroups: {
           some: {
-            groupId: { in: [] }, // list of groups that user is watching
+            // groupId: { in: [] }, // list of groups that user is watching
+            OR: [
+              {
+                Group: {
+                  GroupsWatchedFlows: {
+                    some: {
+                      flowId: flowVersion.Flow.id,
+                      watched: true,
+                    },
+                  },
+                },
+              },
+              {
+                Group: {
+                  OwnedFlows: {
+                    some: { id: flowVersion.Flow.id },
+                  },
+                },
+              },
+            ],
           },
         },
+
         OR: [
           {
             OwnedFlows: {
