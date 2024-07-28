@@ -120,27 +120,8 @@ export const FlowsSearch = ({
       ) : (
         <EmptyTablePlaceholder>
           <Typography>
-            Looks like you don&apos;t have any flows set up yet. Learn more{" "}
-            <Link to={Route.NewFlow}>here</Link> or{" "}
+            There aren&apos;t any flows yet. Learn more <Link to={Route.About}>here</Link> or{" "}
             <Link to={Route.NewFlow}>create your first flow</Link>. <br />
-            <br />
-            <span style={{ fontWeight: 500 }}>Flows</span> define and automate how a set of people
-            (Discord roles, NFTs, email addresses, etc) collectively take an action together. For
-            example, a flow could define how to:
-            <ul>
-              <li>
-                Ask for a group&apos;s opinions and use AI to create a summary of the hivemind
-              </li>
-              <li>
-                Vote on whether to give someone Discord @moderator permissions, and automatically
-                give assign that role if the vote passes
-              </li>
-              <li>
-                Solicit group ideas on initiatives, prioritize the ideas, and output results to
-                Airtable.
-              </li>
-            </ul>
-            <br />
           </Typography>
         </EmptyTablePlaceholder>
       )}
