@@ -163,7 +163,7 @@ export const getRequestSteps = async ({
           final: "asc",
         },
         {
-          expirationDate: "desc",
+          expirationDate: "asc",
         },
       ],
     });

@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { AvatarGroup } from "@/components/Avatar";
-import { TableCellHideable } from "@/components/Tables/TableCells";
+import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { FlowSummaryFragment } from "@/graphql/generated/graphql";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";

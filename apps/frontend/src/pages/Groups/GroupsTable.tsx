@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { Avatar } from "@/components/Avatar";
-import { TableCellHideable } from "@/components/Tables/TableCells";
+import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { WatchGroupButton } from "@/components/watchButton/WatchGroupButton";
 import { GroupSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";

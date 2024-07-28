@@ -18,7 +18,7 @@ export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
     bgcolor: stringToColor(avatar.id),
     width: size ?? "24px",
     height: size ?? "24px",
-    fontSize: "12px",
+    fontSize: size ? parseInt(size, 10) / 2 : "12px",
   };
   return (
     <MuiAvatar
