@@ -90,7 +90,11 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
 
         <TableCellHideable align={"right"}>
           <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-            <Tooltip title="Trigger flow">
+            <Tooltip
+              title={
+                flow.userPermission.request ? "Trigger flow" : "You don't have trigger permissions"
+              }
+            >
               <span>
                 <IconButton
                   onClick={(e) => {
