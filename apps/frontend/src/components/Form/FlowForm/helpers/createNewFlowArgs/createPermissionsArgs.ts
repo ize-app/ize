@@ -5,11 +5,9 @@ import { PermissionSchemaType, PermissionType } from "../../formValidation/permi
 
 export const createPermissionArgs = (
   permission: PermissionSchemaType | undefined,
-  userId?: string,
 ): PermissionArgs => {
   return {
     anyone: permission && permission.type === PermissionType.Anyone ? true : false,
     entities: (permission?.entities ?? []).map((entity) => createEntityArgs(entity as Entity)),
-    userId,
   };
 };
