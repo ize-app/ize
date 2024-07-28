@@ -1,7 +1,6 @@
 import { useLazyQuery } from "@apollo/client";
-import { Button, MenuItem, Typography, debounce } from "@mui/material";
+import { Button, ToggleButton, Typography, debounce } from "@mui/material";
 import Box from "@mui/material/Box";
-import Select from "@mui/material/Select";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link, generatePath } from "react-router-dom";
 
@@ -18,12 +17,6 @@ import {
 import { NewCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
-
-const filters = [
-  { label: "All", value: WatchFilter.All },
-  { label: "Watched", value: WatchFilter.Watched },
-  { label: "Unwatched", value: WatchFilter.Unwatched },
-];
 
 export const GroupsSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,13 +72,16 @@ export const GroupsSearch = () => {
         }}
       >
         <Box
-          sx={{
+          sx={(theme) => ({
             display: "flex",
             flexDirection: "row",
             gap: "16px",
             width: "100%",
             maxWidth: "500px",
-          }}
+            [theme.breakpoints.down("md")]: {
+              flexDirection: "column",
+            },
+          })}
         >
           <Search
             searchQuery={searchQuery}
@@ -93,7 +89,22 @@ export const GroupsSearch = () => {
               setSearchQuery(event.target.value);
             }}
           />
-          <Select
+          <ToggleButton
+            size="small"
+            value="check"
+            selected={watchFilter === WatchFilter.Watched}
+            sx={{ width: "160px" }}
+            color="primary"
+            onChange={() => {
+              // setSelected(!selected);
+              setWatchFilter(
+                watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
+              );
+            }}
+          >
+            Watched groups
+          </ToggleButton>
+          {/* <Select
             sx={{
               width: "140px",
             }}
@@ -111,7 +122,7 @@ export const GroupsSearch = () => {
                 {filter.label}
               </MenuItem>
             ))}
-          </Select>
+          </Select> */}
           {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>
         <CreateButton />

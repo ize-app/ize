@@ -1,7 +1,6 @@
 import { useLazyQuery } from "@apollo/client";
-import { Button, MenuItem, Typography, debounce } from "@mui/material";
+import { Button, ToggleButton, Typography, debounce } from "@mui/material";
 import Box from "@mui/material/Box";
-import Select from "@mui/material/Select";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link, generatePath } from "react-router-dom";
 
@@ -20,18 +19,6 @@ import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
-
-const requestStepStatusFilters = [
-  { label: "All", value: RequestStepStatusFilter.All },
-  { label: "Open", value: RequestStepStatusFilter.Open },
-  { label: "Closed", value: RequestStepStatusFilter.Closed },
-];
-
-const requestStepPermissionFilters = [
-  { label: "All", value: RequestStepRespondPermissionFilter.All },
-  { label: "Respond permission", value: RequestStepRespondPermissionFilter.RespondPermission },
-  { label: "Cannot respond", value: RequestStepRespondPermissionFilter.NoRespondPermission },
-];
 
 export const RequestStepsSearch = ({
   userOnly,
@@ -111,7 +98,7 @@ export const RequestStepsSearch = ({
             gap: "16px",
             width: "100%",
             // maxWidth: "500px",
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down("md")]: {
               flexDirection: "column",
             },
           })}
@@ -123,7 +110,43 @@ export const RequestStepsSearch = ({
             }}
           />
           <Box sx={{ display: "flex", gap: "8px" }}>
-            <Select
+            <ToggleButton
+              size="small"
+              value="check"
+              selected={statusFilter === RequestStepStatusFilter.Open}
+              sx={{ width: "140px" }}
+              color="primary"
+              onChange={() => {
+                // setSelected(!selected);
+                setStatusFilter(
+                  statusFilter === RequestStepStatusFilter.Open
+                    ? RequestStepStatusFilter.All
+                    : RequestStepStatusFilter.Open,
+                );
+              }}
+            >
+              Open requests
+            </ToggleButton>
+            <ToggleButton
+              size="small"
+              value="check"
+              selected={
+                respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+              }
+              sx={{ width: "160px" }}
+              color="primary"
+              onChange={() => {
+                // setSelected(!selected);
+                setRespondPermissionFilter(
+                  respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                    ? RequestStepRespondPermissionFilter.All
+                    : RequestStepRespondPermissionFilter.RespondPermission,
+                );
+              }}
+            >
+              Respond permission
+            </ToggleButton>
+            {/* <Select
               sx={{
                 width: "100px",
               }}
@@ -161,7 +184,7 @@ export const RequestStepsSearch = ({
                   {filter.label}
                 </MenuItem>
               ))}
-            </Select>
+            </Select> */}
           </Box>
           {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>

@@ -128,7 +128,7 @@ export const getRequestSteps = async ({
                     FlowVersion: {
                       Steps: {
                         some: {
-                          RespondPermissions: {
+                          ResponsePermissions: {
                             OR: [
                               { anyone: true },
                               {

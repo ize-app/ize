@@ -1,6 +1,5 @@
-import { Button, MenuItem } from "@mui/material";
+import { Button, ToggleButton } from "@mui/material";
 import Box from "@mui/material/Box";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
@@ -14,18 +13,6 @@ import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 import useFlowsSearch from "./useFlowsSearch.ts";
-
-const watchFilters = [
-  { label: "All", value: WatchFilter.All },
-  { label: "Watched", value: WatchFilter.Watched },
-  { label: "Unwatched", value: WatchFilter.Unwatched },
-];
-
-const triggerFilters = [
-  { label: "All", value: FlowTriggerPermissionFilter.All },
-  { label: "Trigger permission", value: FlowTriggerPermissionFilter.TriggerPermission },
-  { label: "Cannot trigger", value: FlowTriggerPermissionFilter.NoTriggerPermission },
-];
 
 export const FlowsSearch = ({
   groupId,
@@ -77,7 +64,7 @@ export const FlowsSearch = ({
             gap: "16px",
             width: "100%",
             // maxWidth: "500px",
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down("md")]: {
               flexDirection: "column",
             },
           })}
@@ -89,44 +76,39 @@ export const FlowsSearch = ({
             }}
           />
           <Box sx={{ display: "flex", gap: "8px" }}>
-            <Select
-              sx={{
-                width: "140px",
-              }}
-              inputProps={{ multiline: "true" }}
-              aria-label={"Request step filter"}
-              defaultValue={watchFilter}
-              size={"small"}
-              onChange={(event) => {
-                setWatchFilter(event.target.value as WatchFilter);
-                return;
-              }}
-            >
-              {watchFilters.map((filter) => (
-                <MenuItem key={filter.value} value={filter.value}>
-                  {filter.label}
-                </MenuItem>
-              ))}
-            </Select>
-            <Select
-              sx={{
-                width: "140px",
-              }}
-              inputProps={{ multiline: "true" }}
-              aria-label={"Request step filter"}
-              defaultValue={triggerPermissionFilter}
-              size={"small"}
-              onChange={(event) => {
-                setTriggerPermissionFilter(event.target.value as FlowTriggerPermissionFilter);
-                return;
+            <ToggleButton
+              size="small"
+              value="check"
+              selected={triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission}
+              sx={{ width: "140px" }}
+              color="primary"
+              onChange={() => {
+                // setSelected(!selected);
+                setTriggerPermissionFilter(
+                  triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
+                    ? FlowTriggerPermissionFilter.All
+                    : FlowTriggerPermissionFilter.TriggerPermission,
+                );
               }}
             >
-              {triggerFilters.map((filter) => (
-                <MenuItem key={filter.value} value={filter.value}>
-                  {filter.label}
-                </MenuItem>
-              ))}
-            </Select>
+              Trigger permission
+            </ToggleButton>
+
+            <ToggleButton
+              size="small"
+              value={watchFilter}
+              selected={watchFilter === WatchFilter.Watched}
+              sx={{ width: "140px" }}
+              color="primary"
+              onChange={() => {
+                // setSelected(!selected);
+                setWatchFilter(
+                  watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
+                );
+              }}
+            >
+              Watched flows
+            </ToggleButton>
           </Box>
         </Box>
         <CreateButton />
