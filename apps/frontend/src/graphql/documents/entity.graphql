@@ -8,18 +8,17 @@ mutation NewCustomGroup($inputs: CustomGroupArgs!) {
   newCustomGroup(inputs: $inputs)
 }
 
+mutation TestNotificationWebhook($uri: String!) {
+  testNotificationWebhook(uri: $uri)
+}
+
 query Group($id: String!) {
   group(id: $id) {
     ...IzeGroup
   }
 }
 
-query Groups(
-  $cursor: String
-  $limit: Int!
-  $searchQuery: String!
-  $watchFilter: WatchFilter!
-) {
+query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter: WatchFilter!) {
   groupsForCurrentUser(
     cursor: $cursor
     limit: $limit

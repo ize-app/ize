@@ -6,6 +6,7 @@ input setUpDiscordServerInput {
 type Mutation {
   newCustomGroup(inputs: CustomGroupArgs!): String!
   newEntities(entities: [NewEntityArgs!]!): [Entity!]!
+  testNotificationWebhook(uri: String!): Boolean!
 }
 
 type Query {
@@ -187,3 +188,4 @@ input GroupHatArgs {
   chain: Blockchain!
   tokenId: String!
 }
+

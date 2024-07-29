@@ -55,7 +55,7 @@ export const sendGroupNotifications = async ({
       requestId,
       requestTitle: stepIndex > 0 ? `${requestTitle} (Step ${stepIndex + 1})` : requestTitle,
       flowTitle,
-      creator,
+      creatorName: creator.name,
       baseIzeUrl,
     });
 

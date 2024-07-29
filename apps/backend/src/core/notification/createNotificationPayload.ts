@@ -1,10 +1,8 @@
-import { User } from "@/graphql/generated/resolver-types";
-
 export interface NotificationPayloadArgs {
   requestId: string;
   flowTitle: string;
   requestTitle: string;
-  creator: User;
+  creatorName: string;
   baseIzeUrl: string;
 }
 
@@ -15,8 +13,8 @@ export interface NotificationPayload {
 export const createNotificationPayload = (
   notficationPayloadArgs: NotificationPayloadArgs,
 ): NotificationPayload => {
-  const { requestId, requestTitle, flowTitle, creator, baseIzeUrl } = notficationPayloadArgs;
+  const { requestId, requestTitle, flowTitle, creatorName, baseIzeUrl } = notficationPayloadArgs;
   return {
-    message: `New Ize request: [${requestTitle}](${baseIzeUrl}/requests/${requestId})\nFrom the flow "${flowTitle}"\nTriggered by: ${creator.name}\n`,
+    message: `New Ize request: [${requestTitle}](${baseIzeUrl}/requests/${requestId})\nFrom the flow "${flowTitle}"\nTriggered by: ${creatorName}\n`,
   };
 };

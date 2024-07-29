@@ -1,10 +1,8 @@
-import { GraphQLError } from "graphql";
-
 import { testWebhook as testWebhookService } from "@/core/action/webhook/testWebhook";
 import { GraphqlRequestContext } from "@graphql/context";
 import { MutationResolvers, MutationTestWebhookArgs } from "@graphql/generated/resolver-types";
 
-import { CustomErrorCodes } from "../errors";
+import { CustomErrorCodes, GraphQLError } from "../errors";
 
 const testWebhook: MutationResolvers["testWebhook"] = async (
   root: unknown,

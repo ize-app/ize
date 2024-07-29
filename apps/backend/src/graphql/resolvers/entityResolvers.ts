@@ -14,10 +14,12 @@ import {
   MutationNewCustomGroupArgs,
   MutationNewEntitiesArgs,
   MutationResolvers,
+  MutationTestNotificationWebhookArgs,
   QueryGroupArgs,
   QueryGroupsForCurrentUserArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
+import { testNotificationWebhook as testNotificationWebhookService } from "@/core/notification/testNotificationWebhook";
 
 const newEntities: MutationResolvers["newEntities"] = async (
   root: unknown,
@@ -111,9 +113,18 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   });
 };
 
+export const testNotificationWebhook: MutationResolvers["testNotificationWebhook"] = async (
+  root: unknown,
+  args: MutationTestNotificationWebhookArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  return testNotificationWebhookService({ args, context });
+};
+
 export const entityMutations = {
   newCustomGroup,
   newEntities,
+  testNotificationWebhook,
 };
 
 export const entityQueries = {

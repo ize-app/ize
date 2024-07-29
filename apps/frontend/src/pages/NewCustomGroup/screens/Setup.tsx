@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { useState } from "react";
@@ -5,7 +6,7 @@ import { useForm } from "react-hook-form";
 
 import { WebhookTestButton } from "@/components/Form/formFields/WebhookTestButton";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
-import { Status } from "@/graphql/generated/graphql";
+import { Status, TestNotificationWebhookDocument } from "@/graphql/generated/graphql";
 
 import { EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
@@ -14,6 +15,8 @@ import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
+
+  const [testWebhook] = useMutation(TestNotificationWebhookDocument, {});
 
   const {
     control,
@@ -42,15 +45,19 @@ export const Setup = () => {
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
 
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
-    setTestWebhookStatus(Status.InProgress);
     try {
-      // const res = await testWebhook({
-      //   variables: {
-      //     inputs: createTestWebhookArgs(formMethods.getValues(), uri),
-      //   },
-      // });
-      // const success = res.data?.testWebhook ?? false;
-      const success = true;
+      const uri = getFieldValues("notification.uri");
+      let success = false;
+      if (uri) {
+        setTestWebhookStatus(Status.InProgress);
+
+        const res = await testWebhook({
+          variables: {
+            uri,
+          },
+        });
+        success = res.data?.testNotificationWebhook ?? false;
+      }
       setTestWebhookStatus(success ? Status.Completed : Status.Failure);
     } catch (e) {
       console.log("Test webhook error: ", e);
