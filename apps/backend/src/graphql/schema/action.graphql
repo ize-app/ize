@@ -55,6 +55,7 @@ enum ActionType {
 
 input CallWebhookArgs {
   uri: String!
+  originalUri: String
   name: String!
 }
 

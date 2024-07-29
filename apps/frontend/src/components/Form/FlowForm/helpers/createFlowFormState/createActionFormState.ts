@@ -11,6 +11,7 @@ export const createActionFormState = (action: Action | null | undefined): Action
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
         callWebhook: {
           name: action.name,
+          originalUri: action.uri,
           uri: action.uri,
           valid: true,
         },

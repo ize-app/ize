@@ -91,6 +91,7 @@ export type CallWebhook = {
 
 export type CallWebhookArgs = {
   name: Scalars['String']['input'];
+  originalUri?: InputMaybe<Scalars['String']['input']>;
   uri: Scalars['String']['input'];
 };
 

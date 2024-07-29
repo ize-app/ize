@@ -10,6 +10,9 @@ const callWebhookSchema = z
   .object({
     uri: z.string().url(),
     name: z.string().min(1),
+    // when existing webhook is change, we don't send the full uri to the FE for safety reasons
+    // instead, we compare truncated "originalUri" with the new uri to determine if the webhook has changed
+    originalUri: z.string().url().optional(),
     valid: z.boolean().optional(),
   })
   .refine(

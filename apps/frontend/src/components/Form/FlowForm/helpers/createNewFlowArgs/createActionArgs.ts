@@ -41,5 +41,9 @@ export const createActionArgs = (
 
 const createCallWebhookArgs = (action: ActionSchemaType): CallWebhookArgs | null => {
   if (action.type !== ActionType.CallWebhook) return null;
-  return { name: action.callWebhook.name, uri: action.callWebhook.uri };
+  return {
+    name: action.callWebhook.name,
+    uri: action.callWebhook.uri,
+    originalUri: action.callWebhook.originalUri,
+  };
 };

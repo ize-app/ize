@@ -42,7 +42,7 @@ export const newActionConfig = async ({
   if (actionArgs.type === ActionType.CallWebhook) {
     if (!actionArgs.callWebhook) throw Error("newActionConfig: Missing action config");
 
-    await createWebhook({
+    webhookId = await createWebhook({
       name: actionArgs.callWebhook.name,
       uri: actionArgs.callWebhook.uri,
       transaction,

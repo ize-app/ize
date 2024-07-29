@@ -1,17 +1,15 @@
-import { useMutation } from "@apollo/client";
 import { Box, FormHelperText, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { ActionType, Status, TestWebhookDocument } from "@/graphql/generated/graphql";
+import { ActionType } from "@/graphql/generated/graphql";
 
 import { ActionFilterForm } from "./ActionFilterForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { TextField } from "../../formFields";
-import { WebhookTestButton } from "../../formFields/WebhookTestButton";
+import { WebhookField } from "../../formFields/WebhookField";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
-import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
 
 interface WebhookFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -24,27 +22,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
     formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
   }, []);
-
-  const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
-
-  const [testWebhook] = useMutation(TestWebhookDocument, {});
-
-  const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
-    const uri = formMethods.getValues(`steps.${formIndex}.action.callWebhook.uri`);
-    setTestWebhookStatus(Status.InProgress);
-    try {
-      const res = await testWebhook({
-        variables: {
-          inputs: createTestWebhookArgs(formMethods.getValues(), uri),
-        },
-      });
-      const success = res.data?.testWebhook ?? false;
-      formMethods.setValue(`steps.${formIndex}.action.callWebhook.valid`, success);
-      setTestWebhookStatus(success ? Status.Completed : Status.Failure);
-    } catch (e) {
-      console.log("Test webhook error: ", e);
-    }
-  };
 
   const webhookError = formMethods.formState.errors.steps?.[formIndex]?.action;
 
@@ -77,29 +54,7 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           This webhook will only be viewable by users who have rights to request an evolution for
           this flow.
         </Typography>
-        <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <TextField<FlowSchemaType>
-            control={formMethods.control}
-            label="Url"
-            size="small"
-            showLabel={false}
-            placeholderText="Webhook Uri (not displayed publicly)"
-            name={`steps.${formIndex}.action.callWebhook.uri`}
-          />
-          <TextField<FlowSchemaType>
-            control={formMethods.control}
-            label="Valid webhook"
-            size="small"
-            showLabel={false}
-            display={false}
-            placeholderText="Valid webhook"
-            name={`steps.${formIndex}.action.callWebhook.valid`}
-          />
-          <WebhookTestButton
-            testWebhookStatus={testWebhookStatus}
-            handleTestWebhook={handleTestWebhook}
-          />
-        </Box>
+        <WebhookField formMethods={formMethods} name={`steps.${formIndex}.action.callWebhook`} />
       </PanelAccordion>
     </Box>
   );
