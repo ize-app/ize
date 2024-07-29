@@ -8,7 +8,10 @@ import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
+import { sendGroupNotifications } from "../notification/sendGroupNotifications";
 import { hasWritePermission } from "../permission/hasWritePermission";
+import { userInclude } from "../user/userPrismaTypes";
+import { userResolver } from "../user/userResolver";
 import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
@@ -62,6 +65,11 @@ export const newRequest = async ({
     });
 
   const request = await transaction.request.create({
+    include: {
+      Creator: {
+        include: userInclude,
+      },
+    },
     data: {
       name: args.request.name,
       flowVersionId: flow.CurrentFlowVersion.id,
@@ -124,6 +132,15 @@ export const newRequest = async ({
   }
 
   await watchFlow({ flowId: flow.id, watch: true, userId: context.currentUser.id, transaction });
+
+  sendGroupNotifications({
+    flowId,
+    requestId: request.id,
+    flowTitle: flow.CurrentFlowVersion.name, // TODO: include name of flow being evolved if evolve request
+    requestTitle: args.request.name,
+    stepIndex: 0,
+    creator: userResolver(request.Creator),
+  });
 
   return request.id;
   // });

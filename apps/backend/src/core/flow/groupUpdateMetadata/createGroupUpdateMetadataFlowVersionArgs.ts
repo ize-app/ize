@@ -33,14 +33,14 @@ export const createGroupUpdateMetadataFlowVersionArgs = ({
     {
       type: FieldType.FreeInput,
       fieldId: "name",
-      freeInputDataType: FieldDataType.FlowIds,
+      freeInputDataType: FieldDataType.String,
       name: GroupMetadataFields.Name,
       required: true,
     },
     {
       type: FieldType.FreeInput,
       fieldId: "description",
-      freeInputDataType: FieldDataType.FlowIds,
+      freeInputDataType: FieldDataType.String,
       name: GroupMetadataFields.Description,
       required: false,
     },

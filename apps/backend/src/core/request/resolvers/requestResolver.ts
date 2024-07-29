@@ -7,6 +7,7 @@ import { requestStepResolver } from "./requestStepResolver";
 import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestPrismaType } from "../requestPrismaTypes";
+import { getRequestStepIndex } from "../utils/getRequestStepIndex";
 
 export const requestResolver = async ({
   req,
@@ -72,9 +73,7 @@ export const requestResolver = async ({
     creator: userResolver(req.Creator),
     flow: flow,
     createdAt: req.createdAt.toISOString(),
-    currentStepIndex: req.RequestSteps.findIndex(
-      (reqStep) => reqStep.id === req.currentRequestStepId,
-    ),
+    currentStepIndex: getRequestStepIndex(req,req.currentRequestStepId) ,
     final: req.final,
     requestId: req.id,
     steps: requestSteps,
