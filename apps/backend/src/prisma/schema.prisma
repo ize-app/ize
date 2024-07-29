@@ -177,14 +177,16 @@ enum Blockchain {
 }
 
 model GroupCustom {
-  id          String  @id @default(uuid()) @db.Uuid
-  name        String
-  description String?
-  groupId     String  @unique @map("group_id") @db.Uuid
-  entitySetId String  @map("entity_set_id") @db.Uuid
+  id                    String  @id @default(uuid()) @db.Uuid
+  name                  String
+  description           String?
+  groupId               String  @unique @map("group_id") @db.Uuid
+  entitySetId           String  @map("entity_set_id") @db.Uuid
+  notificationWebhookId String? @map("notification_webhook_id") @db.Uuid
 
   MemberEntitySet EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   group           Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Webhook         Webhook?  @relation(fields: [notificationWebhookId], references: [id], onDelete: Cascade)
 
   @@map("groups_custom")
 }
@@ -658,12 +660,14 @@ model Action {
 }
 
 model Webhook {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  uri       String
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  uri        String
+  uriPreview String   @map("uri_preview")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  Actions Action[]
+  Actions     Action[]
+  GroupCustom GroupCustom[]
 
   @@map("webhooks")
 }

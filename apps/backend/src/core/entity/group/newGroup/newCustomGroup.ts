@@ -1,11 +1,11 @@
 import { Prisma } from "@prisma/client";
 
+import { createWebhook } from "@/core/action/webhook/createWebhook";
 import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
 import { newGroupUpdateMetadataFlow } from "@/core/flow/groupUpdateMetadata/newGroupUpdateMetadataFlow";
 import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
-import { prisma } from "@/prisma/client";
 
 import { newEntitySet } from "../../newEntitySet";
 import { checkEntitiesForCustomGroups } from "../checkEntitiesForCustomGroups";
@@ -13,11 +13,11 @@ import { checkEntitiesForCustomGroups } from "../checkEntitiesForCustomGroups";
 export const newCustomGroup = async ({
   context,
   args,
-  transaction = prisma,
+  transaction,
 }: {
   context: GraphqlRequestContext;
   args: MutationNewCustomGroupArgs;
-  transaction?: Prisma.TransactionClient;
+  transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
@@ -27,6 +27,14 @@ export const newCustomGroup = async ({
   });
 
   const entitySetId = await newEntitySet({ entityArgs: args.inputs.members, transaction });
+
+  const notificationWebhookId = args.inputs.notificationUri
+    ? await createWebhook({
+        uri: args.inputs.notificationUri,
+        name: "Group notification",
+        transaction,
+      })
+    : null;
 
   const customGroupEntity = await transaction.entity.create({
     select: {
@@ -41,6 +49,7 @@ export const newCustomGroup = async ({
               name: args.inputs.name,
               description: args.inputs.description,
               entitySetId,
+              notificationWebhookId,
             },
           },
         },

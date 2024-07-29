@@ -1,14 +1,14 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, FormHelperText, Typography } from "@mui/material";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { statusProps } from "@/components/status/statusProps";
 import { ActionType, Status, TestWebhookDocument } from "@/graphql/generated/graphql";
 
 import { ActionFilterForm } from "./ActionFilterForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { TextField } from "../../formFields";
+import { WebhookTestButton } from "../../formFields/WebhookTestButton";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
 import { createTestWebhookArgs } from "../helpers/createTestWebhookArgs";
@@ -26,10 +26,6 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
   }, []);
 
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
-
-  const WebhookStatusIcon = testWebhookStatus
-    ? statusProps[testWebhookStatus].icon
-    : statusProps.NotAttempted.icon;
 
   const [testWebhook] = useMutation(TestWebhookDocument, {});
 
@@ -99,28 +95,10 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
             placeholderText="Valid webhook"
             name={`steps.${formIndex}.action.callWebhook.valid`}
           />
-          <Button
-            variant="outlined"
-            sx={{ width: "60px" }}
-            size={"small"}
-            endIcon={
-              <WebhookStatusIcon
-                sx={{
-                  color: testWebhookStatus
-                    ? statusProps[testWebhookStatus].backgroundColor
-                    : statusProps.NotAttempted.backgroundColor,
-                }}
-                // color={
-                //   testWebhookStatus
-                //     ? actionExecutionStatusProps[testWebhookStatus].color
-                //     : actionExecutionStatusProps.NotAttempted.color
-                // }
-              />
-            }
-            onClick={handleTestWebhook}
-          >
-            Test
-          </Button>
+          <WebhookTestButton
+            testWebhookStatus={testWebhookStatus}
+            handleTestWebhook={handleTestWebhook}
+          />
         </Box>
       </PanelAccordion>
     </Box>

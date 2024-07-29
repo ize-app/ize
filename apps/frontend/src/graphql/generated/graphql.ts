@@ -97,6 +97,7 @@ export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
+  notificationUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Decision = {
@@ -1612,6 +1613,7 @@ export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
+  notificationUri?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Decision = {

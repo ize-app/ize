@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { ActionArgs, ActionType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { createWebhook } from "./webhook/createWebhook";
 import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newActionConfig = async ({
@@ -41,12 +42,11 @@ export const newActionConfig = async ({
   if (actionArgs.type === ActionType.CallWebhook) {
     if (!actionArgs.callWebhook) throw Error("newActionConfig: Missing action config");
 
-    const webhook = await transaction.webhook.create({
-      data: {
-        ...actionArgs.callWebhook,
-      },
+    await createWebhook({
+      name: actionArgs.callWebhook.name,
+      uri: actionArgs.callWebhook.uri,
+      transaction,
     });
-    webhookId = webhook.id;
   }
 
   const action = await transaction.action.create({

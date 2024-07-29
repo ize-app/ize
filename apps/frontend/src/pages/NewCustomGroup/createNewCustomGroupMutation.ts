@@ -12,6 +12,7 @@ export const createNewCustomGroupMutation = (
       members: formState.members.map((member) => ({
         id: member.entityId,
       })),
+      notificationUri: formState.notification.uri,
     },
   };
 };

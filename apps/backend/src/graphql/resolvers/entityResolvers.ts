@@ -106,7 +106,9 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   args: MutationNewCustomGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newCustomGroupService({ args, context });
+  return await prisma.$transaction(async (transaction) => {
+    return await newCustomGroupService({ args, context, transaction });
+  });
 };
 
 export const entityMutations = {

@@ -155,6 +155,7 @@ input CustomGroupArgs {
   name: String!
   description: String
   members: [EntityArgs!]!
+  notificationUri: String
 }
 
 input NewEntityArgs {
