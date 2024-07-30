@@ -3,55 +3,75 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 import { FieldValues, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { Status, TestWebhookDocument } from "@/graphql/generated/graphql";
+import {
+  Status,
+  TestNotificationWebhookDocument,
+  TestWebhookDocument,
+} from "@/graphql/generated/graphql";
 
-import { TextField } from "./TextField";
 import { WebhookTestButton } from "./WebhookTestButton";
-import { createTestWebhookArgs } from "../FlowForm/helpers/createTestWebhookArgs";
+import { createTestWebhookArgs } from "../../FlowForm/helpers/createTestWebhookArgs";
+import { TextField } from "../TextField";
 
 interface WebhookFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   required?: boolean;
   formMethods: UseFormReturn<T>;
+  type: "notification" | "result";
 }
 
 export const WebhookField = <T extends FieldValues>({
   name,
-  //   label,
+  type,
   required = false,
   formMethods,
 }: WebhookFieldProps<T>): JSX.Element => {
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
+  const [testWebhook] = useMutation(TestWebhookDocument, {});
+  const [testNotificationWebhook] = useMutation(TestNotificationWebhookDocument, {});
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
     // @ts-expect-error TODO: figure out how to bring in webhook schema
     const uri = formMethods.getValues(`${name}.uri`);
     setTestWebhookStatus(Status.InProgress);
+    let success = false;
     try {
-      const res = await testWebhook({
-        variables: {
-          // @ts-expect-error TODO: figure out how to bring in webhook schema
-          inputs: createTestWebhookArgs(formMethods.getValues(), uri),
-        },
-      });
-      const success = res.data?.testWebhook ?? false;
+      if (type === "result") {
+        const res = await testWebhook({
+          variables: {
+            // @ts-expect-error TODO: figure out how to bring in webhook schema
+            inputs: createTestWebhookArgs(formMethods.getValues(), uri),
+          },
+        });
+        success = res.data?.testWebhook ?? false;
+      } else {
+        const res = await testNotificationWebhook({
+          variables: {
+            uri,
+          },
+        });
+        success = res.data?.testNotificationWebhook ?? false;
+      }
       // @ts-expect-error TODO: figure out how to bring in webhook schema
       formMethods.setValue(`${name}.valid`, success);
+
       setTestWebhookStatus(success ? Status.Completed : Status.Failure);
     } catch (e) {
       console.log("Test webhook error: ", e);
     }
   };
-  const [testWebhook] = useMutation(TestWebhookDocument, {});
   return (
-    <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+    <Box
+      sx={{ display: "flex", gap: "8px", alignItems: "flex-start", justifyContent: "flex-start" }}
+    >
       <TextField<T>
         control={formMethods.control}
         label="Url"
         size="small"
         required={required}
         showLabel={false}
-        placeholderText="Webhook Uri (not displayed publicly)"
+        placeholderText={`${type === "notification" ? "Notification webhook" : "Results webhook"}`}
         // @ts-expect-error TODO: figure out how to bring in webhook schema
         name={`${name}.uri`}
+        helperText={`${type === "notification" ? "For each flow that this group watches, a notification will be sent to this webhook." : "After this collaborative step is complete, results will be sent to this webhook."} The full webhook URL will not be viewable after creation for security.`}
       />
       <TextField<T>
         control={formMethods.control}
@@ -82,24 +102,3 @@ export const WebhookField = <T extends FieldValues>({
     </Box>
   );
 };
-
-//   <Controller
-//     name={name}
-//     control={control}
-//     render={({ field, fieldState: { error } }) => (
-//       <FormControl error={Boolean(error)} required={required}>
-//         <FormControlLabel
-//           control={
-//             <MuiCheckbox
-//               {...field}
-//               id={`checkbox-${name}`}
-//               checked={field.value as boolean}
-//               aria-label="label"
-//             />
-//           }
-//           label={label}
-//           labelPlacement="top"
-//         />
-//       </FormControl>
-//     )}
-//   />

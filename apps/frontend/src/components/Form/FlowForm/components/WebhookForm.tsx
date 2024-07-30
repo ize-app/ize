@@ -7,7 +7,7 @@ import { ActionType } from "@/graphql/generated/graphql";
 import { ActionFilterForm } from "./ActionFilterForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { TextField } from "../../formFields";
-import { WebhookField } from "../../formFields/WebhookField";
+import { WebhookField } from "../../formFields/WebhookField/WebhookField";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
 
@@ -55,7 +55,11 @@ export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) 
           This webhook will only be viewable by users who have rights to request an evolution for
           this flow.
         </Typography>
-        <WebhookField formMethods={formMethods} name={`steps.${formIndex}.action.callWebhook`} />
+        <WebhookField
+          formMethods={formMethods}
+          name={`steps.${formIndex}.action.callWebhook`}
+          type="result"
+        />
       </PanelAccordion>
     </Box>
   );

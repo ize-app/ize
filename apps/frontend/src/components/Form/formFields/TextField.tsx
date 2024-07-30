@@ -17,6 +17,7 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   size?: "small" | "medium";
   sx?: SxProps;
   display?: boolean;
+  helperText?: string;
 }
 
 export const TextField = <T extends FieldValues>({
@@ -33,6 +34,7 @@ export const TextField = <T extends FieldValues>({
   startAdornment,
   placeholderText,
   display = true,
+  helperText,
   sx = {},
 }: TextFieldProps<T>) => {
   const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none" };
@@ -62,10 +64,12 @@ export const TextField = <T extends FieldValues>({
           />
           <FormHelperText
             sx={{
-              color: "error.main",
+              color: error?.message ? "error.main" : undefined,
             }}
           >
-            {error?.message ?? ""}
+            {error?.message ??
+              helperText ??
+              ""}
           </FormHelperText>
         </FormControl>
       )}

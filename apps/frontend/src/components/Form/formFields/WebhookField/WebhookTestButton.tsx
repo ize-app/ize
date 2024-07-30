@@ -16,7 +16,7 @@ export const WebhookTestButton = ({
   return (
     <Button
       variant="outlined"
-      sx={{ width: "60px" }}
+      sx={{ width: "60px", marginTop: "8px" }}
       size={"small"}
       endIcon={
         <WebhookStatusIcon

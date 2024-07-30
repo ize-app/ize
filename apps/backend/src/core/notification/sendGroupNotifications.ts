@@ -1,6 +1,7 @@
 import { localUrl, prodUrl } from "@/express/origins";
 import { User } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
+import { decrypt } from "@/prisma/encrypt";
 
 import { createNotificationPayload } from "./createNotificationPayload";
 import { callWebhook } from "../action/webhook/callWebhook";
@@ -61,8 +62,10 @@ export const sendGroupNotifications = async ({
 
     await Promise.all(
       groups.map(async (group) => {
-        if (!group.GroupCustom?.Webhook) return;
-        await callWebhook({ uri: group.GroupCustom?.Webhook?.uri, payload });
+        const encryptedUri = group.GroupCustom?.Webhook?.uri;
+        if (!encryptedUri) return;
+        const uri = decrypt(encryptedUri);
+        await callWebhook({ uri, payload });
       }),
     );
   } catch (e) {

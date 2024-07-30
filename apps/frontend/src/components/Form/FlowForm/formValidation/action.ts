@@ -6,11 +6,11 @@ import { DefaultOptionSelection } from "./fields";
 
 export type ActionSchemaType = z.infer<typeof actionSchema>;
 
-const callWebhookSchema = z
+export const callWebhookSchema = z
   .object({
-    webhookId: z.string().min(1),
-    uri: z.string().url(),
-    name: z.string().min(1),
+    webhookId: z.string().min(1).default("defaultWebhookId"),
+    uri: z.string().url().optional(),
+    name: z.string().min(1).optional(),
     // when existing webhook is change, we don't send the full uri to the FE for safety reasons
     // instead, we compare truncated "originalUri" with the new uri to determine if the webhook has changed
     originalUri: z.string().url().optional(),
@@ -18,11 +18,18 @@ const callWebhookSchema = z
   })
   .refine(
     (webhook) => {
-      if (!webhook.valid) {
+      if (webhook.uri && !webhook.valid) {
         return false;
       } else return true;
     },
     { path: ["uri"], message: "Test this webhook successfully to continue" },
+  )
+  .refine(
+    (webhook) => {
+      if (webhook.name && !webhook.uri) return false;
+      else return true;
+    },
+    { path: ["uri"], message: "Please enter a valid URL" },
   );
 
 export const actionSchema = z.discriminatedUnion("type", [
