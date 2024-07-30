@@ -23,10 +23,10 @@ import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
 import { StreamlinedTextField } from "../../formFields";
+import { ActionForm } from "../components/ActionForm/ActionForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 import { StepForm } from "../components/StepForm";
 import { TriggerForm } from "../components/TriggerForm";
-import { WebhookForm } from "../components/WebhookForm";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType, flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
@@ -84,9 +84,11 @@ export const Setup = () => {
     onNext();
   };
 
-  const hasWebhook =
-    useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action.type`) ===
-    ActionType.CallWebhook;
+  const action = useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const displayAction =
+    action && action.type !== ActionType.TriggerStep && action.type !== ActionType.None
+      ? true
+      : false;
 
   return (
     <form style={{ height: "100%" }}>
@@ -145,7 +147,7 @@ export const Setup = () => {
                 )
               );
             })}
-            {!hasWebhook ? (
+            {!displayAction ? (
               <Box
                 sx={{
                   display: "flex",
@@ -192,25 +194,27 @@ export const Setup = () => {
                 />
               </Box>
             ) : (
-              <FlowStage
-                label={actionProperties[ActionType.CallWebhook].label}
-                id={"webhook"}
-                icon={actionProperties[ActionType.CallWebhook].icon}
-                setSelectedId={setSelectedId}
-                selectedId={selectedId}
-                deleteHandler={() => {
-                  setSelectedId("trigger0");
-                  useFormMethods.setValue(
-                    `steps.${stepsArrayMethods.fields.length - 1}.action`,
-                    undefined,
-                  );
-                }}
-                sx={{ marginBottom: "16px" }}
-                hasError={
-                  !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
-                    ?.action
-                }
-              />
+              action && (
+                <FlowStage
+                  label={actionProperties[action.type].label}
+                  id={"webhook"}
+                  icon={actionProperties[action.type].icon}
+                  setSelectedId={setSelectedId}
+                  selectedId={selectedId}
+                  deleteHandler={() => {
+                    setSelectedId("trigger0");
+                    useFormMethods.setValue(
+                      `steps.${stepsArrayMethods.fields.length - 1}.action`,
+                      undefined,
+                    );
+                  }}
+                  sx={{ marginBottom: "16px" }}
+                  hasError={
+                    !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
+                      ?.action
+                  }
+                />
+              )
             )}
             <FlowStage
               label={"Flow evolution"}
@@ -249,11 +253,12 @@ export const Setup = () => {
                 />
               );
             })}
-            {hasWebhook && (
-              <WebhookForm
+            {action && displayAction && (
+              <ActionForm
                 formMethods={useFormMethods}
                 formIndex={stepsArrayMethods.fields.length - 1}
                 show={selectedId === "webhook"}
+                action={action}
               />
             )}
             <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />

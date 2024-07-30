@@ -7,9 +7,9 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { ActionFragment, EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType, EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
 
-import { ActionConfig } from "../../Action/ActionConfig";
+import { ActionDescription } from "../../Action/ActionDescription";
 import { ActionFilter } from "../../Action/ActionFilter";
 
 export const ConfigFlowActionPanel = ({
@@ -33,7 +33,11 @@ export const ConfigFlowActionPanel = ({
           </PanelAccordion>
         )}
         <PanelAccordion title={getActionLabel(action, group)} hasError={false}>
-          <ActionConfig action={action} group={group} />
+          <ActionDescription
+            action={action}
+            actionType={action.__typename as ActionType}
+            groupName={group?.name}
+          />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

@@ -1,8 +1,6 @@
 import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { ActionType } from "@/graphql/generated/graphql";
-
 import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
@@ -52,7 +50,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         <ActionFilterForm
           formIndex={formIndex - 1}
           formMethods={formMethods}
-          actionType={ActionType.TriggerStep}
+          action={formMethods.getValues(`steps.${formIndex - 1}.action`)}
         />
       )}
       <PanelAccordion

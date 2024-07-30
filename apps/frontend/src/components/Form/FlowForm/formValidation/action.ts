@@ -47,6 +47,19 @@ export const actionSchema = z.discriminatedUnion("type", [
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
   }),
   z.object({
+    type: z.literal(ActionType.GroupUpdateMembership),
+    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+  }),
+  z.object({
+    type: z.literal(ActionType.GroupUpdateMetadata),
+    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+  }),
+  z.object({
+    type: z.literal(ActionType.GroupWatchFlow),
+    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+  }),
+
+  z.object({
     type: z.literal(ActionType.None),
   }),
 ]);

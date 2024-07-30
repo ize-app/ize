@@ -8,22 +8,38 @@ import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordio
 import { Select, TextField } from "../../formFields";
 import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
+import { ActionSchemaType } from "../formValidation/action";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface ActionFilterFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
-  actionType: ActionType;
+  action: ActionSchemaType | undefined;
+  isTriggerAction?: boolean;
 }
 
-export const ActionFilterForm = ({ formMethods, formIndex, actionType }: ActionFilterFormProps) => {
+export const ActionFilterForm = ({
+  formMethods,
+  formIndex,
+  action,
+  isTriggerAction = false,
+}: ActionFilterFormProps) => {
   useEffect(() => {
-    formMethods.setValue(`steps.${formIndex}.action`, {
-      filterOptionId: DefaultOptionSelection.None,
-      type: ActionType.TriggerStep,
-    });
-  }, [actionType, formIndex, formMethods]);
+    // formMethods.setValue(`steps.${formIndex}.action`, {
+    //   filterOptionId: DefaultOptionSelection.None,
+    //   // type: actionType,
+    // });
+    if (isTriggerAction) {
+      formMethods.setValue(`steps.${formIndex}.action`, {
+        filterOptionId: DefaultOptionSelection.None,
+        type: ActionType.TriggerStep,
+      });
+    }
+    if (!action || (action.type !== ActionType.None && !action.filterOptionId)) {
+      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
+    }
+  }, [action, formIndex, formMethods]);
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
