@@ -18,7 +18,9 @@ export type GroupDiscordPrismaType = Prisma.GroupDiscordRoleGetPayload<{
   include: typeof groupDiscordInclude;
 }>;
 
-export const groupCustomInclude = Prisma.validator<Prisma.GroupCustomInclude>()({});
+export const groupCustomInclude = Prisma.validator<Prisma.GroupCustomInclude>()({
+  Webhook: true,
+});
 
 export type GroupCustomPrismaType = Prisma.GroupCustomGetPayload<{
   include: typeof groupCustomInclude;

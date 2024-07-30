@@ -33,8 +33,9 @@ const resolveDiscordGroup = (
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   const discordGroup: Group = {
-    ...group,
     __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     // discord only includes the @sign for @everyone
     name:
@@ -82,8 +83,9 @@ const resolveGroupNft = (
     });
   const { GroupNft: nft } = group;
   const discordGroup: Group = {
-    ...group,
     __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     name: nft.name,
     icon: nft.icon,
@@ -112,8 +114,9 @@ const resolveGroupCustom = (
     });
   const { GroupCustom: custom } = group;
   return {
-    ...group,
     __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     name: custom.name,
     createdAt: group.createdAt.toString(),

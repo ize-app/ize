@@ -87,6 +87,7 @@ type IzeGroup {
   group: Group!
   members: [Entity!]!
   description: String
+  notificationUriPreview: String
 }
 
 type Organization {
@@ -188,4 +189,3 @@ input GroupHatArgs {
   chain: Blockchain!
   tokenId: String!
 }
-

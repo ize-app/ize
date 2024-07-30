@@ -92,6 +92,7 @@ const group: QueryResolvers["group"] = async (
     group: groupResolver(group, isWatched, isMember),
     members,
     description: group.GroupCustom?.description,
+    notificationUriPreview: group.GroupCustom?.Webhook?.uriPreview,
   };
 };
 
