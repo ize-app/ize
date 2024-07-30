@@ -11,10 +11,7 @@ import { useEvolveFlowWizardState } from "../evolveFlowWizard";
 import { EvolveRequestContextSchemaType, evolveRequestContextSchema } from "../formValidation";
 
 export const RequestContext = () => {
-  console.log("rendering request context");
-  const { formState, setFormState, onPrev, onNext, nextLabel, params } = useEvolveFlowWizardState();
-  console.log("params are ", params);
-  console.log("formState is ", formState);
+  const { formState, setFormState, onPrev, onNext, nextLabel } = useEvolveFlowWizardState();
 
   const formMethods = useForm({
     defaultValues: formState.requestName ? { requestName: formState.requestName } : {},

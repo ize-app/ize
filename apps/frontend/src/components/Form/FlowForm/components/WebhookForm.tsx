@@ -20,6 +20,7 @@ interface WebhookFormProps {
 export const WebhookForm = ({ formMethods, formIndex, show }: WebhookFormProps) => {
   useEffect(() => {
     formMethods.setValue(`steps.${formIndex}.action.type`, ActionType.CallWebhook);
+    formMethods.setValue(`steps.${formIndex}.action.callWebhook.webhookId`, "webhook" + formIndex);
     formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
   }, []);
 

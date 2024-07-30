@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { parse } from "tldts";
 
+import { encrypt } from "@/prisma/encrypt";
+
 export const createWebhook = async ({
   name,
   uri,
@@ -13,7 +15,7 @@ export const createWebhook = async ({
   const webhook = await transaction.webhook.create({
     data: {
       name,
-      uri,
+      uri: encrypt(uri),
       uriPreview: parse(uri).domain ?? "",
     },
   });

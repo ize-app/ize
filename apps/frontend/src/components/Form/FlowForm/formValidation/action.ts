@@ -8,6 +8,7 @@ export type ActionSchemaType = z.infer<typeof actionSchema>;
 
 const callWebhookSchema = z
   .object({
+    webhookId: z.string().min(1),
     uri: z.string().url(),
     name: z.string().min(1),
     // when existing webhook is change, we don't send the full uri to the FE for safety reasons

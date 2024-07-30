@@ -16,7 +16,6 @@ export const flowResolver = async ({
   userGroupIds,
   userId,
   flowNameOverride,
-  hideSensitiveInfo = true,
   responseFieldsCache = [],
   resultConfigsCache = [],
   transaction = prisma,
@@ -29,7 +28,6 @@ export const flowResolver = async ({
   flowNameOverride?: string;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
-  hideSensitiveInfo?: boolean;
   transaction?: Prisma.TransactionClient;
 }): Promise<Flow> => {
   return {
@@ -65,7 +63,6 @@ export const flowResolver = async ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
-        hideSensitiveInfo,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow

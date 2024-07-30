@@ -45,5 +45,6 @@ const createCallWebhookArgs = (action: ActionSchemaType): CallWebhookArgs | null
     name: action.callWebhook.name,
     uri: action.callWebhook.uri,
     originalUri: action.callWebhook.originalUri,
+    webhookId: action.callWebhook.webhookId,
   };
 };

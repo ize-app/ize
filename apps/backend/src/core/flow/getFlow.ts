@@ -101,7 +101,6 @@ export const getFlow = async ({
     userIdentityIds,
     userGroupIds,
     userId: user?.id,
-    hideSensitiveInfo: !(args.isForEvolveRequest ?? false),
   });
 
   return res;

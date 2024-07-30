@@ -17,6 +17,7 @@ type ActionExecution {
 }
 
 type CallWebhook {
+  webhookId: String!
   filterOption: Option
   uri: String!
   name: String!
@@ -54,6 +55,7 @@ enum ActionType {
 }
 
 input CallWebhookArgs {
+  webhookId: String!
   uri: String!
   originalUri: String
   name: String!

@@ -128,7 +128,7 @@ export const newRequest = async ({
   });
 
   if (!hasResponseFields) {
-    await executeAction({ step, results: [], requestStepId: requestStep.id });
+    await executeAction({ step, results: [], requestStepId: requestStep.id, transaction });
   }
 
   await watchFlow({ flowId: flow.id, watch: true, userId: context.currentUser.id, transaction });
@@ -143,5 +143,4 @@ export const newRequest = async ({
   });
 
   return request.id;
-  // });
 };

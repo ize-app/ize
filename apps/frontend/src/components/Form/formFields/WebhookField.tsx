@@ -55,9 +55,21 @@ export const WebhookField = <T extends FieldValues>({
       />
       <TextField<T>
         control={formMethods.control}
+        label="Webhook id"
+        diabled
+        size="small"
+        showLabel={false}
+        display={false}
+        placeholderText="Valid webhook"
+        // @ts-expect-error TODO: figure out how to bring in webhook schema
+        name={`${name}.webhookId`}
+      />
+      <TextField<T>
+        control={formMethods.control}
         label="Valid webhook"
         size="small"
         showLabel={false}
+        disabled
         display={false}
         placeholderText="Valid webhook"
         // @ts-expect-error TODO: figure out how to bring in webhook schema

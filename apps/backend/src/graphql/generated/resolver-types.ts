@@ -87,12 +87,14 @@ export type CallWebhook = {
   filterOption?: Maybe<Option>;
   name: Scalars['String']['output'];
   uri: Scalars['String']['output'];
+  webhookId: Scalars['String']['output'];
 };
 
 export type CallWebhookArgs = {
   name: Scalars['String']['input'];
   originalUri?: InputMaybe<Scalars['String']['input']>;
   uri: Scalars['String']['input'];
+  webhookId: Scalars['String']['input'];
 };
 
 export type CustomGroupArgs = {
@@ -1402,6 +1404,7 @@ export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  webhookId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

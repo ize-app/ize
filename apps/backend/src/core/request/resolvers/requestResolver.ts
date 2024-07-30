@@ -73,7 +73,7 @@ export const requestResolver = async ({
     creator: userResolver(req.Creator),
     flow: flow,
     createdAt: req.createdAt.toISOString(),
-    currentStepIndex: getRequestStepIndex(req,req.currentRequestStepId) ,
+    currentStepIndex: getRequestStepIndex(req, req.currentRequestStepId),
     final: req.final,
     requestId: req.id,
     steps: requestSteps,
