@@ -69,7 +69,6 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
-  // console.log("form state is ", useFormMethods.getValues());
   // console.log("errors are ", useFormMethods.formState.errors);
 
   const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
@@ -84,9 +83,12 @@ export const Setup = () => {
     onNext();
   };
 
-  const action = useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
   const displayAction =
-    action && action.type !== ActionType.TriggerStep && action.type !== ActionType.None
+    action &&
+    action.type &&
+    action.type !== ActionType.TriggerStep &&
+    action.type !== ActionType.None
       ? true
       : false;
 
@@ -116,10 +118,13 @@ export const Setup = () => {
               icon={PlayCircleOutlineOutlinedIcon}
             />
             <StageConnectorButton />
+            {/* TODO: This logic is brittle as hell */}
             {stepsArrayMethods.fields.map((item, index) => {
               const responseFieldLocked = useFormMethods.getValues(
                 `steps.${index}.response.fieldsLocked`,
               );
+              const disableDelete =
+                index === 0 && (stepsArrayMethods.fields.length > 1 || !displayAction);
               return (
                 (index > 0 || hasStep0Response) && (
                   <Box key={item.id}>
@@ -127,18 +132,20 @@ export const Setup = () => {
                       icon={Diversity3OutlinedIcon}
                       label={"Collaboration " + (index + 1).toString()}
                       key={"stage-" + item.id.toString() + index.toString()}
-                      deleteHandler={
-                        index > 0
-                          ? () => {
-                              stepsArrayMethods.remove(index);
-                              setSelectedId("trigger0");
-                            }
-                          : () => {
-                              useFormMethods.setValue(`steps.${index}.response`, undefined);
-                              setSelectedId("trigger0");
-                            }
-                      }
-                      disableDelete={responseFieldLocked}
+                      deleteHandler={async () => {
+                        if (index === 0) {
+                          if (disableDelete) return;
+                          const stepValues = useFormMethods.getValues(`steps.${index}`);
+                          useFormMethods.setValue(`steps.${index}`, {
+                            ...stepValues,
+                            response: undefined,
+                          });
+                        } else {
+                          stepsArrayMethods.remove(index);
+                          setSelectedId("trigger0");
+                        }
+                      }}
+                      disableDelete={responseFieldLocked || disableDelete}
                       hasError={!!useFormMethods.formState.errors.steps?.[index]}
                       id={"step" + index.toString()}
                       setSelectedId={setSelectedId}
@@ -206,7 +213,7 @@ export const Setup = () => {
                   icon={actionProperties[action.type].icon}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  disableDelete={action.locked}
+                  disableDelete={action.locked || !hasStep0Response}
                   deleteHandler={() => {
                     setSelectedId("trigger0");
                     useFormMethods.setValue(

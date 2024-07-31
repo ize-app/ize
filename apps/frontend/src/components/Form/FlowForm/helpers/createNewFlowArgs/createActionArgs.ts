@@ -31,7 +31,8 @@ export const createActionArgs = (
 
   //@ts-expect-error TODO
   delete action.filterOptionId;
-  return {
+return {
+    locked: action.locked,
     type: action.type,
     filterOptionIndex,
     filterResponseFieldIndex,
@@ -42,8 +43,8 @@ export const createActionArgs = (
 const createCallWebhookArgs = (action: ActionSchemaType): CallWebhookArgs | null => {
   if (action.type !== ActionType.CallWebhook) return null;
   return {
-    name: action.callWebhook.name,
-    uri: action.callWebhook.uri,
+    name: action.callWebhook.name ?? "Webhook",
+    uri: action.callWebhook.uri ?? "",
     originalUri: action.callWebhook.originalUri,
     webhookId: action.callWebhook.webhookId,
   };

@@ -23,10 +23,12 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
         request: step.request && {
           fields: createFieldsArgs(step.request.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.request?.permission),
+          fieldsLocked: step.request.fieldsLocked ?? false,
         },
         response: step.response && {
           fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.response.permission),
+          fieldsLocked: step.response.fieldsLocked ?? false,
         },
         result: createResultsArgs(
           step.result,

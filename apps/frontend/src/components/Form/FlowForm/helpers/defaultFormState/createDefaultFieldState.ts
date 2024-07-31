@@ -17,7 +17,6 @@ interface DefaultFreeInputFieldStateProps {
 type DefaultFieldProps = DefaultOptionFieldStateProps | DefaultFreeInputFieldStateProps;
 
 export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaType => {
-  console.log("create Default field statis is called");
   switch (props.fieldType) {
     case FieldType.Options: {
       const { stepIndex, fieldIndex, selectionType } = props;

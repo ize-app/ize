@@ -46,28 +46,35 @@ export const ActionFilterForm = ({
 
   // get field options asssociated with decisions to use as action filters
   const results = formMethods.watch(`steps.${formIndex}.result`);
+
+  useEffect(() => {
+    if (!results) {
+      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
+    }
+  }, [results]);
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
 
-  // if (!results)
-  //   formMethods
-  //     .setValue(
-  //       `steps.${formIndex}.action.filterOptionId`,
-  //       DefaultOptionSelection.None,
-  //     )
   (results ?? [])
     .filter((res) => res.type === ResultType.Decision)
     .forEach((res, resIndex) => {
+      if (!responseFields) return;
       const field = responseFields.find((f) => f.fieldId === res.fieldId);
-      if (!field || field.type !== FieldType.Options) return;
-      (field.optionsConfig.options ?? []).map((o) => {
-        filterOptions.push({
-          name: `Result ${resIndex}: "${o.name}"`,
-          value: o.optionId,
+      if (!field || field.type !== FieldType.Options) {
+        formMethods.setValue(
+          `steps.${formIndex}.action.filterOptionId`,
+          DefaultOptionSelection.None,
+        );
+      } else {
+        (field.optionsConfig.options ?? []).map((o) => {
+          filterOptions.push({
+            name: `Result ${resIndex}: "${o.name}"`,
+            value: o.optionId,
+          });
         });
-      });
+      }
     });
 
   return (
@@ -91,6 +98,24 @@ export const ActionFilterForm = ({
         control={formMethods.control}
         label="fieldId"
         disabled={true}
+        defaultValue=""
+      />
+      <TextField<FlowSchemaType>
+        control={formMethods.control}
+        display={false}
+        label="Action type"
+        name={`steps.${formIndex}.action.type`}
+        size="small"
+        showLabel={false}
+        defaultValue=""
+      />
+      <TextField<FlowSchemaType>
+        control={formMethods.control}
+        display={false}
+        label="Action type"
+        name={`steps.${formIndex}.action.filterOptionId`}
+        size="small"
+        showLabel={false}
         defaultValue=""
       />
       <Select<FlowSchemaType>
