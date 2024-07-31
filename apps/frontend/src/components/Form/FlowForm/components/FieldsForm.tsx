@@ -29,6 +29,23 @@ export const defaultFreeInputField = (stepIndex: number, fieldIndex: number): Fi
   freeInputDataType: FieldDataType.String,
 });
 
+export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType) => {
+  if (freeInputDataType === FieldDataType.EntityIds) {
+    return [{ name: "Members", value: FieldDataType.EntityIds }];
+  } else if (freeInputDataType === FieldDataType.FlowIds) {
+    return [{ name: "Flows", value: FieldDataType.FlowIds }];
+  } else if (freeInputDataType === FieldDataType.FlowVersionId) {
+    return [{ name: "Flows", value: FieldDataType.FlowVersionId }];
+  } else
+    return [
+      { name: "Text", value: FieldDataType.String },
+      { name: "Number", value: FieldDataType.Number },
+      { name: "Url", value: FieldDataType.Uri },
+      { name: "Date Time", value: FieldDataType.DateTime },
+      { name: "Date", value: FieldDataType.Date },
+    ];
+};
+
 export const FieldsForm = ({
   formMethods,
   fieldsArrayMethods,
@@ -46,6 +63,10 @@ export const FieldsForm = ({
 
         const fieldType: FieldType = formMethods.watch(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
+        );
+
+        const freeInputDataType = formMethods.watch(
+          `steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`,
         );
 
         return (
@@ -112,13 +133,7 @@ export const FieldsForm = ({
                     disabled={noEdit}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
                     key={"dataType" + inputIndex.toString() + formIndex.toString()}
-                    selectOptions={[
-                      { name: "Text", value: FieldDataType.String },
-                      { name: "Number", value: FieldDataType.Number },
-                      { name: "Url", value: FieldDataType.Uri },
-                      { name: "Date Time", value: FieldDataType.DateTime },
-                      { name: "Date", value: FieldDataType.Date },
-                    ]}
+                    selectOptions={createFreeInputDataTypeOptions(freeInputDataType)}
                     label="Free input data type"
                     defaultValue=""
                   />
