@@ -54,6 +54,7 @@ interface ResultFormProps {
   id: string;
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
   resultsArrayMethods: ReturnType<typeof useFieldArray>;
+  locked: boolean;
 }
 
 export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: ResultsFormProps) => {
@@ -65,6 +66,7 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
   });
 
   const results = watch(`steps.${formIndex}.result`) ?? [];
+  const isLocked = formMethods.getValues(`steps.${formIndex}.response.fieldsLocked`);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -86,6 +88,7 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
             resultIndex={resultIndex}
             fieldsArrayMethods={fieldsArrayMethods}
             id={item.id}
+            locked={isLocked}
             //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
@@ -127,6 +130,7 @@ const ResultForm = ({
   id,
   resultsArrayMethods,
   resultIndex,
+  locked,
 }: ResultFormProps) => {
   const result = formMethods.watch(`steps.${formIndex}.result.${resultIndex}`);
   const resultType = result.type;
@@ -256,6 +260,7 @@ const ResultForm = ({
             <Select<FlowSchemaType>
               control={formMethods.control}
               label="What's the final result?"
+              disabled={locked}
               selectOptions={[
                 { name: "Decision", value: ResultType.Decision },
                 { name: "Ranked list", value: ResultType.Ranking },
@@ -271,6 +276,7 @@ const ResultForm = ({
               name={`steps.${formIndex}.response.fields.${resultIndex}.name`}
               key={"fieldName" + resultIndex.toString() + formIndex.toString()}
               control={formMethods.control}
+              disabled={locked}
               multiline
               placeholderText={resultFieldNamePlaceholderText(result.type)}
               label={``}
@@ -283,6 +289,7 @@ const ResultForm = ({
               formIndex={formIndex}
               fieldIndex={resultIndex}
               branch={"response"}
+              locked={locked}
             />
           )}
 
@@ -321,17 +328,19 @@ const ResultForm = ({
           {resultError}
         </FormHelperText>
       </LabeledGroupedInputs>
-      <IconButton
-        color="primary"
-        size="small"
-        aria-label="Remove result"
-        onClick={() => {
-          resultsArrayMethods.remove(resultIndex);
-          fieldsArrayMethods.remove(resultIndex);
-        }}
-      >
-        <Close fontSize="small" />
-      </IconButton>
+      {!locked && (
+        <IconButton
+          color="primary"
+          size="small"
+          aria-label="Remove result"
+          onClick={() => {
+            resultsArrayMethods.remove(resultIndex);
+            fieldsArrayMethods.remove(resultIndex);
+          }}
+        >
+          <Close fontSize="small" />
+        </IconButton>
+      )}
     </Box>
   );
 };

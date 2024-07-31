@@ -55,12 +55,21 @@ export const FieldsForm = ({
   const { control } = formMethods;
 
   const numFields = (formMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
+  const isLocked = formMethods.getValues(`steps.${formIndex}.${branch}.fieldsLocked`);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
-      {fieldsArrayMethods.fields.map((item, inputIndex) => {
-        const noEdit = false; //item.name === "Request title" ? true : false;
+      <TextField<FlowSchemaType>
+        name={`steps.${formIndex}.${branch}.fieldsLocked`}
+        key={"step" + formIndex.toString() + "requestfieldsLocked"}
+        control={control}
+        label="fieldId"
+        disabled={true}
+        display={false}
+        defaultValue=""
+      />
 
+      {fieldsArrayMethods.fields.map((item, inputIndex) => {
         const fieldType: FieldType = formMethods.watch(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
         );
@@ -109,12 +118,12 @@ export const FieldsForm = ({
                   placeholderText={`What's your question?`}
                   label={``}
                   defaultValue=""
+                  disabled={isLocked}
                 />
                 <ResponsiveFormRow>
                   <Select<FlowSchemaType>
                     control={control}
                     size={"small"}
-                    disabled={noEdit}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
                     key={"type" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={[
@@ -123,6 +132,7 @@ export const FieldsForm = ({
                     ]}
                     label="Type"
                     defaultValue=""
+                    disabled={isLocked}
                   />
                   <Select<FlowSchemaType>
                     control={control}
@@ -130,7 +140,7 @@ export const FieldsForm = ({
                       display: fieldType === FieldType.FreeInput ? "flex" : "none",
                     }}
                     size={"small"}
-                    disabled={noEdit}
+                    disabled={isLocked}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
                     key={"dataType" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={createFreeInputDataTypeOptions(freeInputDataType)}
@@ -140,6 +150,7 @@ export const FieldsForm = ({
 
                   <Select<FlowSchemaType>
                     control={control}
+                    disabled={isLocked}
                     sx={{
                       display: fieldType === FieldType.Options ? "flex" : "none",
                     }}
@@ -174,6 +185,7 @@ export const FieldsForm = ({
                   >
                     <Box sx={{ width: "100%" }}>
                       <FieldOptionsForm
+                        locked={isLocked}
                         formMethods={formMethods}
                         formIndex={formIndex}
                         fieldIndex={inputIndex}
@@ -184,7 +196,7 @@ export const FieldsForm = ({
                 )}
               </Box>
             </LabeledGroupedInputs>
-            {noEdit ? null : (
+            {isLocked ? null : (
               <IconButton
                 color="primary"
                 size="small"

@@ -73,11 +73,13 @@ type Step {
 type RequestConfig {
   permission: Permission
   fields: [Field!]!
+  fieldsLocked: Boolean!
 }
 
 type ResponseConfig {
   permission: Permission
   fields: [Field!]!
+  fieldsLocked: Boolean!
 }
 
 type UserPermission {
@@ -114,11 +116,13 @@ input EvolveFlowArgs {
 input StepRequestArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
+  fieldsLocked: Boolean
 }
 
 input StepResponseArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
+  fieldsLocked: Boolean
 }
 
 enum FlowTriggerPermissionFilter {

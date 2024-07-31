@@ -117,6 +117,9 @@ export const Setup = () => {
             />
             <StageConnectorButton />
             {stepsArrayMethods.fields.map((item, index) => {
+              const responseFieldLocked = useFormMethods.getValues(
+                `steps.${index}.response.fieldsLocked`,
+              );
               return (
                 (index > 0 || hasStep0Response) && (
                   <Box key={item.id}>
@@ -135,6 +138,7 @@ export const Setup = () => {
                               setSelectedId("trigger0");
                             }
                       }
+                      disableDelete={responseFieldLocked}
                       hasError={!!useFormMethods.formState.errors.steps?.[index]}
                       id={"step" + index.toString()}
                       setSelectedId={setSelectedId}
@@ -175,6 +179,7 @@ export const Setup = () => {
                       useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
                         filterOptionId: DefaultOptionSelection.None,
                         type: ActionType.TriggerStep,
+                        locked: false,
                       });
                       // navigate to newly created step
                       setSelectedId(`step${stepsArrayMethods.fields.length}`);
@@ -201,6 +206,7 @@ export const Setup = () => {
                   icon={actionProperties[action.type].icon}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
+                  disableDelete={action.locked}
                   deleteHandler={() => {
                     setSelectedId("trigger0");
                     useFormMethods.setValue(
@@ -221,6 +227,7 @@ export const Setup = () => {
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
+              disableDelete={true}
               icon={actionProperties[ActionType.EvolveFlow].icon}
               setSelectedId={setSelectedId}
               selectedId={selectedId}

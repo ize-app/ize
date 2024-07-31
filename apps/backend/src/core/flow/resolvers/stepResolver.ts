@@ -45,12 +45,14 @@ export const stepResolver = ({
         responseFieldsCache,
         resultConfigsCache,
       }),
+      fieldsLocked: step.RequestFieldSet?.locked ?? false,
     },
     response: {
       permission: step.ResponsePermissions
         ? permissionResolver(step.ResponsePermissions, userIdentityIds)
         : null,
       fields: responseFields,
+      fieldsLocked: step.ResponseFieldSet?.locked ?? false,
     },
     action: actionResolver(step.Action, responseFieldsCache),
     result,

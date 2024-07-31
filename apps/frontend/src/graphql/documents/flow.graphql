@@ -111,6 +111,7 @@ fragment RequestConfig on RequestConfig {
   fields {
     ...Field
   }
+  fieldsLocked
 }
 
 fragment ResponseConfig on ResponseConfig {
@@ -120,6 +121,7 @@ fragment ResponseConfig on ResponseConfig {
   fields {
     ...Field
   }
+  fieldsLocked
 }
 
 fragment UserPermission on UserPermission {

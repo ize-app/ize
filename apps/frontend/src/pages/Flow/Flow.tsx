@@ -57,7 +57,7 @@ export const Flow = () => {
 
   const flow = flowData?.getFlow as FlowFragment;
 
-  // console.log("flow is ", flow);
+  console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;

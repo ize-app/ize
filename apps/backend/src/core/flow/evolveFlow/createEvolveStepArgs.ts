@@ -67,6 +67,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     type: ActionType.EvolveFlow,
     filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
+    locked: true,
   };
 
   return {
@@ -74,6 +75,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     request: {
       permission: evolveArgs.requestPermission,
       fields: requestFieldSetArgs,
+      fieldsLocked: true,
     },
     response: {
       permission: evolveArgs.responsePermission,

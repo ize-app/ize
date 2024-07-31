@@ -34,6 +34,7 @@ export const ActionFilterForm = ({
       formMethods.setValue(`steps.${formIndex}.action`, {
         filterOptionId: DefaultOptionSelection.None,
         type: ActionType.TriggerStep,
+        locked: false,
       });
     }
     if (!action || (action.type !== ActionType.None && !action.filterOptionId)) {
@@ -50,6 +51,12 @@ export const ActionFilterForm = ({
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
 
+  // if (!results)
+  //   formMethods
+  //     .setValue(
+  //       `steps.${formIndex}.action.filterOptionId`,
+  //       DefaultOptionSelection.None,
+  //     )
   (results ?? [])
     .filter((res) => res.type === ResultType.Decision)
     .forEach((res, resIndex) => {

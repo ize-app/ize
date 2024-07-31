@@ -75,6 +75,7 @@ export const createGroupUpdateMetadataFlowVersionArgs = ({
     type: ActionType.GroupUpdateMetadata,
     filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
+    locked: true,
   };
 
   return {
@@ -82,6 +83,7 @@ export const createGroupUpdateMetadataFlowVersionArgs = ({
     request: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
       fields: requestFieldSetArgs,
+      fieldsLocked: true,
     },
     response: {
       permission: {

@@ -31,6 +31,7 @@ fragment Action on Action {
 }
 
 fragment CallWebhook on CallWebhook {
+  locked
   webhookId
   filterOption {
     ...Option
@@ -40,30 +41,35 @@ fragment CallWebhook on CallWebhook {
 }
 
 fragment EvolveFlow on EvolveFlow {
+  locked
   filterOption {
     ...Option
   }
 }
 
 fragment TriggerStep on TriggerStep {
+  locked
   filterOption {
     ...Option
   }
 }
 
 fragment GroupUpdateMetadata on GroupUpdateMetadata {
+  locked
   filterOption {
     ...Option
   }
 }
 
 fragment GroupUpdateMembership on GroupUpdateMembership {
+  locked
   filterOption {
     ...Option
   }
 }
 
 fragment GroupWatchFlow on GroupWatchFlow {
+  locked
   filterOption {
     ...Option
   }

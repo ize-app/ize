@@ -17,12 +17,14 @@ const stepSchema = z
       .object({
         permission: permissionSchema,
         fields: fieldsSchema,
+        fieldsLocked: z.boolean(),
       })
       .optional(),
     response: z
       .object({
         permission: permissionSchema,
         fields: fieldsSchema,
+        fieldsLocked: z.boolean(),
       })
       .optional(),
     result: resultsSchema,

@@ -9,9 +9,11 @@ import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 export const newActionConfig = async ({
   actionArgs,
   responseFieldSet,
+  locked,
   transaction,
 }: {
   actionArgs: ActionArgs;
+  locked: boolean;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
@@ -51,6 +53,7 @@ export const newActionConfig = async ({
 
   const action = await transaction.action.create({
     data: {
+      locked,
       type: actionArgs.type,
       filterOptionId,
       webhookId,

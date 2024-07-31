@@ -68,6 +68,7 @@ export const createGroupUpdateMembershipFlowVersionArgs = ({
     type: ActionType.GroupUpdateMembership,
     filterResponseFieldIndex: 0,
     filterOptionIndex: 0,
+    locked: true,
   };
 
   return {
@@ -75,6 +76,7 @@ export const createGroupUpdateMembershipFlowVersionArgs = ({
     request: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
       fields: requestFieldSetArgs,
+      fieldsLocked: true,
     },
     response: {
       permission: {

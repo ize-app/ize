@@ -36,6 +36,7 @@ export const TextField = <T extends FieldValues>({
   display = true,
   helperText,
   sx = {},
+  ...props
 }: TextFieldProps<T>) => {
   const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
@@ -44,7 +45,12 @@ export const TextField = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl sx={styles} error={Boolean(error)} required={required}>
+        <FormControl
+          sx={styles}
+          error={Boolean(error)}
+          required={required}
+          disabled={props.disabled}
+        >
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
           <MuiTextField
             {...field}
@@ -57,6 +63,7 @@ export const TextField = <T extends FieldValues>({
             rows={rows}
             placeholder={placeholderText}
             error={Boolean(error)}
+            disabled={props.disabled}
             InputProps={{
               endAdornment,
               startAdornment,
@@ -67,9 +74,7 @@ export const TextField = <T extends FieldValues>({
               color: error?.message ? "error.main" : undefined,
             }}
           >
-            {error?.message ??
-              helperText ??
-              ""}
+            {error?.message ?? helperText ?? ""}
           </FormHelperText>
         </FormControl>
       )}

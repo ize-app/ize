@@ -2,6 +2,7 @@ import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn } from "react-hook-form";
 
 import { ActionDescription } from "@/components/Action/ActionDescription";
+import { TextField } from "@/components/Form/formFields";
 import { ActionType } from "@/graphql/generated/graphql";
 
 import { WebhookForm } from "./WebhookForm";
@@ -22,6 +23,15 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
+      <TextField<FlowSchemaType>
+        name={`steps.${formIndex}.action.locked`}
+        key={"step" + formIndex.toString() + "actionLocked"}
+        control={formMethods.control}
+        label="fieldId"
+        disabled={true}
+        display={false}
+        defaultValue=""
+      />
       <ActionFilterForm formMethods={formMethods} formIndex={formIndex} action={action} />
       <PanelAccordion title="Setup" hasError={!!actionError}>
         <ActionDescription actionType={action.type} groupName="the group" />

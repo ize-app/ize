@@ -37,26 +37,31 @@ export const actionResolver = (
       return {
         __typename: "TriggerStep",
         filterOption,
+        locked: action.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
         filterOption,
+        locked: action.locked,
       };
     case ActionType.GroupUpdateMetadata:
       return {
         __typename: "GroupUpdateMetadata",
         filterOption,
+        locked: action.locked,
       };
     case ActionType.GroupUpdateMembership:
       return {
         __typename: "GroupUpdateMembership",
         filterOption,
+        locked: action.locked,
       };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
         filterOption,
+        locked: action.locked,
       };
     default:
       throw new GraphQLError("Invalid action type", {
@@ -81,5 +86,6 @@ const callWebhookResolver = (
     uri: "https://" + webhook.uriPreview, // Only return the hostname for privacy
     name: webhook.name,
     filterOption,
+    locked: action.locked,
   };
 };

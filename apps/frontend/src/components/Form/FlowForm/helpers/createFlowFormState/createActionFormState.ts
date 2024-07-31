@@ -7,12 +7,14 @@ export const createActionFormState = (action: Action | null | undefined): Action
   if (!action)
     return {
       type: ActionType.None,
+      locked: false,
     };
 
   switch (action?.__typename) {
     case ActionType.CallWebhook:
       return {
         type: ActionType.CallWebhook,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
         callWebhook: {
           webhookId: action.webhookId,
@@ -25,28 +27,33 @@ export const createActionFormState = (action: Action | null | undefined): Action
     case ActionType.TriggerStep:
       return {
         type: ActionType.TriggerStep,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     case ActionType.EvolveFlow:
       return {
         type: ActionType.EvolveFlow,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     case ActionType.GroupUpdateMembership: {
       return {
         type: ActionType.GroupUpdateMembership,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     }
     case ActionType.GroupWatchFlow: {
       return {
         type: ActionType.GroupWatchFlow,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     }
     case ActionType.GroupUpdateMetadata: {
       return {
         type: ActionType.GroupUpdateMetadata,
+        locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     }

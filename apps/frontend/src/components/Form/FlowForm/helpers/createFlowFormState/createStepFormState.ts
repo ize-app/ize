@@ -14,6 +14,7 @@ export const createStepFormState = (step: Step): StepSchemaType => {
         : {
             permission: createPermissionFormState(step.request.permission as PermissionFragment),
             fields: createFieldsFormState(step.request.fields),
+            fieldsLocked: step.request.fieldsLocked,
           },
     response:
       !step.response.permission && step.response.fields.length === 0
@@ -21,6 +22,7 @@ export const createStepFormState = (step: Step): StepSchemaType => {
         : {
             permission: createPermissionFormState(step.response.permission as PermissionFragment),
             fields: createFieldsFormState(step.response.fields),
+            fieldsLocked: step.response.fieldsLocked,
           },
     result: createResultFormState(step.result),
     action: createActionFormState(step.action),

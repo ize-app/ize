@@ -17,6 +17,7 @@ type ActionExecution {
 }
 
 type CallWebhook {
+  locked: Boolean!
   webhookId: String!
   filterOption: Option
   uri: String!
@@ -24,22 +25,27 @@ type CallWebhook {
 }
 
 type EvolveFlow {
+  locked: Boolean!
   filterOption: Option
 }
 
 type TriggerStep {
+  locked: Boolean!
   filterOption: Option
 }
 
 type GroupUpdateMetadata {
+  locked: Boolean!
   filterOption: Option
 }
 
 type GroupUpdateMembership {
+  locked: Boolean!
   filterOption: Option
 }
 
 type GroupWatchFlow {
+  locked: Boolean!
   filterOption: Option
 }
 
@@ -66,6 +72,7 @@ input ActionArgs {
   filterResponseFieldIndex: Int
   filterOptionIndex: Int
   callWebhook: CallWebhookArgs
+  locked: Boolean!
 }
 
 input TestWebhookArgs {

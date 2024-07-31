@@ -382,6 +382,8 @@ model Entity {
 model FieldSet {
   id                              String            @id @default(uuid()) @db.Uuid
   createdAt                       DateTime          @default(now()) @map("created_at")
+  // this means that all fields in the field set cannot be changed via flow evolution
+  locked                          Boolean           @default(false)
   StepsRequestsUsingThisFieldSet  Step[]            @relation("RequestFieldSet")
   StepsResponsesUsingThisFieldSet Step[]            @relation("ResponseFieldSet")
   FieldSetFields                  FieldSetsFields[]
@@ -644,12 +646,13 @@ enum ActionType {
 }
 
 model Action {
-  id             String     @id @default(uuid()) @db.Uuid
-  type           ActionType
-  webhookId      String?    @map("webhook_id") @db.Uuid
-  filterOptionId String?    @map("filter_option_id") @db.Uuid
-  createdAt      DateTime   @default(now()) @map("created_at")
-
+  id                String       @id @default(uuid()) @db.Uuid
+  type              ActionType
+  webhookId         String?      @map("webhook_id") @db.Uuid
+  filterOptionId    String?      @map("filter_option_id") @db.Uuid
+  createdAt         DateTime     @default(now()) @map("created_at")
+  // locked here means that the ActionType is locked. Other parts of the action can still be changed
+  locked            Boolean      @default(false)
   Steps             Step[]       @relation("StepsWithAction")
   FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
   Webhook           Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
