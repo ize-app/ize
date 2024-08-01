@@ -15,10 +15,20 @@ import { AvatarGroup } from "@/components/Avatar";
 import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { FlowSummaryFragment } from "@/graphql/generated/graphql";
-import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
+import { NewRequestRoute, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
+export const FlowsTable = ({
+  flows,
+  onClickRow,
+  hideTriggerButton = false,
+  hideWatchButton = false,
+}: {
+  flows: FlowSummaryFragment[];
+  onClickRow: (flow: FlowSummaryFragment) => void;
+  hideTriggerButton?: boolean;
+  hideWatchButton?: boolean;
+}) => {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
@@ -32,7 +42,13 @@ export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
         </TableHead> */}
         <TableBody>
           {flows.map((flow) => (
-            <FlowRow key={flow.flowId} flow={flow} />
+            <FlowRow
+              key={flow.flowId}
+              flow={flow}
+              hideTriggerButton={hideTriggerButton}
+              hideWatchButton={hideWatchButton}
+              onClickRow={onClickRow}
+            />
           ))}
         </TableBody>
       </Table>
@@ -40,24 +56,31 @@ export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
   );
 };
 
-const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
+const FlowRow = ({
+  flow,
+  onClickRow,
+  hideTriggerButton,
+  hideWatchButton,
+}: {
+  flow: FlowSummaryFragment;
+  onClickRow: (flow: FlowSummaryFragment) => void;
+  hideTriggerButton: boolean;
+  hideWatchButton: boolean;
+}) => {
   const navigate = useNavigate();
   return (
     <>
       <TableRow
         aria-label="Flow Row"
-        onClick={() =>
-          navigate(
-            generatePath(Route.Flow, {
-              flowId: fullUUIDToShort(flow.flowId),
-              flowVersionId: null,
-            }),
-          )
-        }
+        onClick={() => {
+          onClickRow(flow);
+        }}
       >
-        <TableCell width="60px">
-          <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
-        </TableCell>
+        {!hideWatchButton && (
+          <TableCell width="60px">
+            <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
+          </TableCell>
+        )}
         {/* <AvatarsCell
           align="center"
           width={"60px"}
@@ -88,32 +111,36 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
           </Box>
         </TableCell>
 
-        <TableCellHideable align={"right"}>
-          <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-            <Tooltip
-              title={
-                flow.userPermission.request ? "Trigger flow" : "You don't have trigger permissions"
-              }
-            >
-              <span>
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(
-                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                        flowId: fullUUIDToShort(flow.flowId),
-                      }),
-                    );
-                  }}
-                  color={"primary"}
-                  disabled={!flow.userPermission.request}
-                >
-                  <Add />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </Box>
-        </TableCellHideable>
+        {!hideTriggerButton && (
+          <TableCellHideable align={"right"}>
+            <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+              <Tooltip
+                title={
+                  flow.userPermission.request
+                    ? "Trigger flow"
+                    : "You don't have trigger permissions"
+                }
+              >
+                <span>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(
+                        generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                          flowId: fullUUIDToShort(flow.flowId),
+                        }),
+                      );
+                    }}
+                    color={"primary"}
+                    disabled={!flow.userPermission.request}
+                  >
+                    <Add />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Box>
+          </TableCellHideable>
+        )}
       </TableRow>
     </>
   );

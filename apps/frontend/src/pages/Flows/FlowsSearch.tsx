@@ -1,14 +1,13 @@
-import { Button, ToggleButton } from "@mui/material";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
+import { FlowsSearchBar } from "@/components/searchBars/FlowsSearchBar.tsx";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
-import Search from "@/components/Tables/Search";
-import { FlowTriggerPermissionFilter, WatchFilter } from "@/graphql/generated/graphql.ts";
+import { FlowSummaryFragment, WatchFilter } from "@/graphql/generated/graphql.ts";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 import { Route } from "@/routers/routes.ts";
 
@@ -17,9 +16,19 @@ import { FlowsTable } from "./FlowsTable.tsx";
 export const FlowsSearch = ({
   groupId,
   initialWatchFilter = WatchFilter.Watched,
+  onClickRow,
+  hideTriggerButton = false,
+  hideWatchButton = false,
+  hideTriggerFilterButton = false,
+  hideCreateButton = false,
 }: {
   groupId?: string;
   initialWatchFilter?: WatchFilter;
+  onClickRow: (flow: FlowSummaryFragment) => void;
+  hideTriggerButton?: boolean;
+  hideWatchButton?: boolean;
+  hideTriggerFilterButton?: boolean;
+  hideCreateButton?: boolean;
 }) => {
   const queryResultLimit = 20;
   const {
@@ -57,66 +66,26 @@ export const FlowsSearch = ({
           minWidth: "360px",
         }}
       >
-        <Box
-          sx={(theme) => ({
-            display: "flex",
-            flexDirection: "row",
-            gap: "16px",
-            width: "100%",
-            // maxWidth: "500px",
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column",
-            },
-          })}
-        >
-          <Search
-            searchQuery={searchQuery}
-            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
-              setSearchQuery(event.target.value);
-            }}
-          />
-          <Box sx={{ display: "flex", gap: "8px" }}>
-            <ToggleButton
-              size="small"
-              value="check"
-              selected={triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission}
-              sx={{ width: "140px" }}
-              color="primary"
-              onChange={() => {
-                // setSelected(!selected);
-                setTriggerPermissionFilter(
-                  triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
-                    ? FlowTriggerPermissionFilter.All
-                    : FlowTriggerPermissionFilter.TriggerPermission,
-                );
-              }}
-            >
-              Trigger permission
-            </ToggleButton>
-
-            <ToggleButton
-              size="small"
-              value={watchFilter}
-              selected={watchFilter === WatchFilter.Watched}
-              sx={{ width: "140px" }}
-              color="primary"
-              onChange={() => {
-                // setSelected(!selected);
-                setWatchFilter(
-                  watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
-                );
-              }}
-            >
-              Watched flows
-            </ToggleButton>
-          </Box>
-        </Box>
-        <CreateButton />
+        <FlowsSearchBar
+          watchFilter={watchFilter}
+          setWatchFilter={setWatchFilter}
+          triggerPermissionFilter={triggerPermissionFilter}
+          setTriggerPermissionFilter={setTriggerPermissionFilter}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          hideTriggerFilterButton={hideTriggerFilterButton}
+        />
+        {!hideCreateButton && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />
       ) : flows.length > 0 ? (
-        <FlowsTable flows={flows} />
+        <FlowsTable
+          flows={flows}
+          onClickRow={onClickRow}
+          hideTriggerButton={hideTriggerButton}
+          hideWatchButton={hideWatchButton}
+        />
       ) : (
         <EmptyTablePlaceholder>
           <Typography>

@@ -3,9 +3,10 @@ import { CheckCircleOutline } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { WatchGroupButton } from "@/components/watchButton/WatchGroupButton";
+import { Route } from "@/routers/routes";
 
 import BannerWithAvatar from "./BannerWithAvatar";
 import { MembersList } from "./MembersList";
@@ -21,7 +22,7 @@ import {
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
-import { shortUUIDToFull } from "../../utils/inputs";
+import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { FlowsSearch } from "../Flows/FlowsSearch";
 import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 
@@ -69,7 +70,18 @@ export const Group = () => {
     {
       title: "Flows",
       content: !loading ? (
-        <FlowsSearch groupId={groupId} initialWatchFilter={WatchFilter.All} />
+        <FlowsSearch
+          groupId={groupId}
+          initialWatchFilter={WatchFilter.All}
+          onClickRow={(flow) => {
+            navigate(
+              generatePath(Route.Flow, {
+                flowId: fullUUIDToShort(flow.flowId),
+                flowVersionId: null,
+              }),
+            );
+          }}
+        />
       ) : null,
     },
   ];
