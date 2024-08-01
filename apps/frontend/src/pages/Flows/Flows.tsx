@@ -10,7 +10,7 @@ import { FlowsSearch } from "./FlowsSearch.tsx";
 
 export const Flows = () => {
   const navigate = useNavigate();
-  
+
   return (
     <PageContainer>
       <Head title={"Flows"} description={"View and trigger your collaborative flows."} />

@@ -18,7 +18,7 @@ export const flowSummaryResolver = ({
   flow: FlowSummaryPrismaType;
   identityIds: string[];
   groupIds: string[];
-  userId: string;
+  userId: string | undefined;
 }): FlowSummary => {
   if (!flow.CurrentFlowVersion)
     throw new GraphQLError(`Missing flow version for flow. Flow Id: ${flow.id}`, {
@@ -49,7 +49,7 @@ export const flowSummaryResolver = ({
       flowName: flow.CurrentFlowVersion.name,
       ownerGroupName: flow.OwnerGroup?.GroupCustom?.name,
     }),
-    isWatched: isWatchedFlowSummary({ flowSummary: flow, userId }),
+    isWatched: userId ? isWatchedFlowSummary({ flowSummary: flow, userId }) : false,
     createdAt: flow.createdAt.toISOString(),
     creator: userResolver(flow.Creator),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),

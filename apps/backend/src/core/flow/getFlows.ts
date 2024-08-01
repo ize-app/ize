@@ -23,13 +23,13 @@ export const getFlows = async ({
   user,
 }: {
   args: QueryGetFlowsArgs;
-  user: MePrismaType;
+  user: MePrismaType | undefined | null;
 }): Promise<FlowSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
-  const identityIds: string[] = user.Identities.map((id) => id.id);
+  const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
 
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: createFlowSummaryInclude(user.id),
+    include: createFlowSummaryInclude(user?.id),
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
@@ -37,7 +37,7 @@ export const getFlows = async ({
       AND: [
         args.watchFilter !== WatchFilter.All
           ? createUserWatchedFlowFilter({
-              userId: user.id,
+              userId: user?.id ?? "",
               watched: args.watchFilter === WatchFilter.Watched,
             })
           : {},
@@ -129,5 +129,7 @@ export const getFlows = async ({
     },
   });
 
-  return flows.map((flow) => flowSummaryResolver({ flow, identityIds, groupIds, userId: user.id }));
+  return flows.map((flow) =>
+    flowSummaryResolver({ flow, identityIds, groupIds, userId: user?.id }),
+  );
 };

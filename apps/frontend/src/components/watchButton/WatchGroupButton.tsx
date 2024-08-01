@@ -5,6 +5,7 @@ import { MouseEventHandler, useContext, useState } from "react";
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
 import eyeInactiveUrl from "@/assets/ize-eye-inactive.svg";
 import { WatchGroupDocument } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 export const WatchGroupButton = ({
@@ -18,7 +19,7 @@ export const WatchGroupButton = ({
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const [isWatched, setIsWatched] = useState(watched);
-
+  const { me } = useContext(CurrentUserContext);
   // const onError = () => {
   //   setSnackbarOpen(true);
   //   setSnackbarData({ message: "Cannot find this group", type: "error" });
@@ -50,6 +51,8 @@ export const WatchGroupButton = ({
       variables: { groupId, watch: !watched },
     });
   };
+
+  if (!me) return null;
 
   return (
     <Tooltip title={isWatched ? "Stop watching this group" : "Watch this group"}>

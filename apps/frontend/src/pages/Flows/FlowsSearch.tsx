@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
@@ -8,6 +9,7 @@ import CreateButton from "@/components/Menu/CreateButton";
 import { FlowsSearchBar } from "@/components/searchBars/FlowsSearchBar.tsx";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import { FlowSummaryFragment, WatchFilter } from "@/graphql/generated/graphql.ts";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context.tsx";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 import { Route } from "@/routers/routes.ts";
 
@@ -31,6 +33,8 @@ export const FlowsSearch = ({
   hideCreateButton?: boolean;
 }) => {
   const queryResultLimit = 20;
+
+  const { me } = useContext(CurrentUserContext);
   const {
     watchFilter,
     setWatchFilter,
@@ -73,9 +77,10 @@ export const FlowsSearch = ({
           setTriggerPermissionFilter={setTriggerPermissionFilter}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          hideTriggerFilterButton={hideTriggerFilterButton}
+          hideTriggerFilterButton={hideTriggerFilterButton || !me}
+          hideWatchButton={hideWatchButton || !me}
         />
-        {!hideCreateButton && <CreateButton />}
+        {(!hideCreateButton && !!me) && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />
@@ -83,8 +88,8 @@ export const FlowsSearch = ({
         <FlowsTable
           flows={flows}
           onClickRow={onClickRow}
-          hideTriggerButton={hideTriggerButton}
-          hideWatchButton={hideWatchButton}
+          hideTriggerButton={hideTriggerButton || !me}
+          hideWatchButton={hideWatchButton || !me}
         />
       ) : (
         <EmptyTablePlaceholder>

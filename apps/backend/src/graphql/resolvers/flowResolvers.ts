@@ -24,10 +24,6 @@ const getFlows: QueryResolvers["getFlows"] = async (
   args: QueryGetFlowsArgs,
   context: GraphqlRequestContext,
 ) => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
   return await getFlowsService({ args, user: context.currentUser });
 };
 

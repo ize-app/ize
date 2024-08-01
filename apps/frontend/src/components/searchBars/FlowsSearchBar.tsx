@@ -13,7 +13,7 @@ export const FlowsSearchBar = ({
   setSearchQuery,
   setTriggerPermissionFilter,
   hideTriggerFilterButton,
-
+  hideWatchButton,
 }: {
   searchQuery: string;
   triggerPermissionFilter: FlowTriggerPermissionFilter;
@@ -22,6 +22,7 @@ export const FlowsSearchBar = ({
   setSearchQuery: Dispatch<SetStateAction<string>>;
   setTriggerPermissionFilter: Dispatch<SetStateAction<FlowTriggerPermissionFilter>>;
   hideTriggerFilterButton: boolean;
+  hideWatchButton: boolean;
 }) => {
   return (
     <Box
@@ -63,20 +64,22 @@ export const FlowsSearchBar = ({
           </ToggleButton>
         )}
 
-        <ToggleButton
-          size="small"
-          value={watchFilter}
-          selected={watchFilter === WatchFilter.Watched}
-          sx={{ width: "140px" }}
-          color="primary"
-          onChange={() => {
-            setWatchFilter(
-              watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
-            );
-          }}
-        >
-          Watched flows
-        </ToggleButton>
+        {!hideWatchButton && (
+          <ToggleButton
+            size="small"
+            value={watchFilter}
+            selected={watchFilter === WatchFilter.Watched}
+            sx={{ width: "140px" }}
+            color="primary"
+            onChange={() => {
+              setWatchFilter(
+                watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
+              );
+            }}
+          >
+            Watched flows
+          </ToggleButton>
+        )}
       </Box>
     </Box>
   );
