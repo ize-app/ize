@@ -156,7 +156,7 @@ export const getRequestSteps = async ({
             : {},
         ],
       },
-      include: createRequestStepSummaryInclude(user?.id ?? ""),
+      include: createRequestStepSummaryInclude(user?.id),
       // TODO revisit the ordering logic here
       orderBy: [
         {

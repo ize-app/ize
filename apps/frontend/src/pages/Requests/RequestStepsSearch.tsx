@@ -1,6 +1,6 @@
 import { Button, ToggleButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useContext } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
@@ -11,6 +11,7 @@ import {
   RequestStepRespondPermissionFilter,
   RequestStepStatusFilter,
 } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useRequestStepsSearch from "@/hooks/useRequestStepsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
@@ -50,6 +51,8 @@ export const RequestStepsSearch = ({
     queryResultLimit,
     initialRespondPermissionFilter,
   });
+
+  const { me } = useContext(CurrentUserContext);
 
   return (
     <Box
@@ -106,28 +109,30 @@ export const RequestStepsSearch = ({
             >
               Open requests
             </ToggleButton>
-            <ToggleButton
-              size="small"
-              value="check"
-              selected={
-                respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
-              }
-              sx={{ width: "160px" }}
-              color="primary"
-              onChange={() => {
-                // setSelected(!selected);
-                setRespondPermissionFilter(
+            {me && (
+              <ToggleButton
+                size="small"
+                value="check"
+                selected={
                   respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
-                    ? RequestStepRespondPermissionFilter.All
-                    : RequestStepRespondPermissionFilter.RespondPermission,
-                );
-              }}
-            >
-              Respond permission
-            </ToggleButton>
+                }
+                sx={{ width: "160px" }}
+                color="primary"
+                onChange={() => {
+                  // setSelected(!selected);
+                  setRespondPermissionFilter(
+                    respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                      ? RequestStepRespondPermissionFilter.All
+                      : RequestStepRespondPermissionFilter.RespondPermission,
+                  );
+                }}
+              >
+                Respond permission
+              </ToggleButton>
+            )}
           </Box>
         </Box>
-        <CreateButton />
+        {me && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />

@@ -5,6 +5,7 @@ import { MouseEventHandler, useContext, useState } from "react";
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
 import eyeInactiveUrl from "@/assets/ize-eye-inactive.svg";
 import { WatchFlowDocument } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 export const WatchFlowButton = ({
@@ -18,6 +19,7 @@ export const WatchFlowButton = ({
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const [isWatched, setIsWatched] = useState(watched);
+  const { me } = useContext(CurrentUserContext);
 
   // const onError = () => {
   //   setSnackbarOpen(true);
@@ -50,6 +52,8 @@ export const WatchFlowButton = ({
       variables: { flowId, watch: !watched },
     });
   };
+
+  if (!me) return null;
 
   return (
     <Tooltip title={isWatched ? "Stop watching this flow" : "Watch this flow"}>

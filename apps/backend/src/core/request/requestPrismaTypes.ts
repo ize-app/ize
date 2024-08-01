@@ -58,7 +58,7 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const createRequestStepSummaryInclude = (userId: string) =>
+export const createRequestStepSummaryInclude = (userId: string | undefined) =>
   Prisma.validator<Prisma.RequestStepInclude>()({
     Request: {
       include: {

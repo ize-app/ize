@@ -14,7 +14,7 @@ import { NewCustomGroupRoute } from "@/routers/routes";
 import { GroupsTable } from "./GroupsTable";
 
 export const GroupsSearch = () => {
-  const queryResultLimit = 5;
+  const queryResultLimit = 20;
 
   const {
     searchQuery,
