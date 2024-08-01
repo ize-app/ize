@@ -48,6 +48,7 @@ const useFlowsSearch = ({
   );
 
   // Refetch when searchQuery, watchFilter, or triggerPermissionFilter changes
+  // Note: if you change any of these variables you also need to change apollo client "merge" function
   useEffect(() => {
     setOldCursor(undefined);
     queryVarsRef.current = {

@@ -38,6 +38,7 @@ export const apolloClient = new ApolloClient({
           getRequestSteps: {
             keyArgs: [
               "userOnly",
+              "groupId",
               "flowId",
               "searchQuery",
               "statusFilter",
