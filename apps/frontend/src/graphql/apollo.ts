@@ -72,6 +72,19 @@ export const apolloClient = new ApolloClient({
               return merged;
             },
           },
+          groupsForCurrentUser: {
+            keyArgs: ["searchQuery", "watchFilter"],
+            merge(existing, incoming, { args, readField }) {
+              const cursor = args && args.cursor;
+              const merged = existing ? existing.slice(0) : [];
+              let offset = offsetFromCursor(merged, cursor, readField);
+              if (offset < 0) offset = merged.length;
+              for (let i = 0; i < incoming.length; ++i) {
+                merged[offset + i] = incoming[i];
+              }
+              return merged;
+            },
+          },
         },
       },
     },

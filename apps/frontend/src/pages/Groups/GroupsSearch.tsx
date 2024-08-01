@@ -1,56 +1,34 @@
-import { useLazyQuery } from "@apollo/client";
-import { Button, ToggleButton, Typography, debounce } from "@mui/material";
+import { Button, ToggleButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
-import {
-  GroupSummaryPartsFragment,
-  GroupsDocument,
-  GroupsQueryVariables,
-  WatchFilter,
-} from "@/graphql/generated/graphql";
+import { WatchFilter } from "@/graphql/generated/graphql";
 import { NewCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
+import useGroupsSearch from "./useGroupsSearch";
 
 export const GroupsSearch = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [watchFilter, setWatchFilter] = useState<WatchFilter>(WatchFilter.Watched);
-  const queryResultLimit = 20;
+  const queryResultLimit = 5;
 
-  const queryVars: GroupsQueryVariables = {
+  const {
     searchQuery,
-    limit: queryResultLimit,
+    setSearchQuery,
     watchFilter,
-  };
-
-  // const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
-
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GroupsDocument);
-
-  const debouncedRefetch = debounce(() => {
-    setOldCursor(undefined);
-    getResults({ variables: queryVars });
-  }, 1000);
-
-  useEffect(() => {
-    debouncedRefetch();
-  }, [searchQuery, watchFilter]);
-
-  useEffect(() => {
-    getResults({ variables: queryVars });
-  }, []);
-
-  const newCursor = data?.groupsForCurrentUser.length
-    ? data.groupsForCurrentUser[data.groupsForCurrentUser.length - 1].id
-    : "";
-  const groups = (data?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
+    setWatchFilter,
+    setOldCursor,
+    oldCursor,
+    newCursor,
+    groups,
+    loading,
+    fetchMore,
+    queryVars,
+  } = useGroupsSearch({ queryResultLimit, initialWatchFilter: WatchFilter.Watched });
 
   return (
     <Box
@@ -96,7 +74,6 @@ export const GroupsSearch = () => {
             sx={{ width: "160px" }}
             color="primary"
             onChange={() => {
-              // setSelected(!selected);
               setWatchFilter(
                 watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
               );
@@ -104,26 +81,6 @@ export const GroupsSearch = () => {
           >
             Watched groups
           </ToggleButton>
-          {/* <Select
-            sx={{
-              width: "140px",
-            }}
-            inputProps={{ multiline: "true" }}
-            aria-label={"Request step filter"}
-            defaultValue={watchFilter}
-            size={"small"}
-            onChange={(event) => {
-              setWatchFilter(event.target.value as WatchFilter);
-              return;
-            }}
-          >
-            {filters.map((filter) => (
-              <MenuItem key={filter.value} value={filter.value}>
-                {filter.label}
-              </MenuItem>
-            ))}
-          </Select> */}
-          {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
         </Box>
         <CreateButton />
       </Box>
@@ -140,7 +97,7 @@ export const GroupsSearch = () => {
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}
-      {oldCursor !== newCursor && (data?.groupsForCurrentUser.length ?? 0) >= queryResultLimit && (
+      {oldCursor !== newCursor && (groups.length ?? 0) >= queryResultLimit && (
         <Button
           onClick={() => {
             setOldCursor(newCursor);

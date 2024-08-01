@@ -18,13 +18,14 @@ export const getGroupsOfUser = async ({
   transaction?: Prisma.TransactionClient;
 }) => {
   if (!context.currentUser) throw Error("ERROR: Unauthenticated user");
+
   // Get groups that the user is in a server, role or has created.
   const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
 
   const groupsCustom = await transaction.groupCustom.findMany({
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
-    cursor: args.cursor ? { id: args.cursor } : undefined,
+    cursor: args.cursor ? { groupId: args.cursor } : undefined,
     where: {
       AND: [
         args.searchQuery !== ""
