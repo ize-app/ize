@@ -27,43 +27,52 @@ const useFlowsSearch = ({
   const [triggerPermissionFilter, setTriggerPermissionFilter] =
     useState<FlowTriggerPermissionFilter>(initialTriggerPermissionFilter);
 
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
+
+  const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";
+
   const queryVarsRef = useRef<GetFlowsQueryVariables>({
     groupId,
     searchQuery,
     watchFilter,
     triggerPermissionFilter,
     limit: queryResultLimit,
+    cursor: newCursor,
   });
 
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      getResults({ variables: queryVarsRef.current });
+    }, 1000),
+    [],
+  );
+
+  // Refetch when searchQuery, watchFilter, or triggerPermissionFilter changes
   useEffect(() => {
+    setOldCursor(undefined);
     queryVarsRef.current = {
       groupId,
       searchQuery,
       watchFilter,
       triggerPermissionFilter,
       limit: queryResultLimit,
+      cursor: undefined,
     };
+    debouncedRefetch();
   }, [groupId, searchQuery, queryResultLimit, watchFilter, triggerPermissionFilter]);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
-
-  const debouncedRefetch = useCallback(
-    debounce(() => {
-      setOldCursor(undefined);
-      getResults({ variables: queryVarsRef.current });
-    }, 1000),
-    [],
-  );
-
+  // Update queryVarsRef with the new cursor if there is new data
   useEffect(() => {
-    debouncedRefetch();
-  }, [searchQuery, debouncedRefetch, watchFilter, triggerPermissionFilter]);
+    queryVarsRef.current = {
+      ...queryVarsRef.current,
+      cursor: newCursor,
+    };
+  }, [newCursor]);
 
+  // Initial fetch on page load
   useEffect(() => {
     getResults({ variables: queryVarsRef.current });
   }, []);
-
-  const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";
   const flows = (data?.getFlows ?? []) as FlowSummaryFragment[];
 
   return {
