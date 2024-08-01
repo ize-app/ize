@@ -17,8 +17,8 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { WizardNav } from "@/components/Wizard";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";

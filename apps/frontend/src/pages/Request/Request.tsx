@@ -15,8 +15,8 @@ import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 
 import Loading from "../../components/Loading";
-import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
+import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";

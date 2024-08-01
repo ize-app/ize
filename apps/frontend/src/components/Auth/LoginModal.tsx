@@ -13,7 +13,7 @@ import {
 } from "@stytch/vanilla-js";
 import { useContext } from "react";
 
-import { CurrentUserContext } from "@/contexts/current_user_context";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 const config: StytchLoginConfig = {
   products: [Products.oauth, Products.crypto, Products.passwords, Products.emailMagicLinks],

@@ -9,10 +9,10 @@ import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
 import { FlowTriggerPermissionFilter, WatchFilter } from "@/graphql/generated/graphql.ts";
+import useFlowsSearch from "@/hooks/useFlowsSearch";
 import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
-import useFlowsSearch from "./useFlowsSearch.ts";
 
 export const FlowsSearch = ({
   groupId,

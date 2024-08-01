@@ -17,8 +17,8 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { RecentAgentsContext } from "@/contexts/RecentAgentContext";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
 import {

@@ -1,6 +1,7 @@
+import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
+
 import { NewCustomGroupSchemaType } from "./formValidation";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
-import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
 export const newCustomGroupFormFieldsDefault: NewCustomGroupSchemaType = {
   members: [],

@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
 import { Avatar, AvatarGroup } from "@/components/Avatar";
-import useFlowsSearch from "@/pages/Flows/useFlowsSearch";
+import useFlowsSearch from "@/hooks/useFlowsSearch";
 
 import { FlowSummaryFragment } from "../../../graphql/generated/graphql";
 

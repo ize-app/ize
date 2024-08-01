@@ -9,8 +9,8 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 import {
   EvolveFlowRoute,
   NewRequestRoute,

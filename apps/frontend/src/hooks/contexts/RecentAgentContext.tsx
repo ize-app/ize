@@ -1,7 +1,7 @@
 import { createContext, useState } from "react";
 
-import { EntitySummaryPartsFragment } from "../graphql/generated/graphql";
-import { dedupEntities } from "../utils/dedupEntities";
+import { EntitySummaryPartsFragment } from "../../graphql/generated/graphql";
+import { dedupEntities } from "../../utils/dedupEntities";
 
 interface RecentAgentsContextValue {
   recentAgents: EntitySummaryPartsFragment[];

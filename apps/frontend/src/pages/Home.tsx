@@ -9,7 +9,7 @@ import { LoginButton } from "@/components/Auth/LoginButton";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 import { Route } from "@/routers/routes";
 
-import { CurrentUserContext } from "../contexts/current_user_context";
+import { CurrentUserContext } from "../hooks/contexts/current_user_context";
 
 const UnauthenticatedHome = () => {
   const navigate = useNavigate();

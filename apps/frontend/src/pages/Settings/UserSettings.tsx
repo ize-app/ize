@@ -5,8 +5,8 @@ import Typography from "@mui/material/Typography";
 import { useStytch } from "@stytch/react";
 import { useCallback, useContext, useState } from "react";
 
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { EntityType } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 

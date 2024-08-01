@@ -1,6 +1,6 @@
 import { ReactNode, useContext } from "react";
 
-import { CurrentUserContext } from "../contexts/current_user_context";
+import { CurrentUserContext } from "../hooks/contexts/current_user_context";
 
 export const AuthRoute = ({ children }: { children: ReactNode }) => {
   const { me, meLoading } = useContext(CurrentUserContext);

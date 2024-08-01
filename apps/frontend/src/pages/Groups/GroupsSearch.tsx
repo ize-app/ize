@@ -8,10 +8,10 @@ import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
 import { WatchFilter } from "@/graphql/generated/graphql";
+import useGroupsSearch from "@/hooks/useGroupsSearch";
 import { NewCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
-import useGroupsSearch from "./useGroupsSearch";
 
 export const GroupsSearch = () => {
   const queryResultLimit = 5;

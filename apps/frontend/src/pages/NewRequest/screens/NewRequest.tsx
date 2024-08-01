@@ -4,14 +4,14 @@ import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import { WizardContainer } from "@/components/Wizard";
-import { CurrentUserContext } from "@/contexts/current_user_context";
+import { NewRequestDocument } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
+import { Wizard, useWizard } from "@/hooks/useWizard";
+import Head from "@/layout/Head";
+import PageContainer from "@/layout/PageContainer";
+import { fullUUIDToShort } from "@/utils/inputs";
 
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { NewRequestDocument } from "../../../graphql/generated/graphql";
-import Head from "../../../layout/Head";
-import PageContainer from "../../../layout/PageContainer";
-import { fullUUIDToShort } from "../../../utils/inputs";
-import { Wizard, useWizard } from "../../../utils/wizard";
 import { createNewRequestMutationArgs } from "../createNewRequestMutationArgs";
 import {
   NEW_REQUEST_PROGRESS_BAR_STEPS,

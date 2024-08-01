@@ -3,7 +3,7 @@ import { useStytchUser } from "@stytch/react";
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from "react";
 import { Exact } from "utility-types/dist/mapped-types";
 
-import { MeDocument, MePartsFragment, MeQuery } from "../graphql/generated/graphql";
+import { MeDocument, MePartsFragment, MeQuery } from "../../graphql/generated/graphql";
 
 interface CurrentUserContextValue {
   me: MePartsFragment | undefined | null;

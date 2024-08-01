@@ -4,11 +4,11 @@ import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import { WizardContainer } from "@/components/Wizard";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { Wizard, useWizard } from "@/utils/wizard";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { Wizard, useWizard } from "@/hooks/useWizard";
 
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import { NewCustomGroupDocument } from "../../../graphql/generated/graphql";
+import { SnackbarContext } from "../../../hooks/contexts/SnackbarContext";
 import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
 import { fullUUIDToShort } from "../../../utils/inputs";

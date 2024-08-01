@@ -4,8 +4,8 @@ import { MouseEventHandler, useContext, useState } from "react";
 
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
 import eyeInactiveUrl from "@/assets/ize-eye-inactive.svg";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { WatchFlowDocument } from "@/graphql/generated/graphql";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 export const WatchFlowButton = ({
   flowId,

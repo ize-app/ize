@@ -11,11 +11,11 @@ import {
   RequestStepRespondPermissionFilter,
   RequestStepStatusFilter,
 } from "@/graphql/generated/graphql";
+import useRequestStepsSearch from "@/hooks/useRequestStepsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
-import useRequestStepsSearch from "./useRequestStepsSearch";
 
 export const RequestStepsSearch = ({
   userOnly,
