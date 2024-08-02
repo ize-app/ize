@@ -39,6 +39,9 @@ const formatAnswerValue = async (fieldAnswer: FieldAnswerSchemaType) => {
       case FieldDataType.FlowIds:
         return JSON.stringify((fieldAnswer.value as FlowSummaryFragment[]).map((f) => f.flowId));
       case FieldDataType.Webhook: {
+        const webhookArgs = fieldAnswer.value as WebhookSchemaType;
+        // TODO: This is hacky
+        if (!webhookArgs.uri) return "None";
         const webhookId = await createWebhook({
           webhookArgs: fieldAnswer.value as WebhookSchemaType,
         });

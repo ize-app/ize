@@ -30,7 +30,7 @@ export const validateInput = (value: string, dataType: FieldDataType): boolean =
       pass = z.array(z.string().uuid()).safeParse(JSON.parse(value)).success;
       break;
     case FieldDataType.Webhook:
-      pass = z.string().uuid().safeParse(value).success;
+      pass = z.union([z.string().uuid(), z.literal("None")]).safeParse(value).success;
       break;
     default:
       break;

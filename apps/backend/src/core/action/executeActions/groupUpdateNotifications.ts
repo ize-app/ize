@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 import { GroupNotificationsFields } from "@/core/flow/groupUpdateNotifications/GroupNotificationsFields";
 import { FieldDataType } from "@/graphql/generated/resolver-types";
@@ -71,12 +72,16 @@ export const groupUpdateNotifications = async ({
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
+    const webhookId = z.string().uuid().safeParse(webhook.AnswerFreeInput[0].value).success
+      ? webhook.AnswerFreeInput[0].value
+      : null;
+
     await transaction.groupCustom.update({
       where: {
         id: customGroupId,
       },
       data: {
-        notificationWebhookId: webhook.AnswerFreeInput[0].value,
+        notificationWebhookId: webhookId,
       },
     });
 

@@ -24,9 +24,11 @@ export const Answer = ({
         return <FlowsList flows={fieldAnswer.flows} />;
       } else if (fieldAnswer.__typename === "WebhookFieldAnswer") {
         return (
-          <Typography
-            fontSize={".875rem"}
-          >{`${fieldAnswer.uri} (full webhook not publicly viewable)`}</Typography>
+          <Typography fontSize={".875rem"}>
+            {fieldAnswer.uri
+              ? `${fieldAnswer.uri} (full webhook not publicly viewable)`
+              : "No notification webhook"}
+          </Typography>
         );
       } else return null;
     }
