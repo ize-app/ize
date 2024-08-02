@@ -63,6 +63,12 @@ export const actionResolver = (
         filterOption,
         locked: action.locked,
       };
+    case ActionType.GroupUpdateNotifications:
+      return {
+        __typename: "GroupUpdateNotifications",
+        filterOption,
+        locked: action.locked,
+      };
     default:
       throw new GraphQLError("Invalid action type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

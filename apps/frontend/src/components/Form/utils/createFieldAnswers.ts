@@ -7,7 +7,9 @@ import {
   FlowSummaryFragment,
 } from "@/graphql/generated/graphql";
 
+import { createCallWebhookArgs } from "../FlowForm/helpers/createNewFlowArgs/createActionArgs";
 import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "../formValidation/field";
+import { WebhookSchemaType } from "../formValidation/webhook";
 
 export const createFieldAnswersArgs = (
   fieldAnswers: FieldAnswerRecordSchemaType | undefined,
@@ -34,6 +36,8 @@ const formatAnswerValue = (fieldAnswer: FieldAnswerSchemaType) => {
         return JSON.stringify((fieldAnswer.value as Entity[]).map((e) => e.entityId));
       case FieldDataType.FlowIds:
         return JSON.stringify((fieldAnswer.value as FlowSummaryFragment[]).map((f) => f.flowId));
+      case FieldDataType.Webhook:
+        return JSON.stringify(createCallWebhookArgs(fieldAnswer.value as WebhookSchemaType));
       default:
         return fieldAnswer.value;
     }

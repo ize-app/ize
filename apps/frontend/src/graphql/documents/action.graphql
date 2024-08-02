@@ -28,6 +28,9 @@ fragment Action on Action {
   ... on GroupWatchFlow {
     ...GroupWatchFlow
   }
+  ... on GroupUpdateNotifications {
+    ...GroupUpdateNotifications
+  }
 }
 
 fragment CallWebhook on CallWebhook {
@@ -69,6 +72,13 @@ fragment GroupUpdateMembership on GroupUpdateMembership {
 }
 
 fragment GroupWatchFlow on GroupWatchFlow {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateNotifications on GroupUpdateNotifications {
   locked
   filterOption {
     ...Option

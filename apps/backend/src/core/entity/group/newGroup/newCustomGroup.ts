@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { createWebhook } from "@/core/action/webhook/createWebhook";
 import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
 import { newGroupUpdateMetadataFlow } from "@/core/flow/groupUpdateMetadata/newGroupUpdateMetadataFlow";
+import { newGroupUpdateNotificationsFlow } from "@/core/flow/groupUpdateNotifications/newGroupUpdateNotificationsFlow";
 import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
@@ -80,6 +81,13 @@ export const newCustomGroup = async ({
   });
 
   await newGroupWatchFlowFlow({
+    transaction,
+    context,
+    groupEntityId: customGroupEntity.Group?.entityId as string,
+    groupId: customGroupEntity.Group?.id as string,
+  });
+
+  await newGroupUpdateNotificationsFlow({
     transaction,
     context,
     groupEntityId: customGroupEntity.Group?.entityId as string,

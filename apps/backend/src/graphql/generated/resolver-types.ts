@@ -18,7 +18,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type Action = CallWebhook | EvolveFlow | GroupUpdateMembership | GroupUpdateMetadata | GroupWatchFlow | TriggerStep;
+export type Action = CallWebhook | EvolveFlow | GroupUpdateMembership | GroupUpdateMetadata | GroupUpdateNotifications | GroupWatchFlow | TriggerStep;
 
 export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
@@ -40,6 +40,7 @@ export enum ActionType {
   EvolveFlow = 'EvolveFlow',
   GroupUpdateMembership = 'GroupUpdateMembership',
   GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupUpdateNotifications = 'GroupUpdateNotifications',
   GroupWatchFlow = 'GroupWatchFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
@@ -195,7 +196,7 @@ export type EvolveFlowArgs = {
 
 export type Field = FreeInput | Options;
 
-export type FieldAnswer = EntitiesFieldAnswer | FlowsFieldAnswer | FreeInputFieldAnswer | OptionFieldAnswer;
+export type FieldAnswer = EntitiesFieldAnswer | FlowsFieldAnswer | FreeInputFieldAnswer | OptionFieldAnswer | WebhookFieldAnswer;
 
 export type FieldAnswerArgs = {
   fieldId: Scalars['String']['input'];
@@ -220,7 +221,8 @@ export enum FieldDataType {
   FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',
-  Uri = 'Uri'
+  Uri = 'Uri',
+  Webhook = 'Webhook'
 }
 
 export type FieldOptionArgs = {
@@ -299,6 +301,7 @@ export enum FlowType {
   Evolve = 'Evolve',
   GroupUpdateMembership = 'GroupUpdateMembership',
   GroupUpdateMetadata = 'GroupUpdateMetadata',
+  GroupUpdateNotifications = 'GroupUpdateNotifications',
   GroupWatchFlow = 'GroupWatchFlow'
 }
 
@@ -389,6 +392,12 @@ export type GroupUpdateMembership = {
 
 export type GroupUpdateMetadata = {
   __typename?: 'GroupUpdateMetadata';
+  filterOption?: Maybe<Option>;
+  locked: Scalars['Boolean']['output'];
+};
+
+export type GroupUpdateNotifications = {
+  __typename?: 'GroupUpdateNotifications';
   filterOption?: Maybe<Option>;
   locked: Scalars['Boolean']['output'];
 };
@@ -1025,6 +1034,12 @@ export enum WatchFilter {
   Watched = 'Watched'
 }
 
+export type WebhookFieldAnswer = {
+  __typename?: 'WebhookFieldAnswer';
+  fieldId: Scalars['String']['output'];
+  webhook: CallWebhook;
+};
+
 export type WebhookPayload = {
   __typename?: 'WebhookPayload';
   createdAt: Scalars['String']['output'];
@@ -1120,10 +1135,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
-  Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupWatchFlow ) | ( TriggerStep );
+  Action: ( CallWebhook ) | ( EvolveFlow ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupUpdateNotifications ) | ( GroupWatchFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator: _RefType['User'], groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( FreeInput ) | ( Options );
-  FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer );
+  FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
@@ -1185,6 +1200,7 @@ export type ResolversTypes = {
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
   GroupUpdateMembership: ResolverTypeWrapper<GroupUpdateMembership>;
   GroupUpdateMetadata: ResolverTypeWrapper<GroupUpdateMetadata>;
+  GroupUpdateNotifications: ResolverTypeWrapper<GroupUpdateNotifications>;
   GroupWatchFlow: ResolverTypeWrapper<GroupWatchFlow>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
@@ -1253,6 +1269,7 @@ export type ResolversTypes = {
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
   WatchFilter: WatchFilter;
+  WebhookFieldAnswer: ResolverTypeWrapper<WebhookFieldAnswer>;
   WebhookPayload: ResolverTypeWrapper<WebhookPayload>;
   WebhookValue: ResolverTypeWrapper<WebhookValue>;
   WebhookValueArgs: WebhookValueArgs;
@@ -1305,6 +1322,7 @@ export type ResolversParentTypes = {
   GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
   GroupUpdateMembership: GroupUpdateMembership;
   GroupUpdateMetadata: GroupUpdateMetadata;
+  GroupUpdateNotifications: GroupUpdateNotifications;
   GroupWatchFlow: GroupWatchFlow;
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
@@ -1365,6 +1383,7 @@ export type ResolversParentTypes = {
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
+  WebhookFieldAnswer: WebhookFieldAnswer;
   WebhookPayload: WebhookPayload;
   WebhookValue: WebhookValue;
   WebhookValueArgs: WebhookValueArgs;
@@ -1372,7 +1391,7 @@ export type ResolversParentTypes = {
 };
 
 export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
-  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'GroupUpdateMembership' | 'GroupUpdateMetadata' | 'GroupWatchFlow' | 'TriggerStep', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'GroupUpdateMembership' | 'GroupUpdateMetadata' | 'GroupUpdateNotifications' | 'GroupWatchFlow' | 'TriggerStep', ParentType, ContextType>;
 };
 
 export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
@@ -1488,7 +1507,7 @@ export type FieldResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FieldAnswer'] = ResolversParentTypes['FieldAnswer']> = {
-  __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FlowsFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FlowsFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer' | 'WebhookFieldAnswer', ParentType, ContextType>;
 };
 
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
@@ -1597,6 +1616,12 @@ export type GroupUpdateMembershipResolvers<ContextType = GraphqlRequestContext, 
 };
 
 export type GroupUpdateMetadataResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateMetadata'] = ResolversParentTypes['GroupUpdateMetadata']> = {
+  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GroupUpdateNotificationsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateNotifications'] = ResolversParentTypes['GroupUpdateNotifications']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1929,6 +1954,12 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookFieldAnswer'] = ResolversParentTypes['WebhookFieldAnswer']> = {
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  webhook?: Resolver<ResolversTypes['CallWebhook'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookPayload'] = ResolversParentTypes['WebhookPayload']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1975,6 +2006,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   GroupType?: GroupTypeResolvers<ContextType>;
   GroupUpdateMembership?: GroupUpdateMembershipResolvers<ContextType>;
   GroupUpdateMetadata?: GroupUpdateMetadataResolvers<ContextType>;
+  GroupUpdateNotifications?: GroupUpdateNotificationsResolvers<ContextType>;
   GroupWatchFlow?: GroupWatchFlowResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
@@ -2013,6 +2045,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   UserFieldAnswers?: UserFieldAnswersResolvers<ContextType>;
   UserFlowPermission?: UserFlowPermissionResolvers<ContextType>;
   UserPermission?: UserPermissionResolvers<ContextType>;
+  WebhookFieldAnswer?: WebhookFieldAnswerResolvers<ContextType>;
   WebhookPayload?: WebhookPayloadResolvers<ContextType>;
   WebhookValue?: WebhookValueResolvers<ContextType>;
 };

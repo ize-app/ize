@@ -239,6 +239,7 @@ enum FlowType {
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow
+  GroupUpdateNotifications
 }
 
 model Flow {
@@ -413,6 +414,7 @@ enum FieldDataType {
   FlowVersionId
   EntityIds
   FlowIds
+  Webhook
 }
 
 enum FieldType {
@@ -641,6 +643,7 @@ enum ActionType {
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow
+  GroupUpdateNotifications
 
   @@map("ActionType")
 }

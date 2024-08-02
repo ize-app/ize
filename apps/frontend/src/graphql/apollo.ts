@@ -21,6 +21,7 @@ export const apolloClient = new ApolloClient({
         "GroupUpdateMetadata",
         "GroupUpdateMembership",
         "GroupWatchFlow",
+        "GroupUpdateNotifications",
       ],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],

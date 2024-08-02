@@ -56,6 +56,7 @@ enum FlowType {
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow
+  GroupUpdateNotifications
 }
 
 type Step {

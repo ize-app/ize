@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { EntitiesSearchField } from "@/components/Form/formFields/EntitiesSearchField";
 import { FlowsSearchField } from "@/components/Form/formFields/FlowsSearchField";
+import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import {
@@ -103,6 +104,8 @@ export const CreateRequestForm = () => {
     return <Loading />;
   }
 
+  // console.log("form errors are ", formMethods.formState.errors);
+  // console.log("form state is ", formMethods.getValues());
   return loading ? (
     <Loading />
   ) : (
@@ -152,7 +155,7 @@ export const CreateRequestForm = () => {
                           key={fieldId}
                           control={formMethods.control}
                           // showLabel={false}
-
+                          required={required}
                           label={name}
                         />
                       );
@@ -164,13 +167,14 @@ export const CreateRequestForm = () => {
                           control={formMethods.control}
                           // showLabel={false}
                           label={name}
+                          required={required}
                         />
                       );
                     case FieldDataType.FlowVersionId:
                       throw Error("Flow version Id cannot be directly editted");
                     case FieldDataType.EntityIds:
                       return (
-                        <EntitiesSearchField
+                        <EntitiesSearchField<RequestSchemaType>
                           name={`requestFields.${field.fieldId}.value`}
                           key={fieldId}
                           ariaLabel={name}
@@ -183,12 +187,23 @@ export const CreateRequestForm = () => {
                       );
                     case FieldDataType.FlowIds:
                       return (
-                        <FlowsSearchField
+                        <FlowsSearchField<RequestSchemaType>
                           name={`requestFields.${field.fieldId}.value`}
                           key={fieldId}
                           ariaLabel={name}
                           control={formMethods.control}
                           label={name}
+                        />
+                      );
+                    case FieldDataType.Webhook:
+                      return (
+                        <WebhookField
+                          formMethods={formMethods}
+                          type="notification"
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          control={formMethods.control}
+                          required={required}
                         />
                       );
                     default:

@@ -18,5 +18,7 @@ export const formatDataTypeName = (dataType: FieldDataType): string => {
       return "identities and roles ";
     case FieldDataType.FlowIds:
       return "flows";
+    case FieldDataType.Webhook:
+      return "webhook";
   }
 };

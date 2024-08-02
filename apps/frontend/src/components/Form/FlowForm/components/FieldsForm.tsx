@@ -36,6 +36,8 @@ export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType)
     return [{ name: "Flows", value: FieldDataType.FlowIds }];
   } else if (freeInputDataType === FieldDataType.FlowVersionId) {
     return [{ name: "Flows", value: FieldDataType.FlowVersionId }];
+  } else if (freeInputDataType === FieldDataType.Webhook) {
+    return [{ name: "Webhook", value: FieldDataType.Webhook }];
   } else
     return [
       { name: "Text", value: FieldDataType.String },

@@ -83,6 +83,9 @@ fragment FieldAnswer on FieldAnswer {
   ... on FlowsFieldAnswer {
     ...FlowsFieldAnswer
   }
+  ... on WebhookFieldAnswer {
+    ...WebhookFieldAnswer
+  }
 }
 
 fragment OptionFieldAnswer on OptionFieldAnswer {
@@ -106,4 +109,11 @@ fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
 
 fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
   optionId
+}
+
+fragment WebhookFieldAnswer on WebhookFieldAnswer {
+  fieldId
+  webhook {
+    ...CallWebhook
+  }
 }

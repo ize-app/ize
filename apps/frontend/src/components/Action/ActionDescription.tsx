@@ -38,8 +38,7 @@ export const ActionDescription = ({
         return (
           <>
             <Typography>
-              This webhook is called at the end of this flow. The webhook includes data on the
-              request and results.
+              This action calls a webhook. The webhook includes data on the request and results.
             </Typography>
           </>
         );
@@ -48,7 +47,7 @@ export const ActionDescription = ({
     case ActionType.EvolveFlow: {
       return (
         <>
-          <Typography>The flow is updated to use the proposed flow version.</Typography>
+          <Typography>This action updates a flow to use the proposed flow version.</Typography>
         </>
       );
     }
@@ -56,7 +55,7 @@ export const ActionDescription = ({
       return (
         <>
           <Typography>
-            Metadata of {groupNameOverride} is updated to use the proposed values.
+            This action udpates the name and/or description of <strong>{groupNameOverride}</strong>.
           </Typography>
         </>
       );
@@ -65,9 +64,11 @@ export const ActionDescription = ({
       return (
         <>
           <Typography>
-            Membership rules for {groupName} are updated. When a flow gives someone request/respond
-            permissions to {groupName}, anyone who meets the new membership critieria will be able
-            to request/respond.
+            This action updates the membership of <strong>{groupNameOverride}</strong>. <br />
+            <br />
+            When a flow gives someone request/respond permissions to{" "}
+            <strong>{groupNameOverride}</strong>, anyone who meets the new membership critieria will
+            be able to request/respond.
           </Typography>
         </>
       );
@@ -76,13 +77,27 @@ export const ActionDescription = ({
       return (
         <>
           <Typography>
-            The list of flows that {groupName} watches is updated. Group notifications will be sent
-            out for activity on the new list of watched flows.
+            This action updates the of flows that <strong>{groupNameOverride}</strong> watches.{" "}
+            <br />
+            <br />
+            When a group watches a flow, requests for those flows will show up on the group&apos;s
+            page and the home page of anyone watching that group.
+          </Typography>
+        </>
+      );
+    }
+    case ActionType.GroupUpdateNotifications: {
+      return (
+        <>
+          <Typography>
+            This action changes how and where notifications are sent for flows that{" "}
+            <strong>{groupNameOverride}</strong> watches.
           </Typography>
         </>
       );
     }
 
     default:
+      return null;
   }
 };

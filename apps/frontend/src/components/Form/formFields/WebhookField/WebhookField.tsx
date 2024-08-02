@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
-import { Box } from "@mui/material";
+import { Box, FormHelperText } from "@mui/material";
 import { useState } from "react";
-import { FieldValues, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { Controller, FieldValues, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import {
   Status,
@@ -58,47 +58,73 @@ export const WebhookField = <T extends FieldValues>({
       console.log("Test webhook error: ", e);
     }
   };
+
+  const helperText = `${type === "notification" ? "For each flow that this group watches, a notification will be sent to this webhook." : "After this collaborative step is complete, results will be sent to this webhook."} The full webhook URL will not be viewable after creation for security.`;
+
   return (
-    <Box
-      sx={{ display: "flex", gap: "8px", alignItems: "flex-start", justifyContent: "flex-start" }}
-    >
-      <TextField<T>
-        control={formMethods.control}
-        label="Url"
-        size="small"
-        required={required}
-        showLabel={false}
-        placeholderText={`${type === "notification" ? "Notification webhook" : "Results webhook"}`}
-        // @ts-expect-error TODO: figure out how to bring in webhook schema
-        name={`${name}.uri`}
-        helperText={`${type === "notification" ? "For each flow that this group watches, a notification will be sent to this webhook." : "After this collaborative step is complete, results will be sent to this webhook."} The full webhook URL will not be viewable after creation for security.`}
-      />
-      <TextField<T>
-        control={formMethods.control}
-        label="Webhook id"
-        diabled
-        size="small"
-        showLabel={false}
-        display={false}
-        placeholderText="Valid webhook"
-        // @ts-expect-error TODO: figure out how to bring in webhook schema
-        name={`${name}.webhookId`}
-      />
-      <TextField<T>
-        control={formMethods.control}
-        label="Valid webhook"
-        size="small"
-        showLabel={false}
-        disabled
-        display={false}
-        placeholderText="Valid webhook"
-        // @ts-expect-error TODO: figure out how to bring in webhook schema
-        name={`${name}.valid`}
-      />
-      <WebhookTestButton
-        testWebhookStatus={testWebhookStatus}
-        handleTestWebhook={handleTestWebhook}
-      />
-    </Box>
+    <Controller
+      name={name}
+      control={formMethods.control}
+      render={({ fieldState: { error } }) => {
+        console.log("errors is", error);
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <TextField<T>
+                control={formMethods.control}
+                label="Url"
+                size="small"
+                required={required}
+                showLabel={false}
+                aria-label={`${type === "notification" ? "Notification webhook" : "Results webhook"}`}
+                placeholderText={`${type === "notification" ? "Notification webhook" : "Results webhook"}`}
+                // @ts-expect-error TODO: figure out how to bring in webhook schema
+                name={`${name}.uri`}
+              />
+              <TextField<T>
+                control={formMethods.control}
+                label="Webhook id"
+                diabled
+                size="small"
+                showLabel={false}
+                display={false}
+                placeholderText="Valid webhook"
+                // @ts-expect-error TODO: figure out how to bring in webhook schema
+                name={`${name}.webhookId`}
+              />
+              <TextField<T>
+                control={formMethods.control}
+                label="Valid webhook"
+                size="small"
+                showLabel={false}
+                disabled
+                display={false}
+                placeholderText="Valid webhook"
+                // @ts-expect-error TODO: figure out how to bring in webhook schema
+                name={`${name}.valid`}
+              />
+              <WebhookTestButton
+                testWebhookStatus={testWebhookStatus}
+                handleTestWebhook={handleTestWebhook}
+              />
+            </Box>
+            <FormHelperText
+              sx={{
+                color: error?.root?.message ? "error.main" : undefined,
+              }}
+            >
+              {error?.root?.message ?? helperText ?? ""}
+            </FormHelperText>
+          </Box>
+        );
+      }}
+    />
   );
 };

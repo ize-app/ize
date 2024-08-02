@@ -9,6 +9,7 @@ union Action =
   | GroupUpdateMetadata
   | GroupUpdateMembership
   | GroupWatchFlow
+  | GroupUpdateNotifications
 
 type ActionExecution {
   actionId: String!
@@ -49,6 +50,11 @@ type GroupWatchFlow {
   filterOption: Option
 }
 
+type GroupUpdateNotifications {
+  locked: Boolean!
+  filterOption: Option
+}
+
 # mirrors Prisma type + "None" type
 enum ActionType {
   CallWebhook
@@ -57,6 +63,7 @@ enum ActionType {
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow
+  GroupUpdateNotifications
   None
 }
 

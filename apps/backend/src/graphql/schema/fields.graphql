@@ -53,6 +53,7 @@ enum FieldDataType {
   FlowVersionId
   EntityIds
   FlowIds
+  Webhook
 }
 
 enum FieldType {
@@ -66,7 +67,12 @@ enum FieldOptionsSelectionType {
   Select
 }
 
-union FieldAnswer = OptionFieldAnswer | FreeInputFieldAnswer | EntitiesFieldAnswer | FlowsFieldAnswer
+union FieldAnswer =
+  | OptionFieldAnswer
+  | FreeInputFieldAnswer
+  | EntitiesFieldAnswer
+  | FlowsFieldAnswer
+  | WebhookFieldAnswer
 
 type OptionFieldAnswer {
   fieldId: String!
@@ -86,6 +92,11 @@ type EntitiesFieldAnswer {
 type FlowsFieldAnswer {
   fieldId: String!
   flows: [FlowSummary!]!
+}
+
+type WebhookFieldAnswer {
+  fieldId: String!
+  webhook: CallWebhook!
 }
 
 type UserFieldAnswer {

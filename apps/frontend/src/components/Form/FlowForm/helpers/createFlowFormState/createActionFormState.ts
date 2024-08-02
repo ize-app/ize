@@ -57,6 +57,13 @@ export const createActionFormState = (action: Action | null | undefined): Action
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
     }
+    case ActionType.GroupUpdateNotifications: {
+      return {
+        type: ActionType.GroupUpdateNotifications,
+        locked: action.locked,
+        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+      };
+    }
     default:
       throw new Error(`Unknown action type: ${action?.__typename}`);
   }
