@@ -4,7 +4,7 @@ export type WebhookSchemaType = z.infer<typeof webhookSchema>;
 
 export const webhookSchema = z
   .object({
-    webhookId: z.string().min(1).default("defaultWebhookId"),
+    webhookId: z.string().optional(),
     uri: z.string().url().optional(),
     name: z.string().min(1).optional(),
     // when existing webhook is change, we don't send the full uri to the FE for safety reasons

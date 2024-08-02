@@ -19,7 +19,6 @@ export const createWebhook = async ({
   groupId?: string;
   transaction: Prisma.TransactionClient;
 }) => {
-  console.log("inside createWebhook");
   let existingWebhook: Webhook | null = null;
 
   if (args.webhookId) {
