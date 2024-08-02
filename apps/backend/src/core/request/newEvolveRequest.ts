@@ -1,4 +1,3 @@
-import { decrypt } from "@/prisma/encrypt";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import {
   FieldAnswerArgs,
@@ -53,29 +52,6 @@ export const newEvolveRequest = async ({
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         },
       );
-    // When elolve request is created on FE, the original webhook URI is not displayed for security reasons
-    // instead, a truncated version is displayed.
-    // if there is no change to the truncated version, then we need to hydrate the full URI into the request args
-    const updatedProposedFlow = { ...proposedFlow };
-
-    await Promise.all(
-      proposedFlow.steps.map(async (step, index) => {
-        const webhookArgs = step.action?.callWebhook;
-        if (webhookArgs && webhookArgs.originalUri === webhookArgs.uri) {
-          const newWebhook = updatedProposedFlow.steps[index].action?.callWebhook;
-          if (!newWebhook)
-            throw new GraphQLError(`Cannot find webhook for evolve request for flow ${flow.id}`, {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            });
-
-          const currentWebhook = await transaction.webhook.findUniqueOrThrow({
-            where: { id: newWebhook.webhookId },
-          });
-          const currentUriDecrypted = decrypt(currentWebhook.uri);
-          newWebhook.uri = currentUriDecrypted;
-        }
-      }),
-    );
 
     // find evolve flow and it's fields so they can be referenced in the evolve request
     const evolveFlow = await transaction.flow.findUniqueOrThrow({

@@ -31,8 +31,12 @@ export const newCustomGroup = async ({
 
   const notificationWebhookId = args.inputs.notificationUri
     ? await createWebhook({
-        uri: args.inputs.notificationUri,
-        name: "Group notification",
+        args: {
+          uri: args.inputs.notificationUri,
+          name: "Group notification",
+          webhookId: undefined,
+        },
+
         transaction,
       })
     : null;

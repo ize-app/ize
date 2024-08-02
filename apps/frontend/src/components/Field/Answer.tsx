@@ -1,3 +1,5 @@
+import { Typography } from "@mui/material";
+
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
 import { AnswerFreeInput } from "./AnswerFreeInput";
@@ -18,11 +20,15 @@ export const Answer = ({
         return <AnswerFreeInput answer={fieldAnswer.value} dataType={field.dataType} />;
       else if (fieldAnswer.__typename === "EntitiesFieldAnswer") {
         return <EntityList entities={fieldAnswer.entities} />;
-      } 
-      else if (fieldAnswer.__typename === "FlowsFieldAnswer") {
+      } else if (fieldAnswer.__typename === "FlowsFieldAnswer") {
         return <FlowsList flows={fieldAnswer.flows} />;
-      } 
-      else return null;
+      } else if (fieldAnswer.__typename === "WebhookFieldAnswer") {
+        return (
+          <Typography
+            fontSize={".875rem"}
+          >{`${fieldAnswer.uri} (full webhook not publicly viewable)`}</Typography>
+        );
+      } else return null;
     }
     case FieldType.Options: {
       if (fieldAnswer.__typename !== "OptionFieldAnswer") return null;

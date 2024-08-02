@@ -97,7 +97,7 @@ export type CallWebhookArgs = {
   name: Scalars['String']['input'];
   originalUri?: InputMaybe<Scalars['String']['input']>;
   uri: Scalars['String']['input'];
-  webhookId: Scalars['String']['input'];
+  webhookId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CustomGroupArgs = {
@@ -511,6 +511,7 @@ export type Me = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createWebhook: Scalars['String']['output'];
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
   newEvolveRequest: Scalars['String']['output'];
@@ -522,6 +523,11 @@ export type Mutation = {
   updateProfile: Scalars['Boolean']['output'];
   watchFlow: Scalars['Boolean']['output'];
   watchGroup: Scalars['Boolean']['output'];
+};
+
+
+export type MutationCreateWebhookArgs = {
+  inputs: CallWebhookArgs;
 };
 
 
@@ -1037,7 +1043,7 @@ export enum WatchFilter {
 export type WebhookFieldAnswer = {
   __typename?: 'WebhookFieldAnswer';
   fieldId: Scalars['String']['output'];
-  webhook: CallWebhook;
+  uri: Scalars['String']['output'];
 };
 
 export type WebhookPayload = {
@@ -1710,6 +1716,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createWebhook?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateWebhookArgs, 'inputs'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
@@ -1956,7 +1963,7 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookFieldAnswer'] = ResolversParentTypes['WebhookFieldAnswer']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  webhook?: Resolver<ResolversTypes['CallWebhook'], ParentType, ContextType>;
+  uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

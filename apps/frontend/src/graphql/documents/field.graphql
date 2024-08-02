@@ -113,7 +113,5 @@ fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
 
 fragment WebhookFieldAnswer on WebhookFieldAnswer {
   fieldId
-  webhook {
-    ...CallWebhook
-  }
+  uri
 }

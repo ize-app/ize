@@ -31,6 +31,7 @@ export const apolloClient = new ApolloClient({
         "FreeInputFieldAnswer",
         "EntitiesFieldAnswer",
         "FlowsFieldAnswer",
+        "WebhookFieldAnswer",
       ],
     },
     typePolicies: {

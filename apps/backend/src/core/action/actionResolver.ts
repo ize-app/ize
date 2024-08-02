@@ -1,9 +1,10 @@
 import { ActionType, FieldType } from "@prisma/client";
 
-import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver-types";
+import { Action, Field, Option } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ActionNewPrismaType } from "./actionPrismaTypes";
+import { callWebhookResolver } from "./webhook/webhookResolver";
 
 export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,
@@ -32,7 +33,11 @@ export const actionResolver = (
 
   switch (action.type) {
     case ActionType.CallWebhook:
-      return callWebhookResolver(action, filterOption);
+      if (!action.Webhook)
+        throw new GraphQLError("Missing webhook action config.", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+      return callWebhookResolver({ webhook: action.Webhook, filterOption, locked: action.locked });
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
@@ -74,24 +79,4 @@ export const actionResolver = (
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
   }
-};
-
-const callWebhookResolver = (
-  action: ActionNewPrismaType,
-  filterOption: Option | undefined,
-  // obscureUri = true,
-): CallWebhook => {
-  const webhook = action.Webhook;
-  if (!webhook)
-    throw new GraphQLError("Missing webhook action config.", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-    });
-  return {
-    __typename: "CallWebhook",
-    webhookId: webhook.id,
-    uri: "https://" + webhook.uriPreview, // Only return the hostname for privacy
-    name: webhook.name,
-    filterOption,
-    locked: action.locked,
-  };
 };

@@ -74,6 +74,7 @@ export const newStep = async ({
         actionArgs: args.action,
         locked: args.action.locked ?? false,
         responseFieldSet,
+        flowVersionId,
         transaction,
       })
     : null;

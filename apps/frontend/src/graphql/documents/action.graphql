@@ -2,6 +2,10 @@ mutation TestWebhook($inputs: TestWebhookArgs!) {
   testWebhook(inputs: $inputs)
 }
 
+mutation CreateWebhook($inputs: CallWebhookArgs!) {
+  createWebhook(inputs: $inputs)
+}
+
 fragment ActionExecution on ActionExecution {
   actionId
   lastAttemptedAt

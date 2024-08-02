@@ -65,6 +65,8 @@ export const renderFreeInputValue = (
       return <div></div>;
     case FieldDataType.FlowIds:
       return <div></div>;
+    case FieldDataType.Webhook:
+      return <div></div>;
     case FieldDataType.FlowVersionId:
       return (
         <>

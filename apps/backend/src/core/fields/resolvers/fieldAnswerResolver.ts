@@ -58,6 +58,15 @@ export const fieldAnswerResolver = async ({
             }),
           ),
         };
+      } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.Webhook) {
+        const webhook = await prisma.webhook.findFirst({
+          where: { id: fieldAnswer.AnswerFreeInput[0].value },
+        });
+        return {
+          __typename: "WebhookFieldAnswer",
+          fieldId: fieldAnswer.fieldId,
+          uri: webhook?.uriPreview ?? "",
+        };
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",

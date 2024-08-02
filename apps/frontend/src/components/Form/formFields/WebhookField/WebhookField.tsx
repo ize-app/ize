@@ -66,7 +66,6 @@ export const WebhookField = <T extends FieldValues>({
       name={name}
       control={formMethods.control}
       render={({ fieldState: { error } }) => {
-        console.log("errors is", error);
         return (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Box

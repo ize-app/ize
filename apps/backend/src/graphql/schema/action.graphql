@@ -1,5 +1,6 @@
 type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
+  createWebhook(inputs: CallWebhookArgs!): String!
 }
 
 union Action =
@@ -68,7 +69,7 @@ enum ActionType {
 }
 
 input CallWebhookArgs {
-  webhookId: String!
+  webhookId: String
   uri: String!
   originalUri: String
   name: String!

@@ -37,14 +37,12 @@ export const createActionArgs = (
     type: action.type,
     filterOptionIndex,
     filterResponseFieldIndex,
-    callWebhook: createCallWebhookArgs(
-      action.type === ActionType.CallWebhook ? action.callWebhook : null,
-    ),
+    callWebhook:
+      action.type === ActionType.CallWebhook ? createCallWebhookArgs(action.callWebhook) : null,
   };
 };
 
-export const createCallWebhookArgs = (webhook: WebhookSchemaType | null): CallWebhookArgs | null => {
-  if (!webhook) return null;
+export const createCallWebhookArgs = (webhook: WebhookSchemaType): CallWebhookArgs => {
   return {
     name: webhook.name ?? "Webhook",
     uri: webhook.uri ?? "",

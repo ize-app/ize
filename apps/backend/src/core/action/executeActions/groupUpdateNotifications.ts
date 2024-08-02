@@ -1,14 +1,12 @@
 import { Prisma } from "@prisma/client";
 
-import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
-import { newEntitySet } from "@/core/entity/newEntitySet";
-import { GroupMembershipFields } from "@/core/flow/groupUpdateMembership/GroupMembershipFields";
+import { GroupNotificationsFields } from "@/core/flow/groupUpdateNotifications/GroupNotificationsFields";
 import { FieldDataType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
 
-export const groupUpdateMembership = async ({
+export const groupUpdateNotifications = async ({
   requestStepId,
   transaction = prisma,
 }: {
@@ -43,14 +41,14 @@ export const groupUpdateMembership = async ({
       },
     });
 
-    const members = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-      return fieldAnswer.Field.name === GroupMembershipFields.Members;
+    const webhook = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+      return fieldAnswer.Field.name === GroupNotificationsFields.Webhook;
     });
 
-    [members].forEach((field) => {
+    [webhook].forEach((field) => {
       if (!field) {
         throw new GraphQLError(
-          `Cannot find field for groupUpdateMembership request step ${requestStepId}`,
+          `Cannot find field for groupUpdateNotifications request step ${requestStepId}`,
           {
             extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
           },
@@ -58,9 +56,9 @@ export const groupUpdateMembership = async ({
       }
     });
 
-    if (members?.AnswerFreeInput[0].dataType !== FieldDataType.EntityIds)
+    if (webhook?.AnswerFreeInput[0].dataType !== FieldDataType.Webhook)
       throw new GraphQLError(
-        `Cannot find field for groupUpdateMembership request step ${requestStepId}`,
+        `Cannot find field for groupUpdateNotifications request step ${requestStepId}`,
         {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         },
@@ -73,26 +71,12 @@ export const groupUpdateMembership = async ({
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    const entityIds = JSON.parse(members.AnswerFreeInput[0].value) as string[];
-
-    await checkEntitiesForCustomGroups({
-      entityIds: entityIds,
-      transaction,
-    });
-
-    const entitySetId = await newEntitySet({
-      entityArgs: entityIds.map((id) => ({
-        id,
-      })),
-      transaction,
-    });
-
     await transaction.groupCustom.update({
       where: {
         id: customGroupId,
       },
       data: {
-        entitySetId,
+        notificationWebhookId: webhook.AnswerFreeInput[0].value,
       },
     });
 

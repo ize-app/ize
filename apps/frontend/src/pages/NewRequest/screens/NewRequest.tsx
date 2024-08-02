@@ -35,7 +35,7 @@ export const NewRequest = () => {
     try {
       // console.log("args are", createNewRequestMutationArgs(formState));
       await mutate({
-        variables: { request: createNewRequestMutationArgs(formState) },
+        variables: { request: await createNewRequestMutationArgs(formState) },
       });
 
       setSnackbarOpen(true);

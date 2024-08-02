@@ -10,11 +10,13 @@ export const newActionConfig = async ({
   actionArgs,
   responseFieldSet,
   locked,
+  flowVersionId,
   transaction,
 }: {
   actionArgs: ActionArgs;
   locked: boolean;
   responseFieldSet: FieldSetPrismaType | undefined | null;
+  flowVersionId: string;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   let filterOptionId: string | null | undefined = null;
@@ -45,8 +47,8 @@ export const newActionConfig = async ({
     if (!actionArgs.callWebhook) throw Error("newActionConfig: Missing action config");
 
     webhookId = await createWebhook({
-      name: actionArgs.callWebhook.name,
-      uri: actionArgs.callWebhook.uri,
+      args: actionArgs.callWebhook,
+      flowVersionId,
       transaction,
     });
   }

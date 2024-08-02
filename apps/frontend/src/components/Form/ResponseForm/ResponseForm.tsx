@@ -72,7 +72,7 @@ export const ResponseForm = ({
       variables: {
         response: {
           requestStepId,
-          answers: createFieldAnswersArgs(data.responseFields),
+          answers: await createFieldAnswersArgs(data.responseFields),
         },
       },
     });

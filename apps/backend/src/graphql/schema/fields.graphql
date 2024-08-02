@@ -96,7 +96,7 @@ type FlowsFieldAnswer {
 
 type WebhookFieldAnswer {
   fieldId: String!
-  webhook: CallWebhook!
+  uri: String!
 }
 
 type UserFieldAnswer {
