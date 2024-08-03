@@ -6,6 +6,7 @@ import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 export const newCustomGroupFormFieldsDefault: NewCustomGroupSchemaType = {
   members: [],
   name: "",
+  notification: {},
 };
 
 export function useNewCustomGroupWizardState() {

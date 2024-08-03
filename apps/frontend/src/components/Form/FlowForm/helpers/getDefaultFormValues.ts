@@ -8,12 +8,14 @@ export const defaultStepFormValues: StepSchemaType = {
   request: {
     permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],
+    fieldsLocked: false,
   },
   response: {
     permission: { type: PermissionType.Anyone, entities: [] },
     fields: [],
+    fieldsLocked: false,
   },
   result: [],
-  action: { type: ActionType.None },
+  action: { type: ActionType.None, locked: false },
   expirationSeconds: 259200,
 };
