@@ -35,7 +35,7 @@ const UnauthenticatedHome = () => {
       >
         <img src={izeLogoUrl} style={{ width: "200px" }} />
         <Typography textAlign={"center"}>
-          Evolutionary, cross-tool, <br /> collaborative workflows
+          Collective action and attention
           <br />
         </Typography>
         <Button
