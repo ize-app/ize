@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
@@ -43,6 +44,12 @@ export const Setup = () => {
             gap: "12px",
           }}
         >
+          <Typography variant="description">
+            Groups are 100% collaboratively managed organisms. There is no admin, no boss - just you
+            and your buddies determining how you want to collaborate together. <br />
+            <br />
+            To start off, let&apos;s get some basic information about your new group.
+          </Typography>
           <TextField<NewCustomGroupSchemaType>
             name="name"
             control={formMethods.control}
@@ -70,7 +77,7 @@ export const Setup = () => {
             control={formMethods.control}
             name={"members"}
             hideCustomGroups={true}
-            label={"Group members"}
+            label={"Group members *"}
             setFieldValue={formMethods.setValue}
             getFieldValues={formMethods.getValues}
           />

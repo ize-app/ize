@@ -1,3 +1,3 @@
 export enum GroupMembershipFields {
-  Members = "Members",
+  Members = "Membership definition",
 }

@@ -22,7 +22,7 @@ export const newGroupUpdateNotificationsFlowVersion = async ({
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
-      name: "Update group notification settings",
+      name: "Change notification settings",
       totalSteps: 1,
       reusable: true,
       active,

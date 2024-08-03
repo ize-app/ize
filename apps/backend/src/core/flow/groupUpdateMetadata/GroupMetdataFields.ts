@@ -1,4 +1,4 @@
 export enum GroupMetadataFields {
-  Name = "Name",
-  Description = "Description",
+  Name = "Group name",
+  Description = "Group description",
 }

@@ -10,8 +10,7 @@ export const getFlowName = ({
   if (flowNameOverride) {
     return flowNameOverride;
   } else if (ownerGroupName) {
-    // return flowName + ` for ${ownerGroupName}`;
-    return flowName;
+    return `${ownerGroupName}: ${flowName}`;
   } else {
     return flowName;
   }

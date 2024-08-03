@@ -1,4 +1,4 @@
 export enum GroupWatchFlowFields {
-  WatchFlow = "Flows to watch",
-  UnwatchFlow = "Flows to stop watching",
+  WatchFlow = "Flows for group to watch",
+  UnwatchFlow = "Flows for group to stop watching",
 }

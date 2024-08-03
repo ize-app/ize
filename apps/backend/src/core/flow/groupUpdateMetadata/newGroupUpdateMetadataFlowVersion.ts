@@ -22,7 +22,7 @@ export const newGroupUpdateMetadataFlowVersion = async ({
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
-      name: "Update group metadata",
+      name: "Update metadata",
       totalSteps: 1,
       reusable: true,
       active,

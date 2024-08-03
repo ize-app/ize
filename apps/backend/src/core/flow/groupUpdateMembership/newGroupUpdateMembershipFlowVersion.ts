@@ -22,7 +22,7 @@ export const newGroupUpdateMembershipFlowVersion = async ({
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
-      name: "Add/remove group members",
+      name: "Add/remove members",
       totalSteps: 1,
       reusable: true,
       active,

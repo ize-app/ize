@@ -69,11 +69,10 @@ export const Request = () => {
   // console.log(request);
 
   if (request) {
-    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete ?? false;
-    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
+    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
+    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response;
     userResponses = request.steps[request.currentStepIndex].userResponses;
-    allowMultipleResponses =
-      request.flow.steps[request.currentStepIndex].allowMultipleResponses ?? false;
+    allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
 
   const theme = useTheme();
