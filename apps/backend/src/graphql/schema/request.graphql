@@ -11,8 +11,10 @@ type Query {
     limit: Int!
     userOnly: Boolean!
     flowId: String
+    groupId: String
     searchQuery: String!
-    filter: RequestStepFilter!
+    statusFilter: RequestStepStatusFilter!
+    respondPermissionFilter: RequestStepRespondPermissionFilter!
   ): [RequestStepSummary!]!
 }
 
@@ -49,10 +51,16 @@ enum Status {
   Cancelled
 }
 
-enum RequestStepFilter {
+enum RequestStepStatusFilter {
   All
   Open
   Closed
+}
+
+enum RequestStepRespondPermissionFilter {
+  All
+  RespondPermission
+  NoRespondPermission
 }
 
 type Request {

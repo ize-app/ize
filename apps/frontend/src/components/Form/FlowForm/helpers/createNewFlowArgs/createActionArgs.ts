@@ -1,3 +1,4 @@
+import { WebhookSchemaType } from "@/components/Form/formValidation/webhook";
 import { ActionArgs, ActionType, CallWebhookArgs, FieldType } from "@/graphql/generated/graphql";
 
 import { ActionSchemaType } from "../../formValidation/action";
@@ -32,14 +33,20 @@ export const createActionArgs = (
   //@ts-expect-error TODO
   delete action.filterOptionId;
   return {
+    locked: action.locked,
     type: action.type,
     filterOptionIndex,
     filterResponseFieldIndex,
-    callWebhook: createCallWebhookArgs(action),
+    callWebhook:
+      action.type === ActionType.CallWebhook ? createCallWebhookArgs(action.callWebhook) : null,
   };
 };
 
-const createCallWebhookArgs = (action: ActionSchemaType): CallWebhookArgs | null => {
-  if (action.type !== ActionType.CallWebhook) return null;
-  return { name: action.callWebhook.name, uri: action.callWebhook.uri };
+export const createCallWebhookArgs = (webhook: WebhookSchemaType): CallWebhookArgs => {
+  return {
+    name: webhook.name ?? "Webhook",
+    uri: webhook.uri ?? "",
+    originalUri: webhook.originalUri,
+    webhookId: webhook.webhookId,
+  };
 };

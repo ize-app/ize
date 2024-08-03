@@ -13,9 +13,11 @@ interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
   multiline?: boolean;
+  rows?: number;
   size?: "small" | "medium";
   sx?: SxProps;
   display?: boolean;
+  helperText?: string;
 }
 
 export const TextField = <T extends FieldValues>({
@@ -27,11 +29,14 @@ export const TextField = <T extends FieldValues>({
   size = "small",
   multiline = false,
   variant = "outlined",
+  rows,
   endAdornment,
   startAdornment,
   placeholderText,
   display = true,
+  helperText,
   sx = {},
+  ...props
 }: TextFieldProps<T>) => {
   const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
@@ -40,7 +45,12 @@ export const TextField = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl sx={styles} error={Boolean(error)} required={required}>
+        <FormControl
+          sx={styles}
+          error={Boolean(error)}
+          required={required}
+          disabled={props.disabled}
+        >
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
           <MuiTextField
             {...field}
@@ -50,8 +60,10 @@ export const TextField = <T extends FieldValues>({
             required={required}
             multiline={multiline}
             size={size}
+            rows={rows}
             placeholder={placeholderText}
             error={Boolean(error)}
+            disabled={props.disabled}
             InputProps={{
               endAdornment,
               startAdornment,
@@ -59,10 +71,10 @@ export const TextField = <T extends FieldValues>({
           />
           <FormHelperText
             sx={{
-              color: "error.main",
+              color: error?.message ? "error.main" : undefined,
             }}
           >
-            {error?.message ?? ""}
+            {error?.message ?? helperText ?? ""}
           </FormHelperText>
         </FormControl>
       )}

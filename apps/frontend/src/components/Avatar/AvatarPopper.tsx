@@ -21,6 +21,7 @@ export const AvatarPopper = ({
     anchorEl={anchorEl}
     sx={{
       pointerEvents: "none",
+      zIndex: 5000,
     }}
     transition
   >

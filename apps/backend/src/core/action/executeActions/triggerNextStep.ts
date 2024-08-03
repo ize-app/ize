@@ -1,7 +1,9 @@
 import { Prisma } from "@prisma/client";
 
+import { sendGroupNotifications } from "@/core/notification/sendGroupNotifications";
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
+import { userResolver } from "@/core/user/userResolver";
 import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -117,6 +119,15 @@ export const triggerNextStep = async ({
       data: {
         currentRequestStepId: nextRequestStep.id,
       },
+    });
+
+    sendGroupNotifications({
+      flowId: reqData.Request.FlowVersion.flowId,
+      requestId: reqData.Request.id,
+      flowTitle: reqData.Request.FlowVersion.name, // TODO: include name of flow being evolved if evolve request
+      requestTitle: reqData.Request.name,
+      stepIndex: reqData.Request.RequestSteps.length,
+      creator: userResolver(reqData.Request.Creator),
     });
 
     return true;

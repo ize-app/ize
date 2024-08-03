@@ -13,6 +13,7 @@ interface FlowStageProps extends StageProps {
   deleteHandler?: () => void;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
   hasError?: boolean;
+  disableDelete?: boolean;
 }
 
 export const FlowStage = ({
@@ -23,6 +24,7 @@ export const FlowStage = ({
   deleteHandler,
   entities = [],
   hasError = false,
+  disableDelete = false,
   sx = {},
   icon,
 }: FlowStageProps) => {
@@ -54,7 +56,7 @@ export const FlowStage = ({
       >
         <Typography variant="label">{label}</Typography>
         {entities.length > 0 && <AvatarGroup avatars={entities} />}
-        {deleteHandler && <StageMenu deleteHandler={deleteHandler} />}
+        {deleteHandler && !disableDelete && <StageMenu deleteHandler={deleteHandler} />}
       </Box>
     </Stage>
   );

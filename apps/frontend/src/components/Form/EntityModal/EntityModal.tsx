@@ -10,7 +10,6 @@ import * as z from "zod";
 import { attachDiscord } from "@/components/Auth/attachDiscord";
 import botInviteUrl from "@/components/Auth/botInviteUrl";
 import { DiscordLogoSvg } from "@/components/icons";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import {
   Blockchain,
   DiscordServerRolesDocument,
@@ -20,6 +19,7 @@ import {
   NewEntitiesDocument,
   NewEntityTypes,
 } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { HatsTokenCard, NftCard } from "./NftCard";
 import { Switch, TextField } from "../formFields";

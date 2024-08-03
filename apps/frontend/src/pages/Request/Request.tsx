@@ -15,8 +15,8 @@ import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 
 import Loading from "../../components/Loading";
-import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
+import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -69,11 +69,10 @@ export const Request = () => {
   // console.log(request);
 
   if (request) {
-    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete ?? false;
-    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response ?? false;
+    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
+    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response;
     userResponses = request.steps[request.currentStepIndex].userResponses;
-    allowMultipleResponses =
-      request.flow.steps[request.currentStepIndex].allowMultipleResponses ?? false;
+    allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
 
   const theme = useTheme();
@@ -106,7 +105,7 @@ export const Request = () => {
                     : null,
               })}
             >
-              {request.flow.name}
+              {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
             </Link>
           </Typography>
         </Box>

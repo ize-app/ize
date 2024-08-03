@@ -9,7 +9,8 @@ import { ErrorBoundary } from "@/pages/ErrorBoundary";
 import * as EvolveFlow from "@/pages/EvolveFlow";
 import { Flow } from "@/pages/Flow/Flow";
 import { Flows } from "@/pages/Flows/Flows";
-import { Group } from "@/pages/Groups/Group";
+import { Group } from "@/pages/Group/Group";
+import { Groups } from "@/pages/Groups/Groups";
 import { Home } from "@/pages/Home";
 import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as NewFlow from "@/pages/NewFlow";
@@ -146,6 +147,11 @@ export const router = createBrowserRouter([
         path: Routes.Route.Group,
         errorElement: <ErrorBoundary />,
         element: <Group />,
+      },
+      {
+        path: Routes.Route.Groups,
+        errorElement: <ErrorBoundary />,
+        element: <Groups />,
       },
       {
         path: Routes.Route.Request,

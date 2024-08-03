@@ -1,4 +1,6 @@
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import Diversity2Icon from "@mui/icons-material/Diversity2";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import { Box, Toolbar } from "@mui/material";
@@ -61,7 +63,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
               }}
             >
               <ListItemIcon>
-                <AccountTreeIcon />
+                <CheckCircleOutlineIcon />
               </ListItemIcon>
               <ListItemText primary={"Requests"} />
             </ListItemButton>
@@ -76,6 +78,18 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 <AccountTreeIcon />
               </ListItemIcon>
               <ListItemText primary={"Flows"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                navigate(Route.Groups);
+              }}
+            >
+              <ListItemIcon>
+                <Diversity2Icon />
+              </ListItemIcon>
+              <ListItemText primary={"Groups"} />
             </ListItemButton>
           </ListItem>
         </List>

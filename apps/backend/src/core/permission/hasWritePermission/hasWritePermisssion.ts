@@ -6,7 +6,7 @@ import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { hasDiscordRoleGroupPermission } from "./hasDiscordRoleGroupPermission";
 import { hasIdentityPermission } from "./hasIdentityPermission";
 import { hasNftGroupPermission } from "./hasNftGroupPermission";
-import { resolveEntitySet } from "./resolveEntitySet";
+import { resolveCustomGroupEntitySet } from "./resolveEntitySet";
 import { prisma } from "../../../prisma/client";
 import { PermissionPrismaType } from "../permissionPrismaTypes";
 
@@ -32,7 +32,7 @@ export const hasWritePermission = async ({
 
   if (permission.userId === context.currentUser.id) return true;
 
-  const { discordRoleGroups, nftGroups, identities } = await resolveEntitySet({
+  const { discordRoleGroups, nftGroups, identities } = await resolveCustomGroupEntitySet({
     permission,
     transaction,
   });

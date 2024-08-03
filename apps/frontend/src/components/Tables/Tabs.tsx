@@ -1,4 +1,4 @@
-import { Box, Tabs as MuiTabs, Tab } from "@mui/material";
+import { Box, Tabs as MuiTabs, SxProps, Tab } from "@mui/material";
 import * as React from "react";
 
 function a11yProps(index: number) {
@@ -10,18 +10,19 @@ function a11yProps(index: number) {
 
 export interface TabProps {
   title: string;
-  content: JSX.Element;
+  content: JSX.Element | null;
 }
 
 export interface TabsProps {
   tabs: TabProps[];
   currentTabIndex: number;
   handleChange: (_event: React.SyntheticEvent, newValue: number) => void;
+  sx?: SxProps;
 }
 
-export const Tabs = ({ tabs, currentTabIndex, handleChange }: TabsProps): JSX.Element => {
+export const Tabs = ({ tabs, currentTabIndex, handleChange, sx = {} }: TabsProps): JSX.Element => {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", ...sx }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <MuiTabs value={currentTabIndex} onChange={handleChange} aria-label="tabs">
           {tabs.map((tab: TabProps, index) => {

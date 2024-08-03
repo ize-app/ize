@@ -1,4 +1,3 @@
-import CheckCircleIcon from "@mui/icons-material/CheckCircleOutlined";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,15 +6,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import {
-  AvatarsCell,
-  StatusCell,
-  TableCellHideable,
-  TwoTierCell,
-} from "@/components/Tables/TableCells";
+import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { RequestStepSummaryFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
+
+import { ExpirationStatus } from "./tableComponents/ExpirationStatus";
+import { RequestStepTitle } from "./tableComponents/RequestStepTitle";
+import { ResponseStatus } from "./tableComponents/ResponseStatus";
 
 export const RequestStepsTable = ({
   requestSteps,
@@ -29,15 +27,11 @@ export const RequestStepsTable = ({
           <TableRow>
             <TableCellHideable sx={{ minWidth: "140px" }}>Request</TableCellHideable>
             <TableCellHideable align="center" width={"100px"}>
-              Status
+              Expiration
             </TableCellHideable>
             <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
               Response
             </TableCellHideable>
-            <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-              Creator
-            </TableCellHideable>
-            {/* <TableCell align="right" width={"100px"}></TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -53,11 +47,6 @@ export const RequestStepsTable = ({
 const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragment }) => {
   const navigate = useNavigate();
 
-  const stepProgress =
-    requestStep.totalSteps > 1
-      ? ` (Step ${requestStep.stepIndex + 1} of ${requestStep.totalSteps})`
-      : ``;
-
   return (
     <>
       <TableRow
@@ -70,24 +59,25 @@ const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragme
           )
         }
       >
-        <TwoTierCell
-          component="th"
-          scope="row"
-          align="left"
-          topText={requestStep.flowName}
-          bottomText={requestStep.requestName + stepProgress}
-        />
-        <StatusCell
-          expirationDate={new Date(requestStep.expirationDate)}
-          responseComplete={requestStep.responseComplete}
-          alreadyResponded={false}
-        />
-        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-          {requestStep.userResponded ? (
-            <CheckCircleIcon color={"success"} fontSize="small" />
-          ) : null}
+        <TableCellHideable component="th" scope="row" align="left">
+          <RequestStepTitle
+            flowName={requestStep.flowName}
+            requestName={requestStep.requestName}
+            creator={requestStep.creator}
+            totalSteps={requestStep.totalSteps}
+            stepIndex={requestStep.stepIndex}
+          />
         </TableCellHideable>
-        <AvatarsCell align="center" avatars={[requestStep.creator]} hideOnSmallScreen={true} />
+        <TableCellHideable align="center" width={"160px"}>
+          <ExpirationStatus expirationDate={new Date(requestStep.expirationDate)} />
+        </TableCellHideable>
+        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
+          <ResponseStatus
+            userRespondPermission={requestStep.userRespondPermission}
+            userResponded={requestStep.userResponded}
+            responseComplete={requestStep.responseComplete}
+          />
+        </TableCellHideable>
       </TableRow>
     </>
   );

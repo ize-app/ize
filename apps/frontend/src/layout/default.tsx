@@ -10,7 +10,7 @@ import LoginModal from "@/components/Auth/LoginModal";
 import { Menu } from "@/components/Menu/Menu";
 import { NavBar } from "@/components/Menu/NavBar";
 import { UserSetupModal } from "@/components/UserSetupModal";
-import { CurrentUserContext } from "@/contexts/current_user_context";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import Head from "./Head";
 import Snackbar from "../components/Snackbar";

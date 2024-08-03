@@ -21,16 +21,20 @@ query getRequestSteps(
   $limit: Int!
   $userOnly: Boolean!
   $flowId: String
+  $groupId: String
   $searchQuery: String!
-  $filter: RequestStepFilter!
+  $statusFilter: RequestStepStatusFilter!
+  $respondPermissionFilter: RequestStepRespondPermissionFilter!
 ) {
   getRequestSteps(
     cursor: $cursor
     limit: $limit
     userOnly: $userOnly
     flowId: $flowId
+    groupId: $groupId
     searchQuery: $searchQuery
-    filter: $filter
+    statusFilter: $statusFilter
+    respondPermissionFilter: $respondPermissionFilter
   ) {
     ...RequestStepSummary
   }

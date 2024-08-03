@@ -51,6 +51,9 @@ enum FieldDataType {
   Date
   DateTime
   FlowVersionId
+  EntityIds
+  FlowIds
+  Webhook
 }
 
 enum FieldType {
@@ -64,7 +67,12 @@ enum FieldOptionsSelectionType {
   Select
 }
 
-union FieldAnswer = OptionFieldAnswer | FreeInputFieldAnswer
+union FieldAnswer =
+  | OptionFieldAnswer
+  | FreeInputFieldAnswer
+  | EntitiesFieldAnswer
+  | FlowsFieldAnswer
+  | WebhookFieldAnswer
 
 type OptionFieldAnswer {
   fieldId: String!
@@ -74,6 +82,21 @@ type OptionFieldAnswer {
 type FreeInputFieldAnswer {
   fieldId: String!
   value: String!
+}
+
+type EntitiesFieldAnswer {
+  fieldId: String!
+  entities: [Entity!]!
+}
+
+type FlowsFieldAnswer {
+  fieldId: String!
+  flows: [FlowSummary!]!
+}
+
+type WebhookFieldAnswer {
+  fieldId: String!
+  uri: String!
 }
 
 type UserFieldAnswer {

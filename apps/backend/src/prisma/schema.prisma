@@ -9,18 +9,20 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(uuid()) @db.Uuid
-  stytchId     String       @unique @map("stytch_id")
-  name         String       @default("")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
-  Group        Group[]
-  Identities   Identity[]
-  Oauths       Oauths[]
-  Request      Request[]
-  Response     Response[]
-  Permission   Permission[]
-  CreatedFlows Flow[]
+  id                 String               @id @default(uuid()) @db.Uuid
+  stytchId           String               @unique @map("stytch_id")
+  name               String               @default("")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  Group              Group[]
+  Identities         Identity[]
+  Oauths             Oauths[]
+  Request            Request[]
+  Response           Response[]
+  Permission         Permission[]
+  CreatedFlows       Flow[]
+  UsersWatchedGroups UsersWatchedGroups[]
+  UsersWatchedFlows  UsersWatchedFlows[]
 
   @@map("users")
 }
@@ -33,13 +35,12 @@ model Identity {
   // TODO make this field required
   entityId  String   @unique @map("entity_id") @db.Uuid
 
-  User                        User?                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  IdentityEmail               IdentityEmail?
-  IdentityBlockchain          IdentityBlockchain?
-  IdentityDiscord             IdentityDiscord?
-  IdentitiesGroups            IdentityGroup[]
-  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
-  Entity                      Entity                      @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  User               User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  IdentityEmail      IdentityEmail?
+  IdentityBlockchain IdentityBlockchain?
+  IdentityDiscord    IdentityDiscord?
+  IdentitiesGroups   IdentityGroup[]
+  Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("identities")
 }
@@ -122,20 +123,22 @@ model Oauths {
 }
 
 model Group {
-  id                      String                   @id @default(uuid()) @db.Uuid
-  creator                 User                     @relation(fields: [creatorId], references: [id])
-  creatorId               String                   @map("creator_id") @db.Uuid
-  entityId                String                   @unique @map("entity_id") @db.Uuid
-  createdAt               DateTime                 @default(now()) @map("created_at")
-  updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at")
-  activeAt                DateTime?
-  deactivatedat           DateTime?
-  Entity                  Entity                   @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  GroupDiscordRole        GroupDiscordRole?
-  GroupNft                GroupNft?
-  IdentitiesGroups        IdentityGroup[]
-  CustomGroupMemberGroups CustomGroupMemberGroup[]
-  GroupCustom             GroupCustom?
+  id                 String               @id @default(uuid()) @db.Uuid
+  creator            User                 @relation(fields: [creatorId], references: [id])
+  creatorId          String               @map("creator_id") @db.Uuid
+  entityId           String               @unique @map("entity_id") @db.Uuid
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  activeAt           DateTime?
+  deactivatedat      DateTime?
+  Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  GroupDiscordRole   GroupDiscordRole?
+  GroupNft           GroupNft?
+  IdentitiesGroups   IdentityGroup[]
+  GroupCustom        GroupCustom?
+  UsersWatchedGroups UsersWatchedGroups[]
+  OwnedFlows         Flow[]
+  GroupsWatchedFlows GroupsWatchedFlows[]
 
   @@map("groups")
 }
@@ -174,35 +177,18 @@ enum Blockchain {
 }
 
 model GroupCustom {
-  id      String @id @default(uuid()) @db.Uuid
-  name    String
-  groupId String @unique @map("group_id") @db.Uuid
+  id                    String  @id @default(uuid()) @db.Uuid
+  name                  String
+  description           String?
+  groupId               String  @unique @map("group_id") @db.Uuid
+  entitySetId           String  @map("entity_set_id") @db.Uuid
+  notificationWebhookId String? @map("notification_webhook_id") @db.Uuid
 
-  group                       Group                       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  CustomGroupMemberIdentities CustomGroupMemberIdentity[]
-  CustomGroupMemberGroups     CustomGroupMemberGroup[]
+  MemberEntitySet EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
+  group           Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Webhook         Webhook?  @relation(fields: [notificationWebhookId], references: [id], onDelete: Cascade)
 
   @@map("groups_custom")
-}
-
-model CustomGroupMemberGroup {
-  groupId       String      @map("group_id") @db.Uuid
-  groupCustomId String      @map("group_custom_id") @db.Uuid
-  Group         Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
-
-  @@unique([groupId, groupCustomId])
-  @@map("custom_group_group_members")
-}
-
-model CustomGroupMemberIdentity {
-  identityId    String      @map("identity_id") @db.Uuid
-  groupCustomId String      @map("group_custom_id") @db.Uuid
-  Identity      Identity    @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  GroupCustom   GroupCustom @relation(fields: [groupCustomId], references: [id], onDelete: Cascade)
-
-  @@unique([identityId, groupCustomId])
-  @@map("custom_group_identity_members")
 }
 
 model GroupNft {
@@ -250,10 +236,15 @@ model DiscordServer {
 enum FlowType {
   Custom
   Evolve
+  GroupUpdateMetadata
+  GroupUpdateMembership
+  GroupWatchFlow
+  GroupUpdateNotifications
 }
 
 model Flow {
   id        String   @id @default(uuid()) @db.Uuid
+  groupId   String?  @map("custom_group_id") @db.Uuid
   type      FlowType
   creatorId String   @map("creator_id") @db.Uuid
 
@@ -262,10 +253,13 @@ model Flow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Creator                     User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  CurrentFlowVersion          FlowVersion?  @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
-  FlowVersions                FlowVersion[] @relation("FlowToAllFlowVersions")
-  EvolveRightsForFlowVersions FlowVersion[] @relation("EvolveFlowToFlowVersions")
+  Creator                     User                 @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  OwnerGroup                  Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
+  FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
+  EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
+  GroupsWatchedFlows          GroupsWatchedFlows[]
+  UsersWatchedFlows           UsersWatchedFlows[]
 
   @@map("flows")
 }
@@ -356,6 +350,7 @@ model EntitySet {
   Permissions       Permission[]
   createdAt         DateTime            @default(now()) @map("created_at")
   EntitySetEntities EntitySetEntities[]
+  GroupCustom       GroupCustom[]
 
   @@map("entity_sets")
 }
@@ -388,6 +383,8 @@ model Entity {
 model FieldSet {
   id                              String            @id @default(uuid()) @db.Uuid
   createdAt                       DateTime          @default(now()) @map("created_at")
+  // this means that all fields in the field set cannot be changed via flow evolution
+  locked                          Boolean           @default(false)
   StepsRequestsUsingThisFieldSet  Step[]            @relation("RequestFieldSet")
   StepsResponsesUsingThisFieldSet Step[]            @relation("ResponseFieldSet")
   FieldSetFields                  FieldSetsFields[]
@@ -415,6 +412,9 @@ enum FieldDataType {
   Date
   DateTime
   FlowVersionId
+  EntityIds
+  FlowIds
+  Webhook
 }
 
 enum FieldType {
@@ -640,17 +640,22 @@ enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+  GroupUpdateMetadata
+  GroupUpdateMembership
+  GroupWatchFlow
+  GroupUpdateNotifications
 
   @@map("ActionType")
 }
 
 model Action {
-  id             String     @id @default(uuid()) @db.Uuid
-  type           ActionType
-  webhookId      String?    @map("webhook_id") @db.Uuid
-  filterOptionId String?    @map("filter_option_id") @db.Uuid
-  createdAt      DateTime   @default(now()) @map("created_at")
-
+  id                String       @id @default(uuid()) @db.Uuid
+  type              ActionType
+  webhookId         String?      @map("webhook_id") @db.Uuid
+  filterOptionId    String?      @map("filter_option_id") @db.Uuid
+  createdAt         DateTime     @default(now()) @map("created_at")
+  // locked here means that the ActionType is locked. Other parts of the action can still be changed
+  locked            Boolean      @default(false)
   Steps             Step[]       @relation("StepsWithAction")
   FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
   Webhook           Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
@@ -661,12 +666,14 @@ model Action {
 }
 
 model Webhook {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  uri       String
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  uri        String
+  uriPreview String   @map("uri_preview")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  Actions Action[]
+  Actions     Action[]
+  GroupCustom GroupCustom[]
 
   @@map("webhooks")
 }
@@ -820,4 +827,40 @@ model ResultItems {
   Option FieldOption? @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
 
   @@map("result_items")
+}
+
+model UsersWatchedGroups {
+  userId  String  @map("user_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@map("users_watched_groups")
+}
+
+model UsersWatchedFlows {
+  userId  String  @map("user_id") @db.Uuid
+  flowId  String  @map("flow_id") @db.Uuid
+  watched Boolean
+
+  Flow Flow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, flowId])
+  @@map("users_watched_flows")
+}
+
+model GroupsWatchedFlows {
+  flowId  String  @map("flow_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([flowId, groupId])
+  @@map("groups_watched_flows")
 }

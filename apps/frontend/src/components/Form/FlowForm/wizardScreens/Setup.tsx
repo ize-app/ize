@@ -17,16 +17,16 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { WizardNav } from "@/components/Wizard";
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
 import { StreamlinedTextField } from "../../formFields";
+import { ActionForm } from "../components/ActionForm/ActionForm";
 import { EvolveFlowForm } from "../components/EvolveFlowForm";
 import { StepForm } from "../components/StepForm";
 import { TriggerForm } from "../components/TriggerForm";
-import { WebhookForm } from "../components/WebhookForm";
 import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType, flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
@@ -69,7 +69,6 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
-  // console.log("form state is ", useFormMethods.getValues());
   // console.log("errors are ", useFormMethods.formState.errors);
 
   const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
@@ -84,9 +83,14 @@ export const Setup = () => {
     onNext();
   };
 
-  const hasWebhook =
-    useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action.type`) ===
-    ActionType.CallWebhook;
+  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const displayAction =
+    action &&
+    action.type &&
+    action.type !== ActionType.TriggerStep &&
+    action.type !== ActionType.None
+      ? true
+      : false;
 
   return (
     <form style={{ height: "100%" }}>
@@ -114,7 +118,13 @@ export const Setup = () => {
               icon={PlayCircleOutlineOutlinedIcon}
             />
             <StageConnectorButton />
+            {/* TODO: This logic is brittle as hell */}
             {stepsArrayMethods.fields.map((item, index) => {
+              const responseFieldLocked = useFormMethods.getValues(
+                `steps.${index}.response.fieldsLocked`,
+              );
+              const disableDelete =
+                index === 0 && (stepsArrayMethods.fields.length > 1 || !displayAction);
               return (
                 (index > 0 || hasStep0Response) && (
                   <Box key={item.id}>
@@ -122,18 +132,20 @@ export const Setup = () => {
                       icon={Diversity3OutlinedIcon}
                       label={"Collaboration " + (index + 1).toString()}
                       key={"stage-" + item.id.toString() + index.toString()}
-                      deleteHandler={
-                        index > 0
-                          ? () => {
-                              stepsArrayMethods.remove(index);
-                              setSelectedId("trigger0");
-                            }
-                          : () => {
-                              console.log(`deleting step ${index} response`);
-                              useFormMethods.setValue(`steps.${index}.response`, undefined);
-                              setSelectedId("trigger0");
-                            }
-                      }
+                      deleteHandler={async () => {
+                        if (index === 0) {
+                          if (disableDelete) return;
+                          const stepValues = useFormMethods.getValues(`steps.${index}`);
+                          useFormMethods.setValue(`steps.${index}`, {
+                            ...stepValues,
+                            response: undefined,
+                          });
+                        } else {
+                          stepsArrayMethods.remove(index);
+                          setSelectedId("trigger0");
+                        }
+                      }}
+                      disableDelete={responseFieldLocked || disableDelete}
                       hasError={!!useFormMethods.formState.errors.steps?.[index]}
                       id={"step" + index.toString()}
                       setSelectedId={setSelectedId}
@@ -146,7 +158,7 @@ export const Setup = () => {
                 )
               );
             })}
-            {!hasWebhook ? (
+            {!displayAction ? (
               <Box
                 sx={{
                   display: "flex",
@@ -174,6 +186,7 @@ export const Setup = () => {
                       useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
                         filterOptionId: DefaultOptionSelection.None,
                         type: ActionType.TriggerStep,
+                        locked: false,
                       });
                       // navigate to newly created step
                       setSelectedId(`step${stepsArrayMethods.fields.length}`);
@@ -193,31 +206,35 @@ export const Setup = () => {
                 />
               </Box>
             ) : (
-              <FlowStage
-                label={actionProperties[ActionType.CallWebhook].label}
-                id={"webhook"}
-                icon={actionProperties[ActionType.CallWebhook].icon}
-                setSelectedId={setSelectedId}
-                selectedId={selectedId}
-                deleteHandler={() => {
-                  setSelectedId("trigger0");
-                  useFormMethods.setValue(
-                    `steps.${stepsArrayMethods.fields.length - 1}.action`,
-                    undefined,
-                  );
-                }}
-                sx={{ marginBottom: "16px" }}
-                hasError={
-                  !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
-                    ?.action
-                }
-              />
+              action && (
+                <FlowStage
+                  label={actionProperties[action.type].label}
+                  id={"webhook"}
+                  icon={actionProperties[action.type].icon}
+                  setSelectedId={setSelectedId}
+                  selectedId={selectedId}
+                  disableDelete={action.locked || !hasStep0Response}
+                  deleteHandler={() => {
+                    setSelectedId("trigger0");
+                    useFormMethods.setValue(
+                      `steps.${stepsArrayMethods.fields.length - 1}.action`,
+                      undefined,
+                    );
+                  }}
+                  sx={{ marginBottom: "16px" }}
+                  hasError={
+                    !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
+                      ?.action
+                  }
+                />
+              )
             )}
             <FlowStage
               label={"Flow evolution"}
               key={"evolve"}
               hasError={!!useFormMethods.formState.errors.evolve}
               id={"evolve"}
+              disableDelete={true}
               icon={actionProperties[ActionType.EvolveFlow].icon}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
@@ -250,11 +267,12 @@ export const Setup = () => {
                 />
               );
             })}
-            {hasWebhook && (
-              <WebhookForm
+            {action && displayAction && (
+              <ActionForm
                 formMethods={useFormMethods}
                 formIndex={stepsArrayMethods.fields.length - 1}
                 show={selectedId === "webhook"}
+                action={action}
               />
             )}
             <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />

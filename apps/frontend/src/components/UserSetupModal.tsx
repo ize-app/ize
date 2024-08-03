@@ -7,8 +7,8 @@ import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { CurrentUserContext } from "@/contexts/current_user_context";
 import { UpdateProfileDocument } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { UserSettingsSchemaType, userSettingsSchema } from "@/pages/Settings/formValidation";
 import { colors } from "@/style/style";
 

@@ -3,6 +3,10 @@ import * as z from "zod";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
+import { entityFormSchema } from "./entity";
+import { flowSummarySchema } from "./flowSummary";
+import { webhookSchema } from "./webhook";
+
 export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
 export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
 
@@ -67,6 +71,33 @@ export const evaluateMultiTypeInput = (
           path: errorPath,
         });
       return;
+    case FieldDataType.EntityIds:
+      if (!z.array(entityFormSchema).safeParse(value).success)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid groups and identities",
+          path: errorPath,
+        });
+      return;
+    case FieldDataType.FlowIds:
+      if (!z.array(flowSummarySchema).safeParse(value).success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid flows.",
+          path: errorPath,
+        });
+      }
+      return;
+    case FieldDataType.Webhook: {
+      if (!webhookSchema.safeParse(value).success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid webhook. Test this webhook successfully to continue.",
+          path: errorPath,
+        });
+      }
+      return;
+    }
     default:
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

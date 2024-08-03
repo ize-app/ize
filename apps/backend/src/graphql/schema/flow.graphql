@@ -4,7 +4,14 @@ type Mutation {
 
 type Query {
   getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
-  getFlows: [FlowSummary!]!
+  getFlows(
+    cursor: String
+    limit: Int!
+    groupId: String
+    searchQuery: String!
+    watchFilter: WatchFilter!
+    triggerPermissionFilter: FlowTriggerPermissionFilter!
+  ): [FlowSummary!]!
 }
 
 type Flow {
@@ -12,6 +19,7 @@ type Flow {
   flowId: String!
   flowVersionId: String!
   currentFlowVersionId: String
+  group: Group
   createdAt: String!
   versionCreatedAt: String!
   versionPublishedAt: String
@@ -22,16 +30,19 @@ type Flow {
   steps: [Step!]!
   flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
+  isWatched: Boolean!
 }
 
 type FlowSummary {
   flowId: String!
   name: String!
+  group: Group
   creator: User!
   createdAt: String!
   # permission to trigger first step of the flow
   requestStep0Permission: Permission!
   userPermission: UserFlowPermission!
+  isWatched: Boolean!
 }
 
 type FlowReference {
@@ -42,6 +53,10 @@ type FlowReference {
 enum FlowType {
   Custom
   Evolve
+  GroupUpdateMetadata
+  GroupUpdateMembership
+  GroupWatchFlow
+  GroupUpdateNotifications
 }
 
 type Step {
@@ -59,11 +74,13 @@ type Step {
 type RequestConfig {
   permission: Permission
   fields: [Field!]!
+  fieldsLocked: Boolean!
 }
 
 type ResponseConfig {
   permission: Permission
   fields: [Field!]!
+  fieldsLocked: Boolean!
 }
 
 type UserPermission {
@@ -100,13 +117,17 @@ input EvolveFlowArgs {
 input StepRequestArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
+  fieldsLocked: Boolean
 }
 
 input StepResponseArgs {
   fields: [FieldArgs!]!
   permission: PermissionArgs!
+  fieldsLocked: Boolean
 }
 
-input EntityArgs {
-  id: String!
+enum FlowTriggerPermissionFilter {
+  All
+  TriggerPermission
+  NoTriggerPermission
 }

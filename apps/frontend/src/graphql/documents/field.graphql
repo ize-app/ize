@@ -62,6 +62,13 @@ fragment UserFieldAnswers on UserFieldAnswers {
   }
 }
 
+fragment FlowsFieldAnswer on FlowsFieldAnswer {
+  fieldId
+  flows {
+    ...FlowSummary
+  }
+}
+
 fragment FieldAnswer on FieldAnswer {
   __typename
   ... on OptionFieldAnswer {
@@ -69,6 +76,15 @@ fragment FieldAnswer on FieldAnswer {
   }
   ... on FreeInputFieldAnswer {
     ...FreeInputFieldAnswer
+  }
+  ... on EntitiesFieldAnswer {
+    ...EntitiesFieldAnswer
+  }
+  ... on FlowsFieldAnswer {
+    ...FlowsFieldAnswer
+  }
+  ... on WebhookFieldAnswer {
+    ...WebhookFieldAnswer
   }
 }
 
@@ -84,6 +100,18 @@ fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
   value
 }
 
+fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
+  fieldId
+  entities {
+    ...EntitySummaryParts
+  }
+}
+
 fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
   optionId
+}
+
+fragment WebhookFieldAnswer on WebhookFieldAnswer {
+  fieldId
+  uri
 }

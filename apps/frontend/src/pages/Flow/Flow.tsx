@@ -8,8 +8,9 @@ import { useContext } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 import {
   EvolveFlowRoute,
   NewRequestRoute,
@@ -19,7 +20,12 @@ import {
 } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
-import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  FlowType,
+  GetFlowDocument,
+  RequestStepRespondPermissionFilter,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -50,7 +56,6 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-  console.log("flow is ", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
@@ -76,14 +81,37 @@ export const Flow = () => {
             <Typography variant={"body1"} fontWeight={600} color="primary">
               Flow
             </Typography>
-            <Typography variant={"h1"} marginTop="8px">
-              {flow.name}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <Typography variant={"h1"} margin="8px 0px">
+                {flow.name}
+              </Typography>
+
+              <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
+            </Box>
+            {flow.group && (
+              <Typography variant="description" lineHeight={"24px"}>
+                Modifies{" "}
+                <Link
+                  style={{ color: "inherit" }}
+                  to={generatePath(Route.Group, {
+                    groupId: fullUUIDToShort(flow.group.id),
+                  })}
+                >
+                  {flow.group.name}
+                </Link>
+              </Typography>
+            )}
             {isDraft && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 <Box sx={{ display: "flex", gap: "8px" }}>
                   <Chip label={"Draft"} size="small" />
-                  <Typography>
+                  <Typography variant="description">
                     Version created on {new Date(flow.versionCreatedAt).toLocaleString()}
                   </Typography>
                 </Box>
@@ -101,28 +129,26 @@ export const Flow = () => {
               </Box>
             )}
             {isCurrentFlowVersion && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <Box sx={{ display: "flex", gap: "8px" }}>
-                  <Chip label={"Active"} size="small" />
-                  {flow.versionPublishedAt && (
-                    <Typography>
-                      Most recent version published on{" "}
-                      {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
-                        year: "numeric",
-                        day: "numeric",
-                        month: "long",
-                      })}
-                    </Typography>
-                  )}
-                </Box>
+              <Box sx={{ display: "flex", gap: "8px" }}>
+                {flow.versionPublishedAt && (
+                  <Typography variant="description" lineHeight={"24px"}>
+                    Version published on{" "}
+                    {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
+                      year: "numeric",
+                      day: "numeric",
+                      month: "long",
+                    })}
+                  </Typography>
+                )}
+                <Chip label={"Active"} size="small" />
               </Box>
             )}
             {isOldVersion && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <>
                 <Box sx={{ display: "flex", gap: "8px" }}>
                   <Chip label={"Old version"} size="small" />
                   {flow.versionPublishedAt && (
-                    <Typography>
+                    <Typography variant="description" lineHeight={"24px"}>
                       This version published on{" "}
                       {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
                         year: "numeric",
@@ -132,7 +158,7 @@ export const Flow = () => {
                     </Typography>
                   )}
                 </Box>
-                <Typography>
+                <Typography variant="description" lineHeight={"24px"}>
                   This is an old version of this flow. See the{" "}
                   <Link
                     to={generatePath(Route.Flow, {
@@ -143,12 +169,13 @@ export const Flow = () => {
                     current published version of this flow.
                   </Link>
                 </Typography>
-              </Box>
+              </>
             )}
             {flow.evolve && (
-              <Box sx={{ display: "flex", alignItems: "Center", marginTop: "8px" }}>
-                <Typography>
+              <Box sx={{ display: "flex", alignItems: "Center" }}>
+                <Typography variant="description" lineHeight={"24px"}>
                   <Link
+                    style={{ color: "inherit" }}
                     to={generatePath(Route.Flow, {
                       flowId: fullUUIDToShort(flow.evolve.flowId),
                       flowVersionId: flow.evolve.currentFlowVersionId
@@ -161,8 +188,8 @@ export const Flow = () => {
                   </Link>
                 </Typography>
                 <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
-                  <IconButton size="small">
-                    <InfoOutlined fontSize="small" />
+                  <IconButton size="small" sx={{ padding: "4px" }}>
+                    <InfoOutlined sx={{ fontSize: "16px" }} />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -258,7 +285,13 @@ export const Flow = () => {
           )}
         </Box>
         <ConfigDiagramFlow flow={flow} />
-        {isCurrentFlowVersion && <RequestStepsSearch userOnly={false} flowId={flow.flowId} />}
+        {isCurrentFlowVersion && (
+          <RequestStepsSearch
+            userOnly={false}
+            flowId={flow.flowId}
+            initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
+          />
+        )}
       </Box>
     </PageContainer>
   );

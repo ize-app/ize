@@ -11,10 +11,12 @@ import { StepPrismaType } from "../flow/flowPrismaTypes";
 export const newFieldSet = async ({
   fields,
   createdSteps,
+  locked,
   transaction,
 }: {
   fields: FieldArgs[];
   createdSteps: StepPrismaType[];
+  locked: boolean;
   transaction: Prisma.TransactionClient;
 }): Promise<FieldSetPrismaType | null> => {
   if (fields.length === 0) return null;
@@ -46,6 +48,7 @@ export const newFieldSet = async ({
   const fieldSet = await transaction.fieldSet.create({
     include: fieldSetInclude,
     data: {
+      locked,
       FieldSetFields: { createMany: { data: dbFields.map((fieldId) => ({ fieldId: fieldId })) } },
     },
   });

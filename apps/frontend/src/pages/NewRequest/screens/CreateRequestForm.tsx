@@ -6,6 +6,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { EntitiesSearchField } from "@/components/Form/formFields/EntitiesSearchField";
+import { FlowsSearchField } from "@/components/Form/formFields/FlowsSearchField";
+import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import {
@@ -81,11 +84,8 @@ export const CreateRequestForm = () => {
     shouldUnregister: true,
   });
 
-  console.log("form state is ", formMethods.getValues());
-  console.log("errors are  ", formMethods.formState.errors);
-
-  // console.log("errors are", formMethods.formState.errors);
-  // console.log("formstate is ", formMethods.getValues());
+  // console.log("form state is ", formMethods.getValues());
+  // console.log("errors are  ", formMethods.formState.errors);
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev) => ({
@@ -104,6 +104,8 @@ export const CreateRequestForm = () => {
     return <Loading />;
   }
 
+  // console.log("form errors are ", formMethods.formState.errors);
+  // console.log("form state is ", formMethods.getValues());
   return loading ? (
     <Loading />
   ) : (
@@ -153,7 +155,7 @@ export const CreateRequestForm = () => {
                           key={fieldId}
                           control={formMethods.control}
                           // showLabel={false}
-
+                          required={required}
                           label={name}
                         />
                       );
@@ -165,6 +167,43 @@ export const CreateRequestForm = () => {
                           control={formMethods.control}
                           // showLabel={false}
                           label={name}
+                          required={required}
+                        />
+                      );
+                    case FieldDataType.FlowVersionId:
+                      throw Error("Flow version Id cannot be directly editted");
+                    case FieldDataType.EntityIds:
+                      return (
+                        <EntitiesSearchField<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          ariaLabel={name}
+                          hideCustomGroups={true}
+                          setFieldValue={formMethods.setValue}
+                          getFieldValues={formMethods.getValues}
+                          control={formMethods.control}
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.FlowIds:
+                      return (
+                        <FlowsSearchField<RequestSchemaType>
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          ariaLabel={name}
+                          control={formMethods.control}
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.Webhook:
+                      return (
+                        <WebhookField
+                          formMethods={formMethods}
+                          type="notification"
+                          name={`requestFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          control={formMethods.control}
+                          required={required}
                         />
                       );
                     default:

@@ -6,11 +6,17 @@ input setUpDiscordServerInput {
 type Mutation {
   newCustomGroup(inputs: CustomGroupArgs!): String!
   newEntities(entities: [NewEntityArgs!]!): [Entity!]!
+  testNotificationWebhook(uri: String!): Boolean!
 }
 
 type Query {
-  group(id: String!): Group!
-  groupsForCurrentUser: [Group!]!
+  group(id: String!): IzeGroup!
+  groupsForCurrentUser(
+    cursor: String
+    limit: Int!
+    searchQuery: String!
+    watchFilter: WatchFilter!
+  ): [Group!]!
 }
 
 enum NewEntityTypes {
@@ -70,6 +76,18 @@ type Group {
   organization: Organization
   createdAt: String!
   groupType: GroupType!
+  isMember: Boolean!
+  isWatched: Boolean!
+}
+
+# IzeGroup only applies to the GroupCustom entity type
+# IzeGroup is a more fully hydrated version of this entity
+# TODO: There's probably a more elegant way to model this
+type IzeGroup {
+  group: Group!
+  members: [Entity!]!
+  description: String
+  notificationUriPreview: String
 }
 
 type Organization {
@@ -118,6 +136,11 @@ type OnboardedDiscordServer {
   banner: String
 }
 
+# used for associating an existing entity with some other object
+input EntityArgs {
+  id: String!
+}
+
 input IdentityBlockchainArgs {
   address: String!
 }
@@ -132,12 +155,9 @@ input IdentityEmailArgs {
 
 input CustomGroupArgs {
   name: String!
-  members: [CustomGroupMembersArgs!]!
-}
-
-input CustomGroupMembersArgs {
-  id: String!
-  entityType: EntityType!
+  description: String
+  members: [EntityArgs!]!
+  notificationUri: String
 }
 
 input NewEntityArgs {

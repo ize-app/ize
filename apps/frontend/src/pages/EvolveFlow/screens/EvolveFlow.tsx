@@ -9,19 +9,19 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 import createFlowFormState from "@/components/Form/FlowForm/helpers/createFlowFormState";
 import { createNewFlowArgs } from "@/components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
-
-import Loading from "../../../components/Loading";
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import Loading from "@/components/Loading";
 import {
   FlowFragment,
   GetFlowDocument,
   NewEvolveRequestDocument,
-} from "../../../graphql/generated/graphql";
-import Head from "../../../layout/Head";
-import PageContainer from "../../../layout/PageContainer";
-import { Wizard, useWizard } from "../../../utils/wizard";
+} from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
+import { Wizard, useWizard } from "@/hooks/useWizard";
+import Head from "@/layout/Head";
+import PageContainer from "@/layout/PageContainer";
+import { fullUUIDToShort, shortUUIDToFull } from "@/utils/inputs";
+
 import { EVOLVE_FLOW_PROGRESS_BAR_STEPS, EVOLVE_FLOW_WIZARD_STEPS } from "../evolveFlowWizard";
 import { EvolveExistingFlowSchemaType } from "../formValidation";
 

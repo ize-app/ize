@@ -1,32 +1,30 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormControl, FormHelperText, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
 
+import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
-import { RoleSearch } from "../../../components/Form/formFields";
+import { EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
-import { newCustomGroupFormSchema } from "../formValidation";
-import { NewCustomGroupFormFields, useNewCustomGroupWizardState } from "../newCustomGroupWizard";
+import { NewCustomGroupSchemaType, newCustomGroupFormSchema } from "../formValidation";
+import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
 
-  const {
-    control,
-    handleSubmit,
-    setValue: setFieldValue,
-    getValues: getFieldValues,
-  } = useForm<NewCustomGroupFormFields>({
+  const formMethods = useForm<NewCustomGroupSchemaType>({
     defaultValues: {
-      name: formState.name ?? [],
+      name: formState.name ?? "",
+      description: formState.description ?? "",
       members: formState.members ?? [],
+      notification: formState.notification ?? {},
     },
     resolver: zodResolver(newCustomGroupFormSchema),
     shouldUnregister: true,
   });
 
-  const onSubmit = (data: NewCustomGroupFormFields) => {
+  const onSubmit = (data: NewCustomGroupSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       ...data,
@@ -34,6 +32,7 @@ export const Setup = () => {
 
     onNext();
   };
+
   return (
     <>
       <WizardScreenBodyNarrow>
@@ -42,36 +41,54 @@ export const Setup = () => {
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            gap: "12px",
           }}
         >
-          <Controller
-            name={"name"}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <FormControl>
-                <TextField {...field} label={"Group name"} required error={Boolean(error)} />
-                <FormHelperText
-                  sx={{
-                    color: "error.main",
-                  }}
-                >
-                  {error?.message ?? ""}
-                </FormHelperText>
-              </FormControl>
-            )}
+          <Typography variant="description">
+            Groups are 100% collaboratively managed organisms. There is no admin, no boss - just you
+            and your buddies determining how you want to collaborate together. <br />
+            <br />
+            To start off, let&apos;s get some basic information about your new group.
+          </Typography>
+          <TextField<NewCustomGroupSchemaType>
+            name="name"
+            control={formMethods.control}
+            size="small"
+            label="Group name"
+            placeholderText="Group name"
+            defaultValue={""}
+            required
+            showLabel={true}
+            variant="outlined"
           />
-          <RoleSearch
+          <TextField<NewCustomGroupSchemaType>
+            name="description"
+            control={formMethods.control}
+            size="small"
+            label="Description"
+            showLabel={true}
+            rows={2}
+            multiline
+            placeholderText="What's the purpose of this group?"
+            defaultValue={""}
+          />
+          <EntitySearch<NewCustomGroupSchemaType>
             ariaLabel={"Individuals and groups to add to custom group"}
-            control={control}
+            control={formMethods.control}
             name={"members"}
-            label={"Group members"}
-            setFieldValue={setFieldValue}
-            getFieldValues={getFieldValues}
+            hideCustomGroups={true}
+            label={"Group members *"}
+            setFieldValue={formMethods.setValue}
+            getFieldValues={formMethods.getValues}
           />
+          <WebhookField formMethods={formMethods} name={"notification"} type={"notification"} />
         </form>
       </WizardScreenBodyNarrow>
-      <WizardNav onNext={handleSubmit(onSubmit)} onPrev={onPrev} nextLabel={nextLabel} />
+      <WizardNav
+        onNext={formMethods.handleSubmit(onSubmit)}
+        onPrev={onPrev}
+        nextLabel={nextLabel}
+      />
     </>
   );
 };

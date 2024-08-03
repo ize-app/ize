@@ -30,11 +30,21 @@ export const newStep = async ({
     });
 
   const requestFieldSet = args.request
-    ? await newFieldSet({ fields: args.request.fields, transaction, createdSteps })
+    ? await newFieldSet({
+        fields: args.request.fields,
+        locked: args.request.fieldsLocked ?? false,
+        transaction,
+        createdSteps,
+      })
     : null;
 
   const responseFieldSet = args.response
-    ? await newFieldSet({ fields: args.response.fields, transaction, createdSteps })
+    ? await newFieldSet({
+        fields: args.response.fields,
+        locked: args.response.fieldsLocked ?? false,
+        transaction,
+        createdSteps,
+      })
     : null;
 
   const requestPermissionsId = args.request
@@ -62,7 +72,9 @@ export const newStep = async ({
   const actionId = args.action
     ? await newActionConfig({
         actionArgs: args.action,
+        locked: args.action.locked ?? false,
         responseFieldSet,
+        flowVersionId,
         transaction,
       })
     : null;

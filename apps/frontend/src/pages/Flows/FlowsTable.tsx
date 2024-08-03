@@ -6,34 +6,49 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { AvatarsCell, TableCellHideable } from "@/components/Tables/TableCells";
+import { AvatarGroup } from "@/components/Avatar";
+import { TableCellHideable } from "@/components/Tables/TableCellHideable";
+import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { FlowSummaryFragment } from "@/graphql/generated/graphql";
-import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
+import { NewRequestRoute, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
+export const FlowsTable = ({
+  flows,
+  onClickRow,
+  hideTriggerButton = false,
+  hideWatchButton = false,
+}: {
+  flows: FlowSummaryFragment[];
+  onClickRow: (flow: FlowSummaryFragment) => void;
+  hideTriggerButton?: boolean;
+  hideWatchButton?: boolean;
+}) => {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
-        <TableHead>
+        {/* <TableHead>
           <TableRow>
+            <TableCellHideable align="right" width={"60px"}></TableCellHideable>
             <TableCellHideable sx={{ minWidth: "140px" }}>Flow</TableCellHideable>
-            <TableCellHideable align="right" width={"60px"}>
-              Creator
-            </TableCellHideable>
 
             <TableCellHideable align="right" width={"60px"} hideOnSmallScreen></TableCellHideable>
           </TableRow>
-        </TableHead>
+        </TableHead> */}
         <TableBody>
           {flows.map((flow) => (
-            <FlowRow key={flow.flowId} flow={flow} />
+            <FlowRow
+              key={flow.flowId}
+              flow={flow}
+              hideTriggerButton={hideTriggerButton}
+              hideWatchButton={hideWatchButton}
+              onClickRow={onClickRow}
+            />
           ))}
         </TableBody>
       </Table>
@@ -41,28 +56,46 @@ export const FlowsTable = ({ flows }: { flows: FlowSummaryFragment[] }) => {
   );
 };
 
-const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
+const FlowRow = ({
+  flow,
+  onClickRow,
+  hideTriggerButton,
+  hideWatchButton,
+}: {
+  flow: FlowSummaryFragment;
+  onClickRow: (flow: FlowSummaryFragment) => void;
+  hideTriggerButton: boolean;
+  hideWatchButton: boolean;
+}) => {
   const navigate = useNavigate();
   return (
     <>
       <TableRow
         aria-label="Flow Row"
-        onClick={() =>
-          navigate(
-            generatePath(Route.Flow, {
-              flowId: fullUUIDToShort(flow.flowId),
-              flowVersionId: null,
-            }),
-          )
-        }
+        onClick={() => {
+          onClickRow(flow);
+        }}
       >
+        {!hideWatchButton && (
+          <TableCell width="60px">
+            <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
+          </TableCell>
+        )}
+        {/* <AvatarsCell
+          align="center"
+          width={"60px"}
+          avatars={flow.group ? [flow.group] : null}
+          hideOnSmallScreen={true}
+        /> */}
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
+              gap: "8px",
             }}
           >
+            {flow.group ? <AvatarGroup avatars={[flow.group]} /> : null}
             <Typography
               variant={"body1"}
               sx={{
@@ -77,29 +110,37 @@ const FlowRow = ({ flow }: { flow: FlowSummaryFragment }) => {
             </Typography>
           </Box>
         </TableCell>
-        <AvatarsCell align="center" avatars={[flow.creator]} hideOnSmallScreen={true} />
-        <TableCellHideable align={"right"}>
-          <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-            <Tooltip title="Trigger flow">
-              <span>
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(
-                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                        flowId: fullUUIDToShort(flow.flowId),
-                      }),
-                    );
-                  }}
-                  color={"primary"}
-                  disabled={!flow.userPermission.request}
-                >
-                  <Add />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </Box>
-        </TableCellHideable>
+
+        {!hideTriggerButton && (
+          <TableCellHideable align={"right"}>
+            <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+              <Tooltip
+                title={
+                  flow.userPermission.request
+                    ? "Trigger flow"
+                    : "You don't have trigger permissions"
+                }
+              >
+                <span>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(
+                        generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                          flowId: fullUUIDToShort(flow.flowId),
+                        }),
+                      );
+                    }}
+                    color={"primary"}
+                    disabled={!flow.userPermission.request}
+                  >
+                    <Add />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Box>
+          </TableCellHideable>
+        )}
       </TableRow>
     </>
   );

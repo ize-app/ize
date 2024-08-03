@@ -6,15 +6,16 @@ import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { ResponseSchemaType, responseSchema } from "./formValidation";
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import {
   FieldDataType,
   FieldFragment,
   FieldOptionsSelectionType,
   FieldType,
   NewResponseDocument,
-} from "../../../graphql/generated/graphql";
+} from "@/graphql/generated/graphql";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
+
+import { ResponseSchemaType, responseSchema } from "./formValidation";
 import { DatePicker, DateTimePicker, MultiSelect, SortableList, TextField } from "../formFields";
 import { Radio } from "../formFields/Radio";
 import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
@@ -71,7 +72,7 @@ export const ResponseForm = ({
       variables: {
         response: {
           requestStepId,
-          answers: createFieldAnswersArgs(data.responseFields),
+          answers: await createFieldAnswersArgs(data.responseFields),
         },
       },
     });

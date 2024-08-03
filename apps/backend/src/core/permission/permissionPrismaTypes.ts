@@ -1,26 +1,10 @@
 import { Prisma } from "@prisma/client";
 
-import { groupInclude } from "../entity/group/groupPrismaTypes";
-import { identityInclude } from "../entity/identity/identityPrismaTypes";
+import { entitySetInclude } from "../entity/entityPrismaTypes";
 
 export const permissionInclude = Prisma.validator<Prisma.PermissionInclude>()({
   EntitySet: {
-    include: {
-      EntitySetEntities: {
-        include: {
-          Entity: {
-            include: {
-              Group: {
-                include: groupInclude,
-              },
-              Identity: {
-                include: identityInclude,
-              },
-            },
-          },
-        },
-      },
-    },
+    include: entitySetInclude,
   },
 });
 

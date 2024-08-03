@@ -1,8 +1,6 @@
-import { useLazyQuery } from "@apollo/client";
-import { Button, MenuItem, Typography, debounce } from "@mui/material";
+import { Button, ToggleButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import Select from "@mui/material/Select";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
@@ -10,63 +8,51 @@ import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
 import {
-  GetRequestStepsDocument,
-  GetRequestStepsQueryVariables,
-  RequestStepFilter,
-  RequestStepSummaryFragment,
+  RequestStepRespondPermissionFilter,
+  RequestStepStatusFilter,
 } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import useRequestStepsSearch from "@/hooks/useRequestStepsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestStepsTable } from "./RequestStepsTable";
 
-const filters = [
-  { label: "All", value: RequestStepFilter.All },
-  { label: "Open", value: RequestStepFilter.Open },
-  { label: "Closed", value: RequestStepFilter.Closed },
-];
-
 export const RequestStepsSearch = ({
   userOnly,
   flowId,
+  groupId,
+  initialRespondPermissionFilter = RequestStepRespondPermissionFilter.RespondPermission,
 }: {
   userOnly: boolean;
+  groupId?: string;
   flowId?: string;
+  initialRespondPermissionFilter?: RequestStepRespondPermissionFilter;
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [filter, setFilter] = useState<RequestStepFilter>(RequestStepFilter.Open);
   const queryResultLimit = 20;
-
-  const queryVars: GetRequestStepsQueryVariables = {
-    userOnly,
-    flowId,
+  const {
     searchQuery,
-    limit: queryResultLimit,
-    filter,
-  };
+    setSearchQuery,
+    respondPermissionFilter,
+    setRespondPermissionFilter,
+    statusFilter,
+    setStatusFilter,
+    setOldCursor,
+    oldCursor,
+    newCursor,
+    requestSteps,
+    queryVars,
+    loading,
+    fetchMore,
+  } = useRequestStepsSearch({
+    userOnly,
+    groupId,
+    flowId,
+    queryResultLimit,
+    initialRespondPermissionFilter,
+  });
 
-  // const [statusToggle, setStatusToggle] = useState<"open" | "closed">("open");
-
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestStepsDocument);
-
-  const debouncedRefetch = debounce(() => {
-    setOldCursor(undefined);
-    getResults({ variables: queryVars });
-  }, 1000);
-
-  useEffect(() => {
-    debouncedRefetch();
-  }, [searchQuery, filter]);
-
-  useEffect(() => {
-    getResults({ variables: queryVars });
-  }, []);
-
-  const newCursor = data?.getRequestSteps.length
-    ? data.getRequestSteps[data.getRequestSteps.length - 1].id
-    : "";
-  const requestSteps = (data?.getRequestSteps ?? []) as RequestStepSummaryFragment[];
+  const { me } = useContext(CurrentUserContext);
 
   return (
     <Box
@@ -88,13 +74,16 @@ export const RequestStepsSearch = ({
         }}
       >
         <Box
-          sx={{
+          sx={(theme) => ({
             display: "flex",
             flexDirection: "row",
             gap: "16px",
             width: "100%",
-            maxWidth: "500px",
-          }}
+            // maxWidth: "500px",
+            [theme.breakpoints.down("md")]: {
+              flexDirection: "column",
+            },
+          })}
         >
           <Search
             searchQuery={searchQuery}
@@ -102,28 +91,48 @@ export const RequestStepsSearch = ({
               setSearchQuery(event.target.value);
             }}
           />
-          <Select
-            sx={{
-              width: "140px",
-            }}
-            inputProps={{ multiline: "true" }}
-            aria-label={"Request step filter"}
-            defaultValue={filter}
-            size={"small"}
-            onChange={(event) => {
-              setFilter(event.target.value as RequestStepFilter);
-              return;
-            }}
-          >
-            {filters.map((filter) => (
-              <MenuItem key={filter.value} value={filter.value}>
-                {filter.label}
-              </MenuItem>
-            ))}
-          </Select>
-          {/* <StatusToggle status={statusToggle} setStatus={setStatusToggle} /> */}
+          <Box sx={{ display: "flex", gap: "8px" }}>
+            <ToggleButton
+              size="small"
+              value="check"
+              selected={statusFilter === RequestStepStatusFilter.Open}
+              sx={{ width: "140px" }}
+              color="primary"
+              onChange={() => {
+                // setSelected(!selected);
+                setStatusFilter(
+                  statusFilter === RequestStepStatusFilter.Open
+                    ? RequestStepStatusFilter.All
+                    : RequestStepStatusFilter.Open,
+                );
+              }}
+            >
+              Open requests
+            </ToggleButton>
+            {me && (
+              <ToggleButton
+                size="small"
+                value="check"
+                selected={
+                  respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                }
+                sx={{ width: "160px" }}
+                color="primary"
+                onChange={() => {
+                  // setSelected(!selected);
+                  setRespondPermissionFilter(
+                    respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                      ? RequestStepRespondPermissionFilter.All
+                      : RequestStepRespondPermissionFilter.RespondPermission,
+                  );
+                }}
+              >
+                Respond permission
+              </ToggleButton>
+            )}
+          </Box>
         </Box>
-        <CreateButton />
+        {me && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />
@@ -133,8 +142,9 @@ export const RequestStepsSearch = ({
         <EmptyTablePlaceholder>
           {!flowId ? (
             <Typography>
-              You don&apos;t have any requests. Create a <Link to={Route.NewFlow}>flow</Link> first
-              or a <Link to={Route.NewRequest}>request</Link> or for an existing flow.
+              {groupId ? "This group doesn't " : "You don&apos;t "}have any requests. Create a{" "}
+              <Link to={Route.NewFlow}>flow</Link> first or a{" "}
+              <Link to={Route.NewRequest}>request</Link> or for an existing flow.
             </Typography>
           ) : (
             <Typography>
@@ -152,7 +162,7 @@ export const RequestStepsSearch = ({
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}
-      {oldCursor !== newCursor && (data?.getRequestSteps.length ?? 0) >= queryResultLimit && (
+      {oldCursor !== newCursor && (requestSteps.length ?? 0) >= queryResultLimit && (
         <Button
           onClick={() => {
             setOldCursor(newCursor);

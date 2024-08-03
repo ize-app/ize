@@ -4,7 +4,6 @@ import { DiscordApi } from "@/discord/api";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
 
-import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
 import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
 import { prisma } from "../../../prisma/client";
 
@@ -64,14 +63,9 @@ export const updateUserDiscordGroups = async ({
       .filter((roleGroup) => roleGroup.GroupDiscordRole?.name === "@everyone")
       .forEach((roleGroup) => discordRoleGroupIds.push(roleGroup.id));
 
-    const customGroupIds = await getCustomGroupsForIdentity({
-      identityId: userDiscordIdentity.id,
-      groupIds: discordRoleGroupIds,
-    });
-
     await updateIdentitiesGroups({
       identityId: userDiscordIdentity.id,
-      groupIds: [...discordRoleGroupIds, ...customGroupIds],
+      groupIds: discordRoleGroupIds,
       transaction,
     });
   } catch (e) {

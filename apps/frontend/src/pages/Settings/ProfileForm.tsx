@@ -6,9 +6,9 @@ import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { TextField } from "@/components/Form/formFields";
-import { CurrentUserContext } from "@/contexts/current_user_context";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { UpdateProfileDocument } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 import { UserSettingsSchemaType, userSettingsSchema } from "./formValidation";
 

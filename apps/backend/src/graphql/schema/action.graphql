@@ -1,8 +1,16 @@
 type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
+  createWebhook(inputs: CallWebhookArgs!): String!
 }
 
-union Action = CallWebhook | EvolveFlow | TriggerStep
+union Action =
+  | CallWebhook
+  | EvolveFlow
+  | TriggerStep
+  | GroupUpdateMetadata
+  | GroupUpdateMembership
+  | GroupWatchFlow
+  | GroupUpdateNotifications
 
 type ActionExecution {
   actionId: String!
@@ -11,16 +19,40 @@ type ActionExecution {
 }
 
 type CallWebhook {
+  locked: Boolean!
+  webhookId: String!
   filterOption: Option
   uri: String!
   name: String!
 }
 
 type EvolveFlow {
+  locked: Boolean!
   filterOption: Option
 }
 
 type TriggerStep {
+  locked: Boolean!
+  filterOption: Option
+}
+
+type GroupUpdateMetadata {
+  locked: Boolean!
+  filterOption: Option
+}
+
+type GroupUpdateMembership {
+  locked: Boolean!
+  filterOption: Option
+}
+
+type GroupWatchFlow {
+  locked: Boolean!
+  filterOption: Option
+}
+
+type GroupUpdateNotifications {
+  locked: Boolean!
   filterOption: Option
 }
 
@@ -29,11 +61,17 @@ enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+  GroupUpdateMetadata
+  GroupUpdateMembership
+  GroupWatchFlow
+  GroupUpdateNotifications
   None
 }
 
 input CallWebhookArgs {
+  webhookId: String
   uri: String!
+  originalUri: String
   name: String!
 }
 
@@ -42,6 +80,7 @@ input ActionArgs {
   filterResponseFieldIndex: Int
   filterOptionIndex: Int
   callWebhook: CallWebhookArgs
+  locked: Boolean!
 }
 
 input TestWebhookArgs {

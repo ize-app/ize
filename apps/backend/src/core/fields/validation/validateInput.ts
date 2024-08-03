@@ -23,6 +23,15 @@ export const validateInput = (value: string, dataType: FieldDataType): boolean =
     case FieldDataType.FlowVersionId:
       pass = z.string().uuid().safeParse(value).success;
       break;
+    case FieldDataType.EntityIds:
+      pass = z.array(z.string().uuid()).safeParse(JSON.parse(value)).success;
+      break;
+    case FieldDataType.FlowIds:
+      pass = z.array(z.string().uuid()).safeParse(JSON.parse(value)).success;
+      break;
+    case FieldDataType.Webhook:
+      pass = z.union([z.string().uuid(), z.literal("None")]).safeParse(value).success;
+      break;
     default:
       break;
   }

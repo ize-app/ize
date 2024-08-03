@@ -1,12 +1,10 @@
 import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { ActionType } from "@/graphql/generated/graphql";
-
 import { ActionFilterForm } from "./ActionFilterForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select, Switch, TextField } from "../../formFields";
+import { EntitySearch, Select, Switch } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 
@@ -52,7 +50,8 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
         <ActionFilterForm
           formIndex={formIndex - 1}
           formMethods={formMethods}
-          actionType={ActionType.TriggerStep}
+          action={formMethods.getValues(`steps.${formIndex - 1}.action`)}
+          isTriggerAction={true}
         />
       )}
       <PanelAccordion
@@ -75,7 +74,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           size="small"
         />
         {responseTrigger === PermissionType.Entities && (
-          <RoleSearch<FlowSchemaType>
+          <EntitySearch<FlowSchemaType>
             key="responseRoleSearch"
             ariaLabel={"Individuals and groups who can respond"}
             name={`steps.${formIndex}.response.permission.entities`}
@@ -112,24 +111,6 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           fieldsArrayMethods={fieldsArrayMethods}
         />
       </PanelAccordion>
-      <TextField<FlowSchemaType>
-        control={formMethods.control}
-        display={false}
-        label="Action type"
-        name={`steps.${formIndex}.action.type`}
-        size="small"
-        showLabel={false}
-        defaultValue=""
-      />
-      <TextField<FlowSchemaType>
-        control={formMethods.control}
-        display={false}
-        label="Action type"
-        name={`steps.${formIndex}.action.filterOptionId`}
-        size="small"
-        showLabel={false}
-        defaultValue=""
-      />
     </Box>
   );
 };

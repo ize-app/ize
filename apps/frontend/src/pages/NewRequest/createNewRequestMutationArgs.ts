@@ -8,12 +8,14 @@ import {
 
 import { NewRequestFormSchema } from "./newRequestWizard";
 
-export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): NewRequestArgs => {
+export const createNewRequestMutationArgs = async (
+  formState: NewRequestFormSchema,
+): Promise<NewRequestArgs> => {
   if (!formState.flow || !formState.name) throw Error("createNewRequestMutationArgs: Missing Flow");
   const flowId: string = formState.flow.flowId;
   const name: string = formState.name;
 
-  const requestFields: FieldAnswerArgs[] = createFieldAnswersArgs(formState.requestFields);
+  const requestFields: FieldAnswerArgs[] = await createFieldAnswersArgs(formState.requestFields);
 
   const requestDefinedOptions: RequestDefinedOptionsArgs[] =
     formState.requestDefinedOptions && (formState.requestDefinedOptions ?? []).length > 0

@@ -5,14 +5,17 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { GroupPrismaType } from "./groupPrismaTypes";
 import { userResolver } from "../../user/userResolver";
 
-
-export const groupResolver = (group: GroupPrismaType): Group => {
+export const groupResolver = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (group.GroupDiscordRole) {
-    return resolveDiscordGroup(group);
+    return resolveDiscordGroup(group, isWatched, isMember);
   } else if (group.GroupNft) {
-    return resolveGroupNft(group);
+    return resolveGroupNft(group, isWatched, isMember);
   } else if (group.GroupCustom) {
-    return resolveGroupCustom(group);
+    return resolveGroupCustom(group, isWatched, isMember);
   } else {
     throw new GraphQLError("Invalid group type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -20,14 +23,19 @@ export const groupResolver = (group: GroupPrismaType): Group => {
   }
 };
 
-const resolveDiscordGroup = (group: GroupPrismaType): Group => {
+const resolveDiscordGroup = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupDiscordRole)
     throw new GraphQLError("Missing Discord role group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   const discordGroup: Group = {
-    ...group,
     __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     // discord only includes the @sign for @everyone
     name:
@@ -58,19 +66,26 @@ const resolveDiscordGroup = (group: GroupPrismaType): Group => {
     },
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
   return discordGroup;
 };
 
-const resolveGroupNft = (group: GroupPrismaType): Group => {
+const resolveGroupNft = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupNft)
     throw new GraphQLError("Missing NFT group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   const { GroupNft: nft } = group;
   const discordGroup: Group = {
-    ...group,
     __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     name: nft.name,
     icon: nft.icon,
@@ -82,21 +97,31 @@ const resolveGroupNft = (group: GroupPrismaType): Group => {
     },
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "GroupNft", ...nft } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
   return discordGroup;
 };
 
-const resolveGroupCustom = (group: GroupPrismaType): Group => {
+const resolveGroupCustom = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupCustom)
     throw new GraphQLError("Missing custom group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   const { GroupCustom: custom } = group;
   return {
-    ...group,
+    __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
     creator: userResolver(group.creator),
     name: custom.name,
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "GroupCustom", ...custom } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
 };

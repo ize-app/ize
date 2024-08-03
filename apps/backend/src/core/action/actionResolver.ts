@@ -1,15 +1,14 @@
 import { ActionType, FieldType } from "@prisma/client";
-import { parse } from "tldts";
 
-import { Action, CallWebhook, Field, Option } from "@/graphql/generated/resolver-types";
+import { Action, Field, Option } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ActionNewPrismaType } from "./actionPrismaTypes";
+import { callWebhookResolver } from "./webhook/webhookResolver";
 
 export const actionResolver = (
   action: ActionNewPrismaType | null | undefined,
   responseFields: Field[] | undefined,
-  hideSensitiveInfo = true,
 ): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
@@ -34,38 +33,50 @@ export const actionResolver = (
 
   switch (action.type) {
     case ActionType.CallWebhook:
-      return callWebhookResolver(action, filterOption, hideSensitiveInfo);
+      if (!action.Webhook)
+        throw new GraphQLError("Missing webhook action config.", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+      return callWebhookResolver({ webhook: action.Webhook, filterOption, locked: action.locked });
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
         filterOption,
+        locked: action.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
         filterOption,
+        locked: action.locked,
+      };
+    case ActionType.GroupUpdateMetadata:
+      return {
+        __typename: "GroupUpdateMetadata",
+        filterOption,
+        locked: action.locked,
+      };
+    case ActionType.GroupUpdateMembership:
+      return {
+        __typename: "GroupUpdateMembership",
+        filterOption,
+        locked: action.locked,
+      };
+    case ActionType.GroupWatchFlow:
+      return {
+        __typename: "GroupWatchFlow",
+        filterOption,
+        locked: action.locked,
+      };
+    case ActionType.GroupUpdateNotifications:
+      return {
+        __typename: "GroupUpdateNotifications",
+        filterOption,
+        locked: action.locked,
       };
     default:
       throw new GraphQLError("Invalid action type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
   }
-};
-
-const callWebhookResolver = (
-  action: ActionNewPrismaType,
-  filterOption: Option | undefined,
-  obscureUri = true,
-): CallWebhook => {
-  const webhook = action.Webhook;
-  if (!webhook)
-    throw new GraphQLError("Missing webhook action config.", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-    });
-  return {
-    __typename: "CallWebhook",
-    uri: obscureUri ? "https://" + parse(webhook.uri).domain ?? "" : webhook.uri, // Only return the hostname for privacy
-    name: webhook.name,
-    filterOption,
-  };
 };

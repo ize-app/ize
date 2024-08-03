@@ -8,8 +8,22 @@ query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Bool
   }
 }
 
-query GetFlows {
-  getFlows {
+query GetFlows(
+  $cursor: String
+  $limit: Int!
+  $groupId: String
+  $searchQuery: String!
+  $watchFilter: WatchFilter!
+  $triggerPermissionFilter: FlowTriggerPermissionFilter!
+) {
+  getFlows(
+    cursor: $cursor
+    limit: $limit
+    groupId: $groupId
+    searchQuery: $searchQuery
+    watchFilter: $watchFilter
+    triggerPermissionFilter: $triggerPermissionFilter
+  ) {
     ...FlowSummary
   }
 }
@@ -28,12 +42,16 @@ fragment FlowSummary on FlowSummary {
   creator {
     ...UserSummaryParts
   }
+  group {
+    ...GroupSummaryParts
+  }
   requestStep0Permission {
     ...Permission
   }
   userPermission {
     ...UserFlowPermission
   }
+  isWatched
 }
 
 fragment FlowFields on Flow {
@@ -41,6 +59,9 @@ fragment FlowFields on Flow {
   flowId
   flowVersionId
   currentFlowVersionId
+  group {
+    ...GroupSummaryParts
+  }
   createdAt
   versionCreatedAt
   versionPublishedAt
@@ -54,6 +75,7 @@ fragment FlowFields on Flow {
   steps {
     ...Step
   }
+  isWatched
 }
 
 fragment FlowRefernce on FlowReference {
@@ -89,6 +111,7 @@ fragment RequestConfig on RequestConfig {
   fields {
     ...Field
   }
+  fieldsLocked
 }
 
 fragment ResponseConfig on ResponseConfig {
@@ -98,6 +121,7 @@ fragment ResponseConfig on ResponseConfig {
   fields {
     ...Field
   }
+  fieldsLocked
 }
 
 fragment UserPermission on UserPermission {

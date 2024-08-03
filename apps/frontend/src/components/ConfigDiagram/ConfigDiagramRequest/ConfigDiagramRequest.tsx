@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
+import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -84,7 +85,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                     request.steps[finalStepIndex]?.actionExecution?.status ??
                     (request.final ? Status.Cancelled : Status.NotAttempted)
                   }
-                  label={actionProperties[finalAction.__typename].label}
+                  label={getActionLabel(finalAction, request.flow.group)}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
@@ -120,6 +121,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
           <ConfigRequestActionPanel
             action={finalAction}
             actionExecution={request.steps[finalStepIndex]?.actionExecution ?? null}
+            group={request.flow.group}
           />
         )}
       </FlowConfigDiagramContainer>

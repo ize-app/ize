@@ -3,8 +3,13 @@ import { Prisma } from "@prisma/client";
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
+import { decrypt } from "@/prisma/encrypt";
 
 import { evolveFlow } from "./evolveFlow";
+import { groupUpdateMembership } from "./groupUpdateMembership";
+import { groupUpdateMetadata } from "./groupUpdateMetadata";
+import { groupUpdateNotifications } from "./groupUpdateNotifications";
+import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
 import { callWebhook } from "../webhook/callWebhook";
@@ -25,12 +30,12 @@ export const executeAction = async ({
   requestStepId: string;
   step: StepPrismaType;
   results: ResultPrismaType[];
-  transaction?: Prisma.TransactionClient;
+  transaction: Prisma.TransactionClient;
 }): Promise<boolean> => {
   const action = step.Action;
   // if no action, assume the
   if (!action) {
-    await prisma.requestStep.update({
+    await transaction.requestStep.update({
       where: {
         id: requestStepId,
       },
@@ -59,7 +64,7 @@ export const executeAction = async ({
       }
     }
     if (!passesFilter) {
-      await prisma.requestStep.update({
+      await transaction.requestStep.update({
         where: {
           id: requestStepId,
         },
@@ -81,8 +86,9 @@ export const executeAction = async ({
     case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
       const payload = await createWebhookPayload({ requestStepId, transaction });
+      const uri = decrypt(action.Webhook.uri);
       if (payload) {
-        actionComplete = await callWebhook({ uri: action.Webhook.uri, payload });
+        actionComplete = await callWebhook({ uri, payload });
       }
       break;
     }
@@ -94,12 +100,27 @@ export const executeAction = async ({
       actionComplete = await evolveFlow({ requestStepId, transaction });
       break;
     }
+    case ActionType.GroupUpdateMetadata: {
+      actionComplete = await groupUpdateMetadata({ requestStepId, transaction });
+      break;
+    }
+    case ActionType.GroupUpdateMembership: {
+      actionComplete = await groupUpdateMembership({ requestStepId, transaction });
+      break;
+    }
+    case ActionType.GroupWatchFlow: {
+      actionComplete = await groupWatchFlow({ requestStepId, transaction });
+      break;
+    }
+    case ActionType.GroupUpdateNotifications:
+      actionComplete = await groupUpdateNotifications({ requestStepId, transaction });
+      break;
     default:
       actionComplete = false;
       break;
   }
 
-  await prisma.actionExecution.upsert({
+  await transaction.actionExecution.upsert({
     where: {
       actionId_requestStepId: {
         actionId: action.id,
@@ -118,7 +139,7 @@ export const executeAction = async ({
   });
 
   // update request step with whether actions are complete
-  await prisma.requestStep.update({
+  await transaction.requestStep.update({
     where: {
       id: requestStepId,
     },

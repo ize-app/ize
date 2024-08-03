@@ -8,14 +8,23 @@ mutation NewCustomGroup($inputs: CustomGroupArgs!) {
   newCustomGroup(inputs: $inputs)
 }
 
+mutation TestNotificationWebhook($uri: String!) {
+  testNotificationWebhook(uri: $uri)
+}
+
 query Group($id: String!) {
   group(id: $id) {
-    ...GroupSummaryParts
+    ...IzeGroup
   }
 }
 
-query Groups {
-  groupsForCurrentUser {
+query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter: WatchFilter!) {
+  groupsForCurrentUser(
+    cursor: $cursor
+    limit: $limit
+    searchQuery: $searchQuery
+    watchFilter: $watchFilter
+  ) {
     ...GroupSummaryParts
   }
 }
@@ -38,6 +47,8 @@ fragment GroupSummaryParts on Group {
   icon
   memberCount
   color
+  isWatched
+  isMember
   createdAt
   groupType {
     ...GroupTypeSummaryParts
@@ -45,6 +56,17 @@ fragment GroupSummaryParts on Group {
   organization {
     ...OrganizationParts
   }
+}
+
+fragment IzeGroup on IzeGroup {
+  group {
+    ...GroupSummaryParts
+  }
+  members {
+    ...EntitySummaryParts
+  }
+  description
+  notificationUriPreview
 }
 
 fragment GroupTypeSummaryParts on GroupType {

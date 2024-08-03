@@ -1,18 +1,15 @@
-import * as z from "zod";
+import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
-import { NewCustomGroupSchemaType, newCustomGroupFormSchema } from "./formValidation";
+import { NewCustomGroupSchemaType } from "./formValidation";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
-import { WizardSteps, useWizardFormState } from "../../utils/wizard";
 
-export type NewCustomGroupFormFields = z.infer<typeof newCustomGroupFormSchema>;
-
-export const newCustomGroupFormFieldsDefault: NewCustomGroupFormFields = {
+export const newCustomGroupFormFieldsDefault: NewCustomGroupSchemaType = {
   members: [],
   name: "",
 };
 
 export function useNewCustomGroupWizardState() {
-  return useWizardFormState<NewCustomGroupFormFields>();
+  return useWizardFormState<NewCustomGroupSchemaType>();
 }
 
 export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Finish"];

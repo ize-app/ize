@@ -9,14 +9,21 @@ import {
   Me,
   MutationResolvers,
   MutationUpdateProfileArgs,
+  MutationWatchFlowArgs,
+  MutationWatchGroupArgs,
   QueryResolvers,
+  WatchFilter,
 } from "@graphql/generated/resolver-types";
+import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
+import { watchFlow as watchFlowService } from "@/core/user/watchFlow";
 
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
 import { updateProfile as updateProfileService } from "@/core/user/updateProfile";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
+import { updateUserCustomGroups } from "@/core/entity/updateIdentitiesGroups/updateUserCustomGroups";
+import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
@@ -28,6 +35,7 @@ const me: QueryResolvers["me"] = async (
   const discordServers = await getDiscordServers({ context });
   await updateUserDiscordGroups({ context, discordServers });
   await updateUserNftGroups({ context });
+  await updateUserCustomGroups({ context });
 
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return identityResolver(
@@ -35,6 +43,11 @@ const me: QueryResolvers["me"] = async (
       context.currentUser?.Identities.map((i) => i.id) ?? [],
       false,
     );
+  });
+
+  const groups = await getGroupsOfUser({
+    context,
+    args: { limit: 10, searchQuery: "", watchFilter: WatchFilter.Watched },
   });
 
   const userData = await prisma.user.findFirstOrThrow({
@@ -46,6 +59,7 @@ const me: QueryResolvers["me"] = async (
   return {
     user,
     discordServers,
+    groups,
     identities: [...identities],
   };
 };
@@ -62,10 +76,43 @@ export const updateProfile: MutationResolvers["updateProfile"] = async (
   return await updateProfileService({ args, context });
 };
 
+export const watchGroup: MutationResolvers["watchGroup"] = async (
+  root: unknown,
+  args: MutationWatchGroupArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+  return await watchGroupService({ args, context });
+};
+
+export const watchFlow: MutationResolvers["watchFlow"] = async (
+  root: unknown,
+  args: MutationWatchFlowArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  return await prisma.$transaction(async (transaction) => {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    return await watchFlowService({
+      flowId: args.flowId,
+      watch: args.watch,
+      userId: context.currentUser.id,
+      transaction,
+    });
+  });
+};
+
 export const userQueries = {
   me,
 };
 
 export const userMutations = {
   updateProfile,
+  watchGroup,
+  watchFlow,
 };

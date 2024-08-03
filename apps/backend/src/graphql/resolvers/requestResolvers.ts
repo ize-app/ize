@@ -17,6 +17,7 @@ import {
 } from "@graphql/generated/resolver-types";
 
 import { GraphqlRequestContext } from "../context";
+import { prisma } from "@/prisma/client";
 
 const newRequest: MutationResolvers["newRequest"] = async (
   root: unknown,
@@ -28,9 +29,12 @@ const newRequest: MutationResolvers["newRequest"] = async (
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  return await newRequestService({
-    args,
-    context,
+  return await prisma.$transaction(async (transaction) => {
+    return await newRequestService({
+      args,
+      context,
+      transaction,
+    });
   });
 };
 

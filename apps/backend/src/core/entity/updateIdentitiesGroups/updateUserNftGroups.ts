@@ -5,7 +5,6 @@ import { chainMap } from "@/blockchain/chainMap";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 
-import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
 import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
 import { prisma } from "../../../prisma/client";
 
@@ -34,14 +33,9 @@ export const updateUserNftGroups = async ({
 
     const nftGroupIds = res.flat(1);
 
-    const customGroupIds = await getCustomGroupsForIdentity({
-      identityId: userBlockchainIdentity.id,
-      groupIds: nftGroupIds,
-    });
-
     await updateIdentitiesGroups({
       identityId: userBlockchainIdentity.id,
-      groupIds: [...nftGroupIds, ...customGroupIds],
+      groupIds: nftGroupIds,
       transaction,
     });
   } catch (e) {

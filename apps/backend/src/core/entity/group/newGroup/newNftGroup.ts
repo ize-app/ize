@@ -11,7 +11,6 @@ import { prisma } from "../../../../prisma/client";
 import { groupInclude } from "../groupPrismaTypes";
 import { groupResolver } from "../groupResolver";
 
-
 export const newNftGroup = async ({
   chain,
   address,

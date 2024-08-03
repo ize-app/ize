@@ -10,9 +10,9 @@ import { newRequest } from "./newRequest";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { EvolveFlowFields } from "../flow/helpers/EvolveFlowFields";
-import { newCustomFlowVersion } from "../flow/helpers/newCustomFlowVersion";
-import { newEvolveFlowVersion } from "../flow/helpers/newEvolveFlowVersion";
+import { newCustomFlowVersion } from "../flow/customFlow/newCustomFlowVersion";
+import { EvolveFlowFields } from "../flow/evolveFlow/EvolveFlowFields";
+import { newEvolveFlowVersion } from "../flow/evolveFlow/newEvolveFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -42,8 +42,8 @@ export const newEvolveRequest = async ({
       throw new GraphQLError(`Flow does not have an evolve flow. FlowId ${flowId}`, {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
-    // currently, we're only allowing evolve requests to be created for custom flows
-    // in the future, we'll allow evolve flows to evolve themselves independent of the custom flow
+    // currently, we're only allowing evolve requests to be created for non-evolve flow
+    // in the future, we'll allow evolve flows to evolve themselves independent of whatever flow it evolves
     // but this is a simplifying assumption for v1 because allowing this could result in invalid evolve flows
     if (flow.type === FlowType.Evolve)
       throw new GraphQLError(
@@ -52,6 +52,7 @@ export const newEvolveRequest = async ({
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         },
       );
+
     // find evolve flow and it's fields so they can be referenced in the evolve request
     const evolveFlow = await transaction.flow.findUniqueOrThrow({
       where: { id: flow.CurrentFlowVersion.evolveFlowId },
@@ -143,8 +144,8 @@ export const newEvolveRequest = async ({
     return await newRequest({
       args: { request: requestArgs },
       context,
-      transaction,
       proposedFlowVersionId,
+      transaction,
     });
   });
 };

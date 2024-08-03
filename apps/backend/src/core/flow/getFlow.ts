@@ -1,7 +1,11 @@
 import { Flow, QueryGetFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
-import { FlowVersionPrismaType, flowInclude, flowVersionInclude } from "./flowPrismaTypes";
+import {
+  FlowVersionPrismaType,
+  createFlowInclude,
+  createFlowVersionInclude,
+} from "./flowPrismaTypes";
 import { flowResolver } from "./resolvers/flowResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -21,7 +25,7 @@ export const getFlow = async ({
 
   if (args.flowId) {
     const flow = await prisma.flow.findFirstOrThrow({
-      include: flowInclude,
+      include: createFlowInclude(user?.id),
       where: {
         id: args.flowId,
         FlowVersions: args.flowVersionId
@@ -35,7 +39,7 @@ export const getFlow = async ({
     flowVersion = flow.CurrentFlowVersion;
   } else if (args.flowVersionId) {
     flowVersion = await prisma.flowVersion.findFirstOrThrow({
-      include: flowVersionInclude,
+      include: createFlowVersionInclude(user?.id),
       where: {
         id: args.flowVersionId,
       },
@@ -62,7 +66,7 @@ export const getFlow = async ({
     });
 
   const evolveFlow = await prisma.flow.findFirstOrThrow({
-    include: flowInclude,
+    include: createFlowInclude(user?.id),
     where: {
       id: flowVersion.evolveFlowId,
     },
@@ -91,13 +95,12 @@ export const getFlow = async ({
 
   const userGroupIds = await getGroupIdsOfUser({ user });
 
-  const res = flowResolver({
+  const res = await flowResolver({
     flowVersion: flowVersion,
     evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,
     userGroupIds,
     userId: user?.id,
-    hideSensitiveInfo: !(args.isForEvolveRequest ?? false),
   });
 
   return res;

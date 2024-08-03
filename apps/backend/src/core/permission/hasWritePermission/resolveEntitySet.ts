@@ -14,7 +14,8 @@ import { PermissionPrismaType } from "../permissionPrismaTypes";
 
 // creates unique list of different group / identity types for a given permission set
 // resolves custom groups to their consitituent group / identity members
-export const resolveEntitySet = async ({
+// Note: custom groups cannot have another custom groups as members
+export const resolveCustomGroupEntitySet = async ({
   permission,
   transaction = prisma,
 }: {
@@ -47,30 +48,46 @@ export const resolveEntitySet = async ({
 
   const customGroupIds = Array.from(customGroups).map((cg) => cg.id);
 
-  const resolvedGroups = await transaction.customGroupMemberGroup.findMany({
+  const resolvedGroups = await transaction.group.findMany({
+    include: groupInclude,
     where: {
-      groupCustomId: { in: customGroupIds },
-    },
-    include: {
-      Group: {
-        include: groupInclude,
+      Entity: {
+        EntitySetEntities: {
+          some: {
+            EntitySet: {
+              GroupCustom: {
+                some: {
+                  id: { in: customGroupIds },
+                },
+              },
+            },
+          },
+        },
       },
     },
   });
 
-  const resolvedIdentities = await transaction.customGroupMemberIdentity.findMany({
+  const resolvedIdentities = await transaction.identity.findMany({
+    include: identityInclude,
     where: {
-      groupCustomId: { in: customGroupIds },
-    },
-    include: {
-      Identity: {
-        include: identityInclude,
+      Entity: {
+        EntitySetEntities: {
+          some: {
+            EntitySet: {
+              GroupCustom: {
+                some: {
+                  id: { in: customGroupIds },
+                },
+              },
+            },
+          },
+        },
       },
     },
   });
 
-  resolvedGroups.forEach((memberGroup) => sortGroup(memberGroup.Group));
-  resolvedIdentities.forEach((memberIdentity) => identities.add(memberIdentity.Identity));
+  resolvedGroups.forEach((memberGroup) => sortGroup(memberGroup));
+  resolvedIdentities.forEach((memberIdentity) => identities.add(memberIdentity));
 
   return {
     nftGroups: Array.from(nftGroups),

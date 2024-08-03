@@ -14,16 +14,38 @@ export const apolloClient = new ApolloClient({
       Entity: ["Identity", "Group"],
       Field: ["Options", "FreeInput"],
       ResultConfig: ["Decision", "Ranking", "LlmSummary", "LlmSummaryList"],
-      Action: ["CallWebhook", "EvolveFlow", "TriggerStep"],
+      Action: [
+        "CallWebhook",
+        "EvolveFlow",
+        "TriggerStep",
+        "GroupUpdateMetadata",
+        "GroupUpdateMembership",
+        "GroupWatchFlow",
+        "GroupUpdateNotifications",
+      ],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
-      FieldAnswer: ["OptionFieldAnswer", "FreeInputFieldAnswer"],
+      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
+      FieldAnswer: [
+        "OptionFieldAnswer",
+        "FreeInputFieldAnswer",
+        "EntitiesFieldAnswer",
+        "FlowsFieldAnswer",
+        "WebhookFieldAnswer",
+      ],
     },
     typePolicies: {
       Query: {
         fields: {
           getRequestSteps: {
-            keyArgs: ["userOnly", "flowId", "searchQuery", "filter"],
+            keyArgs: [
+              "userOnly",
+              "groupId",
+              "flowId",
+              "searchQuery",
+              "statusFilter",
+              "respondPermissionFilter",
+            ],
             merge(existing, incoming, { args, readField }) {
               const cursor = args && args.cursor;
               const merged = existing ? existing.slice(0) : [];
@@ -33,6 +55,32 @@ export const apolloClient = new ApolloClient({
               if (offset < 0) offset = merged.length;
               // Now that we have a reliable offset, the rest of this logic
               // is the same as in offsetLimitPagination.
+              for (let i = 0; i < incoming.length; ++i) {
+                merged[offset + i] = incoming[i];
+              }
+              return merged;
+            },
+          },
+          getFlows: {
+            keyArgs: ["groupId", "searchQuery", "watchFilter", "triggerPermissionFilter"],
+            merge(existing, incoming, { args, readField }) {
+              const cursor = args && args.cursor;
+              const merged = existing ? existing.slice(0) : [];
+              let offset = offsetFromCursor(merged, cursor, readField);
+              if (offset < 0) offset = merged.length;
+              for (let i = 0; i < incoming.length; ++i) {
+                merged[offset + i] = incoming[i];
+              }
+              return merged;
+            },
+          },
+          groupsForCurrentUser: {
+            keyArgs: ["searchQuery", "watchFilter"],
+            merge(existing, incoming, { args, readField }) {
+              const cursor = args && args.cursor;
+              const merged = existing ? existing.slice(0) : [];
+              let offset = offsetFromCursor(merged, cursor, readField);
+              if (offset < 0) offset = merged.length;
               for (let i = 0; i < incoming.length; ++i) {
                 merged[offset + i] = incoming[i];
               }

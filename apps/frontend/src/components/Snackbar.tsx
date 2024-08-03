@@ -2,7 +2,7 @@ import { AlertProps, default as MuiAlert } from "@mui/material/Alert";
 import { default as MuiSnackbar } from "@mui/material/Snackbar";
 import { forwardRef, useContext } from "react";
 
-import { SnackbarContext } from "../contexts/SnackbarContext";
+import { SnackbarContext } from "../hooks/contexts/SnackbarContext";
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

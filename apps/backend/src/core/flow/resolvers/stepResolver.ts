@@ -14,7 +14,6 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
-  hideSensitiveInfo = true,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -46,14 +45,16 @@ export const stepResolver = ({
         responseFieldsCache,
         resultConfigsCache,
       }),
+      fieldsLocked: step.RequestFieldSet?.locked ?? false,
     },
     response: {
       permission: step.ResponsePermissions
         ? permissionResolver(step.ResponsePermissions, userIdentityIds)
         : null,
       fields: responseFields,
+      fieldsLocked: step.ResponseFieldSet?.locked ?? false,
     },
-    action: actionResolver(step.Action, responseFieldsCache, hideSensitiveInfo),
+    action: actionResolver(step.Action, responseFieldsCache),
     result,
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,

@@ -50,6 +50,7 @@ interface FieldOptionsFormProps {
   formIndex: number; // react-hook-form name
   fieldIndex: number;
   branch: "request" | "response";
+  locked: boolean;
 }
 
 export const FieldOptionsForm = ({
@@ -57,6 +58,7 @@ export const FieldOptionsForm = ({
   formIndex,
   branch,
   fieldIndex,
+  locked,
 }: FieldOptionsFormProps) => {
   const { control } = formMethods;
 
@@ -125,6 +127,7 @@ export const FieldOptionsForm = ({
             control={control}
             // showLabel={false}
             label={`Option #${inputIndex + 1}`}
+            disabled={disabled}
           />
         );
       case FieldDataType.DateTime:
@@ -135,6 +138,7 @@ export const FieldOptionsForm = ({
             control={control}
             showLabel={false}
             label={`Option #${inputIndex + 1}`}
+            disabled={disabled}
           />
         );
       default:
@@ -238,6 +242,7 @@ export const FieldOptionsForm = ({
                 </Box>
                 <Select<FlowSchemaType>
                   control={control}
+                  disabled={locked}
                   size={"small"}
                   sx={{ flexBasis: "100px", flexGrow: 1 }}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
@@ -253,15 +258,18 @@ export const FieldOptionsForm = ({
                   defaultValue=""
                 />
 
-                {renderInput(inputIndex, false)}
+                {renderInput(inputIndex, locked)}
               </ResponsiveFormRow>
-              <IconButton
-                color="primary"
-                aria-label="Remove option"
-                onClick={() => remove(inputIndex)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
+
+              {!locked && (
+                <IconButton
+                  color="primary"
+                  aria-label="Remove option"
+                  onClick={() => remove(inputIndex)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              )}
             </Box>
           );
         })}
@@ -336,40 +344,42 @@ export const FieldOptionsForm = ({
           </IconButton>
         </Box>
       )}
-      <ResponsiveFormRow>
-        <Button
-          sx={{ position: "relative" }}
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            append(defaultOption(fieldIndex, stepDefinedOptions.length));
-          }}
-        >
-          Add option
-        </Button>
-        {possibleLinkOptions.length > 0 && branch === "response" && (
+      {!locked && (
+        <ResponsiveFormRow>
           <Button
             sx={{ position: "relative" }}
-            variant="text"
+            variant="outlined"
             size="small"
             onClick={() => {
-              linksAppend({ id: "" });
+              append(defaultOption(fieldIndex, stepDefinedOptions.length));
             }}
           >
-            Use previous result as option(s)
+            Add option
           </Button>
-        )}
-        {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
-          <Button
-            sx={{ position: "relative" }}
-            variant="text"
-            size="small"
-            onClick={enableRequestCreatedOptions}
-          >
-            Allow options to be created at trigger
-          </Button>
-        )}
-      </ResponsiveFormRow>
+          {possibleLinkOptions.length > 0 && branch === "response" && (
+            <Button
+              sx={{ position: "relative" }}
+              variant="text"
+              size="small"
+              onClick={() => {
+                linksAppend({ id: "" });
+              }}
+            >
+              Use previous result as option(s)
+            </Button>
+          )}
+          {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
+            <Button
+              sx={{ position: "relative" }}
+              variant="text"
+              size="small"
+              onClick={enableRequestCreatedOptions}
+            >
+              Allow options to be created at trigger
+            </Button>
+          )}
+        </ResponsiveFormRow>
+      )}
 
       <FormHelperText
         sx={{

@@ -12,7 +12,7 @@ export interface ResultConfigCache {
   resultIndex: number;
 }
 
-export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): NewFlowArgs => {
+export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): NewFlowArgs => {
   const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
     name: formState.name,
@@ -22,14 +22,13 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
         ...step,
         request: step.request && {
           fields: createFieldsArgs(step.request.fields ?? [], resultConfigCache),
-          permission: createPermissionArgs(
-            step.request?.permission,
-            index === 0 ? userId : undefined,
-          ),
+          permission: createPermissionArgs(step.request?.permission),
+          fieldsLocked: step.request.fieldsLocked ?? false,
         },
         response: step.response && {
           fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
           permission: createPermissionArgs(step.response.permission),
+          fieldsLocked: step.response.fieldsLocked ?? false,
         },
         result: createResultsArgs(
           step.result,
@@ -48,6 +47,5 @@ export const createNewFlowArgs = (formState: FlowSchemaType, userId: string): Ne
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),
     },
   };
-  console.log("created args are ", args);
   return args;
 };

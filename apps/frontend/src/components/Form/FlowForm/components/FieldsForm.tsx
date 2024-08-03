@@ -29,6 +29,25 @@ export const defaultFreeInputField = (stepIndex: number, fieldIndex: number): Fi
   freeInputDataType: FieldDataType.String,
 });
 
+export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType) => {
+  if (freeInputDataType === FieldDataType.EntityIds) {
+    return [{ name: "Members", value: FieldDataType.EntityIds }];
+  } else if (freeInputDataType === FieldDataType.FlowIds) {
+    return [{ name: "Flows", value: FieldDataType.FlowIds }];
+  } else if (freeInputDataType === FieldDataType.FlowVersionId) {
+    return [{ name: "Flows", value: FieldDataType.FlowVersionId }];
+  } else if (freeInputDataType === FieldDataType.Webhook) {
+    return [{ name: "Webhook", value: FieldDataType.Webhook }];
+  } else
+    return [
+      { name: "Text", value: FieldDataType.String },
+      { name: "Number", value: FieldDataType.Number },
+      { name: "Url", value: FieldDataType.Uri },
+      { name: "Date Time", value: FieldDataType.DateTime },
+      { name: "Date", value: FieldDataType.Date },
+    ];
+};
+
 export const FieldsForm = ({
   formMethods,
   fieldsArrayMethods,
@@ -38,14 +57,27 @@ export const FieldsForm = ({
   const { control } = formMethods;
 
   const numFields = (formMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
+  const isLocked = formMethods.getValues(`steps.${formIndex}.${branch}.fieldsLocked`);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
-      {fieldsArrayMethods.fields.map((item, inputIndex) => {
-        const noEdit = false; //item.name === "Request title" ? true : false;
+      <TextField<FlowSchemaType>
+        name={`steps.${formIndex}.${branch}.fieldsLocked`}
+        key={"step" + formIndex.toString() + "requestfieldsLocked"}
+        control={control}
+        label="fieldId"
+        disabled={true}
+        display={false}
+        defaultValue=""
+      />
 
+      {fieldsArrayMethods.fields.map((item, inputIndex) => {
         const fieldType: FieldType = formMethods.watch(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
+        );
+
+        const freeInputDataType = formMethods.watch(
+          `steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`,
         );
 
         return (
@@ -88,12 +120,12 @@ export const FieldsForm = ({
                   placeholderText={`What's your question?`}
                   label={``}
                   defaultValue=""
+                  disabled={isLocked}
                 />
                 <ResponsiveFormRow>
                   <Select<FlowSchemaType>
                     control={control}
                     size={"small"}
-                    disabled={noEdit}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
                     key={"type" + inputIndex.toString() + formIndex.toString()}
                     selectOptions={[
@@ -102,6 +134,7 @@ export const FieldsForm = ({
                     ]}
                     label="Type"
                     defaultValue=""
+                    disabled={isLocked}
                   />
                   <Select<FlowSchemaType>
                     control={control}
@@ -109,22 +142,17 @@ export const FieldsForm = ({
                       display: fieldType === FieldType.FreeInput ? "flex" : "none",
                     }}
                     size={"small"}
-                    disabled={noEdit}
+                    disabled={isLocked}
                     name={`steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`}
                     key={"dataType" + inputIndex.toString() + formIndex.toString()}
-                    selectOptions={[
-                      { name: "Text", value: FieldDataType.String },
-                      { name: "Number", value: FieldDataType.Number },
-                      { name: "Url", value: FieldDataType.Uri },
-                      { name: "Date Time", value: FieldDataType.DateTime },
-                      { name: "Date", value: FieldDataType.Date },
-                    ]}
+                    selectOptions={createFreeInputDataTypeOptions(freeInputDataType)}
                     label="Free input data type"
                     defaultValue=""
                   />
 
                   <Select<FlowSchemaType>
                     control={control}
+                    disabled={isLocked}
                     sx={{
                       display: fieldType === FieldType.Options ? "flex" : "none",
                     }}
@@ -159,6 +187,7 @@ export const FieldsForm = ({
                   >
                     <Box sx={{ width: "100%" }}>
                       <FieldOptionsForm
+                        locked={isLocked}
                         formMethods={formMethods}
                         formIndex={formIndex}
                         fieldIndex={inputIndex}
@@ -169,7 +198,7 @@ export const FieldsForm = ({
                 )}
               </Box>
             </LabeledGroupedInputs>
-            {noEdit ? null : (
+            {isLocked ? null : (
               <IconButton
                 color="primary"
                 size="small"

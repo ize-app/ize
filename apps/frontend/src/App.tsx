@@ -7,14 +7,14 @@ import { StytchProvider } from "@stytch/react";
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router-dom";
 
-import { CurrentUserProvider } from "./contexts/current_user_context";
-import { RecentAgentsProvider } from "./contexts/RecentAgentContext";
-import { SnackbarProvider } from "./contexts/SnackbarContext";
-import { apolloClient } from "./graphql/apollo";
-import { router } from "./routers/router";
-import GlobalStyles from "./style/global";
-import muiTheme from "./style/muiTheme";
-import { stytchClient } from "./stytch";
+import { apolloClient } from "@/graphql/apollo";
+import { CurrentUserProvider } from "@/hooks/contexts/current_user_context";
+import { RecentAgentsProvider } from "@/hooks/contexts/RecentAgentContext";
+import { SnackbarProvider } from "@/hooks/contexts/SnackbarContext";
+import { router } from "@/routers/router";
+import GlobalStyles from "@/style/global";
+import muiTheme from "@/style/muiTheme";
+import { stytchClient } from "@/stytch";
 
 function App() {
   return (

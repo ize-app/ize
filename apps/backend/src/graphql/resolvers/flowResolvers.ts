@@ -1,12 +1,13 @@
 import { getFlow as getFlowService } from "@/core/flow/getFlow";
 import { getFlows as getFlowsService } from "@/core/flow/getFlows";
-import { newCustomFlow as newCustomFlowService } from "@/core/flow/newCustomFlow";
+import { newCustomFlow as newCustomFlowService } from "@/core/flow/customFlow/newCustomFlow";
 import { GraphqlRequestContext } from "@graphql/context";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import {
   MutationNewFlowArgs,
   MutationResolvers,
   QueryGetFlowArgs,
+  QueryGetFlowsArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 
@@ -20,14 +21,10 @@ const getFlow: QueryResolvers["getFlow"] = async (
 
 const getFlows: QueryResolvers["getFlows"] = async (
   root: unknown,
-  args: {},
+  args: QueryGetFlowsArgs,
   context: GraphqlRequestContext,
 ) => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
-  return await getFlowsService({ user: context.currentUser });
+  return await getFlowsService({ args, user: context.currentUser });
 };
 
 const newFlow: MutationResolvers["newFlow"] = async (

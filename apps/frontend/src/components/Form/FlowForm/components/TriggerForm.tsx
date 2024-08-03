@@ -3,7 +3,7 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldsForm } from "./FieldsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { RoleSearch, Select } from "../../formFields";
+import { EntitySearch, Select } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 
@@ -38,7 +38,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
             label="Who can make requests?"
           />
           {isEntitiesRequestTrigger && (
-            <RoleSearch
+            <EntitySearch
               key="requestRoleSearch"
               ariaLabel={"Individuals and groups who can make requests"}
               name={`steps.${formIndex}.request.permission.entities`}

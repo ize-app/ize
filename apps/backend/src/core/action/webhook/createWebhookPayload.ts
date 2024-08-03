@@ -26,7 +26,7 @@ export const createWebhookPayload = async ({
         id: requestStepId,
       },
     });
-    const formattedRequest = requestResolver({
+    const formattedRequest = await requestResolver({
       req: reqStep.Request,
       context: { currentUser: null, discordApi: undefined },
       userGroupIds: [],

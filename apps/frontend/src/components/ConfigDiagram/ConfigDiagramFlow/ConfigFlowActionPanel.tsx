@@ -1,23 +1,29 @@
 import { Typography } from "@mui/material";
 
-import { actionProperties } from "@/components/Action/actionProperties";
+import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   ConfigurationPanel,
   PanelAccordion,
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { ActionFragment } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType, EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
 
-import { ActionConfig } from "../../Action/ActionConfig";
+import { ActionDescription } from "../../Action/ActionDescription";
 import { ActionFilter } from "../../Action/ActionFilter";
 
-export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) => {
+export const ConfigFlowActionPanel = ({
+  action,
+  group,
+}: {
+  action: ActionFragment;
+  group: EntitySummaryPartsFragment | undefined | null;
+}) => {
   return (
     <PanelContainer>
       <PanelHeader>
         <Typography color="primary" variant="label">
-          {actionProperties[action.__typename].label + " configuration"}
+          {getActionLabel(action, group) + " configuration"}
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
@@ -26,8 +32,12 @@ export const ConfigFlowActionPanel = ({ action }: { action: ActionFragment }) =>
             <ActionFilter action={action} />
           </PanelAccordion>
         )}
-        <PanelAccordion title={actionProperties[action.__typename].label} hasError={false}>
-          <ActionConfig action={action} />
+        <PanelAccordion title={getActionLabel(action, group)} hasError={false}>
+          <ActionDescription
+            action={action}
+            actionType={action.__typename as ActionType}
+            groupName={group?.name}
+          />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

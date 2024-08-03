@@ -57,7 +57,7 @@ export const newLlmSummaryResult = async ({
     },
   });
 
-  const request = requestResolver({
+  const request = await requestResolver({
     req: reqStep.Request,
     context: { currentUser: null, discordApi: undefined },
     userGroupIds: [],

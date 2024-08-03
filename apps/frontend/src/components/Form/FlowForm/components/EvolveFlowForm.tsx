@@ -1,7 +1,7 @@
 import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
 import { UseFormReturn } from "react-hook-form";
 
-import { RoleSearch, Select, TextField } from "@/components/Form/formFields";
+import { EntitySearch, Select, TextField } from "@/components/Form/formFields";
 import { DecisionType } from "@/graphql/generated/graphql";
 
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
@@ -48,7 +48,7 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
         />
 
         {requestPermissionType === PermissionType.Entities && (
-          <RoleSearch
+          <EntitySearch
             key="requestRoleSearch"
             ariaLabel={"Individuals and groups who can make requests"}
             name={`evolve.requestPermission.entities`}
@@ -73,7 +73,7 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
         />
 
         {responsePermissionType === PermissionType.Entities && (
-          <RoleSearch
+          <EntitySearch
             key="requestRoleSearch"
             ariaLabel={"Individuals and groups who can make requests"}
             name={`evolve.responsePermission.entities`}

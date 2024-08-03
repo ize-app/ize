@@ -2,6 +2,10 @@ mutation TestWebhook($inputs: TestWebhookArgs!) {
   testWebhook(inputs: $inputs)
 }
 
+mutation CreateWebhook($inputs: CallWebhookArgs!) {
+  createWebhook(inputs: $inputs)
+}
+
 fragment ActionExecution on ActionExecution {
   actionId
   lastAttemptedAt
@@ -19,9 +23,23 @@ fragment Action on Action {
   ... on TriggerStep {
     ...TriggerStep
   }
+  ... on GroupUpdateMetadata {
+    ...GroupUpdateMetadata
+  }
+  ... on GroupUpdateMembership {
+    ...GroupUpdateMembership
+  }
+  ... on GroupWatchFlow {
+    ...GroupWatchFlow
+  }
+  ... on GroupUpdateNotifications {
+    ...GroupUpdateNotifications
+  }
 }
 
 fragment CallWebhook on CallWebhook {
+  locked
+  webhookId
   filterOption {
     ...Option
   }
@@ -30,12 +48,42 @@ fragment CallWebhook on CallWebhook {
 }
 
 fragment EvolveFlow on EvolveFlow {
+  locked
   filterOption {
     ...Option
   }
 }
 
 fragment TriggerStep on TriggerStep {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateMetadata on GroupUpdateMetadata {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateMembership on GroupUpdateMembership {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupWatchFlow on GroupWatchFlow {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment GroupUpdateNotifications on GroupUpdateNotifications {
+  locked
   filterOption {
     ...Option
   }

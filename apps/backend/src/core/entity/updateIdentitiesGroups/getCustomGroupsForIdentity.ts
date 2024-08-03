@@ -15,22 +15,18 @@ export const getCustomGroupsForIdentity = async ({
 }) => {
   const identityCustomGroups = await transaction.groupCustom.findMany({
     where: {
-      OR: [
-        {
-          CustomGroupMemberGroups: {
-            some: {
-              Group: { id: { in: groupIds } },
+      MemberEntitySet: {
+        EntitySetEntities: {
+          some: {
+            Entity: {
+              OR: [
+                { Group: { id: { in: groupIds } } },
+                { Identity: { id: { equals: identityId } } },
+              ],
             },
           },
         },
-        {
-          CustomGroupMemberIdentities: {
-            some: {
-              identityId: identityId,
-            },
-          },
-        },
-      ],
+      },
     },
   });
 
