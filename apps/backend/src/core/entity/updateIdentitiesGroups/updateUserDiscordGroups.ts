@@ -47,16 +47,20 @@ export const updateUserDiscordGroups = async ({
     });
 
     // get finds ize role role groups for all roles that the user holds in servers that have the cults bot
-    await discordServers.forEach(async (server) => {
-      if (!server.hasCultsBot) return;
-      const serverRoles = await botApi.getDiscordServerRoles(server.id);
-      serverRoles.forEach((role) => {
-        const roleGroup = userServersRoleGroups.find(
-          (roleGroup) => roleGroup.GroupDiscordRole?.discordRoleId === role.id,
-        );
-        if (roleGroup) discordRoleGroupIds.push(roleGroup.id);
-      });
-    });
+    await Promise.all(
+      discordServers.map(async (server) => {
+        if (!server.hasCultsBot) return;
+        const serverRoles = await botApi.getDiscordServerRoles(server.id);
+        serverRoles.forEach((role) => {
+          const roleGroup = userServersRoleGroups.find(
+            (roleGroup) => roleGroup.GroupDiscordRole?.discordRoleId === role.id,
+          );
+          if (roleGroup) {
+            discordRoleGroupIds.push(roleGroup.id);
+          }
+        });
+      }),
+    );
 
     // finds all @everyone roles in all servers that are on Ize
     userServersRoleGroups
