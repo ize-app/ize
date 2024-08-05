@@ -5,8 +5,6 @@ import Box from "@mui/material/Box";
 import { getAvatarString } from "@/components/Avatar/getAvatarString";
 import { stringToColor } from "@/components/Avatar/stringToColor";
 
-import { ParentProps } from "../../components/AvatarOld";
-
 interface BannerWithIconProps {
   id: string;
   bannerUrl: string;
@@ -14,6 +12,11 @@ interface BannerWithIconProps {
   name: string;
   parent: ParentProps | undefined;
   color: string | null | undefined;
+}
+
+export interface ParentProps {
+  avatarUrl: string | undefined | null;
+  name: string;
 }
 
 const BannerWithAvatar = ({

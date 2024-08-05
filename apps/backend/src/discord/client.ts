@@ -6,6 +6,6 @@ discordBotClient.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
-discordBotClient.login(process.env.DISCORD_CULTS_BOT_API_TOKEN);
+discordBotClient.login(process.env.DISCORD_IZE_BOT_API_TOKEN);
 
 export { discordBotClient };

@@ -19,7 +19,7 @@ export class DiscordApi {
   }
 
   static forBotUser() {
-    return new DiscordApi(process.env.DISCORD_CULTS_BOT_API_TOKEN as string, true);
+    return new DiscordApi(process.env.DISCORD_IZE_BOT_API_TOKEN as string, true);
   }
 
   static colorIntToHex(colorInt: number): string {
