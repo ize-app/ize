@@ -142,7 +142,7 @@ export const RequestStepsSearch = ({
         <EmptyTablePlaceholder>
           {!flowId ? (
             <Typography>
-              {groupId ? "This group doesn't " : "You don&apos;t "}have any requests. Create a{" "}
+              {groupId ? "This group doesn't " : "You don't "}have any requests. Create a{" "}
               <Link to={Route.NewFlow}>flow</Link> first or a{" "}
               <Link to={Route.NewRequest}>request</Link> or for an existing flow.
             </Typography>
