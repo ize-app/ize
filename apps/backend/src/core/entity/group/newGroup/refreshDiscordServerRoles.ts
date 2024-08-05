@@ -20,11 +20,12 @@ export const refreshDiscordServerRoles = async ({
   const botApi = DiscordApi.forBotUser();
   const server = await botApi.getDiscordServer(serverId);
   const serverRoles = await botApi.getDiscordServerRoles(serverId);
-  const members = await botApi.getDiscordGuildMembers({
-    serverId: server.id,
-  });
+  // TODO: I think the issue here is permissions for the botAPI. probably an easy fix
+  // const members = await botApi.getDiscordGuildMembers({
+  //   serverId: server.id,
+  // });
 
-  const memberCount = botApi.countRoleMembers(members, serverRoles);
+  // const memberCount = botApi.countRoleMembers(members, serverRoles);
 
   const relevantRoles = serverRoles.filter(
     (role) => !role.tags?.bot_id || role.name === "@everyone",
@@ -80,7 +81,7 @@ export const refreshDiscordServerRoles = async ({
           color: role.color,
           icon: role.icon,
           unicodeEmoji: role.unicode_emoji,
-          memberCount: memberCount[role.id],
+          // memberCount: memberCount[role.id],
         },
         create: {
           name: role.name,
@@ -88,7 +89,7 @@ export const refreshDiscordServerRoles = async ({
           color: role.color,
           icon: role.icon,
           unicodeEmoji: role.unicode_emoji,
-          memberCount: memberCount[role.id],
+          // memberCount: memberCount[role.id],
           Group: {
             create: {
               Entity: { create: {} },
