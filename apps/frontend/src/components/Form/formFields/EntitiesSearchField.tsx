@@ -17,16 +17,12 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 
+import { Avatar } from "@/components/Avatar";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
-import {
-  EntitySummaryPartsFragment,
-  EntityType,
-  NewEntityTypes,
-} from "../../../graphql/generated/graphql";
-import { Avatar } from "../../AvatarOld";
+import { EntitySummaryPartsFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
 import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
@@ -179,27 +175,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                   value.map((option: EntitySummaryPartsFragment, index: number) => {
                     return (
                       <Chip
-                        avatar={
-                          <Avatar
-                            id={option.id}
-                            backgroundColor={
-                              option.__typename === "Group" ? option.color : undefined
-                            }
-                            name={option.name}
-                            avatarUrl={
-                              option.__typename === "Group" && option.organization
-                                ? option.organization.icon ?? option.icon
-                                : option.icon
-                            }
-                            type={option.__typename as EntityType}
-                            cryptoWallet={
-                              option.__typename === "Identity" &&
-                              option.identityType.__typename === "IdentityBlockchain"
-                                ? option.identityType.address
-                                : null
-                            }
-                          />
-                        }
+                        avatar={<Avatar id={option.id} avatar={option} />}
                         variant="filled"
                         label={option.name}
                         color="primary"
@@ -223,24 +199,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                     }}
                     key={"option" + option.id}
                   >
-                    <Avatar
-                      id={option.id}
-                      key={"avatar" + option.id}
-                      avatarUrl={
-                        option.__typename === "Group" && option.organization
-                          ? option.organization.icon ?? option.icon
-                          : option.icon
-                      }
-                      name={option.name}
-                      backgroundColor={option.__typename === "Group" ? option.color : undefined}
-                      type={option.__typename as EntityType}
-                      cryptoWallet={
-                        option.__typename === "Identity" &&
-                        option.identityType.__typename === "IdentityBlockchain"
-                          ? option.identityType.address
-                          : null
-                      }
-                    />
+                    <Avatar id={option.id} avatar={option} />
                     <Typography
                       variant="body1"
                       sx={{

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useStytch } from "@stytch/react";
 import { useCallback, useContext, useState } from "react";
 
-import { EntityType } from "@/graphql/generated/graphql";
+import { AvatarWithName } from "@/components/Avatar";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
@@ -13,7 +13,6 @@ import PageContainer from "@/layout/PageContainer";
 import { LinkEmailModal } from "./LinkEmailModal";
 import { ProfileForm } from "./ProfileForm";
 import { attachDiscord } from "../../components/Auth/attachDiscord";
-import { AvatarWithName } from "../../components/AvatarOld";
 import { DiscordLogoSvg, EthLogoSvg } from "../../components/icons";
 
 export const UserSettings = () => {
@@ -22,50 +21,13 @@ export const UserSettings = () => {
 
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
-  let hasBlockchainIdentity = false;
-  let hasDiscordIdentity = false;
+  const hasBlockchainIdentity =
+    me?.identities.some((id) => id.identityType.__typename === "IdentityBlockchain") ?? false;
+  const hasDiscordIdentity =
+    me?.identities.some((id) => id.identityType.__typename === "IdentityDiscord") ?? false;
 
   const identities = me
-    ? me.identities.map((identity) => {
-        switch (identity.identityType.__typename) {
-          case "IdentityBlockchain": {
-            hasBlockchainIdentity = true;
-            return (
-              <AvatarWithName
-                id={identity.id}
-                key={identity.id}
-                name={identity.name}
-                cryptoWallet={identity.identityType.address}
-                avatarUrl={null}
-                type={EntityType.Identity}
-              />
-            );
-          }
-          case "IdentityEmail": {
-            return (
-              <AvatarWithName
-                id={identity.id}
-                key={identity.id}
-                name={identity.name}
-                avatarUrl={identity.icon}
-                type={EntityType.Identity}
-              />
-            );
-          }
-          case "IdentityDiscord": {
-            hasDiscordIdentity = true;
-            return (
-              <AvatarWithName
-                id={identity.id}
-                key={identity.id}
-                name={identity.name}
-                avatarUrl={identity.icon}
-                type={EntityType.Identity}
-              />
-            );
-          }
-        }
-      })
+    ? me.identities.map((identity) => <AvatarWithName avatar={identity} key={identity.id} />)
     : [];
 
   const authenticateBlockchain = useCallback(async () => {
@@ -116,6 +78,7 @@ export const UserSettings = () => {
               onClick={authenticateBlockchain}
               variant={"outlined"}
               sx={{ width: "200px" }}
+              size="small"
               startIcon={<EthLogoSvg />}
             >
               Connect Eth Address
@@ -128,6 +91,7 @@ export const UserSettings = () => {
             variant={"outlined"}
             sx={{ width: "200px" }}
             startIcon={<MailOutline />}
+            size="small"
           >
             Connect Email
           </Button>
@@ -136,6 +100,7 @@ export const UserSettings = () => {
               onClick={attachDiscord}
               variant={"outlined"}
               sx={{ width: "200px" }}
+              size="small"
               startIcon={<DiscordLogoSvg />}
             >
               Connect Discord
