@@ -1,3 +1,4 @@
+import { GraphqlRequestContext } from "@/graphql/context";
 import { Flow, QueryGetFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
@@ -10,22 +11,21 @@ import { flowResolver } from "./resolvers/flowResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { hasWritePermission } from "../permission/hasWritePermission";
-import { MePrismaType } from "../user/userPrismaTypes";
 
 // if flowID is provided, it returns current published version of that flow
 // if flowVersionID is provided, it returns that specific version/draft of the flow
 export const getFlow = async ({
   args,
-  user,
+  context,
 }: {
   args: QueryGetFlowArgs;
-  user: MePrismaType | undefined | null;
+  context: GraphqlRequestContext;
 }): Promise<Flow> => {
   let flowVersion: FlowVersionPrismaType | null;
 
   if (args.flowId) {
     const flow = await prisma.flow.findFirstOrThrow({
-      include: createFlowInclude(user?.id),
+      include: createFlowInclude(context.currentUser?.id),
       where: {
         id: args.flowId,
         FlowVersions: args.flowVersionId
@@ -39,7 +39,7 @@ export const getFlow = async ({
     flowVersion = flow.CurrentFlowVersion;
   } else if (args.flowVersionId) {
     flowVersion = await prisma.flowVersion.findFirstOrThrow({
-      include: createFlowVersionInclude(user?.id),
+      include: createFlowVersionInclude(context.currentUser?.id),
       where: {
         id: args.flowVersionId,
       },
@@ -66,7 +66,7 @@ export const getFlow = async ({
     });
 
   const evolveFlow = await prisma.flow.findFirstOrThrow({
-    include: createFlowInclude(user?.id),
+    include: createFlowInclude(context.currentUser?.id),
     where: {
       id: flowVersion.evolveFlowId,
     },
@@ -81,7 +81,7 @@ export const getFlow = async ({
 
     const hasEvolvePermission = await hasWritePermission({
       permission: evolveRequestPermissions,
-      context: { currentUser: user },
+      context,
       transaction: prisma,
     });
 
@@ -91,16 +91,16 @@ export const getFlow = async ({
       });
   }
 
-  const userIdentityIds = user?.Identities.map((id) => id.id) ?? [];
+  const userIdentityIds = context.currentUser?.Identities.map((id) => id.id) ?? [];
 
-  const userGroupIds = await getGroupIdsOfUser({ user });
+  const userGroupIds = await getGroupIdsOfUser({ user: context.currentUser });
 
   const res = await flowResolver({
     flowVersion: flowVersion,
     evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,
     userGroupIds,
-    userId: user?.id,
+    userId: context.currentUser?.id,
   });
 
   return res;

@@ -9,10 +9,12 @@ export const createPermissionFormState = (permission: PermissionFragment): Permi
     return {
       type: PermissionType.Entities,
       entities: permission.entities.map((entity) => {
-        if (entity.__typename === "Group")
-          return { ...entity, groupType: { __typename: entity.groupType.__typename } };
+        if (entity.__typename === "Group") return { ...entity, groupType: { ...entity.groupType } };
         else if (entity.__typename === "Identity")
-          return { ...entity, identityType: { __typename: entity.identityType.__typename } };
+          return {
+            ...entity,
+            identityType: { ...entity.identityType },
+          };
       }) as EntitySchemaType[],
     };
 };

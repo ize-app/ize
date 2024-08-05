@@ -16,7 +16,7 @@ const getFlow: QueryResolvers["getFlow"] = async (
   args: QueryGetFlowArgs,
   context: GraphqlRequestContext,
 ) => {
-  return await getFlowService({ args, user: context.currentUser });
+  return await getFlowService({ args, context });
 };
 
 const getFlows: QueryResolvers["getFlows"] = async (
