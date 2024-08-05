@@ -22,7 +22,10 @@ export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
   };
   return (
     <MuiAvatar
-      src={avatar.icon ?? ""}
+      src={
+        avatar.icon ??
+        (avatar.__typename === "Group" ? avatar.organization?.icon ?? undefined : undefined)
+      }
       alt={avatar.name}
       {...props}
       sx={{ ...defaultStyles, ...sx }}
