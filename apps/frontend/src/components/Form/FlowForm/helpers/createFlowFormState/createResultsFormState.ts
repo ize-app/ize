@@ -21,6 +21,7 @@ export const createResultFormState = (results: ResultConfig[]): ResultSchemaType
       fieldId: result.fieldId ?? null,
       minimumAnswers: result.minimumAnswers,
     };
+
     switch (result.__typename) {
       case ResultType.Decision:
         return {
@@ -45,8 +46,17 @@ export const createResultFormState = (results: ResultConfig[]): ResultSchemaType
             example: result.example ?? undefined,
           },
         } as LlmSummaryResultSchemaType;
+      case ResultType.LlmSummaryList:
+        return {
+          type: ResultType.LlmSummary,
+          ...resultBase,
+          llmSummary: {
+            prompt: result.prompt ?? undefined,
+            example: result.example ?? undefined,
+          },
+        } as LlmSummaryResultSchemaType;
       default:
-        throw Error("Unknown result type");
+        throw Error(`Unknown result type`);
     }
   });
 };

@@ -6,6 +6,6 @@ type ResultTypeDisplay = {
 export const resultTypeDisplay: ResultTypeDisplay = {
   [ResultType.Decision]: "Decision",
   [ResultType.Ranking]: "Ranking",
-  [ResultType.LlmSummary]: "AI Summary",
+  [ResultType.LlmSummary]: "AI Lummary",
   [ResultType.LlmSummaryList]: "AI List",
 };
