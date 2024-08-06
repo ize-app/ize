@@ -47,17 +47,6 @@ export const groupUpdateMetadata = async ({
       return fieldAnswer.Field.name === GroupMetadataFields.Description;
     });
 
-    [name, description].forEach((field) => {
-      if (!field) {
-        throw new GraphQLError(
-          `Cannot find field for groupUpdateMetadata request step ${requestStepId}`,
-          {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          },
-        );
-      }
-    });
-
     const customGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupCustom?.id;
 
     if (!customGroupId)
@@ -70,8 +59,8 @@ export const groupUpdateMetadata = async ({
         id: customGroupId,
       },
       data: {
-        name: name?.AnswerFreeInput[0].value,
-        description: description?.AnswerFreeInput[0].value,
+        name: name?.AnswerFreeInput[0].value ?? "",
+        description: description?.AnswerFreeInput[0].value ?? "",
       },
     });
 
