@@ -38,10 +38,11 @@ const resolveDiscordGroup = (
     entityId: group.entityId,
     creator: userResolver(group.creator),
     // discord only includes the @sign for @everyone
-    name:
+    name: `${
       group.GroupDiscordRole.name !== "@everyone"
         ? "@" + group.GroupDiscordRole.name
-        : group.GroupDiscordRole.name,
+        : group.GroupDiscordRole.name
+    } (${group.GroupDiscordRole.discordServer.name})`,
     icon:
       group.GroupDiscordRole.icon && group.GroupDiscordRole.discordRoleId
         ? DiscordApi.createRoleIconURL(
