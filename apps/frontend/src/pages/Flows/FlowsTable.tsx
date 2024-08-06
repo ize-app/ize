@@ -23,6 +23,7 @@ export const FlowsTable = ({
   onClickRow,
   hideTriggerButton = false,
   hideWatchButton = false,
+  // groupId here means that the flow is being displayed in a group context
   groupId,
 }: {
   flows: FlowSummaryFragment[];
@@ -47,6 +48,7 @@ export const FlowsTable = ({
                   hideTriggerButton={hideTriggerButton}
                   hideWatchButton={hideWatchButton}
                   onClickRow={onClickRow}
+                  groupId={groupId}
                 />
               ))}
             </TableBody>
@@ -67,6 +69,7 @@ export const FlowsTable = ({
                       hideTriggerButton={hideTriggerButton}
                       hideWatchButton={hideWatchButton}
                       onClickRow={onClickRow}
+                      groupId={groupId}
                     />
                   ))}
                 </TableBody>
@@ -89,6 +92,7 @@ export const FlowsTable = ({
               hideTriggerButton={hideTriggerButton}
               hideWatchButton={hideWatchButton}
               onClickRow={onClickRow}
+              groupId={groupId}
             />
           ))}
         </TableBody>
@@ -102,11 +106,14 @@ const FlowRow = ({
   onClickRow,
   hideTriggerButton,
   hideWatchButton,
+  groupId,
 }: {
   flow: FlowSummaryFragment;
   onClickRow: (flow: FlowSummaryFragment) => void;
   hideTriggerButton: boolean;
   hideWatchButton: boolean;
+  // groupId here means that the flow is being displayed in a group context
+  groupId?: string;
 }) => {
   const navigate = useNavigate();
   return (
@@ -133,7 +140,7 @@ const FlowRow = ({
               gap: "2px",
             }}
           >
-            {flow.group && (
+            {flow.group && !groupId && (
               <Box sx={{ display: "flex", flexDirection: "row", gap: "4px" }}>
                 <AvatarGroup avatars={[flow.group]} size="14px" />
                 <Typography
