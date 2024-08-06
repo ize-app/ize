@@ -23,23 +23,67 @@ export const FlowsTable = ({
   onClickRow,
   hideTriggerButton = false,
   hideWatchButton = false,
+  // groupId here means that the flow is being displayed in a group context
+  groupId,
 }: {
   flows: FlowSummaryFragment[];
   onClickRow: (flow: FlowSummaryFragment) => void;
   hideTriggerButton?: boolean;
   hideWatchButton?: boolean;
+  groupId?: string;
 }) => {
+  if (groupId) {
+    const groupFlows = flows.filter((flow) => flow.group?.id === groupId);
+    const otherFlows = flows.filter((flow) => flow.group?.id !== groupId);
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <Typography variant={"label2"}>Flows that modify this group</Typography>
+        <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+          <Table aria-label="Flows that modify this group Table" stickyHeader={true}>
+            <TableBody>
+              {groupFlows.map((flow) => (
+                <FlowRow
+                  key={flow.flowId}
+                  flow={flow}
+                  hideTriggerButton={hideTriggerButton}
+                  hideWatchButton={hideWatchButton}
+                  onClickRow={onClickRow}
+                  groupId={groupId}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {otherFlows.length > 0 ? (
+          <>
+            <Typography variant={"label2"} marginTop={"8px"}>
+              Flows watched by this group
+            </Typography>
+            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+              <Table aria-label="Flows watched by this group Table" stickyHeader={true}>
+                <TableBody>
+                  {otherFlows.map((flow) => (
+                    <FlowRow
+                      key={flow.flowId}
+                      flow={flow}
+                      hideTriggerButton={hideTriggerButton}
+                      hideWatchButton={hideWatchButton}
+                      onClickRow={onClickRow}
+                      groupId={groupId}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : null}
+      </Box>
+    );
+  }
+
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
-        {/* <TableHead>
-          <TableRow>
-            <TableCellHideable align="right" width={"60px"}></TableCellHideable>
-            <TableCellHideable sx={{ minWidth: "140px" }}>Flow</TableCellHideable>
-
-            <TableCellHideable align="right" width={"60px"} hideOnSmallScreen></TableCellHideable>
-          </TableRow>
-        </TableHead> */}
         <TableBody>
           {flows.map((flow) => (
             <FlowRow
@@ -48,6 +92,7 @@ export const FlowsTable = ({
               hideTriggerButton={hideTriggerButton}
               hideWatchButton={hideWatchButton}
               onClickRow={onClickRow}
+              groupId={groupId}
             />
           ))}
         </TableBody>
@@ -61,17 +106,23 @@ const FlowRow = ({
   onClickRow,
   hideTriggerButton,
   hideWatchButton,
+  groupId,
 }: {
   flow: FlowSummaryFragment;
   onClickRow: (flow: FlowSummaryFragment) => void;
   hideTriggerButton: boolean;
   hideWatchButton: boolean;
+  // groupId here means that the flow is being displayed in a group context
+  groupId?: string;
 }) => {
   const navigate = useNavigate();
   return (
     <>
       <TableRow
         aria-label="Flow Row"
+        sx={{
+          height: "78px",
+        }}
         onClick={() => {
           onClickRow(flow);
         }}
@@ -81,27 +132,37 @@ const FlowRow = ({
             <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
           </TableCell>
         )}
-        {/* <AvatarsCell
-          align="center"
-          width={"60px"}
-          avatars={flow.group ? [flow.group] : null}
-          hideOnSmallScreen={true}
-        /> */}
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              gap: "8px",
+              flexDirection: "column",
+              gap: "2px",
             }}
           >
-            {flow.group ? <AvatarGroup avatars={[flow.group]} /> : null}
+            {flow.group && !groupId && (
+              <Box sx={{ display: "flex", flexDirection: "row", gap: "4px" }}>
+                <AvatarGroup avatars={[flow.group]} size="14px" />
+                <Typography
+                  variant="description"
+                  // color="primary"
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "1",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Modifies &apos;{flow.group.name}&apos;
+                </Typography>
+              </Box>
+            )}
             <Typography
-              variant={"body1"}
               sx={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: "2",
+                WebkitLineClamp: "1",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}

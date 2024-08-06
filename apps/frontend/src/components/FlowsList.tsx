@@ -9,7 +9,13 @@ import { fullUUIDToShort } from "@/utils/inputs";
 export const FlowsList = ({ flows }: { flows: FlowSummaryFragment[] }) => (
   <Box
     component="ul"
-    sx={{ display: "flex", marginBlockStart: "0rem", paddingInlineStart: "16px" }}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      marginBlockStart: "0rem",
+      marginBlockEnd: "0rem",
+      paddingInlineStart: "16px",
+    }}
   >
     {flows.map((flow) => (
       <Typography component="li" fontSize={".875rem"} key={flow.flowId}>
