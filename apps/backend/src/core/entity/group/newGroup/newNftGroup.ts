@@ -1,5 +1,5 @@
 import { HATS_V1 } from "@hatsprotocol/sdk-v1-core";
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { getHatToken, parseHatToken } from "@/blockchain/getHatToken";
 import { getNftContract } from "@/blockchain/getNftContract";
@@ -154,6 +154,7 @@ const upsertNftTokenGroup = async ({
       data: {
         Group: {
           create: {
+            type: GroupType.GroupNft,
             creatorId: context.currentUser?.id as string,
             GroupNft: {
               create: {

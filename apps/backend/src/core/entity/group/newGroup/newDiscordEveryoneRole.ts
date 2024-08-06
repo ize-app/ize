@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { prisma } from "@/prisma/client";
 
@@ -52,6 +52,7 @@ export const newDiscordEveryoneRole = async ({
       Group: {
         create: {
           Entity: { create: {} },
+          type: GroupType.DiscordRoleGroup,
           creator: {
             connect: {
               id: context.currentUser?.id as string,

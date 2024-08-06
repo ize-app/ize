@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
 import { chainMap } from "@/blockchain/chainMap";
@@ -36,6 +36,7 @@ export const updateUserNftGroups = async ({
     await updateIdentitiesGroups({
       identityId: userBlockchainIdentity.id,
       groupIds: nftGroupIds,
+      groupType: GroupType.GroupNft,
       transaction,
     });
   } catch (e) {
