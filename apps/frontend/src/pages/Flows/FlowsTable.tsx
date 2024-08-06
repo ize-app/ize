@@ -113,6 +113,9 @@ const FlowRow = ({
     <>
       <TableRow
         aria-label="Flow Row"
+        sx={{
+          height: "78px",
+        }}
         onClick={() => {
           onClickRow(flow);
         }}
@@ -122,27 +125,37 @@ const FlowRow = ({
             <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.isWatched} />
           </TableCell>
         )}
-        {/* <AvatarsCell
-          align="center"
-          width={"60px"}
-          avatars={flow.group ? [flow.group] : null}
-          hideOnSmallScreen={true}
-        /> */}
         <TableCell component="th" scope="row" align="left">
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              gap: "8px",
+              flexDirection: "column",
+              gap: "2px",
             }}
           >
-            {flow.group ? <AvatarGroup avatars={[flow.group]} /> : null}
+            {flow.group && (
+              <Box sx={{ display: "flex", flexDirection: "row", gap: "4px" }}>
+                <AvatarGroup avatars={[flow.group]} size="14px" />
+                <Typography
+                  variant="description"
+                  // color="primary"
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "1",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Modifies &apos;{flow.group.name}&apos;
+                </Typography>
+              </Box>
+            )}
             <Typography
-              variant={"body1"}
               sx={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: "2",
+                WebkitLineClamp: "1",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
