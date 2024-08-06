@@ -40,7 +40,7 @@ export const ActionFilterForm = ({
     if (!action || (action.type !== ActionType.None && !action.filterOptionId)) {
       formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
     }
-  }, [action, formIndex, formMethods]);
+  }, [action?.type, formIndex]);
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
@@ -52,6 +52,7 @@ export const ActionFilterForm = ({
       formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
     }
   }, [results]);
+
   const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },

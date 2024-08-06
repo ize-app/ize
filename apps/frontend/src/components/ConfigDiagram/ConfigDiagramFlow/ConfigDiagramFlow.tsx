@@ -11,6 +11,7 @@ import {
   FlowStage,
   PanelContainer,
 } from "@/components/ConfigDiagram";
+import { resultTypeDisplay } from "@/components/result/resultTypeDisplay";
 import { FlowFragment } from "@/graphql/generated/graphql";
 
 import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
@@ -50,7 +51,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                     icon={Diversity3Outlined}
                     label={
                       flow.steps[index].result[0]
-                        ? flow.steps[index].result[0].__typename
+                        ? resultTypeDisplay[flow.steps[index].result[0].__typename]
                         : "Collaboration " + (index + 1).toString()
                     }
                     key={"stage-" + step?.id}
@@ -58,7 +59,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
-                    entities={flow.steps[0].response.permission?.entities}
+                    entities={flow.steps[index].response.permission?.entities}
                   />
                 </Box>
               );
