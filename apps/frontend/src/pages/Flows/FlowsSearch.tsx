@@ -78,15 +78,16 @@ export const FlowsSearch = ({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           hideTriggerFilterButton={hideTriggerFilterButton || !me}
-          hideWatchButton={hideWatchButton || !me}
+          hideWatchButton={hideWatchButton || !me || !!groupId}
         />
-        {(!hideCreateButton && !!me) && <CreateButton />}
+        {!hideCreateButton && !!me && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />
       ) : flows.length > 0 ? (
         <FlowsTable
           flows={flows}
+          groupId={groupId}
           onClickRow={onClickRow}
           hideTriggerButton={hideTriggerButton || !me}
           hideWatchButton={hideWatchButton || !me}
