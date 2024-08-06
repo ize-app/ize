@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { createWebhook } from "@/core/action/webhook/createWebhook";
 import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
@@ -49,6 +49,7 @@ export const newCustomGroup = async ({
       Group: {
         create: {
           creatorId: context.currentUser?.id,
+          type: GroupType.GroupCustom,
           GroupCustom: {
             create: {
               name: args.inputs.name,

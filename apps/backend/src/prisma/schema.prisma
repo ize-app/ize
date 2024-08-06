@@ -122,6 +122,12 @@ model Oauths {
   @@map("oauths")
 }
 
+enum GroupType {
+  DiscordRoleGroup
+  GroupNft
+  GroupCustom
+}
+
 model Group {
   id                 String               @id @default(uuid()) @db.Uuid
   creator            User                 @relation(fields: [creatorId], references: [id])
@@ -131,6 +137,7 @@ model Group {
   updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
   activeAt           DateTime?
   deactivatedat      DateTime?
+  type               GroupType
   Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
   GroupDiscordRole   GroupDiscordRole?
   GroupNft           GroupNft?

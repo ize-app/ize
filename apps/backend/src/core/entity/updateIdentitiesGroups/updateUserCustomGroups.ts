@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 
@@ -31,6 +31,7 @@ export const updateUserCustomGroups = async ({
         await updateIdentitiesGroups({
           identityId,
           groupIds: customGroupIds,
+          groupType: GroupType.GroupCustom,
           transaction,
         });
       }),

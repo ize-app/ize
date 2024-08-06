@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { GroupType, Prisma } from "@prisma/client";
 
 import { DiscordApi } from "@/discord/api";
 import { GraphqlRequestContext } from "@/graphql/context";
@@ -70,6 +70,7 @@ export const updateUserDiscordGroups = async ({
     await updateIdentitiesGroups({
       identityId: userDiscordIdentity.id,
       groupIds: discordRoleGroupIds,
+      groupType: GroupType.DiscordRoleGroup,
       transaction,
     });
   } catch (e) {
