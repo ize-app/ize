@@ -9,7 +9,7 @@ import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder
 import Search from "@/components/Tables/Search";
 import { WatchFilter } from "@/graphql/generated/graphql";
 import useGroupsSearch from "@/hooks/useGroupsSearch";
-import { NewCustomGroupRoute } from "@/routers/routes";
+import { NewCustomGroupRoute, newCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
 
@@ -91,8 +91,11 @@ export const GroupsSearch = () => {
       ) : (
         <EmptyTablePlaceholder>
           <Typography>
-            You aren&apos;t a part of any Ize groups (yet!)
-            <Link to={generatePath(NewCustomGroupRoute.Setup)}>Create a group</Link>.
+            You aren&apos;t a part of any Ize groups (yet!).{" "}
+            <Link to={generatePath(newCustomGroupRoute(NewCustomGroupRoute.Setup))}>
+              Create a group
+            </Link>
+            .
           </Typography>
         </EmptyTablePlaceholder>
       )}
