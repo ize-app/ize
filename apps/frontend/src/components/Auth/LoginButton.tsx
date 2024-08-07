@@ -14,7 +14,7 @@ export const LoginButton = (props: ButtonProps) => {
       size="small"
       {...props}
     >
-      Login
+      {props.children ?? "Login"}
     </Button>
   );
 };

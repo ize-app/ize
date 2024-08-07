@@ -44,11 +44,12 @@ const UnauthenticatedHome = () => {
           onClick={() => {
             navigate("/about");
           }}
+          size="small"
           sx={{ width: "160px" }}
         >
           Learn more
         </Button>
-        <LoginButton sx={{ width: "160px" }} />
+        <LoginButton sx={{ width: "160px" }}>Join the alpha</LoginButton>
       </Box>
     </IzeLogoBackground>
   );

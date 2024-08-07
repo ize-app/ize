@@ -42,6 +42,15 @@ export const About = () => {
             </a>
             .
           </p>
+          <a
+            href={
+              "https://www.loom.com/share/f02374b8562f4334b576667de74c0d60?sid=9eeacda6-55ee-4a11-827a-1d499e3be475"
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Check out the Ize alpha demo
+          </a>
           <br />
           <hr />
           <br />
@@ -183,6 +192,15 @@ export const About = () => {
               &#x68;&#97;&#114;&#109;&#111;&#x6e;&#x40;&#x69;&#122;&#101;&#46;&#x73;&#x70;&#97;&#x63;&#101;
             </a>
           </p>
+          <a
+            href={
+              "https://www.loom.com/share/f02374b8562f4334b576667de74c0d60?sid=9eeacda6-55ee-4a11-827a-1d499e3be475"
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Check out the Ize alpha demo
+          </a>
         </Box>
       </IzeLogoBackground>
     </>
