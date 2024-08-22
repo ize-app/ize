@@ -1,7 +1,5 @@
 import { FlowType } from "@prisma/client";
 
-import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
-import { watchFlow } from "@/core/user/watchFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
@@ -42,8 +40,6 @@ export const newCustomFlow = async ({
       data: { type: FlowType.Custom, creatorId },
     });
 
-    await watchFlow({ flowId: flow.id, watch: true, userId: creatorId, transaction });
-
     await newCustomFlowVersion({
       transaction,
       flowArgs: args.flow,
@@ -53,8 +49,6 @@ export const newCustomFlow = async ({
       draftEvolveFlowVersionId: null,
     });
 
-    // associate user with any new identities that were created when creating the new flow
-    await updateUserGroups({ context });
     return flow.id;
   });
 };

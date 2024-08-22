@@ -1,15 +1,17 @@
 import { Prisma } from "@prisma/client";
 
+import { prisma } from "@/prisma/client";
+
 export const watchFlow = async ({
   flowId,
   userId,
   watch,
-  transaction,
+  transaction = prisma,
 }: {
   flowId: string;
   userId: string;
   watch: boolean;
-  transaction: Prisma.TransactionClient;
+  transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
   await transaction.usersWatchedFlows.upsert({
     where: {

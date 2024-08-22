@@ -20,6 +20,9 @@ import {
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { testNotificationWebhook as testNotificationWebhookService } from "@/core/notification/testNotificationWebhook";
+import { GraphQLError } from "graphql";
+import { CustomErrorCodes } from "../errors";
+import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 
 const newEntities: MutationResolvers["newEntities"] = async (
   root: unknown,
@@ -109,9 +112,28 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   args: MutationNewCustomGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await prisma.$transaction(async (transaction) => {
-    return await newCustomGroupService({ args, context, transaction });
+  const groupId = await prisma.$transaction(async (transaction) => {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    const groupId = await newCustomGroupService({ args, context, transaction });
+
+    // Watch group for user
+    await transaction.usersWatchedGroups.create({
+      data: {
+        userId: context.currentUser.id,
+        groupId,
+        watched: true,
+      },
+    });
+    return groupId;
   });
+  // associate user with any new identities that were created when creating the new group
+  await updateUserGroups({ context });
+
+  return groupId;
 };
 
 export const testNotificationWebhook: MutationResolvers["testNotificationWebhook"] = async (
