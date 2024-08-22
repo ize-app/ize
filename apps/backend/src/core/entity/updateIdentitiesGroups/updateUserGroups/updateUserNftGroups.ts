@@ -5,8 +5,8 @@ import { chainMap } from "@/blockchain/chainMap";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 
-import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
-import { prisma } from "../../../prisma/client";
+import { prisma } from "../../../../prisma/client";
+import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
 
 export const updateUserNftGroups = async ({
   context,

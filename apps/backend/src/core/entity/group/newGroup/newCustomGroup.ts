@@ -9,6 +9,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
 import { newEntitySet } from "../../newEntitySet";
+import { updateUserGroups } from "../../updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 import { checkEntitiesForCustomGroups } from "../checkEntitiesForCustomGroups";
 
 export const newCustomGroup = async ({
@@ -99,5 +100,7 @@ export const newCustomGroup = async ({
     groupId: customGroupEntity.Group?.id as string,
   });
 
+  // associate user with any new identities that were created when creating the new flow
+  await updateUserGroups({ context });
   return customGroupEntity.Group?.id as string;
 };

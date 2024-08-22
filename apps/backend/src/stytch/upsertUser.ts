@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { Response } from "express";
 import { User as StytchUser } from "stytch";
 
-import { UserPrismaType, meInclude } from "@/core/user/userPrismaTypes";
+import { MePrismaType, meInclude } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 
 export const upsertUser = async ({
@@ -13,7 +13,7 @@ export const upsertUser = async ({
   stytchUser: StytchUser;
   res: Response;
   transaction?: Prisma.TransactionClient;
-}): Promise<UserPrismaType> => {
+}): Promise<MePrismaType> => {
   // finding user first so we can distinguish new user
   let user = await prisma.user.findFirst({
     include: meInclude,

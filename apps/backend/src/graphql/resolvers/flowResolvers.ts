@@ -36,7 +36,7 @@ const newFlow: MutationResolvers["newFlow"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  return await newCustomFlowService({ args, creatorId: context.currentUser.id });
+  return await newCustomFlowService({ args, context });
 };
 
 export const flowMutations = {

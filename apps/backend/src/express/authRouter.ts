@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { OAuthProvider } from "stytch";
 
+import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { MePrismaType } from "@/core/user/userPrismaTypes";
+
+import { createRequestContext } from "./createRequestContext";
 import { prisma } from "../prisma/client";
 import { createBlockchainIdentitiesForUser } from "../stytch/createBlockchainIdentities";
 import { createDiscordIdentity } from "../stytch/createDiscordIdentity";
@@ -20,6 +24,8 @@ authRouter.get("/token", async (req, res, next) => {
     // for when this endpoint is called to attach identity to existing user
     const exitingSessionToken: string | undefined = req.cookies["stytch_session"];
     let sessionToken: string | undefined;
+    let user: MePrismaType | undefined;
+
     await prisma.$transaction(async (transaction) => {
       if (typeof token !== "string" || !token || !stytch_token_type)
         throw Error("Missing authentication token");
@@ -31,7 +37,7 @@ authRouter.get("/token", async (req, res, next) => {
         });
 
         sessionToken = stytchOAuthentication.session_token;
-        const user = await upsertUser({ stytchUser: stytchOAuthentication.user, res, transaction });
+        user = await upsertUser({ stytchUser: stytchOAuthentication.user, res, transaction });
         await upsertOauthToken({ stytchOAuthentication, user, transaction });
 
         // create Discord username identity (if it doesn't already exist) and tie it to that user
@@ -64,7 +70,7 @@ authRouter.get("/token", async (req, res, next) => {
           session_token: exitingSessionToken,
         });
         sessionToken = stytchMagicAuthentication.session_token;
-        const user = await upsertUser({
+        user = await upsertUser({
           stytchUser: stytchMagicAuthentication.user,
           res,
           transaction,
@@ -77,8 +83,8 @@ authRouter.get("/token", async (req, res, next) => {
       }
     });
 
+    await updateUserGroups({ context: createRequestContext({ user }) });
     if (sessionToken) res.cookie("stytch_session", sessionToken);
-
     redirectAtLogin({ req, res });
   } catch (e) {
     next(e);
@@ -86,6 +92,8 @@ authRouter.get("/token", async (req, res, next) => {
 });
 
 // Attaches Discord login to an existing Stytch account
+// sends user oauth token which they use to begin the oauth flow
+// at which point user is directed through normal /token flow
 authRouter.post("/attach-discord", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];
@@ -103,6 +111,7 @@ authRouter.post("/attach-discord", async (req, res, next) => {
 // creates blockchain identities for user on authentication
 // session already created for user on FE --> user also already created via authenticateSession
 authRouter.post("/crypto", async (req, res, next) => {
+  let user: MePrismaType | undefined;
   try {
     const session_token = req.cookies["stytch_session"];
     if (!session_token) res.status(401).send();
@@ -113,7 +122,7 @@ authRouter.post("/crypto", async (req, res, next) => {
     });
 
     await prisma.$transaction(async (transaction) => {
-      const user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
+      user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
       // create blockchain identities if they don't already exist
       return await createBlockchainIdentitiesForUser({
         user,
@@ -121,6 +130,8 @@ authRouter.post("/crypto", async (req, res, next) => {
         transaction,
       });
     });
+
+    await updateUserGroups({ context: createRequestContext({ user }) });
 
     redirectAtLogin({ req, res });
     // res.status(200).send();
@@ -132,6 +143,7 @@ authRouter.post("/crypto", async (req, res, next) => {
 // creates email identities for user on authentication
 // session already created for user on FE --> user also already created via authenticateSession
 authRouter.post("/password", async (req, res, next) => {
+  let user: MePrismaType | undefined;
   try {
     const session_token = req.cookies["stytch_session"];
     const sessionData = await stytchClient.sessions.authenticate({
@@ -145,7 +157,7 @@ authRouter.post("/password", async (req, res, next) => {
     }
 
     await prisma.$transaction(async (transaction) => {
-      const user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
+      user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
 
       await createEmailIdentities({
         user,
@@ -153,11 +165,7 @@ authRouter.post("/password", async (req, res, next) => {
         transaction,
       });
     });
-
-    // create email identities if they don't already exist
-    // res.cookie("stytch_session", sessionToken);
-
-    // res.status(200).send();
+    await updateUserGroups({ context: createRequestContext({ user }) });
     redirectAtLogin({ req, res });
   } catch (e) {
     next(e);

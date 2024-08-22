@@ -15,9 +15,9 @@ import express from "express";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 
 import authRouter from "./authRouter";
+import { createRequestContext } from "./createRequestContext";
 import { expressGloalErrorHandler } from "./error";
 import { validOrigins } from "./origins";
-import { DiscordApi } from "../discord/api";
 import { GraphqlRequestContext } from "../graphql/context";
 import { resolvers } from "../graphql/resolvers/queryResolvers";
 import { authenticateSession } from "../stytch/authenticateSession";
@@ -76,14 +76,8 @@ server.start().then(() => {
     }),
     json(),
     expressMiddleware(server, {
-      context: async ({ res }) => {
-        const user: MePrismaType | undefined = res.locals.user;
-
-        return {
-          currentUser: user,
-          discordApi: user ? DiscordApi.forUser(res.locals.user) : undefined,
-        };
-      },
+      context: async ({ res }) =>
+        createRequestContext({ user: res.locals.user as MePrismaType | undefined }),
     }),
   );
 
