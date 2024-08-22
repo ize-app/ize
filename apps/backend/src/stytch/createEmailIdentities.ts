@@ -61,6 +61,11 @@ export const createEmailIdentities = async ({
             },
             data: {
               userId: user.id,
+              IdentityEmail: {
+                update: {
+                  icon: profilePictureURL ?? null,
+                },
+              },
             },
           });
         } catch (e) {
