@@ -31,7 +31,7 @@ authRouter.get("/token", async (req, res, next) => {
 
         sessionToken = stytchOAuthentication.session_token;
         const user = await upsertUser({ stytchUser: stytchOAuthentication.user, res, transaction });
-        await upsertOauthToken({ stytchOAuthentication, user });
+        await upsertOauthToken({ stytchOAuthentication, user, transaction });
 
         // create Discord username identity (if it doesn't already exist) and tie it to that user
         if (stytchOAuthentication.provider_type === "Discord") {
@@ -48,11 +48,12 @@ authRouter.get("/token", async (req, res, next) => {
                 stytchOAuthentication.oauth_user_registration_id
               );
             });
-          await createEmailIdentities(
+          await createEmailIdentities({
             user,
-            stytchOAuthentication.user.emails,
-            providerDetails?.profile_picture_url,
-          );
+            stytchEmails: stytchOAuthentication.user.emails,
+            profilePictureURL: providerDetails?.profile_picture_url,
+            transaction,
+          });
         }
       } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
         const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
@@ -65,7 +66,12 @@ authRouter.get("/token", async (req, res, next) => {
           res,
           transaction,
         });
-        await createEmailIdentities(user, stytchMagicAuthentication.user.emails);
+        await createEmailIdentities({
+          user,
+          stytchEmails: stytchMagicAuthentication.user.emails,
+          transaction,
+        });
+        console.log("finishing magic links");
       }
     });
 
@@ -97,15 +103,22 @@ authRouter.post("/attach-discord", async (req, res, next) => {
 authRouter.post("/crypto", async (req, res, next) => {
   try {
     const session_token = req.cookies["stytch_session"];
+    if (!session_token) res.status(401).send();
+
     const sessionData = await stytchClient.sessions.authenticate({
       session_token,
       session_duration_minutes: sessionDurationMinutes,
     });
 
-    if (!session_token) res.status(401).send();
-
-    // create blockchain identities if they don't already exist
-    await createBlockchainIdentitiesForUser(res.locals.user, sessionData.user.crypto_wallets);
+    await prisma.$transaction(async (transaction) => {
+      const user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
+      // create blockchain identities if they don't already exist
+      return await createBlockchainIdentitiesForUser({
+        user,
+        stytchWallets: sessionData.user.crypto_wallets,
+        transaction,
+      });
+    });
 
     redirectAtLogin({ req, res });
     // res.status(200).send();
@@ -123,15 +136,24 @@ authRouter.post("/password", async (req, res, next) => {
       session_token,
       session_duration_minutes: sessionDurationMinutes,
     });
-    const sessionToken = sessionData.session_token;
+    // const sessionToken = sessionData.session_token;
 
     if (!session_token) {
       res.status(401).send();
     }
 
+    await prisma.$transaction(async (transaction) => {
+      const user = await upsertUser({ stytchUser: sessionData.user, res, transaction });
+
+      await createEmailIdentities({
+        user,
+        stytchEmails: sessionData.user.emails,
+        transaction,
+      });
+    });
+
     // create email identities if they don't already exist
-    await createEmailIdentities(res.locals.user, sessionData.user.emails);
-    res.cookie("stytch_session", sessionToken);
+    // res.cookie("stytch_session", sessionToken);
 
     // res.status(200).send();
     redirectAtLogin({ req, res });

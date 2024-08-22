@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { Email } from "stytch";
 
 import { UserPrismaType } from "@/core/user/userPrismaTypes";
@@ -6,11 +7,16 @@ import { prisma } from "@/prisma/client";
 // creates email identities in db if they don't exist yet
 // TODO: passing in the profilePictureURL is a hack and
 // will associate the wrong url with the wrong user in some edge cases
-export const createEmailIdentities = async (
-  user: UserPrismaType,
-  stytchEmails: Email[],
-  profilePictureURL?: string | undefined,
-) => {
+export const createEmailIdentities = async ({
+  user,
+  stytchEmails,
+  profilePictureURL,
+}: {
+  user: UserPrismaType;
+  stytchEmails: Email[];
+  profilePictureURL?: string | undefined;
+  transaction: Prisma.TransactionClient;
+}) => {
   stytchEmails.forEach(async (email) => {
     const userEmail = (user.Identities ?? []).find((identity) => {
       identity.IdentityEmail?.email === email.email && email.verified;

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { StytchError } from "stytch";
 
-import { createBlockchainIdentitiesForUser } from "./createBlockchainIdentities";
-import { createEmailIdentities } from "./createEmailIdentities";
+import { meInclude } from "@/core/user/userPrismaTypes";
+import { prisma } from "@/prisma/client";
+
 import { sessionDurationMinutes, stytchClient } from "./stytchClient";
-import { upsertUser } from "./upsertUser";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,17 +20,12 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
       session_duration_minutes: sessionDurationMinutes,
     });
 
-    const user = await upsertUser({ stytchUser: session.user, res });
-
-    // create identities if they don't already exist
-    // TODO: create Discord identity if it doesn't exist
-    if (session.user.emails.length !== user.Identities.filter((id) => id.IdentityEmail).length)
-      await createEmailIdentities(user, session.user.emails);
-    if (
-      session.user.crypto_wallets.length !==
-      user.Identities.filter((id) => id.IdentityBlockchain).length
-    )
-      await createBlockchainIdentitiesForUser(user, session.user.crypto_wallets);
+    const user = await prisma.user.findFirst({
+      include: meInclude,
+      where: {
+        stytchId: session.user.user_id,
+      },
+    });
 
     res.locals.user = user;
   } catch (error) {

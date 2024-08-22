@@ -11,7 +11,7 @@ import {
   StytchEventType,
   StytchLoginConfig,
 } from "@stytch/vanilla-js";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
@@ -79,22 +79,26 @@ const styles: StyleConfig = {
 const LoginModal = () => {
   const { refetch, authModalOpen, setAuthModalOpen } = useContext(CurrentUserContext);
 
+  const loadMe = useCallback(() => {
+    if (refetch) {
+      refetch();
+    } else {
+      window.location.reload();
+    }
+  }, [refetch]);
+
   // Oauth/Magiclink are already redirected to backend endpoint by stytch
   // so these callbacks call backend for crypto wallets / passwords to create the identity if it doesn't exist already
   const callBacks: Callbacks = {
-    onEvent: (message: StytchEvent) => {
+    onEvent: async (message: StytchEvent) => {
       switch (message.type) {
         case StytchEventType.CryptoWalletAuthenticate:
-          fetch("/api/auth/crypto", { method: "POST" });
-          if (refetch) {
-            refetch();
-          }
+          await fetch("/api/auth/crypto", { method: "POST" });
+          loadMe();
           return;
         case StytchEventType.PasswordCreate:
-          fetch("/api/auth/password", { method: "POST" });
-          if (refetch) {
-            refetch();
-          }
+          await fetch("/api/auth/password", { method: "POST" });
+          loadMe();
           return;
       }
     },
