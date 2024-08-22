@@ -2,6 +2,7 @@ import { DiscordApi } from "@/discord/api";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { Identity } from "@graphql/generated/resolver-types";
 
+import { displayEthAddress } from "./displayEthAddress";
 import { IdentityPrismaType } from "./identityPrismaTypes";
 
 export const identityResolver = (
@@ -14,7 +15,8 @@ export const identityResolver = (
       __typename: "Identity",
       id: identity.id,
       entityId: identity.entityId,
-      name: identity.IdentityBlockchain.ens ?? identity.IdentityBlockchain.address,
+      name:
+        identity.IdentityBlockchain.ens ?? displayEthAddress(identity.IdentityBlockchain.address),
       // TODO: replace with avatar logo
       icon: null,
       identityType: { __typename: "IdentityBlockchain", ...identity.IdentityBlockchain },
