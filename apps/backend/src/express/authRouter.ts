@@ -17,7 +17,8 @@ const authRouter = Router();
 authRouter.get("/token", async (req, res, next) => {
   try {
     const { stytch_token_type, token } = req.query;
-
+    // for when this endpoint is called to attach identity to existing user
+    const exitingSessionToken: string | undefined = req.cookies["stytch_session"];
     let sessionToken: string | undefined;
     await prisma.$transaction(async (transaction) => {
       if (typeof token !== "string" || !token || !stytch_token_type)
@@ -59,6 +60,8 @@ authRouter.get("/token", async (req, res, next) => {
         const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
           token,
           session_duration_minutes: sessionDurationMinutes,
+          // if user is already logged in, use their session token
+          session_token: exitingSessionToken,
         });
         sessionToken = stytchMagicAuthentication.session_token;
         const user = await upsertUser({
@@ -71,7 +74,6 @@ authRouter.get("/token", async (req, res, next) => {
           stytchEmails: stytchMagicAuthentication.user.emails,
           transaction,
         });
-        console.log("finishing magic links");
       }
     });
 
