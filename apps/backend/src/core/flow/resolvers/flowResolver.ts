@@ -46,6 +46,7 @@ export const flowResolver = async ({
     isWatched: isWatchedFlow({ flowVersion: flowVersion, userId }),
     name: getFlowName({
       flowName: flowVersion.name,
+      flowType: flowVersion.Flow.type,
       ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,
       flowNameOverride,
     }),

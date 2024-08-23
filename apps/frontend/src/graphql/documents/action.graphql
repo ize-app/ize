@@ -20,6 +20,9 @@ fragment Action on Action {
   ... on EvolveFlow {
     ...EvolveFlow
   }
+  ... on EvolveGroup {
+    ...EvolveGroup
+  }
   ... on TriggerStep {
     ...TriggerStep
   }
@@ -83,6 +86,13 @@ fragment GroupWatchFlow on GroupWatchFlow {
 }
 
 fragment GroupUpdateNotifications on GroupUpdateNotifications {
+  locked
+  filterOption {
+    ...Option
+  }
+}
+
+fragment EvolveGroup on EvolveGroup {
   locked
   filterOption {
     ...Option

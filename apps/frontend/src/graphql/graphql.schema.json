@@ -30,6 +30,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "EvolveGroup",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "GroupUpdateMembership",
             "ofType": null
           },
@@ -208,6 +213,12 @@
           },
           {
             "name": "EvolveFlow",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "EvolveGroup",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -1565,6 +1576,46 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "EvolveGroup",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "filterOption",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Option",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "locked",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "UNION",
         "name": "Field",
         "description": null,
@@ -2586,6 +2637,12 @@
           },
           {
             "name": "Evolve",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "EvolveGroup",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

@@ -243,6 +243,7 @@ model DiscordServer {
 enum FlowType {
   Custom
   Evolve
+  EvolveGroup
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow
@@ -647,6 +648,7 @@ enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+  EvolveGroup
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow

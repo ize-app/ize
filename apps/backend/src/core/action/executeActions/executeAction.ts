@@ -6,6 +6,7 @@ import { ActionType } from "@/graphql/generated/resolver-types";
 import { decrypt } from "@/prisma/encrypt";
 
 import { evolveFlow } from "./evolveFlow";
+import { evolveGroup } from "./evolveGroup";
 import { groupUpdateMembership } from "./groupUpdateMembership";
 import { groupUpdateMetadata } from "./groupUpdateMetadata";
 import { groupUpdateNotifications } from "./groupUpdateNotifications";
@@ -114,6 +115,9 @@ export const executeAction = async ({
     }
     case ActionType.GroupUpdateNotifications:
       actionComplete = await groupUpdateNotifications({ requestStepId, transaction });
+      break;
+    case ActionType.EvolveGroup:
+      actionComplete = await evolveGroup({ requestStepId, transaction });
       break;
     default:
       actionComplete = false;

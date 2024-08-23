@@ -53,6 +53,7 @@ type FlowReference {
 enum FlowType {
   Custom
   Evolve
+  EvolveGroup
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow

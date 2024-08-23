@@ -50,4 +50,8 @@ export const actionProperties: ActionProps = {
     label: "None",
     icon: CloseIcon,
   },
+  [ActionType.EvolveGroup]: {
+    label: "Evolve group",
+    icon: PublishedWithChangesIcon,
+  },
 };

@@ -1,3 +1,4 @@
+import { getFlowName } from "@/core/flow/helpers/getFlowName";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { userResolver } from "@/core/user/userResolver";
@@ -27,7 +28,12 @@ export const requestStepSummaryResolver = ({
     flowName:
       getEvolveRequestFlowName({
         proposedFlowVersion: r.Request.ProposedFlowVersionEvolution,
-      }) ?? r.Request.FlowVersion.name,
+      }) ??
+      getFlowName({
+        flowName: r.Request.FlowVersion.name,
+        ownerGroupName: r.Request.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+        flowType: r.Request.FlowVersion.Flow.type,
+      }),
     creator: userResolver(r.Request.Creator),
     stepIndex: r.Step.index,
     totalSteps: r.Request.FlowVersion.totalSteps,

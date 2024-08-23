@@ -96,6 +96,15 @@ export const ActionDescription = ({
         </>
       );
     }
+    case ActionType.EvolveGroup: {
+      return (
+        <>
+          <Typography>
+            Updates membership and notificaiton settings for <strong>{groupNameOverride}</strong>.
+          </Typography>
+        </>
+      );
+    }
 
     default:
       return null;
