@@ -322,6 +322,7 @@ export type FlowsFieldAnswer = {
 export type FreeInput = {
   __typename?: 'FreeInput';
   dataType: FieldDataType;
+  defaultAnswer?: Maybe<FieldAnswer>;
   fieldId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   required: Scalars['Boolean']['output'];
@@ -1051,7 +1052,10 @@ export enum WatchFilter {
 export type WebhookFieldAnswer = {
   __typename?: 'WebhookFieldAnswer';
   fieldId: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  originalUri?: Maybe<Scalars['String']['output']>;
   uri: Scalars['String']['output'];
+  webhookId?: Maybe<Scalars['String']['output']>;
 };
 
 export type WebhookPayload = {
@@ -1151,7 +1155,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupUpdateNotifications ) | ( GroupWatchFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator: _RefType['User'], groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
-  Field: ( FreeInput ) | ( Options );
+  Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
@@ -1202,7 +1206,7 @@ export type ResolversTypes = {
   FlowTriggerPermissionFilter: FlowTriggerPermissionFilter;
   FlowType: FlowType;
   FlowsFieldAnswer: ResolverTypeWrapper<Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<ResolversTypes['FlowSummary']> }>;
-  FreeInput: ResolverTypeWrapper<FreeInput>;
+  FreeInput: ResolverTypeWrapper<Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversTypes['FieldAnswer']> }>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
   Group: ResolverTypeWrapper<Omit<Group, 'creator' | 'groupType'> & { creator: ResolversTypes['User'], groupType: ResolversTypes['GroupType'] }>;
@@ -1325,7 +1329,7 @@ export type ResolversParentTypes = {
   FlowReference: FlowReference;
   FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversParentTypes['User'], group?: Maybe<ResolversParentTypes['Group']>, requestStep0Permission: ResolversParentTypes['Permission'] };
   FlowsFieldAnswer: Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<ResolversParentTypes['FlowSummary']> };
-  FreeInput: FreeInput;
+  FreeInput: Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversParentTypes['FieldAnswer']> };
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
   Group: Omit<Group, 'creator' | 'groupType'> & { creator: ResolversParentTypes['User'], groupType: ResolversParentTypes['GroupType'] };
@@ -1578,6 +1582,7 @@ export type FlowsFieldAnswerResolvers<ContextType = GraphqlRequestContext, Paren
 
 export type FreeInputResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FreeInput'] = ResolversParentTypes['FreeInput']> = {
   dataType?: Resolver<ResolversTypes['FieldDataType'], ParentType, ContextType>;
+  defaultAnswer?: Resolver<Maybe<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1979,7 +1984,10 @@ export type UserPermissionResolvers<ContextType = GraphqlRequestContext, ParentT
 
 export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookFieldAnswer'] = ResolversParentTypes['WebhookFieldAnswer']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  originalUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  webhookId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

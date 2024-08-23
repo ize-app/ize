@@ -39,6 +39,7 @@ export const requestResolver = async ({
     flowNameOverride: flowNameOverride ?? undefined,
     responseFieldsCache,
     resultConfigsCache,
+    context,
   });
 
   const requestSteps = await Promise.all(

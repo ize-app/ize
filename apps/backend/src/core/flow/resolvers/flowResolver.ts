@@ -1,13 +1,24 @@
 import { Prisma } from "@prisma/client";
 
+import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 import { groupResolver } from "@/core/entity/group/groupResolver";
-import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
+import { GraphqlRequestContext } from "@/graphql/context";
+import {
+  Field,
+  FieldAnswer,
+  Flow,
+  FlowType,
+  ResultConfig,
+} from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
+import { EvolveGroupFields } from "../evolveGroup/EvolveGroupFields";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
 import { getFlowName } from "../helpers/getFlowName";
 import { isWatchedFlow } from "../helpers/isWatchedFlow";
+
+export type DefaultEvolveGroupValues = Record<string, FieldAnswer>;
 
 export const flowResolver = async ({
   flowVersion,
@@ -18,6 +29,7 @@ export const flowResolver = async ({
   flowNameOverride,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  context,
   transaction = prisma,
 }: {
   flowVersion: FlowVersionPrismaType;
@@ -28,8 +40,41 @@ export const flowResolver = async ({
   flowNameOverride?: string;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
+  context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<Flow> => {
+  let defaultValues: DefaultEvolveGroupValues;
+
+  if (flowVersion.Flow.type === FlowType.EvolveGroup && flowVersion.Flow.OwnerGroup?.id) {
+    const group = await getIzeGroup({
+      groupId: flowVersion.Flow.OwnerGroup?.id,
+      context,
+      getWatchAndPermissionStatus: true,
+    });
+    defaultValues = {
+      [EvolveGroupFields.Name]: {
+        __typename: "FreeInputFieldAnswer",
+        fieldId: "",
+        value: group.group.name,
+      },
+      [EvolveGroupFields.Description]: {
+        __typename: "FreeInputFieldAnswer",
+        fieldId: "",
+        value: group.description ?? "",
+      },
+      [EvolveGroupFields.Members]: {
+        __typename: "EntitiesFieldAnswer",
+        fieldId: "",
+        entities: group.members,
+      },
+      [EvolveGroupFields.Webhook]: {
+        __typename: "WebhookFieldAnswer",
+        fieldId: "",
+        uri: group.notificationUriPreview ?? "",
+      },
+    };
+  }
+
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
@@ -64,6 +109,7 @@ export const flowResolver = async ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
+        defaultValues,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow
@@ -73,6 +119,7 @@ export const flowResolver = async ({
           userGroupIds,
           userId,
           transaction,
+          context,
         })
       : null,
   };

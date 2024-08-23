@@ -1,4 +1,4 @@
-export { CreateRequestForm as CreateRequest } from "./screens/CreateRequestForm";
+export { RequestFormContainer as CreateRequest } from "./screens/RequestFormContainer.tsx";
 export { Confirm } from "./screens/Confirm";
 export { SelectFlow as SelectProcess } from "./screens/SelectFlow.tsx";
-export { NewRequest as default } from "./screens/NewRequest";
+export { NewRequestWizard as default } from "./screens/NewRequestWizard.tsx";
