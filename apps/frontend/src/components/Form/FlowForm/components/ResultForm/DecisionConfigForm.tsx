@@ -48,7 +48,9 @@ export const DecisionConfigForm = ({
   field,
   display = true,
 }: DecisionConfigFormProps) => {
-  const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
+  const decisionType = formMethods.getValues(
+    `steps.${formIndex}.result.${resultIndex}.decision.type`,
+  );
 
   const defaultDecisionOptions: SelectOption[] = [
     {

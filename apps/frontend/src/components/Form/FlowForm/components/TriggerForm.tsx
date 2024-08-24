@@ -15,7 +15,7 @@ interface TriggerFormProps {
 
 export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
   const isEntitiesRequestTrigger =
-    formMethods.watch(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
+    formMethods.getValues(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
 
   const error = formMethods.formState.errors.steps?.[formIndex]?.request;
 

@@ -56,7 +56,7 @@ export const FieldsForm = ({
 }: FieldsFormProps) => {
   const { control } = formMethods;
 
-  const numFields = (formMethods.watch(`steps.${formIndex}.${branch}.fields`) ?? []).length;
+  const numFields = fieldsArrayMethods.fields.length;
   const isLocked = formMethods.getValues(`steps.${formIndex}.${branch}.fieldsLocked`);
 
   return (
@@ -72,11 +72,11 @@ export const FieldsForm = ({
       />
 
       {fieldsArrayMethods.fields.map((item, inputIndex) => {
-        const fieldType: FieldType = formMethods.watch(
+        const fieldType: FieldType = formMethods.getValues(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
         );
 
-        const freeInputDataType = formMethods.watch(
+        const freeInputDataType = formMethods.getValues(
           `steps.${formIndex}.${branch}.fields.${inputIndex}.freeInputDataType`,
         );
 

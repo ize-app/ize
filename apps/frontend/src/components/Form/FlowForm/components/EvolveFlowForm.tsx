@@ -14,11 +14,11 @@ interface EvolveProcessFormProps {
 }
 
 export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) => {
-  const requestPermissionType = formMethods.watch(`evolve.requestPermission.type`);
+  const requestPermissionType = formMethods.getValues(`evolve.requestPermission.type`);
 
-  const responsePermissionType = formMethods.watch(`evolve.responsePermission.type`);
+  const responsePermissionType = formMethods.getValues(`evolve.responsePermission.type`);
 
-  const decisionType = formMethods.watch(`evolve.decision.type`);
+  const decisionType = formMethods.getValues(`evolve.decision.type`);
 
   const error = formMethods.formState.errors.evolve;
 

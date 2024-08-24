@@ -76,7 +76,7 @@ export const FieldOptionsForm = ({
     name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
   });
 
-  const steps = formMethods.watch(`steps`);
+  const steps = formMethods.getValues(`steps`);
   const possibleLinkOptions = createLinkOptions(steps, formIndex);
 
   const enableRequestCreatedOptions = () => {
@@ -98,18 +98,19 @@ export const FieldOptionsForm = ({
   );
 
   const stepDefinedOptions =
-    formMethods.watch(`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`) ??
-    [];
+    formMethods.getValues(
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
+    ) ?? [];
 
   const linkedOptions =
-    formMethods.watch(
+    formMethods.getValues(
       `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
     ) ?? [];
 
   const optionsError =
     formMethods.formState.errors?.steps?.[formIndex]?.[branch]?.fields?.[fieldIndex]?.message ?? "";
 
-  const optionSelectionType = formMethods.watch(
+  const optionSelectionType = formMethods.getValues(
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,
   );
 

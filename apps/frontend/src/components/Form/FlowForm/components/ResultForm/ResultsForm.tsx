@@ -58,14 +58,11 @@ interface ResultFormProps {
 }
 
 export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: ResultsFormProps) => {
-  const { watch } = formMethods;
-
   const resultsArrayMethods = useFieldArray({
     control: formMethods.control,
     name: `steps.${formIndex}.result`,
   });
 
-  const results = watch(`steps.${formIndex}.result`) ?? [];
   const isLocked = formMethods.getValues(`steps.${formIndex}.response.fieldsLocked`);
 
   return (
@@ -103,14 +100,14 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
             const field = createDefaultFieldState({
               fieldType: FieldType.Options,
               stepIndex: formIndex,
-              fieldIndex: results.length,
+              fieldIndex: resultsArrayMethods.fields.length,
               selectionType: FieldOptionsSelectionType.Select,
             });
             fieldsArrayMethods.append(field);
             const result = createDefaultResultState({
               resultType: ResultType.Decision,
               stepIndex: formIndex,
-              resultIndex: results.length,
+              resultIndex: resultsArrayMethods.fields.length,
               fieldId: field.fieldId,
             });
             resultsArrayMethods.append(result);
@@ -132,9 +129,9 @@ const ResultForm = ({
   resultIndex,
   locked,
 }: ResultFormProps) => {
-  const result = formMethods.watch(`steps.${formIndex}.result.${resultIndex}`);
-  const resultType = result.type;
-  const resultField = formMethods.watch(`steps.${formIndex}.response.fields.${resultIndex}`);
+  const resultType = formMethods.getValues(`steps.${formIndex}.result.${resultIndex}.type`);
+
+  const resultField = formMethods.getValues(`steps.${formIndex}.response.fields.${resultIndex}`);
   const optionSelectionType =
     resultField.type === FieldType.Options ? resultField.optionsConfig.selectionType : null;
 
@@ -186,6 +183,7 @@ const ResultForm = ({
   }, [resultType]);
 
   useEffect(() => {
+    console.log("inside optionSelectionType useEffect", optionSelectionType);
     if (optionSelectionType) {
       if (optionSelectionType === FieldOptionsSelectionType.Rank) {
         formMethods.setValue(
@@ -278,12 +276,12 @@ const ResultForm = ({
               control={formMethods.control}
               disabled={locked}
               multiline
-              placeholderText={resultFieldNamePlaceholderText(result.type)}
+              placeholderText={resultFieldNamePlaceholderText(resultType)}
               label={``}
               defaultValue=""
             />
           </FieldBlock>
-          {(result.type === ResultType.Decision || result.type === ResultType.Ranking) && (
+          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
             <FieldOptionsForm
               formMethods={formMethods}
               formIndex={formIndex}
@@ -298,7 +296,7 @@ const ResultForm = ({
             formMethods={formMethods}
             resultIndex={resultIndex}
             field={resultField}
-            display={result.type === ResultType.Decision}
+            display={resultType === ResultType.Decision}
           />
 
           <LlmSummaryForm
@@ -306,9 +304,9 @@ const ResultForm = ({
             formMethods={formMethods}
             resultIndex={resultIndex}
             display={
-              result.type === ResultType.LlmSummary || result.type === ResultType.LlmSummaryList
+              resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
             }
-            type={result.type}
+            type={resultType}
           />
 
           <PrioritizationForm
@@ -316,7 +314,7 @@ const ResultForm = ({
             formMethods={formMethods}
             resultIndex={resultIndex}
             field={resultField}
-            display={result.type === ResultType.Ranking}
+            display={resultType === ResultType.Ranking}
           />
         </Box>
         <FormHelperText

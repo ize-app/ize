@@ -71,7 +71,7 @@ export const Setup = () => {
 
   // console.log("errors are ", useFormMethods.formState.errors);
 
-  const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
+  const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,

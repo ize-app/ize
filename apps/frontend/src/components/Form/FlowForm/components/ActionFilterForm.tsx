@@ -45,7 +45,7 @@ export const ActionFilterForm = ({
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
   // get field options asssociated with decisions to use as action filters
-  const results = formMethods.watch(`steps.${formIndex}.result`);
+  const results = formMethods.getValues(`steps.${formIndex}.result`);
 
   useEffect(() => {
     if (!results) {
@@ -53,7 +53,7 @@ export const ActionFilterForm = ({
     }
   }, [results]);
 
-  const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
+  const responseFields = formMethods.getValues(`steps.${formIndex}.response.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
