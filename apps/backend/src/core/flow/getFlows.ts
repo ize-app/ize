@@ -81,8 +81,7 @@ export const getFlows = async ({
                 },
               ],
             }
-          : // switch out to be flows user is watching or any of their groups are watching
-            {},
+          : { groupId: null },
         // TODO: reduce some non-DRY code with requestSteps permission logic
         args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
           ? {
