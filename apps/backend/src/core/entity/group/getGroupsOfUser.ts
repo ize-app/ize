@@ -51,6 +51,14 @@ export const getGroupsOfUser = async ({
               groupId: {
                 in: groupIds,
               },
+              group: {
+                UsersWatchedGroups: {
+                  none: {
+                    userId: context.currentUser.id,
+                    watched: true,
+                  },
+                },
+              },
             },
       ],
     },
