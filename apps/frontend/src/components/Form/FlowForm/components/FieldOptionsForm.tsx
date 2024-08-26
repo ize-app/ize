@@ -2,6 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
+import { useEffect } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldDataType, FieldOptionsSelectionType, ResultType } from "@/graphql/generated/graphql";
@@ -78,6 +79,18 @@ export const FieldOptionsForm = ({
 
   const steps = formMethods.getValues(`steps`);
   const possibleLinkOptions = createLinkOptions(steps, formIndex);
+
+  // remove linked option if that result is removed
+  useEffect(() => {
+    const linkedOptions = formMethods.getValues(
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
+    );
+    linkedOptions.forEach((result, index) => {
+      if (!possibleLinkOptions.find((option) => option.value === result.id)) {
+        linksRemove(index);
+      }
+    });
+  }, [possibleLinkOptions]);
 
   const enableRequestCreatedOptions = () => {
     formMethods.setValue(
@@ -332,7 +345,7 @@ export const FieldOptionsForm = ({
               variant="text"
               size="small"
               onClick={() => {
-                linksAppend({ id: "" });
+                linksAppend({ id: (possibleLinkOptions[0]?.value as string) ?? "" });
               }}
             >
               Use previous result as option(s)
