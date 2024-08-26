@@ -81,20 +81,20 @@ export const FieldOptionsForm = ({
 
   const enableRequestCreatedOptions = () => {
     formMethods.setValue(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
-      true,
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
+      FieldDataType.String,
     );
   };
 
   const disableRequestCreatedOptions = () => {
     formMethods.setValue(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
-      false,
+      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
+      null,
     );
   };
 
   const hasRequestDefinedOptions = formMethods.watch(
-    `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`,
+    `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
   );
 
   const stepDefinedOptions =
@@ -170,39 +170,6 @@ export const FieldOptionsForm = ({
         flexGrow: 1,
       }}
     >
-      <Box sx={{ display: "none" }}>
-        {" "}
-        <TextField<FlowSchemaType>
-          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.hasRequestOptions`}
-          key={"hasRequestOptions" + formIndex.toString()}
-          defaultValue=""
-          control={control}
-          showLabel={false}
-          label={`Has request options - ignore`}
-          disabled={true}
-          size="small"
-        />
-        <TextField<FlowSchemaType>
-          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`}
-          key={"linkedOptions" + formIndex.toString()}
-          defaultValue=""
-          control={control}
-          showLabel={false}
-          label={`Linked options - ignore`}
-          disabled={true}
-          size="small"
-        />
-        <TextField<FlowSchemaType>
-          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-          key={"requestOptionsDataType" + formIndex.toString()}
-          control={control}
-          showLabel={false}
-          defaultValue=""
-          label={`Linked options - ignore`}
-          disabled={true}
-          size="small"
-        />
-      </Box>
       {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
         <Select<FlowSchemaType>
           control={formMethods.control}

@@ -114,7 +114,6 @@ export const fieldSetResolver = ({
         fieldId: f.Field.id,
         name: f.Field.name,
         required: f.Field.required,
-        hasRequestOptions: config.hasRequestOptions,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
         linkedResultOptions,
         previousStepOptions: config.previousStepOptions,

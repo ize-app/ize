@@ -38,8 +38,7 @@ export const fieldOptionSchema = z
 const fieldOptionsSchema = z
   .object({
     previousStepOptions: z.boolean().default(false),
-    hasRequestOptions: z.boolean().default(false),
-    requestOptionsDataType: z.nativeEnum(FieldDataType).optional(), // refers only to request created options
+    requestOptionsDataType: z.nativeEnum(FieldDataType).optional().nullable(), // refers only to request created options
     selectionType: z
       .nativeEnum(FieldOptionsSelectionType)
       .default(FieldOptionsSelectionType.Select),
@@ -58,15 +57,6 @@ const fieldOptionsSchema = z
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
   .refine(
-    (requestOptions) => {
-      if (requestOptions.hasRequestOptions && !requestOptions.requestOptionsDataType) {
-        return false;
-      }
-      return true;
-    },
-    { path: ["dataType"], message: "Select a data type" },
-  )
-  .refine(
     (options) => {
       if (
         options.selectionType === FieldOptionsSelectionType.MultiSelect &&
@@ -76,13 +66,6 @@ const fieldOptionsSchema = z
       return true;
     },
     { path: ["maxSelections"], message: "Required" },
-  )
-  .refine(
-    (options) => {
-      if (options.hasRequestOptions && !options.requestOptionsDataType) return false;
-      return true;
-    },
-    { path: ["requestOptionsDataType"], message: "Required" },
   );
 
 export const fieldSchema = z
@@ -107,7 +90,7 @@ export const fieldSchema = z
       if (
         field.type === FieldType.Options &&
         (field.optionsConfig.options ?? []).length === 0 &&
-        !field.optionsConfig.hasRequestOptions &&
+        !field.optionsConfig.requestOptionsDataType &&
         field.optionsConfig.linkedResultOptions.length === 0
       )
         return false;

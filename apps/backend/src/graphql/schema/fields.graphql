@@ -15,7 +15,6 @@ type Options {
   name: String!
   required: Boolean!
   previousStepOptions: Boolean!
-  hasRequestOptions: Boolean!
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
@@ -131,7 +130,6 @@ input FieldArgs {
 input FieldOptionsConfigArgs {
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
-  hasRequestOptions: Boolean!
   maxSelections: Int
   selectionType: FieldOptionsSelectionType!
   linkedResultOptions: [LinkedResultOptionsArgs!]!

@@ -66,7 +66,6 @@ export const createEvolveGroupFlowVersionArgs = ({
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {
-      hasRequestOptions: false,
       previousStepOptions: false,
       maxSelections: 1,
       selectionType: FieldOptionsSelectionType.Select,

@@ -461,7 +461,6 @@ model FieldOptionsConfig {
   fieldOptionSetId       String              @map("field_option_set_id") @db.Uuid
   requestOptionsDataType FieldDataType?      @map("data_type")
   // Whether or not options are created by the requestor
-  hasRequestOptions      Boolean             @default(false) @map("has_request_options")
   previousStepOptions    Boolean             @default(false) @map("previous_step_options")
   // Whether option is single or multi-select. Null means no maximum # of selections
   maxSelections          Int?                @map("max_selections")

@@ -13,7 +13,6 @@ fragment Options on Options {
   name
   required
   previousStepOptions
-  hasRequestOptions
   requestOptionsDataType
   selectionType
   maxSelections

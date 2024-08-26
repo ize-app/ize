@@ -20,7 +20,6 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
         required: true,
         optionsConfig: {
           options: [],
-          hasRequestOptions: false,
           selectionType: selectionType ?? FieldOptionsSelectionType.Select,
           previousStepOptions: false,
           maxSelections:

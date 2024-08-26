@@ -39,11 +39,7 @@ export const createRequestDefinedOptionSet = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  if (
-    isTriggerDefinedOptions &&
-    (!field.Field.FieldOptionsConfigs?.hasRequestOptions ||
-      !field.Field.FieldOptionsConfigs?.requestOptionsDataType)
-  )
+  if (isTriggerDefinedOptions && !field.Field.FieldOptionsConfigs?.requestOptionsDataType)
     throw new GraphQLError(
       "Request defined options provided but this field does not allow request defined options.",
       {

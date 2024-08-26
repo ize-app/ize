@@ -50,7 +50,7 @@ export const FieldOptions = ({
   onlyShowSelections?: boolean;
   final: boolean;
 }) => {
-  const { options, requestOptionsDataType, hasRequestOptions, linkedResultOptions } = fieldOptions;
+  const { options, requestOptionsDataType, linkedResultOptions } = fieldOptions;
 
   // intended for showing a field answer without the other options
   // used for displaying user field answers in both request and response
@@ -134,7 +134,7 @@ export const FieldOptions = ({
             />
           );
         })}
-        {!final && hasRequestOptions && requestOptionsDataType && (
+        {!final && requestOptionsDataType && (
           <FieldOption
             selectionType={fieldOptions.selectionType}
             sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
