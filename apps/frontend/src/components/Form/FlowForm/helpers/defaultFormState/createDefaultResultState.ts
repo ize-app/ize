@@ -5,21 +5,17 @@ import { ResultSchemaType } from "../../formValidation/result";
 
 interface DefaultResultStateProps {
   resultType: ResultType;
-  stepIndex: number;
   fieldId: string;
-  resultIndex: number;
 }
 
 export const createDefaultResultState = ({
   resultType,
   fieldId,
-  stepIndex,
-  resultIndex,
 }: DefaultResultStateProps): ResultSchemaType => {
   switch (resultType) {
     case ResultType.Decision:
       return {
-        resultId: "new." + stepIndex + "." + resultIndex,
+        resultId: crypto.randomUUID(),
         type: ResultType.Decision,
         fieldId,
         minimumAnswers: 1,
@@ -31,7 +27,7 @@ export const createDefaultResultState = ({
       };
     case ResultType.Ranking:
       return {
-        resultId: "new." + stepIndex + "." + resultIndex,
+        resultId: crypto.randomUUID(),
         type: ResultType.Ranking,
         fieldId,
         minimumAnswers: 2,
@@ -39,7 +35,7 @@ export const createDefaultResultState = ({
       };
     case ResultType.LlmSummary:
       return {
-        resultId: "new." + stepIndex + "." + resultIndex,
+        resultId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         fieldId,
         minimumAnswers: 2,
@@ -51,7 +47,7 @@ export const createDefaultResultState = ({
       };
     case ResultType.LlmSummaryList:
       return {
-        resultId: "new." + stepIndex + "." + resultIndex,
+        resultId: crypto.randomUUID(),
         type: ResultType.LlmSummaryList,
         fieldId,
         minimumAnswers: 2,

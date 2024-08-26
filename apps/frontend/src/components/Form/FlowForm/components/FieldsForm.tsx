@@ -53,7 +53,6 @@ export const FieldsForm = ({
 }: FieldsFormProps) => {
   const { register, setValue } = formMethods;
 
-  const numFields = fieldsArrayMethods.fields.length;
   const isLocked = formMethods.getValues(`steps.${formIndex}.${branch}.fieldsLocked`);
 
   // register values that are in zod schema but not displayed to user
@@ -85,8 +84,6 @@ export const FieldsForm = ({
             onClick={() => {
               fieldsArrayMethods.append(
                 createDefaultFieldState({
-                  stepIndex: formIndex,
-                  fieldIndex: numFields,
                   fieldType: FieldType.FreeInput,
                 }),
               );
@@ -125,7 +122,7 @@ export const FieldForm = ({
     if (prevFieldType && fieldType && fieldType !== prevFieldType) {
       formMethods.setValue(
         `steps.${formIndex}.${branch}.fields.${inputIndex}`,
-        createDefaultFieldState({ fieldType, stepIndex: formIndex, fieldIndex: inputIndex }),
+        createDefaultFieldState({ fieldType }),
       );
       setDisplayForm(true);
     }

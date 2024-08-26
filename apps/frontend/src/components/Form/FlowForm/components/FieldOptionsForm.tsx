@@ -39,8 +39,8 @@ const multiSelectOptions = [
   { name: "No limit", value: OptionSelectionCountLimit.None },
 ];
 
-export const defaultOption = (fieldIndex: number, optionIndex: number): FieldOptionSchemaType => ({
-  optionId: "new." + fieldIndex + "." + optionIndex,
+export const defaultOption = (): FieldOptionSchemaType => ({
+  optionId: crypto.randomUUID(),
   name: "",
   dataType: FieldDataType.String,
 });
@@ -321,7 +321,7 @@ export const FieldOptionsForm = ({
             variant="outlined"
             size="small"
             onClick={() => {
-              append(defaultOption(fieldIndex, stepDefinedOptions.length));
+              append(defaultOption());
             }}
           >
             Add option

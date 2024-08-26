@@ -4,17 +4,15 @@ import { FieldSchemaType } from "../../formValidation/fields";
 
 interface DefaultFieldProps {
   fieldType: FieldType;
-  stepIndex: number;
-  fieldIndex: number;
   selectionType?: FieldOptionsSelectionType;
 }
 
 export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaType => {
   switch (props.fieldType) {
     case FieldType.Options: {
-      const { stepIndex, fieldIndex, selectionType } = props;
+      const { selectionType } = props;
       return {
-        fieldId: "new." + stepIndex + "." + fieldIndex,
+        fieldId: crypto.randomUUID(),
         type: FieldType.Options,
         name: "",
         required: true,
@@ -33,9 +31,8 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
       };
     }
     case FieldType.FreeInput: {
-      const { stepIndex, fieldIndex } = props;
       return {
-        fieldId: "new." + stepIndex + "." + fieldIndex,
+        fieldId: crypto.randomUUID(),
         type: FieldType.FreeInput,
         name: "",
         required: true,

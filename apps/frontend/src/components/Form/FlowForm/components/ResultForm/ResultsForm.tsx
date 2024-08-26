@@ -90,15 +90,11 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
           onClick={() => {
             const field = createDefaultFieldState({
               fieldType: FieldType.Options,
-              stepIndex: formIndex,
-              fieldIndex: resultsArrayMethods.fields.length,
               selectionType: FieldOptionsSelectionType.Select,
             });
             fieldsArrayMethods.append(field);
             const result = createDefaultResultState({
               resultType: ResultType.Decision,
-              stepIndex: formIndex,
-              resultIndex: resultsArrayMethods.fields.length,
               fieldId: field.fieldId,
             });
             resultsArrayMethods.append(result);
@@ -137,8 +133,6 @@ const ResultForm = ({
           resultType === ResultType.Ranking || resultType === ResultType.Decision
             ? FieldType.Options
             : FieldType.FreeInput,
-        stepIndex: formIndex,
-        fieldIndex: resultIndex,
         selectionType:
           resultType === ResultType.Ranking
             ? FieldOptionsSelectionType.Rank
@@ -146,8 +140,6 @@ const ResultForm = ({
       });
       const result: ResultSchemaType = createDefaultResultState({
         resultType,
-        stepIndex: formIndex,
-        resultIndex: resultIndex,
         fieldId: field.fieldId,
       });
       formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
