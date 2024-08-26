@@ -21,7 +21,7 @@ const createDefaultPermissionState = (type: PermissionType): PermissionSchemaTyp
 export const PermissionForm = ({ formMethods, formIndex, branch }: PermissionFormProps) => {
   const permissionType = formMethods.watch(`steps.${formIndex}.${branch}.permission.type`);
   const [prevPermissionType, setPrevPermissionType] = useState<PermissionType | undefined>(
-    undefined,
+    permissionType,
   );
   useEffect(() => {
     if (prevPermissionType && permissionType && permissionType !== prevPermissionType) {

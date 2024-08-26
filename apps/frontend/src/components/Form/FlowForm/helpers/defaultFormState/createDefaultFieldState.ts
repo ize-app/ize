@@ -2,19 +2,12 @@ import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/g
 
 import { FieldSchemaType } from "../../formValidation/fields";
 
-interface DefaultOptionFieldStateProps {
-  fieldType: FieldType.Options;
+interface DefaultFieldProps {
+  fieldType: FieldType;
   stepIndex: number;
   fieldIndex: number;
-  selectionType: FieldOptionsSelectionType;
+  selectionType?: FieldOptionsSelectionType;
 }
-
-interface DefaultFreeInputFieldStateProps {
-  fieldType: FieldType.FreeInput;
-  stepIndex: number;
-  fieldIndex: number;
-}
-type DefaultFieldProps = DefaultOptionFieldStateProps | DefaultFreeInputFieldStateProps;
 
 export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaType => {
   switch (props.fieldType) {
@@ -28,7 +21,7 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
         optionsConfig: {
           options: [],
           hasRequestOptions: false,
-          selectionType,
+          selectionType: selectionType ?? FieldOptionsSelectionType.Select,
           previousStepOptions: false,
           maxSelections:
             selectionType === FieldOptionsSelectionType.MultiSelect

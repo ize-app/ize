@@ -40,7 +40,9 @@ const fieldOptionsSchema = z
     previousStepOptions: z.boolean().default(false),
     hasRequestOptions: z.boolean().default(false),
     requestOptionsDataType: z.nativeEnum(FieldDataType).optional(), // refers only to request created options
-    selectionType: z.nativeEnum(FieldOptionsSelectionType),
+    selectionType: z
+      .nativeEnum(FieldOptionsSelectionType)
+      .default(FieldOptionsSelectionType.Select),
     maxSelections: z
       .number()
       .or(z.nativeEnum(OptionSelectionCountLimit))

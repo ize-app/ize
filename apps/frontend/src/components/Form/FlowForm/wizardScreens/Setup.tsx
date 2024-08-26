@@ -66,7 +66,7 @@ export const Setup = () => {
       steps: formState.steps ? [...formState.steps] : [defaultStepFormValues],
     },
     resolver: zodResolver(flowSchema),
-    shouldUnregister: true,
+    shouldUnregister: false,
   });
 
   // console.log("errors are ", useFormMethods.formState.errors);

@@ -24,7 +24,6 @@ import { ResultSchemaType } from "../../formValidation/result";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
 import { FieldOptionsForm } from "../FieldOptionsForm";
-import { FieldsForm } from "../FieldsForm";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -68,14 +67,6 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* This hidden form is here so that the fields can be added to the response fields array */}
-      <Box sx={{ display: "none" }}>
-        <FieldsForm
-          formMethods={formMethods}
-          formIndex={formIndex}
-          fieldsArrayMethods={fieldsArrayMethods}
-          branch="response"
-        />
-      </Box>
       {resultsArrayMethods.fields.map((item, resultIndex) => {
         return (
           <ResultForm
@@ -129,47 +120,30 @@ const ResultForm = ({
   resultIndex,
   locked,
 }: ResultFormProps) => {
-  const resultType = formMethods.getValues(`steps.${formIndex}.result.${resultIndex}.type`);
+  const resultType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.type`);
 
   const resultField = formMethods.getValues(`steps.${formIndex}.response.fields.${resultIndex}`);
   const optionSelectionType =
     resultField.type === FieldType.Options ? resultField.optionsConfig.selectionType : null;
 
-  const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(undefined);
+  const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(resultType);
+  const [displayForm, setDisplayForm] = useState<boolean>(true);
 
   useEffect(() => {
     // only run logic if result type has changed, but not on first render
     if (prevResultType && resultType && resultType !== prevResultType) {
-      let field: FieldSchemaType;
-      if (resultType === ResultType.Decision) {
-        field = createDefaultFieldState({
-          fieldType: FieldType.Options,
-          stepIndex: formIndex,
-          fieldIndex: resultIndex,
-          selectionType: FieldOptionsSelectionType.Select,
-        });
-      } else if (resultType === ResultType.Ranking) {
-        field = createDefaultFieldState({
-          fieldType: FieldType.Options,
-          stepIndex: formIndex,
-          fieldIndex: resultIndex,
-          selectionType: FieldOptionsSelectionType.Rank,
-        });
-      } else if (resultType === ResultType.LlmSummary) {
-        field = createDefaultFieldState({
-          fieldType: FieldType.FreeInput,
-          stepIndex: formIndex,
-          fieldIndex: resultIndex,
-        });
-      } else if (resultType === ResultType.LlmSummaryList) {
-        field = createDefaultFieldState({
-          fieldType: FieldType.FreeInput,
-          stepIndex: formIndex,
-          fieldIndex: resultIndex,
-        });
-      } else {
-        throw new Error(`Unknown result type `);
-      }
+      const field: FieldSchemaType = createDefaultFieldState({
+        fieldType:
+          resultType === ResultType.Ranking || resultType === ResultType.Decision
+            ? FieldType.Options
+            : FieldType.FreeInput,
+        stepIndex: formIndex,
+        fieldIndex: resultIndex,
+        selectionType:
+          resultType === ResultType.Ranking
+            ? FieldOptionsSelectionType.Rank
+            : FieldOptionsSelectionType.Select,
+      });
       const result: ResultSchemaType = createDefaultResultState({
         resultType,
         stepIndex: formIndex,
@@ -178,12 +152,12 @@ const ResultForm = ({
       });
       formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
       formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
+      setDisplayForm(true);
     }
     setPrevResultType(resultType);
   }, [resultType]);
 
   useEffect(() => {
-    console.log("inside optionSelectionType useEffect", optionSelectionType);
     if (optionSelectionType) {
       if (optionSelectionType === FieldOptionsSelectionType.Rank) {
         formMethods.setValue(
@@ -233,27 +207,6 @@ const ResultForm = ({
             backgroundColor: "#fffff5",
           }}
         >
-          <Box sx={{ display: "none" }}>
-            <TextField<FlowSchemaType>
-              name={`steps.${formIndex}.result.${resultIndex}.resultId`}
-              key={"resultId" + resultIndex.toString() + formIndex.toString()}
-              control={formMethods.control}
-              showLabel={false}
-              label={`Result ID - ignore`}
-              variant="standard"
-              disabled={true}
-              defaultValue=""
-              size="small"
-            />
-            <TextField<FlowSchemaType>
-              name={`steps.${formIndex}.result.${resultIndex}.fieldId`}
-              key={"fieldId" + resultIndex.toString() + formIndex.toString()}
-              control={formMethods.control}
-              label="fieldId"
-              disabled={true}
-              defaultValue=""
-            />
-          </Box>
           <FieldBlock>
             <Select<FlowSchemaType>
               control={formMethods.control}
@@ -266,6 +219,7 @@ const ResultForm = ({
                 { name: "AI generated list", value: ResultType.LlmSummaryList },
               ]}
               name={`steps.${formIndex}.result.${resultIndex}.type`}
+              onChange={() => setDisplayForm(false)}
               size="small"
               defaultValue=""
             />
@@ -281,41 +235,48 @@ const ResultForm = ({
               defaultValue=""
             />
           </FieldBlock>
-          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
-            <FieldOptionsForm
-              formMethods={formMethods}
+          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) &&
+            displayForm && (
+              <FieldOptionsForm
+                formMethods={formMethods}
+                formIndex={formIndex}
+                fieldIndex={resultIndex}
+                branch={"response"}
+                locked={locked}
+              />
+            )}
+          {resultType === ResultType.Decision && displayForm && (
+            <DecisionConfigForm
               formIndex={formIndex}
-              fieldIndex={resultIndex}
-              branch={"response"}
-              locked={locked}
+              formMethods={formMethods}
+              resultIndex={resultIndex}
+              field={resultField}
+              display={resultType === ResultType.Decision}
             />
           )}
 
-          <DecisionConfigForm
-            formIndex={formIndex}
-            formMethods={formMethods}
-            resultIndex={resultIndex}
-            field={resultField}
-            display={resultType === ResultType.Decision}
-          />
+          {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) &&
+            displayForm && (
+              <LlmSummaryForm
+                formIndex={formIndex}
+                formMethods={formMethods}
+                resultIndex={resultIndex}
+                display={
+                  resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
+                }
+                type={resultType}
+              />
+            )}
 
-          <LlmSummaryForm
-            formIndex={formIndex}
-            formMethods={formMethods}
-            resultIndex={resultIndex}
-            display={
-              resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
-            }
-            type={resultType}
-          />
-
-          <PrioritizationForm
-            formIndex={formIndex}
-            formMethods={formMethods}
-            resultIndex={resultIndex}
-            field={resultField}
-            display={resultType === ResultType.Ranking}
-          />
+          {resultType === ResultType.Ranking && displayForm && (
+            <PrioritizationForm
+              formIndex={formIndex}
+              formMethods={formMethods}
+              resultIndex={resultIndex}
+              field={resultField}
+              display={resultType === ResultType.Ranking}
+            />
+          )}
         </Box>
         <FormHelperText
           sx={{

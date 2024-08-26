@@ -2,7 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
@@ -11,7 +11,6 @@ import { FieldOptionsForm } from "./FieldOptionsForm";
 import { Select, TextField } from "../../formFields";
 import { LabeledGroupedInputs } from "../../formLayout/LabeledGroupedInputs";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
-import { FieldSchemaType } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
 import { createDefaultFieldState } from "../helpers/defaultFormState/createDefaultFieldState";
 
@@ -26,14 +25,6 @@ interface FieldFormProps extends FieldsFormProps {
   inputIndex: number;
   isLocked: boolean;
 }
-
-export const defaultFreeInputField = (stepIndex: number, fieldIndex: number): FieldSchemaType => ({
-  fieldId: "new." + stepIndex + "." + fieldIndex,
-  type: FieldType.FreeInput,
-  name: "",
-  required: true,
-  freeInputDataType: FieldDataType.String,
-});
 
 export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType) => {
   if (freeInputDataType === FieldDataType.EntityIds) {
@@ -61,8 +52,6 @@ export const FieldsForm = ({
   branch,
 }: FieldsFormProps) => {
   const { register, setValue } = formMethods;
-
-  console.log("formstate", formMethods.getValues());
 
   const numFields = fieldsArrayMethods.fields.length;
   const isLocked = formMethods.getValues(`steps.${formIndex}.${branch}.fieldsLocked`);
@@ -125,10 +114,22 @@ export const FieldForm = ({
     `steps.${formIndex}.${branch}.fields.${inputIndex}.type`,
   );
 
+  const [displayForm, setDisplayForm] = useState<boolean>(true);
+  const [prevFieldType, setPrevFieldType] = useState<FieldType | undefined>(fieldType);
+
   // register values that are in zod schema but not displayed to user
   useEffect(() => {
     register(`steps.${formIndex}.${branch}.fields.${inputIndex}.type`);
     setValue(`steps.${formIndex}.${branch}.fields.${inputIndex}.type`, fieldType);
+
+    if (prevFieldType && fieldType && fieldType !== prevFieldType) {
+      formMethods.setValue(
+        `steps.${formIndex}.${branch}.fields.${inputIndex}`,
+        createDefaultFieldState({ fieldType, stepIndex: formIndex, fieldIndex: inputIndex }),
+      );
+      setDisplayForm(true);
+    }
+    setPrevFieldType(fieldType);
   }, [register, fieldType]);
 
   return (
@@ -157,6 +158,7 @@ export const FieldForm = ({
             size={"small"}
             name={`steps.${formIndex}.${branch}.fields.${inputIndex}.type`}
             key={"type" + inputIndex.toString() + formIndex.toString()}
+            onChange={() => setDisplayForm(false)}
             selectOptions={[
               { name: "Free input", value: FieldType.FreeInput },
               { name: "Options", value: FieldType.Options },
@@ -175,7 +177,7 @@ export const FieldForm = ({
             defaultValue=""
             disabled={isLocked}
           />
-          {fieldType === FieldType.FreeInput && (
+          {fieldType === FieldType.FreeInput && displayForm && (
             <FreeInputFieldForm
               formMethods={formMethods}
               formIndex={formIndex}
@@ -185,7 +187,7 @@ export const FieldForm = ({
               inputIndex={inputIndex}
             />
           )}
-          {fieldType === FieldType.Options && (
+          {fieldType === FieldType.Options && displayForm && (
             <OptionFieldForm
               formMethods={formMethods}
               formIndex={formIndex}
@@ -218,10 +220,9 @@ export const OptionFieldForm = ({
   inputIndex,
   isLocked,
 }: FieldFormProps) => {
-  const { control, getValues } = formMethods;
-  const selectionType = getValues(
-    `steps.${formIndex}.${branch}.fields.${inputIndex}.optionsConfig.selectionType`,
-  );
+  const { control } = formMethods;
+
+  // if (!selectionType) return null;
 
   return (
     <>
@@ -247,7 +248,6 @@ export const OptionFieldForm = ({
           ]}
           // defaultValue={FieldOptionsSelectionType.Select}
           label="How do participants select options?"
-          defaultValue={selectionType}
         />
       </ResponsiveFormRow>
 

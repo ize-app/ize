@@ -203,19 +203,21 @@ export const FieldOptionsForm = ({
           size="small"
         />
       </Box>
-      <Select<FlowSchemaType>
-        control={formMethods.control}
-        defaultValue=""
-        display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
-        label="How many options can be selected?"
-        renderValue={(val) => {
-          const option = multiSelectOptions.find((option) => option.value === val);
-          return "User can select " + option?.name + " maximum";
-        }}
-        selectOptions={multiSelectOptions}
-        name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.maxSelections`}
-        size={"small"}
-      />
+      {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
+        <Select<FlowSchemaType>
+          control={formMethods.control}
+          defaultValue=""
+          display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
+          label="How many options can be selected?"
+          renderValue={(val) => {
+            const option = multiSelectOptions.find((option) => option.value === val);
+            return "User can select " + option?.name + " maximum";
+          }}
+          selectOptions={multiSelectOptions}
+          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.maxSelections`}
+          size={"small"}
+        />
+      )}
       <Typography variant={"label2"}>Available options</Typography>
       {stepDefinedOptions.length > 0 &&
         fields.map((item, inputIndex) => {
