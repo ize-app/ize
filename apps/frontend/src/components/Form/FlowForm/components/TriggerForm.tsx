@@ -2,10 +2,9 @@ import { Box } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldsForm } from "./FieldsForm";
+import { PermissionForm } from "./PermissionForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { EntitySearch, Select } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
 
 interface TriggerFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -14,9 +13,6 @@ interface TriggerFormProps {
 }
 
 export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
-  const isEntitiesRequestTrigger =
-    formMethods.getValues(`steps.${formIndex}.request.permission.type`) === PermissionType.Entities;
-
   const error = formMethods.formState.errors.steps?.[formIndex]?.request;
 
   const fieldsArrayMethods = useFieldArray({
@@ -28,25 +24,7 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
     formIndex === 0 && (
       <Box sx={{ display: show ? "block" : "none" }}>
         <PanelAccordion title="Permission" hasError={!!error?.permission}>
-          <Select
-            control={formMethods.control}
-            name={`steps.${formIndex}.request.permission.type`}
-            selectOptions={[
-              { name: "Certain individuals and groups", value: PermissionType.Entities },
-              { name: "Anyone can request", value: PermissionType.Anyone },
-            ]}
-            label="Who can make requests?"
-          />
-          {isEntitiesRequestTrigger && (
-            <EntitySearch
-              key="requestRoleSearch"
-              ariaLabel={"Individuals and groups who can make requests"}
-              name={`steps.${formIndex}.request.permission.entities`}
-              control={formMethods.control}
-              setFieldValue={formMethods.setValue}
-              getFieldValues={formMethods.getValues}
-            />
-          )}
+          <PermissionForm formMethods={formMethods} formIndex={formIndex} branch={"request"} />
         </PanelAccordion>
         <PanelAccordion title="Request fields" hasError={!!error?.fields}>
           <FieldsForm

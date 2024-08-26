@@ -2,11 +2,11 @@ import { Box, FormHelperText } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { ActionFilterForm } from "./ActionFilterForm";
+import { PermissionForm } from "./PermissionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { EntitySearch, Select, Switch } from "../../formFields";
+import { Select, Switch } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
 
 interface StepFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
@@ -24,9 +24,6 @@ const requestExpirationOptions = [
 ];
 
 export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepFormProps) => {
-  // console.log("form state for ", formIndex, " is ", formMethods.getValues());
-  // console.log("errors are ", formMethods.formState.errors.steps?.[formIndex]);
-  const responseTrigger = formMethods.getValues(`steps.${formIndex}.response.permission.type`);
   const stepError = formMethods.formState.errors.steps?.[formIndex];
 
   const fieldsArrayMethods = useFieldArray({
@@ -62,27 +59,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
         }
       >
-        <Select<FlowSchemaType>
-          control={formMethods.control}
-          // width="300px"
-          name={`steps.${formIndex}.response.permission.type`}
-          selectOptions={[
-            { name: "Certain people can respond", value: PermissionType.Entities },
-            { name: "Anyone can respond", value: PermissionType.Anyone },
-          ]}
-          label="Who can respond?"
-          size="small"
-        />
-        {responseTrigger === PermissionType.Entities && (
-          <EntitySearch<FlowSchemaType>
-            key="responseRoleSearch"
-            ariaLabel={"Individuals and groups who can respond"}
-            name={`steps.${formIndex}.response.permission.entities`}
-            control={formMethods.control}
-            setFieldValue={formMethods.setValue}
-            getFieldValues={formMethods.getValues}
-          />
-        )}
+        <PermissionForm formMethods={formMethods} formIndex={formIndex} branch={"response"} />
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="How long do people have to respond?"
