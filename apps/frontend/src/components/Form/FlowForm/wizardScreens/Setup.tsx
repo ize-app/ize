@@ -72,7 +72,8 @@ export const Setup = () => {
   // console.log("errors are ", useFormMethods.formState.errors);
   // console.log("values are ", useFormMethods.getValues());
 
-  const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
+  const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
+  console.log("hasStep0Response", hasStep0Response);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -84,7 +85,7 @@ export const Setup = () => {
     onNext();
   };
 
-  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const action = useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action`);
   const displayAction =
     action &&
     action.type &&
@@ -143,8 +144,8 @@ export const Setup = () => {
                           });
                         } else {
                           stepsArrayMethods.remove(index);
-                          setSelectedId("trigger0");
                         }
+                        setSelectedId("trigger0");
                       }}
                       disableDelete={responseFieldLocked || disableDelete}
                       hasError={!!useFormMethods.formState.errors.steps?.[index]}
