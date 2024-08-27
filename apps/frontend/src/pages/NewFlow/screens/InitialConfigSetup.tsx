@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { FlowSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
 import { WizardNav } from "@/components/Wizard";
 
+import { generateNewFlowConfig } from "../generateNewFlowConfig";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const InitialConfigSetup = () => {
@@ -13,8 +14,8 @@ export const InitialConfigSetup = () => {
     shouldUnregister: false,
   });
 
-  const onSubmit = (data: object) => {
-    setFormState((prev) => ({ ...prev, ...data }));
+  const onSubmit = (_data: object) => {
+    setFormState((prev) => ({ ...prev, newFlow: { ...generateNewFlowConfig() } }));
     onNext();
   };
 
