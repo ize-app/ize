@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { FieldPath, FieldValues, Path, PathValue, useFormContext } from "react-hook-form";
 
 import { EntitySearch, Select } from "../../formFields";
-import { FlowSchemaType } from "../formValidation/flow";
 import { PermissionSchemaType, PermissionType } from "../formValidation/permission";
 
-interface PermissionFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+interface PermissionFormProps<T extends FieldValues> {
   branch: "request" | "response";
+  fieldName: FieldPath<T>; // The path to the permission field in the form schema
 }
 
+// Helper function to create a default permission state
 const createDefaultPermissionState = (type: PermissionType): PermissionSchemaType => {
   return {
     type,
@@ -18,29 +17,41 @@ const createDefaultPermissionState = (type: PermissionType): PermissionSchemaTyp
   };
 };
 
-export const PermissionForm = ({ formMethods, formIndex, branch }: PermissionFormProps) => {
-  const permissionType = formMethods.watch(`steps.${formIndex}.${branch}.permission.type`);
+export const PermissionForm = <T extends FieldValues>({
+  branch,
+  fieldName,
+}: PermissionFormProps<T>) => {
+  const formMethods = useFormContext<T>();
+
+  // Construct the path to the permission type field
+  const permissionTypePath = `${fieldName}.type` as Path<T>;
+  const permissionType = formMethods.watch(permissionTypePath as Path<T>) as PermissionType;
+
   const [prevPermissionType, setPrevPermissionType] = useState<PermissionType | undefined>(
     permissionType,
   );
+
   useEffect(() => {
     if (prevPermissionType && permissionType && permissionType !== prevPermissionType) {
-      formMethods.setValue(
-        `steps.${formIndex}.${branch}.permission`,
-        createDefaultPermissionState(permissionType),
-      );
+      const permissionPath = `${fieldName}` as FieldPath<T>;
+
+      // Use PathValue to ensure type safety for the value being set
+      const defaultPermissionState = createDefaultPermissionState(
+        permissionType,
+      ) as PermissionSchemaType as PathValue<T, typeof permissionPath>;
+
+      formMethods.setValue(permissionPath, defaultPermissionState);
     }
     setPrevPermissionType(permissionType);
   }, [permissionType]);
 
-  const isEntitiesRequestTrigger =
-    formMethods.watch(`steps.${formIndex}.${branch}.permission.type`) === PermissionType.Entities;
+  const isEntitiesRequestTrigger = permissionType === PermissionType.Entities;
 
   return (
     <>
       <Select
         control={formMethods.control}
-        name={`steps.${formIndex}.${branch}.permission.type`}
+        name={permissionTypePath}
         selectOptions={[
           { name: "Certain individuals and groups", value: PermissionType.Entities },
           {
@@ -53,13 +64,15 @@ export const PermissionForm = ({ formMethods, formIndex, branch }: PermissionFor
       {isEntitiesRequestTrigger && (
         <EntitySearch
           key="requestRoleSearch"
-          ariaLabel={`Individuals and groups who can ${branch === "request" ? "trigger this flow" : "respond"}`}
-          name={`steps.${formIndex}.${branch}.permission.entities`}
+          ariaLabel={`Individuals and groups who can ${
+            branch === "request" ? "trigger this flow" : "respond"
+          }`}
+          name={`${fieldName}.entities` as Path<T>}
           control={formMethods.control}
           setFieldValue={formMethods.setValue}
           getFieldValues={formMethods.getValues}
         />
-      )}{" "}
+      )}
     </>
   );
 };

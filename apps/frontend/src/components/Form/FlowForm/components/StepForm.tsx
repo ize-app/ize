@@ -59,7 +59,10 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
         }
       >
-        <PermissionForm formMethods={formMethods} formIndex={formIndex} branch={"response"} />
+        <PermissionForm<FlowSchemaType>
+          fieldName={`steps.${formIndex}.response.permission`}
+          branch={"response"}
+        />
         <Select<FlowSchemaType>
           control={formMethods.control}
           label="How long do people have to respond?"

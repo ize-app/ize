@@ -24,7 +24,10 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
     formIndex === 0 && (
       <Box sx={{ display: show ? "block" : "none" }}>
         <PanelAccordion title="Permission" hasError={!!error?.permission}>
-          <PermissionForm formMethods={formMethods} formIndex={formIndex} branch={"request"} />
+          <PermissionForm<FlowSchemaType>
+            fieldName={`steps.${formIndex}.request.permission`}
+            branch={"request"}
+          />
         </PanelAccordion>
         <PanelAccordion title="Request fields" hasError={!!error?.fields}>
           <FieldsForm
