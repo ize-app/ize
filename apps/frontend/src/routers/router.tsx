@@ -64,9 +64,13 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         children: [
           {
-            path: Routes.newFlowRoute(Routes.NewFlowRoute.Setup),
-            element: <FullConfigSetup />,
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.InitialSetup),
+            element: <NewFlow.InitialConfigSetup />,
             index: true,
+          },
+          {
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.FullConfigSetup),
+            element: <FullConfigSetup />,
           },
           {
             path: Routes.newFlowRoute(Routes.NewFlowRoute.Confirm),
