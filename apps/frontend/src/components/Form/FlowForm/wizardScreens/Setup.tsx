@@ -138,7 +138,7 @@ export const Setup = () => {
                         if (index === 0) {
                           if (disableDelete) return;
                           const stepValues = useFormMethods.getValues(`steps.${index}`);
-                          useFormMethods.setValue(`steps.${index}`, {
+                          stepsArrayMethods.update(index, {
                             ...stepValues,
                             response: undefined,
                           });
