@@ -74,3 +74,7 @@ export const flowSchema = z.object({
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   evolve: evolveFlowSchema,
 });
+
+export const newFlowFormSchema = z.object({
+  newFlow: flowSchema,
+});

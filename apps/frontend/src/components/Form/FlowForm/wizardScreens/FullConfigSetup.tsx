@@ -42,8 +42,8 @@ export const FullConfigSetup = () => {
 
   const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
-      name: formState.name ?? "",
-      evolve: formState.evolve ?? {
+      name: formState.newFlow?.name ?? "",
+      evolve: formState.newFlow?.evolve ?? {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
           type: PermissionType.Entities,
@@ -63,7 +63,7 @@ export const FullConfigSetup = () => {
           threshold: 1,
         },
       },
-      steps: formState.steps ? [...formState.steps] : [defaultStepFormValues],
+      steps: formState.newFlow?.steps ? [...formState.newFlow.steps] : [defaultStepFormValues],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: false,
@@ -81,7 +81,7 @@ export const FullConfigSetup = () => {
   });
 
   const onSubmit = (data: FlowSchemaType) => {
-    setFormState((prev) => ({ ...prev, ...data }));
+    setFormState((prev) => ({ ...prev, newFlow: { ...data } }));
     onNext();
   };
 
