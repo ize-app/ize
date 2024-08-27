@@ -32,7 +32,7 @@ import { FlowSchemaType, flowSchema } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 
-export const Setup = () => {
+export const FullConfigSetup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
   const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
 
