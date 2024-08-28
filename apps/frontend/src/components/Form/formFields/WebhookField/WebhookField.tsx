@@ -59,7 +59,7 @@ export const WebhookField = <T extends FieldValues>({
     }
   };
 
-  const helperText = `${type === "notification" ? "For each flow that this group watches, a notification will be sent to this webhook." : "After this collaborative step is complete, results will be sent to this webhook."} The full webhook URL will not be viewable after creation for security.`;
+  const helperText = `${type === "notification" ? "For each flow that this group watches, a notification will be sent to this webhook." : ""}`;
 
   return (
     <Controller
@@ -105,7 +105,7 @@ export const WebhookField = <T extends FieldValues>({
                 size="small"
                 showLabel={false}
                 display={false}
-                placeholderText="Valid webhook"
+                placeholderText="Original uri"
                 // @ts-expect-error TODO: figure out how to bring in webhook schema
                 name={`${name}.originalUri`}
               />

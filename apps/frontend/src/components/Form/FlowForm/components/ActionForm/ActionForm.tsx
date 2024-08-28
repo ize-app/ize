@@ -62,7 +62,7 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
           </FormHelperText>
         )}
         {action.type === ActionType.CallWebhook && (
-          <WebhookForm formMethods={formMethods} formIndex={formIndex} />
+          <WebhookForm fieldName={`steps.${formIndex}.action`} />
         )}
       </PanelAccordion>
     </Box>
