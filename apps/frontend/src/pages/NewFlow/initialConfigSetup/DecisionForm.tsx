@@ -8,9 +8,9 @@ import { OptionsForm } from "./OptionsForm";
 import { IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const DecisionForm = () => {
-  const { control, watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, control } = useFormContext<IntitialFlowSetupSchemaType>();
 
-  const decisionName = watch("question");
+  const question = watch("question");
 
   return (
     <>
@@ -21,12 +21,12 @@ export const DecisionForm = () => {
           name={`question`}
           control={control}
           multiline
-          placeholderText={"What are you deciding on"}
+          placeholderText={"What's your question to the group?"}
           label={``}
           defaultValue=""
         />
       </FieldBlock>
-      {decisionName && <OptionsForm />}
+      {question && <OptionsForm />}
     </>
   );
 };

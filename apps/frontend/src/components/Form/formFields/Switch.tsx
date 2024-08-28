@@ -24,7 +24,8 @@ export const Switch = <T extends FieldValues>({
         <FormControl error={Boolean(error)} sx={sx}>
           <FormControlLabel
             label={label}
-            control={<MuiSwitch {...field} checked={field.value} />}
+            slotProps={{ typography: { fontSize: ".875rem" } }}
+            control={<MuiSwitch {...field} checked={field.value} size="small" />}
           />
           <FormHelperText
             sx={{

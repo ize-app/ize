@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { TextField } from "@/components/Form/formFields";
@@ -8,10 +9,21 @@ import { ButtonGroupField } from "../ButtonGroupField";
 import { AIOutputType, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const SummaryForm = () => {
-  const { control, watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { control, watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const question = watch("question");
   const aiOutputType = watch("aiOutputType");
+
+  useEffect(() => {}, [
+    setValue(
+      "prompt",
+      "Summarize overall thoughts and sentiment of the group, common points of disagreement, and next steps.",
+    ),
+    setValue(
+      "example",
+      "Points of agreement: \n- Do A for reason X\n- Create B but consider Y\n\nPoints of disagreement: \n- No alignment on whether we should take path C because reason Z",
+    ),
+  ]);
 
   return (
     <>

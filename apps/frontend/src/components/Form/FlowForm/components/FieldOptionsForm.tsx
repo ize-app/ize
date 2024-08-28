@@ -7,13 +7,14 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldDataType, FieldOptionsSelectionType, ResultType } from "@/graphql/generated/graphql";
 
-import { InputField } from "./InputField";
-import { Select, TextField } from "../../formFields";
+import { UsePresetOptionsForm } from "./UsePresetOptionsForm";
+import { Select } from "../../formFields";
 import { SelectOption } from "../../formFields/Select";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { FieldOptionSchemaType, OptionSelectionCountLimit } from "../formValidation/fields";
+import { OptionSelectionCountLimit } from "../formValidation/fields";
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
+import { createDefaultOptionState } from "../helpers/defaultFormState/createDefaultOptionState";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];
@@ -41,12 +42,6 @@ const multiSelectOptions = [
   { name: "No limit", value: OptionSelectionCountLimit.None },
 ];
 
-export const defaultOption = (): FieldOptionSchemaType => ({
-  optionId: crypto.randomUUID(),
-  name: "",
-  dataType: FieldDataType.String,
-});
-
 interface FieldOptionsFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number; // react-hook-form name
@@ -64,9 +59,9 @@ export const FieldOptionsForm = ({
 }: FieldOptionsFormProps) => {
   const { control } = formMethods;
 
-  const { fields, remove, append } = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
+  const { PresetOptions, append } = UsePresetOptionsForm<FlowSchemaType>({
+    locked,
+    fieldsArrayName: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
   });
 
   const {
@@ -111,11 +106,6 @@ export const FieldOptionsForm = ({
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
   );
 
-  const stepDefinedOptions =
-    formMethods.getValues(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
-    ) ?? [];
-
   const linkedOptions =
     formMethods.getValues(
       `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
@@ -153,71 +143,7 @@ export const FieldOptionsForm = ({
         />
       )}
       <Typography variant={"label2"}>Available options</Typography>
-      {stepDefinedOptions.length > 0 &&
-        fields.map((item, inputIndex) => {
-          const dataType = formMethods.watch(
-            `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`,
-          );
-          return (
-            <Box
-              key={item.id}
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                flexGrow: 1,
-              }}
-            >
-              <ResponsiveFormRow key={item.id}>
-                <Box sx={{ display: "none" }}>
-                  <TextField<FlowSchemaType>
-                    name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.optionId`}
-                    key={"optionId" + inputIndex.toString() + formIndex.toString()}
-                    control={control}
-                    showLabel={false}
-                    label={`Option ID - ignore`}
-                    disabled={true}
-                    size="small"
-                    defaultValue=""
-                  />
-                </Box>
-                <Select<FlowSchemaType>
-                  control={control}
-                  disabled={locked}
-                  size={"small"}
-                  sx={{ flexBasis: "100px", flexGrow: 1 }}
-                  name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`}
-                  key={"dataType" + inputIndex.toString() + formIndex.toString()}
-                  selectOptions={[
-                    { name: "Text", value: FieldDataType.String },
-                    { name: "Number", value: FieldDataType.Number },
-                    { name: "Url", value: FieldDataType.Uri },
-                    { name: "Date Time", value: FieldDataType.DateTime },
-                    { name: "Date", value: FieldDataType.Date },
-                  ]}
-                  label="Type"
-                  defaultValue=""
-                />
-                <InputField
-                  disabled={locked}
-                  fieldName={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
-                  dataType={dataType}
-                  label={`Option #${inputIndex + 1}`}
-                />
-                {/* {renderInput(inputIndex, locked)} */}
-              </ResponsiveFormRow>
-
-              {!locked && (
-                <IconButton
-                  color="primary"
-                  aria-label="Remove option"
-                  onClick={() => remove(inputIndex)}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              )}
-            </Box>
-          );
-        })}
+      <PresetOptions />
       {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
         <Box sx={{ width: "100%" }}>
           {linksFields.map((item, inputIndex) => {
@@ -296,7 +222,7 @@ export const FieldOptionsForm = ({
             variant="outlined"
             size="small"
             onClick={() => {
-              append(defaultOption());
+              append(createDefaultOptionState());
             }}
           >
             Add option

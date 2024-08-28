@@ -36,6 +36,7 @@ export const InitialConfigSetup = () => {
     }));
     onNext();
   };
+  console.log("errors are", formMethods.formState.errors);
 
   console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
@@ -49,7 +50,7 @@ export const InitialConfigSetup = () => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          gap: "24px",
+          gap: "30px",
         }}
       >
         <FieldBlock>
@@ -97,9 +98,9 @@ export const InitialConfigSetup = () => {
           </FieldBlock>
         )}
         {goal === FlowGoal.TriggerWebhook && permissionType && <WebhookForm />}
-        {goal === FlowGoal.Decision && <DecisionForm />}
-        {goal === FlowGoal.Prioritize && <PrioritizationForm />}
-        {goal === FlowGoal.AiSummary && <SummaryForm />}
+        {goal === FlowGoal.Decision && permissionType && <DecisionForm />}
+        {goal === FlowGoal.Prioritize && permissionType && <PrioritizationForm />}
+        {goal === FlowGoal.AiSummary && permissionType && <SummaryForm />}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}

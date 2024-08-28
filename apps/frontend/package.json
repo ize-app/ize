@@ -15,6 +15,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.1",
     "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.7",

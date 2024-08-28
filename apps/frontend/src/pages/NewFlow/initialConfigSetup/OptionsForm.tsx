@@ -1,35 +1,80 @@
-import { Typography } from "@mui/material";
-// import { useFormContext } from "react-hook-form";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
+import { useFormContext, useFormState } from "react-hook-form";
+
+import { UsePresetOptionsForm } from "@/components/Form/FlowForm/components/UsePresetOptionsForm";
+import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/defaultFormState/createDefaultOptionState";
+import { Switch, TextField } from "@/components/Form/formFields";
 
 import { FieldBlock } from "./FieldBlock";
-import { ButtonGroupField } from "../ButtonGroupField";
-import { IntitialFlowSetupSchemaType, OptionsType } from "../formValidation";
+import { IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const OptionsForm = () => {
-  //   const { control, watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, control } = useFormContext<IntitialFlowSetupSchemaType>();
+  const optionsFormState = useFormState({ control, name: "optionsConfig" });
+  const { PresetOptions, append } = UsePresetOptionsForm<IntitialFlowSetupSchemaType>({
+    locked: false,
+    fieldsArrayName: `optionsConfig.options`,
+  });
+
+  //@ts-expect-error TODO
+  const error = optionsFormState.errors.optionsConfig?.root?.message;
+
+  const hasLinkedOptions = watch("optionsConfig.linkedOptions.hasLinkedOptions");
 
   return (
     <>
       <FieldBlock>
         <Typography variant="description">What options are you deciding between?</Typography>
-        <ButtonGroupField<IntitialFlowSetupSchemaType>
-          label="Test"
-          name={`decision.optionsType`}
-          options={[
-            {
-              name: "Preset options",
-              value: OptionsType.Preset,
-            },
-            {
-              name: "Options created when triggered",
-              value: OptionsType.Trigger,
-            },
-            {
-              name: "Ask community for option ideas",
-              value: OptionsType.PrevStep,
-            },
-          ]}
-        />
+
+        {error && (
+          <FormHelperText
+            sx={{
+              color: "error.main",
+              marginLeft: "16px",
+            }}
+          >
+            {error}
+          </FormHelperText>
+        )}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <PresetOptions />
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <Box sx={{ marginBottom: "8px" }}>
+            <Button
+              sx={{ position: "relative" }}
+              variant="text"
+              size="small"
+              onClick={() => {
+                append(createDefaultOptionState());
+              }}
+            >
+              Add option
+            </Button>
+          </Box>
+          <Switch<IntitialFlowSetupSchemaType>
+            label={"Requestor can create additional options"}
+            name={"optionsConfig.requestCreatedOptions"}
+            sx={{ marginLeft: "8px" }}
+            defaultValue={false}
+          />
+          <Switch<IntitialFlowSetupSchemaType>
+            label={"Generate option ideas from partipants"}
+            name={"optionsConfig.linkedOptions.hasLinkedOptions"}
+            sx={{ marginLeft: "8px" }}
+            defaultValue={false}
+          />
+          {hasLinkedOptions && (
+            <TextField<IntitialFlowSetupSchemaType>
+              // assuming here that results to fields is 1:1 relationshp
+              name={"optionsConfig.linkedOptions.question"}
+              multiline
+              placeholderText={"What kind of ideas are looking from the community?"}
+              label={``}
+              defaultValue={""}
+            />
+          )}
+        </Box>
       </FieldBlock>
     </>
   );

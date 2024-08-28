@@ -2,6 +2,10 @@ import * as z from "zod";
 
 import { actionSchema } from "@/components/Form/FlowForm/formValidation/action";
 // import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
+import {
+  DefaultOptionSelection,
+  fieldOptionSchema,
+} from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 
@@ -31,12 +35,28 @@ export enum AIOutputType {
   List = "List",
 }
 
-const optionConfigSchema = z.object({
-  // name: z.string().min(1),
-  // options: z.array(fieldOptionSchema).default([]),
-  // options: z.array(fieldOptionSchema).default([]),
-  optionsType: z.nativeEnum(OptionsType),
-});
+const optionConfigSchema = z
+  .object({
+    options: z.array(fieldOptionSchema).default([]),
+    requestCreatedOptions: z.boolean().optional().default(false),
+    linkedOptions: z.object({
+      hasLinkedOptions: z.boolean().optional().default(false),
+      question: z.string().optional(),
+    }),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.options.length === 0 &&
+        !data.requestCreatedOptions &&
+        !data.linkedOptions.hasLinkedOptions
+      ) {
+        return false;
+      }
+      return true;
+    },
+    { message: "Define how participants will select options" },
+  );
 
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   z.object({
@@ -44,21 +64,28 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     permission: permissionSchema,
     webhookTriggerCondition: z.nativeEnum(ActionTriggerCondition),
     webhook: actionSchema,
-    decision: optionConfigSchema.optional(),
+    optionsConfig: optionConfigSchema.optional(),
+    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
     permission: permissionSchema,
-    decision: optionConfigSchema,
+    optionsConfig: optionConfigSchema,
+    question: z.string(),
   }),
-  z.object({ goal: z.literal(FlowGoal.Prioritize), permission: permissionSchema }),
+  z.object({
+    goal: z.literal(FlowGoal.Prioritize),
+    question: z.string(),
+    permission: permissionSchema,
+    optionsConfig: optionConfigSchema,
+  }),
   z.object({
     goal: z.literal(FlowGoal.AiSummary),
     permission: permissionSchema,
     aiOutputType: z.nativeEnum(AIOutputType),
     question: z.string(),
     prompt: z.string(),
-    example: z.string().default("etst"),
+    example: z.string(),
   }),
 ]);
 

@@ -30,10 +30,11 @@ export const DateTimePicker = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => {
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
-          <FormControl fullWidth error={Boolean(error)} required={required}>
+          <FormControl error={Boolean(error)} required={required}>
             <MuiDateTimePicker
               {...field}
               sx={{
+                flexGrow: 1,
                 "& .MuiInputBase-input": {
                   paddingBottom: "8.5px",
                   paddingTop: "8.5px",
