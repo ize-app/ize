@@ -7,7 +7,8 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldDataType, FieldOptionsSelectionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DatePicker, DateTimePicker, Select, TextField } from "../../formFields";
+import { InputField } from "./InputField";
+import { Select, TextField } from "../../formFields";
 import { SelectOption } from "../../formFields/Select";
 import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
@@ -63,7 +64,10 @@ export const FieldOptionsForm = ({
 }: FieldOptionsFormProps) => {
   const { control } = formMethods;
 
-v
+  const { fields, remove, append } = useFieldArray({
+    control: formMethods.control,
+    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
+  });
 
   const {
     fields: linksFields,
@@ -124,53 +128,6 @@ v
     `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,
   );
 
-  const renderInput = (inputIndex: number, disabled: boolean) => {
-    const dataType = formMethods.getValues(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`,
-    );
-
-    switch (dataType) {
-      case FieldDataType.Date:
-        return (
-          <DatePicker<FlowSchemaType>
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
-            key={"name" + inputIndex.toString() + formIndex.toString()}
-            control={control}
-            // showLabel={false}
-            label={`Option #${inputIndex + 1}`}
-            disabled={disabled}
-          />
-        );
-      case FieldDataType.DateTime:
-        return (
-          <DateTimePicker<FlowSchemaType>
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
-            key={"name" + inputIndex.toString() + formIndex.toString()}
-            control={control}
-            showLabel={false}
-            label={`Option #${inputIndex + 1}`}
-            disabled={disabled}
-          />
-        );
-      default:
-        return (
-          <TextField<FlowSchemaType>
-            name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
-            key={"name" + inputIndex.toString() + formIndex.toString()}
-            control={control}
-            defaultValue=""
-            placeholderText={`Option #${inputIndex + 1}`}
-            showLabel={false}
-            multiline
-            // sx={{ flexGrow: 1 }}
-            label={`Option #${inputIndex + 1}`}
-            disabled={disabled}
-            size="small"
-          />
-        );
-    }
-  };
-
   return (
     <Box
       sx={{
@@ -198,6 +155,9 @@ v
       <Typography variant={"label2"}>Available options</Typography>
       {stepDefinedOptions.length > 0 &&
         fields.map((item, inputIndex) => {
+          const dataType = formMethods.watch(
+            `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.dataType`,
+          );
           return (
             <Box
               key={item.id}
@@ -237,8 +197,13 @@ v
                   label="Type"
                   defaultValue=""
                 />
-
-                {renderInput(inputIndex, locked)}
+                <InputField
+                  disabled={locked}
+                  fieldName={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options.${inputIndex}.name`}
+                  dataType={dataType}
+                  label={`Option #${inputIndex + 1}`}
+                />
+                {/* {renderInput(inputIndex, locked)} */}
               </ResponsiveFormRow>
 
               {!locked && (
