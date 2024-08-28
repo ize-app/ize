@@ -1,32 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Fade, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { WebhookForm } from "@/components/Form/FlowForm/components/ActionForm/WebhookForm";
 import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
-import { EntitySearch, TextField } from "@/components/Form/formFields";
+import { EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 
 // import ButtonGroup from "../ButtonGroup";
 import { ButtonGroupField } from "../ButtonGroupField";
-import {
-  AIOutputType,
-  ActionTriggerCondition,
-  FlowGoal,
-  IntitialFlowSetupSchemaType,
-  OptionsType,
-  intitialFlowSetupSchema,
-} from "../formValidation";
+import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig";
+import { DecisionForm } from "../initialConfigSetup/DecisionForm";
+import { FieldBlock } from "../initialConfigSetup/FieldBlock";
+import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
+import { SummaryForm } from "../initialConfigSetup/SummaryForm";
+import { WebhookForm } from "../initialConfigSetup/WebhookForm";
 import { useNewFlowWizardState } from "../newFlowWizard";
-
-const FieldBlock = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Fade in={true} timeout={1000}>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>{children}</Box>
-    </Fade>
-  );
-};
 
 export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
@@ -50,12 +39,8 @@ export const InitialConfigSetup = () => {
 
   console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
-  const question = formMethods.watch("question");
-  const webhookTriggerCondition = formMethods.watch("webhookTriggerCondition");
-  // const validWebhook = formMethods.watch("webhook.callWebhook.valid");
-  const aiOutputType = formMethods.watch("aiOutputType");
+
   const permissionType = formMethods.watch("permission.type");
-  const decisionName = formMethods.watch("decision.name");
 
   return (
     <FormProvider {...formMethods}>
@@ -111,143 +96,10 @@ export const InitialConfigSetup = () => {
             </Box>
           </FieldBlock>
         )}
-        {goal === FlowGoal.TriggerWebhook && permissionType && (
-          <>
-            <FieldBlock>
-              <Typography variant="description">When should this action happen?</Typography>
-              <ButtonGroupField<IntitialFlowSetupSchemaType>
-                label="Test"
-                name={`webhookTriggerCondition`}
-                options={[
-                  {
-                    name: "Whenever someone triggers this flow",
-                    value: ActionTriggerCondition.None,
-                  },
-                  {
-                    name: "Only if there's a certain decision",
-                    value: ActionTriggerCondition.Decision,
-                  },
-                ]}
-              />
-            </FieldBlock>
-            {webhookTriggerCondition && permissionType && (
-              <FieldBlock>
-                <Typography variant="description">
-                  Let&apos;s set up how this webhook works
-                </Typography>
-
-                <WebhookForm<IntitialFlowSetupSchemaType> fieldName={`webhook`} />
-              </FieldBlock>
-            )}
-          </>
-        )}
-        {(goal === FlowGoal.Decision ||
-          webhookTriggerCondition == ActionTriggerCondition.Decision) &&
-          permissionType && (
-            <>
-              <FieldBlock>
-                <Typography variant="description">What are you deciding on?</Typography>
-                <TextField<IntitialFlowSetupSchemaType>
-                  // assuming here that results to fields is 1:1 relationshp
-                  name={`decision.name`}
-                  control={formMethods.control}
-                  multiline
-                  placeholderText={"What are you deciding on"}
-                  label={``}
-                  defaultValue=""
-                />
-              </FieldBlock>
-              {decisionName && (
-                <FieldBlock>
-                  <Typography variant="description">
-                    What options are you deciding between?
-                  </Typography>
-                  <ButtonGroupField<IntitialFlowSetupSchemaType>
-                    label="Test"
-                    name={`decision.optionsType`}
-                    options={[
-                      {
-                        name: "Preset options",
-                        value: OptionsType.Preset,
-                      },
-                      {
-                        name: "Options created when triggered",
-                        value: OptionsType.Trigger,
-                      },
-                      {
-                        name: "Ask community for option ideas",
-                        value: OptionsType.PrevStep,
-                      },
-                    ]}
-                  />
-                </FieldBlock>
-              )}
-            </>
-          )}
-        {goal === FlowGoal.AiSummary && (
-          <>
-            <FieldBlock>
-              <Typography variant="description">What&apos;s your question to the group?</Typography>
-              <TextField<IntitialFlowSetupSchemaType>
-                // assuming here that results to fields is 1:1 relationshp
-                name={`question`}
-                control={formMethods.control}
-                multiline
-                placeholderText={"What's your question to the group?"}
-                label={``}
-                defaultValue=""
-              />
-            </FieldBlock>
-            {question && (
-              <FieldBlock>
-                <Typography variant="description">
-                  What kind of output do you want from the AI
-                </Typography>
-                <ButtonGroupField<IntitialFlowSetupSchemaType>
-                  label="Test"
-                  name={`aiOutputType`}
-                  options={[
-                    {
-                      name: "Single summary",
-                      value: AIOutputType.Summary,
-                    },
-                    {
-                      name: "List of outputs",
-                      value: AIOutputType.List,
-                    },
-                  ]}
-                />
-              </FieldBlock>
-            )}
-            {aiOutputType && (
-              <>
-                <FieldBlock>
-                  <Typography variant="description">
-                    What kind of output do you want from the AI
-                  </Typography>
-                  <TextField<IntitialFlowSetupSchemaType>
-                    // assuming here that results to fields is 1:1 relationshp
-                    name={`prompt`}
-                    control={formMethods.control}
-                    multiline
-                    placeholderText={"Prompt for the AI"}
-                    label={``}
-                    defaultValue=""
-                  />
-                  <TextField<IntitialFlowSetupSchemaType>
-                    // assuming here that results to fields is 1:1 relationshp
-                    name={`example`}
-                    control={formMethods.control}
-                    multiline
-                    placeholderText={"example output from the AI"}
-                    label={``}
-                    defaultValue=""
-                  />
-                </FieldBlock>
-              </>
-            )}
-          </>
-        )}
+        {goal === FlowGoal.TriggerWebhook && permissionType && <WebhookForm />}
+        {goal === FlowGoal.Decision && <DecisionForm />}
+        {goal === FlowGoal.Prioritize && <PrioritizationForm />}
+        {goal === FlowGoal.AiSummary && <SummaryForm />}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}

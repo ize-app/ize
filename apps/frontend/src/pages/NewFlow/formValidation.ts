@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 import { actionSchema } from "@/components/Form/FlowForm/formValidation/action";
+// import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 
@@ -30,8 +31,9 @@ export enum AIOutputType {
   List = "List",
 }
 
-const decisionSchema = z.object({
-  name: z.string().min(1),
+const optionConfigSchema = z.object({
+  // name: z.string().min(1),
+  // options: z.array(fieldOptionSchema).default([]),
   // options: z.array(fieldOptionSchema).default([]),
   optionsType: z.nativeEnum(OptionsType),
 });
@@ -42,12 +44,12 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     permission: permissionSchema,
     webhookTriggerCondition: z.nativeEnum(ActionTriggerCondition),
     webhook: actionSchema,
-    decision: decisionSchema.optional(),
+    decision: optionConfigSchema.optional(),
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
     permission: permissionSchema,
-    decision: decisionSchema,
+    decision: optionConfigSchema,
   }),
   z.object({ goal: z.literal(FlowGoal.Prioritize), permission: permissionSchema }),
   z.object({
