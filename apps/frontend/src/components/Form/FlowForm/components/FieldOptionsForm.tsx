@@ -63,10 +63,7 @@ export const FieldOptionsForm = ({
 }: FieldOptionsFormProps) => {
   const { control } = formMethods;
 
-  const { fields, remove, append } = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
-  });
+v
 
   const {
     fields: linksFields,

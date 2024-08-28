@@ -25,11 +25,15 @@ export enum OptionsType {
   Trigger = "Trigger",
   PrevStep = "PrevStep",
 }
+export enum AIOutputType {
+  Summary = "Summary",
+  List = "List",
+}
 
 const decisionSchema = z.object({
   name: z.string().min(1),
   // options: z.array(fieldOptionSchema).default([]),
-  // optionsType: z.nativeEnum(OptionsType),
+  optionsType: z.nativeEnum(OptionsType),
 });
 
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
@@ -40,9 +44,20 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     webhook: actionSchema,
     decision: decisionSchema.optional(),
   }),
-  z.object({ goal: z.literal(FlowGoal.Decision), decision: decisionSchema }),
-  z.object({ goal: z.literal(FlowGoal.Prioritize) }),
-  z.object({ goal: z.literal(FlowGoal.AiSummary) }),
+  z.object({
+    goal: z.literal(FlowGoal.Decision),
+    permission: permissionSchema,
+    decision: decisionSchema,
+  }),
+  z.object({ goal: z.literal(FlowGoal.Prioritize), permission: permissionSchema }),
+  z.object({
+    goal: z.literal(FlowGoal.AiSummary),
+    permission: permissionSchema,
+    aiOutputType: z.nativeEnum(AIOutputType),
+    question: z.string(),
+    prompt: z.string(),
+    example: z.string().default("etst"),
+  }),
 ]);
 
 export const newFlowWizardFormSchema = newFlowFormSchema.extend({
