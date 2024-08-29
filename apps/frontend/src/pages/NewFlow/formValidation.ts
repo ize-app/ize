@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { ZodErrorMap, setErrorMap, z } from "zod";
 
 import { actionSchema } from "@/components/Form/FlowForm/formValidation/action";
 // import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
@@ -12,6 +12,18 @@ import { permissionSchema } from "@/components/Form/FlowForm/formValidation/perm
 export type NewFlowWizardFormSchema = z.infer<typeof newFlowWizardFormSchema>;
 
 export type IntitialFlowSetupSchemaType = z.infer<typeof intitialFlowSetupSchema>;
+
+// Define a custom error map function
+const customErrorMap: ZodErrorMap = (issue, ctx) => {
+  if (issue.code === "invalid_union_discriminator") {
+    return { message: "Required" };
+  }
+  // Use the default error message for other error codes
+  return { message: ctx.defaultError };
+};
+
+// Set the custom error map globally
+setErrorMap(customErrorMap);
 
 export enum FlowGoal {
   TriggerWebhook = "TriggerWebhook",

@@ -20,8 +20,6 @@ import { useNewFlowWizardState } from "../newFlowWizard";
 export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
 
-  // console.log("formState", formState);
-
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
     defaultValues: formState.initialFlowSetup ?? {},
     resolver: zodResolver(intitialFlowSetupSchema),
@@ -36,9 +34,9 @@ export const InitialConfigSetup = () => {
     }));
     onNext();
   };
-  console.log("errors are", formMethods.formState.errors);
+  // console.log("errors are", formMethods.formState.errors);
 
-  console.log("form state", formMethods.getValues());
+  // console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
 
   const permissionType = formMethods.watch("permission.type");
