@@ -1,6 +1,5 @@
 import { ZodErrorMap, setErrorMap, z } from "zod";
 
-import { actionSchema } from "@/components/Form/FlowForm/formValidation/action";
 // import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
 import {
   DefaultOptionSelection,
@@ -75,7 +74,8 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     goal: z.literal(FlowGoal.TriggerWebhook),
     permission: permissionSchema,
     webhookTriggerCondition: z.nativeEnum(ActionTriggerCondition),
-    webhook: actionSchema,
+    // webhook: actionSchema,
+    webhookName: z.string(),
     optionsConfig: optionConfigSchema.optional(),
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
   }),

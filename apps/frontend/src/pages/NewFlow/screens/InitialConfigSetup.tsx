@@ -9,7 +9,7 @@ import { WizardNav } from "@/components/Wizard";
 // import ButtonGroup from "../ButtonGroup";
 import { ButtonGroupField } from "../ButtonGroupField";
 import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
-import { generateNewFlowConfig } from "../generateNewFlowConfig";
+import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
 import { FieldBlock } from "../initialConfigSetup/FieldBlock";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
@@ -30,7 +30,7 @@ export const InitialConfigSetup = () => {
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },
-      newFlow: { ...generateNewFlowConfig() },
+      newFlow: { ...generateNewFlowConfig({ config: data }) },
     }));
     onNext();
   };
