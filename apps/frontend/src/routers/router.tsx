@@ -118,7 +118,7 @@ export const router = createBrowserRouter([
             index: true,
           },
           {
-            path: Routes.newCustomGroupRoute(Routes.NewCustomGroupRoute.Finish),
+            path: Routes.newCustomGroupRoute(Routes.NewCustomGroupRoute.Policy),
             element: <NewCustomGroup.Confirm />,
           },
         ],

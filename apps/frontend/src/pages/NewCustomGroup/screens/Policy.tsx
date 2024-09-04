@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
-export const Confirm = () => {
+export const Policy = () => {
   const { onNext, formState, onPrev, nextLabel } = useNewCustomGroupWizardState();
 
   return (

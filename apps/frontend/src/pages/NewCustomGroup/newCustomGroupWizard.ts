@@ -13,7 +13,7 @@ export function useNewCustomGroupWizardState() {
   return useWizardFormState<NewCustomGroupSchemaType>();
 }
 
-export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Finish"];
+export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Policy"];
 
 export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<NewCustomGroupSchemaType> = [
   {
@@ -24,8 +24,8 @@ export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<NewCustomGroupSchemaType
     validWizardState: () => true,
   },
   {
-    path: newCustomGroupRoute(NewCustomGroupRoute.Finish),
-    title: "Confirm new group creation",
+    path: newCustomGroupRoute(NewCustomGroupRoute.Policy),
+    title: "How can this group evolve over time?",
     progressBarStep: 1,
     canNext: () => true,
     validWizardState: (formState: NewCustomGroupSchemaType) => !!formState.name,
