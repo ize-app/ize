@@ -1,7 +1,13 @@
-import { FlowFragment, PermissionFragment, ResultType } from "@/graphql/generated/graphql";
+import {
+  DecisionType,
+  FlowFragment,
+  PermissionFragment,
+  ResultType,
+} from "@/graphql/generated/graphql";
 
 import { createPermissionFormState } from "./createPermissionFormState";
 import { EvolveSchemaType } from "../../formValidation/evolve";
+import { DefaultOptionSelection } from "../../formValidation/fields";
 
 export const createEvolveFormState = (flow: FlowFragment): EvolveSchemaType => {
   if (
@@ -18,10 +24,10 @@ export const createEvolveFormState = (flow: FlowFragment): EvolveSchemaType => {
       flow.steps[0].response.permission as PermissionFragment,
     ),
     decision: {
-      type: flow.steps[0].result[0].decisionType,
+      type: flow.steps[0].result[0].decisionType as DecisionType,
       threshold: flow.steps[0].result[0].threshold,
-      // defaultOptionId:
-      //   flow.steps[0].result[0].defaultOption?.optionId ?? DefaultOptionSelection.None,
+      defaultOptionId:
+        flow.steps[0].result[0].defaultOption?.optionId ?? DefaultOptionSelection.None,
     },
   };
 };
