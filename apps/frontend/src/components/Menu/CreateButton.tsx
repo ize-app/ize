@@ -103,7 +103,7 @@ export const CreateMenu = ({
         <Link to={newRequestRoute(NewRequestRoute.SelectFlow)}>New request</Link>
       </MenuItem>
       <MenuItem>
-        <Link to={newFlowRoute(NewFlowRoute.Setup)}>New flow</Link>
+        <Link to={newFlowRoute(NewFlowRoute.InitialSetup)}>New flow</Link>
       </MenuItem>
       <MenuItem>
         <Link to={newCustomGroupRoute(NewCustomGroupRoute.Setup)}>New group</Link>

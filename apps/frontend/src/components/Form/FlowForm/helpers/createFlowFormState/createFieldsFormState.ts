@@ -33,7 +33,6 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
           // array of resultConfig ids
           linkedResultOptions: field.linkedResultOptions.map((lr) => ({ id: lr.resultConfigId })),
           previousStepOptions: field.previousStepOptions,
-          hasRequestOptions: field.hasRequestOptions,
           requestOptionsDataType: field.requestOptionsDataType ?? undefined,
           maxSelections: field.maxSelections,
           selectionType: field.selectionType,

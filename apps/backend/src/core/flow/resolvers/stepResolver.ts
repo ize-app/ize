@@ -1,6 +1,7 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
+import { DefaultEvolveGroupValues } from "./flowResolver";
 import { actionResolver } from "../../action/actionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
@@ -14,6 +15,7 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
+  defaultValues,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -22,6 +24,7 @@ export const stepResolver = ({
   responseFieldsCache: Field[];
   resultConfigsCache: ResultConfig[];
   hideSensitiveInfo?: boolean;
+  defaultValues?: DefaultEvolveGroupValues | undefined;
 }): Step => {
   const responseFields = fieldSetResolver({
     fieldSet: step.ResponseFieldSet,
@@ -44,6 +47,7 @@ export const stepResolver = ({
         fieldSet: step.RequestFieldSet,
         responseFieldsCache,
         resultConfigsCache,
+        defaultValues,
       }),
       fieldsLocked: step.RequestFieldSet?.locked ?? false,
     },

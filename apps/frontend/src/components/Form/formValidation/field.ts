@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import * as z from "zod";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
 import { entityFormSchema } from "./entity";
 import { flowSummarySchema } from "./flowSummary";
@@ -114,6 +114,7 @@ const fieldAnswerSchema = z
   .object({
     dataType: z.nativeEnum(FieldDataType).optional(),
     maxSelections: z.number().nullable().optional(),
+    selectionType: z.nativeEnum(FieldOptionsSelectionType).optional(),
     value: z.any(),
     optionSelections: optionSelectionsSchema.optional(),
     required: z.boolean().optional(),

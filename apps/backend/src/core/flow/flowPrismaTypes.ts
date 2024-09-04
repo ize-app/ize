@@ -122,6 +122,7 @@ export const createUserWatchedFlowFilter = ({
           },
         },
       },
+      // user is not watching flow and...
       {
         UsersWatchedFlows: {
           none: {
@@ -129,6 +130,7 @@ export const createUserWatchedFlowFilter = ({
             watched: false,
           },
         },
+        // owned by a group that the user is watching
         OR: [
           {
             OwnerGroup: {
@@ -140,6 +142,7 @@ export const createUserWatchedFlowFilter = ({
               },
             },
           },
+          // flow is watched by group that user is watching
           {
             GroupsWatchedFlows: {
               some: {

@@ -1,3 +1,4 @@
+import { DefaultEvolveGroupValues } from "@/core/flow/resolvers/flowResolver";
 import {
   Field,
   FieldDataType,
@@ -16,11 +17,13 @@ import { FieldSetPrismaType } from "../fieldPrismaTypes";
 
 export const fieldSetResolver = ({
   fieldSet,
+  defaultValues,
   requestDefinedOptionSets,
   responseFieldsCache = [],
   resultConfigsCache = [],
 }: {
   fieldSet: FieldSetPrismaType | null;
+  defaultValues?: DefaultEvolveGroupValues | undefined;
   requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
@@ -34,6 +37,7 @@ export const fieldSetResolver = ({
         name: f.Field.name,
         required: f.Field.required,
         dataType: f.Field.freeInputDataType as FieldDataType,
+        defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
       };
       return freeInput;
     } else if (f.Field.type === FieldType.Options) {
@@ -110,13 +114,13 @@ export const fieldSetResolver = ({
         fieldId: f.Field.id,
         name: f.Field.name,
         required: f.Field.required,
-        hasRequestOptions: config.hasRequestOptions,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
         linkedResultOptions,
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as FieldOptionsSelectionType,
         maxSelections: config.maxSelections,
         options: [...flowOptions, ...requestOptions],
+        // defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
       };
       return options;
     } else

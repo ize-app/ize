@@ -2,9 +2,9 @@ import { GroupType, Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 
-import { getCustomGroupsForIdentity } from "./getCustomGroupsForIdentity";
-import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
-import { prisma } from "../../../prisma/client";
+import { prisma } from "../../../../prisma/client";
+import { getCustomGroupsForIdentity } from "../getCustomGroupsForIdentity";
+import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
 
 export const updateUserCustomGroups = async ({
   context,

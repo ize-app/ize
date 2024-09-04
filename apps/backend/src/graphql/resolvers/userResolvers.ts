@@ -1,9 +1,7 @@
 import { identityResolver } from "@/core/entity/identity/identityResolver";
-import { updateUserDiscordGroups } from "@/core/entity/updateIdentitiesGroups/updateUserDiscordGroups";
-import { updateUserNftGroups } from "@/core/entity/updateIdentitiesGroups/updateUserNftGroups";
+
 import { userInclude } from "@/core/user/userPrismaTypes";
 import { userResolver } from "@/core/user/userResolver";
-import { getDiscordServers } from "@/discord/getDiscordServers";
 import {
   Identity,
   Me,
@@ -22,7 +20,6 @@ import { GraphqlRequestContext } from "../context";
 import { updateProfile as updateProfileService } from "@/core/user/updateProfile";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
-import { updateUserCustomGroups } from "@/core/entity/updateIdentitiesGroups/updateUserCustomGroups";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 
 const me: QueryResolvers["me"] = async (
@@ -32,10 +29,10 @@ const me: QueryResolvers["me"] = async (
 ): Promise<Me | null> => {
   if (!context.currentUser) return null;
 
-  const discordServers = await getDiscordServers({ context });
-  await updateUserDiscordGroups({ context, discordServers });
-  await updateUserNftGroups({ context });
-  await updateUserCustomGroups({ context });
+  // const discordServers = await getDiscordServers({ context });
+  // await updateUserDiscordGroups({ context, discordServers });
+  // await updateUserNftGroups({ context });
+  // await updateUserCustomGroups({ context });
 
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return identityResolver(
@@ -58,7 +55,7 @@ const me: QueryResolvers["me"] = async (
 
   return {
     user,
-    discordServers,
+    discordServers: [],
     groups,
     identities: [...identities],
   };

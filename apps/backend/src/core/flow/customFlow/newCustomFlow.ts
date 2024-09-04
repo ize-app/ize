@@ -1,8 +1,8 @@
 import { FlowType } from "@prisma/client";
 
-import { watchFlow } from "@/core/user/watchFlow";
+import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
-import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
+import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import { newCustomFlowVersion } from "./newCustomFlowVersion";
 import { prisma } from "../../../prisma/client";
@@ -10,11 +10,17 @@ import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
 
 export const newCustomFlow = async ({
   args,
-  creatorId,
+  context,
 }: {
   args: MutationNewFlowArgs;
-  creatorId: string;
+  context: GraphqlRequestContext;
 }): Promise<string> => {
+  if (!context.currentUser)
+    throw new GraphQLError("Unauthenticated", {
+      extensions: { code: CustomErrorCodes.Unauthenticated },
+    });
+
+  const creatorId = context.currentUser.id;
   let evolveFlowId: string | null = null;
   return await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
@@ -33,8 +39,6 @@ export const newCustomFlow = async ({
     const flow = await transaction.flow.create({
       data: { type: FlowType.Custom, creatorId },
     });
-
-    await watchFlow({ flowId: flow.id, watch: true, userId: creatorId, transaction });
 
     await newCustomFlowVersion({
       transaction,

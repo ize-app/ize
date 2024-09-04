@@ -18,6 +18,7 @@ export const apolloClient = new ApolloClient({
         "CallWebhook",
         "EvolveFlow",
         "TriggerStep",
+        "EvolveGroup",
         "GroupUpdateMetadata",
         "GroupUpdateMembership",
         "GroupWatchFlow",

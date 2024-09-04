@@ -34,6 +34,7 @@ export const Answer = ({
     }
     case FieldType.Options: {
       if (fieldAnswer.__typename !== "OptionFieldAnswer") return null;
+
       return (
         <FieldOptions
           fieldOptions={field}

@@ -6,6 +6,7 @@ type Mutation {
 union Action =
   | CallWebhook
   | EvolveFlow
+  | EvolveGroup
   | TriggerStep
   | GroupUpdateMetadata
   | GroupUpdateMembership
@@ -56,11 +57,17 @@ type GroupUpdateNotifications {
   filterOption: Option
 }
 
+type EvolveGroup {
+  locked: Boolean!
+  filterOption: Option
+}
+
 # mirrors Prisma type + "None" type
 enum ActionType {
   CallWebhook
   TriggerStep
   EvolveFlow
+  EvolveGroup
   GroupUpdateMetadata
   GroupUpdateMembership
   GroupWatchFlow

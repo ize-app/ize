@@ -100,6 +100,7 @@ export const getFlow = async ({
     evolveFlow: evolveFlow.CurrentFlowVersion ?? undefined,
     userIdentityIds,
     userGroupIds,
+    context,
     userId: context.currentUser?.id,
   });
 

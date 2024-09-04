@@ -2,6 +2,8 @@ import * as z from "zod";
 
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
+import { DefaultOptionSelection } from "./fields";
+
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
@@ -31,7 +33,7 @@ export const decisionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(DecisionType.WeightedAverage),
-    defaultOptionId: z.string().optional(),
+    defaultOptionId: z.string().default(DefaultOptionSelection.None),
   }),
 ]);
 

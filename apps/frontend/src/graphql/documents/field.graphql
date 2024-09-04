@@ -13,7 +13,6 @@ fragment Options on Options {
   name
   required
   previousStepOptions
-  hasRequestOptions
   requestOptionsDataType
   selectionType
   maxSelections
@@ -30,6 +29,9 @@ fragment FreeInput on FreeInput {
   name
   required
   dataType
+  defaultAnswer {
+    ...FieldAnswer
+  }
 }
 
 fragment Option on Option {
@@ -114,4 +116,7 @@ fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
 fragment WebhookFieldAnswer on WebhookFieldAnswer {
   fieldId
   uri
+  webhookId
+  originalUri
+  name
 }

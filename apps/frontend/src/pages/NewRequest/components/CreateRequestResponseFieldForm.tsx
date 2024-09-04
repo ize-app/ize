@@ -156,7 +156,7 @@ export const CreateRequestResponseFieldForm = ({
               </TableContainer>
             }
           </Box>
-          {field.hasRequestOptions && (
+          {field.requestOptionsDataType && (
             <Button
               sx={{ margin: "0px 0px 8px 16px", position: "relative", bottom: "8px" }}
               variant="outlined"

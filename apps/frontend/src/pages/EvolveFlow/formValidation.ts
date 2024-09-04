@@ -1,8 +1,8 @@
 import * as z from "zod";
 
-import { flowSchema } from "@/components/Form/FlowForm/formValidation/flow";
+import { flowSchema, newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 
-export const evolveExistingFlowSchema = flowSchema.extend({
+export const evolveExistingFlowSchema = newFlowFormSchema.extend({
   currentFlow: flowSchema,
   requestName: z.string(),
   requestDescription: z.string().optional(),

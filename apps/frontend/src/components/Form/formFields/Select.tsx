@@ -15,7 +15,7 @@ export interface SelectOption {
 
 interface SelectProps<T extends FieldValues> extends UseControllerProps<T> {
   label: string;
-
+  onChange?: () => void;
   selectOptions: SelectOption[];
   required?: boolean;
   loading?: boolean;
@@ -37,6 +37,7 @@ export const Select = <T extends FieldValues>({
   renderValue,
   required = false,
   loading = false,
+  onChange,
   variant = "outlined",
   size = "small",
   display = true,
@@ -59,6 +60,11 @@ export const Select = <T extends FieldValues>({
             inputProps={{ multiline: "true" }}
             {...field}
             label={""}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+
+              if (onChange) onChange();
+            }}
             aria-label={label}
             size={size}
             renderValue={renderValue}

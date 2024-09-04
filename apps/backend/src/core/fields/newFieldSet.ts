@@ -69,7 +69,6 @@ const createFieldOptionsConfig = async ({
   const {
     selectionType,
     options,
-    hasRequestOptions,
     maxSelections,
     requestOptionsDataType,
     linkedResultOptions,
@@ -80,7 +79,6 @@ const createFieldOptionsConfig = async ({
     data: {
       maxSelections:
         selectionType === "MultiSelect" ? maxSelections : selectionType === "Select" ? 1 : null,
-      hasRequestOptions,
       requestOptionsDataType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((l) => {

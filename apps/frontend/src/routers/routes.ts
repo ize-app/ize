@@ -26,7 +26,8 @@ export enum NewRequestRoute {
 }
 
 export enum NewFlowRoute {
-  Setup = "",
+  InitialSetup = "",
+  FullConfigSetup = "/full-setup",
   Confirm = "/confirm",
 }
 

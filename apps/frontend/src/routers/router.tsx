@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import { ResetPassword } from "@/components/Auth/ResetPassword";
-import { Setup as FlowSetup } from "@/components/Form/FlowForm/wizardScreens/Setup";
+import { FullConfigSetup } from "@/components/Form/FlowForm/wizardScreens/FullConfigSetup";
 import { DefaultLayout } from "@/layout/default";
 import { _404 } from "@/pages/404";
 import { About } from "@/pages/About";
@@ -64,9 +64,13 @@ export const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         children: [
           {
-            path: Routes.newFlowRoute(Routes.NewFlowRoute.Setup),
-            element: <FlowSetup />,
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.InitialSetup),
+            element: <NewFlow.InitialConfigSetup />,
             index: true,
+          },
+          {
+            path: Routes.newFlowRoute(Routes.NewFlowRoute.FullConfigSetup),
+            element: <FullConfigSetup />,
           },
           {
             path: Routes.newFlowRoute(Routes.NewFlowRoute.Confirm),
@@ -130,7 +134,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Setup),
-            element: <FlowSetup />,
+            element: <FullConfigSetup />,
             index: true,
           },
           {

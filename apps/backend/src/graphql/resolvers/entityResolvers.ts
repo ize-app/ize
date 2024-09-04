@@ -1,8 +1,5 @@
-import { entitySetInclude } from "@/core/entity/entityPrismaTypes";
-import { entityResolver } from "@/core/entity/entityResolver";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
-import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
-import { groupResolver } from "@/core/entity/group/groupResolver";
+
 import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
 import { newEntities as newEntitiesService } from "@/core/entity/newEntities";
 import { prisma } from "@/prisma/client";
@@ -20,6 +17,10 @@ import {
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { testNotificationWebhook as testNotificationWebhookService } from "@/core/notification/testNotificationWebhook";
+import { GraphQLError } from "graphql";
+import { CustomErrorCodes } from "../errors";
+import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 
 const newEntities: MutationResolvers["newEntities"] = async (
   root: unknown,
@@ -34,66 +35,7 @@ const group: QueryResolvers["group"] = async (
   args: QueryGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<IzeGroup> => {
-  const group: GroupPrismaType = await prisma.group.findFirstOrThrow({
-    include: groupInclude,
-    where: { id: args.id },
-  });
-
-  let isWatched = false;
-  let isMember = false;
-
-  if (context.currentUser) {
-    const watchRecord = await prisma.usersWatchedGroups.findUnique({
-      where: {
-        userId_groupId: {
-          groupId: args.id,
-          userId: context.currentUser.id,
-        },
-      },
-    });
-
-    const groupMember = await prisma.identityGroup.findFirst({
-      where: {
-        groupId: args.id,
-        identityId: { in: context.currentUser.Identities.map((id) => id.id) },
-      },
-    });
-
-    if (watchRecord) {
-      isWatched = watchRecord.watched;
-    }
-
-    if (groupMember) {
-      isMember = true;
-    }
-  }
-
-  const membersRes = await prisma.groupCustom.findUnique({
-    where: {
-      groupId: args.id,
-    },
-    include: {
-      MemberEntitySet: {
-        include: entitySetInclude,
-      },
-    },
-  });
-
-  const members = [
-    ...(membersRes?.MemberEntitySet.EntitySetEntities.map((entity) => {
-      return entityResolver({
-        entity: entity.Entity,
-        userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
-      });
-    }) ?? []),
-  ];
-
-  return {
-    group: groupResolver(group, isWatched, isMember),
-    members,
-    description: group.GroupCustom?.description,
-    notificationUriPreview: group.GroupCustom?.Webhook?.uriPreview,
-  };
+  return await getIzeGroup({ groupId: args.id, context, getWatchAndPermissionStatus: true });
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (
@@ -109,9 +51,28 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   args: MutationNewCustomGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await prisma.$transaction(async (transaction) => {
-    return await newCustomGroupService({ args, context, transaction });
+  const groupId = await prisma.$transaction(async (transaction) => {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    const groupId = await newCustomGroupService({ args, context, transaction });
+
+    // Watch group for user
+    await transaction.usersWatchedGroups.create({
+      data: {
+        userId: context.currentUser.id,
+        groupId,
+        watched: true,
+      },
+    });
+    return groupId;
   });
+  // associate user with any new identities that were created when creating the new group
+  await updateUserGroups({ context });
+
+  return groupId;
 };
 
 export const testNotificationWebhook: MutationResolvers["testNotificationWebhook"] = async (

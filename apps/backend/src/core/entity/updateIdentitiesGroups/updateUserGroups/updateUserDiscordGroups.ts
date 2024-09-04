@@ -3,9 +3,9 @@ import { GroupType, Prisma } from "@prisma/client";
 import { DiscordApi } from "@/discord/api";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 
-import { updateIdentitiesGroups } from "./updateIdentitiesGroups";
-import { prisma } from "../../../prisma/client";
+import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
 
 export const updateUserDiscordGroups = async ({
   context,

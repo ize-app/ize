@@ -8,7 +8,7 @@ export const ResponsiveFormRow = ({ children, sx }: { children: ReactNode; sx?: 
     display: "flex",
     gap: "8px",
     justifyContent: "flex-start",
-    alignItems: "flex-end",
+    alignItems: "flex-start",
     flexWrap: "wrap",
   };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;

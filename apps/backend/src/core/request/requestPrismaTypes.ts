@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { actionExecutionInclude } from "../action/actionPrismaTypes";
+import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
@@ -64,7 +65,11 @@ export const createRequestStepSummaryInclude = (userId: string | undefined) =>
       include: {
         FlowVersion: {
           include: {
-            Flow: true,
+            Flow: {
+              include: {
+                OwnerGroup: { include: groupInclude },
+              },
+            },
           },
         },
         Creator: {

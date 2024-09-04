@@ -19,7 +19,7 @@ import {
   NewRequestFormSchema,
 } from "../newRequestWizard";
 
-export const NewRequest = () => {
+export const NewRequestWizard = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const { setAuthModalOpen, me } = useContext(CurrentUserContext);
@@ -70,6 +70,7 @@ export const NewRequest = () => {
     setParams,
   } = useWizard(newRequestWizard);
 
+  formState;
   return me ? (
     <PageContainer>
       <Head

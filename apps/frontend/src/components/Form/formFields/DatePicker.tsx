@@ -18,7 +18,7 @@ export const DatePicker = <T extends FieldValues>({
   label,
   name,
   control,
-  showLabel = true,
+  showLabel = false,
   required = false,
 }: DatePickerProps<T>) => {
   return (
@@ -28,11 +28,12 @@ export const DatePicker = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => {
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
-          <FormControl fullWidth error={Boolean(error)} required={required}>
+          <FormControl error={Boolean(error)} required={required}>
             <MuiDatePicker
               {...field}
               value={field.value}
               sx={{
+                flexGrow: 1,
                 "& .MuiInputBase-input": {
                   paddingBottom: "8.5px",
                   paddingTop: "8.5px",

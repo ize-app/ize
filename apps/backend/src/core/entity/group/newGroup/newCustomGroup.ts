@@ -1,9 +1,7 @@
 import { GroupType, Prisma } from "@prisma/client";
 
 import { createWebhook } from "@/core/action/webhook/createWebhook";
-import { newGroupUpdateMembershipFlow } from "@/core/flow/groupUpdateMembership/newGroupUpdateMembershipFlow";
-import { newGroupUpdateMetadataFlow } from "@/core/flow/groupUpdateMetadata/newGroupUpdateMetadataFlow";
-import { newGroupUpdateNotificationsFlow } from "@/core/flow/groupUpdateNotifications/newGroupUpdateNotificationsFlow";
+import { newEvolveGroupFlow } from "@/core/flow/evolveGroup/newEvolveGroupFlow";
 import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
@@ -63,22 +61,21 @@ export const newCustomGroup = async ({
     },
   });
 
-  await transaction.usersWatchedGroups.create({
-    data: {
-      userId: context.currentUser.id,
-      groupId: customGroupEntity.Group?.id as string,
-      watched: true,
-    },
-  });
+  // await newGroupUpdateMetadataFlow({
+  //   transaction,
+  //   context,
+  //   groupEntityId: customGroupEntity.Group?.entityId as string,
+  //   groupId: customGroupEntity.Group?.id as string,
+  // });
 
-  await newGroupUpdateMetadataFlow({
-    transaction,
-    context,
-    groupEntityId: customGroupEntity.Group?.entityId as string,
-    groupId: customGroupEntity.Group?.id as string,
-  });
+  // await newGroupUpdateMembershipFlow({
+  //   transaction,
+  //   context,
+  //   groupEntityId: customGroupEntity.Group?.entityId as string,
+  //   groupId: customGroupEntity.Group?.id as string,
+  // });
 
-  await newGroupUpdateMembershipFlow({
+  await newEvolveGroupFlow({
     transaction,
     context,
     groupEntityId: customGroupEntity.Group?.entityId as string,
@@ -92,12 +89,12 @@ export const newCustomGroup = async ({
     groupId: customGroupEntity.Group?.id as string,
   });
 
-  await newGroupUpdateNotificationsFlow({
-    transaction,
-    context,
-    groupEntityId: customGroupEntity.Group?.entityId as string,
-    groupId: customGroupEntity.Group?.id as string,
-  });
+  // await newGroupUpdateNotificationsFlow({
+  //   transaction,
+  //   context,
+  //   groupEntityId: customGroupEntity.Group?.entityId as string,
+  //   groupId: customGroupEntity.Group?.id as string,
+  // });
 
   return customGroupEntity.Group?.id as string;
 };

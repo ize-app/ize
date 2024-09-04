@@ -45,15 +45,9 @@ export const ActionFilterForm = ({
   const error = formMethods.formState.errors.steps?.[formIndex]?.action;
 
   // get field options asssociated with decisions to use as action filters
-  const results = formMethods.watch(`steps.${formIndex}.result`);
+  const results = formMethods.getValues(`steps.${formIndex}.result`);
 
-  useEffect(() => {
-    if (!results) {
-      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
-    }
-  }, [results]);
-
-  const responseFields = formMethods.watch(`steps.${formIndex}.response.fields`);
+  const responseFields = formMethods.getValues(`steps.${formIndex}.response.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
@@ -77,6 +71,15 @@ export const ActionFilterForm = ({
         });
       }
     });
+
+  const actionFilterId = formMethods.getValues(`steps.${formIndex}.action.filterOptionId`);
+
+  // remove linked option if that result is removed
+  useEffect(() => {
+    if (!filterOptions.find((option) => option.value === actionFilterId)) {
+      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
+    }
+  }, [filterOptions, actionFilterId]);
 
   return (
     <PanelAccordion
@@ -127,7 +130,7 @@ export const ActionFilterForm = ({
           const optionName = getSelectOptionName(filterOptions, val);
           if (optionName) {
             return "Only run action on: " + optionName;
-          } else return "Run action on all options";
+          } else "Action runs on every result";
         }}
         selectOptions={[...filterOptions]}
         defaultValue=""

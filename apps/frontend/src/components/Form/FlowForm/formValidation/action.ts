@@ -25,6 +25,11 @@ export const actionSchema = z.discriminatedUnion("type", [
     locked: z.boolean().default(true),
   }),
   z.object({
+    type: z.literal(ActionType.EvolveGroup),
+    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    locked: z.boolean().default(true),
+  }),
+  z.object({
     type: z.literal(ActionType.GroupUpdateMembership),
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
     locked: z.boolean().default(true),

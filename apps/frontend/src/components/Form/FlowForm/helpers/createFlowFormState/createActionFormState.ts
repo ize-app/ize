@@ -36,6 +36,12 @@ export const createActionFormState = (action: Action | null | undefined): Action
         locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
+    case ActionType.EvolveGroup:
+      return {
+        type: ActionType.EvolveGroup,
+        locked: action.locked,
+        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+      };
     case ActionType.GroupUpdateMembership: {
       return {
         type: ActionType.GroupUpdateMembership,

@@ -41,8 +41,8 @@ export const EvolveFlow = () => {
       const formState = createFlowFormState(data.getFlow as FlowFragment);
       setFormState((prev) => {
         return {
-          ...formState,
           ...prev,
+          newFlow: { ...formState },
           currentFlow: formState,
         };
       });
@@ -65,7 +65,7 @@ export const EvolveFlow = () => {
             flowId: flowId,
             name: formState.requestName,
             description: formState.requestDescription,
-            proposedFlow: createNewFlowArgs(formState, me?.user.id),
+            proposedFlow: createNewFlowArgs(formState.newFlow, me?.user.id),
             currentFlow: createNewFlowArgs(formState.currentFlow, me?.user.id),
           },
         },

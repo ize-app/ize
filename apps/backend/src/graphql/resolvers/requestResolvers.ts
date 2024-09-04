@@ -18,6 +18,7 @@ import {
 
 import { GraphqlRequestContext } from "../context";
 import { prisma } from "@/prisma/client";
+import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 
 const newRequest: MutationResolvers["newRequest"] = async (
   root: unknown,
@@ -47,7 +48,10 @@ const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  return await newEvolveRequestService({ args, context });
+  const requestId = await newEvolveRequestService({ args, context });
+  // update user groups created while updating flow
+  await updateUserGroups({ context });
+  return requestId;
 };
 
 const getRequest: QueryResolvers["getRequest"] = async (

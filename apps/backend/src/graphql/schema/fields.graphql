@@ -15,7 +15,6 @@ type Options {
   name: String!
   required: Boolean!
   previousStepOptions: Boolean!
-  hasRequestOptions: Boolean!
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
@@ -35,6 +34,7 @@ type FreeInput {
   name: String!
   required: Boolean!
   dataType: FieldDataType!
+  defaultAnswer: FieldAnswer
 }
 
 type Option {
@@ -97,6 +97,9 @@ type FlowsFieldAnswer {
 type WebhookFieldAnswer {
   fieldId: String!
   uri: String!
+  webhookId: String
+  originalUri: String
+  name: String
 }
 
 type UserFieldAnswer {
@@ -127,7 +130,6 @@ input FieldArgs {
 input FieldOptionsConfigArgs {
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
-  hasRequestOptions: Boolean!
   maxSelections: Int
   selectionType: FieldOptionsSelectionType!
   linkedResultOptions: [LinkedResultOptionsArgs!]!
