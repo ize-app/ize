@@ -2,10 +2,9 @@ import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { TextField } from "@/components/Form/formFields";
+import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 
 import { FieldBlock } from "./FieldBlock";
-import { ButtonGroupField } from "../ButtonGroupField";
 import { AIOutputType, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const SummaryForm = () => {

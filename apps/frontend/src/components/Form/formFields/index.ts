@@ -8,3 +8,4 @@ export { Switch } from "./Switch";
 export { MultiSelect } from "./MultiSelect";
 export { SortableList } from "./SortableList/SortableList";
 export { StreamlinedTextField } from "./StreamlinedTextField";
+export { ButtonGroupField } from "./ButtonGroupField";

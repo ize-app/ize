@@ -3,11 +3,9 @@ import { Box, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
-import { EntitySearch } from "@/components/Form/formFields";
+import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 
-// import ButtonGroup from "../ButtonGroup";
-import { ButtonGroupField } from "../ButtonGroupField";
 import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";

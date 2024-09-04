@@ -1,11 +1,10 @@
 import { Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
-import { TextField } from "@/components/Form/formFields";
+import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 
 import { FieldBlock } from "./FieldBlock";
 import { OptionsForm } from "./OptionsForm";
-import { ButtonGroupField } from "../ButtonGroupField";
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const WebhookForm = () => {
