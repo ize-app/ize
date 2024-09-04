@@ -1,21 +1,30 @@
+import { GroupFlowPolicyType } from "@/graphql/generated/graphql";
 import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
-import { NewCustomGroupSchemaType } from "./formValidation";
+import { GroupSetupAndPoliciesSchemaType } from "./formValidation";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 
-export const newCustomGroupFormFieldsDefault: NewCustomGroupSchemaType = {
+export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = {
   members: [],
   name: "",
   notification: {},
+  flows: {
+    evolveGroup: {
+      type: GroupFlowPolicyType.GroupDecision,
+    },
+    watch: {
+      type: GroupFlowPolicyType.GroupAutoApprove,
+    },
+  },
 };
 
 export function useNewCustomGroupWizardState() {
-  return useWizardFormState<NewCustomGroupSchemaType>();
+  return useWizardFormState<GroupSetupAndPoliciesSchemaType>();
 }
 
 export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Policy"];
 
-export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<NewCustomGroupSchemaType> = [
+export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<GroupSetupAndPoliciesSchemaType> = [
   {
     path: newCustomGroupRoute(NewCustomGroupRoute.Setup),
     title: "Setup group",
@@ -28,6 +37,6 @@ export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<NewCustomGroupSchemaType
     title: "How can this group evolve over time?",
     progressBarStep: 1,
     canNext: () => true,
-    validWizardState: (formState: NewCustomGroupSchemaType) => !!formState.name,
+    validWizardState: (formState: GroupSetupAndPoliciesSchemaType) => !!formState.name,
   },
 ];

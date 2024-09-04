@@ -153,11 +153,23 @@ input IdentityEmailArgs {
   email: String!
 }
 
+enum GroupFlowPolicyType {
+  CreatorAutoApprove
+  GroupAutoApprove
+  GroupDecision
+}
+
+input GroupFlowPolicyArgs {
+  type: GroupFlowPolicyType!
+  decision: DecisionArgs
+}
+
 input CustomGroupArgs {
   name: String!
   description: String
   members: [EntityArgs!]!
   notificationUri: String
+  flows: GroupFlowPolicyArgs!
 }
 
 input NewEntityArgs {
