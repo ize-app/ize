@@ -42,7 +42,7 @@ export const RequestContext = () => {
           }}
         >
           <Typography fontWeight={600} color="primary" marginBottom={"12px"}>
-            {formState.name}
+            {formState.newFlow.name}
           </Typography>
           <TextField<EvolveRequestContextSchemaType>
             label={"Evolution summary"}
