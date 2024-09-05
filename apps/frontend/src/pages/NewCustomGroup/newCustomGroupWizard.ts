@@ -1,4 +1,4 @@
-import { GroupFlowPolicyType } from "@/graphql/generated/graphql";
+import { DecisionType, GroupFlowPolicyType } from "@/graphql/generated/graphql";
 import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
 import { GroupSetupAndPoliciesSchemaType } from "./formValidation";
@@ -10,10 +10,18 @@ export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = 
   notification: {},
   flows: {
     evolveGroup: {
-      type: GroupFlowPolicyType.GroupDecision,
+      type: GroupFlowPolicyType.GroupAutoApprove,
+      decision: {
+        type: DecisionType.NumberThreshold,
+        threshold: 2,
+      },
     },
     watch: {
       type: GroupFlowPolicyType.GroupAutoApprove,
+      decision: {
+        type: DecisionType.NumberThreshold,
+        threshold: 2,
+      },
     },
   },
 };

@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form";
 
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 
-import { FieldBlock } from "./FieldBlock";
+import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
 import { AIOutputType, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const SummaryForm = () => {
@@ -26,7 +26,7 @@ export const SummaryForm = () => {
 
   return (
     <>
-      <FieldBlock>
+      <FieldBlockFadeIn>
         <Typography variant="description">What&apos;s your question to the group?</Typography>
         <TextField<IntitialFlowSetupSchemaType>
           // assuming here that results to fields is 1:1 relationshp
@@ -37,9 +37,9 @@ export const SummaryForm = () => {
           label={``}
           defaultValue=""
         />
-      </FieldBlock>
+      </FieldBlockFadeIn>
       {question && (
-        <FieldBlock>
+        <FieldBlockFadeIn>
           <Typography variant="description">What kind of output do you want from the AI</Typography>
           <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="Test"
@@ -55,11 +55,11 @@ export const SummaryForm = () => {
               },
             ]}
           />
-        </FieldBlock>
+        </FieldBlockFadeIn>
       )}
       {aiOutputType && (
         <>
-          <FieldBlock>
+          <FieldBlockFadeIn>
             <Typography variant="description">
               What kind of output do you want from the AI?
             </Typography>
@@ -81,7 +81,7 @@ export const SummaryForm = () => {
               label={``}
               defaultValue=""
             />
-          </FieldBlock>
+          </FieldBlockFadeIn>
         </>
       )}
     </>
