@@ -89,6 +89,7 @@ export const evaluateMultiTypeInput = (
       }
       return;
     case FieldDataType.Webhook: {
+      return;
       if (!webhookSchema.safeParse(value).success) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

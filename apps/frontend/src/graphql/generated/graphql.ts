@@ -102,7 +102,7 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  flows: GroupFlowPolicyArgs;
+  flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
   notificationUri?: InputMaybe<Scalars['String']['input']>;
@@ -368,6 +368,11 @@ export type GroupDiscordRoleArgs = {
 
 export type GroupEnsArgs = {
   name: Scalars['String']['input'];
+};
+
+export type GroupFlowArgs = {
+  evolveGroup: GroupFlowPolicyArgs;
+  watch: GroupFlowPolicyArgs;
 };
 
 export type GroupFlowPolicyArgs = {
@@ -1716,7 +1721,7 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  flows: GroupFlowPolicyArgs;
+  flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
   notificationUri?: InputMaybe<Scalars['String']['input']>;
@@ -1982,6 +1987,11 @@ export type GroupDiscordRoleArgs = {
 
 export type GroupEnsArgs = {
   name: Scalars['String']['input'];
+};
+
+export type GroupFlowArgs = {
+  evolveGroup: GroupFlowPolicyArgs;
+  watch: GroupFlowPolicyArgs;
 };
 
 export type GroupFlowPolicyArgs = {

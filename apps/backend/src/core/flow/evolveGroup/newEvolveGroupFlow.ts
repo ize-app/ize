@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
-import { DecisionType } from "@/graphql/generated/resolver-types";
+import { DecisionType, GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { createEvolveGroupFlowVersionArgs } from "./createEvolveGroupFlowVersionArgs";
 import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
@@ -13,12 +13,14 @@ export const newEvolveGroupFlow = async ({
   groupEntityId,
   groupId,
   context,
+  policy,
   transaction,
 }: {
   context: GraphqlRequestContext;
   groupId: string;
   groupEntityId: string;
   transaction: Prisma.TransactionClient;
+  policy: GroupFlowPolicyArgs;
 }): Promise<string | null> => {
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
@@ -43,6 +45,7 @@ export const newEvolveGroupFlow = async ({
 
   await newEvolveGroupFlowVersion({
     transaction,
+    policy,
     flowId: flow.id,
     evolveFlowId,
     active: true,
@@ -59,12 +62,14 @@ export const newEvolveGroupFlowVersion = async ({
   evolveFlowId,
   active,
   context,
+  policy,
   groupEntityId,
 }: {
   transaction: Prisma.TransactionClient;
   flowId: string;
   evolveFlowId: string;
   active: boolean;
+  policy: GroupFlowPolicyArgs;
   context: GraphqlRequestContext;
   groupEntityId: string;
 }): Promise<string> => {
@@ -97,7 +102,7 @@ export const newEvolveGroupFlowVersion = async ({
   });
 
   await newStep({
-    args: createEvolveGroupFlowVersionArgs({ groupEntityId, context }),
+    args: createEvolveGroupFlowVersionArgs({ groupEntityId, context, policy }),
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,

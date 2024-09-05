@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
+import { GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { createGroupWatchFlowArgs } from "./createGroupWatchFlowArgs";
 import { newStep } from "../helpers/newStep";
@@ -11,6 +12,7 @@ export const newGroupWatchFlowFlowVersion = async ({
   evolveFlowId,
   active,
   context,
+  policy,
   groupEntityId,
 }: {
   transaction: Prisma.TransactionClient;
@@ -18,6 +20,7 @@ export const newGroupWatchFlowFlowVersion = async ({
   evolveFlowId: string;
   active: boolean;
   context: GraphqlRequestContext;
+  policy: GroupFlowPolicyArgs;
   groupEntityId: string;
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
@@ -49,7 +52,7 @@ export const newGroupWatchFlowFlowVersion = async ({
   });
 
   await newStep({
-    args: createGroupWatchFlowArgs({ groupEntityId, context }),
+    args: createGroupWatchFlowArgs({ groupEntityId, context, policy }),
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,

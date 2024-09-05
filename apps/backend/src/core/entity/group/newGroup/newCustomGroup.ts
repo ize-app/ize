@@ -80,6 +80,7 @@ export const newCustomGroup = async ({
     context,
     groupEntityId: customGroupEntity.Group?.entityId as string,
     groupId: customGroupEntity.Group?.id as string,
+    policy: args.inputs.flows.evolveGroup,
   });
 
   await newGroupWatchFlowFlow({
@@ -87,6 +88,7 @@ export const newCustomGroup = async ({
     context,
     groupEntityId: customGroupEntity.Group?.entityId as string,
     groupId: customGroupEntity.Group?.id as string,
+    policy: args.inputs.flows.watch,
   });
 
   // await newGroupUpdateNotificationsFlow({

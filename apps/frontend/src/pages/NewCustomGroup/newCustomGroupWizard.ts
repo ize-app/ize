@@ -30,7 +30,7 @@ export function useNewCustomGroupWizardState() {
   return useWizardFormState<GroupSetupAndPoliciesSchemaType>();
 }
 
-export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Policy"];
+export const NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS = ["Setup", "Policy", "Confirm"];
 
 export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<GroupSetupAndPoliciesSchemaType> = [
   {
@@ -46,5 +46,12 @@ export const NEW_CUSTOM_GROUP_WIZARD_STEPS: WizardSteps<GroupSetupAndPoliciesSch
     progressBarStep: 1,
     canNext: () => true,
     validWizardState: (formState: GroupSetupAndPoliciesSchemaType) => !!formState.name,
+  },
+  {
+    path: newCustomGroupRoute(NewCustomGroupRoute.Confirm),
+    title: "Confirm new group",
+    progressBarStep: 2,
+    canNext: () => true,
+    validWizardState: () => true,
   },
 ];

@@ -164,12 +164,17 @@ input GroupFlowPolicyArgs {
   decision: DecisionArgs
 }
 
+input GroupFlowArgs {
+  evolveGroup: GroupFlowPolicyArgs!
+  watch: GroupFlowPolicyArgs!
+}
+
 input CustomGroupArgs {
   name: String!
   description: String
   members: [EntityArgs!]!
   notificationUri: String
-  flows: GroupFlowPolicyArgs!
+  flows: GroupFlowArgs!
 }
 
 input NewEntityArgs {
