@@ -4,13 +4,15 @@ import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-ho
 interface ButtonGroupFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   name: FieldPath<T>;
   label: string;
-  options: { value: string; name: string; icon?: string }[];
+  options: { value: string; name: string; icon?: string; title?: string }[];
+  buttonWidth?: string;
 }
 
 export const ButtonGroupField = <T extends FieldValues>({
   name,
   control,
   options,
+  buttonWidth = "140px",
 }: ButtonGroupFieldProps<T>) => {
   return (
     <Controller
@@ -50,9 +52,10 @@ export const ButtonGroupField = <T extends FieldValues>({
                   size="small"
                   aria-label={option.name}
                   color="primary"
-                  sx={{ width: "140px" }} // Modify this line to add a single solid border
+                  sx={{ width: buttonWidth, display: "flex", flexDirection: "column" }} // Modify this line to add a single solid border
                 >
-                  <span>{option.name}</span>
+                  <span style={{ fontWeight: "900" }}>{option.title}</span>
+                  <span style={{ fontWeight: "400" }}>{option.name}</span>
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>

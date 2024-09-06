@@ -3,26 +3,27 @@ import { GraphQLError } from "graphql";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
-  ActionArgs,
   ActionType,
-  DecisionType,
   FieldArgs,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
+  GroupFlowPolicyArgs,
   NewStepArgs,
-  ResultArgs,
-  ResultType,
 } from "@/graphql/generated/resolver-types";
 
 import { EvolveGroupFields } from "./EvolveGroupFields";
+import { createActionConfigForPolicy } from "../helpers/createActionConfigForPolicy";
+import { createDecisionResultConfigForPolicy } from "../helpers/createDecisionResultConfigForPolicy";
+import { createResponseConfigForPolicy } from "../helpers/createResponseConfigForPolicy";
 
 export const createEvolveGroupFlowVersionArgs = ({
   groupEntityId,
   context,
+  policy,
 }: {
   context: GraphqlRequestContext;
   groupEntityId: string;
+  policy: GroupFlowPolicyArgs;
 }): NewStepArgs => {
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
@@ -60,36 +61,7 @@ export const createEvolveGroupFlowVersionArgs = ({
     },
   ];
 
-  const responseFieldSetArgs: FieldArgs = {
-    type: FieldType.Options,
-    fieldId: "new",
-    name: "Do you approve of these changes?",
-    required: true,
-    optionsConfig: {
-      previousStepOptions: false,
-      maxSelections: 1,
-      selectionType: FieldOptionsSelectionType.Select,
-      linkedResultOptions: [],
-      options: [
-        { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
-        { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
-      ],
-    },
-  };
-
-  const resultArgs: ResultArgs = {
-    type: ResultType.Decision,
-    decision: { type: DecisionType.NumberThreshold, threshold: 1 },
-    responseFieldIndex: 0,
-    minimumAnswers: 1,
-  };
-
-  const actionArgs: ActionArgs = {
-    type: ActionType.EvolveGroup,
-    filterResponseFieldIndex: 0,
-    filterOptionIndex: 0,
-    locked: true,
-  };
+  const decisionResult = createDecisionResultConfigForPolicy({ policy });
 
   return {
     allowMultipleResponses: false,
@@ -98,15 +70,13 @@ export const createEvolveGroupFlowVersionArgs = ({
       fields: requestFieldSetArgs,
       fieldsLocked: true,
     },
-    response: {
-      permission: {
-        anyone: false,
-        entities: [{ id: context.currentUser.Identities[0].entityId }],
-      },
-      fields: [responseFieldSetArgs],
-    },
+    response: createResponseConfigForPolicy({
+      creatorEntityId: context.currentUser.Identities[0].entityId,
+      groupEntityId,
+      policy,
+    }),
     expirationSeconds: 259200,
-    result: [resultArgs],
-    action: actionArgs,
+    result: decisionResult ? [decisionResult] : [],
+    action: createActionConfigForPolicy({ actionType: ActionType.EvolveGroup, policy }),
   };
 };

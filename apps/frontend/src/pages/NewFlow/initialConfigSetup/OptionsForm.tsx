@@ -4,8 +4,8 @@ import { useFormContext, useFormState } from "react-hook-form";
 import { UsePresetOptionsForm } from "@/components/Form/FlowForm/components/UsePresetOptionsForm";
 import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/defaultFormState/createDefaultOptionState";
 import { Switch, TextField } from "@/components/Form/formFields";
+import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
-import { FieldBlock } from "./FieldBlock";
 import { IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const OptionsForm = () => {
@@ -23,7 +23,7 @@ export const OptionsForm = () => {
 
   return (
     <>
-      <FieldBlock>
+      <FieldBlockFadeIn>
         <Typography variant="description">What options are you deciding between?</Typography>
 
         {error && (
@@ -75,7 +75,7 @@ export const OptionsForm = () => {
             />
           )}
         </Box>
-      </FieldBlock>
+      </FieldBlockFadeIn>
     </>
   );
 };

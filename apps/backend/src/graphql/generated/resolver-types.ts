@@ -103,6 +103,7 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
+  flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
   notificationUri?: InputMaybe<Scalars['String']['input']>;
@@ -369,6 +370,22 @@ export type GroupDiscordRoleArgs = {
 export type GroupEnsArgs = {
   name: Scalars['String']['input'];
 };
+
+export type GroupFlowArgs = {
+  evolveGroup: GroupFlowPolicyArgs;
+  watch: GroupFlowPolicyArgs;
+};
+
+export type GroupFlowPolicyArgs = {
+  decision?: InputMaybe<DecisionArgs>;
+  type: GroupFlowPolicyType;
+};
+
+export enum GroupFlowPolicyType {
+  CreatorAutoApprove = 'CreatorAutoApprove',
+  GroupAutoApprove = 'GroupAutoApprove',
+  GroupDecision = 'GroupDecision'
+}
 
 export type GroupHatArgs = {
   chain: Blockchain;
@@ -1211,6 +1228,9 @@ export type ResolversTypes = {
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
+  GroupFlowArgs: GroupFlowArgs;
+  GroupFlowPolicyArgs: GroupFlowPolicyArgs;
+  GroupFlowPolicyType: GroupFlowPolicyType;
   GroupHatArgs: GroupHatArgs;
   GroupNft: ResolverTypeWrapper<GroupNft>;
   GroupNftArgs: GroupNftArgs;
@@ -1334,6 +1354,8 @@ export type ResolversParentTypes = {
   GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
+  GroupFlowArgs: GroupFlowArgs;
+  GroupFlowPolicyArgs: GroupFlowPolicyArgs;
   GroupHatArgs: GroupHatArgs;
   GroupNft: GroupNft;
   GroupNftArgs: GroupNftArgs;

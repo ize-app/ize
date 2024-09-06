@@ -1,11 +1,11 @@
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/graphql";
 
-import { NewCustomGroupSchemaType } from "./formValidation";
+import { GroupSetupAndPoliciesSchemaType } from "./formValidation";
 
 export const createNewCustomGroupMutation = (
-  formState: NewCustomGroupSchemaType,
+  formState: GroupSetupAndPoliciesSchemaType,
 ): MutationNewCustomGroupArgs => {
-  return {
+  const args = {
     inputs: {
       name: formState.name,
       description: formState.description,
@@ -13,6 +13,9 @@ export const createNewCustomGroupMutation = (
         id: member.entityId,
       })),
       notificationUri: formState.notification.uri,
+      flows: { ...formState.flows },
     },
   };
+
+  return args;
 };

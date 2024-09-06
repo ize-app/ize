@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
-import { DecisionType } from "@/graphql/generated/resolver-types";
+import { DecisionType, GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { newGroupWatchFlowFlowVersion } from "./newWatchFlowFlowVersion";
 import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
@@ -11,12 +11,14 @@ import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
 export const newGroupWatchFlowFlow = async ({
   groupEntityId,
   groupId,
+  policy,
   context,
   transaction,
 }: {
   context: GraphqlRequestContext;
   groupId: string;
   groupEntityId: string;
+  policy: GroupFlowPolicyArgs;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   if (!context.currentUser)
@@ -47,6 +49,7 @@ export const newGroupWatchFlowFlow = async ({
     evolveFlowId,
     active: true,
     groupEntityId,
+    policy,
     context,
   });
 

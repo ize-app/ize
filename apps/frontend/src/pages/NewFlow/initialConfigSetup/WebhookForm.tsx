@@ -1,11 +1,10 @@
 import { Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
-import { TextField } from "@/components/Form/formFields";
+import { ButtonGroupField, TextField } from "@/components/Form/formFields";
+import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
-import { FieldBlock } from "./FieldBlock";
 import { OptionsForm } from "./OptionsForm";
-import { ButtonGroupField } from "../ButtonGroupField";
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const WebhookForm = () => {
@@ -28,7 +27,7 @@ export const WebhookForm = () => {
 
   return (
     <>
-      <FieldBlock>
+      <FieldBlockFadeIn>
         <Typography variant="description">
           In the next step, you&apos;ll set up this integration with a webhook. What will this
           webhook do?
@@ -42,9 +41,9 @@ export const WebhookForm = () => {
           defaultValue=""
         />
         {/* <WebhookURIForm<IntitialFlowSetupSchemaType> fieldName={`webhook`} /> */}
-      </FieldBlock>
+      </FieldBlockFadeIn>
       {webhookName && (
-        <FieldBlock>
+        <FieldBlockFadeIn>
           <Typography variant="description">When should the other tool be triggered?</Typography>
           <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="When should this action happen?"
@@ -60,7 +59,7 @@ export const WebhookForm = () => {
               },
             ]}
           />
-        </FieldBlock>
+        </FieldBlockFadeIn>
       )}
       {webhookTriggerCondition === ActionTriggerCondition.Decision && <OptionsForm />}
       {/* {options.length > 0 && (

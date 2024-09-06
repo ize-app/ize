@@ -29,11 +29,10 @@ import { useNewRequestWizardState } from "../newRequestWizard";
 export const RequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel } = useNewRequestWizardState();
 
-
   const formMethods = useForm({
     defaultValues: formState ?? {},
     resolver: zodResolver(requestSchema),
-    shouldUnregister: true,
+    shouldUnregister: false,
   });
 
   // console.log("form state is ", formMethods.getValues());

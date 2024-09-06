@@ -3,15 +3,13 @@ import { Box, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
-import { EntitySearch } from "@/components/Form/formFields";
+import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 
-// import ButtonGroup from "../ButtonGroup";
-import { ButtonGroupField } from "../ButtonGroupField";
+import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
 import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
-import { FieldBlock } from "../initialConfigSetup/FieldBlock";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
 import { SummaryForm } from "../initialConfigSetup/SummaryForm";
 import { WebhookForm } from "../initialConfigSetup/WebhookForm";
@@ -51,11 +49,11 @@ export const InitialConfigSetup = () => {
           gap: "30px",
         }}
       >
-        <FieldBlock>
+        <FieldBlockFadeIn>
           <Typography variant="description">
             What&apos;s the goal of this collaborative process?
           </Typography>
-          <ButtonGroupField
+          <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="Test"
             name="goal"
             options={[
@@ -68,9 +66,9 @@ export const InitialConfigSetup = () => {
               },
             ]}
           />
-        </FieldBlock>
+        </FieldBlockFadeIn>
         {goal && (
-          <FieldBlock>
+          <FieldBlockFadeIn>
             <Typography variant="description">Who&apos;s participating?</Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <ButtonGroupField<IntitialFlowSetupSchemaType>
@@ -93,7 +91,7 @@ export const InitialConfigSetup = () => {
                 />
               )}
             </Box>
-          </FieldBlock>
+          </FieldBlockFadeIn>
         )}
         {goal === FlowGoal.TriggerWebhook && permissionType && <WebhookForm />}
         {goal === FlowGoal.Decision && permissionType && <DecisionForm />}

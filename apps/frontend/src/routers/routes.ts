@@ -33,7 +33,8 @@ export enum NewFlowRoute {
 
 export enum NewCustomGroupRoute {
   Setup = "",
-  Finish = "/finish",
+  Policy = "/policy",
+  Confirm = "/confirm",
 }
 
 export enum EvolveFlowRoute {
