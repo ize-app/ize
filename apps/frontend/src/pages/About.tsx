@@ -7,7 +7,7 @@ import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 export const About = () => {
   return (
     <>
-      <Head title={"About"} description={"Ize 👀: The Art of Collective Attention"} />
+      <Head title={"About"} description={"Ize 👀: The Collaboration Engine"} />
 
       <IzeLogoBackground>
         <Box
@@ -27,16 +27,16 @@ export const About = () => {
           <p>
             The human brain isn&#39;t cut out for modern online collaboration. Whereas our ancestors
             collaborated in a single time and place, modern collaboration is spread across the
-            boundaries of teams, time and tools.{" "}
+            boundaries of teams, time, and tools.{" "}
           </p>
           <p>
-            Our attention is spread too thin, and this breaks both our ability to facilitate and
-            participate in online collaboration. We are burnt out and bottlenecked, our collective
-            energies are being scattered in a flurry of irrelevant notifications.{" "}
+            Our attention is spread thin, breaking our ability to facilitate and participate in
+            online collaboration. We are burnt out and bottlenecked, our collective energies
+            scattered in a flurry of irrelevant notifications.{" "}
           </p>
           <p>
-            The limits of online collaboration is an immeasurable waste of human energy, but it also
-            severely limits our ability to build new power structures and modes of harnessing
+            The limits of online collaboration are an immeasurable waste of human energy, but it
+            also severely limits our ability to build new power structures and modes of harnessing
             collective wisdom. We feel these limits across all online communities, whether they be
             activist networks, remote startups, or democracies.
           </p>
@@ -44,29 +44,29 @@ export const About = () => {
             How do we build collaboration tools that understand our most precious
             resource—attention? The answer isn’t another one-size-fits-all platform that tries to do
             everything poorly. It’s about weaving together disconnected teams, tools, and workflows
-            in a way that actually frees up our mental space and lets us focus on what matters.
+            in a way that frees up our mental space and lets us focus on what matters.
           </p>
-          <h1 id="introducing-ize">Introducing Ize 👀</h1>
+          <h1 id="introducing-ize">Introducing Ize</h1>
           <p>
             Ize is a collaboration engine. It dramatically reduces the cognitive load of online
             collaboration via two complementary parts.{" "}
           </p>
           <ol>
             <li>
-              <strong>Facilitation</strong>: An open source language and ecosystem for defining and
-              automating complex collaborative process across teams, time, and tools.{" "}
+              <strong>Facilitation</strong>: An open-source language and ecosystem for defining and
+              automating complex collaborative processes across teams, time, and tools.{" "}
             </li>
             <li>
-              <strong>Participation</strong>: Infrastructure to get people&#39;s attention on
+              <strong>Participation</strong>: Infrastructure to get people&#39;s attention on a
               collaborative process when it matters most.{" "}
             </li>
           </ol>
           <p>Let&#39;s dive into both:</p>
           <h2 id="facilitation">Facilitation</h2>
           <p>
-            Ize is an open source language and plug-in ecosystem for automating the facilitation of
-            collaborative process. Through automation, we can make complex interactions between
-            time, teams, and tools trivial to facilitate.{" "}
+            Ize is an open-source language and plug-in ecosystem for automating the facilitation of
+            collaborative processes. Through automation, we can facilitate complex interactions
+            between time, teams, and tools.{" "}
           </p>
           <p>
             The key to seeing how this automation could be possible is observing that collaboration
@@ -89,8 +89,8 @@ export const About = () => {
           </ol>
           <p>
             In Ize, this common form of facilitated collaboration is defined via the language of{" "}
-            <em>flows</em>. Flows describe a reusable collaborative process works that can span
-            teams, time, and tools. A flow could define, for example:
+            <em>flows</em>. Flows describe reusable collaborative processes that span teams, time,
+            and tools. Flows define, for example:
           </p>
           <ul>
             <li>
@@ -98,27 +98,27 @@ export const About = () => {
               shared AI-assisted sensemaking process
             </li>
             <li>
-              How a team can approve reimbursements from a shared expense account without needing to
-              rely on their manager.
+              How team members can approve and publish new content without being bottlenecked by
+              their manager.
             </li>
-            <li>How members of a Discord server can elects and chooses moderators</li>
+            <li>How members of a Discord server elect @moderators.</li>
           </ul>
           <p>
             By having a common language for defining collaborative flows, collaboration can be
-            automated. In the same way a <a href="https://about.gitlab.com/topics/ci-cd/">CI/CD</a>{" "}
-            workflow can automate complicated process for deploying code, we can do the same thing
-            with collaborative flows.{" "}
+            automated. In the same way that a{" "}
+            <a href="https://about.gitlab.com/topics/ci-cd/">CI/CD</a> workflow can automate the
+            complicated process of deploying code, we can do the same with collaborative flows.{" "}
           </p>
           <p>
-            Flows are both an open source process language and a plug-in ecosystem for building new
-            kinds of collaborative process. Exotic sensemaking processes like{" "}
+            Flows are both an open-source process language and a plug-in ecosystem for building new
+            kinds of collaborative processes. Exotic sensemaking processes like{" "}
             <a href="https://en.wikipedia.org/wiki/Quadratic_voting">quadratic voting</a>,
             canvas-based brainstorming, or reputation-based compensation will simply be modules in
             the Ize ecosystem.{" "}
           </p>
           <p>
-            By explicitly defining process via flows, Ize makes it legible both what happened in the
-            past and how process can change in the future.{" "}
+            By explicitly defining process via flows, Ize makes legible both what happened in the
+            past and how processes can change in the future.{" "}
           </p>
           <p>
             Ize flows are built to evolve as needs change. The process to evolve a flow is, itself,
@@ -127,9 +127,9 @@ export const About = () => {
           </p>
           <h2 id="participation">Participation</h2>
           <p>
-            But automating collaborative process is only valuable if you can get the relevant people
-            to pay attention to it when it counts. Considering how fragmented our individual
-            attention is, focusing collective attention is an exceptionally difficult to task.{" "}
+            But automating collaborative processes is only valuable if you can get the relevant
+            people to pay attention to it when it counts. Considering how fragmented our individual
+            attention is, focusing collective attention is an exceptionally difficult task.{" "}
           </p>
           <p>
             Ize flows are, in essence, a standardized language for requesting each other&#39;s
@@ -138,30 +138,29 @@ export const About = () => {
           </p>
           <p>
             In Ize, it is trivial to filter out requests for attention where you are not explicitly
-            being asked for input, requests that have expired, or requests that already have an
-            outcome and no longer need attention.{" "}
+            being asked for input, expired requests, or requests that already have an outcome.{" "}
           </p>
           <p>
             Individuals and teams are in full control of what they choose to pay attention to, or{" "}
             <em>watch</em> in Ize terminology 👀. The process of teams deciding what they want to
-            pay attention to and how they want to receive notifications is itself defined through
-            Ize flows. <em>Everything</em> in Ize happens through collaborative flows.{" "}
+            pay attention to and how they want to receive notifications is also defined through Ize
+            flows. <em>Everything</em> in Ize happens through collaborative flows.{" "}
           </p>
           <p>
-            Individuals and teams to consume requests for attention wherever they prefer. Instead of
+            Individuals and teams consume requests for attention wherever they prefer. Instead of
             being yet another tool to monitor, the vision of Ize is to live as infrastructure in the
-            background. Individuals might choose to interact with Ize via SMS or a Discord bot,
-            whereas a team might choose to primarily interact with Ize via Telegram, Slack, or
+            background. Individuals might choose to interact with Ize via SMS or Discord bot,
+            whereas a team might decide to primarily interact with Ize via Telegram, Slack, or
             embedded into Notion. Other applications will use Ize as the collaborative
             infrastructure that runs under the hood of their app.
           </p>
           <h1 id="harnessing-our-collective-energy">Harnessing our Collective Energy</h1>
           <p>
-            Ize drastically reduces the mental overhead of both facilitating and participating in
-            online collaboration. Ize&#39;s generalized language of collaboration allows complex
-            collaboration across teams, time and tools to be automated. This language creates a
-            standard for how we request each other&#39;s attention, which allows individuals and
-            teams to be full control of how they spend this limited resource.{" "}
+            Ize drastically reduces the mental overhead of facilitating and participating in online
+            collaboration. Ize&#39;s generalized language of collaboration allows complex
+            collaboration across teams, time, and tools to be automated. This language creates a
+            standard for how we request each other&#39;s attention, which enables individuals and
+            teams to have full control over how they spend this limited resource.{" "}
           </p>
           <p>
             As a collaboration engine, Ize allows us to harness our collective energies. It helps us
@@ -169,10 +168,7 @@ export const About = () => {
             much bigger than ourselves.
           </p>
           <p>...</p>
-          <p>
-            If this sounds interesting to you - whether you&#39;re a builder, activist, open source
-            maintainer, investor, whatever - we&#39;d love to hear from you.
-          </p>
+          <p>If this sounds exciting, we&#39;d love to hear from you.</p>
           <p>
             <a href="mailto:harmon@ize.space">harmon@ize.space</a>
           </p>
