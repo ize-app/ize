@@ -5,7 +5,6 @@ import { useContext, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import izeLogoUrl from "@/assets/ize-logo-circle.svg";
-import { LoginButton } from "@/components/Auth/LoginButton";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 import { Route } from "@/routers/routes";
 
@@ -35,7 +34,7 @@ const UnauthenticatedHome = () => {
       >
         <img src={izeLogoUrl} style={{ width: "200px" }} />
         <Typography textAlign={"center"}>
-          Collective action and attention
+          The Collaboration Engine
           <br />
         </Typography>
         <Button
@@ -49,7 +48,7 @@ const UnauthenticatedHome = () => {
         >
           Learn more
         </Button>
-        <LoginButton sx={{ width: "160px" }}>Join the alpha</LoginButton>
+        {/* <LoginButton sx={{ width: "160px" }}>Join the alpha</LoginButton> */}
       </Box>
     </IzeLogoBackground>
   );
