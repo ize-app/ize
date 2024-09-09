@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Typography } from "@mui/material";
+import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useForm } from "react-hook-form";
 
 import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
@@ -44,6 +45,14 @@ export const Setup = () => {
             gap: "12px",
           }}
         >
+          <TelegramLoginButton
+            botUsername={"ize_app_bot"}
+            authCallbackUrl="/path/to/callback/url"
+            buttonSize="large" // "large" | "medium" | "small"
+            cornerRadius={5} // 0 - 20
+            showAvatar={true} // true | false
+            lang="en"
+          />
           <Typography variant="description">
             Groups are 100% collaboratively managed organisms. There is no admin, no boss - just you
             and your buddies determining how you want to collaborate together. <br />

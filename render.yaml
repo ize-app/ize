@@ -39,7 +39,7 @@ envVarGroups:
       - key: MODE
         value: "production"
       - key: LOCAL_URL
-        value: "http://localhost:5173"
+        value: "http://127.0.0.1"
       - key: PROD_URL
         value: "https://ize.space"
       - key: PROD_RENDER_URL

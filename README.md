@@ -52,7 +52,7 @@ Build the database and run the backend
 
 `cd apps/backend && npx prisma db push && npm run start:dev`
 
-Navigate to [localhost:5173](http://localhost:5173/)
+Navigate to [127.0.0.1](http://127.0.0.1/)
 
 ### Testing production build locally
 
@@ -66,9 +66,9 @@ Start the express server
 
 `cd apps/backend && npm run start:prod`
 
-Navigate to [localhost:3000](http://localhost:3000/)
+Navigate to [127.0.0.1](http://127.0.0.1v)
 
-This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [localhost:5173](http://localhost:5173/)
+This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [127.0.0.1](127.0.0.1)
 
 ## Debugging production build
 
