@@ -27,6 +27,7 @@
     "@sentry/cli": "^2.32.1",
     "@sentry/node": "^8.9.2",
     "@sentry/profiling-node": "^8.9.2",
+    "@telegram-auth/server": "^1.0.4",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/nanoid": "^3.0.0",
     "alchemy-sdk": "^3.3.1",

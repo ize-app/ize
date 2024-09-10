@@ -47,7 +47,7 @@ export const Setup = () => {
         >
           <TelegramLoginButton
             botUsername={"ize_app_bot"}
-            authCallbackUrl="/path/to/callback/url"
+            authCallbackUrl="/api/auth/telegram"
             buttonSize="large" // "large" | "medium" | "small"
             cornerRadius={5} // 0 - 20
             showAvatar={true} // true | false

@@ -1,8 +1,10 @@
+import { urlStrToAuthDataMap } from "@telegram-auth/server/utils";
 import { Router } from "express";
 import { OAuthProvider } from "stytch";
 
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
+import { telegramValidator } from "@/telegram/validator";
 
 import { createRequestContext } from "./createRequestContext";
 import { prisma } from "../prisma/client";
@@ -167,6 +169,19 @@ authRouter.post("/password", async (req, res, next) => {
     });
     await updateUserGroups({ context: createRequestContext({ user }) });
     redirectAtLogin({ req, res });
+  } catch (e) {
+    next(e);
+  }
+});
+
+authRouter.get("/telegram", async (req, res, next) => {
+  const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
+  try {
+    const data = urlStrToAuthDataMap(fullUrl);
+    const user = await telegramValidator.validate(data);
+    // The data is now valid and you can sign in the user.
+
+    console.log("tg user is ", user);
   } catch (e) {
     next(e);
   }
