@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Typography } from "@mui/material";
-import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
+import { Button, Typography } from "@mui/material";
+// import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useForm } from "react-hook-form";
 
+import { CopyToClipboardButton } from "@/components/CopyToClipboard";
 import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
@@ -25,6 +26,8 @@ export const Setup = () => {
     shouldUnregister: true,
   });
 
+  const uuid = crypto.randomUUID();
+
   const onSubmit = (data: GroupInitialSetupSchemaType) => {
     setFormState((prev) => ({
       ...prev,
@@ -45,13 +48,32 @@ export const Setup = () => {
             gap: "12px",
           }}
         >
-          <TelegramLoginButton
+          {/* <TelegramLoginButton
             botUsername={"ize_app_bot"}
             authCallbackUrl="/api/auth/telegram"
             buttonSize="large" // "large" | "medium" | "small"
             cornerRadius={5} // 0 - 20
             showAvatar={true} // true | false
             lang="en"
+          /> */}
+          <Button
+            onClick={() => {
+              window.open("https://t.me/ize_app_bot?startgroup=true", "_blank"); //.focus();
+            }}
+            sx={{ display: "flex" }}
+            variant="contained"
+          >
+            Add Ize Bot
+          </Button>
+          <Typography variant="description">
+            Send this slash command in the Discord group where you want to add the bot
+          </Typography>
+          <CopyToClipboardButton
+            textComponent={
+              <>
+                <strong>/linkgroup</strong> {uuid}
+              </>
+            }
           />
           <Typography variant="description">
             Groups are 100% collaboratively managed organisms. There is no admin, no boss - just you
