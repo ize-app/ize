@@ -147,6 +147,15 @@ fragment IdentityDiscordSummaryParts on IdentityDiscord {
   avatar
 }
 
+fragment IdentityTelegram on IdentityTelegram {
+  id
+  telegramUserId
+  photo
+  firstName
+  lastName
+  telegramUsername
+}
+
 fragment IdentityTypesSummaryParts on IdentityType {
   __typename
   ... on IdentityBlockchain {
@@ -157,6 +166,9 @@ fragment IdentityTypesSummaryParts on IdentityType {
   }
   ... on IdentityDiscord {
     ...IdentityDiscordSummaryParts
+  }
+  ... on IdentityTelegram {
+    ...IdentityTelegram
   }
 }
 

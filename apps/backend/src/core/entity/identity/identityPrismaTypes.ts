@@ -4,6 +4,7 @@ export const identityInclude = Prisma.validator<Prisma.IdentityInclude>()({
   IdentityBlockchain: true,
   IdentityDiscord: true,
   IdentityEmail: true,
+  IdentityTelegram: true,
 });
 
 export type IdentityPrismaType = Prisma.IdentityGetPayload<{

@@ -35,7 +35,7 @@ enum EntityType {
 
 union Entity = Identity | Group
 
-union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord
+union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
 
 type Identity {
   id: String! # refers to id of Identity model
@@ -61,6 +61,15 @@ type IdentityDiscord {
   avatar: String
   username: String!
   discordUserId: String!
+}
+
+type IdentityTelegram {
+  id: String!
+  telegramUserId: Int!
+  photo: String
+  firstName: String!
+  lastName: String
+  telegramUsername: String
 }
 
 union GroupType = DiscordRoleGroup | GroupNft | GroupCustom

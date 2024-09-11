@@ -41,6 +41,7 @@ model Identity {
   IdentityDiscord    IdentityDiscord?
   IdentitiesGroups   IdentityGroup[]
   Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  IdentityTelegram   IdentityTelegram?
 
   @@map("identities")
 }
@@ -84,6 +85,20 @@ model IdentityDiscord {
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
   @@map("identities_discord")
+}
+
+model IdentityTelegram {
+  id             String  @id @default(uuid()) @db.Uuid
+  identityId     String  @unique @map("identity_id") @db.Uuid
+  telegramUserId Int     @map("telegram_user_id")
+  username       String?
+  photoUrl       String? @map("photo_url")
+  firstName      String  @map("first_name")
+  lastName       String? @map("last_name")
+
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@map("identities_telegram")
 }
 
 model IdentityGroup {

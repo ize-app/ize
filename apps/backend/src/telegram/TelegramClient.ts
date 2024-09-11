@@ -28,6 +28,7 @@ telegramBot.telegram.setMyCommands([
 ]);
 
 telegramBot.command("linkgroup", async (ctx) => {
+  // console.log("args are ", (ctx.args = ctx.message.text.split(" ").slice(1)));
   const telegramChatId = ctx.message.chat.id; // Telegram group chat ID
   const userIdToCheck = ctx.message.from.id; // User's Telegram ID from the group message
 
@@ -45,8 +46,16 @@ telegramBot.command("linkgroup", async (ctx) => {
   try {
     // Check if the user is a member of the group
     const chatMember = await ctx.telegram.getChatMember(telegramChatId, userIdToCheck);
-
     console.log("chat member", chatMember);
+
+    // TODO
+    // if member isn't admin/creator, throw Error
+    // get the chat id, thread id, chat name, and chat photo and upsert TelegramGroup Entity
+    // upsert notifications entity with chat id, thread id, and user id
+    // get uuid from args,
+    //// check that uuid is valid format (potentially that it's already in the database)
+    //// associate notifications with that group
+
     if (
       // chatMember.status === "member" ||
       chatMember.status === "administrator" ||

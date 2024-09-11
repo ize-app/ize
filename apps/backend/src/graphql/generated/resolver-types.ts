@@ -475,7 +475,17 @@ export type IdentityEmailArgs = {
   email: Scalars['String']['input'];
 };
 
-export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
+export type IdentityTelegram = {
+  __typename?: 'IdentityTelegram';
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  photo?: Maybe<Scalars['String']['output']>;
+  telegramUserId: Scalars['Int']['output'];
+  telegramUsername?: Maybe<Scalars['String']['output']>;
+};
+
+export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail | IdentityTelegram;
 
 export type IzeGroup = {
   __typename?: 'IzeGroup';
@@ -1173,7 +1183,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
-  IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
+  IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
 };
 
@@ -1246,6 +1256,7 @@ export type ResolversTypes = {
   IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
   IdentityEmailArgs: IdentityEmailArgs;
+  IdentityTelegram: ResolverTypeWrapper<IdentityTelegram>;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']> }>;
@@ -1371,6 +1382,7 @@ export type ResolversParentTypes = {
   IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: IdentityEmail;
   IdentityEmailArgs: IdentityEmailArgs;
+  IdentityTelegram: IdentityTelegram;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
   IzeGroup: Omit<IzeGroup, 'group' | 'members'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']> };
@@ -1710,8 +1722,18 @@ export type IdentityEmailResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type IdentityTelegramResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityTelegram'] = ResolversParentTypes['IdentityTelegram']> = {
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  photo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  telegramUserId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  telegramUsername?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityType'] = ResolversParentTypes['IdentityType']> = {
-  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail' | 'IdentityTelegram', ParentType, ContextType>;
 };
 
 export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
@@ -2063,6 +2085,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
+  IdentityTelegram?: IdentityTelegramResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
   IzeGroup?: IzeGroupResolvers<ContextType>;
   LinkedResult?: LinkedResultResolvers<ContextType>;

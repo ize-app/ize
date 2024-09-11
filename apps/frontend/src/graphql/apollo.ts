@@ -25,7 +25,7 @@ export const apolloClient = new ApolloClient({
         "GroupUpdateNotifications",
       ],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
-      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
+      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
       GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
       FieldAnswer: [
         "OptionFieldAnswer",

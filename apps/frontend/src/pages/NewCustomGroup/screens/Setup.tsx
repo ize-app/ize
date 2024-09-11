@@ -1,14 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Typography } from "@mui/material";
-// import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
+import { Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 
-import { CopyToClipboardButton } from "@/components/CopyToClipboard";
 import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import { EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
+import { TelegramBotSetup } from "../components/TelegramBotSetup";
 import { GroupInitialSetupSchemaType, groupInitialSetupFormSchema } from "../formValidation";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
@@ -25,8 +24,6 @@ export const Setup = () => {
     resolver: zodResolver(groupInitialSetupFormSchema),
     shouldUnregister: true,
   });
-
-  const uuid = crypto.randomUUID();
 
   const onSubmit = (data: GroupInitialSetupSchemaType) => {
     setFormState((prev) => ({
@@ -48,33 +45,7 @@ export const Setup = () => {
             gap: "12px",
           }}
         >
-          {/* <TelegramLoginButton
-            botUsername={"ize_app_bot"}
-            authCallbackUrl="/api/auth/telegram"
-            buttonSize="large" // "large" | "medium" | "small"
-            cornerRadius={5} // 0 - 20
-            showAvatar={true} // true | false
-            lang="en"
-          /> */}
-          <Button
-            onClick={() => {
-              window.open("https://t.me/ize_app_bot?startgroup=true", "_blank"); //.focus();
-            }}
-            sx={{ display: "flex" }}
-            variant="contained"
-          >
-            Add Ize Bot
-          </Button>
-          <Typography variant="description">
-            Send this slash command in the Discord group where you want to add the bot
-          </Typography>
-          <CopyToClipboardButton
-            textComponent={
-              <>
-                <strong>/linkgroup</strong> {uuid}
-              </>
-            }
-          />
+          <TelegramBotSetup />
           <Typography variant="description">
             Groups are 100% collaboratively managed organisms. There is no admin, no boss - just you
             and your buddies determining how you want to collaborate together. <br />

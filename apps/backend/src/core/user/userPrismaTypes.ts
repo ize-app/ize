@@ -1,19 +1,17 @@
 import { Prisma } from "@prisma/client";
 
+import { identityInclude } from "../entity/identity/identityPrismaTypes";
+
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
   Identities: {
-    include: { IdentityBlockchain: true, IdentityDiscord: true, IdentityEmail: true },
+    include: identityInclude,
   },
 });
 
 export const meInclude = Prisma.validator<Prisma.UserInclude>()({
   Oauths: true,
   Identities: {
-    include: {
-      IdentityBlockchain: true,
-      IdentityDiscord: true,
-      IdentityEmail: true,
-    },
+    include: identityInclude,
   },
 });
 
