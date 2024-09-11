@@ -1,12 +1,12 @@
-import { urlStrToAuthDataMap } from "@telegram-auth/server";
+// import { urlStrToAuthDataMap } from "@telegram-auth/server";
 import { Router } from "express";
-// import { GraphQLError } from "graphql";
+import { GraphQLError } from "graphql";
 import { OAuthProvider } from "stytch";
 
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
-// import { CustomErrorCodes } from "@/graphql/errors";
-// import { upsertTelegramIdentity } from "@/telegram/upsertTelegramIdentity";
+import { CustomErrorCodes } from "@/graphql/errors";
+import { upsertTelegramIdentity } from "@/telegram/upsertTelegramIdentity";
 import { telegramValidator } from "@/telegram/validator";
 
 import { createRequestContext } from "./createRequestContext";
@@ -176,46 +176,29 @@ authRouter.post("/password", async (req, res, next) => {
     next(e);
   }
 });
-authRouter.get("/telegram", async (req, res, next) => {
-  const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-  try {
-    const data = urlStrToAuthDataMap(fullUrl);
-    console.log("data is  ", data);
-    const user = await telegramValidator.validate(data);
-    // The data is now valid and you can sign in the user.
 
-    console.log("tg user is ", user);
+authRouter.post("/telegram", async (req, res, next) => {
+  try {
+    const data = new Map(Object.entries(req.body)) as Map<string, string | number>;
+    // note telegramValidator is implicitly using botToken to validate
+    // if FE Telegram bot token is different from BE bot token, this will fail
+    const telegramUserData = await telegramValidator.validate(data);
+    const user = res.locals.user as MePrismaType | undefined;
+
+    if (!user)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    // The data is now valid and you can sign in the user.
+    await upsertTelegramIdentity({
+      telegramUserData,
+      userId: user?.id,
+    });
   } catch (e) {
+    res.sendStatus(500);
     next(e);
   }
 });
-// authRouter.get("/telegram", async (req, res, next) => {
-//   try {
-//     console.log("telegram auth");
-//     // console.log("req.body", req.body);
-
-//     // const data = new Map(Object.entries(req.body)) as Map<string, string | number>;
-//     // console.log("data is ", data);
-//     const fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-
-//     const data = urlStrToAuthDataMap(fullUrl);
-//     const telegramUserData = await telegramValidator.validate(data);
-//     const user = res.locals.user as MePrismaType | undefined;
-
-//     if (!user)
-//       throw new GraphQLError("Unauthenticated", {
-//         extensions: { code: CustomErrorCodes.Unauthenticated },
-//       });
-
-//     // The data is now valid and you can sign in the user.
-//     await upsertTelegramIdentity({
-//       telegramUserData,
-//       userId: user?.id,
-//     });
-//   } catch (e) {
-//     res.sendStatus(500);
-//     next(e);
-//   }
-// });
 
 export default authRouter;

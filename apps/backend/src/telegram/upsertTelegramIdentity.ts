@@ -20,26 +20,42 @@ export const upsertTelegramIdentity = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const res = await prisma.identity.create({
-    data: {
-      User: {
-        connect: {
-          id: userId,
-        },
-      },
-      Entity: {
-        create: {},
-      },
+  let identity = await prisma.identity.findFirst({
+    include: {
+      IdentityTelegram: true,
+    },
+    where: {
       IdentityTelegram: {
-        create: {
-          firstName: telegramUserData.first_name,
-          lastName: telegramUserData.last_name,
-          username: telegramUserData.username,
-          photoUrl: telegramUserData.photo_url,
-          telegramUserId: telegramUserData.id,
-        },
+        telegramUserId: telegramUserData.id,
       },
     },
   });
-  return identityResolver(res as IdentityPrismaType, [], false);
+
+  if (!identity) {
+    identity = await prisma.identity.create({
+      include: {
+        IdentityTelegram: true,
+      },
+      data: {
+        User: {
+          connect: {
+            id: userId,
+          },
+        },
+        Entity: {
+          create: {},
+        },
+        IdentityTelegram: {
+          create: {
+            firstName: telegramUserData.first_name,
+            lastName: telegramUserData.last_name,
+            username: telegramUserData.username,
+            photoUrl: telegramUserData.photo_url,
+            telegramUserId: telegramUserData.id,
+          },
+        },
+      },
+    });
+  }
+  return identityResolver(identity as IdentityPrismaType, [], false);
 };

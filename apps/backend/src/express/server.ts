@@ -13,7 +13,7 @@ import cors from "cors";
 import express from "express";
 
 import { MePrismaType } from "@/core/user/userPrismaTypes";
-import { telegramBot } from "@/telegram/TelegramClient";
+// import { telegramBot } from "@/telegram/TelegramClient";
 
 import authRouter from "./authRouter";
 import { createRequestContext } from "./createRequestContext";
@@ -33,7 +33,7 @@ app.use(cookieParser());
 app.use(authenticateSession);
 
 // // Middleware to parse JSON bodies
-// app.use(express.json());
+app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use(express.static(frontendPath));
@@ -44,10 +44,10 @@ app.get("/healthcheck", async (_req, res) => {
 });
 
 // Webhook route
-app.post("/telegram", (req, res) => {
-  telegramBot.handleUpdate(req.body); // Pass the request body to the bot
-  res.sendStatus(200); // Respond with 200 OK
-});
+// app.post("/telegram", (req, res) => {
+//   telegramBot.handleUpdate(req.body); // Pass the request body to the bot
+//   res.sendStatus(200); // Respond with 200 OK
+// });
 
 const typeDefs = mergeTypeDefs(
   loadFilesSync("./src/graphql", { recursive: true, extensions: [".graphql"] }),

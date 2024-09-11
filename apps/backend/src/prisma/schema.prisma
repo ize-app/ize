@@ -90,7 +90,7 @@ model IdentityDiscord {
 model IdentityTelegram {
   id             String  @id @default(uuid()) @db.Uuid
   identityId     String  @unique @map("identity_id") @db.Uuid
-  telegramUserId Int     @map("telegram_user_id")
+  telegramUserId Int     @unique @map("telegram_user_id")
   username       String?
   photoUrl       String? @map("photo_url")
   firstName      String  @map("first_name")
