@@ -141,8 +141,8 @@ type GroupTelegramChat {
   id: String!
   name: String!
   icon: String
-  chatId: Int!
-  messageThreadId: Int
+  chatId: String!
+  messageThreadId: String
 }
 
 type OnboardedDiscordServer {

@@ -14,6 +14,7 @@ export const groupInitialSetupFormSchema = z.object({
   description: z.string().optional(),
   members: z.array(entityFormSchema).min(1, "Please select at least one group or individual."),
   notification: webhookSchema,
+  entity: entityFormSchema.optional(),
 });
 
 export const groupFlowPolicy = z.object({

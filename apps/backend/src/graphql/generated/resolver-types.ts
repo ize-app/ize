@@ -409,10 +409,10 @@ export type GroupNftArgs = {
 
 export type GroupTelegramChat = {
   __typename?: 'GroupTelegramChat';
-  chatId: Scalars['Int']['output'];
+  chatId: Scalars['String']['output'];
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  messageThreadId?: Maybe<Scalars['Int']['output']>;
+  messageThreadId?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
 };
 
@@ -1677,10 +1677,10 @@ export type GroupNftResolvers<ContextType = GraphqlRequestContext, ParentType ex
 };
 
 export type GroupTelegramChatResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupTelegramChat'] = ResolversParentTypes['GroupTelegramChat']> = {
-  chatId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  chatId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  messageThreadId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  messageThreadId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

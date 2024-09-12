@@ -149,7 +149,8 @@ const resolveGroupTelegram = (
     groupType: {
       __typename: "GroupTelegramChat",
       ...telegram,
-      chatId: Number(telegram.chatId), // need to convert bigint to number because graphql doesn't know how to handle bigint
+      chatId: String(telegram.chatId), // need to convert bigint to string because graphql doesn't know how to handle bigint
+      messageThreadId: telegram.messageThreadId ? String(telegram.messageThreadId) : null,
     } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,

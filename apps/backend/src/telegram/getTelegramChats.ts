@@ -28,7 +28,7 @@ export const getTelegramChats = async ({
     where: {
       Group: {
         // this only pulls groups where user was last admin to call /linkgroup telegram command
-        GroupTelegramChat: { adminTelegramUserId: telegramUserId },
+        GroupTelegramChat: { adminTelegramUserId: { equals: telegramUserId } },
       },
     },
   });
