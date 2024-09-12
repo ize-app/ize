@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
+import { upsertTelegramChatGroup } from "./upsertTelegramChatGroup";
+
 dotenv.config();
 
 const isDev = process.env.MODE === "development";
@@ -28,62 +30,36 @@ telegramBot.telegram.setMyCommands([
 ]);
 
 telegramBot.command("linkgroup", async (ctx) => {
-  // console.log("args are ", (ctx.args = ctx.message.text.split(" ").slice(1)));
-  const telegramChatId = ctx.message.chat.id; // Telegram group chat ID
-  const userIdToCheck = ctx.message.from.id; // User's Telegram ID from the group message
-
-  const threadId = ctx.message.message_thread_id; // topic thread id
-  console.log("telegramChatId", telegramChatId);
-  console.log("userIdToCheck", userIdToCheck);
-  console.log("threadId", threadId);
-
-  ctx.getChat().then((chat) => {
-    if (chat.type === "group" || chat.type === "supergroup") {
-      // const title = chat.title;
-      // const photo = chat.photo;
-    }
-  });
   try {
-    // Check if the user is a member of the group
-    const chatMember = await ctx.telegram.getChatMember(telegramChatId, userIdToCheck);
-    console.log("chat member", chatMember);
+    const chatId = ctx.message.chat.id; // Telegram group chat ID
+    const creatorTelegramId = ctx.message.from.id; // User's Telegram ID from the group message
+    const messageThreadId = ctx.message.message_thread_id; // topic thread id
 
-    // TODO
-    // if member isn't admin/creator, throw Error
-    // get the chat id, thread id, chat name, and chat photo and upsert TelegramGroup Entity
-    // upsert notifications entity with chat id, thread id, and user id
-    // get uuid from args,
-    //// check that uuid is valid format (potentially that it's already in the database)
-    //// associate notifications with that group
+    const chat = await ctx.getChat();
+    const chatMember = await ctx.telegram.getChatMember(chatId, creatorTelegramId);
 
-    if (
-      // chatMember.status === "member" ||
-      chatMember.status === "administrator" ||
-      chatMember.status === "creator"
-    ) {
-      ctx.reply("Membership confirmed! You are a member of this group.");
-
-      // Now, notify the web app of the confirmation
-      //   await fetch("https://yourwebapp.com/api/confirm-telegram-membership", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       telegramUserId: userIdToCheck, // User's Telegram ID
-      //       telegramChatId: telegramChatId, // Group's Telegram ID
-      //       status: chatMember.status, // Membership status
-      //     }),
-      //   });
-    } else {
-      ctx.reply("You are not a member of this group.");
+    if (chat.type !== "group" && chat.type !== "supergroup") {
+      ctx.reply("Invalid chat for Ize bot.");
+      return;
     }
-  } catch (error) {
-    console.error("Error checking membership:", error);
-    ctx.reply("Could not check your membership status.");
-  }
 
-  //   ctx.reply("Hello");
+    if (chatMember.status !== "administrator" && chatMember.status !== "creator") {
+      ctx.reply("You do not have permissions to add the bot to this group.");
+      return;
+    }
+
+    await upsertTelegramChatGroup({
+      chatId,
+      messageThreadId,
+      title: chat.title,
+      creatorTelegramId,
+    });
+
+    ctx.reply("Ize will send notifications to this chat");
+  } catch (error) {
+    console.error("ERROR: Telegram bot linkgroup command ", error);
+    ctx.reply("Something went wrong. Please try again.");
+  }
 });
 telegramBot.launch();
 

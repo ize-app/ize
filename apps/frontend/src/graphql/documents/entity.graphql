@@ -80,6 +80,9 @@ fragment GroupTypeSummaryParts on GroupType {
   ... on GroupCustom {
     ...GroupCustomParts
   }
+  ... on GroupTelegramChat {
+    ...GroupTelegramChat
+  }
 }
 
 fragment DiscordRoleGroupParts on DiscordRoleGroup {
@@ -106,6 +109,14 @@ fragment GroupNftParts on GroupNft {
 fragment GroupCustomParts on GroupCustom {
   id
   name
+}
+
+fragment GroupTelegramChat on GroupTelegramChat {
+  id
+  name
+  icon
+  chatId
+  messageThreadId
 }
 
 fragment NftCollectionParts on NftCollection {

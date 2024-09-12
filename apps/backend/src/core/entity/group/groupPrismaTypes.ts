@@ -39,6 +39,7 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   GroupCustom: {
     include: groupCustomInclude,
   },
+  GroupTelegramChat: true,
 });
 
 export type GroupPrismaType = Prisma.GroupGetPayload<{

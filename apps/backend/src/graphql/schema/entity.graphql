@@ -72,13 +72,13 @@ type IdentityTelegram {
   telegramUsername: String
 }
 
-union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
+union GroupType = DiscordRoleGroup | GroupNft | GroupCustom | GroupTelegramChat
 
 type Group {
   id: String!
   entityId: String!
   name: String!
-  creator: User!
+  creator: User
   color: String
   icon: String
   memberCount: Int
@@ -135,6 +135,14 @@ type DiscordRoleGroup {
   unicodeEmoji: String
   discordRoleId: String
   discordServer: OnboardedDiscordServer!
+}
+
+type GroupTelegramChat {
+  id: String!
+  name: String!
+  icon: String
+  chatId: Int!
+  messageThreadId: Int
 }
 
 type OnboardedDiscordServer {

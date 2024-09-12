@@ -26,7 +26,7 @@ export const apolloClient = new ApolloClient({
       ],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
-      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
+      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom", "GroupTelegramChat "],
       FieldAnswer: [
         "OptionFieldAnswer",
         "FreeInputFieldAnswer",

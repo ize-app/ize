@@ -140,13 +140,14 @@ model Oauths {
 enum GroupType {
   DiscordRoleGroup
   GroupNft
+  GroupTelegram
   GroupCustom
 }
 
 model Group {
   id                 String               @id @default(uuid()) @db.Uuid
-  creator            User                 @relation(fields: [creatorId], references: [id])
-  creatorId          String               @map("creator_id") @db.Uuid
+  creator            User?                @relation(fields: [creatorId], references: [id])
+  creatorId          String?              @map("creator_id") @db.Uuid
   entityId           String               @unique @map("entity_id") @db.Uuid
   createdAt          DateTime             @default(now()) @map("created_at")
   updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
@@ -161,6 +162,7 @@ model Group {
   UsersWatchedGroups UsersWatchedGroups[]
   OwnedFlows         Flow[]
   GroupsWatchedFlows GroupsWatchedFlows[]
+  GroupTelegramChat  GroupTelegramChat?
 
   @@map("groups")
 }
@@ -183,6 +185,20 @@ model GroupDiscordRole {
   @@unique([discordServerId, discordRoleId])
   @@unique([discordServerId, name])
   @@map("discord_role_groups")
+}
+
+model GroupTelegramChat {
+  id                String   @id @default(uuid()) @db.Uuid
+  Group             Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name              String
+  groupId           String   @unique @map("group_id") @db.Uuid
+  chatId            BigInt   @unique @map("chat_id")
+  // thread where group wants to receive notifications. if null, chat will receive messages in "general"
+  messageThreadId   BigInt?  @map("message_thread_id")
+  creatorTelegramId BigInt   @map("creator_telegram_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("groups_telegram_chat")
 }
 
 enum NftTypes {
@@ -887,3 +903,9 @@ model GroupsWatchedFlows {
   @@unique([flowId, groupId])
   @@map("groups_watched_flows")
 }
+
+// model Notifications {
+//   id String @id @default(uuid()) @db.Uuid
+
+//   @@map("notifications")
+// }
