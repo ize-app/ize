@@ -65,7 +65,7 @@ type IdentityDiscord {
 
 type IdentityTelegram {
   id: String!
-  telegramUserId: Int!
+  telegramUserId: String!
   photo: String
   firstName: String!
   lastName: String

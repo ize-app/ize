@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Typography } from "@mui/material";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
@@ -33,6 +34,14 @@ export const Setup = () => {
 
     onNext();
   };
+
+  const entity = formMethods.watch("entity");
+
+  useEffect(() => {
+    if (entity) {
+      formMethods.setValue("members", [entity]);
+    }
+  }, [entity]);
 
   return (
     <FormProvider {...formMethods}>

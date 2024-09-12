@@ -60,7 +60,11 @@ export const identityResolver = (
         identity.IdentityTelegram.firstName +
           (identity.IdentityTelegram.lastName ? " " + identity.IdentityTelegram.lastName : ""),
       icon: identity.IdentityTelegram.photoUrl,
-      identityType: { __typename: "IdentityTelegram", ...identity.IdentityTelegram },
+      identityType: {
+        __typename: "IdentityTelegram",
+        ...identity.IdentityTelegram,
+        telegramUserId: String(identity.IdentityTelegram.telegramUserId), // convert BigInt to string
+      },
     };
   else {
     throw new GraphQLError("Invalid identity type.", {

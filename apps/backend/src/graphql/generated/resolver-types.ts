@@ -490,7 +490,7 @@ export type IdentityTelegram = {
   id: Scalars['String']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   photo?: Maybe<Scalars['String']['output']>;
-  telegramUserId: Scalars['Int']['output'];
+  telegramUserId: Scalars['String']['output'];
   telegramUsername?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1748,7 +1748,7 @@ export type IdentityTelegramResolvers<ContextType = GraphqlRequestContext, Paren
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   photo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  telegramUserId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  telegramUserId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   telegramUsername?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
