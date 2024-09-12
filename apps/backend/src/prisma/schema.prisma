@@ -188,15 +188,15 @@ model GroupDiscordRole {
 }
 
 model GroupTelegramChat {
-  id                String   @id @default(uuid()) @db.Uuid
-  Group             Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  name              String
-  groupId           String   @unique @map("group_id") @db.Uuid
-  chatId            BigInt   @unique @map("chat_id")
+  id                  String   @id @default(uuid()) @db.Uuid
+  Group               Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name                String
+  groupId             String   @unique @map("group_id") @db.Uuid
+  chatId              BigInt   @unique @map("chat_id")
   // thread where group wants to receive notifications. if null, chat will receive messages in "general"
-  messageThreadId   BigInt?  @map("message_thread_id")
-  creatorTelegramId BigInt   @map("creator_telegram_id")
-  createdAt         DateTime @default(now()) @map("created_at")
+  messageThreadId     BigInt?  @map("message_thread_id")
+  adminTelegramUserId BigInt   @map("admin_telegram_user_id")
+  createdAt           DateTime @default(now()) @map("created_at")
 
   @@map("groups_telegram_chat")
 }

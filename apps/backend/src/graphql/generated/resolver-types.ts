@@ -782,6 +782,7 @@ export type Query = {
   nftContract?: Maybe<AlchemyApiNftContract>;
   nftToken?: Maybe<AlchemyApiNftToken>;
   searchNftContracts: Array<AlchemyApiNftContract>;
+  telegramChats: Array<Entity>;
 };
 
 
@@ -1889,6 +1890,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
   nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
+  telegramChats?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
 };
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {

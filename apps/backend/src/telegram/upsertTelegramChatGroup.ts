@@ -6,12 +6,12 @@ export const upsertTelegramChatGroup = async ({
   chatId,
   title,
   messageThreadId,
-  creatorTelegramId,
+  adminTelegramUserId,
 }: {
   chatId: number;
   title: string;
   messageThreadId: number | undefined;
-  creatorTelegramId: number;
+  adminTelegramUserId: number;
 }) => {
   const existingGroup = await prisma.groupTelegramChat.findFirst({
     where: {
@@ -27,6 +27,7 @@ export const upsertTelegramChatGroup = async ({
       data: {
         name: title,
         messageThreadId: messageThreadId ?? null,
+        adminTelegramUserId,
       },
     });
   } else {
@@ -39,7 +40,7 @@ export const upsertTelegramChatGroup = async ({
               create: {
                 chatId,
                 name: title,
-                creatorTelegramId,
+                adminTelegramUserId,
                 messageThreadId,
               },
             },

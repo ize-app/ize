@@ -32,11 +32,11 @@ telegramBot.telegram.setMyCommands([
 telegramBot.command("linkgroup", async (ctx) => {
   try {
     const chatId = ctx.message.chat.id; // Telegram group chat ID
-    const creatorTelegramId = ctx.message.from.id; // User's Telegram ID from the group message
     const messageThreadId = ctx.message.message_thread_id; // topic thread id
+    const fromUserId = ctx.message.from.id; // User's Telegram ID from the group message
 
     const chat = await ctx.getChat();
-    const chatMember = await ctx.telegram.getChatMember(chatId, creatorTelegramId);
+    const chatMember = await ctx.telegram.getChatMember(chatId, fromUserId);
 
     if (chat.type !== "group" && chat.type !== "supergroup") {
       ctx.reply("Invalid chat for Ize bot.");
@@ -52,7 +52,7 @@ telegramBot.command("linkgroup", async (ctx) => {
       chatId,
       messageThreadId,
       title: chat.title,
-      creatorTelegramId,
+      adminTelegramUserId: fromUserId,
     });
 
     ctx.reply("Ize will send notifications to this chat");
