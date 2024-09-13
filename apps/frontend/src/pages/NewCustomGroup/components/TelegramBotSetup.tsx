@@ -20,8 +20,6 @@ export const TelegramBotSetup = () => {
   const [getTelegramChats, { loading: telegramChatsLoading, data: telegramChats }] =
     useLazyQuery(TelegramChatsDocument);
 
-  
-
   return (
     <>
       {/* In local dev, you need to set bot's domain to 127.0.0.1:80 for FE button to work
@@ -69,8 +67,8 @@ export const TelegramBotSetup = () => {
         Once you call the /linkgroup command, select the Telegram group below
       </Typography>
       <AsyncSelect<GroupSetupAndPoliciesSchemaType, EntityFragment>
-        label={"Telegram channel"}
-        name="entity"
+        label={"Telegram group"}
+        name="notificationEntity"
         getOptionLabel={(option) => option.name}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         loading={telegramChatsLoading}

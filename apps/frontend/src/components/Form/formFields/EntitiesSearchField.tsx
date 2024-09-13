@@ -34,6 +34,7 @@ interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T>
   hideCustomGroups?: boolean;
   setFieldValue: UseFormSetValue<T>;
   getFieldValues: UseFormGetValues<T>;
+  showLabel?: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
@@ -44,6 +45,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
   hideCustomGroups = false,
   setFieldValue,
   getFieldValues,
+  showLabel,
   ...props
 }: EntitySearchProps<T>) => {
   const { me } = useContext(CurrentUserContext);
@@ -215,7 +217,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={label}
+                    label={showLabel ? label : ""}
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,

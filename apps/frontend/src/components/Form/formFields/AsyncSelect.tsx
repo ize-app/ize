@@ -12,10 +12,12 @@ interface AsyncSelectProps<T extends FieldValues, OptionType> extends UseControl
   options: OptionType[];
   isOptionEqualToValue: (option: OptionType, value: OptionType) => boolean;
   getOptionLabel: (option: OptionType) => string;
+  showLabel?: boolean;
 }
 
 export default function AsyncSelect<T extends FieldValues, OptionType>({
   label,
+  showLabel,
   name,
   loading,
   fetchOptions,
@@ -46,21 +48,24 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Autocomplete
               sx={{ width: 300 }}
+              size="small"
+              {...field}
+              {...props}
               open={open}
               onOpen={handleOpen}
               onClose={handleClose}
               isOptionEqualToValue={isOptionEqualToValue}
               getOptionLabel={getOptionLabel}
               options={options}
-              {...field}
-              {...props}
-              size="small"
+              onChange={(_event, data) => field.onChange(data)}
               loading={loading}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   name="ignore"
-                  label={label}
+                  placeholder="Choose a Telegram group"
+                  label={showLabel ? label : ""}
+                  aria-label={label}
                   autoComplete="off"
                   InputProps={{
                     ...params.InputProps,

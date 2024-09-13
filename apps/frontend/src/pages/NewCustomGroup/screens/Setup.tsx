@@ -3,14 +3,15 @@ import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
-import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
+import telegramLogoUrl from "@/assets/telegram-logo.svg";
+import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
-import { EntitySearch, TextField } from "../../../components/Form/formFields";
+import { ButtonGroupField, EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
 import { TelegramBotSetup } from "../components/TelegramBotSetup";
 import { GroupInitialSetupSchemaType, groupInitialSetupFormSchema } from "../formValidation";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
+import { GroupCommunicationType } from "../types";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
@@ -21,10 +22,13 @@ export const Setup = () => {
       description: formState.description ?? "",
       members: formState.members ?? [],
       notification: formState.notification ?? {},
+      notificationEntity: undefined,
     },
     resolver: zodResolver(groupInitialSetupFormSchema),
-    shouldUnregister: true,
+    shouldUnregister: false,
   });
+
+  // console.log("form state", formMethods.getValues());
 
   const onSubmit = (data: GroupInitialSetupSchemaType) => {
     setFormState((prev) => ({
@@ -35,67 +39,103 @@ export const Setup = () => {
     onNext();
   };
 
-  const entity = formMethods.watch("entity");
+  const groupCommunicationChannel = formMethods.watch("groupCommunicationChannel");
+  const entity = formMethods.watch("notificationEntity");
+  const members = formMethods.watch("members") ?? [];
 
   useEffect(() => {
     if (entity) {
+      console.log("about to set entity");
       formMethods.setValue("members", [entity]);
+      formMethods.setValue("name", entity.name);
     }
   }, [entity]);
 
   return (
     <FormProvider {...formMethods}>
       <>
-        <WizardScreenBodyNarrow>
-          <form
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-            }}
-          >
-            <TelegramBotSetup />
+        {/* <WizardScreenBodyNarrow> */}
+        <form
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+          }}
+        >
+          <FieldBlockFadeIn>
+            <Typography variant="body1">How does your team communicate?</Typography>
             <Typography variant="description">
-              Groups are 100% collaboratively managed organisms. There is no admin, no boss - just
-              you and your buddies determining how you want to collaborate together. <br />
-              <br />
-              To start off, let&apos;s get some basic information about your new group.
+              This is where Ize will send notifications for shared collabroative process
             </Typography>
-            <TextField<GroupInitialSetupSchemaType>
-              name="name"
-              control={formMethods.control}
-              size="small"
-              label="Group name"
-              placeholderText="Group name"
-              defaultValue={""}
-              required
-              showLabel={true}
-              variant="outlined"
+            <ButtonGroupField<GroupInitialSetupSchemaType>
+              name={"groupCommunicationChannel"}
+              label="label"
+              options={[
+                {
+                  value: GroupCommunicationType.Telegram,
+                  name: "Telegram",
+                  icon: telegramLogoUrl,
+                },
+                { value: GroupCommunicationType.Other, name: "Other" },
+              ]}
             />
-            <TextField<GroupInitialSetupSchemaType>
-              name="description"
-              control={formMethods.control}
-              size="small"
-              label="Description"
-              showLabel={true}
-              rows={2}
-              multiline
-              placeholderText="What's the purpose of this group?"
-              defaultValue={""}
-            />
-            <EntitySearch<GroupInitialSetupSchemaType>
-              ariaLabel={"Individuals and groups to add to custom group"}
-              control={formMethods.control}
-              name={"members"}
-              hideCustomGroups={true}
-              label={"Group members *"}
-              setFieldValue={formMethods.setValue}
-              getFieldValues={formMethods.getValues}
-            />
-            <WebhookField formMethods={formMethods} name={"notification"} type={"notification"} />
-          </form>
-        </WizardScreenBodyNarrow>
+          </FieldBlockFadeIn>
+          {groupCommunicationChannel === GroupCommunicationType.Telegram && (
+            <FieldBlockFadeIn>
+              <TelegramBotSetup />
+            </FieldBlockFadeIn>
+          )}
+          {(groupCommunicationChannel === GroupCommunicationType.Other || !!entity) && (
+            <FieldBlockFadeIn>
+              <Typography variant="body1">Who is part of your group?</Typography>
+              <Typography variant="description">
+                When this group has permissions on a collaborative process, your members will be
+                able to participate
+              </Typography>
+              <EntitySearch<GroupInitialSetupSchemaType>
+                ariaLabel={"Individuals and groups to add to custom group"}
+                control={formMethods.control}
+                name={"members"}
+                hideCustomGroups={true}
+                label={"Group members *"}
+                setFieldValue={formMethods.setValue}
+                getFieldValues={formMethods.getValues}
+                showLabel={false}
+              />
+            </FieldBlockFadeIn>
+          )}
+
+          {/* <WebhookField formMethods={formMethods} name={"notification"} type={"notification"} /> */}
+          {members.length > 0 && (
+            <FieldBlockFadeIn>
+              <Typography variant="body1">What should we call your group?</Typography>
+              <TextField<GroupInitialSetupSchemaType>
+                name="name"
+                control={formMethods.control}
+                size="small"
+                label="Group name"
+                placeholderText="Group name"
+                defaultValue={""}
+                required
+                showLabel={false}
+                variant="outlined"
+              />
+              {/* <TextField<GroupInitialSetupSchemaType>
+                  name="description"
+                  control={formMethods.control}
+                  size="small"
+                  label="Description"
+                  showLabel={false}
+                  rows={2}
+                  multiline
+                  placeholderText="What's the purpose of this group?"
+                  defaultValue={""}
+                /> */}
+            </FieldBlockFadeIn>
+          )}
+        </form>
+        {/* </WizardScreenBodyNarrow> */}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}
