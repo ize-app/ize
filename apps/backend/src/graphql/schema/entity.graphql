@@ -190,8 +190,8 @@ input CustomGroupArgs {
   name: String!
   description: String
   members: [EntityArgs!]!
-  notificationUri: String
   flows: GroupFlowArgs!
+  notificationEntity: EntityArgs
 }
 
 input NewEntityArgs {

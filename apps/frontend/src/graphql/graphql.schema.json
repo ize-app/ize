@@ -835,11 +835,11 @@
             "deprecationReason": null
           },
           {
-            "name": "notificationUri",
+            "name": "notificationEntity",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INPUT_OBJECT",
+              "name": "EntityArgs",
               "ofType": null
             },
             "defaultValue": null,

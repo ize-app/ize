@@ -1,6 +1,5 @@
 import { GroupType, Prisma } from "@prisma/client";
 
-import { createWebhook } from "@/core/action/webhook/createWebhook";
 import { newEvolveGroupFlow } from "@/core/flow/evolveGroup/newEvolveGroupFlow";
 import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
@@ -27,17 +26,17 @@ export const newCustomGroup = async ({
 
   const entitySetId = await newEntitySet({ entityArgs: args.inputs.members, transaction });
 
-  const notificationWebhookId = args.inputs.notificationUri
-    ? await createWebhook({
-        args: {
-          uri: args.inputs.notificationUri,
-          name: "Group notification",
-          webhookId: undefined,
-        },
+  // const notificationWebhookId = args.inputs.notificationUri
+  //   ? await createWebhook({
+  //       args: {
+  //         uri: args.inputs.notificationUri,
+  //         name: "Group notification",
+  //         webhookId: undefined,
+  //       },
 
-        transaction,
-      })
-    : null;
+  //       transaction,
+  //     })
+  //   : null;
 
   const customGroupEntity = await transaction.entity.create({
     select: {
@@ -53,7 +52,6 @@ export const newCustomGroup = async ({
               name: args.inputs.name,
               description: args.inputs.description,
               entitySetId,
-              notificationWebhookId,
             },
           },
         },

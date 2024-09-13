@@ -18,6 +18,17 @@ export const groupInitialSetupFormSchema = z.object({
   notification: webhookSchema,
   notificationEntity: entityFormSchema.optional(),
 });
+// .refine(
+//   (group) => {
+//     if (
+//       group.groupCommunicationChannel !== GroupCommunicationType.Other &&
+//       !group.notificationEntity
+//     ) {
+//       return false;
+//     }
+//   },
+//   { path: ["notificationEntity"], message: "Required" },
+// );
 
 export const groupFlowPolicy = z.object({
   type: z.nativeEnum(GroupFlowPolicyType),

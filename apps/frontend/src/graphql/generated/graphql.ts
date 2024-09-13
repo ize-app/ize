@@ -105,7 +105,7 @@ export type CustomGroupArgs = {
   flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-  notificationUri?: InputMaybe<Scalars['String']['input']>;
+  notificationEntity?: InputMaybe<EntityArgs>;
 };
 
 export type Decision = {
@@ -1762,7 +1762,7 @@ export type CustomGroupArgs = {
   flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-  notificationUri?: InputMaybe<Scalars['String']['input']>;
+  notificationEntity?: InputMaybe<EntityArgs>;
 };
 
 export type Decision = {
