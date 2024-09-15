@@ -4326,12 +4326,12 @@
             "deprecationReason": null
           },
           {
-            "name": "notificationUriPreview",
+            "name": "notificationEntity",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "UNION",
+              "name": "Entity",
               "ofType": null
             },
             "isDeprecated": false,

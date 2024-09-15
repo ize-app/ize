@@ -1,4 +1,4 @@
-import { entitySetInclude } from "@/core/entity/entityPrismaTypes";
+import { EntityPrismaType, entityInclude, entitySetInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
 import { groupResolver } from "@/core/entity/group/groupResolver";
@@ -20,6 +20,7 @@ export const getIzeGroup = async ({
     where: { id: groupId },
   });
 
+  let notificationEntity: EntityPrismaType | null = null;
   let isWatched = false;
   let isMember = false;
 
@@ -69,10 +70,24 @@ export const getIzeGroup = async ({
     }) ?? []),
   ];
 
+  if (group.GroupCustom?.notificationEntityId) {
+    notificationEntity = await prisma.entity.findFirst({
+      where: {
+        id: group.GroupCustom?.notificationEntityId ?? undefined,
+      },
+      include: entityInclude,
+    });
+  }
+
   return {
     group: groupResolver(group, isWatched, isMember),
     members,
     description: group.GroupCustom?.description,
-    notificationUriPreview: group.GroupCustom?.Webhook?.uriPreview,
+    notificationEntity: notificationEntity
+      ? entityResolver({
+          entity: notificationEntity,
+          userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
+        })
+      : null,
   };
 };

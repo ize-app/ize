@@ -66,7 +66,9 @@ fragment IzeGroup on IzeGroup {
     ...EntitySummaryParts
   }
   description
-  notificationUriPreview
+  notificationEntity {
+    ...EntitySummaryParts
+  }
 }
 
 fragment GroupTypeSummaryParts on GroupType {

@@ -52,13 +52,6 @@ export const createEvolveGroupFlowVersionArgs = ({
       name: EvolveGroupFields.Members,
       required: true,
     },
-    {
-      type: FieldType.FreeInput,
-      fieldId: "webhook",
-      freeInputDataType: FieldDataType.Webhook,
-      name: EvolveGroupFields.Webhook,
-      required: true,
-    },
   ];
 
   const decisionResult = createDecisionResultConfigForPolicy({ policy });

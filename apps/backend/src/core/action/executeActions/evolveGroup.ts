@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { z } from "zod";
 
 import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
@@ -61,10 +60,6 @@ export const evolveGroup = async ({
       return fieldAnswer.Field.name === EvolveGroupFields.Members;
     });
 
-    const webhook = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-      return fieldAnswer.Field.name === EvolveGroupFields.Webhook;
-    });
-
     /// validate members and create entity set for members ///
 
     if (!members) {
@@ -90,14 +85,6 @@ export const evolveGroup = async ({
       transaction,
     });
 
-    // validate and create webhook Id
-
-    const webhookId = webhook
-      ? z.string().uuid().safeParse(webhook.AnswerFreeInput[0].value).success
-        ? webhook.AnswerFreeInput[0].value
-        : null
-      : null;
-
     await transaction.groupCustom.update({
       where: {
         id: customGroupId,
@@ -106,7 +93,6 @@ export const evolveGroup = async ({
         name: name?.AnswerFreeInput[0].value ?? "",
         description: description?.AnswerFreeInput[0].value ?? "",
         entitySetId: entitySetId,
-        notificationWebhookId: webhookId,
       },
     });
 

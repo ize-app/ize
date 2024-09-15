@@ -96,7 +96,7 @@ type IzeGroup {
   group: Group!
   members: [Entity!]!
   description: String
-  notificationUriPreview: String
+  notificationEntity: Entity
 }
 
 type Organization {

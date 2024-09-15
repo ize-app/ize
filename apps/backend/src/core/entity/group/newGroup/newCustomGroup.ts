@@ -30,17 +30,6 @@ export const newCustomGroup = async ({
   if (args.inputs.notificationEntity) {
     await confirmNotificationEntity({ entityId: args.inputs.notificationEntity.id, context });
   }
-  // const notificationWebhookId = args.inputs.notificationUri
-  //   ? await createWebhook({
-  //       args: {
-  //         uri: args.inputs.notificationUri,
-  //         name: "Group notification",
-  //         webhookId: undefined,
-  //       },
-
-  //       transaction,
-  //     })
-  //   : null;
 
   const customGroupEntity = await transaction.entity.create({
     select: {
@@ -56,6 +45,7 @@ export const newCustomGroup = async ({
               name: args.inputs.name,
               description: args.inputs.description,
               entitySetId,
+              notificationEntityId: args.inputs.notificationEntity?.id,
             },
           },
         },

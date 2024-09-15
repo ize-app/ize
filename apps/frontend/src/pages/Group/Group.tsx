@@ -157,11 +157,6 @@ export const Group = () => {
               {group.description}
             </Typography>
           )}
-          {group.notificationUriPreview && (
-            <Typography variant="description" marginTop="8px">
-              Notifications for watched flows sent via {group.notificationUriPreview}
-            </Typography>
-          )}
         </Box>
         <Tabs
           tabs={tabs}

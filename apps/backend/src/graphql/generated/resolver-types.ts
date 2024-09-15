@@ -501,7 +501,7 @@ export type IzeGroup = {
   description?: Maybe<Scalars['String']['output']>;
   group: Group;
   members: Array<Entity>;
-  notificationUriPreview?: Maybe<Scalars['String']['output']>;
+  notificationEntity?: Maybe<Entity>;
 };
 
 export type LinkedResult = {
@@ -1270,7 +1270,7 @@ export type ResolversTypes = {
   IdentityTelegram: ResolverTypeWrapper<IdentityTelegram>;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']> }>;
+  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
   LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
@@ -1397,7 +1397,7 @@ export type ResolversParentTypes = {
   IdentityTelegram: IdentityTelegram;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
-  IzeGroup: Omit<IzeGroup, 'group' | 'members'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']> };
+  IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
   LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
@@ -1761,7 +1761,7 @@ export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType ex
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
-  notificationUriPreview?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notificationEntity?: Resolver<Maybe<ResolversTypes['Entity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

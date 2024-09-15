@@ -215,16 +215,16 @@ enum Blockchain {
 }
 
 model GroupCustom {
-  id                    String  @id @default(uuid()) @db.Uuid
-  name                  String
-  description           String?
-  groupId               String  @unique @map("group_id") @db.Uuid
-  entitySetId           String  @map("entity_set_id") @db.Uuid
-  notificationWebhookId String? @map("notification_webhook_id") @db.Uuid
+  id                   String  @id @default(uuid()) @db.Uuid
+  name                 String
+  description          String?
+  groupId              String  @unique @map("group_id") @db.Uuid
+  entitySetId          String  @map("entity_set_id") @db.Uuid
+  notificationEntityId String? @map("notification_entity_id") @db.Uuid
 
-  MemberEntitySet EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
-  group           Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  Webhook         Webhook?  @relation(fields: [notificationWebhookId], references: [id], onDelete: Cascade)
+  NotificationEntity Entity?   @relation(fields: [notificationEntityId], references: [id], onDelete: Cascade)
+  MemberEntitySet    EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
+  group              Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("groups_custom")
 }
@@ -411,9 +411,10 @@ model Entity {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  Group             Group?
-  Identity          Identity?
-  EntitySetEntities EntitySetEntities[]
+  Group                   Group?
+  Identity                Identity?
+  EntitySetEntities       EntitySetEntities[]
+  NotifiesForCustomGroups GroupCustom[]
 
   @@map("entities")
 }
@@ -711,8 +712,7 @@ model Webhook {
   uriPreview String   @map("uri_preview")
   createdAt  DateTime @default(now()) @map("created_at")
 
-  Actions     Action[]
-  GroupCustom GroupCustom[]
+  Actions Action[]
 
   @@map("webhooks")
 }
