@@ -53,20 +53,6 @@ export const newCustomGroup = async ({
     },
   });
 
-  // await newGroupUpdateMetadataFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
-
-  // await newGroupUpdateMembershipFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
-
   await newEvolveGroupFlow({
     transaction,
     context,
@@ -82,13 +68,6 @@ export const newCustomGroup = async ({
     groupId: customGroupEntity.Group?.id as string,
     policy: args.inputs.flows.watch,
   });
-
-  // await newGroupUpdateNotificationsFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
 
   return customGroupEntity.Group?.id as string;
 };

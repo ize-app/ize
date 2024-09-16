@@ -1,10 +1,9 @@
 import { localUrl, prodUrl } from "@/express/origins";
 import { User } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
-import { decrypt } from "@/prisma/encrypt";
 
 import { createNotificationPayload } from "./createNotificationPayload";
-import { callWebhook } from "../action/webhook/callWebhook";
+// import { callWebhook } from "../action/webhook/callWebhook";
 
 export const sendGroupNotifications = async ({
   flowId,
@@ -30,7 +29,7 @@ export const sendGroupNotifications = async ({
       include: {
         GroupCustom: {
           include: {
-            Webhook: true,
+            // Webhook: true,
           },
         },
       },
@@ -47,7 +46,7 @@ export const sendGroupNotifications = async ({
           },
         ],
         GroupCustom: {
-          notificationWebhookId: { not: null },
+          // notificationWebhookId: { not: null },
         },
       },
     });
@@ -60,14 +59,15 @@ export const sendGroupNotifications = async ({
       baseIzeUrl,
     });
 
-    await Promise.all(
-      groups.map(async (group) => {
-        const encryptedUri = group.GroupCustom?.Webhook?.uri;
-        if (!encryptedUri) return;
-        const uri = decrypt(encryptedUri);
-        await callWebhook({ uri, payload });
-      }),
-    );
+    console.log("payload", payload, groups);
+    // await Promise.all(
+    //   groups.map(async (group) => {
+    //     const encryptedUri = group.GroupCustom?.Webhook?.uri;
+    //     if (!encryptedUri) return;
+    //     const uri = decrypt(encryptedUri);
+    //     await callWebhook({ uri, payload });
+    //   }),
+    // );
   } catch (e) {
     // error sending group notifications shouldn't stop the request from being written
     console.log("Error sending group notifications: ", e);

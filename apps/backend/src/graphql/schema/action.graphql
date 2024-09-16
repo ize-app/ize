@@ -3,15 +3,7 @@ type Mutation {
   createWebhook(inputs: CallWebhookArgs!): String!
 }
 
-union Action =
-  | CallWebhook
-  | EvolveFlow
-  | EvolveGroup
-  | TriggerStep
-  | GroupUpdateMetadata
-  | GroupUpdateMembership
-  | GroupWatchFlow
-  | GroupUpdateNotifications
+union Action = CallWebhook | EvolveFlow | EvolveGroup | TriggerStep | GroupWatchFlow
 
 type ActionExecution {
   actionId: String!
@@ -37,22 +29,7 @@ type TriggerStep {
   filterOption: Option
 }
 
-type GroupUpdateMetadata {
-  locked: Boolean!
-  filterOption: Option
-}
-
-type GroupUpdateMembership {
-  locked: Boolean!
-  filterOption: Option
-}
-
 type GroupWatchFlow {
-  locked: Boolean!
-  filterOption: Option
-}
-
-type GroupUpdateNotifications {
   locked: Boolean!
   filterOption: Option
 }
@@ -68,10 +45,7 @@ enum ActionType {
   TriggerStep
   EvolveFlow
   EvolveGroup
-  GroupUpdateMetadata
-  GroupUpdateMembership
   GroupWatchFlow
-  GroupUpdateNotifications
   None
 }
 

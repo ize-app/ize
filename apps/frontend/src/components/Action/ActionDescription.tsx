@@ -51,28 +51,6 @@ export const ActionDescription = ({
         </>
       );
     }
-    case ActionType.GroupUpdateMetadata: {
-      return (
-        <>
-          <Typography>
-            This action udpates the name and/or description of <strong>{groupNameOverride}</strong>.
-          </Typography>
-        </>
-      );
-    }
-    case ActionType.GroupUpdateMembership: {
-      return (
-        <>
-          <Typography>
-            This action updates the membership of <strong>{groupNameOverride}</strong>. <br />
-            <br />
-            When a flow gives someone request/respond permissions to{" "}
-            <strong>{groupNameOverride}</strong>, anyone who meets the new membership critieria will
-            be able to request/respond.
-          </Typography>
-        </>
-      );
-    }
     case ActionType.GroupWatchFlow: {
       return (
         <>
@@ -82,16 +60,6 @@ export const ActionDescription = ({
             <br />
             When a group watches a flow, requests for those flows will show up on the group&apos;s
             page and the home page of anyone watching that group.
-          </Typography>
-        </>
-      );
-    }
-    case ActionType.GroupUpdateNotifications: {
-      return (
-        <>
-          <Typography>
-            This action changes how and where notifications are sent for flows that{" "}
-            <strong>{groupNameOverride}</strong> watches.
           </Typography>
         </>
       );

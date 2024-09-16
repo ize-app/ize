@@ -7,9 +7,6 @@ import { decrypt } from "@/prisma/encrypt";
 
 import { evolveFlow } from "./evolveFlow";
 import { evolveGroup } from "./evolveGroup";
-import { groupUpdateMembership } from "./groupUpdateMembership";
-import { groupUpdateMetadata } from "./groupUpdateMetadata";
-import { groupUpdateNotifications } from "./groupUpdateNotifications";
 import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
@@ -101,21 +98,10 @@ export const executeAction = async ({
       actionComplete = await evolveFlow({ requestStepId, transaction });
       break;
     }
-    case ActionType.GroupUpdateMetadata: {
-      actionComplete = await groupUpdateMetadata({ requestStepId, transaction });
-      break;
-    }
-    case ActionType.GroupUpdateMembership: {
-      actionComplete = await groupUpdateMembership({ requestStepId, transaction });
-      break;
-    }
     case ActionType.GroupWatchFlow: {
       actionComplete = await groupWatchFlow({ requestStepId, transaction });
       break;
     }
-    case ActionType.GroupUpdateNotifications:
-      actionComplete = await groupUpdateNotifications({ requestStepId, transaction });
-      break;
     case ActionType.EvolveGroup:
       actionComplete = await evolveGroup({ requestStepId, transaction });
       break;

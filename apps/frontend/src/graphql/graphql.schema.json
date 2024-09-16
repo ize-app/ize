@@ -35,21 +35,6 @@
           },
           {
             "kind": "OBJECT",
-            "name": "GroupUpdateMembership",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "GroupUpdateMetadata",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "GroupUpdateNotifications",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
             "name": "GroupWatchFlow",
             "ofType": null
           },
@@ -219,24 +204,6 @@
           },
           {
             "name": "EvolveGroup",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "GroupUpdateMembership",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "GroupUpdateMetadata",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "GroupUpdateNotifications",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2648,24 +2615,6 @@
             "deprecationReason": null
           },
           {
-            "name": "GroupUpdateMembership",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "GroupUpdateMetadata",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "GroupUpdateNotifications",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "GroupWatchFlow",
             "description": null,
             "isDeprecated": false,
@@ -3623,126 +3572,6 @@
             "ofType": null
           }
         ]
-      },
-      {
-        "kind": "OBJECT",
-        "name": "GroupUpdateMembership",
-        "description": null,
-        "isOneOf": null,
-        "fields": [
-          {
-            "name": "filterOption",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Option",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "locked",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "GroupUpdateMetadata",
-        "description": null,
-        "isOneOf": null,
-        "fields": [
-          {
-            "name": "filterOption",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Option",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "locked",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "GroupUpdateNotifications",
-        "description": null,
-        "isOneOf": null,
-        "fields": [
-          {
-            "name": "filterOption",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Option",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "locked",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
       },
       {
         "kind": "OBJECT",

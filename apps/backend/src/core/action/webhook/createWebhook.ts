@@ -11,12 +11,10 @@ import { encrypt } from "@/prisma/encrypt";
 export const createWebhook = async ({
   args,
   flowVersionId,
-  groupId,
   transaction,
 }: {
   args: CallWebhookArgs;
   flowVersionId?: string;
-  groupId?: string;
   transaction: Prisma.TransactionClient;
 }) => {
   let existingWebhook: Webhook | null = null;
@@ -42,20 +40,6 @@ export const createWebhook = async ({
                   },
                 },
               },
-            },
-          },
-        },
-      });
-    }
-
-    // see if this webhook id already exists and is associated to a given group
-    if (groupId) {
-      existingWebhook = await transaction.webhook.findUnique({
-        where: {
-          id: args.webhookId,
-          GroupCustom: {
-            some: {
-              groupId,
             },
           },
         },

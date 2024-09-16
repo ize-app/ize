@@ -275,10 +275,7 @@ enum FlowType {
   Custom
   Evolve
   EvolveGroup
-  GroupUpdateMetadata
-  GroupUpdateMembership
   GroupWatchFlow
-  GroupUpdateNotifications
 }
 
 model Flow {
@@ -680,10 +677,7 @@ enum ActionType {
   TriggerStep
   EvolveFlow
   EvolveGroup
-  GroupUpdateMetadata
-  GroupUpdateMembership
   GroupWatchFlow
-  GroupUpdateNotifications
 
   @@map("ActionType")
 }
