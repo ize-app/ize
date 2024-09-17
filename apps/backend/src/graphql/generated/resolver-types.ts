@@ -839,6 +839,11 @@ export type QuerySearchNftContractsArgs = {
   query: Scalars['String']['input'];
 };
 
+
+export type QueryTelegramChatsArgs = {
+  adminOnly: Scalars['Boolean']['input'];
+};
+
 export type Ranking = {
   __typename?: 'Ranking';
   fieldId?: Maybe<Scalars['String']['output']>;
@@ -1843,7 +1848,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
   nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
-  telegramChats?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
+  telegramChats?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<QueryTelegramChatsArgs, 'adminOnly'>>;
 };
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {

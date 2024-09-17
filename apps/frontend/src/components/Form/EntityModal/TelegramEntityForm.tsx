@@ -19,7 +19,11 @@ export const TelegramEntityForm = ({ handleEntitySelection }: TelegramEntityForm
   return (
     <>
       <ResponsiveFormRow>
-        <SelectTelegramChat<NewEntitySchemaType> label="Chat" name="telegramChat" />
+        <SelectTelegramChat<NewEntitySchemaType>
+          label="Select Telegram Chat"
+          name="telegramChat"
+          adminOnly={false}
+        />
       </ResponsiveFormRow>
       <Button
         onClick={() => handleEntitySelection(telegramChat ? [telegramChat] : [])}

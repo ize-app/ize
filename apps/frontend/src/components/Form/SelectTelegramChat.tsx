@@ -8,14 +8,19 @@ interface SelectTelegramChatProps<T extends FieldValues> extends UseControllerPr
   label: string;
   showLabel?: boolean;
   name: FieldPath<T>;
+  // whether this query should only return chats where the user is an admin
+  adminOnly: boolean;
 }
 
 export const SelectTelegramChat = <T extends FieldValues>({
   label,
   name,
+  adminOnly,
 }: SelectTelegramChatProps<T>) => {
-  const [getTelegramChats, { loading: telegramChatsLoading, data: telegramChats }] =
-    useLazyQuery(TelegramChatsDocument);
+  const [getTelegramChats, { loading: telegramChatsLoading, data: telegramChats }] = useLazyQuery(
+    TelegramChatsDocument,
+    { variables: { adminOnly } },
+  );
 
   return (
     <AsyncSelect<T, EntityFragment>

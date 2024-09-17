@@ -61,7 +61,11 @@ export const TelegramBotSetup = () => {
       <Typography variant="description">
         Once you call the /linkgroup command, select the Telegram group below
       </Typography>
-      <SelectTelegramChat<GroupSetupAndPoliciesSchemaType> label="Chat" name="notificationEntity" />
+      <SelectTelegramChat<GroupSetupAndPoliciesSchemaType>
+        label="Chat"
+        name="notificationEntity"
+        adminOnly={true}
+      />
     </>
   );
   // login button

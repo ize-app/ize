@@ -1,5 +1,5 @@
-query TelegramChats {
-  telegramChats {
+query TelegramChats($adminOnly: Boolean!) {
+  telegramChats(adminOnly: $adminOnly) {
     ...Entity
   }
 }
