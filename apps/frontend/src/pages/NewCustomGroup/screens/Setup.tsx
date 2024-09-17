@@ -21,7 +21,6 @@ export const Setup = () => {
       name: formState.name ?? "",
       description: formState.description ?? "",
       members: formState.members ?? [],
-      notification: formState.notification ?? {},
       notificationEntity: undefined,
     },
     resolver: zodResolver(groupInitialSetupFormSchema),

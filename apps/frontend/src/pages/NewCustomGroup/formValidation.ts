@@ -1,7 +1,6 @@
 import * as z from "zod";
 
 import { decisionSchema } from "@/components/Form/FlowForm/formValidation/result";
-import { webhookSchema } from "@/components/Form/formValidation/webhook";
 import { GroupFlowPolicyType } from "@/graphql/generated/graphql";
 
 import { GroupCommunicationType } from "./types";
@@ -15,7 +14,6 @@ export const groupInitialSetupFormSchema = z.object({
   name: z.string().min(1, "Please enter a name for the group"),
   description: z.string().optional(),
   members: z.array(entityFormSchema).min(1, "Please select at least one group or individual."),
-  notification: webhookSchema,
   notificationEntity: entityFormSchema.optional(),
 });
 // .refine(

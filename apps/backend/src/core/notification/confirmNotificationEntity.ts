@@ -40,7 +40,7 @@ export const confirmNotificationEntity = async ({
   // if Telegram, confirm that user has admin rights
 
   const chatMember = await telegramBot.telegram.getChatMember(
-    telegramGroup.chatId.toLocaleString(),
+    telegramGroup.chatId.toString(),
     Number(telegramIdentity.IdentityTelegram.telegramUserId),
   );
 

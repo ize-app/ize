@@ -38,10 +38,7 @@ export const Policy = () => {
 
   const formMethods = useForm<GroupSetupAndPoliciesSchemaType>({
     defaultValues: {
-      name: formState.name ?? "",
-      description: formState.description ?? "",
-      members: formState.members ?? [],
-      notification: formState.notification ?? {},
+      ...formState,
       flows: formState.flows ?? {},
     },
     resolver: zodResolver(groupSetupAndPoliciesFormSchema),
@@ -55,6 +52,9 @@ export const Policy = () => {
     }));
     onNext();
   };
+
+  console.log("errors are  ", formMethods.formState.errors);
+  console.log("form state is ", formMethods.getValues());
 
   const evolveGroupPolicyType = formMethods.watch("flows.evolveGroup.type");
   const watchGroupPolicyType = formMethods.watch("flows.watch.type");
