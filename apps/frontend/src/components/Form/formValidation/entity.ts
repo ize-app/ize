@@ -5,6 +5,8 @@ import { Blockchain, EntityType, NewEntityTypes } from "@/graphql/generated/grap
 
 export type EntitySchemaType = z.infer<typeof entityFormSchema>;
 
+export type NewEntitySchemaType = z.infer<typeof newEntityFormSchema>;
+
 const groupFormSchema = z.object({
   id: z.string(),
   entityId: z.string(),
@@ -122,4 +124,5 @@ export const newEntityFormSchema = z.object({
       },
     )
     .optional(),
+  telegramChat: entityFormSchema.optional(),
 });

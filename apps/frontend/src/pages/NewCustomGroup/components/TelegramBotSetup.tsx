@@ -1,11 +1,9 @@
-import { useLazyQuery } from "@apollo/client";
 import { Button, Typography } from "@mui/material";
 import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useContext } from "react";
 
 import { CopyToClipboardButton } from "@/components/CopyToClipboard";
-import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
-import { EntityFragment, TelegramChatsDocument } from "@/graphql/generated/graphql";
+import { SelectTelegramChat } from "@/components/Form/SelectTelegramChat";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { GroupSetupAndPoliciesSchemaType } from "../formValidation";
@@ -16,9 +14,6 @@ export const TelegramBotSetup = () => {
   const telegramIdentity = me?.identities.find(
     (id) => id.identityType?.__typename === "IdentityTelegram",
   );
-
-  const [getTelegramChats, { loading: telegramChatsLoading, data: telegramChats }] =
-    useLazyQuery(TelegramChatsDocument);
 
   return (
     <>
@@ -66,17 +61,7 @@ export const TelegramBotSetup = () => {
       <Typography variant="description">
         Once you call the /linkgroup command, select the Telegram group below
       </Typography>
-      <AsyncSelect<GroupSetupAndPoliciesSchemaType, EntityFragment>
-        label={"Telegram group"}
-        name="notificationEntity"
-        getOptionLabel={(option) => option.name}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
-        loading={telegramChatsLoading}
-        options={telegramChats?.telegramChats || []}
-        fetchOptions={async () => {
-          await getTelegramChats();
-        }}
-      />
+      <SelectTelegramChat<GroupSetupAndPoliciesSchemaType> label="Chat" name="notificationEntity" />
     </>
   );
   // login button

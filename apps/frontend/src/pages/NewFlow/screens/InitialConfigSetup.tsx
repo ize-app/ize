@@ -19,7 +19,7 @@ export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
 
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
-    defaultValues: formState.initialFlowSetup ?? {},
+    defaultValues: formState.initialFlowSetup ?? { permission: { entities: [] } },
     resolver: zodResolver(intitialFlowSetupSchema),
     // shouldUnregister: true,
   });

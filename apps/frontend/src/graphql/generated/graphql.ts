@@ -620,6 +620,7 @@ export enum NewEntityTypes {
   GroupDiscord = 'GroupDiscord',
   GroupHat = 'GroupHat',
   GroupNft = 'GroupNft',
+  GroupTelegramChat = 'GroupTelegramChat',
   IdentityBlockchain = 'IdentityBlockchain',
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
@@ -2235,6 +2236,7 @@ export enum NewEntityTypes {
   GroupDiscord = 'GroupDiscord',
   GroupHat = 'GroupHat',
   GroupNft = 'GroupNft',
+  GroupTelegramChat = 'GroupTelegramChat',
   IdentityBlockchain = 'IdentityBlockchain',
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'

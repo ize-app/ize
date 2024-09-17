@@ -1,4 +1,5 @@
 import { MailOutline } from "@mui/icons-material";
+import { SvgIcon } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -17,6 +18,7 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 
+import telegramLogoUrl from "@/assets/telegram-logo.svg";
 import { Avatar } from "@/components/Avatar";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
@@ -167,6 +169,22 @@ export const EntitiesSearchField = <T extends FieldValues>({
                           }}
                         >
                           Hat
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={telegramLogoUrl} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
+                          onMouseDown={() => {
+                            setRoleModalType(NewEntityTypes.GroupTelegramChat);
+                            setOpen(true);
+                          }}
+                        >
+                          Telegram
                         </Button>
                       </Box>
                       {children}
