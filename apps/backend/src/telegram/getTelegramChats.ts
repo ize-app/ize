@@ -36,6 +36,7 @@ export const getTelegramChats = async ({
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 
   return telegramIzeBots.map((entity) => {

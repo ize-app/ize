@@ -7,7 +7,7 @@ import { useCallback, useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { attachDiscord } from "@/components/Auth/attachDiscord";
-import botInviteUrl from "@/components/Auth/botInviteUrl";
+import discordBotInviteUrl from "@/components/Auth/discordBotInviteUrl";
 import { DiscordLogoSvg } from "@/components/icons";
 import {
   Blockchain,
@@ -373,7 +373,11 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                     {!serverHasCultsBot && discordServerId && (
                       <Typography>
                         To use all roles in this server, ask your admin to{" "}
-                        <a href={botInviteUrl.toString()} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={discordBotInviteUrl.toString()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           add the Ize Discord bot
                         </a>{" "}
                         to this server.

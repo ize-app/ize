@@ -1,7 +1,8 @@
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useContext } from "react";
 
+import { AddTelegramBotButton } from "@/components/AddTelegramBotButton";
 import { CopyToClipboardButton } from "@/components/CopyToClipboard";
 import { SelectTelegramChat } from "@/components/Form/SelectTelegramChat";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -39,15 +40,7 @@ export const TelegramBotSetup = () => {
         />
       )}
       <Typography variant="description">First, add the Ize bot to your Telegram</Typography>
-      <Button
-        onClick={() => {
-          window.open("https://t.me/ize_app_bot?startgroup=true", "_blank"); //.focus();
-        }}
-        sx={{ display: "flex", width: "fit-content" }}
-        variant="contained"
-      >
-        Add Ize Bot
-      </Button>
+      <AddTelegramBotButton />
       <Typography variant="description">
         Send this slash command in the Telegram group where you want to add the bot
       </Typography>
