@@ -5,6 +5,7 @@ import {
   GroupDiscordPrismaType,
   GroupNftPrismaType,
   GroupPrismaType,
+  GroupTelegramChatPrismaType,
   groupInclude,
 } from "@/core/entity/group/groupPrismaTypes";
 import { IdentityPrismaType, identityInclude } from "@/core/entity/identity/identityPrismaTypes";
@@ -26,6 +27,7 @@ export const resolveCustomGroupEntitySet = async ({
     return {
       nftGroups: [],
       discordRoleGroups: [],
+      telegramGroups: [],
       identities: [],
     };
 
@@ -36,12 +38,14 @@ export const resolveCustomGroupEntitySet = async ({
   const customGroups = new Set<GroupCustomPrismaType>();
   const discordRoleGroups = new Set<GroupDiscordPrismaType>();
   const nftGroups = new Set<GroupNftPrismaType>();
+  const telegramGroups = new Set<GroupTelegramChatPrismaType>();
   const identities = new Set<IdentityPrismaType>();
 
   const sortGroup = (group: GroupPrismaType) => {
     if (group.GroupCustom) customGroups.add(group.GroupCustom);
     else if (group.GroupDiscordRole) discordRoleGroups.add(group.GroupDiscordRole);
     else if (group.GroupNft) nftGroups.add(group.GroupNft);
+    else if (group.GroupTelegramChat) telegramGroups.add(group.GroupTelegramChat);
   };
 
   groups.forEach((group) => sortGroup(group));
@@ -92,6 +96,7 @@ export const resolveCustomGroupEntitySet = async ({
   return {
     nftGroups: Array.from(nftGroups),
     discordRoleGroups: Array.from(discordRoleGroups),
+    telegramGroups: Array.from(telegramGroups),
     identities: Array.from(identities),
   };
 };

@@ -24,6 +24,12 @@ export type GroupCustomPrismaType = Prisma.GroupCustomGetPayload<{
   include: typeof groupCustomInclude;
 }>;
 
+export const groupTelegramChatInclude = Prisma.validator<Prisma.GroupTelegramChatInclude>()({});
+
+export type GroupTelegramChatPrismaType = Prisma.GroupTelegramChatGetPayload<{
+  include: typeof groupTelegramChatInclude;
+}>;
+
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   creator: {
     include: userInclude,
@@ -37,7 +43,9 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   GroupCustom: {
     include: groupCustomInclude,
   },
-  GroupTelegramChat: true,
+  GroupTelegramChat: {
+    include: groupTelegramChatInclude,
+  },
 });
 
 export type GroupPrismaType = Prisma.GroupGetPayload<{
