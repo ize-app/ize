@@ -1,8 +1,10 @@
 import { localUrl, prodUrl } from "@/express/origins";
 import { User } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
+import { telegramBot } from "@/telegram/TelegramClient";
 
 import { createNotificationPayload } from "./createNotificationPayload";
+import { entityInclude } from "../entity/entityPrismaTypes";
 // import { callWebhook } from "../action/webhook/callWebhook";
 
 export const sendGroupNotifications = async ({
@@ -29,7 +31,9 @@ export const sendGroupNotifications = async ({
       include: {
         GroupCustom: {
           include: {
-            // Webhook: true,
+            NotificationEntity: {
+              include: entityInclude,
+            },
           },
         },
       },
@@ -46,7 +50,7 @@ export const sendGroupNotifications = async ({
           },
         ],
         GroupCustom: {
-          // notificationWebhookId: { not: null },
+          notificationEntityId: { not: null },
         },
       },
     });
@@ -59,15 +63,14 @@ export const sendGroupNotifications = async ({
       baseIzeUrl,
     });
 
-    console.log("payload", payload, groups);
-    // await Promise.all(
-    //   groups.map(async (group) => {
-    //     const encryptedUri = group.GroupCustom?.Webhook?.uri;
-    //     if (!encryptedUri) return;
-    //     const uri = decrypt(encryptedUri);
-    //     await callWebhook({ uri, payload });
-    //   }),
-    // );
+    await Promise.all(
+      groups.map(async (group) => {
+        const telegramGroupChat = group.GroupCustom?.NotificationEntity?.Group?.GroupTelegramChat;
+        if (!telegramGroupChat) return;
+
+        telegramBot.telegram.sendMessage(telegramGroupChat.chatId.toString(), payload.message);
+      }),
+    );
   } catch (e) {
     // error sending group notifications shouldn't stop the request from being written
     console.log("Error sending group notifications: ", e);
