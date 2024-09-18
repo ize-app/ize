@@ -37,7 +37,7 @@ export const ResponseForm = ({
       setSnackbarData({ message: "Response submitted!", type: "success" });
     },
     onError: (data) => {
-      console.log("Error submitting response: ", data.message);
+      console.log("Error submitting response: ", data);
       setSnackbarOpen(true);
       setSnackbarData({ message: "Response submission failed", type: "error" });
     },

@@ -55,12 +55,17 @@ export const newResponse = async ({
       },
     });
 
-    if (
-      !hasWritePermission({ permission: requestStep.Step.RequestPermissions, context, transaction })
-    )
+    const hasRespondPermissions = await hasWritePermission({
+      permission: requestStep.Step.ResponsePermissions,
+      context,
+      transaction,
+    });
+
+    if (!hasRespondPermissions) {
       throw new GraphQLError("Unauthenticated", {
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
+    }
 
     if (!context.currentUser)
       throw new GraphQLError("Unauthenticated", {
