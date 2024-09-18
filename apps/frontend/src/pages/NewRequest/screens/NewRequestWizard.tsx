@@ -1,4 +1,4 @@
-import { ApolloError, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -22,12 +22,23 @@ import {
 export const NewRequestWizard = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
-  const { setAuthModalOpen, me } = useContext(CurrentUserContext);
+  const { setAuthModalOpen, setIdentityModalState, me } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewRequestDocument, {
     onCompleted: (data) => {
       const newRequestId = data.newRequest;
       navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request created!", type: "success" });
+    },
+    onError: (data) => {
+      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+        setIdentityModalState({ type: "request", permission: undefined });
+      } else if (data.graphQLErrors[0].extensions.code === "Unauthenticated") {
+        setAuthModalOpen(true);
+      }
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request creation failed", type: "error" });
     },
   });
 
@@ -37,18 +48,8 @@ export const NewRequestWizard = () => {
       await mutate({
         variables: { request: await createNewRequestMutationArgs(formState) },
       });
-
-      setSnackbarOpen(true);
-      setSnackbarData({ message: "Request created!", type: "success" });
     } catch (e) {
       console.log("ERROR: ", e);
-      if (e instanceof ApolloError && e.message === "Unauthenticated") {
-        setAuthModalOpen(true);
-      } else {
-        navigate("/");
-      }
-      setSnackbarOpen(true);
-      setSnackbarData({ message: "Request creation failed", type: "error" });
     }
   };
 

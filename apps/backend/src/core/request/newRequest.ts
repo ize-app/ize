@@ -54,14 +54,20 @@ export const newRequest = async ({
 
   const step = flow.CurrentFlowVersion.Steps[0];
 
-  if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
+  if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  const hasRequestPermission = await hasWritePermission({
+    permission: step.RequestPermissions,
+    context,
+    transaction,
+  });
+
+  if (!hasRequestPermission)
+    throw new GraphQLError("User does not have permission to respond", {
+      extensions: { code: CustomErrorCodes.InsufficientPermissions },
     });
 
   const request = await transaction.request.create({

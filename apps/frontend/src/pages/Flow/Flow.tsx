@@ -207,7 +207,7 @@ export const Flow = () => {
               <>
                 <Button
                   variant="contained"
-                  disabled={!flow.steps[0]?.userPermission.request}
+                  // disabled={!flow.steps[0]?.userPermission.request}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",
@@ -231,7 +231,7 @@ export const Flow = () => {
                       }),
                     );
                   }}
-                  disabled={!flow.evolve?.steps[0]?.request}
+                  // disabled={!flow.evolve?.steps[0]?.request}
                   sx={{
                     width: "140px",
                     display: !me ? "none" : "flex",

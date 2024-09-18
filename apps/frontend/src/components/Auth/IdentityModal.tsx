@@ -44,7 +44,7 @@ const IdentityModal = () => {
           <Typography variant="h2" sx={{ mb: "16px" }}>
             Missing permissions
           </Typography>
-          {identityModalState?.permission && (
+          {identityModalState?.permission ? (
             <>
               <Typography variant="h3">
                 {identityModalState?.type === "response" ? "Response" : "Trigger"} permissions
@@ -57,13 +57,17 @@ const IdentityModal = () => {
               <Typography variant="h3" sx={{ marginTop: "20px" }}>
                 Your identies
               </Typography>
-              <Typography variant="description" sx={{ marginBottom: "8px" }}>
-                Connect additional identities to{" "}
-                {identityModalState?.type === "response" ? "respond" : "trigger this flow"}
-              </Typography>
-              <UserIdentities identities={me?.identities} />
             </>
+          ) : (
+            <Typography variant="description" sx={{ marginBottom: "8px" }}>
+              Your aren&apos;t connected to an identity that has permission to{" "}
+              {identityModalState?.type === "response" ? "respond" : "trigger this flow"}.
+            </Typography>
           )}
+          <Typography variant="description" sx={{ marginBottom: "8px" }}>
+            Connect additional identities:
+          </Typography>
+          <UserIdentities identities={me?.identities} />
         </Box>
       </Box>
     </Modal>
