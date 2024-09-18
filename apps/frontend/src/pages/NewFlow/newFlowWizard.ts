@@ -1,7 +1,6 @@
 import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
 import { NewFlowWizardFormSchema } from "./formValidation";
-import { FlowSchemaType } from "../../components/Form/FlowForm/formValidation/flow";
 import { NewFlowRoute, newFlowRoute } from "../../routers/routes";
 
 export function useNewFlowWizardState() {
@@ -10,7 +9,7 @@ export function useNewFlowWizardState() {
 
 export const NEW_FLOW_PROGRESS_BAR_STEPS = ["Setup", "Edit details", "Confirm"];
 
-export const NEW_FLOW_WIZARD_STEPS: WizardSteps<FlowSchemaType> = [
+export const NEW_FLOW_WIZARD_STEPS: WizardSteps<NewFlowWizardFormSchema> = [
   {
     path: newFlowRoute(NewFlowRoute.InitialSetup),
     title: "Create a new flow",

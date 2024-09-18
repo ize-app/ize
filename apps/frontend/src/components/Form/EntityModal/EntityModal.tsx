@@ -138,7 +138,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
 
   const handleEntitySelection = useCallback((entities: EntitySummaryPartsFragment[]) => {
     setOpen(false);
-    onSubmit(entities);
+    onSubmit([...entities]);
   }, []);
 
   const [mutate] = useMutation(NewEntitiesDocument, {
@@ -180,6 +180,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
     },
     resolver: zodResolver(newEntityFormSchema),
     shouldUnregister: true,
+    // shouldUnregister: false,
   });
 
   const { control, handleSubmit, watch } = formMethods;

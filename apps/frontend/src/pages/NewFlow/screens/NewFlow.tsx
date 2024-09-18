@@ -9,11 +9,11 @@ import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Wizard, useWizard } from "@/hooks/useWizard";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-import { FlowSchemaType } from "../../../components/Form/FlowForm/formValidation/flow";
 import { createNewFlowArgs } from "../../../components/Form/FlowForm/helpers/createNewFlowArgs/createNewFlowArgs";
 import { SnackbarContext } from "../../../hooks/contexts/SnackbarContext";
 import Head from "../../../layout/Head";
 import PageContainer from "../../../layout/PageContainer";
+import { NewFlowWizardFormSchema } from "../formValidation";
 import { NEW_FLOW_PROGRESS_BAR_STEPS, NEW_FLOW_WIZARD_STEPS } from "../newFlowWizard";
 
 export const NewFlow = () => {
@@ -33,7 +33,7 @@ export const NewFlow = () => {
       if (!me?.user.id) throw Error("Missing user Id");
       await mutate({
         variables: {
-          flow: createNewFlowArgs(formState, me?.user.id),
+          flow: createNewFlowArgs(formState.newFlow, me?.user.id),
         },
       });
       setSnackbarData({
@@ -43,6 +43,7 @@ export const NewFlow = () => {
       });
       setSnackbarOpen(true);
     } catch (e) {
+      console.log("ERROR: ", e);
       if (e instanceof ApolloError && e.message === "Unauthenticated") {
         setAuthModalOpen(true);
       } else {
@@ -53,7 +54,7 @@ export const NewFlow = () => {
     }
   };
 
-  const newFlowWizard: Wizard<FlowSchemaType> = {
+  const newFlowWizard: Wizard<NewFlowWizardFormSchema> = {
     steps: NEW_FLOW_WIZARD_STEPS,
     onComplete,
     //@ts-expect-error TODO: fix initial state

@@ -21,14 +21,14 @@ export const InitialConfigSetup = () => {
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
     defaultValues: formState.initialFlowSetup ?? { permission: { entities: [] } },
     resolver: zodResolver(intitialFlowSetupSchema),
-    // shouldUnregister: true,
+    shouldUnregister: false,
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },
-      newFlow: { ...generateNewFlowConfig({ config: data }) },
+      newFlow: generateNewFlowConfig({ config: data }),
     }));
     onNext();
   };
