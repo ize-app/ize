@@ -55,6 +55,11 @@ export const newResponse = async ({
       },
     });
 
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
     const hasRespondPermissions = await hasWritePermission({
       permission: requestStep.Step.ResponsePermissions,
       context,
@@ -62,16 +67,10 @@ export const newResponse = async ({
     });
 
     if (!hasRespondPermissions) {
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
+      throw new GraphQLError("User does not have permission to respond", {
+        extensions: { code: CustomErrorCodes.InsufficientPermissions },
       });
     }
-
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-
     if (requestStep.id !== requestStep.Request.currentRequestStepId)
       throw new GraphQLError(
         "User is trying to submit response for request step that is not the current request step.",

@@ -12,7 +12,9 @@ import {
   FieldOptionsSelectionType,
   FieldType,
   NewResponseDocument,
+  PermissionFragment,
 } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 import { ResponseSchemaType, responseSchema } from "./formValidation";
@@ -23,12 +25,15 @@ import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
 export const ResponseForm = ({
   responseFields,
   requestStepId,
+  permission,
 }: {
   responseFields: FieldFragment[];
   requestStepId: string;
+  permission: PermissionFragment | undefined | null;
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
+  const { setIdentityModalState } = useContext(CurrentUserContext);
   const [mutate] = useMutation(NewResponseDocument, {
     onCompleted: (_data) => {
       navigate(0);
@@ -37,7 +42,10 @@ export const ResponseForm = ({
       setSnackbarData({ message: "Response submitted!", type: "success" });
     },
     onError: (data) => {
-      console.log("Error submitting response: ", data);
+      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+        setIdentityModalState({ type: "response", permission });
+      }
+
       setSnackbarOpen(true);
       setSnackbarData({ message: "Response submission failed", type: "error" });
     },

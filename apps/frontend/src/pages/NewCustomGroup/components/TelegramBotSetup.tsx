@@ -35,7 +35,7 @@ export const TelegramBotSetup = () => {
           }}
           buttonSize="medium"
           cornerRadius={5} // 0 - 20
-          showAvatar={true} // true | false
+          showAvatar={false} // true | false
           lang="en"
         />
       )}

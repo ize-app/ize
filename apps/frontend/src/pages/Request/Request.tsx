@@ -47,7 +47,6 @@ export const Request = () => {
   const navigate = useNavigate();
 
   let acceptingNewResponses = false;
-  let canRespond: boolean = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
 
@@ -70,7 +69,6 @@ export const Request = () => {
 
   if (request) {
     acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
-    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response;
     userResponses = request.steps[request.currentStepIndex].userResponses;
     allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
@@ -176,8 +174,7 @@ export const Request = () => {
               <RequestResults request={request} />
             </Box>
           </Box>
-          {canRespond &&
-            acceptingNewResponses &&
+          {acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
                 sx={{
@@ -197,6 +194,7 @@ export const Request = () => {
                 <ResponseForm
                   requestStepId={request.steps[request.currentStepIndex].requestStepId}
                   responseFields={request.steps[request.currentStepIndex].responseFields}
+                  permission={request.flow.steps[request.currentStepIndex].response.permission}
                 />
               </Paper>
             )}
