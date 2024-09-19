@@ -1,7 +1,5 @@
 import { TelegramUserData } from "@telegram-auth/server/utils";
-import { GraphQLError } from "graphql";
 
-import { CustomErrorCodes } from "@/graphql/errors";
 import { Identity } from "@/graphql/generated/resolver-types";
 
 import { IdentityPrismaType } from "../core/entity/identity/identityPrismaTypes";
@@ -13,13 +11,8 @@ export const upsertTelegramIdentity = async ({
   userId,
 }: {
   telegramUserData: TelegramUserData;
-  userId: string;
-}): Promise<Identity | null> => {
-  if (!userId)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
-
+  userId?: string | undefined;
+}): Promise<Identity> => {
   let identity = await prisma.identity.findFirst({
     include: {
       IdentityTelegram: true,
@@ -37,11 +30,13 @@ export const upsertTelegramIdentity = async ({
         IdentityTelegram: true,
       },
       data: {
-        User: {
-          connect: {
-            id: userId,
-          },
-        },
+        User: userId
+          ? {
+              connect: {
+                id: userId,
+              },
+            }
+          : {},
         Entity: {
           create: {},
         },
@@ -52,6 +47,33 @@ export const upsertTelegramIdentity = async ({
             username: telegramUserData.username,
             photoUrl: telegramUserData.photo_url,
             telegramUserId: telegramUserData.id,
+          },
+        },
+      },
+    });
+  } else {
+    identity = await prisma.identity.update({
+      include: {
+        IdentityTelegram: true,
+      },
+      where: {
+        id: identity.id,
+      },
+      data: {
+        User: userId
+          ? {
+              connect: {
+                id: userId,
+              },
+            }
+          : {},
+        IdentityTelegram: {
+          update: {
+            firstName: telegramUserData.first_name ?? identity.IdentityTelegram?.firstName,
+            lastName: telegramUserData.last_name ?? identity.IdentityTelegram?.lastName,
+            username: telegramUserData.username ?? identity.IdentityTelegram?.username,
+            photoUrl: telegramUserData.photo_url ?? identity.IdentityTelegram?.photoUrl,
+            telegramUserId: telegramUserData.id ?? identity.IdentityTelegram?.telegramUserId,
           },
         },
       },

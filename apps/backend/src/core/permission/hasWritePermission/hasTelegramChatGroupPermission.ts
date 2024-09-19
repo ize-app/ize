@@ -1,5 +1,5 @@
 import { GroupTelegramChatPrismaType } from "@/core/entity/group/groupPrismaTypes";
-import { updateIdentityGroups } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
+import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
 import { telegramBot } from "@/telegram/TelegramClient";
 import { GraphqlRequestContext } from "@graphql/context";
 
@@ -35,14 +35,14 @@ export const hasTelegramChatGroupPermission = async ({
       ) {
         // updating identities_groups association because we can't query all of a user's telegram chats
         // like we do with other platforms
-        updateIdentityGroups({
+        upsertIdentityGroup({
           identityId: telegramIdentity.id,
           groupId: telegramGroup.groupId,
           active: true,
         });
         return true;
       } else {
-        updateIdentityGroups({
+        upsertIdentityGroup({
           identityId: telegramIdentity.id,
           groupId: telegramGroup.groupId,
           active: false,

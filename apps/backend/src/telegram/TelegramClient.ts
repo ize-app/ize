@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
+import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
+
 import { upsertTelegramChatGroup } from "./upsertTelegramChatGroup";
+import { upsertTelegramIdentity } from "./upsertTelegramIdentity";
 
 dotenv.config();
 
@@ -48,12 +51,23 @@ telegramBot.command("linkgroup", async (ctx) => {
       return;
     }
 
-    await upsertTelegramChatGroup({
+    const tgGroupId = await upsertTelegramChatGroup({
       chatId,
       messageThreadId,
       title: chat.title,
       adminTelegramUserId: fromUserId,
     });
+
+    try {
+      const tgIdentity = await upsertTelegramIdentity({ telegramUserData: chatMember.user });
+      await upsertIdentityGroup({
+        identityId: tgIdentity.id,
+        groupId: tgGroupId,
+        active: true,
+      });
+    } catch (error) {
+      console.log("ERROR: Telegram bot linkgroup command. Error creating telegram identity", error);
+    }
 
     ctx.reply("Ize will send notifications to this chat");
   } catch (error) {

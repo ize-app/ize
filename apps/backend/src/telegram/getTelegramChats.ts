@@ -29,6 +29,12 @@ export const getTelegramChats = async ({
     include: entityInclude,
     where: {
       Group: {
+        IdentitiesGroups: {
+          some: {
+            identityId: telegramIdentity.id,
+            active: true,
+          },
+        },
         // this only pulls groups where user was last admin to call /linkgroup telegram command
         GroupTelegramChat: {
           id: { not: undefined },

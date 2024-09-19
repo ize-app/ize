@@ -19,8 +19,10 @@ export const upsertTelegramChatGroup = async ({
     },
   });
 
+  let groupId: string;
+
   if (existingGroup) {
-    await prisma.groupTelegramChat.update({
+    const group = await prisma.groupTelegramChat.update({
       where: {
         chatId,
       },
@@ -30,8 +32,12 @@ export const upsertTelegramChatGroup = async ({
         adminTelegramUserId,
       },
     });
+    groupId = group.groupId;
   } else {
-    await prisma.entity.create({
+    const entity = await prisma.entity.create({
+      include: {
+        Group: true,
+      },
       data: {
         Group: {
           create: {
@@ -48,5 +54,8 @@ export const upsertTelegramChatGroup = async ({
         },
       },
     });
+    groupId = entity.Group?.id as string;
   }
+
+  return groupId;
 };
