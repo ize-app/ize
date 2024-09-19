@@ -11,6 +11,7 @@ import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRe
 import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 
@@ -44,6 +45,7 @@ export const Request = () => {
   const { requestId: shortRequestId } = useParams();
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { me } = useContext(CurrentUserContext);
   const navigate = useNavigate();
 
   let acceptingNewResponses = false;
@@ -174,7 +176,8 @@ export const Request = () => {
               <RequestResults request={request} />
             </Box>
           </Box>
-          {acceptingNewResponses &&
+          {!!me &&
+            acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
                 sx={{

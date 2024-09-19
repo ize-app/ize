@@ -203,44 +203,47 @@ export const Flow = () => {
               gap: "16px",
             }}
           >
-            {isCurrentFlowVersion && !isEvolveFlow && (
-              <>
-                <Button
-                  variant="contained"
-                  // disabled={!flow.steps[0]?.userPermission.request}
-                  sx={{
-                    width: "140px",
-                    display: !me ? "none" : "flex",
-                  }}
-                  onClick={() =>
-                    navigate(
-                      generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
-                        flowId: fullUUIDToShort(flow.flowId),
-                      }),
-                    )
-                  }
-                >
-                  Create request
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    navigate(
-                      generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {
-                        flowId: fullUUIDToShort(flow.flowId),
-                      }),
-                    );
-                  }}
-                  // disabled={!flow.evolve?.steps[0]?.request}
-                  sx={{
-                    width: "140px",
-                    display: !me ? "none" : "flex",
-                  }}
-                >
-                  Evolve flow
-                </Button>
-              </>
-            )}
+            {isCurrentFlowVersion &&
+              !isEvolveFlow &&
+              // user is logged in
+              !!me && (
+                <>
+                  <Button
+                    variant="contained"
+                    // disabled={!flow.steps[0]?.userPermission.request}
+                    sx={{
+                      width: "140px",
+                      display: !me ? "none" : "flex",
+                    }}
+                    onClick={() =>
+                      navigate(
+                        generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
+                          flowId: fullUUIDToShort(flow.flowId),
+                        }),
+                      )
+                    }
+                  >
+                    Create request
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      navigate(
+                        generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {
+                          flowId: fullUUIDToShort(flow.flowId),
+                        }),
+                      );
+                    }}
+                    // disabled={!flow.evolve?.steps[0]?.request}
+                    sx={{
+                      width: "140px",
+                      display: !me ? "none" : "flex",
+                    }}
+                  >
+                    Evolve flow
+                  </Button>
+                </>
+              )}
             {isOldVersion && (
               <Button
                 variant="contained"
