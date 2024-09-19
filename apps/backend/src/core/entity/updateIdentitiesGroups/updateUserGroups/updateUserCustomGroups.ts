@@ -3,7 +3,7 @@ import { GroupType, Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "@/graphql/context";
 
 import { prisma } from "../../../../prisma/client";
-import { getCustomGroupsForIdentity } from "../getCustomGroupsForIdentity";
+import { getCustomGroupsByMembers } from "../getCustomGroupsForIdentity";
 import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
 
 export const updateUserCustomGroups = async ({
@@ -24,7 +24,7 @@ export const updateUserCustomGroups = async ({
             identityId,
           },
         });
-        const customGroupIds = await getCustomGroupsForIdentity({
+        const customGroupIds = await getCustomGroupsByMembers({
           identityId,
           groupIds: groupsOfIdentity.map((group) => group.groupId),
         });
