@@ -187,7 +187,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                           Telegram
                         </Button>
                       </Box>
-                      {children}
+                      <Box sx={{ maxHeight: "200px", overflowY: "auto" }}>{children}</Box>
                     </Paper>
                   );
                 }}

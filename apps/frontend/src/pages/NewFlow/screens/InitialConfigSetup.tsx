@@ -84,7 +84,7 @@ export const InitialConfigSetup = () => {
                   ariaLabel={"Individuals and groups to add to custom group"}
                   control={formMethods.control}
                   name={"permission.entities"}
-                  hideCustomGroups={true}
+                  hideCustomGroups={false}
                   label={"Group members *"}
                   setFieldValue={formMethods.setValue}
                   getFieldValues={formMethods.getValues}
