@@ -706,7 +706,8 @@ export type OptionFieldAnswerSelection = {
 };
 
 export type OptionSelectionArgs = {
-  optionId: Scalars['String']['input'];
+  optionId?: InputMaybe<Scalars['String']['input']>;
+  optionIndex?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Options = {

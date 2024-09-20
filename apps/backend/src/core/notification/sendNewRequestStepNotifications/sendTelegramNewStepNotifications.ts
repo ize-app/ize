@@ -1,6 +1,7 @@
 import { FieldType, GroupTelegramChat } from "@prisma/client";
 
 import { FieldOptionsSelectionType, Request } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
 import { createRequestUrl } from "./createRequestUrl";
@@ -32,20 +33,29 @@ export const sendTelegramNewStepMessage = async ({
   ) {
     const options = firstField.options;
     await Promise.all(
-      telegramGroups.map(
-        async (group) =>
-          await telegramBot.telegram.sendPoll(
-            group.chatId.toString(),
-            requestName.substring(0, 300),
-            options.map((option) => option.name.substring(0, 100)),
-            {
-              is_anonymous: true,
-              reply_markup: {
-                inline_keyboard: [[{ url, text: "See request on Ize" }]],
-              },
+      telegramGroups.map(async (group) => {
+        const poll = await telegramBot.telegram.sendPoll(
+          group.chatId.toString(),
+          requestName.substring(0, 300),
+          options.map((option) => option.name.substring(0, 100)),
+          {
+            // anonymous polls don't send poll_answer update
+            // to be confirmed: this might just be a testing env issue
+            is_anonymous: false,
+            reply_markup: {
+              inline_keyboard: [[{ url, text: "See request on Ize" }]],
             },
-          ),
-      ),
+          },
+        );
+
+        await prisma.telegramPoll.create({
+          data: {
+            pollId: BigInt(poll.poll.id),
+            requestStepId,
+            fieldId: firstField.fieldId,
+          },
+        });
+      }),
     );
     return;
   }

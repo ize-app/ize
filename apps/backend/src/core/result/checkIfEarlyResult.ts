@@ -43,6 +43,8 @@ export const checkIfEarlyResult = ({
           responses,
         });
 
+        if (r.minAnswers > fieldAnswers.length) return false;
+
         return !!determineDecision({ decisionConfig, answers: fieldAnswers });
       }
       return false;

@@ -3,6 +3,7 @@ import { Telegraf } from "telegraf";
 
 import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
 
+import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 import { upsertTelegramChatGroup } from "./upsertTelegramChatGroup";
 import { upsertTelegramIdentity } from "./upsertTelegramIdentity";
 
@@ -75,6 +76,11 @@ telegramBot.command("linkgroup", async (ctx) => {
     ctx.reply("Something went wrong. Please try again.");
   }
 });
+
+telegramBot.on("poll_answer", (ctx) => {
+  handleTelegramPollResponse({ pollAnswer: ctx.update.poll_answer });
+});
+
 telegramBot.launch();
 
 // Enable graceful stop

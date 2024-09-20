@@ -474,6 +474,7 @@ model Field {
   ResultConfig            ResultConfig[]
   FieldSetFields          FieldSetsFields[]
   RequestDefinedOptionSet RequestDefinedOptionSet[]
+  TelegramPolls           TelegramPoll[]
 
   @@map("fields")
 }
@@ -770,6 +771,7 @@ model RequestStep {
   RequestDefinedOptionSets RequestDefinedOptionSet[]
   Responses                Response[]
   ActionExecution          ActionExecution[]
+  TelegramPolls            TelegramPoll[]
 
   @@unique([stepId, requestId])
   @@map("request_steps")
@@ -896,6 +898,18 @@ model GroupsWatchedFlows {
 
   @@unique([flowId, groupId])
   @@map("groups_watched_flows")
+}
+
+model TelegramPoll {
+  id            String @id @default(uuid()) @db.Uuid
+  pollId        BigInt @unique @map("poll_id")
+  requestStepId String @map("request_step_id") @db.Uuid
+  fieldId       String @map("field_id") @db.Uuid
+
+  RequestStep RequestStep @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  Field       Field       @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@map("telegram_polls")
 }
 
 // model Notifications {
