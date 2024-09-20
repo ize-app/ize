@@ -145,7 +145,6 @@ export const newEvolveRequest = async ({
       args: { request: requestArgs },
       context,
       proposedFlowVersionId,
-      transaction,
-    });
+  });
   });
 };

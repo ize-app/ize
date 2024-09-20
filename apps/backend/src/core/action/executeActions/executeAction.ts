@@ -91,7 +91,7 @@ export const executeAction = async ({
       break;
     }
     case ActionType.TriggerStep: {
-      actionComplete = await triggerNextStep({ requestStepId, transaction });
+      actionComplete = await triggerNextStep({ requestStepId });
       break;
     }
     case ActionType.EvolveFlow: {

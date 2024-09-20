@@ -67,7 +67,6 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.getRequest;
-  // console.log(request);
 
   if (request) {
     acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
