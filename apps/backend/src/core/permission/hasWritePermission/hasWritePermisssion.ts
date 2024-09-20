@@ -7,7 +7,7 @@ import { hasDiscordRoleGroupPermission } from "./hasDiscordRoleGroupPermission";
 import { hasIdentityPermission } from "./hasIdentityPermission";
 import { hasNftGroupPermission } from "./hasNftGroupPermission";
 import { hasTelegramChatGroupPermission } from "./hasTelegramChatGroupPermission";
-import { resolveCustomGroupEntitySet } from "./resolveEntitySet";
+import { resolveEntitySet } from "./resolveEntitySet";
 import { prisma } from "../../../prisma/client";
 import { PermissionPrismaType } from "../permissionPrismaTypes";
 
@@ -33,17 +33,16 @@ export const hasWritePermission = async ({
 
   if (permission.userId === context.currentUser.id) return true;
 
-  const { discordRoleGroups, nftGroups, telegramGroups, identities } =
-    await resolveCustomGroupEntitySet({
-      permission,
-      transaction,
-    });
+  const { discordRoleGroups, nftGroups, telegramGroups, identities } = await resolveEntitySet({
+    permission,
+    transaction,
+  });
 
   if (await hasIdentityPermission({ identities, userIdentities: context.currentUser.Identities }))
     return true;
 
   if (await hasTelegramChatGroupPermission({ telegramGroups, context })) return true;
-  
+
   if (await hasNftGroupPermission({ nftGroups, userIdentities: context.currentUser.Identities }))
     return true;
 

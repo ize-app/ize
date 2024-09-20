@@ -1,3 +1,4 @@
+import { resolveEntitySet } from "@/core/permission/hasWritePermission/resolveEntitySet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { prisma } from "@/prisma/client";
@@ -54,11 +55,23 @@ export const sendNewStepNotifications = async ({
 
     const request = await requestResolver({ req: data, context: {}, userGroupIds: [] });
 
+    const stepIndex = data.RequestSteps.findIndex((rs) => rs.id === data.currentRequestStepId);
+    const step = data.FlowVersion.Steps[stepIndex];
+    const respondPermission = step.ResponsePermissions;
+    if (!respondPermission) return;
+
+    const resolvedEntities = await resolveEntitySet({ permission: respondPermission });
+
     const telegramGroups = groups
       .map((group) => group.GroupCustom?.NotificationEntity?.Group?.GroupTelegramChat)
       .filter((tgGroup) => !!tgGroup);
 
-    await sendTelegramNewStepMessage({ telegramGroups, request, requestStepId });
+    await sendTelegramNewStepMessage({
+      telegramGroups,
+      request,
+      requestStepId,
+      permissions: { resolvedEntities, anyone: respondPermission.anyone },
+    });
   } catch (e) {
     // error sending group notifications shouldn't stop the request from being written
     console.log("Error sending group notifications: ", e);

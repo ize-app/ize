@@ -1,5 +1,6 @@
 import { FieldType, GroupTelegramChat } from "@prisma/client";
 
+import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
 import { FieldOptionsSelectionType, Request } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
@@ -10,12 +11,18 @@ export const sendTelegramNewStepMessage = async ({
   telegramGroups,
   request,
   requestStepId,
+  permissions,
 }: {
   telegramGroups: GroupTelegramChat[];
   request: Request;
   requestStepId: string;
+  permissions: {
+    anyone: boolean;
+    resolvedEntities: ResolvedEntities;
+  };
 }) => {
   const requestStep = request.steps.find((step) => step.requestStepId === requestStepId);
+
   if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
   const requestName = request.name;
@@ -26,14 +33,19 @@ export const sendTelegramNewStepMessage = async ({
 
   const url = createRequestUrl({ requestId: request.requestId });
 
-  if (
-    responseFields.length === 1 &&
-    firstField.__typename === FieldType.Options &&
-    firstField.selectionType === FieldOptionsSelectionType.Select
-  ) {
-    const options = firstField.options;
-    await Promise.all(
-      telegramGroups.map(async (group) => {
+  await Promise.all(
+    telegramGroups.map(async (group) => {
+      const chatHasRespondPermission =
+        permissions.anyone ||
+        permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
+
+      if (
+        chatHasRespondPermission &&
+        responseFields.length === 1 &&
+        firstField.__typename === FieldType.Options &&
+        firstField.selectionType === FieldOptionsSelectionType.Select
+      ) {
+        const options = firstField.options;
         const poll = await telegramBot.telegram.sendPoll(
           group.chatId.toString(),
           requestName.substring(0, 300),
@@ -41,6 +53,7 @@ export const sendTelegramNewStepMessage = async ({
           {
             // anonymous polls don't send poll_answer update
             // to be confirmed: this might just be a testing env issue
+            message_thread_id: group.messageThreadId ? Number(group.messageThreadId) : undefined,
             is_anonymous: false,
             reply_markup: {
               inline_keyboard: [[{ url, text: "See request on Ize" }]],
@@ -55,8 +68,8 @@ export const sendTelegramNewStepMessage = async ({
             fieldId: firstField.fieldId,
           },
         });
-      }),
-    );
-    return;
-  }
+        return;
+      }
+    }),
+  );
 };

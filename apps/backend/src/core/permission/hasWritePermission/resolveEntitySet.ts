@@ -13,16 +13,23 @@ import { IdentityPrismaType, identityInclude } from "@/core/entity/identity/iden
 import { prisma } from "../../../prisma/client";
 import { PermissionPrismaType } from "../permissionPrismaTypes";
 
+export interface ResolvedEntities {
+  nftGroups: GroupNftPrismaType[];
+  discordRoleGroups: GroupDiscordPrismaType[];
+  telegramGroups: GroupTelegramChatPrismaType[];
+  identities: IdentityPrismaType[];
+}
+
 // creates unique list of different group / identity types for a given permission set
 // resolves custom groups to their consitituent group / identity members
 // Note: custom groups cannot have another custom groups as members
-export const resolveCustomGroupEntitySet = async ({
+export const resolveEntitySet = async ({
   permission,
   transaction = prisma,
 }: {
   permission: PermissionPrismaType;
   transaction?: Prisma.TransactionClient;
-}) => {
+}): Promise<ResolvedEntities> => {
   if (!permission.EntitySet)
     return {
       nftGroups: [],
