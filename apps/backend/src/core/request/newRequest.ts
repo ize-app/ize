@@ -7,7 +7,7 @@ import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import { sendNewStepNotifications } from "../notification/sendNewStepNotifications/sendNewStepNotifications";
+import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
 import { hasWriteUserPermission } from "../permission/hasWritePermission";
 import { userInclude } from "../user/userPrismaTypes";
 import { watchFlow } from "../user/watchFlow";
