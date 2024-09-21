@@ -26,6 +26,7 @@ export const sendTelegramNewStepMessage = async ({
   if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
   const requestName = request.name;
+  const flowName = request.flow.name;
 
   const { responseFields } = requestStep;
 
@@ -35,9 +36,12 @@ export const sendTelegramNewStepMessage = async ({
 
   await Promise.all(
     telegramGroups.map(async (group) => {
+      const messageThreadId = group.messageThreadId ? Number(group.messageThreadId) : undefined;
       const chatHasRespondPermission =
         permissions.anyone ||
         permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
+
+      if (responseFields.length === 0) return;
 
       if (
         chatHasRespondPermission &&
@@ -69,6 +73,14 @@ export const sendTelegramNewStepMessage = async ({
           },
         });
         return;
+      } else {
+        const message = `New request in Ize 👀\n${requestName}\n\n__${flowName}__`;
+        await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
+          reply_markup: {
+            inline_keyboard: [[{ url, text: "See request on Ize" }]],
+          },
+          message_thread_id: messageThreadId,
+        });
       }
     }),
   );
