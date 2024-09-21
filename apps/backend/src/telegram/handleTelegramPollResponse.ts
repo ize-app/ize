@@ -1,7 +1,7 @@
 import { PollAnswer } from "telegraf/types";
 
+import { identityInclude } from "@/core/entity/identity/identityPrismaTypes";
 import { newResponse } from "@/core/response/newResponse";
-import { meInclude } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 // import { PollAnswer } from "telegraf/typings/core/types/typegram";
 export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: PollAnswer }) => {
@@ -15,20 +15,17 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
     },
   });
 
-  const user = await prisma.user.findFirstOrThrow({
-    include: meInclude,
+  const identity = await prisma.identity.findFirstOrThrow({
+    include: identityInclude,
     where: {
-      Identities: {
-        some: {
-          IdentityTelegram: {
-            telegramUserId: userId,
-          },
-        },
+      IdentityTelegram: {
+        telegramUserId: userId,
       },
     },
   });
 
   await newResponse({
+    type: "identity",
     args: {
       response: {
         answers: [
@@ -40,6 +37,6 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
         requestStepId: poll.requestStepId,
       },
     },
-    context: { currentUser: user },
+    identity,
   });
 };

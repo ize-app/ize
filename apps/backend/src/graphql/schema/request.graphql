@@ -115,7 +115,7 @@ type RequestStepSummary {
 type Response {
   responseId: String!
   createdAt: String!
-  user: User!
+  creator: Respondant!
   answers: [FieldAnswer!]!
 }
 

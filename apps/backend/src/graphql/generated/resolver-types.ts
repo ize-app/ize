@@ -927,12 +927,14 @@ export type RequestStepSummary = {
   userResponded: Scalars['Boolean']['output'];
 };
 
+export type Respondant = Identity | User;
+
 export type Response = {
   __typename?: 'Response';
   answers: Array<FieldAnswer>;
   createdAt: Scalars['String']['output'];
+  creator: Respondant;
   responseId: Scalars['String']['output'];
-  user: User;
 };
 
 export type ResponseConfig = {
@@ -1041,7 +1043,7 @@ export type UserFieldAnswer = {
   __typename?: 'UserFieldAnswer';
   answer: FieldAnswer;
   createdAt: Scalars['String']['output'];
-  user: User;
+  creator: Respondant;
 };
 
 export type UserFieldAnswers = {
@@ -1177,6 +1179,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
+  Respondant: ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
 };
 
@@ -1287,7 +1290,8 @@ export type ResolversTypes = {
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatusFilter: RequestStepStatusFilter;
   RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['User'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
-  Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversTypes['FieldAnswer']>, user: ResolversTypes['User'] }>;
+  Respondant: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Respondant']>;
+  Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversTypes['FieldAnswer']>, creator: ResolversTypes['Respondant'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversTypes['Field']>, permission?: Maybe<ResolversTypes['Permission']> }>;
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
@@ -1303,7 +1307,7 @@ export type ResolversTypes = {
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
-  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversTypes['FieldAnswer'], user: ResolversTypes['User'] }>;
+  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversTypes['FieldAnswer'], creator: ResolversTypes['Respondant'] }>;
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
@@ -1406,7 +1410,8 @@ export type ResolversParentTypes = {
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, responseFields: Array<ResolversParentTypes['Field']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['User'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
-  Response: Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, user: ResolversParentTypes['User'] };
+  Respondant: ResolversUnionTypes<ResolversParentTypes>['Respondant'];
+  Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Respondant'] };
   ResponseConfig: Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversParentTypes['Field']>, permission?: Maybe<ResolversParentTypes['Permission']> };
   Result: Result;
   ResultArgs: ResultArgs;
@@ -1420,7 +1425,7 @@ export type ResolversParentTypes = {
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
   User: User;
-  UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversParentTypes['FieldAnswer'], user: ResolversParentTypes['User'] };
+  UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['FieldAnswer'], creator: ResolversParentTypes['Respondant'] };
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
@@ -1917,11 +1922,15 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type RespondantResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Respondant'] = ResolversParentTypes['Respondant']> = {
+  __resolveType: TypeResolveFn<'Identity' | 'User', ParentType, ContextType>;
+};
+
 export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
   answers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Respondant'], ParentType, ContextType>;
   responseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1983,7 +1992,7 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
 export type UserFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFieldAnswer'] = ResolversParentTypes['UserFieldAnswer']> = {
   answer?: Resolver<ResolversTypes['FieldAnswer'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Respondant'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2086,6 +2095,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestConfig?: RequestConfigResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
+  Respondant?: RespondantResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   Result?: ResultResolvers<ContextType>;

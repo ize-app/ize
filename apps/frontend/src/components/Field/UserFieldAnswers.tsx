@@ -23,7 +23,7 @@ export const UserFieldAnswers = ({
   const otherAnswers: UserFieldAnswerFragment[] = [];
 
   userFieldAnswers.answers.forEach((userFieldAnswer) => {
-    if (userFieldAnswer.user.id === me?.user.id) {
+    if (userFieldAnswer.creator.id === me?.user.id) {
       userAnswers.push(userFieldAnswer);
     } else {
       otherAnswers.push(userFieldAnswer);

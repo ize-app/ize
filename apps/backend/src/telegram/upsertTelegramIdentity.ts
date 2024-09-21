@@ -79,5 +79,15 @@ export const upsertTelegramIdentity = async ({
       },
     });
   }
+
+  // associate all previous responses of identity with user
+  // TODO: replicate this same logic for Discord
+  if (userId) {
+    await prisma.response.updateMany({
+      where: { identityId: identity.id },
+      data: { userId: userId },
+    });
+  }
+
   return identityResolver(identity as IdentityPrismaType, [], false);
 };

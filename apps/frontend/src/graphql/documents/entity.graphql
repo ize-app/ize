@@ -39,6 +39,16 @@ fragment EntitySummaryParts on Entity {
   }
 }
 
+fragment Respondant on Respondant {
+  __typename
+  ... on User {
+    ...UserSummaryParts
+  }
+  ... on Identity {
+    ...IdentitySummaryParts
+  }
+}
+
 fragment GroupSummaryParts on Group {
   __typename
   id

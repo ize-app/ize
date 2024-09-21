@@ -72,7 +72,7 @@ const newResponse: MutationResolvers["newResponse"] = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newResponseService({ args, context });
+  return await newResponseService({ type: "user", args, context });
 };
 
 export const requestQueries = {

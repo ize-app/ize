@@ -112,8 +112,8 @@ fragment RequestStepSummary on RequestStepSummary {
 fragment Response on Response {
   responseId
   createdAt
-  user {
-    ...UserSummaryParts
+  creator {
+    ...Respondant
   }
   answers {
     ...FieldAnswer

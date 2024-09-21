@@ -42,6 +42,7 @@ model Identity {
   IdentitiesGroups   IdentityGroup[]
   Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
   IdentityTelegram   IdentityTelegram?
+  Response           Response[]
 
   @@map("identities")
 }
@@ -792,12 +793,14 @@ model RequestDefinedOptionSet {
 model Response {
   id            String   @id @default(uuid()) @db.Uuid
   requestStepId String   @map("request_step_id") @db.Uuid
-  creatorId     String   @map("creator_id") @db.Uuid
+  userId        String?  @map("user_id") @db.Uuid
+  identityId    String?  @map("identity_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
   RequestStep RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   Answers     FieldAnswer[]
-  User        User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  User        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Identity    Identity?     @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
   @@map("responses")
 }

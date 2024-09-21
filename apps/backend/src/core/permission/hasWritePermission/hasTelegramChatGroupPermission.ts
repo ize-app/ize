@@ -1,23 +1,22 @@
 import { GroupTelegramChatPrismaType } from "@/core/entity/group/groupPrismaTypes";
+import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
 import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
 import { telegramBot } from "@/telegram/TelegramClient";
-import { GraphqlRequestContext } from "@graphql/context";
 
 // checks whether user has permission according to their discord @roles
 // for a given set of request or respond roles.
 // optimized for minimizing the number of discord API queries
 export const hasTelegramChatGroupPermission = async ({
-  context,
+  identities,
   telegramGroups,
 }: {
   telegramGroups: GroupTelegramChatPrismaType[];
 
-  context: GraphqlRequestContext;
+  identities: IdentityPrismaType[];
 }): Promise<boolean> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
   // for now, there is only one discord account per user
-  const telegramIdentity = context.currentUser.Identities.find((id) => !!id.IdentityTelegram);
+  const telegramIdentity = identities.find((id) => !!id.IdentityTelegram);
   if (!telegramIdentity?.IdentityTelegram) return false;
 
   for (let i = 0; i <= telegramGroups.length - 1; i++) {

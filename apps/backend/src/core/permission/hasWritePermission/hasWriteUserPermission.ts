@@ -13,7 +13,7 @@ import { PermissionPrismaType } from "../permissionPrismaTypes";
 
 // checks whether one of a user's identities/groups has permissions to make a request or response
 // this function checks sources of truth for membership, so it's slow but secure and only intended for write operations
-export const hasWritePermission = async ({
+export const hasWriteUserPermission = async ({
   permission,
   context,
   transaction = prisma,
@@ -41,7 +41,13 @@ export const hasWritePermission = async ({
   if (await hasIdentityPermission({ identities, userIdentities: context.currentUser.Identities }))
     return true;
 
-  if (await hasTelegramChatGroupPermission({ telegramGroups, context })) return true;
+  if (
+    await hasTelegramChatGroupPermission({
+      telegramGroups,
+      identities: context.currentUser.Identities,
+    })
+  )
+    return true;
 
   if (await hasNftGroupPermission({ nftGroups, userIdentities: context.currentUser.Identities }))
     return true;

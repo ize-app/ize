@@ -8,7 +8,7 @@ import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewRequestStepNotifications/sendNewStepNotifications";
-import { hasWritePermission } from "../permission/hasWritePermission";
+import { hasWriteUserPermission } from "../permission/hasWritePermission";
 import { userInclude } from "../user/userPrismaTypes";
 import { watchFlow } from "../user/watchFlow";
 
@@ -61,7 +61,7 @@ export const newRequest = async ({
 
     const step = flow.CurrentFlowVersion.Steps[0];
 
-    const hasRequestPermission = await hasWritePermission({
+    const hasRequestPermission = await hasWriteUserPermission({
       permission: step.RequestPermissions,
       context,
       transaction,

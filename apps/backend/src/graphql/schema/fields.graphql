@@ -106,7 +106,7 @@ type WebhookFieldAnswer {
 }
 
 type UserFieldAnswer {
-  user: User!
+  creator: Respondant!
   createdAt: String!
   answer: FieldAnswer!
 }

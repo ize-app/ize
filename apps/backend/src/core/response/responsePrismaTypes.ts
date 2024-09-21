@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 
+import { identityInclude } from "../entity/identity/identityPrismaTypes";
 import { userInclude } from "../user/userPrismaTypes";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
@@ -11,6 +12,9 @@ export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   },
   User: {
     include: userInclude,
+  },
+  Identity: {
+    include: identityInclude,
   },
 });
 
