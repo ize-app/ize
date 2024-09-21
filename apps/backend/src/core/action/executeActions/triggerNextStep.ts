@@ -1,4 +1,4 @@
-import { sendNewStepNotifications } from "@/core/notification/sendNewRequestStepNotifications/sendNewStepNotifications";
+import { sendNewStepNotifications } from "@/core/notification/sendNewStepNotifications/sendNewStepNotifications";
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
