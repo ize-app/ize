@@ -7,9 +7,9 @@ const createResultsString = (results: WebhookPayload["results"]) => {
   return results
     .map((result) => {
       if (result.value) {
-        return `${result.fieldName}:\n - ${result.value}`;
+        return `${result.fieldName}:\nResult: ${result.value}`;
       } else {
-        return `${result.fieldName}:\n ${result.optionSelections?.map((o) => ` - ${o}`).join("\n")}`;
+        return `${result.fieldName}:\nResult:\n${result.optionSelections?.map((o) => ` - ${o}`).join("\n")}`;
       }
     })
     .join(`\n`);
@@ -23,7 +23,7 @@ export const sendTelegramResultsNotifications = async ({
   payload: WebhookPayload;
 }) => {
   if (telegramGroups.length === 0) return;
-  const message = `New request in Ize 👀\n${payload.requestName}\n\n__${payload.flowName}__\n${createResultsString(payload.results)}`;
+  const message = `New results in Ize 👀\n\n${payload.requestName}\n\n<i>${payload.flowName}</i>\n${createResultsString(payload.results)}`;
   await Promise.all(
     telegramGroups.map(async (group) => {
       try {
