@@ -38,10 +38,6 @@ export const resolveEntitySet = async ({
       identities: [],
     };
 
-  const groups: GroupPrismaType[] = permission.EntitySet.EntitySetEntities.filter(
-    (entity) => !!entity.Entity.Group?.id,
-  ).map((entity) => entity.Entity.Group as GroupPrismaType);
-
   const customGroups = new Set<GroupCustomPrismaType>();
   const discordRoleGroups = new Set<GroupDiscordPrismaType>();
   const nftGroups = new Set<GroupNftPrismaType>();
@@ -55,7 +51,10 @@ export const resolveEntitySet = async ({
     else if (group.GroupTelegramChat) telegramGroups.add(group.GroupTelegramChat);
   };
 
-  groups.forEach((group) => sortGroup(group));
+  permission.EntitySet.EntitySetEntities.forEach((entity) => {
+    if (entity.Entity.Group) sortGroup(entity.Entity.Group);
+    else if (entity.Entity.Identity) identities.add(entity.Entity.Identity);
+  });
 
   const customGroupIds = Array.from(customGroups).map((cg) => cg.id);
 

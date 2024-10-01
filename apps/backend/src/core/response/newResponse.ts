@@ -108,8 +108,9 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
 
       existingUserResponse = await transaction.response.findFirst({
         where: {
+          requestStepId,
           OR: [
-            { userId: context.currentUser.id, requestStepId },
+            { userId: context.currentUser.id },
             {
               Identity: { User: { id: context.currentUser.id } },
             },
@@ -141,9 +142,10 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
 
       existingUserResponse = await transaction.response.findFirst({
         where: {
+          requestStepId,
           OR: [
-            { identityId: identity.id, requestStepId },
-            { User: { Identities: { some: { id: { equals: identity.id } } } }, requestStepId },
+            { identityId: identity.id },
+            { User: { Identities: { some: { id: { equals: identity.id } } } } },
           ],
         },
       });
@@ -163,6 +165,7 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
     }
 
     if (!requestStep.Step.allowMultipleResponses) {
+
       if (existingUserResponse)
         throw new GraphQLError(
           `Response already exists for this request step. requestStepId: ${requestStepId}`,
