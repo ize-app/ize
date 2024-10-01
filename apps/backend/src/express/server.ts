@@ -44,7 +44,7 @@ app.get("/healthcheck", async (_req, res) => {
 });
 
 // Webhook route
-app.post("/telegram", (req, res) => {
+app.post("/api/telegram", (req, res) => {
   telegramBot.handleUpdate(req.body); // Pass the request body to the bot
   res.sendStatus(200); // Respond with 200 OK
 });

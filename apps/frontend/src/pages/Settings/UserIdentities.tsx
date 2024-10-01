@@ -2,7 +2,6 @@ import { MailOutline } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useStytch } from "@stytch/react";
-import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useCallback, useContext, useState } from "react";
 
 import defaultAvatarLogoUrl from "@/assets/default-avatar.svg";
@@ -10,6 +9,7 @@ import discordLogoUrl from "@/assets/discord-logo-blue.svg";
 import emailLogoUrl from "@/assets/email.svg";
 import etherumLogoUrl from "@/assets/ethereum.svg";
 import telegramLogoUrl from "@/assets/telegram-logo.svg";
+import { TelegramLogin } from "@/components/Auth/TelegramLogin";
 import { AvatarWithName } from "@/components/Avatar";
 import { IdentitySummaryPartsFragment } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -147,24 +147,7 @@ export const UserIdentities = ({
             Connect Discord
           </Button>
         )}
-        {!hasTelegramIdentity && (
-          <TelegramLoginButton
-            botUsername={"ize_app_bot"}
-            onAuthCallback={async (data) => {
-              await fetch("/api/auth/telegram", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data), // Send the URL parameters to the backend
-              });
-            }}
-            buttonSize="medium"
-            cornerRadius={5} // 0 - 20
-            showAvatar={false} // true | false
-            lang="en"
-          />
-        )}
+        {!hasTelegramIdentity && <TelegramLogin />}
       </Box>
     </>
   );

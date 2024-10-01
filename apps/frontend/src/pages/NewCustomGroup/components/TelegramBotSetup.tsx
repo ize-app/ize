@@ -1,8 +1,8 @@
 import { Typography } from "@mui/material";
-import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
 import { useContext } from "react";
 
 import { AddTelegramBotButton } from "@/components/AddTelegramBotButton";
+import { TelegramLogin } from "@/components/Auth/TelegramLogin";
 import { CopyToClipboardButton } from "@/components/CopyToClipboard";
 import { SelectTelegramChat } from "@/components/Form/SelectTelegramChat";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -21,24 +21,7 @@ export const TelegramBotSetup = () => {
       {/* In local dev, you need to set bot's domain to 127.0.0.1:80 for FE button to work
       But the backend validation will fail if the bot's domain is not the same as the one set in the backend
       */}
-      {!telegramIdentity && (
-        <TelegramLoginButton
-          botUsername={"ize_app_bot"}
-          onAuthCallback={async (data) => {
-            await fetch("/api/auth/telegram", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(data), // Send the URL parameters to the backend
-            });
-          }}
-          buttonSize="medium"
-          cornerRadius={5} // 0 - 20
-          showAvatar={false} // true | false
-          lang="en"
-        />
-      )}
+      {!telegramIdentity && <TelegramLogin />}
       <Typography variant="description">First, add the Ize bot to your Telegram</Typography>
       <AddTelegramBotButton />
       <Typography variant="description">

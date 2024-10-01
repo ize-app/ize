@@ -11,12 +11,10 @@ dotenv.config();
 
 const isDev = process.env.MODE === "development";
 
-export const telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN as string, {
-  telegram: { testEnv: isDev },
-});
+export const telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN as string);
 
 // Telegram requires url have SSL enabled so need to use port forwarding for development
-const telegramWebhookDomain = `${isDev ? process.env.PORT_FORWARDING_ADDRESS : process.env.PROD_URL}/telegram`;
+const telegramWebhookDomain = `${isDev ? process.env.PORT_FORWARDING_ADDRESS : process.env.PROD_URL}/api/telegram`;
 
 telegramBot
   .createWebhook({
