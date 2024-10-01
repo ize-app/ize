@@ -1083,6 +1083,7 @@ export type WebhookPayload = {
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
+  requestUrl: Scalars['String']['output'];
   results: Array<WebhookValue>;
 };
 
@@ -2720,6 +2721,7 @@ export type WebhookPayload = {
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
+  requestUrl: Scalars['String']['output'];
   results: Array<WebhookValue>;
 };
 

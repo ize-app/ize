@@ -13,6 +13,7 @@ export const createTestWebhookPayload = (args: TestWebhookArgs): WebhookPayload 
     requestName: "Test request",
     requestFields: args.requestFields.map((field) => generateFieldData(field)),
     results: args.results.map((result) => generateFieldData(result)),
+    requestUrl: "https://ize.space",
   };
 };
 

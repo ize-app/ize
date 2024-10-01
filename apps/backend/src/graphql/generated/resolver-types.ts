@@ -1084,6 +1084,7 @@ export type WebhookPayload = {
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
+  requestUrl: Scalars['String']['output'];
   results: Array<WebhookValue>;
 };
 
@@ -2027,6 +2028,7 @@ export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentT
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestFields?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

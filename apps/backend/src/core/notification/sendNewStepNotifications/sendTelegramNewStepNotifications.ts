@@ -5,7 +5,7 @@ import { FieldOptionsSelectionType, Request } from "@/graphql/generated/resolver
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createRequestUrl } from "./createRequestUrl";
+import { createRequestUrl } from "../createRequestUrl";
 
 export const sendTelegramNewStepMessage = async ({
   telegramGroups,
@@ -59,6 +59,7 @@ export const sendTelegramNewStepMessage = async ({
             // to be confirmed: this might just be a testing env issue
             message_thread_id: group.messageThreadId ? Number(group.messageThreadId) : undefined,
             is_anonymous: false,
+            close_date: Date.parse(requestStep.expirationDate),
             reply_markup: {
               inline_keyboard: [[{ url, text: "See request on Ize" }]],
             },
@@ -68,6 +69,8 @@ export const sendTelegramNewStepMessage = async ({
         await prisma.telegramPoll.create({
           data: {
             pollId: BigInt(poll.poll.id),
+            chatId: group.chatId,
+            messageId: poll.message_id,
             requestStepId,
             fieldId: firstField.fieldId,
           },

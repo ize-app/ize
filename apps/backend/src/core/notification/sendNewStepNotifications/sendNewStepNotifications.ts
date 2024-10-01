@@ -4,7 +4,7 @@ import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { prisma } from "@/prisma/client";
 
 import { sendTelegramNewStepMessage } from "./sendTelegramNewStepNotifications";
-import { entityInclude } from "../../entity/entityPrismaTypes";
+import { getGroupsToNotify } from "../getGroupsToNotifiy";
 
 export const sendNewStepNotifications = async ({
   flowId,
@@ -16,33 +16,7 @@ export const sendNewStepNotifications = async ({
   try {
     // get groups that watch or own flow AND have notifications set up
 
-    const groups = await prisma.group.findMany({
-      include: {
-        GroupCustom: {
-          include: {
-            NotificationEntity: {
-              include: entityInclude,
-            },
-          },
-        },
-      },
-      where: {
-        OR: [
-          { OwnedFlows: { some: { id: flowId } } },
-          {
-            GroupsWatchedFlows: {
-              some: {
-                flowId,
-                watched: true,
-              },
-            },
-          },
-        ],
-        GroupCustom: {
-          notificationEntityId: { not: null },
-        },
-      },
-    });
+    const groups = await getGroupsToNotify(flowId);
 
     if (groups.length === 0) {
       return;

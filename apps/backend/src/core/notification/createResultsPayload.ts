@@ -1,13 +1,14 @@
 import { Prisma } from "@prisma/client";
 
+import { createRequestUrl } from "@/core/notification/createRequestUrl";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { FieldType, WebhookPayload, WebhookValue } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { prisma } from "../../../prisma/client";
+import { prisma } from "../../prisma/client";
 
-export const createWebhookPayload = async ({
+export const createResultsPayload = async ({
   requestStepId,
   transaction = prisma,
 }: {
@@ -122,9 +123,10 @@ export const createWebhookPayload = async ({
       requestName: formattedRequest.name,
       requestFields,
       results,
+      requestUrl: createRequestUrl({ requestId: formattedRequest.requestId }),
     };
   } catch (error) {
-    console.error("Error in createWebhookPayload:", error);
+    console.error("Error in createResultsPayload:", error);
     return null;
   }
 };

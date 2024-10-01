@@ -905,6 +905,8 @@ model GroupsWatchedFlows {
 
 model TelegramPoll {
   id            String @id @default(uuid()) @db.Uuid
+  chatId        BigInt @unique @map("chat_id")
+  messageId     BigInt @unique @map("message_id")
   pollId        BigInt @unique @map("poll_id")
   requestStepId String @map("request_step_id") @db.Uuid
   fieldId       String @map("field_id") @db.Uuid
