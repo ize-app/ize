@@ -23,7 +23,7 @@ export const newEvolveRequest = async ({
   args: MutationNewEvolveRequestArgs;
   context: GraphqlRequestContext;
 }): Promise<string> => {
-  return await prisma.$transaction(async (transaction) => {
+  const [requestArgs, proposedFlowVersionId] = await prisma.$transaction(async (transaction) => {
     let draftEvolveFlowVersionId: string | null = null;
 
     const {
@@ -141,10 +141,12 @@ export const newEvolveRequest = async ({
       requestDefinedOptions: [],
     };
 
-    return await newRequest({
-      args: { request: requestArgs },
-      context,
-      proposedFlowVersionId,
+    return [requestArgs, proposedFlowVersionId];
   });
+
+  return await newRequest({
+    args: { request: requestArgs },
+    context,
+    proposedFlowVersionId,
   });
 };

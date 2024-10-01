@@ -77,12 +77,13 @@ export const sendTelegramNewStepMessage = async ({
         });
         return;
       } else {
-        const message = `New request in Ize 👀\n${requestName}\n\n__${flowName}__`;
+        const message = `New request in Ize 👀\n\n${requestName}\n\n<i>${flowName}</i>\n`;
         await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
           reply_markup: {
             inline_keyboard: [[{ url, text: "See request on Ize" }]],
           },
           message_thread_id: messageThreadId,
+          parse_mode: "HTML",
         });
       }
     }),

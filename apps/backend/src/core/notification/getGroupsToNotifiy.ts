@@ -15,11 +15,17 @@ export const getGroupsToNotify = async (flowId: string) => {
     },
     where: {
       OR: [
-        { OwnedFlows: { some: { id: flowId } } },
+        // flow is either owned by group OR evolves flow that group owns
+        {
+          OwnedFlows: {
+            some: { OR: [{ id: flowId }, { CurrentFlowVersion: { evolveFlowId: flowId } }] },
+          },
+        },
+        // flow is either watched by group or evolves flow that group watches
         {
           GroupsWatchedFlows: {
             some: {
-              flowId,
+              OR: [{ flowId }, { Flow: { CurrentFlowVersion: { evolveFlowId: flowId } } }],
               watched: true,
             },
           },
