@@ -5,9 +5,10 @@ import { telegramBot } from "./TelegramClient";
 // end all polls for a given request step
 export const endTelegramPolls = async ({ requestStepId }: { requestStepId: string }) => {
   try {
-    const polls = await prisma.telegramPoll.findMany({
+    const polls = await prisma.telegramMessages.findMany({
       where: {
         requestStepId,
+        pollId: { not: null },
       },
     });
     await Promise.all(

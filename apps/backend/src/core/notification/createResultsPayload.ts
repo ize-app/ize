@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { createRequestUrl } from "@/core/notification/createRequestUrl";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { FieldType, WebhookPayload, WebhookValue } from "@/graphql/generated/resolver-types";
+import { WebhookPayload, WebhookValue } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../prisma/client";
@@ -33,52 +33,54 @@ export const createResultsPayload = async ({
       userGroupIds: [],
     });
 
-    const requestFields: WebhookValue[] = formattedRequest.flow.steps[0].request.fields.map(
-      (field) => {
-        const answer = formattedRequest.steps[0].requestFieldAnswers.find(
-          (fa) => fa.fieldId === field.fieldId,
-        );
-        if (!answer)
-          return {
-            fieldName: field.name,
-            value: null,
-          };
-        if (field.__typename === FieldType.FreeInput) {
-          if (answer.__typename !== "FreeInputFieldAnswer")
-            throw new GraphQLError(
-              `Free input field ${field.fieldId} has field answer that is not free input answer`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-          return {
-            fieldName: field.name,
-            value: answer.value,
-          };
-        } else if (field.__typename === FieldType.Options) {
-          if (answer.__typename !== "OptionFieldAnswer")
-            throw new GraphQLError(
-              `Options field ${field.fieldId} has field answer that is not options answer`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-          return {
-            fieldName: field.name,
-            optionSelections: answer.selections.map((s) => {
-              const option = field.options.find((o) => {
-                if (o.optionId === s.optionId) return o.name;
-              });
-              if (!option) throw Error("");
-              return option.name;
-            }),
-          };
-        } else
-          throw new GraphQLError(`Unknown field type. field ID: ${field.fieldId}`, {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          });
-      },
-    );
+    const requestFields: WebhookValue[] = [];
+
+    // const requestFields: WebhookValue[] = formattedRequest.flow.steps[0].request.fields.map(
+    //   (field) => {
+    //     const answer = formattedRequest.steps[0].requestFieldAnswers.find(
+    //       (fa) => fa.fieldId === field.fieldId,
+    //     );
+    //     if (!answer)
+    //       return {
+    //         fieldName: field.name,
+    //         value: null,
+    //       };
+    //     if (field.__typename === FieldType.FreeInput) {
+    //       if (answer.__typename !== "FreeInputFieldAnswer")
+    //         throw new GraphQLError(
+    //           `Free input field ${field.fieldId} has field answer that is not free input answer`,
+    //           {
+    //             extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    //           },
+    //         );
+    //       return {
+    //         fieldName: field.name,
+    //         value: answer.value,
+    //       };
+    //     } else if (field.__typename === FieldType.Options) {
+    //       if (answer.__typename !== "OptionFieldAnswer")
+    //         throw new GraphQLError(
+    //           `Options field ${field.fieldId} has field answer that is not options answer`,
+    //           {
+    //             extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    //           },
+    //         );
+    //       return {
+    //         fieldName: field.name,
+    //         optionSelections: answer.selections.map((s) => {
+    //           const option = field.options.find((o) => {
+    //             if (o.optionId === s.optionId) return o.name;
+    //           });
+    //           if (!option) throw Error("");
+    //           return option.name;
+    //         }),
+    //       };
+    //     } else
+    //       throw new GraphQLError(`Unknown field type. field ID: ${field.fieldId}`, {
+    //         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    //       });
+    //   },
+    // );
 
     const results: WebhookValue[] = [];
 

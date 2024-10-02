@@ -50,9 +50,10 @@ export const sendTelegramNewStepMessage = async ({
         firstField.selectionType === FieldOptionsSelectionType.Select
       ) {
         const options = firstField.options;
+        const message = `${flowName}: ${requestName}\n\n${firstField.name}`;
         const poll = await telegramBot.telegram.sendPoll(
           group.chatId.toString(),
-          requestName.substring(0, 300),
+          message.substring(0, 300),
           options.map((option) => option.name.substring(0, 100)),
           {
             // anonymous polls don't send poll_answer update
@@ -66,7 +67,7 @@ export const sendTelegramNewStepMessage = async ({
           },
         );
 
-        await prisma.telegramPoll.create({
+        await prisma.telegramMessages.create({
           data: {
             pollId: BigInt(poll.poll.id),
             chatId: group.chatId,
@@ -77,13 +78,26 @@ export const sendTelegramNewStepMessage = async ({
         });
         return;
       } else {
-        const message = `New request in Ize 👀\n\n${requestName}\n\n<i>${flowName}</i>\n`;
-        await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
-          reply_markup: {
-            inline_keyboard: [[{ url, text: "See request on Ize" }]],
+        const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong>\n<i>${flowName}</i>\n\n${firstField.name}`;
+        const message = await telegramBot.telegram.sendMessage(
+          group.chatId.toString(),
+          messageText,
+          {
+            reply_markup: {
+              inline_keyboard: [[{ url, text: "See request on Ize" }]],
+            },
+            message_thread_id: messageThreadId,
+            parse_mode: "HTML",
           },
-          message_thread_id: messageThreadId,
-          parse_mode: "HTML",
+        );
+
+        await prisma.telegramMessages.create({
+          data: {
+            chatId: group.chatId,
+            messageId: message.message_id,
+            requestStepId,
+            fieldId: firstField.fieldId,
+          },
         });
       }
     }),

@@ -9,7 +9,7 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
   const userId = pollAnswer.user?.id;
   const selectedOptions = pollAnswer.option_ids;
 
-  const poll = await prisma.telegramPoll.findFirstOrThrow({
+  const poll = await prisma.telegramMessages.findFirstOrThrow({
     where: {
       pollId: BigInt(pollId),
     },
