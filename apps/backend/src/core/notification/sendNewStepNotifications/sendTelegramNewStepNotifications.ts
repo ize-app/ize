@@ -5,7 +5,9 @@ import { FieldOptionsSelectionType, Request } from "@/graphql/generated/resolver
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createRequestUrl } from "../createRequestUrl";
+import { createRequestFieldsPayload } from "../createNotificationPayload/createRequestFieldsPayload";
+import { createRequestUrl } from "../createNotificationPayload/createRequestUrl";
+import { createWebhookValueString } from "../createWebhookValueString";
 
 export const sendTelegramNewStepMessage = async ({
   telegramGroups,
@@ -27,11 +29,8 @@ export const sendTelegramNewStepMessage = async ({
 
   const requestName = request.name;
   const flowName = request.flow.name;
-
   const { responseFields } = requestStep;
-
   const firstField = responseFields[0];
-
   const url = createRequestUrl({ requestId: request.requestId });
 
   await Promise.all(
@@ -43,6 +42,32 @@ export const sendTelegramNewStepMessage = async ({
 
       if (responseFields.length === 0) return;
 
+      const requestFieldsString = createWebhookValueString(
+        createRequestFieldsPayload({
+          requestFieldAnswers: request.steps[0].requestFieldAnswers,
+          requestFields: request.flow.steps[0].request.fields,
+        }),
+      );
+
+      const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
+
+      const message = await telegramBot.telegram.sendMessage(group.chatId.toString(), messageText, {
+        reply_markup: {
+          inline_keyboard: [[{ url, text: "See request on Ize" }]],
+        },
+        message_thread_id: messageThreadId,
+        parse_mode: "HTML",
+      });
+
+      await prisma.telegramMessages.create({
+        data: {
+          chatId: group.chatId,
+          messageId: message.message_id,
+          requestStepId,
+          fieldId: firstField.fieldId,
+        },
+      });
+
       if (
         chatHasRespondPermission &&
         responseFields.length === 1 &&
@@ -50,10 +75,10 @@ export const sendTelegramNewStepMessage = async ({
         firstField.selectionType === FieldOptionsSelectionType.Select
       ) {
         const options = firstField.options;
-        const message = `${flowName}: ${requestName}\n\n${firstField.name}`;
+        const question = `${firstField.name}`;
         const poll = await telegramBot.telegram.sendPoll(
           group.chatId.toString(),
-          message.substring(0, 300),
+          question.substring(0, 300),
           options.map((option) => option.name.substring(0, 100)),
           {
             // anonymous polls don't send poll_answer update
@@ -61,6 +86,7 @@ export const sendTelegramNewStepMessage = async ({
             message_thread_id: group.messageThreadId ? Number(group.messageThreadId) : undefined,
             is_anonymous: false,
             close_date: Date.parse(requestStep.expirationDate),
+            reply_parameters: { message_id: message.message_id },
             reply_markup: {
               inline_keyboard: [[{ url, text: "See request on Ize" }]],
             },
@@ -78,27 +104,7 @@ export const sendTelegramNewStepMessage = async ({
         });
         return;
       } else {
-        const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong>\n<i>${flowName}</i>\n\n${firstField.name}`;
-        const message = await telegramBot.telegram.sendMessage(
-          group.chatId.toString(),
-          messageText,
-          {
-            reply_markup: {
-              inline_keyboard: [[{ url, text: "See request on Ize" }]],
-            },
-            message_thread_id: messageThreadId,
-            parse_mode: "HTML",
-          },
-        );
-
-        await prisma.telegramMessages.create({
-          data: {
-            chatId: group.chatId,
-            messageId: message.message_id,
-            requestStepId,
-            fieldId: firstField.fieldId,
-          },
-        });
+        //
       }
     }),
   );

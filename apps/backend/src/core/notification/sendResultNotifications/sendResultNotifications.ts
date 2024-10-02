@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma/client";
 
 import { sendTelegramResultsNotifications } from "./sendTelegramResultsNotifications";
-import { createResultsPayload } from "../createResultsPayload";
+import { createNotificationPayload } from "../createNotificationPayload/createNotificationPayload";
 import { getGroupsToNotify } from "../getGroupsToNotifiy";
 
 export const sendResultNotifications = async ({ requestStepId }: { requestStepId: string }) => {
@@ -25,7 +25,7 @@ export const sendResultNotifications = async ({ requestStepId }: { requestStepId
 
   // get all flow / request info
   // TODO: make it return only result from this step
-  const resultsPayload = await createResultsPayload({ requestStepId });
+  const resultsPayload = await createNotificationPayload({ requestStepId });
 
   if (!resultsPayload) return;
 

@@ -10,7 +10,7 @@ import { evolveGroup } from "./evolveGroup";
 import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
-import { createResultsPayload } from "../../notification/createResultsPayload";
+import { createNotificationPayload } from "../../notification/createNotificationPayload/createNotificationPayload";
 import { callWebhook } from "../webhook/callWebhook";
 
 // Executes an action if it exists
@@ -83,7 +83,7 @@ export const executeAction = async ({
   switch (action.type) {
     case ActionType.CallWebhook: {
       if (!action.Webhook) throw Error("");
-      const payload = await createResultsPayload({ requestStepId, transaction });
+      const payload = await createNotificationPayload({ requestStepId, transaction });
       const uri = decrypt(action.Webhook.uri);
       if (payload) {
         actionComplete = await callWebhook({ uri, payload });
