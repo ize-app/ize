@@ -8,8 +8,8 @@ export const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         display: "flex",
         flexDirection: "column",
-        padding: "48px 0px",
         alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {children}

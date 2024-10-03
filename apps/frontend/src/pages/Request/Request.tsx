@@ -3,14 +3,14 @@ import { Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
-import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
+import TabPanel from "@/components/Tables/TabPanel";
+import { TabProps, Tabs } from "@/components/Tables/Tabs";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
@@ -46,7 +46,10 @@ export const Request = () => {
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const { me } = useContext(CurrentUserContext);
+  const theme = useTheme();
   const navigate = useNavigate();
+
+  const [currentTabIndex, setTabIndex] = useState(0);
 
   let acceptingNewResponses = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
@@ -74,12 +77,20 @@ export const Request = () => {
     allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
 
-  const theme = useTheme();
-  // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  if (loading || !request) return <Loading />;
 
-  return loading || !request ? (
-    <Loading />
-  ) : (
+  const tabs: TabProps[] = [
+    {
+      title: "Status",
+      content: <ConfigDiagramRequest request={request} />,
+    },
+    {
+      title: "Responses",
+      content: <div>sup</div>,
+    },
+  ];
+
+  return (
     <PageContainer>
       <Head
         title={"Request for " + request.flow.name}
@@ -113,7 +124,7 @@ export const Request = () => {
             display: "flex",
             justifyContent: "space-between",
             marginTop: "36px",
-            marginBottom: "60px",
+            marginBottom: "36px",
             gap: "24px",
             [theme.breakpoints.down("md")]: {
               flexDirection: "column-reverse",
@@ -131,9 +142,10 @@ export const Request = () => {
               maxWidth: "800px",
             }}
           >
-            <Box
+            {/* <Box
               sx={{
                 outline: "1px solid rgba(0, 0, 0, 0.1)",
+                borderRadius: "8px",
                 padding: "16px 24px 16px 16px",
                 marginTop: "8px",
                 display: "flex",
@@ -141,8 +153,8 @@ export const Request = () => {
                 backgroundColor: theme.palette.background.paper,
               }}
             >
-              <Typography color="primary" variant="label" marginBottom="12px">
-                Request
+              <Typography color="primary" variant="label" marginBottom="12px" fontSize="20px">
+                Request details
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <Box sx={{ display: "flex", gap: "6px" }}>
@@ -158,18 +170,19 @@ export const Request = () => {
                   onlyShowSelections={true}
                 />
               </Box>
-            </Box>
+            </Box> */}
             <Box
               sx={{
                 outline: "1px solid rgba(0, 0, 0, 0.1)",
                 padding: "16px 24px 16px 16px",
+                borderRadius: "8px",
                 marginTop: "8px",
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: theme.palette.background.paper,
               }}
             >
-              <Typography color="primary" variant="label" marginBottom="12px">
+              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
                 Results
               </Typography>
               <RequestResults request={request} />
@@ -201,7 +214,22 @@ export const Request = () => {
               </Paper>
             )}
         </Box>
-        <ConfigDiagramRequest request={request} />
+        <Box sx={{ padding: "0px 12px" }}>
+          <Tabs
+            tabs={tabs}
+            currentTabIndex={currentTabIndex}
+            handleChange={(_event: React.SyntheticEvent, newValue: number) => {
+              setTabIndex(newValue);
+            }}
+            // sx={{ marginTop: "24px" }}
+          />
+
+          {tabs.map((tab: TabProps, index) => (
+            <TabPanel value={currentTabIndex} index={index} key={index}>
+              {tab.content}
+            </TabPanel>
+          ))}
+        </Box>
       </Box>
     </PageContainer>
   );
