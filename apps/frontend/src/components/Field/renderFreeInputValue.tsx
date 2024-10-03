@@ -16,7 +16,7 @@ dayjs.extend(utc);
 export const renderFreeInputValue = (
   value: string,
   type: FieldDataType,
-  fontSize = ".875rem",
+  fontSize = "1rem",
 ): ReactElement => {
   switch (type) {
     case FieldDataType.String:

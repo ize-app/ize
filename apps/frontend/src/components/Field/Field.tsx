@@ -5,8 +5,6 @@ import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generat
 
 import { Answer } from "./Answer";
 import { FieldOptions } from "./FieldOptions";
-import { formatDataTypeName } from "./formatDataTypeName";
-import { formatOptionSelectionType } from "./formatOptionSelectionType";
 
 // renders name of the field and answer, if it exists.
 // option fields show all options
@@ -23,9 +21,9 @@ export const Field = ({
     case FieldType.FreeInput: {
       return (
         <Box>
-          <Typography color="primary" fontSize=".875rem">
+          <Typography color="primary" fontSize="1rem">
             {field.name}
-            <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span>
+            {/* <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span> */}
           </Typography>
           {fieldAnswer && <Answer field={field} fieldAnswer={fieldAnswer} />}
         </Box>
@@ -38,16 +36,16 @@ export const Field = ({
           : undefined;
       return (
         <Box>
-          <Typography color="primary" fontSize=".875rem">
+          <Typography color="primary" fontSize="1rem">
             {field.name}{" "}
-            <span style={{ fontStyle: "italic" }}>
+            {/* <span style={{ fontStyle: "italic" }}>
               (
               {formatOptionSelectionType({
                 type: field.selectionType,
                 maxSelections: field.maxSelections,
               })}
               )
-            </span>
+            </span> */}
           </Typography>
           <FieldOptions
             onlyShowSelections={onlyShowSelections}

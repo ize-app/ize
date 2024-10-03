@@ -19,8 +19,7 @@ export const AnswerFreeInput = ({
         alignItems: "center",
         gap: "4px",
         borderRadius: "4px",
-        outline: "1px solid rgba(0, 0, 0, 0.1)",
-        padding: "6px",
+        padding: "6px 0px",
         background: "white",
       }}
     >

@@ -17,7 +17,7 @@ export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
     >
       {<Avatar avatar={avatar} size="18px" />}
       <Typography
-        fontSize={"0.875rem"}
+        fontSize={"1rem"}
         sx={{
           whiteSpace: "nowrap",
           overflow: "hidden",
