@@ -15,6 +15,8 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
     },
   });
 
+  if (!poll.fieldId) return;
+
   const identity = await prisma.identity.findFirstOrThrow({
     include: identityInclude,
     where: {

@@ -1,7 +1,11 @@
 import { FieldType, GroupTelegramChat } from "@prisma/client";
 
 import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
-import { FieldOptionsSelectionType, Request } from "@/graphql/generated/resolver-types";
+import {
+  FieldDataType,
+  FieldOptionsSelectionType,
+  Request,
+} from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
@@ -64,13 +68,12 @@ export const sendTelegramNewStepMessage = async ({
           chatId: group.chatId,
           messageId: message.message_id,
           requestStepId,
-          fieldId: firstField.fieldId,
         },
       });
 
+      if (responseFields.length > 1 && !chatHasRespondPermission) return;
+
       if (
-        chatHasRespondPermission &&
-        responseFields.length === 1 &&
         firstField.__typename === FieldType.Options &&
         firstField.selectionType === FieldOptionsSelectionType.Select
       ) {
@@ -87,9 +90,9 @@ export const sendTelegramNewStepMessage = async ({
             is_anonymous: false,
             close_date: Date.parse(requestStep.expirationDate),
             reply_parameters: { message_id: message.message_id },
-            reply_markup: {
-              inline_keyboard: [[{ url, text: "See request on Ize" }]],
-            },
+            // reply_markup: {
+            //   inline_keyboard: [[{ url, text: "See request on Ize" }]],
+            // },
           },
         );
 
@@ -103,8 +106,32 @@ export const sendTelegramNewStepMessage = async ({
           },
         });
         return;
-      } else {
-        //
+      } else if (
+        firstField.__typename === FieldType.FreeInput &&
+        firstField.dataType === FieldDataType.String
+      ) {
+        const prompt = await telegramBot.telegram.sendMessage(
+          group.chatId.toString(),
+          `<strong>${firstField.name}</strong>\n\n↩️ Reply to this message to respond`,
+          {
+            reply_markup: {
+              inline_keyboard: [[{ url, text: "See request on Ize" }]],
+            },
+            reply_parameters: { message_id: message.message_id },
+            message_thread_id: messageThreadId,
+
+            parse_mode: "HTML",
+          },
+        );
+
+        await prisma.telegramMessages.create({
+          data: {
+            chatId: group.chatId,
+            messageId: prompt.message_id,
+            requestStepId,
+            fieldId: firstField.fieldId,
+          },
+        });
       }
     }),
   );

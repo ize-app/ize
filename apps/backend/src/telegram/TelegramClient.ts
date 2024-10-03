@@ -3,6 +3,7 @@ import { Telegraf } from "telegraf";
 
 import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
 
+import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 import { upsertTelegramChatGroup } from "./upsertTelegramChatGroup";
 import { upsertTelegramIdentity } from "./upsertTelegramIdentity";
@@ -77,6 +78,13 @@ telegramBot.command("linkgroup", async (ctx) => {
 
 telegramBot.on("poll_answer", (ctx) => {
   handleTelegramPollResponse({ pollAnswer: ctx.update.poll_answer });
+});
+
+telegramBot.on("message", async (ctx) => {
+  await handleTelegramFreeTextResponse({
+    message: ctx.message,
+    ctx,
+  });
 });
 
 telegramBot.launch();

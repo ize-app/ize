@@ -26,6 +26,9 @@ export const sendTelegramResultsNotifications = async ({
           where: {
             requestStepId: requestStepId,
           },
+          orderBy: {
+            createdAt: "asc",
+          },
         });
 
         await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
