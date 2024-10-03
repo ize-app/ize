@@ -1,5 +1,6 @@
 import { FlowType } from "@prisma/client";
 
+import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
@@ -22,7 +23,7 @@ export const newCustomFlow = async ({
 
   const creatorId = context.currentUser.id;
   let evolveFlowId: string | null = null;
-  return await prisma.$transaction(async (transaction) => {
+  const flowId = await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
       throw new GraphQLError("Reusable flows must include evolve flow arguments.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
@@ -51,4 +52,8 @@ export const newCustomFlow = async ({
 
     return flow.id;
   });
+
+  createWatchFlowRequests({ flowId, context });
+
+  return flowId;
 };
