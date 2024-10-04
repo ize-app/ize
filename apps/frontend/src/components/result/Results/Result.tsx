@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 
 import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
-import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
 import { statusProps } from "@/components/status/statusProps";
 import {
   FieldFragment,
@@ -12,7 +11,6 @@ import {
   ResultFragment,
   ResultType,
   Status,
-  UserFieldAnswersFragment,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
@@ -25,7 +23,6 @@ export const Result = ({
   field,
   result,
   requestStepStatus,
-  fieldAnswers,
   displayDescripton,
   onlyShowSelections = false,
   displayFieldOptionsIfNoResult = true,
@@ -34,7 +31,6 @@ export const Result = ({
   field: FieldFragment | null;
   result: ResultFragment | null;
   requestStepStatus: Status;
-  fieldAnswers?: UserFieldAnswersFragment | undefined;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
   displayFieldOptionsIfNoResult?: boolean;
@@ -92,9 +88,6 @@ export const Result = ({
             <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
           ))}
       </Box>
-      {fieldAnswers && field && (
-        <UserFieldAnswers userFieldAnswers={fieldAnswers} field={field} key={result?.id} />
-      )}
     </LabeledGroupedInputs>
   );
 };

@@ -16,7 +16,7 @@ export const UserFieldAnswer = ({
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <AvatarWithName avatar={userFieldAnswer.creator} />
+        <AvatarWithName avatar={userFieldAnswer.creator} fontSize="14px" typography="description" />
         <Typography variant="description" marginBottom={"4px"}>
           {createdAt}
         </Typography>

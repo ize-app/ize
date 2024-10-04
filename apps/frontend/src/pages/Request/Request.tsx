@@ -17,6 +17,7 @@ import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 
+import { Responses } from "./Responses";
 import Loading from "../../components/Loading";
 import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
@@ -88,7 +89,7 @@ export const Request = () => {
     },
     {
       title: "Responses",
-      content: <div>sup</div>,
+      content: <Responses request={request} />,
     },
   ];
 
@@ -188,37 +189,40 @@ export const Request = () => {
               backgroundColor: theme.palette.background.paper,
             })}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                minWidth: "300px",
-                width: "100%",
-              }}
-            >
-              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                Request context
-              </Typography>
+            {request.steps[0].requestFieldAnswers.length > 0 && (
               <Box
                 sx={{
-                  borderRadius: "8px",
-                  outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                  padding: "12px 16px 12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "300px",
+                  width: "100%",
                 }}
               >
-                <Fields
-                  fields={request.flow.steps[0].request.fields}
-                  fieldAnswers={request.steps[0].requestFieldAnswers}
-                  onlyShowSelections={true}
-                />
+                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                  Request context
+                </Typography>
+                <Box
+                  sx={{
+                    borderRadius: "8px",
+                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                    padding: "12px 16px 12px",
+                  }}
+                >
+                  <Fields
+                    fields={request.flow.steps[0].request.fields}
+                    fieldAnswers={request.steps[0].requestFieldAnswers}
+                    onlyShowSelections={true}
+                  />
+                </Box>
               </Box>
-            </Box>
+            )}
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
                 minWidth: "300px",
+                maxWidth: "700px",
               }}
             >
               <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">

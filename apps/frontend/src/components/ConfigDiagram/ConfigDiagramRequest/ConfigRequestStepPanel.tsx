@@ -98,7 +98,6 @@ export const ConfigRequestStepPanel = ({
             responseFields={step.response.fields}
             results={requestStep?.results ?? []}
             requestStatus={status}
-            fieldsAnswers={requestStep?.responseFieldAnswers ?? []}
           />
         </PanelAccordion>
       </ConfigurationPanel>
