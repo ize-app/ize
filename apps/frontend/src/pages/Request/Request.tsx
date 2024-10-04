@@ -138,70 +138,13 @@ export const Request = () => {
         <Box
           sx={{
             display: "flex",
+            flexDirection: "column",
             justifyContent: "space-between",
             marginTop: "36px",
             marginBottom: "36px",
-            gap: "72px",
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column-reverse",
-              gap: "24px",
-            },
+            gap: "60px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-              minWidth: "300px",
-              width: "100%",
-              maxWidth: "800px",
-            }}
-          >
-            <Box
-              sx={{
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                padding: "16px 24px 16px 16px",
-                borderRadius: "8px",
-                marginTop: "8px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-                backgroundColor: theme.palette.background.paper,
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  // outline: "1px solid rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                  Request context
-                </Typography>
-                <Box
-                  sx={{
-                    borderRadius: "8px",
-                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                    padding: "12px 16px 12px",
-                  }}
-                >
-                  <Fields
-                    fields={request.flow.steps[0].request.fields}
-                    fieldAnswers={request.steps[0].requestFieldAnswers}
-                    onlyShowSelections={true}
-                  />
-                </Box>
-              </Box>
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                  Results
-                </Typography>
-                <RequestResults request={request} />
-              </Box>
-            </Box>
-          </Box>
           {!!me &&
             acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
@@ -210,11 +153,9 @@ export const Request = () => {
                 sx={{
                   display: "block",
                   alignSelf: "flex-start",
-                  minWidth: "300px",
+                  minWidth: "400px",
                   maxWidth: "800px",
-                  width: "100%",
                   border: `solid ${colors.primaryContainer} 2px`,
-                  marginLeft: "2rem",
                   [theme.breakpoints.down("md")]: {
                     width: "100%",
                     marginLeft: 0,
@@ -229,6 +170,63 @@ export const Request = () => {
                 />
               </Paper>
             )}
+          <Box
+            sx={(theme) => ({
+              display: "flex",
+              [theme.breakpoints.down("lg")]: {
+                flexDirection: "column",
+                gap: "36px",
+              },
+              flexDirection: "row",
+              width: "100%",
+              minWidth: "300px",
+              outline: "1px solid rgba(0, 0, 0, 0.1)",
+              padding: "16px 24px 16px 16px",
+              borderRadius: "8px",
+
+              gap: "60px",
+              backgroundColor: theme.palette.background.paper,
+            })}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: "300px",
+                width: "100%",
+              }}
+            >
+              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                Request context
+              </Typography>
+              <Box
+                sx={{
+                  borderRadius: "8px",
+                  outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                  padding: "12px 16px 12px",
+                }}
+              >
+                <Fields
+                  fields={request.flow.steps[0].request.fields}
+                  fieldAnswers={request.steps[0].requestFieldAnswers}
+                  onlyShowSelections={true}
+                />
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                minWidth: "300px",
+              }}
+            >
+              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                Results
+              </Typography>
+              <RequestResults request={request} />
+            </Box>
+          </Box>
         </Box>
         <Box sx={{ padding: "0px 12px" }}>
           <Tabs
