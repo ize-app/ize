@@ -6,7 +6,9 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
+import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -104,7 +106,7 @@ export const Request = () => {
           <Typography variant={"h1"} marginBottom={".75rem"}>
             {request.name}
           </Typography>
-          <Typography variant={"h3"}>
+          <Typography variant={"description"} lineHeight={"24px"}>
             <Link
               to={generatePath(Route.Flow, {
                 flowId: fullUUIDToShort(request.flow.flowId),
@@ -118,6 +120,20 @@ export const Request = () => {
               {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
             </Link>
           </Typography>
+          <Box sx={{ display: "flex", gap: "6px" }}>
+            <Typography variant="description" lineHeight={"24px"}>
+              Created by{"  "}
+            </Typography>
+            <AvatarWithName
+              avatar={request.creator}
+              typography="description"
+              size="14px"
+              fontSize="14px"
+            />
+            <Typography variant="description" lineHeight={"24px"}>
+              on {new Date(request.createdAt).toLocaleDateString()}
+            </Typography>
+          </Box>
         </Box>
         <Box
           sx={{
@@ -125,7 +141,7 @@ export const Request = () => {
             justifyContent: "space-between",
             marginTop: "36px",
             marginBottom: "36px",
-            gap: "24px",
+            gap: "72px",
             [theme.breakpoints.down("md")]: {
               flexDirection: "column-reverse",
               gap: "24px",
@@ -142,35 +158,6 @@ export const Request = () => {
               maxWidth: "800px",
             }}
           >
-            {/* <Box
-              sx={{
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                borderRadius: "8px",
-                padding: "16px 24px 16px 16px",
-                marginTop: "8px",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: theme.palette.background.paper,
-              }}
-            >
-              <Typography color="primary" variant="label" marginBottom="12px" fontSize="20px">
-                Request details
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                <Box sx={{ display: "flex", gap: "6px" }}>
-                  <Typography fontSize={".875rem"}>Created by{"  "}</Typography>
-                  <AvatarWithName avatar={request.creator} />
-                  <Typography fontSize={".875rem"}>
-                    on {new Date(request.createdAt).toLocaleDateString()}
-                  </Typography>
-                </Box>
-                <Fields
-                  fields={request.flow.steps[0].request.fields}
-                  fieldAnswers={request.steps[0].requestFieldAnswers}
-                  onlyShowSelections={true}
-                />
-              </Box>
-            </Box> */}
             <Box
               sx={{
                 outline: "1px solid rgba(0, 0, 0, 0.1)",
@@ -179,21 +166,50 @@ export const Request = () => {
                 marginTop: "8px",
                 display: "flex",
                 flexDirection: "column",
+                gap: "24px",
                 backgroundColor: theme.palette.background.paper,
               }}
             >
-              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                Results
-              </Typography>
-              <RequestResults request={request} />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  // outline: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                  Request context
+                </Typography>
+                <Box
+                  sx={{
+                    borderRadius: "8px",
+                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                    padding: "12px 16px 12px",
+                  }}
+                >
+                  <Fields
+                    fields={request.flow.steps[0].request.fields}
+                    fieldAnswers={request.steps[0].requestFieldAnswers}
+                    onlyShowSelections={true}
+                  />
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                  Results
+                </Typography>
+                <RequestResults request={request} />
+              </Box>
             </Box>
           </Box>
           {!!me &&
             acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
+                elevation={3}
                 sx={{
-                  flexGrow: 1,
+                  display: "block",
+                  alignSelf: "flex-start",
                   minWidth: "300px",
                   maxWidth: "800px",
                   width: "100%",
@@ -221,7 +237,6 @@ export const Request = () => {
             handleChange={(_event: React.SyntheticEvent, newValue: number) => {
               setTabIndex(newValue);
             }}
-            // sx={{ marginTop: "24px" }}
           />
 
           {tabs.map((tab: TabProps, index) => (
