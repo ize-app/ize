@@ -9,6 +9,7 @@ import { WatchGroupButton } from "@/components/watchButton/WatchGroupButton";
 import { Route } from "@/routers/routes";
 
 import BannerWithAvatar from "./BannerWithAvatar";
+import { EvolveGroupButton } from "./EvolveGroupButton";
 import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
@@ -117,20 +118,23 @@ export const Group = () => {
             gap: "8px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            <Typography variant="h1">{group.group.name}</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <Typography variant="h1">{group.group.name}</Typography>
+              <WatchGroupButton
+                watched={group.group.isWatched}
+                groupId={group.group.id}
+                size="medium"
+              />
+            </Box>
 
-            <WatchGroupButton
-              watched={group.group.isWatched}
-              groupId={group.group.id}
-              size="medium"
-            />
+            <EvolveGroupButton evolveGroupFlowId={group.evolveGroupFlowId} />
           </Box>
           <Box
             sx={(theme) => ({

@@ -475,6 +475,7 @@ export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail 
 export type IzeGroup = {
   __typename?: 'IzeGroup';
   description?: Maybe<Scalars['String']['output']>;
+  evolveGroupFlowId?: Maybe<Scalars['String']['output']>;
   group: Group;
   members: Array<Entity>;
   notificationEntity?: Maybe<Entity>;
@@ -1732,6 +1733,7 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
 
 export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  evolveGroupFlowId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
   notificationEntity?: Resolver<Maybe<ResolversTypes['Entity']>, ParentType, ContextType>;

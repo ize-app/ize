@@ -79,6 +79,7 @@ fragment IzeGroup on IzeGroup {
   notificationEntity {
     ...EntitySummaryParts
   }
+  evolveGroupFlowId
 }
 
 fragment GroupTypeSummaryParts on GroupType {
