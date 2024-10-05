@@ -21,10 +21,14 @@ import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
-  const [selectedId, setSelectedId] = useState<string | false>(false); // change to step1
+  // if the current step has an action, select the action, otherwise select the step
+  const [selectedId, setSelectedId] = useState<string | false>(
+    request.steps[request.currentStepIndex].actionExecution
+      ? "action"
+      : "step" + request.currentStepIndex.toString(),
+  );
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;
-
   return (
     <FlowConfigDiagramContainer>
       <PanelContainer>
