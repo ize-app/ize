@@ -12,13 +12,12 @@ import {
   UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
-import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { TimeLeft } from "./TimeLeft";
 import { ActionFilter } from "../../Action/ActionFilter";
-import { Permissions } from "../../Permissions";
+import { RespondPermissionPanel } from "../RespondPermissionPanel";
 
 export const ConfigRequestStepPanel = ({
   step,
@@ -97,17 +96,7 @@ export const ConfigRequestStepPanel = ({
             <ActionFilter action={triggeringAction} />
           </PanelAccordion>
         )}
-        <PanelAccordion title="Respond permission" hasError={false}>
-          {step.response.permission && (
-            <Permissions permission={step.response.permission} type="response" />
-          )}
-          {step.expirationSeconds &&
-            `Respondants have ${intervalToIntuitiveTimeString(
-              step.expirationSeconds * 1000,
-            )} to respond and can respond ${
-              step.allowMultipleResponses ? "multiple times" : "only once"
-            }`}
-        </PanelAccordion>
+        <RespondPermissionPanel step={step} />
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
           <RequestStepResults
