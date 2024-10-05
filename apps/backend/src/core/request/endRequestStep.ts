@@ -33,7 +33,7 @@ export const endRequestStep = async ({
   if (requestStep.Request.creatorId !== context.currentUser?.id) return false;
   if (requestStep.responseComplete) return true;
 
-  await prisma.requestStep.updateMany({
+  await prisma.requestStep.update({
     where: {
       id: requestStepId,
     },

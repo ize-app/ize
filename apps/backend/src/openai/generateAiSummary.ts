@@ -8,7 +8,7 @@ dotenv.config();
 
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
 
-type AiSummaryResult =
+export type AiSummaryResult =
   | {
       complete: false;
       value: null;
