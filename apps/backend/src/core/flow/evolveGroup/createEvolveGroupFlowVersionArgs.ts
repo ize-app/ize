@@ -68,6 +68,7 @@ export const createEvolveGroupFlowVersionArgs = ({
       groupEntityId,
       policy,
     }),
+    canBeManuallyEnded: false,
     expirationSeconds: 259200,
     result: decisionResult ? [decisionResult] : [],
     action: createActionConfigForPolicy({ actionType: ActionType.EvolveGroup, policy }),

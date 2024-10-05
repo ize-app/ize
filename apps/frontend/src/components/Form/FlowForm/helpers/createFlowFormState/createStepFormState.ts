@@ -28,5 +28,6 @@ export const createStepFormState = (step: Step): StepSchemaType => {
     action: createActionFormState(step.action),
     expirationSeconds: step.expirationSeconds ?? undefined,
     allowMultipleResponses: step.allowMultipleResponses,
+    canBeManuallyEnded: step.canBeManuallyEnded,
   };
 };

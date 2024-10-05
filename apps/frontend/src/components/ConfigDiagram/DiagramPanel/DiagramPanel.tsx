@@ -9,9 +9,8 @@ export const DiagramPanel = ({ children }: { children: React.ReactNode }) => {
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         display: "flex",
         flexDirection: "column",
-        padding: "48px 24px",
+        padding: "60px 24px",
         alignItems: "center",
-        justifyContent: "center",
       }}
     >
       {children}

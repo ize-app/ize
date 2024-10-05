@@ -5,6 +5,7 @@ import { newRequest as newRequestService } from "@/core/request/newRequest";
 import { newResponse as newResponseService } from "@/core/response/newResponse";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import {
+  MutationEndRequestStepArgs,
   MutationNewEvolveRequestArgs,
   MutationNewRequestArgs,
   MutationNewResponseArgs,
@@ -15,6 +16,8 @@ import {
   Request,
   RequestStepSummary,
 } from "@graphql/generated/resolver-types";
+
+import { endRequestStep as endRequestStepService } from "@/core/request/endRequestStep";
 
 import { GraphqlRequestContext } from "../context";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
@@ -75,9 +78,17 @@ const newResponse: MutationResolvers["newResponse"] = async (
   return await newResponseService({ type: "user", args, context });
 };
 
+const endRequestStep: MutationResolvers["endRequestStep"] = async (
+  root: unknown,
+  args: MutationEndRequestStepArgs,
+  context: GraphqlRequestContext,
+): Promise<boolean> => {
+  return await endRequestStepService({ args, context });
+};
+
 export const requestQueries = {
   getRequest,
   getRequestSteps,
 };
 
-export const requestMutations = { newRequest, newEvolveRequest, newResponse };
+export const requestMutations = { newRequest, newEvolveRequest, newResponse, endRequestStep };

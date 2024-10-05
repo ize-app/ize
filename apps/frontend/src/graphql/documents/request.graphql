@@ -16,6 +16,10 @@ query getRequest($requestId: String!) {
   }
 }
 
+mutation EndRequestStep($requestStepId: String!) {
+  endRequestStep(requestStepId: $requestStepId)
+}
+
 query getRequestSteps(
   $cursor: String
   $limit: Int!

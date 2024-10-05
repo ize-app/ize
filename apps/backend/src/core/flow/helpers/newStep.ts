@@ -92,6 +92,7 @@ export const newStep = async ({
       index,
       flowVersionId,
       expirationSeconds: args.expirationSeconds,
+      canBeManuallyEnded: args.canBeManuallyEnded,
     },
   });
 

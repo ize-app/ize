@@ -1,9 +1,17 @@
 import { Box, Typography } from "@mui/material";
+import { useContext } from "react";
 
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
+import { EndRequestStepButton } from "@/components/EndRequestStepButton";
 import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
-import { ActionFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
+import {
+  ActionFragment,
+  RequestStepFragment,
+  StepFragment,
+  UserSummaryPartsFragment,
+} from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
@@ -19,6 +27,7 @@ export const ConfigRequestStepPanel = ({
   requestStepIndex,
   currentStepIndex,
   requestFinal,
+  creator,
 }: {
   step: StepFragment;
   requestFinal: boolean;
@@ -26,7 +35,9 @@ export const ConfigRequestStepPanel = ({
   triggeringAction: ActionFragment | null | undefined;
   requestStepIndex: number;
   currentStepIndex: number;
+  creator: UserSummaryPartsFragment;
 }) => {
+  const { me } = useContext(CurrentUserContext);
   const status = determineRequestStepStatus(
     requestStepIndex,
     requestStep?.resultsComplete ?? false,
@@ -35,6 +46,9 @@ export const ConfigRequestStepPanel = ({
   );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
+
+  const showManuallyEndButton =
+    step.canBeManuallyEnded && me?.user.id === creator.id && !requestStep?.responseComplete;
 
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);
@@ -52,6 +66,9 @@ export const ConfigRequestStepPanel = ({
       </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Status" hasError={false}>
+          {showManuallyEndButton && requestStep && (
+            <EndRequestStepButton requestStepId={requestStep.requestStepId} />
+          )}
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
             <StatusTag status={status} />

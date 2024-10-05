@@ -79,6 +79,11 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           control={formMethods.control}
           label="Allow multiple responses"
         />
+        <Switch<FlowSchemaType>
+          name={`steps.${formIndex}.canBeManuallyEnded`}
+          control={formMethods.control}
+          label="Allow triggerer to end step early"
+        />
       </PanelAccordion>
       <PanelAccordion
         title="Collaborations"

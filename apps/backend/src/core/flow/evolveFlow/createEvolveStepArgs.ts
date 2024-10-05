@@ -71,6 +71,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
 
   return {
     allowMultipleResponses: false,
+    canBeManuallyEnded: false,
     request: {
       permission: evolveArgs.requestPermission,
       fields: requestFieldSetArgs,

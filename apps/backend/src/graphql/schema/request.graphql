@@ -2,6 +2,7 @@ type Mutation {
   newRequest(request: NewRequestArgs!): String!
   newEvolveRequest(request: NewEvolveRequestArgs!): String!
   newResponse(response: NewResponseArgs!): String!
+  endRequestStep(requestStepId: String!): Boolean!
 }
 
 type Query {

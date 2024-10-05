@@ -80,6 +80,8 @@ export const Request = () => {
     allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
 
+  console.log("request is ", request);
+
   if (loading || !request) return <Loading />;
 
   const tabs: TabProps[] = [

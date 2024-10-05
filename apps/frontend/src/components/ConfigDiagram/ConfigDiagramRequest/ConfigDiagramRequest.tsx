@@ -102,6 +102,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               currentStepIndex={request.currentStepIndex}
               triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
               requestFinal={request.final}
+              creator={request.creator}
             />
           )
         );

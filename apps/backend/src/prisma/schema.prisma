@@ -342,6 +342,8 @@ model Step {
   flowVersionId          String  @map("flow_version_id") @db.Uuid
   index                  Int
   expirationSeconds      Int?    @default(0) @map("request_expiration_seconds")
+  // can be ended manually be the creator of the request
+  canBeManuallyEnded     Boolean @default(false) @map("can_be_manually_ended")
   allowMultipleResponses Boolean @default(false) @map("allow_multiple_responses")
   requestPermissionsId   String? @map("request_permissions_id") @db.Uuid
   responsePermissionsId  String? @map("response_permissions_id") @db.Uuid

@@ -62,6 +62,7 @@ export const createGroupWatchFlowArgs = ({
       policy,
     }),
     expirationSeconds: 259200,
+    canBeManuallyEnded: false,
     result: decisionResult ? [decisionResult] : [],
     action: createActionConfigForPolicy({ actionType: ActionType.GroupWatchFlow, policy }),
   };

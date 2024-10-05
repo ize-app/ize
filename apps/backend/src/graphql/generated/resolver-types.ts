@@ -532,6 +532,7 @@ export type Me = {
 export type Mutation = {
   __typename?: 'Mutation';
   createWebhook: Scalars['String']['output'];
+  endRequestStep: Scalars['Boolean']['output'];
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
   newEvolveRequest: Scalars['String']['output'];
@@ -548,6 +549,11 @@ export type Mutation = {
 
 export type MutationCreateWebhookArgs = {
   inputs: CallWebhookArgs;
+};
+
+
+export type MutationEndRequestStepArgs = {
+  requestStepId: Scalars['String']['input'];
 };
 
 
@@ -657,6 +663,7 @@ export type NewResponseArgs = {
 export type NewStepArgs = {
   action?: InputMaybe<ActionArgs>;
   allowMultipleResponses: Scalars['Boolean']['input'];
+  canBeManuallyEnded: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request?: InputMaybe<StepRequestArgs>;
   response?: InputMaybe<StepResponseArgs>;
@@ -993,6 +1000,7 @@ export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
   allowMultipleResponses: Scalars['Boolean']['output'];
+  canBeManuallyEnded: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
   id: Scalars['String']['output'];
   index: Scalars['Int']['output'];
@@ -1766,6 +1774,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createWebhook?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateWebhookArgs, 'inputs'>>;
+  endRequestStep?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationEndRequestStepArgs, 'requestStepId'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
@@ -1966,6 +1975,7 @@ export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
   allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  canBeManuallyEnded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
