@@ -18,6 +18,8 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 
+import discordLogo from "@/assets/discord-logo-blue.svg";
+import hatsLogoUrl from "@/assets/hats-logo.svg";
 import telegramLogoUrl from "@/assets/telegram-logo.svg";
 import { Avatar } from "@/components/Avatar";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -25,7 +27,7 @@ import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
 import { EntitySummaryPartsFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
-import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
+import { EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
 
@@ -142,16 +144,6 @@ export const EntitiesSearchField = <T extends FieldValues>({
                         </Button>
                         <Button
                           variant="outlined"
-                          startIcon={<DiscordLogoSvg />}
-                          onMouseDown={() => {
-                            setRoleModalType(NewEntityTypes.GroupDiscord);
-                            setOpen(true);
-                          }}
-                        >
-                          Discord @role
-                        </Button>
-                        <Button
-                          variant="outlined"
                           startIcon={<NftSvg />}
                           onMouseDown={() => {
                             setRoleModalType(NewEntityTypes.GroupNft);
@@ -162,7 +154,29 @@ export const EntitiesSearchField = <T extends FieldValues>({
                         </Button>
                         <Button
                           variant="outlined"
-                          startIcon={<NftSvg />}
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={discordLogo} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
+                          onMouseDown={() => {
+                            setRoleModalType(NewEntityTypes.GroupDiscord);
+                            setOpen(true);
+                          }}
+                        >
+                          Discord @role
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={hatsLogoUrl} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
                           onMouseDown={() => {
                             setRoleModalType(NewEntityTypes.GroupHat);
                             setOpen(true);
