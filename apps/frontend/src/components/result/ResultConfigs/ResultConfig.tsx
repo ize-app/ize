@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { FieldOptions } from "@/components/Field/FieldOptions";
 import {
@@ -25,9 +25,7 @@ export const ResultConfig = ({
         name={field?.name}
         resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
       />
-      <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
-        {createResultConfigDescription(resultConfig)}
-      </Typography>
+      {createResultConfigDescription(resultConfig)}
       {field && field.__typename === FieldType.Options && (
         <FieldOptions fieldOptions={field} final={false} />
       )}
