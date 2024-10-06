@@ -6,43 +6,40 @@ import { runResultsAndActions } from "../core/result/newResults/runResultsAndAct
 import { resultInclude } from "../core/result/resultPrismaTypes";
 import { prisma } from "../prisma/client";
 export const retryNewResults = async () => {
-  console.log("inside retry");
-  //  check if there are any request steps that don't have completed results
-  const stepsWithoutResults = await prisma.requestStep.findMany({
-    where: {
-      responseComplete: true,
-      resultsComplete: false,
-      final: false,
-    },
-    include: {
-      Step: {
-        include: stepInclude,
+  try {
+    //  check if there are any request steps that don't have completed results
+    const stepsWithoutResults = await prisma.requestStep.findMany({
+      where: {
+        responseComplete: true,
+        resultsComplete: false,
+        final: false,
       },
-      Responses: {
-        include: responseInclude,
+      include: {
+        Step: {
+          include: stepInclude,
+        },
+        Responses: {
+          include: responseInclude,
+        },
+        Results: {
+          include: resultInclude,
+        },
       },
-      Results: {
-        include: resultInclude,
-      },
-    },
-  });
+    });
 
-  // retry getting results for each result
-  await Promise.all(
-    stepsWithoutResults.map(async (reqStep) => {
-      console.log("rerunning results for request step: ", reqStep.id);
-      await runResultsAndActions({
-        step: reqStep.Step,
-        responses: reqStep.Responses,
-        existingResults: reqStep.Results,
-        requestStepId: reqStep.id,
-      });
-    }),
-  );
-
-  process.exit(0);
-
-  // telegramBot.stop("SIGTERM");
+    // retry getting results for each result
+    await Promise.all(
+      stepsWithoutResults.map(async (reqStep) => {
+        console.log("rerunning results for request step: ", reqStep.id);
+        await runResultsAndActions({
+          step: reqStep.Step,
+          responses: reqStep.Responses,
+          existingResults: reqStep.Results,
+          requestStepId: reqStep.id,
+        });
+      }),
+    );
+  } catch (error) {
+    console.error("Error in retryNewResults:", error);
+  }
 };
-
-retryNewResults();

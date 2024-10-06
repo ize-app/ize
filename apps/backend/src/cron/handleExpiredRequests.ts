@@ -45,9 +45,5 @@ export const handleExpiredResults = async () => {
     );
   } catch (error) {
     console.error("Error in handleExpiredResults:", error);
-    throw error;
-  } finally {
-    // Ensure all connections are properly closed
-    await prisma.$disconnect();
   }
 };
