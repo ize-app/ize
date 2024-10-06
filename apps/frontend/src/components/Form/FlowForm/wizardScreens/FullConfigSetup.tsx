@@ -72,7 +72,7 @@ export const FullConfigSetup = () => {
   // console.log("errors are ", useFormMethods.formState.errors);
   // console.log("values are ", useFormMethods.getValues());
 
-  const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
+  const hasStep0Response =  !!useFormMethods.getValues(`steps.0.response`);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -84,7 +84,7 @@ export const FullConfigSetup = () => {
     onNext();
   };
 
-  const action = useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
   const displayAction =
     action &&
     action.type &&
