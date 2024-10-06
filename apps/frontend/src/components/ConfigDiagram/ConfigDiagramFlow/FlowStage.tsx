@@ -10,6 +10,7 @@ import { StageMenu } from "../DiagramPanel/StageMenu";
 
 interface FlowStageProps extends StageProps {
   label: string;
+  subtitle?: string;
   deleteHandler?: () => void;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
   hasError?: boolean;
@@ -18,6 +19,7 @@ interface FlowStageProps extends StageProps {
 
 export const FlowStage = ({
   label,
+  subtitle,
   id,
   setSelectedId,
   selectedId,
@@ -52,9 +54,38 @@ export const FlowStage = ({
           justifyContent: "space-between",
           alignItems: "center",
           flexGrow: 1,
+          // whiteSpace: "nowrap",
+          // overflow: "hidden",
+          // textOverflow: "ellipsis",
         }}
       >
-        <Typography variant="label">{label}</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            // whiteSpace: "nowrap",
+            // overflow: "hidden",
+            // textOverflow: "ellipsis",
+            flexGrow: 1,
+          }}
+        >
+          <Typography variant="label">{label}</Typography>
+          {subtitle && (
+            <Typography
+              fontSize={".7rem"}
+              lineHeight={"1rem"}
+              width={"100%"}
+              // sx={{
+              //   whiteSpace: "nowrap",
+              //   overflow: "hidden",
+              //   textOverflow: "ellipsis",
+              //   flexGrow: 1,
+              // }}
+            >
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
         {entities.length > 0 && <AvatarGroup avatars={entities} />}
         {deleteHandler && !disableDelete && <StageMenu deleteHandler={deleteHandler} />}
       </Box>
