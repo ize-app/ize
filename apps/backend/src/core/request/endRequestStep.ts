@@ -2,8 +2,6 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationEndRequestStepArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
-import { stepInclude } from "../flow/flowPrismaTypes";
-import { responseInclude } from "../response/responsePrismaTypes";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
 export const endRequestStep = async ({
@@ -20,12 +18,6 @@ export const endRequestStep = async ({
       id: requestStepId,
     },
     include: {
-      Responses: {
-        include: responseInclude,
-      },
-      Step: {
-        include: stepInclude,
-      },
       Request: true,
     },
   });
@@ -44,8 +36,6 @@ export const endRequestStep = async ({
 
   await runResultsAndActions({
     requestStepId: requestStepId,
-    step: requestStep.Step,
-    responses: requestStep.Responses,
   });
 
   return true;

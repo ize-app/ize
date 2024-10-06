@@ -1,5 +1,3 @@
-import { stepInclude } from "../core/flow/flowPrismaTypes";
-import { responseInclude } from "../core/response/responsePrismaTypes";
 import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
 import { prisma } from "../prisma/client";
 
@@ -12,14 +10,6 @@ export const handleExpiredResults = async () => {
       where: {
         responseComplete: false,
         expirationDate: { lte: now },
-      },
-      include: {
-        Responses: {
-          include: responseInclude,
-        },
-        Step: {
-          include: stepInclude,
-        },
       },
     });
 
@@ -38,8 +28,6 @@ export const handleExpiredResults = async () => {
       newlyExpiredSteps.map(async (requestStep) => {
         return await runResultsAndActions({
           requestStepId: requestStep.id,
-          step: requestStep.Step,
-          responses: requestStep.Responses,
         });
       }),
     );

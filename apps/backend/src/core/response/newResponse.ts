@@ -4,7 +4,6 @@ import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { MutationNewResponseArgs } from "@graphql/generated/resolver-types";
 
-import { responseInclude } from "./responsePrismaTypes";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
 import { IdentityPrismaType } from "../entity/identity/identityPrismaTypes";
@@ -40,12 +39,10 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
   } = args;
 
   let hasRespondPermissions = false;
-
   let existingUserResponse: Response | null = null;
-
   let newResponse: Response;
 
-  return await prisma.$transaction(async (transaction) => {
+  const responseId = await prisma.$transaction(async (transaction) => {
     const requestStep = await transaction.requestStep.findUniqueOrThrow({
       where: {
         id: requestStepId,
@@ -58,9 +55,6 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
           include: {
             FlowVersion: true,
           },
-        },
-        Responses: {
-          include: responseInclude,
         },
         RequestFieldAnswers: {
           include: fieldAnswerInclude,
@@ -165,7 +159,6 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
     }
 
     if (!requestStep.Step.allowMultipleResponses) {
-
       if (existingUserResponse)
         throw new GraphQLError(
           `Response already exists for this request step. requestStepId: ${requestStepId}`,
@@ -183,23 +176,16 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
       transaction,
     });
 
-    const allResponses = await transaction.response.findMany({
-      include: responseInclude,
-      where: {
-        requestStepId,
-      },
-    });
-
-    if (checkIfEarlyResult({ step: requestStep.Step, responses: allResponses })) {
-      // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
-      // there is cron job to rerun stalled actions / results
-      await runResultsAndActions({
-        requestStepId: requestStep.id,
-        step: requestStep.Step,
-        responses: allResponses,
-      });
-    }
-
     return newResponse.id;
   });
+
+  if (await checkIfEarlyResult({ requestStepId })) {
+    // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
+    // there is cron job to rerun stalled actions / results
+    await runResultsAndActions({
+      requestStepId,
+    });
+  }
+
+  return responseId;
 };

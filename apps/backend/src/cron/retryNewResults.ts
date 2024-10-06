@@ -32,9 +32,6 @@ export const retryNewResults = async () => {
       stepsWithoutResults.map(async (reqStep) => {
         console.log("rerunning results for request step: ", reqStep.id);
         await runResultsAndActions({
-          step: reqStep.Step,
-          responses: reqStep.Responses,
-          existingResults: reqStep.Results,
           requestStepId: reqStep.id,
         });
       }),

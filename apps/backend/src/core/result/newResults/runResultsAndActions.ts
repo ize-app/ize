@@ -1,37 +1,41 @@
-import { Prisma } from "@prisma/client";
-
 import { executeAction } from "@/core/action/executeActions/executeAction";
-import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
+import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { sendResultNotifications } from "@/core/notification/sendResultNotifications";
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { responseInclude } from "@/core/response/responsePrismaTypes";
 import { prisma } from "@/prisma/client";
 import { endTelegramPolls } from "@/telegram/endTelegramPolls";
 
 import { runResultsForStep } from "./runResultsForStep";
-import { ResultPrismaType } from "../resultPrismaTypes";
+import { resultInclude } from "../resultPrismaTypes";
 
 // creates the results and then runs actions for a given request Step
 // should only be run if resultsComplete is false
-export const runResultsAndActions = async ({
-  requestStepId,
-  step,
-  responses,
-  existingResults = [],
-  transaction = prisma,
-}: {
-  requestStepId: string;
-  step: StepPrismaType;
-  responses: ResponsePrismaType[];
-  existingResults?: ResultPrismaType[];
-  transaction?: Prisma.TransactionClient;
-}) => {
+export const runResultsAndActions = async ({ requestStepId }: { requestStepId: string }) => {
   try {
+    const reqStep = await prisma.requestStep.findFirstOrThrow({
+      where: {
+        id: requestStepId,
+      },
+      include: {
+        Step: {
+          include: stepInclude,
+        },
+        Results: {
+          include: resultInclude,
+        },
+        Responses: {
+          include: responseInclude,
+        },
+      },
+    });
+
     const results = await runResultsForStep({
-      step,
-      responses,
-      existingResults,
+      step: reqStep.Step,
+      responses: reqStep.Responses,
+      existingResults: reqStep.Results,
       requestStepId,
     });
+
     const hasCompleteResults = results.every((result) => result.complete);
 
     // this code block should only be run once per request step
@@ -40,10 +44,9 @@ export const runResultsAndActions = async ({
       endTelegramPolls({ requestStepId });
       sendResultNotifications({ requestStepId });
       await executeAction({
-        step,
+        step: reqStep.Step,
         results,
         requestStepId,
-        transaction,
       });
     }
   } catch (e) {

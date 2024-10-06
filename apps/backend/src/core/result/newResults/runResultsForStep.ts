@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
@@ -16,69 +14,69 @@ export const runResultsForStep = async ({
   step,
   responses,
   existingResults = [],
-  transaction = prisma,
 }: {
   requestStepId: string;
   step: StepPrismaType;
   responses: ResponsePrismaType[];
   existingResults?: ResultPrismaType[];
-  transaction?: Prisma.TransactionClient;
 }): Promise<ResultPrismaType[]> => {
-  const resultConfigs =
-    step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
+  return await prisma.$transaction(async (transaction) => {
+    const resultConfigs =
+      step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
-  // run results from each
-  const possibleResults = await Promise.all(
-    resultConfigs.map(async (resultConfig) => {
-      const existingResult = existingResults.find(
-        (r) => r.resultConfigId === resultConfig.id && r.complete,
-      );
-      if (existingResult) return existingResult;
-      // TODO set result status to complete on success
-      switch (resultConfig.resultType) {
-        case ResultType.Decision: {
-          return await newDecisionResult({ resultConfig, responses, requestStepId });
+    // run results from each
+    const possibleResults = await Promise.all(
+      resultConfigs.map(async (resultConfig) => {
+        const existingResult = existingResults.find(
+          (r) => r.resultConfigId === resultConfig.id && r.complete,
+        );
+        if (existingResult) return existingResult;
+        // TODO set result status to complete on success
+        switch (resultConfig.resultType) {
+          case ResultType.Decision: {
+            return await newDecisionResult({ resultConfig, responses, requestStepId });
+          }
+          case ResultType.LlmSummary: {
+            return await newLlmSummaryResult({
+              resultConfig,
+              responses,
+              requestStepId,
+              type: ResultType.LlmSummary,
+            });
+          }
+          case ResultType.LlmSummaryList: {
+            return await newLlmSummaryResult({
+              resultConfig,
+              responses,
+              requestStepId,
+              type: ResultType.LlmSummaryList,
+            });
+          }
+          case ResultType.Ranking: {
+            return await newRankingResult({ resultConfig, responses, requestStepId });
+          }
+          default: {
+            throw Error("");
+          }
         }
-        case ResultType.LlmSummary: {
-          return await newLlmSummaryResult({
-            resultConfig,
-            responses,
-            requestStepId,
-            type: ResultType.LlmSummary,
-          });
-        }
-        case ResultType.LlmSummaryList: {
-          return await newLlmSummaryResult({
-            resultConfig,
-            responses,
-            requestStepId,
-            type: ResultType.LlmSummaryList,
-          });
-        }
-        case ResultType.Ranking: {
-          return await newRankingResult({ resultConfig, responses, requestStepId });
-        }
-        default: {
-          throw Error("");
-        }
-      }
-    }),
-  );
+      }),
+    );
 
-  // remove result configs that did not produce a result
-  // but keep resultsConfigs that were supposed to create a result but didn't complete
-  const attemptedResults = possibleResults.filter((r) => r !== null);
+    // remove result configs that did not produce a result
+    // but keep resultsConfigs that were supposed to create a result but didn't complete
+    const attemptedResults = possibleResults.filter((r) => r !== null);
 
-  // update request step with outcome
-  await transaction.requestStep.update({
-    where: {
-      id: requestStepId,
-    },
-    data: {
-      responseComplete: true,
-      resultsComplete: attemptedResults.every((result) => result.complete),
-    },
+    // update request step with outcome
+    await transaction.requestStep.update({
+      where: {
+        id: requestStepId,
+      },
+      data: {
+        responseComplete: true,
+        resultsComplete: attemptedResults.every((result) => result.complete),
+      },
+    });
+
+    return attemptedResults;
   });
-
-  return attemptedResults;
 };
