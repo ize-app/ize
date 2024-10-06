@@ -1,9 +1,12 @@
-import { runResultsAndActions } from "./runResultsAndActions";
-import { prisma } from "../../../prisma/client";
-import { stepInclude } from "../../flow/flowPrismaTypes";
-import { responseInclude } from "../../response/responsePrismaTypes";
-import { resultInclude } from "../resultPrismaTypes";
+// import { telegramBot } from "@/telegram/TelegramClient";
+
+import { stepInclude } from "../core/flow/flowPrismaTypes";
+import { responseInclude } from "../core/response/responsePrismaTypes";
+import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
+import { resultInclude } from "../core/result/resultPrismaTypes";
+import { prisma } from "../prisma/client";
 export const retryNewResults = async () => {
+  console.log("inside retry");
   //  check if there are any request steps that don't have completed results
   const stepsWithoutResults = await prisma.requestStep.findMany({
     where: {
@@ -27,6 +30,7 @@ export const retryNewResults = async () => {
   // retry getting results for each result
   await Promise.all(
     stepsWithoutResults.map(async (reqStep) => {
+      console.log("rerunning results for request step: ", reqStep.id);
       await runResultsAndActions({
         step: reqStep.Step,
         responses: reqStep.Responses,
@@ -35,4 +39,10 @@ export const retryNewResults = async () => {
       });
     }),
   );
+
+  process.exit(0);
+
+  // telegramBot.stop("SIGTERM");
 };
+
+retryNewResults();

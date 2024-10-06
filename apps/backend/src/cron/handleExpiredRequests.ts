@@ -1,7 +1,7 @@
-import { prisma } from "../../prisma/client";
-import { stepInclude } from "../flow/flowPrismaTypes";
-import { responseInclude } from "../response/responsePrismaTypes";
-import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { stepInclude } from "../core/flow/flowPrismaTypes";
+import { responseInclude } from "../core/response/responsePrismaTypes";
+import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
+import { prisma } from "../prisma/client";
 
 // run results and actions on newly expired requests
 export const handleExpiredResults = async () => {
