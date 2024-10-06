@@ -30,7 +30,9 @@ export const newResults = async ({
   // run results from each
   const possibleResults = await Promise.all(
     resultConfigs.map(async (resultConfig) => {
-      const existingResult = existingResults.find((r) => r.resultConfigId === resultConfig.id);
+      const existingResult = existingResults.find(
+        (r) => r.resultConfigId === resultConfig.id && r.complete,
+      );
       if (existingResult) return existingResult;
       // TODO set result status to complete on success
       switch (resultConfig.resultType) {
