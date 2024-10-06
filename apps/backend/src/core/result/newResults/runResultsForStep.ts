@@ -11,7 +11,7 @@ import { newRankingResult } from "../ranking/newRankingResult";
 import { ResultPrismaType } from "../resultPrismaTypes";
 
 // return type should distinguish between what completed and what didn't run yet
-export const newResults = async ({
+export const runResultsForStep = async ({
   requestStepId,
   step,
   responses,

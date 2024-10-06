@@ -7,7 +7,7 @@ import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { prisma } from "@/prisma/client";
 import { endTelegramPolls } from "@/telegram/endTelegramPolls";
 
-import { newResults } from "./newResults";
+import { runResultsForStep } from "./runResultsForStep";
 import { ResultPrismaType } from "../resultPrismaTypes";
 
 // creates the results and then runs actions for a given request Step
@@ -26,7 +26,7 @@ export const runResultsAndActions = async ({
   transaction?: Prisma.TransactionClient;
 }) => {
   try {
-    const results = await newResults({
+    const results = await runResultsForStep({
       step,
       responses,
       existingResults,
