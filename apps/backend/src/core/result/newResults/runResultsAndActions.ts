@@ -44,8 +44,6 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
       endTelegramPolls({ requestStepId });
       sendResultNotifications({ requestStepId });
       await executeAction({
-        step: reqStep.Step,
-        results,
         requestStepId,
       });
     }
