@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
@@ -97,25 +99,31 @@ export const newLlmSummaryResult = async ({
       .map((r) => r.AnswerFreeInput[0].value),
   });
 
-  ////// create results for that decision
-  return await prisma.result.create({
-    include: resultInclude,
-    data: {
-      itemCount: res.complete ? res.value.length : 0,
-      requestStepId,
-      resultConfigId: resultConfig.id,
-      complete: res?.complete ?? false,
-      hasResult: res?.complete ?? false,
-      ResultItems: res?.complete
-        ? {
-            createMany: {
-              data: res.value.map((value) => ({
-                dataType: FieldDataType.String,
-                value,
-              })),
-            },
-          }
-        : undefined,
+  const resultArgs: Prisma.ResultUncheckedCreateInput = {
+    itemCount: res.length,
+    requestStepId,
+    resultConfigId: resultConfig.id,
+    complete: true,
+    hasResult: true,
+    ResultItems: {
+      createMany: {
+        data: res.map((value) => ({
+          dataType: FieldDataType.String,
+          value,
+        })),
+      },
     },
+  };
+
+  return await prisma.result.upsert({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
+    },
+    include: resultInclude,
+    create: resultArgs,
+    update: resultArgs,
   });
 };

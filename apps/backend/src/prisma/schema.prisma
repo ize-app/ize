@@ -836,20 +836,23 @@ model ResultConfigSetResultConfigs {
 // A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
 // The result model is an attempt of a result creation, but there may not actually be results in this attempt (e.g. the minimum vote threshold isn't hit for a decision)
 model Result {
-  id             String   @id @default(uuid()) @db.Uuid
-  complete       Boolean  @default(false)
-  requestStepId  String   @map("request_step_id") @db.Uuid
-  resultConfigId String   @map("result_config_id") @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  complete       Boolean   @default(false)
+  requestStepId  String    @map("request_step_id") @db.Uuid
+  resultConfigId String    @map("result_config_id") @db.Uuid
   // Number of items within result array
-  itemCount      Int      @map("itemCount")
-  hasResult      Boolean  @map("has_result")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+  itemCount      Int       @map("itemCount")
+  hasResult      Boolean   @map("has_result")
+  retryAttempts  Int       @default(0) @map("retry_attempts")
+  nextRetryAt    DateTime? @map("next_retry_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
 
   RequestStep  RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
   ResultItems  ResultItems[]
 
+  @@unique([requestStepId, resultConfigId])
   @@map("results")
 }
 

@@ -1,4 +1,4 @@
-import { FieldOption, ResultType } from "@prisma/client";
+import { FieldOption, Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -40,24 +40,33 @@ export const newDecisionResult = async ({
     });
   }
 
-  ////// create results for that decision
-  return await prisma.result.create({
-    include: resultInclude,
-    data: {
-      itemCount: decisionFieldOption ? 1 : 0,
-      requestStepId,
-      resultConfigId: resultConfig.id,
-      complete: true,
-      hasResult: !!decisionFieldOption,
-      ResultItems: decisionFieldOption
-        ? {
-            create: {
-              dataType: decisionFieldOption.dataType,
-              value: decisionFieldOption.name,
-              fieldOptionId: decisionFieldOption.id,
-            },
-          }
-        : undefined,
+  const resultArgs: Prisma.ResultUncheckedCreateInput = {
+    itemCount: decisionFieldOption ? 1 : 0,
+    requestStepId,
+    resultConfigId: resultConfig.id,
+    complete: true,
+    hasResult: !!decisionFieldOption,
+    ResultItems: decisionFieldOption
+      ? {
+          create: {
+            dataType: decisionFieldOption.dataType,
+            value: decisionFieldOption.name,
+            fieldOptionId: decisionFieldOption.id,
+          },
+        }
+      : undefined,
+  };
+
+  ////// upsert results for decision
+  return await prisma.result.upsert({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
     },
+    include: resultInclude,
+    create: resultArgs,
+    update: resultArgs,
   });
 };

@@ -1,4 +1,4 @@
-import { ResultType } from "@prisma/client";
+import { Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -38,32 +38,41 @@ export const newRankingResult = async ({
   });
 
   const hasResult = rankFieldOptions.length > 0;
-  /// create ranking results
-  return await prisma.result.create({
-    include: resultInclude,
-    data: {
-      itemCount: rankFieldOptions.length,
-      requestStepId,
-      resultConfigId: resultConfig.id,
-      complete: true,
-      hasResult,
-      ResultItems: hasResult
-        ? {
-            createMany: {
-              data: rankFieldOptions
-                .map((option) => ({
-                  dataType: option.dataType,
-                  value: option.name,
-                  fieldOptionId: option.id,
-                  // calculate average weight of each option
-                  weight: optionCount[option.id] / fieldAnswers.length,
-                }))
-                // rank in ascending order of weight
-                .sort((a, b) => b.weight - a.weight)
-                .slice(0, rankConfig.numOptionsToInclude ?? undefined),
-            },
-          }
-        : undefined,
+
+  const resultArgs: Prisma.ResultUncheckedCreateInput = {
+    itemCount: rankFieldOptions.length,
+    requestStepId,
+    resultConfigId: resultConfig.id,
+    complete: true,
+    hasResult,
+    ResultItems: hasResult
+      ? {
+          createMany: {
+            data: rankFieldOptions
+              .map((option) => ({
+                dataType: option.dataType,
+                value: option.name,
+                fieldOptionId: option.id,
+                // calculate average weight of each option
+                weight: optionCount[option.id] / fieldAnswers.length,
+              }))
+              // rank in ascending order of weight
+              .sort((a, b) => b.weight - a.weight)
+              .slice(0, rankConfig.numOptionsToInclude ?? undefined),
+          },
+        }
+      : undefined,
+  };
+
+  return await prisma.result.upsert({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
     },
+    include: resultInclude,
+    create: resultArgs,
+    update: resultArgs,
   });
 };
