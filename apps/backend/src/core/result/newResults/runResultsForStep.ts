@@ -31,14 +31,11 @@ export const runResultsForStep = async ({
 
     const attempetdResults = await Promise.all(
       resultConfigs.map(async (resultConfig) => {
+        const maxResultRetries = 20;
+
         const existingResult = existingResults.find((r) => r.resultConfigId === resultConfig.id);
 
         if (existingResult?.complete) return existingResult;
-        // check if result is ready to be retried again, if not return existing incomplete result
-        if (existingResult?.nextRetryAt && existingResult.nextRetryAt > new Date()) {
-          return existingResult;
-        }
-        const maxResultRetries = 20;
         // if result has been retried too many times, mark as complete but with no result
         if ((existingResult?.retryAttempts ?? 0) > maxResultRetries) {
           await prisma.result.update({
@@ -53,6 +50,11 @@ export const runResultsForStep = async ({
               hasResult: false,
             },
           });
+        }
+
+        // check if result is ready to be retried again, if not return existing incomplete result
+        if (existingResult?.nextRetryAt && existingResult.nextRetryAt > new Date()) {
+          return existingResult;
         }
 
         if (!resultConfig.fieldId)
