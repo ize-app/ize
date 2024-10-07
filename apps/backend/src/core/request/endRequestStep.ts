@@ -23,14 +23,14 @@ export const endRequestStep = async ({
   });
 
   if (requestStep.Request.creatorId !== context.currentUser?.id) return false;
-  if (requestStep.responseComplete) return true;
+  if (requestStep.responseFinal) return true;
 
   await prisma.requestStep.update({
     where: {
       id: requestStepId,
     },
     data: {
-      responseComplete: true,
+      responseFinal: true,
     },
   });
 

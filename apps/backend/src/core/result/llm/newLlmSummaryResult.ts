@@ -103,7 +103,7 @@ export const newLlmSummaryResult = async ({
     itemCount: res.length,
     requestStepId,
     resultConfigId: resultConfig.id,
-    complete: true,
+    final: true,
     hasResult: true,
     ResultItems: {
       createMany: {

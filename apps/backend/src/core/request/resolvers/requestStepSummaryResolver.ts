@@ -39,9 +39,9 @@ export const requestStepSummaryResolver = ({
     totalSteps: r.Request.FlowVersion.totalSteps,
     createdAt: r.createdAt.toISOString(),
     expirationDate: r.expirationDate?.toISOString(),
-    responseComplete: r.responseComplete,
-    resultsComplete: r.resultsComplete,
-    actionsComplete: r.actionsComplete,
+    responseComplete: r.responseFinal,
+    resultsComplete: r.resultsFinal,
+    actionsComplete: r.actionsFinal,
     final: r.final,
     userResponded: r.Responses.length > 0,
     respondPermission: r.Step.ResponsePermissions

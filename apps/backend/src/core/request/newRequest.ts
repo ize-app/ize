@@ -95,8 +95,8 @@ export const newRequest = async ({
           expirationDate: new Date(
             new Date().getTime() + (step.expirationSeconds as number) * 1000,
           ),
-          responseComplete: executeActionAutomatically,
-          resultsComplete: executeActionAutomatically,
+          responseFinal: executeActionAutomatically,
+          resultsFinal: executeActionAutomatically,
           Request: {
             connect: {
               id: request.id,

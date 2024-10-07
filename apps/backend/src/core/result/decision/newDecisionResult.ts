@@ -44,7 +44,7 @@ export const newDecisionResult = async ({
     itemCount: decisionFieldOption ? 1 : 0,
     requestStepId,
     resultConfigId: resultConfig.id,
-    complete: true,
+    final: true,
     hasResult: !!decisionFieldOption,
     ResultItems: decisionFieldOption
       ? {

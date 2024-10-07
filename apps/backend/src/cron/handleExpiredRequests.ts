@@ -8,7 +8,7 @@ export const handleExpiredResults = async () => {
     // get request steps that are past expiration date but haven't been processed yet
     const newlyExpiredSteps = await prisma.requestStep.findMany({
       where: {
-        responseComplete: false,
+        responseFinal: false,
         expirationDate: { lte: now },
       },
     });
@@ -16,11 +16,11 @@ export const handleExpiredResults = async () => {
     // stop allowing responses on expired requests
     await prisma.requestStep.updateMany({
       where: {
-        responseComplete: false,
+        responseFinal: false,
         expirationDate: { lte: now },
       },
       data: {
-        responseComplete: true,
+        responseFinal: true,
       },
     });
 

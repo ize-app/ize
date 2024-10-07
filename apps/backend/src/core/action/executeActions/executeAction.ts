@@ -46,7 +46,7 @@ export const executeAction = async ({
             id: requestStepId,
           },
           data: {
-            actionsComplete: true,
+            actionsFinal: true,
             final: true,
             Request: {
               update: {
@@ -58,7 +58,7 @@ export const executeAction = async ({
         return true;
       }
 
-      let actionComplete = false;
+      let actionsFinal = false;
 
       // if the action filter isn't passed, end the request step and request
       if (action.filterOptionId) {
@@ -75,7 +75,7 @@ export const executeAction = async ({
               id: requestStepId,
             },
             data: {
-              actionsComplete: true,
+              actionsFinal: true,
               final: true,
               Request: {
                 update: {
@@ -94,27 +94,27 @@ export const executeAction = async ({
           const payload = await createNotificationPayload({ requestStepId, transaction });
           const uri = decrypt(action.Webhook.uri);
           if (payload) {
-            actionComplete = await callWebhook({ uri, payload });
+            actionsFinal = await callWebhook({ uri, payload });
           }
           break;
         }
         case ActionType.TriggerStep: {
-          actionComplete = await triggerNextStep({ requestStepId });
+          actionsFinal = await triggerNextStep({ requestStepId });
           break;
         }
         case ActionType.EvolveFlow: {
-          actionComplete = await evolveFlow({ requestStepId, transaction });
+          actionsFinal = await evolveFlow({ requestStepId, transaction });
           break;
         }
         case ActionType.GroupWatchFlow: {
-          actionComplete = await groupWatchFlow({ requestStepId, transaction });
+          actionsFinal = await groupWatchFlow({ requestStepId, transaction });
           break;
         }
         case ActionType.EvolveGroup:
-          actionComplete = await evolveGroup({ requestStepId, transaction });
+          actionsFinal = await evolveGroup({ requestStepId, transaction });
           break;
         default:
-          actionComplete = false;
+          actionsFinal = false;
           break;
       }
 
@@ -126,13 +126,13 @@ export const executeAction = async ({
           },
         },
         update: {
-          complete: actionComplete,
+          complete: actionsFinal,
           lastAttemptedAt: new Date(),
         },
         create: {
           actionId: action.id,
           requestStepId,
-          complete: actionComplete,
+          complete: actionsFinal,
         },
       });
 
@@ -142,8 +142,8 @@ export const executeAction = async ({
           id: requestStepId,
         },
         data: {
-          actionsComplete: actionComplete,
-          final: actionComplete,
+          actionsFinal: actionsFinal,
+          final: actionsFinal,
           Request:
             // since there is currently only one action per request step
             // we can assume the request is complete if the action is complete
@@ -151,14 +151,14 @@ export const executeAction = async ({
             action.type !== ActionType.TriggerStep
               ? {
                   update: {
-                    final: actionComplete,
+                    final: actionsFinal,
                   },
                 }
               : {},
         },
       });
 
-      return actionComplete;
+      return actionsFinal;
     });
   } catch (error) {
     console.error("Error in executeAction:", error);

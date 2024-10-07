@@ -8,8 +8,8 @@ export const retryActions = async () => {
     //  check if there are any request steps that don't have completed actions
     const stepsWithoutActions = await prisma.requestStep.findMany({
       where: {
-        resultsComplete: true,
-        actionsComplete: false,
+        resultsFinal: true,
+        actionsFinal: false,
         final: false,
       },
       include: {

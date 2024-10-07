@@ -43,7 +43,7 @@ export const newRankingResult = async ({
     itemCount: rankFieldOptions.length,
     requestStepId,
     resultConfigId: resultConfig.id,
-    complete: true,
+    final: true,
     hasResult,
     ResultItems: hasResult
       ? {

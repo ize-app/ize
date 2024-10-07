@@ -56,8 +56,8 @@ export const requestStepResolver = async ({
     responseFieldAnswers,
     userResponses,
     results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
-    responseComplete: reqStep.responseComplete,
-    resultsComplete: reqStep.resultsComplete,
+    responseComplete: reqStep.final,
+    resultsComplete: reqStep.final,
     final: reqStep.final,
   };
   return res;

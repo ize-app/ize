@@ -35,7 +35,7 @@ export const runResultsForStep = async ({
 
         const existingResult = existingResults.find((r) => r.resultConfigId === resultConfig.id);
 
-        if (existingResult?.complete) return existingResult;
+        if (existingResult?.final) return existingResult;
         // if result has been retried too many times, mark as complete but with no result
         if ((existingResult?.retryAttempts ?? 0) > maxResultRetries) {
           await prisma.result.update({
@@ -46,7 +46,7 @@ export const runResultsForStep = async ({
               },
             },
             data: {
-              complete: true,
+              final: true,
               hasResult: false,
             },
           });
@@ -79,7 +79,7 @@ export const runResultsForStep = async ({
               itemCount: 0,
               requestStepId,
               resultConfigId: resultConfig.id,
-              complete: true,
+              final: true,
               hasResult: false,
             },
           });
@@ -133,7 +133,7 @@ export const runResultsForStep = async ({
               itemCount: 0,
               requestStepId,
               resultConfigId: resultConfig.id,
-              complete: false,
+              final: false,
               hasResult: false,
               retryAttempts,
               nextRetryAt,
@@ -155,8 +155,8 @@ export const runResultsForStep = async ({
         id: requestStepId,
       },
       data: {
-        responseComplete: true,
-        resultsComplete: attempetdResults.every((result) => result.complete),
+        responseFinal: true,
+        resultsFinal: attempetdResults.every((result) => result.final),
       },
     });
 
