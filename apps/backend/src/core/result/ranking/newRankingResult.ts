@@ -1,21 +1,20 @@
 import { ResultType } from "@prisma/client";
 
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
 import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // returns result if there is no result
 export const newRankingResult = async ({
   resultConfig,
-  responses,
+  fieldAnswers,
   requestStepId,
 }: {
   resultConfig: ResultConfigPrismaType;
-  responses: ResponsePrismaType[];
+  fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
 }): Promise<ResultPrismaType> => {
   const rankConfig = resultConfig.ResultConfigRank;
@@ -28,15 +27,6 @@ export const newRankingResult = async ({
       },
     );
 
-  if (!resultConfig.fieldId)
-    throw new GraphQLError(
-      `Result config for decision is missing a fieldId: resultConfigId: ${resultConfig.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
-  const fieldAnswers = getFieldAnswersFromResponses({ fieldId: resultConfig.fieldId, responses });
   const optionCount = calculateAggregateOptionWeights({ answers: fieldAnswers });
 
   const rankFieldOptions = await prisma.fieldOption.findMany({
@@ -47,7 +37,7 @@ export const newRankingResult = async ({
     },
   });
 
-  const hasResult = fieldAnswers.length >= resultConfig.minAnswers && rankFieldOptions.length > 0;
+  const hasResult = rankFieldOptions.length > 0;
   /// create ranking results
   return await prisma.result.create({
     include: resultInclude,

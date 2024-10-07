@@ -1,30 +1,27 @@
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { getRequestResults } from "@/core/request/utils/getRequestResults";
 import { getRequestTriggerFieldAnswers } from "@/core/request/utils/getRequestTriggerFieldAnswers";
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
-import { AiSummaryResult, generateAiSummary } from "@/openai/generateAiSummary";
+import { generateAiSummary } from "@/openai/generateAiSummary";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 export const newLlmSummaryResult = async ({
   resultConfig,
-  responses,
+  fieldAnswers,
   requestStepId,
   type,
 }: {
   resultConfig: ResultConfigPrismaType;
-  responses: ResponsePrismaType[];
+  fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }): Promise<ResultPrismaType> => {
   const llmConfig = resultConfig.ResultConfigLlm;
-
-  let res: AiSummaryResult | null = null;
 
   if (
     !(
@@ -81,40 +78,33 @@ export const newLlmSummaryResult = async ({
       },
     );
 
-  const fieldAnswers = getFieldAnswersFromResponses({
-    fieldId: resultConfig.fieldId,
-    responses,
+  const requestName = request.name;
+  const flowName = request.flow.name;
+  const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
+  const requestResults = getRequestResults({ request });
+
+  const res = await generateAiSummary({
+    flowName,
+    requestName,
+    requestTriggerAnswers,
+    requestResults,
+    fieldName,
+    type,
+    exampleOutput: llmConfig.example,
+    summaryPrompt: llmConfig.prompt,
+    responses: fieldAnswers
+      .filter((r) => r.AnswerFreeInput.length > 0)
+      .map((r) => r.AnswerFreeInput[0].value),
   });
-
-  if (resultConfig.minAnswers <= fieldAnswers.length) {
-    const requestName = request.name;
-    const flowName = request.flow.name;
-    const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-    const requestResults = getRequestResults({ request });
-
-    res = await generateAiSummary({
-      flowName,
-      requestName,
-      requestTriggerAnswers,
-      requestResults,
-      fieldName,
-      type,
-      exampleOutput: llmConfig.example,
-      summaryPrompt: llmConfig.prompt,
-      responses: fieldAnswers
-        .filter((r) => r.AnswerFreeInput.length > 0)
-        .map((r) => r.AnswerFreeInput[0].value),
-    });
-  }
 
   ////// create results for that decision
   return await prisma.result.create({
     include: resultInclude,
     data: {
-      itemCount: res && res.complete ? res.value.length : 0,
+      itemCount: res.complete ? res.value.length : 0,
       requestStepId,
       resultConfigId: resultConfig.id,
-      complete: res?.complete ?? true,
+      complete: res?.complete ?? false,
       hasResult: res?.complete ?? false,
       ResultItems: res?.complete
         ? {

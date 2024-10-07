@@ -1,21 +1,20 @@
 import { FieldOption, ResultType } from "@prisma/client";
 
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { determineDecision } from "./determineDecision";
 import { prisma } from "../../../prisma/client";
 import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // returns result if there is no result
 export const newDecisionResult = async ({
   resultConfig,
-  responses,
+  fieldAnswers,
   requestStepId,
 }: {
   resultConfig: ResultConfigPrismaType;
-  responses: ResponsePrismaType[];
+  fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
 }): Promise<ResultPrismaType> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
@@ -29,22 +28,11 @@ export const newDecisionResult = async ({
       },
     );
 
-  if (!resultConfig.fieldId)
-    throw new GraphQLError(
-      `Result config for decision is missing a fieldId: resultConfigId: ${resultConfig.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
-  const fieldAnswers = getFieldAnswersFromResponses({ fieldId: resultConfig.fieldId, responses });
-
   // find the decision and choose default option if no decision was made
   const decisionOptionId =
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
-  // only create a record of a decision if the minimum number of answers have been provided and there is a decision
-  if (decisionOptionId && fieldAnswers.length >= resultConfig.minAnswers) {
+  if (decisionOptionId) {
     decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
       where: {
         id: decisionOptionId,

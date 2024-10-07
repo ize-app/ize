@@ -2,11 +2,13 @@ import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newDecisionResult } from "../decision/newDecisionResult";
 import { newLlmSummaryResult } from "../llm/newLlmSummaryResult";
 import { newRankingResult } from "../ranking/newRankingResult";
-import { ResultPrismaType } from "../resultPrismaTypes";
+import { ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // return type should distinguish between what completed and what didn't run yet
 export const runResultsForStep = async ({
@@ -31,40 +33,80 @@ export const runResultsForStep = async ({
           (r) => r.resultConfigId === resultConfig.id && r.complete,
         );
         if (existingResult) return existingResult;
-        // TODO set result status to complete on success
-        switch (resultConfig.resultType) {
-          case ResultType.Decision: {
-            return await newDecisionResult({ resultConfig, responses, requestStepId });
-          }
-          case ResultType.LlmSummary: {
-            return await newLlmSummaryResult({
-              resultConfig,
-              responses,
+
+        if (!resultConfig.fieldId)
+          throw new GraphQLError(
+            `Result config for decision is missing a fieldId: resultConfigId: ${resultConfig.id}`,
+            {
+              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+            },
+          );
+
+        const fieldAnswers = getFieldAnswersFromResponses({
+          fieldId: resultConfig.fieldId,
+          responses,
+        });
+
+        if (fieldAnswers.length < resultConfig.minAnswers) {
+          // create result with complete = true and hasResult = false
+          return await prisma.result.create({
+            include: resultInclude,
+            data: {
+              itemCount: 0,
               requestStepId,
-              type: ResultType.LlmSummary,
-            });
+              resultConfigId: resultConfig.id,
+              complete: true,
+              hasResult: false,
+            },
+          });
+        }
+        try {
+          // TODO set result status to complete on success
+          switch (resultConfig.resultType) {
+            case ResultType.Decision: {
+              return await newDecisionResult({ resultConfig, fieldAnswers, requestStepId });
+            }
+            case ResultType.LlmSummary: {
+              return await newLlmSummaryResult({
+                resultConfig,
+                fieldAnswers,
+                requestStepId,
+                type: ResultType.LlmSummary,
+              });
+            }
+            case ResultType.LlmSummaryList: {
+              return await newLlmSummaryResult({
+                resultConfig,
+                fieldAnswers,
+                requestStepId,
+                type: ResultType.LlmSummaryList,
+              });
+            }
+            case ResultType.Ranking: {
+              return await newRankingResult({ resultConfig, fieldAnswers, requestStepId });
+            }
+            default: {
+              throw Error("");
+            }
           }
-          case ResultType.LlmSummaryList: {
-            return await newLlmSummaryResult({
-              resultConfig,
-              responses,
+        } catch (e) {
+          console.error(
+            `Error creating result. ResultConfigId ${resultConfig.id} requestStepId ${requestStepId} :`,
+            e,
+          );
+          return await prisma.result.create({
+            include: resultInclude,
+            data: {
+              itemCount: 0,
               requestStepId,
-              type: ResultType.LlmSummaryList,
-            });
-          }
-          case ResultType.Ranking: {
-            return await newRankingResult({ resultConfig, responses, requestStepId });
-          }
-          default: {
-            throw Error("");
-          }
+              resultConfigId: resultConfig.id,
+              complete: false,
+              hasResult: false,
+            },
+          });
         }
       }),
     );
-
-    // remove result configs that did not produce a result
-    // but keep resultsConfigs that were supposed to create a result but didn't complete
-    const attemptedResults = possibleResults.filter((r) => r !== null);
 
     // update request step with outcome
     await transaction.requestStep.update({
@@ -73,10 +115,10 @@ export const runResultsForStep = async ({
       },
       data: {
         responseComplete: true,
-        resultsComplete: attemptedResults.every((result) => result.complete),
+        resultsComplete: possibleResults.every((result) => result.complete),
       },
     });
 
-    return attemptedResults;
+    return possibleResults;
   });
 };
