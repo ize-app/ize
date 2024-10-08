@@ -24,10 +24,12 @@ import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
   // if the current step has an action, select the action, otherwise select the step
   const [selectedId, setSelectedId] = useState<string | false>(
-    request.steps[request.currentStepIndex].actionExecution
+    request.steps[request.currentStepIndex].resultsComplete
       ? "action"
       : "step" + request.currentStepIndex.toString(),
   );
+
+  console.log("selectedId", selectedId);
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;
   return (
