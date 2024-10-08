@@ -15,10 +15,10 @@
   "scripts": {
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
     "codegen": "graphql-codegen --config codegen.ts && ts-node scripts/ignoreCodegenTSErrors.ts",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --max-warnings 0 && npm run tsc",
     "format": "prettier . --write",
     "prepare": "husky || true",
-    "tsc": "tsc --build"
+    "tsc": "npm run tsc --workspace=apps/frontend  && npm run tsc --workspace=apps/backend"
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
