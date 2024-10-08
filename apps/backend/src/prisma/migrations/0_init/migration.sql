@@ -2,16 +2,19 @@
 CREATE TYPE "OauthTypes" AS ENUM ('Discord', 'Google');
 
 -- CreateEnum
+CREATE TYPE "GroupType" AS ENUM ('DiscordRoleGroup', 'GroupNft', 'GroupTelegram', 'GroupCustom');
+
+-- CreateEnum
 CREATE TYPE "NftTypes" AS ENUM ('ERC721', 'ERC1155');
 
 -- CreateEnum
 CREATE TYPE "Blockchain" AS ENUM ('Ethereum', 'Arbitrum', 'Optimism', 'Matic', 'Base');
 
 -- CreateEnum
-CREATE TYPE "FlowType" AS ENUM ('Custom', 'Evolve');
+CREATE TYPE "FlowType" AS ENUM ('Custom', 'Evolve', 'EvolveGroup', 'GroupWatchFlow');
 
 -- CreateEnum
-CREATE TYPE "FieldDataType" AS ENUM ('String', 'Number', 'Uri', 'Date', 'DateTime', 'FlowVersionId');
+CREATE TYPE "FieldDataType" AS ENUM ('String', 'Number', 'Uri', 'Date', 'DateTime', 'FlowVersionId', 'EntityIds', 'FlowIds', 'Webhook');
 
 -- CreateEnum
 CREATE TYPE "FieldType" AS ENUM ('Options', 'FreeInput');
@@ -29,14 +32,13 @@ CREATE TYPE "DecisionType" AS ENUM ('NumberThreshold', 'PercentageThreshold', 'W
 CREATE TYPE "LlmSummaryType" AS ENUM ('AfterEveryResponse', 'AtTheEnd');
 
 -- CreateEnum
-CREATE TYPE "ActionType" AS ENUM ('CallWebhook', 'TriggerStep', 'EvolveFlow');
+CREATE TYPE "ActionType" AS ENUM ('CallWebhook', 'TriggerStep', 'EvolveFlow', 'EvolveGroup', 'GroupWatchFlow');
 
 -- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "stytch_id" TEXT NOT NULL,
-    "firstName" TEXT,
-    "lastName" TEXT,
+    "name" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -93,6 +95,19 @@ CREATE TABLE "identities_discord" (
 );
 
 -- CreateTable
+CREATE TABLE "identities_telegram" (
+    "id" UUID NOT NULL,
+    "identity_id" UUID NOT NULL,
+    "telegram_user_id" BIGINT NOT NULL,
+    "username" TEXT,
+    "photo_url" TEXT,
+    "first_name" TEXT NOT NULL,
+    "last_name" TEXT,
+
+    CONSTRAINT "identities_telegram_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "identities_groups" (
     "identity_id" UUID NOT NULL,
     "group_id" UUID NOT NULL,
@@ -119,12 +134,13 @@ CREATE TABLE "oauths" (
 -- CreateTable
 CREATE TABLE "groups" (
     "id" UUID NOT NULL,
-    "creator_id" UUID NOT NULL,
+    "creator_id" UUID,
     "entity_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "activeAt" TIMESTAMP(3),
     "deactivatedat" TIMESTAMP(3),
+    "type" "GroupType" NOT NULL,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
 );
@@ -147,24 +163,28 @@ CREATE TABLE "discord_role_groups" (
 );
 
 -- CreateTable
-CREATE TABLE "groups_custom" (
+CREATE TABLE "groups_telegram_chat" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "group_id" UUID NOT NULL,
+    "chat_id" BIGINT NOT NULL,
+    "message_thread_id" BIGINT,
+    "admin_telegram_user_id" BIGINT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "groups_telegram_chat_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "groups_custom" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "group_id" UUID NOT NULL,
+    "entity_set_id" UUID NOT NULL,
+    "notification_entity_id" UUID,
 
     CONSTRAINT "groups_custom_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "custom_group_group_members" (
-    "group_id" UUID NOT NULL,
-    "group_custom_id" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "custom_group_identity_members" (
-    "identity_id" UUID NOT NULL,
-    "group_custom_id" UUID NOT NULL
 );
 
 -- CreateTable
@@ -207,6 +227,7 @@ CREATE TABLE "discord_servers" (
 -- CreateTable
 CREATE TABLE "flows" (
     "id" UUID NOT NULL,
+    "custom_group_id" UUID,
     "type" "FlowType" NOT NULL,
     "creator_id" UUID NOT NULL,
     "current_flow_version_id" UUID,
@@ -238,6 +259,7 @@ CREATE TABLE "steps" (
     "flow_version_id" UUID NOT NULL,
     "index" INTEGER NOT NULL,
     "request_expiration_seconds" INTEGER DEFAULT 0,
+    "can_be_manually_ended" BOOLEAN NOT NULL DEFAULT false,
     "allow_multiple_responses" BOOLEAN NOT NULL DEFAULT false,
     "request_permissions_id" UUID,
     "response_permissions_id" UUID,
@@ -287,6 +309,7 @@ CREATE TABLE "entities" (
 CREATE TABLE "field_sets" (
     "id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "locked" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "field_sets_pkey" PRIMARY KEY ("id")
 );
@@ -315,7 +338,6 @@ CREATE TABLE "field_options_configs" (
     "id" UUID NOT NULL,
     "field_option_set_id" UUID NOT NULL,
     "data_type" "FieldDataType",
-    "has_request_options" BOOLEAN NOT NULL DEFAULT false,
     "previous_step_options" BOOLEAN NOT NULL DEFAULT false,
     "max_selections" INTEGER,
     "linked_result_options" TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -437,6 +459,7 @@ CREATE TABLE "actions" (
     "webhook_id" UUID,
     "filter_option_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "locked" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "actions_pkey" PRIMARY KEY ("id")
 );
@@ -446,6 +469,7 @@ CREATE TABLE "webhooks" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "uri" TEXT NOT NULL,
+    "uri_preview" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "webhooks_pkey" PRIMARY KEY ("id")
@@ -457,7 +481,10 @@ CREATE TABLE "action_executions" (
     "action_id" UUID NOT NULL,
     "request_step_id" UUID NOT NULL,
     "complete" BOOLEAN NOT NULL DEFAULT false,
+    "final" BOOLEAN NOT NULL DEFAULT false,
     "last_attempted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "retry_attempts" INTEGER NOT NULL DEFAULT 0,
+    "next_retry_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -484,10 +511,10 @@ CREATE TABLE "request_steps" (
     "id" UUID NOT NULL,
     "request_id" UUID NOT NULL,
     "step_id" UUID NOT NULL,
+    "response_final" BOOLEAN NOT NULL DEFAULT false,
+    "results_final" BOOLEAN NOT NULL DEFAULT false,
+    "actions_final" BOOLEAN NOT NULL DEFAULT false,
     "final" BOOLEAN NOT NULL DEFAULT false,
-    "response_complete" BOOLEAN NOT NULL DEFAULT false,
-    "results_complete" BOOLEAN NOT NULL DEFAULT false,
-    "actions_complete" BOOLEAN NOT NULL DEFAULT false,
     "expiration_date" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -509,7 +536,8 @@ CREATE TABLE "request_defined_option_sets" (
 CREATE TABLE "responses" (
     "id" UUID NOT NULL,
     "request_step_id" UUID NOT NULL,
-    "creator_id" UUID NOT NULL,
+    "user_id" UUID,
+    "identity_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "responses_pkey" PRIMARY KEY ("id")
@@ -532,11 +560,13 @@ CREATE TABLE "result_config_set_result_configs" (
 -- CreateTable
 CREATE TABLE "results" (
     "id" UUID NOT NULL,
-    "complete" BOOLEAN NOT NULL DEFAULT false,
+    "final" BOOLEAN NOT NULL DEFAULT false,
     "request_step_id" UUID NOT NULL,
     "result_config_id" UUID NOT NULL,
     "itemCount" INTEGER NOT NULL,
     "has_result" BOOLEAN NOT NULL,
+    "retry_attempts" INTEGER NOT NULL DEFAULT 0,
+    "next_retry_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -554,6 +584,40 @@ CREATE TABLE "result_items" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "result_items_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "users_watched_groups" (
+    "user_id" UUID NOT NULL,
+    "group_id" UUID NOT NULL,
+    "watched" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "users_watched_flows" (
+    "user_id" UUID NOT NULL,
+    "flow_id" UUID NOT NULL,
+    "watched" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "groups_watched_flows" (
+    "flow_id" UUID NOT NULL,
+    "group_id" UUID NOT NULL,
+    "watched" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "telegram_messages" (
+    "id" UUID NOT NULL,
+    "chat_id" BIGINT NOT NULL,
+    "message_id" BIGINT NOT NULL,
+    "poll_id" BIGINT,
+    "request_step_id" UUID NOT NULL,
+    "field_id" UUID,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "telegram_messages_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -578,6 +642,12 @@ CREATE UNIQUE INDEX "identities_blockchain_address_key" ON "identities_blockchai
 CREATE UNIQUE INDEX "identities_discord_identity_id_key" ON "identities_discord"("identity_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "identities_telegram_identity_id_key" ON "identities_telegram"("identity_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "identities_telegram_telegram_user_id_key" ON "identities_telegram"("telegram_user_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "identities_groups_identity_id_group_id_key" ON "identities_groups"("identity_id", "group_id");
 
 -- CreateIndex
@@ -593,13 +663,13 @@ CREATE UNIQUE INDEX "discord_role_groups_discord_server_id_discord_role_id_key" 
 CREATE UNIQUE INDEX "discord_role_groups_discord_server_id_name_key" ON "discord_role_groups"("discord_server_id", "name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "groups_telegram_chat_group_id_key" ON "groups_telegram_chat"("group_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "groups_telegram_chat_chat_id_key" ON "groups_telegram_chat"("chat_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "groups_custom_group_id_key" ON "groups_custom"("group_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "custom_group_group_members_group_id_group_custom_id_key" ON "custom_group_group_members"("group_id", "group_custom_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "custom_group_identity_members_identity_id_group_custom_id_key" ON "custom_group_identity_members"("identity_id", "group_custom_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "groups_nft_group_id_key" ON "groups_nft"("group_id");
@@ -646,6 +716,24 @@ CREATE UNIQUE INDEX "request_steps_step_id_request_id_key" ON "request_steps"("s
 -- CreateIndex
 CREATE UNIQUE INDEX "result_config_set_result_configs_result_config_id_result_co_key" ON "result_config_set_result_configs"("result_config_id", "result_config_set_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "results_request_step_id_result_config_id_key" ON "results"("request_step_id", "result_config_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_watched_groups_user_id_group_id_key" ON "users_watched_groups"("user_id", "group_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_watched_flows_user_id_flow_id_key" ON "users_watched_flows"("user_id", "flow_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "groups_watched_flows_flow_id_group_id_key" ON "groups_watched_flows"("flow_id", "group_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "telegram_messages_message_id_key" ON "telegram_messages"("message_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "telegram_messages_poll_id_key" ON "telegram_messages"("poll_id");
+
 -- AddForeignKey
 ALTER TABLE "identities" ADD CONSTRAINT "identities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -662,6 +750,9 @@ ALTER TABLE "identities_blockchain" ADD CONSTRAINT "identities_blockchain_identi
 ALTER TABLE "identities_discord" ADD CONSTRAINT "identities_discord_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "identities_telegram" ADD CONSTRAINT "identities_telegram_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "identities_groups" ADD CONSTRAINT "identities_groups_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -671,7 +762,7 @@ ALTER TABLE "identities_groups" ADD CONSTRAINT "identities_groups_group_id_fkey"
 ALTER TABLE "oauths" ADD CONSTRAINT "oauths_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "groups" ADD CONSTRAINT "groups_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "groups" ADD CONSTRAINT "groups_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "groups" ADD CONSTRAINT "groups_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -683,19 +774,16 @@ ALTER TABLE "discord_role_groups" ADD CONSTRAINT "discord_role_groups_group_id_f
 ALTER TABLE "discord_role_groups" ADD CONSTRAINT "discord_role_groups_discord_server_id_fkey" FOREIGN KEY ("discord_server_id") REFERENCES "discord_servers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "groups_telegram_chat" ADD CONSTRAINT "groups_telegram_chat_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "groups_custom" ADD CONSTRAINT "groups_custom_notification_entity_id_fkey" FOREIGN KEY ("notification_entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "groups_custom" ADD CONSTRAINT "groups_custom_entity_set_id_fkey" FOREIGN KEY ("entity_set_id") REFERENCES "entity_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "groups_custom" ADD CONSTRAINT "groups_custom_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "custom_group_group_members" ADD CONSTRAINT "custom_group_group_members_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "custom_group_group_members" ADD CONSTRAINT "custom_group_group_members_group_custom_id_fkey" FOREIGN KEY ("group_custom_id") REFERENCES "groups_custom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "custom_group_identity_members" ADD CONSTRAINT "custom_group_identity_members_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "custom_group_identity_members" ADD CONSTRAINT "custom_group_identity_members_group_custom_id_fkey" FOREIGN KEY ("group_custom_id") REFERENCES "groups_custom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "groups_nft" ADD CONSTRAINT "groups_nft_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -705,6 +793,9 @@ ALTER TABLE "groups_nft" ADD CONSTRAINT "groups_nft_collection_id_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "flows" ADD CONSTRAINT "flows_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "flows" ADD CONSTRAINT "flows_custom_group_id_fkey" FOREIGN KEY ("custom_group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "flows" ADD CONSTRAINT "flows_current_flow_version_id_fkey" FOREIGN KEY ("current_flow_version_id") REFERENCES "flow_versions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -848,7 +939,10 @@ ALTER TABLE "request_defined_option_sets" ADD CONSTRAINT "request_defined_option
 ALTER TABLE "responses" ADD CONSTRAINT "responses_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "responses" ADD CONSTRAINT "responses_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "responses" ADD CONSTRAINT "responses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "responses" ADD CONSTRAINT "responses_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "result_config_set_result_configs" ADD CONSTRAINT "result_config_set_result_configs_result_config_set_id_fkey" FOREIGN KEY ("result_config_set_id") REFERENCES "result_config_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -867,4 +961,28 @@ ALTER TABLE "result_items" ADD CONSTRAINT "result_items_resultId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "result_items" ADD CONSTRAINT "result_items_field_option_id_fkey" FOREIGN KEY ("field_option_id") REFERENCES "field_options"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_watched_groups" ADD CONSTRAINT "users_watched_groups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_watched_groups" ADD CONSTRAINT "users_watched_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_watched_flows" ADD CONSTRAINT "users_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users_watched_flows" ADD CONSTRAINT "users_watched_flows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "groups_watched_flows" ADD CONSTRAINT "groups_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "groups_watched_flows" ADD CONSTRAINT "groups_watched_flows_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "telegram_messages" ADD CONSTRAINT "telegram_messages_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "telegram_messages" ADD CONSTRAINT "telegram_messages_field_id_fkey" FOREIGN KEY ("field_id") REFERENCES "fields"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
