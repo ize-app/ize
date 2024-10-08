@@ -35,6 +35,7 @@ export const generateStepConfig = ({
           },
     result,
     action,
+    canBeManuallyEnded: true,
     expirationSeconds: 259200,
     allowMultipleResponses: false,
   };

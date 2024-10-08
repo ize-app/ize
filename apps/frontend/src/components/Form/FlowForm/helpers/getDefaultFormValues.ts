@@ -15,6 +15,7 @@ export const defaultStepFormValues: StepSchemaType = {
     fields: [],
     fieldsLocked: false,
   },
+  canBeManuallyEnded: true,
   result: [],
   action: { type: ActionType.None, locked: false },
   expirationSeconds: 259200,
