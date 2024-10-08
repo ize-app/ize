@@ -34,10 +34,10 @@ export const FieldOption = ({
       border={isSelected && selectionType !== FieldOptionsSelectionType.Rank ? "1px solid" : "none"}
       fontWeight={isSelected ? 500 : "normal"}
       color={isSelected ? "primary" : "secondary"}
-      fontSize={".875rem"}
+      fontSize={"1rem"}
     >
       {selectionType === FieldOptionsSelectionType.Rank && typeof index === "number" && final && (
-        <Typography fontSize={".875rem"} fontWeight={700} marginRight="4px">
+        <Typography fontSize={"1rem"} fontWeight={700} marginRight="4px">
           {index + 1}.
         </Typography>
       )}

@@ -164,7 +164,10 @@ export const createUserWatchedFlowFilter = ({
 
 export const createGroupWatchedFlowFilter = ({ groupId }: { groupId: string }) =>
   Prisma.validator<Prisma.FlowWhereInput>()({
-    OR: [{ OwnerGroup: { id: groupId } }, { GroupsWatchedFlows: { some: { groupId: groupId } } }],
+    OR: [
+      { OwnerGroup: { id: groupId } },
+      { GroupsWatchedFlows: { some: { groupId: groupId, watched: true } } },
+    ],
   });
 
 export const createFlowSummaryInclude = (userId: string | undefined) =>

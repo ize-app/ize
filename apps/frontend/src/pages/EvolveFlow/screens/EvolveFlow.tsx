@@ -28,7 +28,7 @@ import { EvolveExistingFlowSchemaType } from "../formValidation";
 export const EvolveFlow = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
-  const { me } = useContext(CurrentUserContext);
+  const { me, setIdentityModalState, setAuthModalOpen } = useContext(CurrentUserContext);
   const { flowId: flowIdShort } = useParams();
   const flowId: string = shortUUIDToFull(flowIdShort as string);
 
@@ -53,6 +53,18 @@ export const EvolveFlow = () => {
     onCompleted: (data) => {
       const newRequestId = data.newEvolveRequest;
       navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request created!", type: "success" });
+    },
+    onError: (data) => {
+      // navigate("/");
+      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+        setIdentityModalState({ type: "request", permission: undefined });
+      } else if (data.graphQLErrors[0].extensions.code === "Unauthenticated") {
+        setAuthModalOpen(true);
+      }
+      setSnackbarOpen(true);
+      setSnackbarData({ message: "Request creation failed", type: "error" });
     },
   });
 
@@ -70,14 +82,8 @@ export const EvolveFlow = () => {
           },
         },
       });
-
-      setSnackbarOpen(true);
-      setSnackbarData({ message: "Request created!", type: "success" });
-      navigate("/");
     } catch (e) {
-      navigate("/");
-      setSnackbarOpen(true);
-      setSnackbarData({ message: "Request creation failed", type: "error" });
+      console.log("ERROR: ", e);
     }
   };
 

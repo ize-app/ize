@@ -23,7 +23,7 @@ export const createDecisionResultConfigForPolicy = ({
     type: ResultType.Decision,
     decision: { type: decisionType, threshold },
     responseFieldIndex: 0,
-    minimumAnswers: 2,
+    minimumAnswers: 1,
   };
   return resultArgs;
 };

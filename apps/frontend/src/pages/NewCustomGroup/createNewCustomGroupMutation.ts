@@ -1,4 +1,5 @@
-import { MutationNewCustomGroupArgs } from "@/graphql/generated/graphql";
+import { createEntityArgs } from "@/components/Form/utils/createEntityArgs";
+import { Entity, MutationNewCustomGroupArgs } from "@/graphql/generated/graphql";
 
 import { GroupSetupAndPoliciesSchemaType } from "./formValidation";
 
@@ -12,7 +13,9 @@ export const createNewCustomGroupMutation = (
       members: formState.members.map((member) => ({
         id: member.entityId,
       })),
-      notificationUri: formState.notification.uri,
+      notificationEntity: formState.notificationEntity
+        ? createEntityArgs(formState.notificationEntity as Entity)
+        : undefined,
       flows: { ...formState.flows },
     },
   };

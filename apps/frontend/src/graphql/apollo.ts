@@ -24,9 +24,10 @@ export const apolloClient = new ApolloClient({
         "GroupWatchFlow",
         "GroupUpdateNotifications",
       ],
+      Respondant: ["Identity", "User"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
-      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord"],
-      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom"],
+      IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
+      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom", "GroupTelegramChat "],
       FieldAnswer: [
         "OptionFieldAnswer",
         "FreeInputFieldAnswer",

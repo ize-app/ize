@@ -1,6 +1,5 @@
-import { Prisma } from "@prisma/client";
-
 import { createFlowInclude } from "@/core/flow/flowPrismaTypes";
+import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
@@ -8,10 +7,9 @@ import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import { sendGroupNotifications } from "../notification/sendGroupNotifications";
-import { hasWritePermission } from "../permission/hasWritePermission";
+import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
+import { hasWriteUserPermission } from "../permission/hasWritePermission";
 import { userInclude } from "../user/userPrismaTypes";
-import { userResolver } from "../user/userResolver";
 import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
@@ -21,126 +19,139 @@ export const newRequest = async ({
   context,
   // proposed flow version id is used when creating an evolution request
   proposedFlowVersionId,
-  transaction,
 }: {
   args: MutationNewRequestArgs;
   context: GraphqlRequestContext;
   proposedFlowVersionId?: string;
-  transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   const {
     request: { requestDefinedOptions, requestFields, flowId },
   } = args;
-
-  const flow = await transaction.flow.findUniqueOrThrow({
-    where: {
-      id: flowId,
-    },
-    include: createFlowInclude(context.currentUser?.id),
-  });
-
-  if (!flow.CurrentFlowVersion)
-    throw new GraphQLError("Missing current version of flow", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-    });
-
-  if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
-    throw new GraphQLError(
-      `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
-  const step = flow.CurrentFlowVersion.Steps[0];
-
-  if (!hasWritePermission({ permission: step.RequestPermissions, context, transaction }))
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
 
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const request = await transaction.request.create({
-    include: {
-      Creator: {
-        include: userInclude,
-      },
-    },
-    data: {
-      name: args.request.name,
-      flowVersionId: flow.CurrentFlowVersion.id,
-      creatorId: context.currentUser.id,
-      proposedFlowVersionId,
-      final: false,
-    },
-  });
-
-  const hasResponseFields = !!step.ResponseFieldSet;
-
-  const requestStep = await transaction.requestStep.create({
-    data: {
-      expirationDate: new Date(new Date().getTime() + (step.expirationSeconds as number) * 1000),
-      responseComplete: !hasResponseFields,
-      resultsComplete: !hasResponseFields,
-      Request: {
-        connect: {
-          id: request.id,
+  const [requestId, requestStepId, executeActionAutomatically] = await prisma.$transaction(
+    async (transaction) => {
+      const flow = await transaction.flow.findUniqueOrThrow({
+        where: {
+          id: flowId,
         },
-      },
-      Step: {
-        connect: {
-          id: step.id,
-        },
-      },
-      CurrentStepParent: {
-        connect: {
-          id: request.id,
-        },
-      },
-    },
-  });
+        include: createFlowInclude(context.currentUser?.id),
+      });
 
-  const requestDefinedOptionSets = await Promise.all(
-    requestDefinedOptions.map(async (r) => {
-      return await createRequestDefinedOptionSet({
-        step,
-        requestStepId: requestStep.id,
-        newOptionArgs: r.options,
-        fieldId: r.fieldId,
-        isTriggerDefinedOptions: true,
+      if (!context.currentUser)
+        throw new GraphQLError("Unauthenticated", {
+          extensions: { code: CustomErrorCodes.Unauthenticated },
+        });
+
+      if (!flow.CurrentFlowVersion)
+        throw new GraphQLError("Missing current version of flow", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+
+      if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
+        throw new GraphQLError(
+          `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
+          {
+            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+          },
+        );
+
+      const step = flow.CurrentFlowVersion.Steps[0];
+
+      const hasRequestPermission = await hasWriteUserPermission({
+        permission: step.RequestPermissions,
+        context,
         transaction,
       });
-    }),
+
+      if (!hasRequestPermission)
+        throw new GraphQLError("User does not have permission to respond", {
+          extensions: { code: CustomErrorCodes.InsufficientPermissions },
+        });
+
+      const request = await transaction.request.create({
+        include: {
+          Creator: {
+            include: userInclude,
+          },
+        },
+        data: {
+          name: args.request.name,
+          flowVersionId: flow.CurrentFlowVersion.id,
+          creatorId: context.currentUser.id,
+          proposedFlowVersionId,
+          final: false,
+        },
+      });
+
+      const executeActionAutomatically = !step.ResponseFieldSet;
+
+      const requestStep = await transaction.requestStep.create({
+        data: {
+          expirationDate: new Date(
+            new Date().getTime() + (step.expirationSeconds as number) * 1000,
+          ),
+          responseFinal: executeActionAutomatically,
+          resultsFinal: executeActionAutomatically,
+          Request: {
+            connect: {
+              id: request.id,
+            },
+          },
+          Step: {
+            connect: {
+              id: step.id,
+            },
+          },
+          CurrentStepParent: {
+            connect: {
+              id: request.id,
+            },
+          },
+        },
+      });
+
+      const requestDefinedOptionSets = await Promise.all(
+        requestDefinedOptions.map(async (r) => {
+          return await createRequestDefinedOptionSet({
+            step,
+            requestStepId: requestStep.id,
+            newOptionArgs: r.options,
+            fieldId: r.fieldId,
+            isTriggerDefinedOptions: true,
+            transaction,
+          });
+        }),
+      );
+
+      // TODO: if auto approve, just create the result
+
+      await newFieldAnswers({
+        fieldSet: step.RequestFieldSet,
+        fieldAnswers: requestFields,
+        requestDefinedOptionSets: requestDefinedOptionSets,
+        requestStepId: requestStep.id,
+        transaction,
+      });
+
+      return [request.id, requestStep.id, executeActionAutomatically];
+    },
   );
 
-  // TODO: if auto approve, just create the result
-
-  await newFieldAnswers({
-    fieldSet: step.RequestFieldSet,
-    fieldAnswers: requestFields,
-    requestDefinedOptionSets: requestDefinedOptionSets,
-    requestStepId: requestStep.id,
-    transaction,
-  });
-
-  if (!hasResponseFields) {
-    await executeAction({ step, results: [], requestStepId: requestStep.id, transaction });
+  if (executeActionAutomatically) {
+    await executeAction({ requestStepId: requestStepId });
   }
 
-  await watchFlow({ flowId: flow.id, watch: true, userId: context.currentUser.id, transaction });
+  await watchFlow({ flowId: flowId, watch: true, userId: context.currentUser.id });
 
-  sendGroupNotifications({
-    flowId,
-    requestId: request.id,
-    flowTitle: flow.CurrentFlowVersion.name, // TODO: include name of flow being evolved if evolve request
-    requestTitle: args.request.name,
-    stepIndex: 0,
-    creator: userResolver(request.Creator),
+  await sendNewStepNotifications({
+    flowId: flowId,
+    requestStepId,
   });
 
-  return request.id;
+  return requestId;
 };

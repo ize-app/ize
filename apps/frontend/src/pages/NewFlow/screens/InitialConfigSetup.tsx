@@ -19,16 +19,16 @@ export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
 
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
-    defaultValues: formState.initialFlowSetup ?? {},
+    defaultValues: formState.initialFlowSetup ?? { permission: { entities: [] } },
     resolver: zodResolver(intitialFlowSetupSchema),
-    // shouldUnregister: true,
+    shouldUnregister: false,
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },
-      newFlow: { ...generateNewFlowConfig({ config: data }) },
+      newFlow: generateNewFlowConfig({ config: data }),
     }));
     onNext();
   };
@@ -84,7 +84,7 @@ export const InitialConfigSetup = () => {
                   ariaLabel={"Individuals and groups to add to custom group"}
                   control={formMethods.control}
                   name={"permission.entities"}
-                  hideCustomGroups={true}
+                  hideCustomGroups={false}
                   label={"Group members *"}
                   setFieldValue={formMethods.setValue}
                   getFieldValues={formMethods.getValues}

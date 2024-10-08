@@ -1,4 +1,4 @@
-import { DecisionArgs, NewFlowArgs } from "@/graphql/generated/graphql";
+import { DecisionArgs, NewFlowArgs, NewStepArgs } from "@/graphql/generated/graphql";
 
 import { createActionArgs } from "./createActionArgs";
 import { createFieldsArgs } from "./createFieldsArgs";
@@ -17,7 +17,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
   const args: NewFlowArgs = {
     name: formState.name,
     reusable: true,
-    steps: formState.steps.map((step, index) => {
+    steps: formState.steps.map((step, index): NewStepArgs => {
       return {
         ...step,
         request: step.request && {
@@ -38,11 +38,17 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
         ),
         action: step.action ? createActionArgs(step.action, step.response?.fields) : null,
         expirationSeconds: step.expirationSeconds ?? null,
+        allowMultipleResponses: step.allowMultipleResponses,
+        canBeManuallyEnded: step.canBeManuallyEnded,
       };
     }),
     evolve: formState.evolve && {
       ...formState.evolve,
-      decision: formState.evolve.decision as DecisionArgs,
+      decision: {
+        type: formState.evolve.decision.type,
+        // @ts-expect-error - need to fix this
+        threshold: formState.evolve.decision.threshold,
+      } as DecisionArgs,
       requestPermission: createPermissionArgs(formState.evolve.requestPermission),
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),
     },

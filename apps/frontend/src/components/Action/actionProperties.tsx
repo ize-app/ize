@@ -1,8 +1,5 @@
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import CloseIcon from "@mui/icons-material/Close";
-import DataObjectIcon from "@mui/icons-material/DataObject";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import WebhookIcon from "@mui/icons-material/Webhook";
@@ -30,21 +27,9 @@ export const actionProperties: ActionProps = {
     label: "Trigger a new step",
     icon: ArrowCircleRightIcon,
   },
-  [ActionType.GroupUpdateMetadata]: {
-    label: "Update group metadata",
-    icon: DataObjectIcon,
-  },
-  [ActionType.GroupUpdateMembership]: {
-    label: "Update group membership",
-    icon: GroupAddIcon,
-  },
   [ActionType.GroupWatchFlow]: {
     label: "Watch/unwatch flow",
     icon: VisibilityIcon,
-  },
-  [ActionType.GroupUpdateNotifications]: {
-    label: "Change group notification settings",
-    icon: NotificationsIcon,
   },
   [ActionType.None]: {
     label: "None",

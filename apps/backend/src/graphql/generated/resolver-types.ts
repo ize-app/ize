@@ -18,7 +18,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type Action = CallWebhook | EvolveFlow | EvolveGroup | GroupUpdateMembership | GroupUpdateMetadata | GroupUpdateNotifications | GroupWatchFlow | TriggerStep;
+export type Action = CallWebhook | EvolveFlow | EvolveGroup | GroupWatchFlow | TriggerStep;
 
 export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
@@ -39,9 +39,6 @@ export enum ActionType {
   CallWebhook = 'CallWebhook',
   EvolveFlow = 'EvolveFlow',
   EvolveGroup = 'EvolveGroup',
-  GroupUpdateMembership = 'GroupUpdateMembership',
-  GroupUpdateMetadata = 'GroupUpdateMetadata',
-  GroupUpdateNotifications = 'GroupUpdateNotifications',
   GroupWatchFlow = 'GroupWatchFlow',
   None = 'None',
   TriggerStep = 'TriggerStep'
@@ -106,7 +103,7 @@ export type CustomGroupArgs = {
   flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
-  notificationUri?: InputMaybe<Scalars['String']['input']>;
+  notificationEntity?: InputMaybe<EntityArgs>;
 };
 
 export type Decision = {
@@ -307,9 +304,6 @@ export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve',
   EvolveGroup = 'EvolveGroup',
-  GroupUpdateMembership = 'GroupUpdateMembership',
-  GroupUpdateMetadata = 'GroupUpdateMetadata',
-  GroupUpdateNotifications = 'GroupUpdateNotifications',
   GroupWatchFlow = 'GroupWatchFlow'
 }
 
@@ -344,7 +338,7 @@ export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
-  creator: User;
+  creator?: Maybe<User>;
   entityId: Scalars['String']['output'];
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
@@ -407,25 +401,16 @@ export type GroupNftArgs = {
   tokenId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft;
-
-export type GroupUpdateMembership = {
-  __typename?: 'GroupUpdateMembership';
-  filterOption?: Maybe<Option>;
-  locked: Scalars['Boolean']['output'];
+export type GroupTelegramChat = {
+  __typename?: 'GroupTelegramChat';
+  chatId: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  messageThreadId?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
 };
 
-export type GroupUpdateMetadata = {
-  __typename?: 'GroupUpdateMetadata';
-  filterOption?: Maybe<Option>;
-  locked: Scalars['Boolean']['output'];
-};
-
-export type GroupUpdateNotifications = {
-  __typename?: 'GroupUpdateNotifications';
-  filterOption?: Maybe<Option>;
-  locked: Scalars['Boolean']['output'];
-};
+export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft | GroupTelegramChat;
 
 export type GroupWatchFlow = {
   __typename?: 'GroupWatchFlow';
@@ -475,14 +460,25 @@ export type IdentityEmailArgs = {
   email: Scalars['String']['input'];
 };
 
-export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail;
+export type IdentityTelegram = {
+  __typename?: 'IdentityTelegram';
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  photo?: Maybe<Scalars['String']['output']>;
+  telegramUserId: Scalars['String']['output'];
+  telegramUsername?: Maybe<Scalars['String']['output']>;
+};
+
+export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail | IdentityTelegram;
 
 export type IzeGroup = {
   __typename?: 'IzeGroup';
   description?: Maybe<Scalars['String']['output']>;
+  evolveGroupFlowId?: Maybe<Scalars['String']['output']>;
   group: Group;
   members: Array<Entity>;
-  notificationUriPreview?: Maybe<Scalars['String']['output']>;
+  notificationEntity?: Maybe<Entity>;
 };
 
 export type LinkedResult = {
@@ -537,6 +533,7 @@ export type Me = {
 export type Mutation = {
   __typename?: 'Mutation';
   createWebhook: Scalars['String']['output'];
+  endRequestStep: Scalars['Boolean']['output'];
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
   newEvolveRequest: Scalars['String']['output'];
@@ -553,6 +550,11 @@ export type Mutation = {
 
 export type MutationCreateWebhookArgs = {
   inputs: CallWebhookArgs;
+};
+
+
+export type MutationEndRequestStepArgs = {
+  requestStepId: Scalars['String']['input'];
 };
 
 
@@ -626,6 +628,7 @@ export enum NewEntityTypes {
   GroupDiscord = 'GroupDiscord',
   GroupHat = 'GroupHat',
   GroupNft = 'GroupNft',
+  GroupTelegramChat = 'GroupTelegramChat',
   IdentityBlockchain = 'IdentityBlockchain',
   IdentityDiscord = 'IdentityDiscord',
   IdentityEmail = 'IdentityEmail'
@@ -661,6 +664,7 @@ export type NewResponseArgs = {
 export type NewStepArgs = {
   action?: InputMaybe<ActionArgs>;
   allowMultipleResponses: Scalars['Boolean']['input'];
+  canBeManuallyEnded: Scalars['Boolean']['input'];
   expirationSeconds?: InputMaybe<Scalars['Int']['input']>;
   request?: InputMaybe<StepRequestArgs>;
   response?: InputMaybe<StepResponseArgs>;
@@ -710,7 +714,8 @@ export type OptionFieldAnswerSelection = {
 };
 
 export type OptionSelectionArgs = {
-  optionId: Scalars['String']['input'];
+  optionId?: InputMaybe<Scalars['String']['input']>;
+  optionIndex?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Options = {
@@ -763,6 +768,7 @@ export type Query = {
   nftContract?: Maybe<AlchemyApiNftContract>;
   nftToken?: Maybe<AlchemyApiNftToken>;
   searchNftContracts: Array<AlchemyApiNftContract>;
+  telegramChats: Array<Entity>;
 };
 
 
@@ -840,6 +846,11 @@ export type QueryNftTokenArgs = {
 export type QuerySearchNftContractsArgs = {
   chain: Blockchain;
   query: Scalars['String']['input'];
+};
+
+
+export type QueryTelegramChatsArgs = {
+  adminOnly: Scalars['Boolean']['input'];
 };
 
 export type Ranking = {
@@ -924,12 +935,14 @@ export type RequestStepSummary = {
   userResponded: Scalars['Boolean']['output'];
 };
 
+export type Respondant = Identity | User;
+
 export type Response = {
   __typename?: 'Response';
   answers: Array<FieldAnswer>;
   createdAt: Scalars['String']['output'];
+  creator: Respondant;
   responseId: Scalars['String']['output'];
-  user: User;
 };
 
 export type ResponseConfig = {
@@ -988,6 +1001,7 @@ export type Step = {
   __typename?: 'Step';
   action?: Maybe<Action>;
   allowMultipleResponses: Scalars['Boolean']['output'];
+  canBeManuallyEnded: Scalars['Boolean']['output'];
   expirationSeconds?: Maybe<Scalars['Int']['output']>;
   id: Scalars['String']['output'];
   index: Scalars['Int']['output'];
@@ -1038,7 +1052,7 @@ export type UserFieldAnswer = {
   __typename?: 'UserFieldAnswer';
   answer: FieldAnswer;
   createdAt: Scalars['String']['output'];
-  user: User;
+  creator: Respondant;
 };
 
 export type UserFieldAnswers = {
@@ -1079,6 +1093,7 @@ export type WebhookPayload = {
   flowName: Scalars['String']['output'];
   requestFields: Array<WebhookValue>;
   requestName: Scalars['String']['output'];
+  requestUrl: Scalars['String']['output'];
   results: Array<WebhookValue>;
 };
 
@@ -1168,12 +1183,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
-  Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupUpdateMembership ) | ( GroupUpdateMetadata ) | ( GroupUpdateNotifications ) | ( GroupWatchFlow ) | ( TriggerStep );
-  Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator: _RefType['User'], groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
+  Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupWatchFlow ) | ( TriggerStep );
+  Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<_RefType['User']>, groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } );
   Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( Omit<FlowsFieldAnswer, 'flows'> & { flows: Array<_RefType['FlowSummary']> } ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
-  GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft );
-  IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail );
+  GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
+  IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
+  Respondant: ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
   ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
 };
 
@@ -1224,7 +1240,7 @@ export type ResolversTypes = {
   FreeInput: ResolverTypeWrapper<Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversTypes['FieldAnswer']> }>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
-  Group: ResolverTypeWrapper<Omit<Group, 'creator' | 'groupType'> & { creator: ResolversTypes['User'], groupType: ResolversTypes['GroupType'] }>;
+  Group: ResolverTypeWrapper<Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<ResolversTypes['User']>, groupType: ResolversTypes['GroupType'] }>;
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1234,10 +1250,8 @@ export type ResolversTypes = {
   GroupHatArgs: GroupHatArgs;
   GroupNft: ResolverTypeWrapper<GroupNft>;
   GroupNftArgs: GroupNftArgs;
+  GroupTelegramChat: ResolverTypeWrapper<GroupTelegramChat>;
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
-  GroupUpdateMembership: ResolverTypeWrapper<GroupUpdateMembership>;
-  GroupUpdateMetadata: ResolverTypeWrapper<GroupUpdateMetadata>;
-  GroupUpdateNotifications: ResolverTypeWrapper<GroupUpdateNotifications>;
   GroupWatchFlow: ResolverTypeWrapper<GroupWatchFlow>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
@@ -1246,9 +1260,10 @@ export type ResolversTypes = {
   IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
   IdentityEmailArgs: IdentityEmailArgs;
+  IdentityTelegram: ResolverTypeWrapper<IdentityTelegram>;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']> }>;
+  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
   LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
@@ -1285,7 +1300,8 @@ export type ResolversTypes = {
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatusFilter: RequestStepStatusFilter;
   RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['User'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
-  Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversTypes['FieldAnswer']>, user: ResolversTypes['User'] }>;
+  Respondant: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Respondant']>;
+  Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversTypes['FieldAnswer']>, creator: ResolversTypes['Respondant'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversTypes['Field']>, permission?: Maybe<ResolversTypes['Permission']> }>;
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
@@ -1301,7 +1317,7 @@ export type ResolversTypes = {
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
-  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversTypes['FieldAnswer'], user: ResolversTypes['User'] }>;
+  UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversTypes['FieldAnswer'], creator: ResolversTypes['Respondant'] }>;
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   UserFlowPermission: ResolverTypeWrapper<UserFlowPermission>;
   UserPermission: ResolverTypeWrapper<UserPermission>;
@@ -1350,7 +1366,7 @@ export type ResolversParentTypes = {
   FreeInput: Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversParentTypes['FieldAnswer']> };
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
-  Group: Omit<Group, 'creator' | 'groupType'> & { creator: ResolversParentTypes['User'], groupType: ResolversParentTypes['GroupType'] };
+  Group: Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<ResolversParentTypes['User']>, groupType: ResolversParentTypes['GroupType'] };
   GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1359,10 +1375,8 @@ export type ResolversParentTypes = {
   GroupHatArgs: GroupHatArgs;
   GroupNft: GroupNft;
   GroupNftArgs: GroupNftArgs;
+  GroupTelegramChat: GroupTelegramChat;
   GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
-  GroupUpdateMembership: GroupUpdateMembership;
-  GroupUpdateMetadata: GroupUpdateMetadata;
-  GroupUpdateNotifications: GroupUpdateNotifications;
   GroupWatchFlow: GroupWatchFlow;
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
@@ -1371,9 +1385,10 @@ export type ResolversParentTypes = {
   IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: IdentityEmail;
   IdentityEmailArgs: IdentityEmailArgs;
+  IdentityTelegram: IdentityTelegram;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
-  IzeGroup: Omit<IzeGroup, 'group' | 'members'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']> };
+  IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
   LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
@@ -1405,7 +1420,8 @@ export type ResolversParentTypes = {
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, responseFields: Array<ResolversParentTypes['Field']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['User'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
-  Response: Omit<Response, 'answers' | 'user'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, user: ResolversParentTypes['User'] };
+  Respondant: ResolversUnionTypes<ResolversParentTypes>['Respondant'];
+  Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Respondant'] };
   ResponseConfig: Omit<ResponseConfig, 'fields' | 'permission'> & { fields: Array<ResolversParentTypes['Field']>, permission?: Maybe<ResolversParentTypes['Permission']> };
   Result: Result;
   ResultArgs: ResultArgs;
@@ -1419,7 +1435,7 @@ export type ResolversParentTypes = {
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
   User: User;
-  UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'user'> & { answer: ResolversParentTypes['FieldAnswer'], user: ResolversParentTypes['User'] };
+  UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['FieldAnswer'], creator: ResolversParentTypes['Respondant'] };
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   UserFlowPermission: UserFlowPermission;
   UserPermission: UserPermission;
@@ -1431,7 +1447,7 @@ export type ResolversParentTypes = {
 };
 
 export type ActionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Action'] = ResolversParentTypes['Action']> = {
-  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'EvolveGroup' | 'GroupUpdateMembership' | 'GroupUpdateMetadata' | 'GroupUpdateNotifications' | 'GroupWatchFlow' | 'TriggerStep', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CallWebhook' | 'EvolveFlow' | 'EvolveGroup' | 'GroupWatchFlow' | 'TriggerStep', ParentType, ContextType>;
 };
 
 export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionExecution'] = ResolversParentTypes['ActionExecution']> = {
@@ -1624,7 +1640,7 @@ export type GenericFieldAndValueResolvers<ContextType = GraphqlRequestContext, P
 export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Group'] = ResolversParentTypes['Group']> = {
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  creator?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   entityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   groupType?: Resolver<ResolversTypes['GroupType'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1652,26 +1668,17 @@ export type GroupNftResolvers<ContextType = GraphqlRequestContext, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GroupTelegramChatResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupTelegramChat'] = ResolversParentTypes['GroupTelegramChat']> = {
+  chatId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  messageThreadId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupType'] = ResolversParentTypes['GroupType']> = {
-  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupCustom' | 'GroupNft', ParentType, ContextType>;
-};
-
-export type GroupUpdateMembershipResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateMembership'] = ResolversParentTypes['GroupUpdateMembership']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GroupUpdateMetadataResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateMetadata'] = ResolversParentTypes['GroupUpdateMetadata']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GroupUpdateNotificationsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupUpdateNotifications'] = ResolversParentTypes['GroupUpdateNotifications']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupCustom' | 'GroupNft' | 'GroupTelegramChat', ParentType, ContextType>;
 };
 
 export type GroupWatchFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupWatchFlow'] = ResolversParentTypes['GroupWatchFlow']> = {
@@ -1710,15 +1717,26 @@ export type IdentityEmailResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type IdentityTelegramResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityTelegram'] = ResolversParentTypes['IdentityTelegram']> = {
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  photo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  telegramUserId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  telegramUsername?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityType'] = ResolversParentTypes['IdentityType']> = {
-  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'IdentityBlockchain' | 'IdentityDiscord' | 'IdentityEmail' | 'IdentityTelegram', ParentType, ContextType>;
 };
 
 export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  evolveGroupFlowId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
-  notificationUriPreview?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notificationEntity?: Resolver<Maybe<ResolversTypes['Entity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1758,6 +1776,7 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createWebhook?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateWebhookArgs, 'inputs'>>;
+  endRequestStep?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationEndRequestStepArgs, 'requestStepId'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
@@ -1847,6 +1866,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
   nftToken?: Resolver<Maybe<ResolversTypes['AlchemyApiNftToken']>, ParentType, ContextType, RequireFields<QueryNftTokenArgs, 'address' | 'chain' | 'tokenId'>>;
   searchNftContracts?: Resolver<Array<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QuerySearchNftContractsArgs, 'chain' | 'query'>>;
+  telegramChats?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<QueryTelegramChatsArgs, 'adminOnly'>>;
 };
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
@@ -1914,11 +1934,15 @@ export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type RespondantResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Respondant'] = ResolversParentTypes['Respondant']> = {
+  __resolveType: TypeResolveFn<'Identity' | 'User', ParentType, ContextType>;
+};
+
 export type ResponseResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
   answers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Respondant'], ParentType, ContextType>;
   responseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1953,6 +1977,7 @@ export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type StepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType>;
   allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  canBeManuallyEnded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1980,7 +2005,7 @@ export type UserResolvers<ContextType = GraphqlRequestContext, ParentType extend
 export type UserFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFieldAnswer'] = ResolversParentTypes['UserFieldAnswer']> = {
   answer?: Resolver<ResolversTypes['FieldAnswer'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Respondant'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2015,6 +2040,7 @@ export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentT
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestFields?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -2054,15 +2080,14 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Group?: GroupResolvers<ContextType>;
   GroupCustom?: GroupCustomResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;
+  GroupTelegramChat?: GroupTelegramChatResolvers<ContextType>;
   GroupType?: GroupTypeResolvers<ContextType>;
-  GroupUpdateMembership?: GroupUpdateMembershipResolvers<ContextType>;
-  GroupUpdateMetadata?: GroupUpdateMetadataResolvers<ContextType>;
-  GroupUpdateNotifications?: GroupUpdateNotificationsResolvers<ContextType>;
   GroupWatchFlow?: GroupWatchFlowResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;
   IdentityEmail?: IdentityEmailResolvers<ContextType>;
+  IdentityTelegram?: IdentityTelegramResolvers<ContextType>;
   IdentityType?: IdentityTypeResolvers<ContextType>;
   IzeGroup?: IzeGroupResolvers<ContextType>;
   LinkedResult?: LinkedResultResolvers<ContextType>;
@@ -2084,6 +2109,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestConfig?: RequestConfigResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
+  Respondant?: RespondantResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   Result?: ResultResolvers<ContextType>;

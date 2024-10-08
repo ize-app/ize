@@ -52,13 +52,6 @@ export const createEvolveGroupFlowVersionArgs = ({
       name: EvolveGroupFields.Members,
       required: true,
     },
-    {
-      type: FieldType.FreeInput,
-      fieldId: "webhook",
-      freeInputDataType: FieldDataType.Webhook,
-      name: EvolveGroupFields.Webhook,
-      required: true,
-    },
   ];
 
   const decisionResult = createDecisionResultConfigForPolicy({ policy });
@@ -75,6 +68,7 @@ export const createEvolveGroupFlowVersionArgs = ({
       groupEntityId,
       policy,
     }),
+    canBeManuallyEnded: false,
     expirationSeconds: 259200,
     result: decisionResult ? [decisionResult] : [],
     action: createActionConfigForPolicy({ actionType: ActionType.EvolveGroup, policy }),

@@ -1,24 +1,25 @@
+import { Prisma } from "@prisma/client";
+
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { getRequestResults } from "@/core/request/utils/getRequestResults";
 import { getRequestTriggerFieldAnswers } from "@/core/request/utils/getRequestTriggerFieldAnswers";
-import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
-import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 export const newLlmSummaryResult = async ({
   resultConfig,
-  responses,
+  fieldAnswers,
   requestStepId,
   type,
 }: {
   resultConfig: ResultConfigPrismaType;
-  responses: ResponsePrismaType[];
+  fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }): Promise<ResultPrismaType> => {
@@ -84,11 +85,6 @@ export const newLlmSummaryResult = async ({
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
   const requestResults = getRequestResults({ request });
 
-  const responsesCleaned = getFieldAnswersFromResponses({
-    fieldId: resultConfig.fieldId,
-    responses,
-  });
-
   const res = await generateAiSummary({
     flowName,
     requestName,
@@ -98,30 +94,36 @@ export const newLlmSummaryResult = async ({
     type,
     exampleOutput: llmConfig.example,
     summaryPrompt: llmConfig.prompt,
-    responses: responsesCleaned
+    responses: fieldAnswers
       .filter((r) => r.AnswerFreeInput.length > 0)
       .map((r) => r.AnswerFreeInput[0].value),
   });
 
-  ////// create results for that decision
-  return await prisma.result.create({
-    include: resultInclude,
-    data: {
-      itemCount: res.complete ? res.value.length : 0,
-      requestStepId,
-      resultConfigId: resultConfig.id,
-      complete: res.complete,
-      hasResult: res.complete,
-      ResultItems: res.complete
-        ? {
-            createMany: {
-              data: res.value.map((value) => ({
-                dataType: FieldDataType.String,
-                value,
-              })),
-            },
-          }
-        : undefined,
+  const resultArgs: Prisma.ResultUncheckedCreateInput = {
+    itemCount: res.length,
+    requestStepId,
+    resultConfigId: resultConfig.id,
+    final: true,
+    hasResult: true,
+    ResultItems: {
+      createMany: {
+        data: res.map((value) => ({
+          dataType: FieldDataType.String,
+          value,
+        })),
+      },
     },
+  };
+
+  return await prisma.result.upsert({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
+    },
+    include: resultInclude,
+    create: resultArgs,
+    update: resultArgs,
   });
 };

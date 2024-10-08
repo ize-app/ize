@@ -60,6 +60,7 @@ export const stepResolver = ({
     },
     action: actionResolver(step.Action, responseFieldsCache),
     result,
+    canBeManuallyEnded: step.canBeManuallyEnded,
     expirationSeconds: step.expirationSeconds,
     allowMultipleResponses: step.allowMultipleResponses,
     userPermission: {

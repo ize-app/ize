@@ -7,6 +7,7 @@ import { FieldAnswerRecordSchemaType } from "@/components/Form/formValidation/fi
 import Loading from "../../../components/Loading";
 import {
   FieldAnswer,
+  FieldDataType,
   FieldType,
   Flow,
   FlowType,
@@ -18,22 +19,42 @@ import { RequestForm } from "../components/RequestForm";
 import { RequestSchemaType } from "../formValidation";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
-const getDefaultValue = (defaultValue: FieldAnswer | undefined | null) => {
-  if (!defaultValue) return "";
-
-  switch (defaultValue.__typename) {
-    case "EntitiesFieldAnswer":
-      return defaultValue.entities;
-    case "FlowsFieldAnswer":
-      return defaultValue.flows;
-
-    case "FreeInputFieldAnswer":
-      return defaultValue.value;
-    case "WebhookFieldAnswer":
-      return defaultValue;
-    case "OptionFieldAnswer":
-      return defaultValue.selections;
-  }
+const getFreeInputDefaultValue = (
+  defaultValue: FieldAnswer | undefined | null,
+  dataType: FieldDataType,
+) => {
+  if (defaultValue)
+    switch (defaultValue.__typename) {
+      case "EntitiesFieldAnswer":
+        return defaultValue.entities;
+      case "FlowsFieldAnswer":
+        return defaultValue.flows;
+      case "FreeInputFieldAnswer":
+        return defaultValue.value;
+      case "WebhookFieldAnswer":
+        return defaultValue;
+      case "OptionFieldAnswer":
+        return defaultValue.selections;
+      default:
+        return "";
+    }
+  else
+    switch (dataType) {
+      // case FieldDataType.Date:
+      //   return new Date();
+      // case FieldDataType.DateTime:
+      //   return new Date();
+      case FieldDataType.EntityIds:
+        return [];
+      case FieldDataType.FlowIds:
+        return [];
+      case FieldDataType.Number:
+        return "";
+      case FieldDataType.String:
+        return "";
+      default:
+        return "";
+    }
 };
 
 const createRequestFormState = (flow: Flow): RequestSchemaType => {
@@ -41,7 +62,7 @@ const createRequestFormState = (flow: Flow): RequestSchemaType => {
   const requestFields: FieldAnswerRecordSchemaType = {};
   step.request.fields.forEach((field) => {
     if (field.__typename === FieldType.FreeInput) {
-      const defaultValue = getDefaultValue(field?.defaultAnswer);
+      const defaultValue = getFreeInputDefaultValue(field?.defaultAnswer, field.dataType);
       requestFields[field.fieldId] = {
         dataType: field.dataType,
         required: field.required,

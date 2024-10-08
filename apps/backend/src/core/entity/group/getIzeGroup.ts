@@ -1,9 +1,9 @@
-import { entitySetInclude } from "@/core/entity/entityPrismaTypes";
+import { EntityPrismaType, entityInclude, entitySetInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
 import { groupResolver } from "@/core/entity/group/groupResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { IzeGroup } from "@/graphql/generated/resolver-types";
+import { FlowType, IzeGroup } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 export const getIzeGroup = async ({
@@ -20,6 +20,7 @@ export const getIzeGroup = async ({
     where: { id: groupId },
   });
 
+  let notificationEntity: EntityPrismaType | null = null;
   let isWatched = false;
   let isMember = false;
 
@@ -49,7 +50,7 @@ export const getIzeGroup = async ({
     }
   }
 
-  const membersRes = await prisma.groupCustom.findUnique({
+  const customGroup = await prisma.groupCustom.findUnique({
     where: {
       groupId,
     },
@@ -57,11 +58,20 @@ export const getIzeGroup = async ({
       MemberEntitySet: {
         include: entitySetInclude,
       },
+      group: {
+        include: {
+          OwnedFlows: true,
+        },
+      },
     },
   });
 
+  const evolveFlow = (customGroup?.group.OwnedFlows ?? []).find(
+    (flow) => flow.type === FlowType.EvolveGroup,
+  );
+
   const members = [
-    ...(membersRes?.MemberEntitySet.EntitySetEntities.map((entity) => {
+    ...(customGroup?.MemberEntitySet.EntitySetEntities.map((entity) => {
       return entityResolver({
         entity: entity.Entity,
         userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
@@ -69,10 +79,25 @@ export const getIzeGroup = async ({
     }) ?? []),
   ];
 
+  if (group.GroupCustom?.notificationEntityId) {
+    notificationEntity = await prisma.entity.findFirst({
+      where: {
+        id: group.GroupCustom?.notificationEntityId ?? undefined,
+      },
+      include: entityInclude,
+    });
+  }
+
   return {
     group: groupResolver(group, isWatched, isMember),
     members,
     description: group.GroupCustom?.description,
-    notificationUriPreview: group.GroupCustom?.Webhook?.uriPreview,
+    notificationEntity: notificationEntity
+      ? entityResolver({
+          entity: notificationEntity,
+          userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
+        })
+      : null,
+    evolveGroupFlowId: evolveFlow?.id ?? null,
   };
 };

@@ -11,69 +11,85 @@ export const evolveFlow = async ({
 }: {
   requestStepId: string;
   transaction?: Prisma.TransactionClient;
-}): Promise<boolean> => {
-  try {
-    // find the current / proposed fields in the request
-    const requestStep = await transaction.requestStep.findFirstOrThrow({
-      include: {
-        RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
-      },
-      where: {
-        id: requestStepId,
-      },
+}) => {
+  // find the current / proposed fields in the request
+  const requestStep = await transaction.requestStep.findFirstOrThrow({
+    include: {
+      RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+    },
+    where: {
+      id: requestStepId,
+    },
+  });
+
+  const proposedFlowField = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+    return fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow;
+  });
+
+  if (!proposedFlowField)
+    throw new GraphQLError(`Cannot find proposed flow version for request step ${requestStepId}`, {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-    const proposedFlowField = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-      return fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow;
-    });
+  if (
+    proposedFlowField.type !== "FreeInput" ||
+    proposedFlowField.Field.freeInputDataType !== FieldDataType.FlowVersionId
+  )
+    throw new GraphQLError(
+      `Field id ${proposedFlowField.Field.id} is the incorrect type for an evolve request`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
-    if (!proposedFlowField)
-      throw new GraphQLError(
-        `Cannot find proposed flow version for request step ${requestStepId}`,
-        {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+  // make proposed the current_flow_version_id and switch it's status to draft = false
+
+  const proposedFlowVersion = await transaction.flowVersion.findFirstOrThrow({
+    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    include: {
+      Flow: {
+        include: {
+          CurrentFlowVersion: true,
         },
-      );
+      },
+    },
+  });
 
-    if (
-      proposedFlowField.type !== "FreeInput" ||
-      proposedFlowField.Field.freeInputDataType !== FieldDataType.FlowVersionId
-    )
-      throw new GraphQLError(
-        `Field id ${proposedFlowField.Field.id} is the incorrect type for an evolve request`,
-        {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        },
-      );
+  const currentFlowVersionId = proposedFlowVersion.Flow.CurrentFlowVersion?.id;
+  if (!currentFlowVersionId)
+    throw new GraphQLError(
+      `Cannot find current flow version for proposed flow version ${proposedFlowVersion.id}`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
-    // make proposed the current_flow_version_id and switch it's status to draft = false
-
-    const proposedFlowVersion = await transaction.flowVersion.findFirstOrThrow({
-      where: { id: proposedFlowField.AnswerFreeInput[0].value },
-      include: {
-        Flow: {
-          include: {
-            CurrentFlowVersion: true,
+  await transaction.flowVersion.update({
+    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    data: {
+      active: true,
+      publishedAt: new Date(),
+      // change current flow version to inactive
+      Flow: {
+        update: {
+          CurrentFlowVersion: {
+            update: {
+              active: false,
+            },
           },
         },
       },
-    });
+      FlowForCurrentVersion: { connect: { id: proposedFlowVersion.flowId } },
+    },
+  });
 
-    const currentFlowVersionId = proposedFlowVersion.Flow.CurrentFlowVersion?.id;
-    if (!currentFlowVersionId)
-      throw new GraphQLError(
-        `Cannot find current flow version for proposed flow version ${proposedFlowVersion.id}`,
-        {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        },
-      );
-
+  // do the same thing for the evolve_draft_flow_version_id if it exists
+  if (proposedFlowVersion.draftEvolveFlowVersionId && proposedFlowVersion.evolveFlowId) {
     await transaction.flowVersion.update({
-      where: { id: proposedFlowField.AnswerFreeInput[0].value },
+      where: { id: proposedFlowVersion.draftEvolveFlowVersionId },
       data: {
         active: true,
         publishedAt: new Date(),
-        // change current flow version to inactive
         Flow: {
           update: {
             CurrentFlowVersion: {
@@ -83,33 +99,8 @@ export const evolveFlow = async ({
             },
           },
         },
-        FlowForCurrentVersion: { connect: { id: proposedFlowVersion.flowId } },
+        FlowForCurrentVersion: { connect: { id: proposedFlowVersion.evolveFlowId } },
       },
     });
-
-    // do the same thing for the evolve_draft_flow_version_id if it exists
-    if (proposedFlowVersion.draftEvolveFlowVersionId && proposedFlowVersion.evolveFlowId) {
-      await transaction.flowVersion.update({
-        where: { id: proposedFlowVersion.draftEvolveFlowVersionId },
-        data: {
-          active: true,
-          publishedAt: new Date(),
-          Flow: {
-            update: {
-              CurrentFlowVersion: {
-                update: {
-                  active: false,
-                },
-              },
-            },
-          },
-          FlowForCurrentVersion: { connect: { id: proposedFlowVersion.evolveFlowId } },
-        },
-      });
-    }
-    return true;
-  } catch (error) {
-    console.log("evolveFlow error: ", error);
-    return false;
   }
 };

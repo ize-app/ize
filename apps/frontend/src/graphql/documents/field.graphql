@@ -49,8 +49,8 @@ fragment LinkedResult on LinkedResult {
 
 fragment UserFieldAnswer on UserFieldAnswer {
   createdAt
-  user {
-    ...UserSummaryParts
+  creator {
+    ...Respondant
   }
   answer {
     ...FieldAnswer

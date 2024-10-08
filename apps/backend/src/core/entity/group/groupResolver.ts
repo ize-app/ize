@@ -14,6 +14,8 @@ export const groupResolver = (
     return resolveDiscordGroup(group, isWatched, isMember);
   } else if (group.GroupNft) {
     return resolveGroupNft(group, isWatched, isMember);
+  } else if (group.GroupTelegramChat) {
+    return resolveGroupTelegram(group, isWatched, isMember);
   } else if (group.GroupCustom) {
     return resolveGroupCustom(group, isWatched, isMember);
   } else {
@@ -36,7 +38,7 @@ const resolveDiscordGroup = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: userResolver(group.creator),
+    creator: group.creator ? userResolver(group.creator) : null,
     // discord only includes the @sign for @everyone
     name: `${
       group.GroupDiscordRole.name !== "@everyone"
@@ -87,7 +89,7 @@ const resolveGroupNft = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: userResolver(group.creator),
+    creator: group.creator ? userResolver(group.creator) : null,
     name: nft.name,
     icon: nft.icon,
     color: null,
@@ -118,10 +120,38 @@ const resolveGroupCustom = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: userResolver(group.creator),
+    creator: group.creator ? userResolver(group.creator) : null,
     name: custom.name,
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "GroupCustom", ...custom } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
+  };
+};
+
+const resolveGroupTelegram = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
+  if (!group.GroupTelegramChat)
+    throw new GraphQLError("Missing Telegram group details", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    });
+  const { GroupTelegramChat: telegram } = group;
+  return {
+    __typename: "Group",
+    id: group.id,
+    entityId: group.entityId,
+    creator: group.creator ? userResolver(group.creator) : null,
+    name: telegram.name,
+    createdAt: group.createdAt.toString(),
+    groupType: {
+      __typename: "GroupTelegramChat",
+      ...telegram,
+      chatId: String(telegram.chatId), // need to convert bigint to string because graphql doesn't know how to handle bigint
+      messageThreadId: telegram.messageThreadId ? String(telegram.messageThreadId) : null,
+    } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
   };

@@ -13,6 +13,7 @@ import cors from "cors";
 import express from "express";
 
 import { MePrismaType } from "@/core/user/userPrismaTypes";
+import { telegramBot } from "@/telegram/TelegramClient";
 
 import authRouter from "./authRouter";
 import { createRequestContext } from "./createRequestContext";
@@ -30,12 +31,22 @@ const app = express();
 
 app.use(cookieParser());
 app.use(authenticateSession);
+
+// // Middleware to parse JSON bodies
+app.use(express.json());
+
 app.use("/api/auth", authRouter);
 app.use(express.static(frontendPath));
 
 // Healthcheck endpoint used by Render
 app.get("/healthcheck", async (_req, res) => {
   res.status(200).send();
+});
+
+// Webhook route
+app.post("/api/telegram", (req, res) => {
+  telegramBot.handleUpdate(req.body); // Pass the request body to the bot
+  res.sendStatus(200); // Respond with 200 OK
 });
 
 const typeDefs = mergeTypeDefs(

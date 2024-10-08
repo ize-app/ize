@@ -1,0 +1,5 @@
+query TelegramChats($adminOnly: Boolean!) {
+  telegramChats(adminOnly: $adminOnly) {
+    ...EntitySummaryParts
+  }
+}

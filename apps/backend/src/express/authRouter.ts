@@ -1,8 +1,13 @@
+// import { urlStrToAuthDataMap } from "@telegram-auth/server";
 import { Router } from "express";
+import { GraphQLError } from "graphql";
 import { OAuthProvider } from "stytch";
 
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
+import { CustomErrorCodes } from "@/graphql/errors";
+import { upsertTelegramIdentity } from "@/telegram/upsertTelegramIdentity";
+import { telegramValidator } from "@/telegram/validator";
 
 import { createRequestContext } from "./createRequestContext";
 import { prisma } from "../prisma/client";
@@ -168,6 +173,30 @@ authRouter.post("/password", async (req, res, next) => {
     await updateUserGroups({ context: createRequestContext({ user }) });
     redirectAtLogin({ req, res });
   } catch (e) {
+    next(e);
+  }
+});
+
+authRouter.post("/telegram", async (req, res, next) => {
+  try {
+    const data = new Map(Object.entries(req.body)) as Map<string, string | number>;
+    // note telegramValidator is implicitly using botToken to validate
+    // if FE Telegram bot token is different from BE bot token, this will fail
+    const telegramUserData = await telegramValidator.validate(data);
+    const user = res.locals.user as MePrismaType | undefined;
+
+    if (!user)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+
+    // The data is now valid and you can sign in the user.
+    await upsertTelegramIdentity({
+      telegramUserData,
+      userId: user?.id,
+    });
+  } catch (e) {
+    res.sendStatus(500);
     next(e);
   }
 });

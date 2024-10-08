@@ -26,6 +26,7 @@ enum NewEntityTypes {
   GroupDiscord
   GroupNft
   GroupHat
+  GroupTelegramChat
 }
 
 enum EntityType {
@@ -35,7 +36,9 @@ enum EntityType {
 
 union Entity = Identity | Group
 
-union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord
+union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
+
+union Respondant = User | Identity
 
 type Identity {
   id: String! # refers to id of Identity model
@@ -63,13 +66,22 @@ type IdentityDiscord {
   discordUserId: String!
 }
 
-union GroupType = DiscordRoleGroup | GroupNft | GroupCustom
+type IdentityTelegram {
+  id: String!
+  telegramUserId: String!
+  photo: String
+  firstName: String!
+  lastName: String
+  telegramUsername: String
+}
+
+union GroupType = DiscordRoleGroup | GroupNft | GroupCustom | GroupTelegramChat
 
 type Group {
   id: String!
   entityId: String!
   name: String!
-  creator: User!
+  creator: User
   color: String
   icon: String
   memberCount: Int
@@ -87,7 +99,8 @@ type IzeGroup {
   group: Group!
   members: [Entity!]!
   description: String
-  notificationUriPreview: String
+  notificationEntity: Entity
+  evolveGroupFlowId: String
 }
 
 type Organization {
@@ -126,6 +139,14 @@ type DiscordRoleGroup {
   unicodeEmoji: String
   discordRoleId: String
   discordServer: OnboardedDiscordServer!
+}
+
+type GroupTelegramChat {
+  id: String!
+  name: String!
+  icon: String
+  chatId: String!
+  messageThreadId: String
 }
 
 type OnboardedDiscordServer {
@@ -173,8 +194,8 @@ input CustomGroupArgs {
   name: String!
   description: String
   members: [EntityArgs!]!
-  notificationUri: String
   flows: GroupFlowArgs!
+  notificationEntity: EntityArgs
 }
 
 input NewEntityArgs {

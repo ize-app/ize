@@ -54,6 +54,13 @@ export const ButtonGroupField = <T extends FieldValues>({
                   color="primary"
                   sx={{ width: buttonWidth, display: "flex", flexDirection: "column" }} // Modify this line to add a single solid border
                 >
+                  {option.icon && (
+                    <img
+                      src={option.icon}
+                      alt={option.name}
+                      style={{ width: "40px", height: "40px", margin: "4px" }}
+                    />
+                  )}
                   <span style={{ fontWeight: "900" }}>{option.title}</span>
                   <span style={{ fontWeight: "400" }}>{option.name}</span>
                 </ToggleButton>

@@ -3,12 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { useCallback, useContext, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { attachDiscord } from "@/components/Auth/attachDiscord";
-import botInviteUrl from "@/components/Auth/botInviteUrl";
+import discordBotInviteUrl from "@/components/Auth/discordBotInviteUrl";
 import { DiscordLogoSvg } from "@/components/icons";
 import {
   Blockchain,
@@ -22,12 +21,11 @@ import {
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { HatsTokenCard, NftCard } from "./NftCard";
+import { TelegramEntityForm } from "./TelegramEntityForm";
 import { Switch, TextField } from "../formFields";
 import { Select, SelectOption } from "../formFields/Select";
 import { ResponsiveFormRow } from "../formLayout/ResponsiveFormRow";
-import { newEntityFormSchema } from "../formValidation/entity";
-
-type FormFields = z.infer<typeof newEntityFormSchema>;
+import { NewEntitySchemaType, newEntityFormSchema } from "../formValidation/entity";
 
 const style = {
   position: "absolute" as const,
@@ -56,7 +54,7 @@ const chainOptions: SelectOption[] = [
   { name: "Base", value: Blockchain.Base },
 ];
 
-const createNewAgentArgs = (data: FormFields): MutationNewEntitiesArgs => {
+const createNewAgentArgs = (data: NewEntitySchemaType): MutationNewEntitiesArgs => {
   switch (data.type) {
     case NewEntityTypes.IdentityBlockchain: {
       return {
@@ -138,11 +136,15 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
 
   const [disableSubmit, setDisableSubmit] = useState(false);
 
+  const handleEntitySelection = useCallback((entities: EntitySummaryPartsFragment[]) => {
+    setOpen(false);
+    onSubmit([...entities]);
+  }, []);
+
   const [mutate] = useMutation(NewEntitiesDocument, {
     onCompleted: (data) => {
       setDisableSubmit(false);
-      setOpen(false);
-      onSubmit(data.newEntities);
+      handleEntitySelection(data.newEntities);
     },
     onError: (error) => {
       console.log("Error", error);
@@ -155,7 +157,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
     setOpen(false);
   };
 
-  const { control, handleSubmit, watch } = useForm<FormFields>({
+  const formMethods = useForm<NewEntitySchemaType>({
     defaultValues: {
       type: initialType,
       ethAddress: [],
@@ -174,12 +176,16 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
         serverId: "",
         roleId: "",
       },
+      telegramChat: undefined,
     },
     resolver: zodResolver(newEntityFormSchema),
     shouldUnregister: true,
+    // shouldUnregister: false,
   });
 
-  const createAgents = async (data: FormFields) => {
+  const { control, handleSubmit, watch } = formMethods;
+
+  const createAgents = async (data: NewEntitySchemaType) => {
     setDisableSubmit(true);
 
     await mutate({
@@ -224,258 +230,268 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
       aria-labelledby="role-selection-modal"
       aria-describedby="role-selection-modal"
     >
-      <Box sx={style}>
-        <Typography variant="h2" sx={{ mb: "16px" }}>
-          Add role
-        </Typography>
-        <form style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <Select<FormFields>
-            name="type"
-            control={control}
-            label=""
-            selectOptions={[
-              { name: "Email address", value: NewEntityTypes.IdentityEmail },
-              { name: "Eth wallet", value: NewEntityTypes.IdentityBlockchain },
-              { name: "Discord role", value: NewEntityTypes.GroupDiscord },
-              { name: "NFT", value: NewEntityTypes.GroupNft },
-              { name: "Hat", value: NewEntityTypes.GroupHat },
-            ]}
-          />
-          {inputType === NewEntityTypes.IdentityBlockchain && (
-            <Box>
-              <Typography>
-                Enter an Eth address or ENS address (or multiple seperated by commas).
-              </Typography>
-              <ResponsiveFormRow
-                sx={{
-                  marginTop: "8px",
-                  alignItems: "center",
-                  gap: "24px",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TextField<FormFields>
-                  name={"ethAddress"}
-                  control={control}
-                  label={"ETH wallet or ENS"}
-                  showLabel={true}
-                  multiline
-                  variant="outlined"
-                  sx={{ flexGrow: 1, minWidth: "200px" }}
-                />
-                <Button
-                  onClick={handleSubmit(createAgents)}
-                  variant="contained"
-                  disabled={disableSubmit}
-                >
-                  Submit
-                </Button>
-              </ResponsiveFormRow>
-            </Box>
-          )}
-          {inputType === NewEntityTypes.IdentityEmail && (
-            <>
-              <Typography>
-                Enter an email address (or multiple seperated by commas). The full email address
-                will not be publicly visible.
-              </Typography>
-
-              <ResponsiveFormRow
-                sx={{
-                  marginTop: "8px",
-                  alignItems: "center",
-                  gap: "24px",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TextField<FormFields>
-                  name={"emailAddress"}
-                  control={control}
-                  label={"Email addresses"}
-                  showLabel={true}
-                  multiline
-                  variant="outlined"
-                  sx={{ flexGrow: 1, minWidth: "200px" }}
-                />
-                <Button
-                  type="submit"
-                  onClick={handleSubmit(createAgents)}
-                  variant="contained"
-                  disabled={disableSubmit}
-                >
-                  Submit
-                </Button>
-              </ResponsiveFormRow>
-            </>
-          )}
-          {inputType === NewEntityTypes.GroupDiscord && (
-            <>
-              {!isConnectedToDiscord ? (
-                <>
-                  <Typography>
-                    Connect Discord to Ize to attach Discord roles to this process.
-                  </Typography>
-                  <Button
-                    onClick={attachDiscord}
-                    variant={"outlined"}
-                    sx={{ width: "200px" }}
-                    startIcon={<DiscordLogoSvg />}
-                  >
-                    Connect Discord
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "row",
-                      gap: "16px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box sx={{ width: "300px" }}>
-                      <Select<FormFields>
-                        name="discordRole.serverId"
-                        control={control}
-                        label="Server"
-                        selectOptions={serverOptions}
-                      />
-                    </Box>
-                    {discordServerId && (
-                      <>
-                        <Select<FormFields>
-                          name="discordRole.roleId"
-                          control={control}
-                          label="Role"
-                          loading={roleLoading}
-                          selectOptions={discordServerRoles}
-                        />
-                        <Button
-                          type="submit"
-                          onClick={handleSubmit(createAgents)}
-                          variant="contained"
-                          disabled={disableSubmit}
-                        >
-                          Submit
-                        </Button>
-                      </>
-                    )}
-                  </Box>
-                  {!serverHasCultsBot && discordServerId && (
-                    <Typography>
-                      To use all roles in this server, ask your admin to{" "}
-                      <a href={botInviteUrl.toString()} target="_blank" rel="noopener noreferrer">
-                        add the Ize Discord bot
-                      </a>{" "}
-                      to this server.
-                    </Typography>
-                  )}
-                </>
-              )}
-            </>
-          )}
-          {inputType === NewEntityTypes.GroupNft && (
-            <>
-              <div>
-                <Box
+      <FormProvider {...formMethods}>
+        <Box sx={style}>
+          <Typography variant="h2" sx={{ mb: "16px" }}>
+            Add role
+          </Typography>
+          <form style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <Select<NewEntitySchemaType>
+              name="type"
+              control={control}
+              label=""
+              selectOptions={[
+                { name: "Email address", value: NewEntityTypes.IdentityEmail },
+                { name: "Eth wallet", value: NewEntityTypes.IdentityBlockchain },
+                { name: "Discord role", value: NewEntityTypes.GroupDiscord },
+                { name: "NFT", value: NewEntityTypes.GroupNft },
+                { name: "Hat", value: NewEntityTypes.GroupHat },
+                { name: "Telegram chat", value: NewEntityTypes.GroupTelegramChat },
+              ]}
+            />
+            {inputType === NewEntityTypes.IdentityBlockchain && (
+              <Box>
+                <Typography>
+                  Enter an Eth address or ENS address (or multiple seperated by commas).
+                </Typography>
+                <ResponsiveFormRow
                   sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
-                    alignItems: "left",
+                    marginTop: "8px",
+                    alignItems: "center",
+                    gap: "24px",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <ResponsiveFormRow>
-                    <Select<FormFields>
-                      name="nft.chain"
-                      control={control}
-                      label="Chain"
-                      selectOptions={chainOptions}
-                    />
-                    <TextField<FormFields>
-                      name={"nft.contractAddress"}
-                      control={control}
-                      placeholderText="NFT contract address"
-                      label="Contract Address"
-                      variant="outlined"
-                      sx={{ flexGrow: 1, minWidth: "300px" }}
-                    />
-                  </ResponsiveFormRow>
-                  <ResponsiveFormRow
-                    sx={{
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Switch<FormFields>
-                      name={"nft.allTokens"}
-                      control={control}
-                      label="Include all token Ids"
-                      sx={{ flexGrow: 1 }}
-                    />
-                    {!nftAllTokens && (
-                      <TextField<FormFields>
-                        name={"nft.tokenId"}
-                        control={control}
-                        placeholderText="Token Id"
-                        label="Token Id"
-                        variant="outlined"
-                        sx={{ flexGrow: 1, minWidth: "100px" }}
-                      />
-                    )}
-                  </ResponsiveFormRow>
-                  <NftCard address={nftContractAddress} tokenId={nftTokenId} chain={nftChain} />
+                  <TextField<NewEntitySchemaType>
+                    name={"ethAddress"}
+                    control={control}
+                    label={"ETH wallet or ENS"}
+                    showLabel={true}
+                    multiline
+                    variant="outlined"
+                    sx={{ flexGrow: 1, minWidth: "200px" }}
+                  />
                   <Button
                     onClick={handleSubmit(createAgents)}
                     variant="contained"
                     disabled={disableSubmit}
-                    sx={{ width: "200px" }}
                   >
                     Submit
                   </Button>
-                </Box>
-              </div>
-            </>
-          )}
-          {inputType === NewEntityTypes.GroupHat && (
-            <>
-              <ResponsiveFormRow
-                sx={{
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Select<FormFields>
-                  name="hat.chain"
-                  control={control}
-                  label="Chain"
-                  selectOptions={chainOptions}
-                />
-                <TextField<FormFields>
-                  name={"hat.tokenId"}
-                  control={control}
-                  placeholderText="Hat ID (hex or decimal)"
-                  label={"Hat Token Id"}
-                  variant="outlined"
-                  sx={{ flexGrow: 1, minWidth: "200px" }}
-                />
-              </ResponsiveFormRow>
-              <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
-              <Button
-                onClick={handleSubmit(createAgents)}
-                variant="contained"
-                disabled={disableSubmit}
-                sx={{ width: "200px" }}
-              >
-                Submit
-              </Button>
-            </>
-          )}
-        </form>
-      </Box>
+                </ResponsiveFormRow>
+              </Box>
+            )}
+            {inputType === NewEntityTypes.IdentityEmail && (
+              <>
+                <Typography>
+                  Enter an email address (or multiple seperated by commas). The full email address
+                  will not be publicly visible.
+                </Typography>
+
+                <ResponsiveFormRow
+                  sx={{
+                    marginTop: "8px",
+                    alignItems: "center",
+                    gap: "24px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <TextField<NewEntitySchemaType>
+                    name={"emailAddress"}
+                    control={control}
+                    label={"Email addresses"}
+                    showLabel={true}
+                    multiline
+                    variant="outlined"
+                    sx={{ flexGrow: 1, minWidth: "200px" }}
+                  />
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit(createAgents)}
+                    variant="contained"
+                    disabled={disableSubmit}
+                  >
+                    Submit
+                  </Button>
+                </ResponsiveFormRow>
+              </>
+            )}
+            {inputType === NewEntityTypes.GroupDiscord && (
+              <>
+                {!isConnectedToDiscord ? (
+                  <>
+                    <Typography>
+                      Connect Discord to Ize to attach Discord roles to this process.
+                    </Typography>
+                    <Button
+                      onClick={attachDiscord}
+                      variant={"outlined"}
+                      sx={{ width: "200px" }}
+                      startIcon={<DiscordLogoSvg />}
+                    >
+                      Connect Discord
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "16px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box sx={{ width: "300px" }}>
+                        <Select<NewEntitySchemaType>
+                          name="discordRole.serverId"
+                          control={control}
+                          label="Server"
+                          selectOptions={serverOptions}
+                        />
+                      </Box>
+                      {discordServerId && (
+                        <>
+                          <Select<NewEntitySchemaType>
+                            name="discordRole.roleId"
+                            control={control}
+                            label="Role"
+                            loading={roleLoading}
+                            selectOptions={discordServerRoles}
+                          />
+                          <Button
+                            type="submit"
+                            onClick={handleSubmit(createAgents)}
+                            variant="contained"
+                            disabled={disableSubmit}
+                          >
+                            Submit
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                    {!serverHasCultsBot && discordServerId && (
+                      <Typography>
+                        To use all roles in this server, ask your admin to{" "}
+                        <a
+                          href={discordBotInviteUrl.toString()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          add the Ize Discord bot
+                        </a>{" "}
+                        to this server.
+                      </Typography>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+            {inputType === NewEntityTypes.GroupNft && (
+              <>
+                <div>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "16px",
+                      alignItems: "left",
+                    }}
+                  >
+                    <ResponsiveFormRow>
+                      <Select<NewEntitySchemaType>
+                        name="nft.chain"
+                        control={control}
+                        label="Chain"
+                        selectOptions={chainOptions}
+                      />
+                      <TextField<NewEntitySchemaType>
+                        name={"nft.contractAddress"}
+                        control={control}
+                        placeholderText="NFT contract address"
+                        label="Contract Address"
+                        variant="outlined"
+                        sx={{ flexGrow: 1, minWidth: "300px" }}
+                      />
+                    </ResponsiveFormRow>
+                    <ResponsiveFormRow
+                      sx={{
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Switch<NewEntitySchemaType>
+                        name={"nft.allTokens"}
+                        control={control}
+                        label="Include all token Ids"
+                        sx={{ flexGrow: 1 }}
+                      />
+                      {!nftAllTokens && (
+                        <TextField<NewEntitySchemaType>
+                          name={"nft.tokenId"}
+                          control={control}
+                          placeholderText="Token Id"
+                          label="Token Id"
+                          variant="outlined"
+                          sx={{ flexGrow: 1, minWidth: "100px" }}
+                        />
+                      )}
+                    </ResponsiveFormRow>
+                    <NftCard address={nftContractAddress} tokenId={nftTokenId} chain={nftChain} />
+                    <Button
+                      onClick={handleSubmit(createAgents)}
+                      variant="contained"
+                      disabled={disableSubmit}
+                      sx={{ width: "200px" }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                </div>
+              </>
+            )}
+            {inputType === NewEntityTypes.GroupHat && (
+              <>
+                <ResponsiveFormRow
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Select<NewEntitySchemaType>
+                    name="hat.chain"
+                    control={control}
+                    label="Chain"
+                    selectOptions={chainOptions}
+                  />
+                  <TextField<NewEntitySchemaType>
+                    name={"hat.tokenId"}
+                    control={control}
+                    placeholderText="Hat ID (hex or decimal)"
+                    label={"Hat Token Id"}
+                    variant="outlined"
+                    sx={{ flexGrow: 1, minWidth: "200px" }}
+                  />
+                </ResponsiveFormRow>
+                <HatsTokenCard chain={hatChain} tokenId={hatTokenId} />
+                <Button
+                  onClick={handleSubmit(createAgents)}
+                  variant="contained"
+                  disabled={disableSubmit}
+                  sx={{ width: "200px" }}
+                >
+                  Submit
+                </Button>
+              </>
+            )}
+            {inputType === NewEntityTypes.GroupTelegramChat && (
+              <TelegramEntityForm handleEntitySelection={handleEntitySelection} />
+            )}
+          </form>
+        </Box>
+      </FormProvider>
     </Modal>
   );
 }

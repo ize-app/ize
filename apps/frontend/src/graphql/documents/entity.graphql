@@ -39,6 +39,16 @@ fragment EntitySummaryParts on Entity {
   }
 }
 
+fragment Respondant on Respondant {
+  __typename
+  ... on User {
+    ...UserSummaryParts
+  }
+  ... on Identity {
+    ...IdentitySummaryParts
+  }
+}
+
 fragment GroupSummaryParts on Group {
   __typename
   id
@@ -66,7 +76,10 @@ fragment IzeGroup on IzeGroup {
     ...EntitySummaryParts
   }
   description
-  notificationUriPreview
+  notificationEntity {
+    ...EntitySummaryParts
+  }
+  evolveGroupFlowId
 }
 
 fragment GroupTypeSummaryParts on GroupType {
@@ -79,6 +92,9 @@ fragment GroupTypeSummaryParts on GroupType {
   }
   ... on GroupCustom {
     ...GroupCustomParts
+  }
+  ... on GroupTelegramChat {
+    ...GroupTelegramChat
   }
 }
 
@@ -106,6 +122,14 @@ fragment GroupNftParts on GroupNft {
 fragment GroupCustomParts on GroupCustom {
   id
   name
+}
+
+fragment GroupTelegramChat on GroupTelegramChat {
+  id
+  name
+  icon
+  chatId
+  messageThreadId
 }
 
 fragment NftCollectionParts on NftCollection {
@@ -147,6 +171,15 @@ fragment IdentityDiscordSummaryParts on IdentityDiscord {
   avatar
 }
 
+fragment IdentityTelegram on IdentityTelegram {
+  id
+  telegramUserId
+  photo
+  firstName
+  lastName
+  telegramUsername
+}
+
 fragment IdentityTypesSummaryParts on IdentityType {
   __typename
   ... on IdentityBlockchain {
@@ -157,6 +190,9 @@ fragment IdentityTypesSummaryParts on IdentityType {
   }
   ... on IdentityDiscord {
     ...IdentityDiscordSummaryParts
+  }
+  ... on IdentityTelegram {
+    ...IdentityTelegram
   }
 }
 

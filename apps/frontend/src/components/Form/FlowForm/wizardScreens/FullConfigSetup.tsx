@@ -16,6 +16,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
+import { resultTypeDisplay } from "@/components/result/resultTypeDisplay";
 import { WizardNav } from "@/components/Wizard";
 import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -72,7 +73,7 @@ export const FullConfigSetup = () => {
   // console.log("errors are ", useFormMethods.formState.errors);
   // console.log("values are ", useFormMethods.getValues());
 
-  const hasStep0Response = !!useFormMethods.watch(`steps.0.response`);
+  const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -84,7 +85,7 @@ export const FullConfigSetup = () => {
     onNext();
   };
 
-  const action = useFormMethods.watch(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
   const displayAction =
     action &&
     action.type &&
@@ -125,6 +126,11 @@ export const FullConfigSetup = () => {
                 const responseFieldLocked = useFormMethods.getValues(
                   `steps.${index}.response.fieldsLocked`,
                 );
+                const resultType = useFormMethods.getValues(`steps.${index}.result.${0}.type`);
+                const fieldName = useFormMethods.getValues(
+                  `steps.${index}.response.fields.${0}.name`,
+                );
+                // item.result[0].type
                 const disableDelete =
                   index === 0 && (stepsArrayMethods.fields.length > 1 || !displayAction);
                 return (
@@ -132,7 +138,12 @@ export const FullConfigSetup = () => {
                     <Box key={item.id}>
                       <FlowStage
                         icon={Diversity3OutlinedIcon}
-                        label={"Collaboration " + (index + 1).toString()}
+                        label={
+                          (resultType ? resultTypeDisplay[resultType] : "Collaboration") +
+                          " " +
+                          (index + 1).toString()
+                        }
+                        subtitle={fieldName}
                         key={"stage-" + item.id.toString() + index.toString()}
                         deleteHandler={async () => {
                           if (index === 0) {

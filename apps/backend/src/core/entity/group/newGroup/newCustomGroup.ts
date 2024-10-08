@@ -1,8 +1,8 @@
 import { GroupType, Prisma } from "@prisma/client";
 
-import { createWebhook } from "@/core/action/webhook/createWebhook";
 import { newEvolveGroupFlow } from "@/core/flow/evolveGroup/newEvolveGroupFlow";
 import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
+import { confirmNotificationEntity } from "@/core/notification/confirmNotificationEntity";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
@@ -27,17 +27,9 @@ export const newCustomGroup = async ({
 
   const entitySetId = await newEntitySet({ entityArgs: args.inputs.members, transaction });
 
-  const notificationWebhookId = args.inputs.notificationUri
-    ? await createWebhook({
-        args: {
-          uri: args.inputs.notificationUri,
-          name: "Group notification",
-          webhookId: undefined,
-        },
-
-        transaction,
-      })
-    : null;
+  if (args.inputs.notificationEntity) {
+    await confirmNotificationEntity({ entityId: args.inputs.notificationEntity.id, context });
+  }
 
   const customGroupEntity = await transaction.entity.create({
     select: {
@@ -53,27 +45,13 @@ export const newCustomGroup = async ({
               name: args.inputs.name,
               description: args.inputs.description,
               entitySetId,
-              notificationWebhookId,
+              notificationEntityId: args.inputs.notificationEntity?.id,
             },
           },
         },
       },
     },
   });
-
-  // await newGroupUpdateMetadataFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
-
-  // await newGroupUpdateMembershipFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
 
   await newEvolveGroupFlow({
     transaction,
@@ -90,13 +68,6 @@ export const newCustomGroup = async ({
     groupId: customGroupEntity.Group?.id as string,
     policy: args.inputs.flows.watch,
   });
-
-  // await newGroupUpdateNotificationsFlow({
-  //   transaction,
-  //   context,
-  //   groupEntityId: customGroupEntity.Group?.entityId as string,
-  //   groupId: customGroupEntity.Group?.id as string,
-  // });
 
   return customGroupEntity.Group?.id as string;
 };

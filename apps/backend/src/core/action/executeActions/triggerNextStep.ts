@@ -1,22 +1,13 @@
-import { Prisma } from "@prisma/client";
-
-import { sendGroupNotifications } from "@/core/notification/sendGroupNotifications";
+import { sendNewStepNotifications } from "@/core/notification/sendNewStepNotifications";
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
-import { userResolver } from "@/core/user/userResolver";
 import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
 
-export const triggerNextStep = async ({
-  requestStepId,
-  transaction = prisma,
-}: {
-  requestStepId: string;
-  transaction?: Prisma.TransactionClient;
-}): Promise<boolean> => {
-  try {
+export const triggerNextStep = async ({ requestStepId }: { requestStepId: string }) => {
+  const flowId = await prisma.$transaction(async (transaction) => {
     // get the id of the next step and request
     const reqData = await transaction.requestStep.findFirst({
       where: {
@@ -121,17 +112,11 @@ export const triggerNextStep = async ({
       },
     });
 
-    sendGroupNotifications({
-      flowId: reqData.Request.FlowVersion.flowId,
-      requestId: reqData.Request.id,
-      flowTitle: reqData.Request.FlowVersion.name, // TODO: include name of flow being evolved if evolve request
-      requestTitle: reqData.Request.name,
-      stepIndex: reqData.Request.RequestSteps.length,
-      creator: userResolver(reqData.Request.Creator),
-    });
+    return reqData.Request.FlowVersion.flowId;
+  });
 
-    return true;
-  } catch (e) {
-    return false;
-  }
+  sendNewStepNotifications({
+    flowId,
+    requestStepId,
+  });
 };

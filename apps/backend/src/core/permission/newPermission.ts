@@ -20,7 +20,8 @@ export const newPermission = async ({
 
   const permission = await transaction.permission.create({
     data: {
-      anyone: args.anyone,
+      // in case args.anyone is true  even though there are entity permissions set
+      anyone: args.anyone && !entitySetId && !args.userId,
       entitySetId,
       userId: args.userId,
     },

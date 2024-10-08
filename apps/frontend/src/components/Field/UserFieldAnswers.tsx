@@ -1,29 +1,25 @@
-import { Box, Button, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { useContext } from "react";
 
-import {
-  FieldFragment,
-  UserFieldAnswerFragment,
-  UserFieldAnswersFragment,
-} from "@/graphql/generated/graphql";
+import { FieldFragment, UserFieldAnswerFragment } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { UserFieldAnswer } from "./UserFieldAnswer";
 
 export const UserFieldAnswers = ({
-  userFieldAnswers,
+  fieldAnswers,
   field,
 }: {
-  userFieldAnswers: UserFieldAnswersFragment;
+  fieldAnswers: UserFieldAnswerFragment[];
   field: FieldFragment;
 }) => {
   const { me } = useContext(CurrentUserContext);
-  const [showAll, setShowAll] = useState<boolean>(false);
+  // const [showAll, setShowAll] = useState<boolean>(false);
   const userAnswers: UserFieldAnswerFragment[] = [];
   const otherAnswers: UserFieldAnswerFragment[] = [];
 
-  userFieldAnswers.answers.forEach((userFieldAnswer) => {
-    if (userFieldAnswer.user.id === me?.user.id) {
+  fieldAnswers.forEach((userFieldAnswer) => {
+    if (userFieldAnswer.creator.id === me?.user.id) {
       userAnswers.push(userFieldAnswer);
     } else {
       otherAnswers.push(userFieldAnswer);
@@ -32,16 +28,20 @@ export const UserFieldAnswers = ({
 
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         outline: "1px solid rgba(0, 0, 0, 0.1)",
         padding: "12px",
         marginTop: "8px",
-      }}
+        width: "100%",
+        backgroundColor: theme.palette.background.paper,
+        minWidth: "300px",
+        maxWidth: "500px",
+      })}
     >
-      <Typography variant={"description"}>Responses</Typography>
+      <Typography variant={"label"}>{field.name}</Typography>
       {userAnswers.map((userFieldAnswer, index) => (
         <UserFieldAnswer
           key={"userfieldAnswer" + index}
@@ -56,7 +56,7 @@ export const UserFieldAnswers = ({
           field={field}
         />
       ))}
-      {otherAnswers.length > 0 && !showAll && (
+      {/* {otherAnswers.length > 0 && !showAll && (
         <Button
           variant={"outlined"}
           color="secondary"
@@ -68,7 +68,7 @@ export const UserFieldAnswers = ({
         >
           See all
         </Button>
-      )}
+      )} */}
     </Box>
   );
 };

@@ -1,4 +1,5 @@
 import { MailOutline } from "@mui/icons-material";
+import { SvgIcon } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -17,13 +18,16 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 
+import discordLogo from "@/assets/discord-logo-blue.svg";
+import hatsLogoUrl from "@/assets/hats-logo.svg";
+import telegramLogoUrl from "@/assets/telegram-logo.svg";
 import { Avatar } from "@/components/Avatar";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
 import { EntitySummaryPartsFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
-import { DiscordLogoSvg, EthLogoSvg } from "../../icons";
+import { EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
 
@@ -34,6 +38,7 @@ interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T>
   hideCustomGroups?: boolean;
   setFieldValue: UseFormSetValue<T>;
   getFieldValues: UseFormGetValues<T>;
+  showLabel?: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
@@ -44,6 +49,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
   hideCustomGroups = false,
   setFieldValue,
   getFieldValues,
+  showLabel,
   ...props
 }: EntitySearchProps<T>) => {
   const { me } = useContext(CurrentUserContext);
@@ -138,16 +144,6 @@ export const EntitiesSearchField = <T extends FieldValues>({
                         </Button>
                         <Button
                           variant="outlined"
-                          startIcon={<DiscordLogoSvg />}
-                          onMouseDown={() => {
-                            setRoleModalType(NewEntityTypes.GroupDiscord);
-                            setOpen(true);
-                          }}
-                        >
-                          Discord @role
-                        </Button>
-                        <Button
-                          variant="outlined"
                           startIcon={<NftSvg />}
                           onMouseDown={() => {
                             setRoleModalType(NewEntityTypes.GroupNft);
@@ -158,7 +154,29 @@ export const EntitiesSearchField = <T extends FieldValues>({
                         </Button>
                         <Button
                           variant="outlined"
-                          startIcon={<NftSvg />}
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={discordLogo} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
+                          onMouseDown={() => {
+                            setRoleModalType(NewEntityTypes.GroupDiscord);
+                            setOpen(true);
+                          }}
+                        >
+                          Discord @role
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={hatsLogoUrl} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
                           onMouseDown={() => {
                             setRoleModalType(NewEntityTypes.GroupHat);
                             setOpen(true);
@@ -166,8 +184,24 @@ export const EntitiesSearchField = <T extends FieldValues>({
                         >
                           Hat
                         </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={
+                            <SvgIcon>
+                              <svg>
+                                <image xlinkHref={telegramLogoUrl} width="100%" height="100%" />
+                              </svg>
+                            </SvgIcon>
+                          }
+                          onMouseDown={() => {
+                            setRoleModalType(NewEntityTypes.GroupTelegramChat);
+                            setOpen(true);
+                          }}
+                        >
+                          Telegram
+                        </Button>
                       </Box>
-                      {children}
+                      <Box sx={{ maxHeight: "200px", overflowY: "auto" }}>{children}</Box>
                     </Paper>
                   );
                 }}
@@ -215,7 +249,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={label}
+                    label={showLabel ? label : ""}
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,

@@ -82,7 +82,7 @@ export const createRequestStepSummaryInclude = (userId: string | undefined) =>
     },
     Responses: {
       where: {
-        creatorId: {
+        userId: {
           equals: userId,
         },
       },

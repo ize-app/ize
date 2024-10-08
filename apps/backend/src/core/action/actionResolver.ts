@@ -50,27 +50,9 @@ export const actionResolver = (
         filterOption,
         locked: action.locked,
       };
-    case ActionType.GroupUpdateMetadata:
-      return {
-        __typename: "GroupUpdateMetadata",
-        filterOption,
-        locked: action.locked,
-      };
-    case ActionType.GroupUpdateMembership:
-      return {
-        __typename: "GroupUpdateMembership",
-        filterOption,
-        locked: action.locked,
-      };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
-        filterOption,
-        locked: action.locked,
-      };
-    case ActionType.GroupUpdateNotifications:
-      return {
-        __typename: "GroupUpdateNotifications",
         filterOption,
         locked: action.locked,
       };

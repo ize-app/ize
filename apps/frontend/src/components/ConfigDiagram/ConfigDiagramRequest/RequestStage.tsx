@@ -12,6 +12,7 @@ import { Stage, StageProps } from "../DiagramPanel/Stage";
 
 interface RequestStageProps extends StageProps {
   label: string;
+  subtitle?: string;
   entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
   status: Status;
 }
@@ -23,6 +24,7 @@ export const RequestStage = ({
   selectedId,
   entities = [],
   icon,
+  subtitle,
   status = Status.InProgress,
 }: RequestStageProps) => {
   const backgroundColor = statusProps[status].backgroundColor;
@@ -50,11 +52,14 @@ export const RequestStage = ({
           <Typography variant="label" color={backgroundColor}>
             {label}
           </Typography>
-          {status === Status.InProgress && (
+          <Typography color={backgroundColor} fontSize={".7rem"} lineHeight={"1rem"}>
+            {subtitle}
+          </Typography>
+          {/* {status === Status.InProgress && (
             <Typography color={backgroundColor} fontSize={".7rem"} lineHeight={"1rem"}>
               In progress
             </Typography>
-          )}
+          )} */}
         </Box>
         {entities.length > 0 && <AvatarGroup avatars={entities} />}
       </Box>

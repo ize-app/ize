@@ -16,7 +16,7 @@ export const ResultHeader = ({
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box sx={{ display: "flex", gap: "8px" }}>
         <Chip label={resultType} size="small" />{" "}
-        <Typography color="primary" fontSize=".875rem">
+        <Typography color="primary" fontSize="1rem">
           {name}
         </Typography>
       </Box>

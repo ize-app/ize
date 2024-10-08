@@ -26,17 +26,8 @@ fragment Action on Action {
   ... on TriggerStep {
     ...TriggerStep
   }
-  ... on GroupUpdateMetadata {
-    ...GroupUpdateMetadata
-  }
-  ... on GroupUpdateMembership {
-    ...GroupUpdateMembership
-  }
   ... on GroupWatchFlow {
     ...GroupWatchFlow
-  }
-  ... on GroupUpdateNotifications {
-    ...GroupUpdateNotifications
   }
 }
 
@@ -64,28 +55,7 @@ fragment TriggerStep on TriggerStep {
   }
 }
 
-fragment GroupUpdateMetadata on GroupUpdateMetadata {
-  locked
-  filterOption {
-    ...Option
-  }
-}
-
-fragment GroupUpdateMembership on GroupUpdateMembership {
-  locked
-  filterOption {
-    ...Option
-  }
-}
-
 fragment GroupWatchFlow on GroupWatchFlow {
-  locked
-  filterOption {
-    ...Option
-  }
-}
-
-fragment GroupUpdateNotifications on GroupUpdateNotifications {
   locked
   filterOption {
     ...Option

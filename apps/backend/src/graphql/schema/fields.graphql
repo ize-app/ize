@@ -7,7 +7,10 @@ input FieldAnswerArgs {
 }
 
 input OptionSelectionArgs {
-  optionId: String!
+  # for FE UI
+  optionId: String
+  # for Telegram polls
+  optionIndex: Int
 }
 
 type Options {
@@ -103,7 +106,7 @@ type WebhookFieldAnswer {
 }
 
 type UserFieldAnswer {
-  user: User!
+  creator: Respondant!
   createdAt: String!
   answer: FieldAnswer!
 }

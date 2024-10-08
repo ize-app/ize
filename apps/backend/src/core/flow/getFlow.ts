@@ -1,6 +1,6 @@
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Flow, QueryGetFlowArgs } from "@/graphql/generated/resolver-types";
-import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import {
   FlowVersionPrismaType,
@@ -10,7 +10,6 @@ import {
 import { flowResolver } from "./resolvers/flowResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { hasWritePermission } from "../permission/hasWritePermission";
 
 // if flowID is provided, it returns current published version of that flow
 // if flowVersionID is provided, it returns that specific version/draft of the flow
@@ -71,25 +70,6 @@ export const getFlow = async ({
       id: flowVersion.evolveFlowId,
     },
   });
-
-  if (args.isForEvolveRequest) {
-    const evolveRequestPermissions = evolveFlow.CurrentFlowVersion?.Steps[0].RequestPermissions;
-    if (!evolveRequestPermissions)
-      throw new GraphQLError("Missing request permissions for evolve flow", {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
-
-    const hasEvolvePermission = await hasWritePermission({
-      permission: evolveRequestPermissions,
-      context,
-      transaction: prisma,
-    });
-
-    if (!hasEvolvePermission)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-  }
 
   const userIdentityIds = context.currentUser?.Identities.map((id) => id.id) ?? [];
 

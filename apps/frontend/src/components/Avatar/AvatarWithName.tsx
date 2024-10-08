@@ -1,9 +1,22 @@
 import Box from "@mui/material/Box";
+import { Variant } from "@mui/material/styles/createTypography";
 import Typography from "@mui/material/Typography";
 
 import { Avatar, AvatarProps } from "./Avatar";
 
-export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
+interface AvatarWithNameProps extends AvatarProps {
+  typography?: Variant | "description";
+  fontSize?: string;
+}
+
+export const AvatarWithName = ({
+  avatar,
+  fontSize,
+  typography,
+}: AvatarWithNameProps): JSX.Element => {
+  const fontSizeOverride = fontSize ?? "16px";
+  const avatarSize = (parseInt(fontSizeOverride, 10) * 1.25).toString() + "px";
+
   return (
     <Box
       sx={{
@@ -15,9 +28,10 @@ export const AvatarWithName = ({ avatar }: AvatarProps): JSX.Element => {
         verticalAlign: "middle",
       }}
     >
-      {<Avatar avatar={avatar} size="18px" />}
+      {<Avatar avatar={avatar} size={avatarSize} />}
       <Typography
-        fontSize={"0.875rem"}
+        fontSize={fontSizeOverride}
+        variant={typography ?? "body1"}
         sx={{
           whiteSpace: "nowrap",
           overflow: "hidden",

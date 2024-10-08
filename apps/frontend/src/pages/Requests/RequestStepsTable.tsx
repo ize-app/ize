@@ -73,7 +73,6 @@ const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragme
         </TableCellHideable>
         <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
           <ResponseStatus
-            userRespondPermission={requestStep.userRespondPermission}
             userResponded={requestStep.userResponded}
             responseComplete={requestStep.responseComplete}
           />

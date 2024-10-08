@@ -5,6 +5,8 @@ import { Blockchain, EntityType, NewEntityTypes } from "@/graphql/generated/grap
 
 export type EntitySchemaType = z.infer<typeof entityFormSchema>;
 
+export type NewEntitySchemaType = z.infer<typeof newEntityFormSchema>;
+
 const groupFormSchema = z.object({
   id: z.string(),
   entityId: z.string(),
@@ -12,11 +14,14 @@ const groupFormSchema = z.object({
   icon: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
   memberCount: z.number().optional().nullable(),
-  organization: z.object({
-    name: z.string(),
-    icon: z.string().optional().nullable(),
-  }),
-  __typename: z.nativeEnum(EntityType),
+  organization: z
+    .object({
+      name: z.string(),
+      icon: z.string().optional().nullable(),
+    }) 
+    .nullable()
+    .optional(),
+  __typename: z.literal(EntityType.Group),
   groupType: z
     .object({
       __typename: z.any(),
@@ -29,7 +34,7 @@ const identityFormSchema = z.object({
   name: z.string(),
   entityId: z.string(),
   icon: z.string().optional().nullable(),
-  __typename: z.nativeEnum(EntityType),
+  __typename: z.literal(EntityType.Identity),
   identityType: z
     .object({
       __typename: z.any(),
@@ -37,7 +42,10 @@ const identityFormSchema = z.object({
     .optional(),
 });
 
-export const entityFormSchema = z.union([identityFormSchema, groupFormSchema]);
+export const entityFormSchema = z.discriminatedUnion("__typename", [
+  identityFormSchema,
+  groupFormSchema,
+]);
 
 export const newEntityFormSchema = z.object({
   type: z.nativeEnum(NewEntityTypes),
@@ -122,4 +130,5 @@ export const newEntityFormSchema = z.object({
       },
     )
     .optional(),
+  telegramChat: entityFormSchema.optional(),
 });

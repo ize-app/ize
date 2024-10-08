@@ -23,7 +23,8 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
     },
     server: {
-      port: 5173,
+      host: "127.0.0.1",
+      port: 80,
       proxy: {
         "/api": {
           target: env.VITE_LOCAL_BACKEND_URL,

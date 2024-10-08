@@ -116,7 +116,7 @@ export const getRequestSteps = async ({
               }
             : {},
           args.statusFilter !== RequestStepStatusFilter.All
-            ? { responseComplete: args.statusFilter === RequestStepStatusFilter.Closed }
+            ? { responseFinal: args.statusFilter === RequestStepStatusFilter.Closed }
             : {},
           args.respondPermissionFilter !== RequestStepRespondPermissionFilter.All && user
             ? {

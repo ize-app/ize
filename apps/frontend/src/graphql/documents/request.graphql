@@ -16,6 +16,10 @@ query getRequest($requestId: String!) {
   }
 }
 
+mutation EndRequestStep($requestStepId: String!) {
+  endRequestStep(requestStepId: $requestStepId)
+}
+
 query getRequestSteps(
   $cursor: String
   $limit: Int!
@@ -112,8 +116,8 @@ fragment RequestStepSummary on RequestStepSummary {
 fragment Response on Response {
   responseId
   createdAt
-  user {
-    ...UserSummaryParts
+  creator {
+    ...Respondant
   }
   answers {
     ...FieldAnswer

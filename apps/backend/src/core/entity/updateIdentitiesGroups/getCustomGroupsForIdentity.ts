@@ -4,12 +4,12 @@ import { prisma } from "../../../prisma/client";
 
 // looks whether there are any custom groups for a given identity or set of groups associated with that identity
 // (e.g. discord role groups for a discord identity)
-export const getCustomGroupsForIdentity = async ({
+export const getCustomGroupsByMembers = async ({
   identityId,
   groupIds,
   transaction = prisma,
 }: {
-  identityId: string;
+  identityId?: string;
   groupIds: string[];
   transaction?: Prisma.TransactionClient;
 }) => {
@@ -21,7 +21,7 @@ export const getCustomGroupsForIdentity = async ({
             Entity: {
               OR: [
                 { Group: { id: { in: groupIds } } },
-                { Identity: { id: { equals: identityId } } },
+                identityId ? { Identity: { id: { equals: identityId } } } : {},
               ],
             },
           },

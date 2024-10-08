@@ -18,12 +18,16 @@ export type GroupDiscordPrismaType = Prisma.GroupDiscordRoleGetPayload<{
   include: typeof groupDiscordInclude;
 }>;
 
-export const groupCustomInclude = Prisma.validator<Prisma.GroupCustomInclude>()({
-  Webhook: true,
-});
+export const groupCustomInclude = Prisma.validator<Prisma.GroupCustomInclude>()({});
 
 export type GroupCustomPrismaType = Prisma.GroupCustomGetPayload<{
   include: typeof groupCustomInclude;
+}>;
+
+export const groupTelegramChatInclude = Prisma.validator<Prisma.GroupTelegramChatInclude>()({});
+
+export type GroupTelegramChatPrismaType = Prisma.GroupTelegramChatGetPayload<{
+  include: typeof groupTelegramChatInclude;
 }>;
 
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
@@ -38,6 +42,9 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   },
   GroupCustom: {
     include: groupCustomInclude,
+  },
+  GroupTelegramChat: {
+    include: groupTelegramChatInclude,
   },
 });
 

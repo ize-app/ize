@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import { useEffect } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { FieldDataType, FieldOptionsSelectionType, ResultType } from "@/graphql/generated/graphql";
+import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
 import { UsePresetOptionsForm } from "./UsePresetOptionsForm";
 import { Select } from "../../formFields";
@@ -21,11 +21,11 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
   steps.forEach((s, stepIndex) => {
     // only include results from previous steps
     if (currentStepIndex <= stepIndex) return;
-    s.result.forEach((r, resultIndex) => {
+    s.result.forEach((r) => {
+      const field = (s.response?.fields ?? []).find((f) => f.fieldId === r.fieldId);
+
       results.push({
-        name: `Include  result from "Step ${stepIndex + 1}, Result ${resultIndex + 1}: ${
-          r.type as ResultType
-        }" as options`,
+        name: `${r.type} from step ${stepIndex + 1}${field?.name ? `: "${field.name}"` : ""}`,
         value: r.resultId,
       });
     });
@@ -148,17 +148,33 @@ export const FieldOptionsForm = ({
         <Box sx={{ width: "100%" }}>
           {linksFields.map((item, inputIndex) => {
             return (
-              <Box key={item.id} sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
+              <Box
+                key={item.id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <Select<FlowSchemaType>
                   control={control}
-                  sx={{}}
                   size={"small"}
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                   key={"links" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={possibleLinkOptions}
                   renderValue={(val) => {
-                    if (val) return getSelectOptionName(possibleLinkOptions, val);
-                    else return "Select a previous result";
+                    return (
+                      <div
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {val
+                          ? getSelectOptionName(possibleLinkOptions, val)
+                          : "Select a previous result"}
+                      </div>
+                    );
                   }}
                   label="Type"
                   displayEmpty={true}

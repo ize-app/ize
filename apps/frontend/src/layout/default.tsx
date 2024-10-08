@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import usePageTracking from "@/analytics/usePageTracking";
+import IdentityModal from "@/components/Auth/IdentityModal";
 import LoginModal from "@/components/Auth/LoginModal";
 import { Menu } from "@/components/Menu/Menu";
 import { NavBar } from "@/components/Menu/NavBar";
@@ -43,6 +44,7 @@ export const DefaultLayout = () => {
         </Main>
         <Snackbar />
         <LoginModal />
+        <IdentityModal />
       </Box>
     </>
   );

@@ -98,6 +98,7 @@ fragment Step on Step {
     ...Action
   }
   expirationSeconds
+  canBeManuallyEnded
   allowMultipleResponses
   userPermission {
     ...UserPermission

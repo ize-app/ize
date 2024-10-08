@@ -54,10 +54,7 @@ enum FlowType {
   Custom
   Evolve
   EvolveGroup
-  GroupUpdateMetadata
-  GroupUpdateMembership
   GroupWatchFlow
-  GroupUpdateNotifications
 }
 
 type Step {
@@ -68,6 +65,7 @@ type Step {
   result: [ResultConfig!]!
   action: Action
   expirationSeconds: Int
+  canBeManuallyEnded: Boolean!
   allowMultipleResponses: Boolean!
   userPermission: UserPermission!
 }
@@ -107,6 +105,7 @@ input NewStepArgs {
   action: ActionArgs
   expirationSeconds: Int
   allowMultipleResponses: Boolean!
+  canBeManuallyEnded: Boolean!
 }
 
 input EvolveFlowArgs {

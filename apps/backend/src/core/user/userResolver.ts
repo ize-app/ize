@@ -5,6 +5,7 @@ import { UserPrismaType } from "./userPrismaTypes";
 
 export const userResolver = (user: UserPrismaType): User => {
   return {
+    __typename: "User",
     id: user.id,
     name: user.name,
     createdAt: user.createdAt.toString(),

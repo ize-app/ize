@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -12,7 +12,9 @@ import {
   FieldOptionsSelectionType,
   FieldType,
   NewResponseDocument,
+  PermissionFragment,
 } from "@/graphql/generated/graphql";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 import { ResponseSchemaType, responseSchema } from "./formValidation";
@@ -23,12 +25,15 @@ import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
 export const ResponseForm = ({
   responseFields,
   requestStepId,
+  permission,
 }: {
   responseFields: FieldFragment[];
   requestStepId: string;
+  permission: PermissionFragment | undefined | null;
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
+  const { setIdentityModalState } = useContext(CurrentUserContext);
   const [mutate] = useMutation(NewResponseDocument, {
     onCompleted: (_data) => {
       navigate(0);
@@ -37,7 +42,10 @@ export const ResponseForm = ({
       setSnackbarData({ message: "Response submitted!", type: "success" });
     },
     onError: (data) => {
-      console.log("Error submitting response: ", data.message);
+      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+        setIdentityModalState({ type: "response", permission });
+      }
+
       setSnackbarOpen(true);
       setSnackbarData({ message: "Response submission failed", type: "error" });
     },
@@ -88,9 +96,9 @@ export const ResponseForm = ({
         padding: "16px",
       }}
     >
-      <Typography color="primary" variant="label" marginBottom="12px">
+      {/* <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
         Respond
-      </Typography>
+      </Typography> */}
       <form
         style={{
           display: "flex",

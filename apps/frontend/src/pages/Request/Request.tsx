@@ -3,7 +3,7 @@ import { Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
@@ -11,9 +11,13 @@ import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRe
 import { Fields } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
+import TabPanel from "@/components/Tables/TabPanel";
+import { TabProps, Tabs } from "@/components/Tables/Tabs";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 
+import { Responses } from "./Responses";
 import Loading from "../../components/Loading";
 import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
@@ -44,10 +48,13 @@ export const Request = () => {
   const { requestId: shortRequestId } = useParams();
   const requestId = shortUUIDToFull(shortRequestId as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const { me } = useContext(CurrentUserContext);
+  const theme = useTheme();
   const navigate = useNavigate();
 
+  const [currentTabIndex, setTabIndex] = useState(0);
+
   let acceptingNewResponses = false;
-  let canRespond: boolean = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
 
@@ -66,21 +73,29 @@ export const Request = () => {
   if (error) onError();
 
   const request = data?.getRequest;
-  // console.log(request);
 
   if (request) {
     acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
-    canRespond = request.flow.steps[request.currentStepIndex].userPermission.response;
     userResponses = request.steps[request.currentStepIndex].userResponses;
     allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
   }
 
-  const theme = useTheme();
-  // const isOverMdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  console.log("request is ", request);
 
-  return loading || !request ? (
-    <Loading />
-  ) : (
+  if (loading || !request) return <Loading />;
+
+  const tabs: TabProps[] = [
+    {
+      title: "Status",
+      content: <ConfigDiagramRequest request={request} />,
+    },
+    {
+      title: "Responses",
+      content: <Responses request={request} />,
+    },
+  ];
+
+  return (
     <PageContainer>
       <Head
         title={"Request for " + request.flow.name}
@@ -94,7 +109,7 @@ export const Request = () => {
           <Typography variant={"h1"} marginBottom={".75rem"}>
             {request.name}
           </Typography>
-          <Typography variant={"h3"}>
+          <Typography variant={"description"} lineHeight={"24px"}>
             <Link
               to={generatePath(Route.Flow, {
                 flowId: fullUUIDToShort(request.flow.flowId),
@@ -108,85 +123,42 @@ export const Request = () => {
               {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
             </Link>
           </Typography>
+          <Box sx={{ display: "flex", gap: "6px" }}>
+            <Typography variant="description" lineHeight={"24px"}>
+              Created by{"  "}
+            </Typography>
+            <AvatarWithName
+              avatar={request.creator}
+              typography="description"
+              size="14px"
+              fontSize="14px"
+            />
+            <Typography variant="description" lineHeight={"24px"}>
+              on {new Date(request.createdAt).toLocaleDateString()}
+            </Typography>
+          </Box>
         </Box>
         <Box
           sx={{
             display: "flex",
+            flexDirection: "column",
             justifyContent: "space-between",
             marginTop: "36px",
-            marginBottom: "60px",
-            gap: "24px",
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column-reverse",
-              gap: "24px",
-            },
+            marginBottom: "36px",
+            gap: "60px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-              minWidth: "300px",
-              width: "100%",
-              maxWidth: "800px",
-            }}
-          >
-            <Box
-              sx={{
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                padding: "16px 24px 16px 16px",
-                marginTop: "8px",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: theme.palette.background.paper,
-              }}
-            >
-              <Typography color="primary" variant="label" marginBottom="12px">
-                Request
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                <Box sx={{ display: "flex", gap: "6px" }}>
-                  <Typography fontSize={".875rem"}>Created by{"  "}</Typography>
-                  <AvatarWithName avatar={request.creator} />
-                  <Typography fontSize={".875rem"}>
-                    on {new Date(request.createdAt).toLocaleDateString()}
-                  </Typography>
-                </Box>
-                <Fields
-                  fields={request.flow.steps[0].request.fields}
-                  fieldAnswers={request.steps[0].requestFieldAnswers}
-                  onlyShowSelections={true}
-                />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                outline: "1px solid rgba(0, 0, 0, 0.1)",
-                padding: "16px 24px 16px 16px",
-                marginTop: "8px",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: theme.palette.background.paper,
-              }}
-            >
-              <Typography color="primary" variant="label" marginBottom="12px">
-                Results
-              </Typography>
-              <RequestResults request={request} />
-            </Box>
-          </Box>
-          {canRespond &&
+          {!!me &&
             acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
+                elevation={3}
                 sx={{
-                  flexGrow: 1,
-                  minWidth: "300px",
+                  display: "block",
+                  alignSelf: "flex-start",
+                  minWidth: "400px",
                   maxWidth: "800px",
-                  width: "100%",
                   border: `solid ${colors.primaryContainer} 2px`,
-                  marginLeft: "2rem",
                   [theme.breakpoints.down("md")]: {
                     width: "100%",
                     marginLeft: 0,
@@ -197,11 +169,86 @@ export const Request = () => {
                 <ResponseForm
                   requestStepId={request.steps[request.currentStepIndex].requestStepId}
                   responseFields={request.steps[request.currentStepIndex].responseFields}
+                  permission={request.flow.steps[request.currentStepIndex].response.permission}
                 />
               </Paper>
             )}
+          <Box
+            sx={(theme) => ({
+              display: "flex",
+              [theme.breakpoints.down("lg")]: {
+                flexDirection: "column",
+                gap: "36px",
+              },
+              flexDirection: "row",
+              width: "100%",
+              minWidth: "300px",
+              outline: "1px solid rgba(0, 0, 0, 0.1)",
+              padding: "16px 24px 16px 16px",
+              borderRadius: "8px",
+
+              gap: "60px",
+              backgroundColor: theme.palette.background.paper,
+            })}
+          >
+            {request.steps[0].requestFieldAnswers.length > 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "300px",
+                  width: "100%",
+                }}
+              >
+                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                  Request context
+                </Typography>
+                <Box
+                  sx={{
+                    borderRadius: "8px",
+                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                    padding: "12px 16px 12px",
+                  }}
+                >
+                  <Fields
+                    fields={request.flow.steps[0].request.fields}
+                    fieldAnswers={request.steps[0].requestFieldAnswers}
+                    onlyShowSelections={true}
+                  />
+                </Box>
+              </Box>
+            )}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                minWidth: "300px",
+                maxWidth: "700px",
+              }}
+            >
+              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                Results
+              </Typography>
+              <RequestResults request={request} />
+            </Box>
+          </Box>
         </Box>
-        <ConfigDiagramRequest request={request} />
+        <Box sx={{ padding: "0px 12px" }}>
+          <Tabs
+            tabs={tabs}
+            currentTabIndex={currentTabIndex}
+            handleChange={(_event: React.SyntheticEvent, newValue: number) => {
+              setTabIndex(newValue);
+            }}
+          />
+
+          {tabs.map((tab: TabProps, index) => (
+            <TabPanel value={currentTabIndex} index={index} key={index}>
+              {tab.content}
+            </TabPanel>
+          ))}
+        </Box>
       </Box>
     </PageContainer>
   );

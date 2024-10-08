@@ -141,7 +141,14 @@ export const newFieldAnswers = async ({
 
           // check whether selected options are part of field's option Set
           fieldAnswer.optionSelections.map((optionSelectionArgs) => {
-            if (!options.some((option) => option.id === optionSelectionArgs.optionId))
+            if (
+              !options.some((option) => {
+                if (optionSelectionArgs.optionId) return option.id === optionSelectionArgs.optionId;
+                else if (typeof optionSelectionArgs.optionIndex === "number")
+                  return option.id === options[optionSelectionArgs.optionIndex].id;
+                return false;
+              })
+            )
               throw new GraphQLError(
                 `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
                 {
@@ -158,13 +165,25 @@ export const newFieldAnswers = async ({
               responseId,
               AnswerOptionSelections: {
                 createMany: {
-                  data: fieldAnswer.optionSelections.map((optionSelectionArgs, index) => ({
-                    fieldOptionId: optionSelectionArgs.optionId,
-                    weight:
-                      field.FieldOptionsConfigs?.selectionType === FieldOptionsSelectionType.Rank
-                        ? totalOptionCount - index
-                        : 1,
-                  })),
+                  data: fieldAnswer.optionSelections.map((optionSelectionArgs, index) => {
+                    let fieldOptionId: string;
+                    if (optionSelectionArgs.optionId) {
+                      fieldOptionId = optionSelectionArgs.optionId;
+                    } else if (typeof optionSelectionArgs.optionIndex === "number") {
+                      fieldOptionId = options[optionSelectionArgs.optionIndex].id;
+                    } else {
+                      throw new GraphQLError(`Missing  option selection for field: ${field.id}`, {
+                        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+                      });
+                    }
+                    return {
+                      fieldOptionId,
+                      weight:
+                        field.FieldOptionsConfigs?.selectionType === FieldOptionsSelectionType.Rank
+                          ? totalOptionCount - index
+                          : 1,
+                    };
+                  }),
                 },
               },
             },

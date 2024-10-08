@@ -67,11 +67,6 @@ export const flowResolver = async ({
         fieldId: "",
         entities: group.members,
       },
-      [EvolveGroupFields.Webhook]: {
-        __typename: "WebhookFieldAnswer",
-        fieldId: "",
-        uri: group.notificationUriPreview ?? "",
-      },
     };
   }
 

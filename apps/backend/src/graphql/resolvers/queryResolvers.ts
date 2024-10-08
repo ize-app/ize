@@ -5,11 +5,13 @@ import { userMutations, userQueries } from "./userResolvers";
 import { requestMutations, requestQueries } from "./requestResolvers";
 import { flowMutations, flowQueries } from "./flowResolvers";
 import { actionMutations } from "./actionResolvers";
+import { telegramQueries } from "./telegramResolvers";
 
 export const resolvers = {
   Query: {
     ...blockchainQueries,
     ...discordQueries,
+    ...telegramQueries,
     ...userQueries,
     ...entityQueries,
     ...requestQueries,

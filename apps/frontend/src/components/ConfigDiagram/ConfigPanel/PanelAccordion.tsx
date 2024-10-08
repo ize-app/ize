@@ -13,13 +13,15 @@ export const PanelAccordion = ({
   title,
   hasError,
   sx = {},
+  initialState = true,
 }: {
   children: React.ReactNode;
   title: string;
   hasError: boolean;
+  initialState?: boolean;
   sx?: SxProps;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(initialState);
   return (
     <Accordion
       disableGutters

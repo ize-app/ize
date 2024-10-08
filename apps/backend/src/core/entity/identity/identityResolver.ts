@@ -50,6 +50,22 @@ export const identityResolver = (
         : null,
       identityType: { __typename: "IdentityDiscord", ...identity.IdentityDiscord },
     };
+  else if (identity.IdentityTelegram)
+    return {
+      __typename: "Identity",
+      id: identity.id,
+      entityId: identity.entityId,
+      name:
+        identity.IdentityTelegram.username ??
+        identity.IdentityTelegram.firstName +
+          (identity.IdentityTelegram.lastName ? " " + identity.IdentityTelegram.lastName : ""),
+      icon: identity.IdentityTelegram.photoUrl,
+      identityType: {
+        __typename: "IdentityTelegram",
+        ...identity.IdentityTelegram,
+        telegramUserId: String(identity.IdentityTelegram.telegramUserId), // convert BigInt to string
+      },
+    };
   else {
     throw new GraphQLError("Invalid identity type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

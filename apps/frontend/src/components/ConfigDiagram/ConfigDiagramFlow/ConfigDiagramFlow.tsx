@@ -54,6 +54,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                         ? resultTypeDisplay[flow.steps[index].result[0].__typename]
                         : "Collaboration " + (index + 1).toString()
                     }
+                    subtitle={flow.steps[index].response.fields[0].name}
                     key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}
