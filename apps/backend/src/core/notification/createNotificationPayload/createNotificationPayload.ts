@@ -16,41 +16,36 @@ export const createNotificationPayload = async ({
   requestStepId: string;
 
   transaction?: Prisma.TransactionClient;
-}): Promise<WebhookPayload | null> => {
-  try {
-    const reqStep = await transaction.requestStep.findUniqueOrThrow({
-      include: {
-        Request: {
-          include: requestInclude,
-        },
+}): Promise<WebhookPayload> => {
+  const reqStep = await transaction.requestStep.findUniqueOrThrow({
+    include: {
+      Request: {
+        include: requestInclude,
       },
-      where: {
-        id: requestStepId,
-      },
-    });
-    const formattedRequest = await requestResolver({
-      req: reqStep.Request,
-      context: { currentUser: null, discordApi: undefined },
-      userGroupIds: [],
-    });
+    },
+    where: {
+      id: requestStepId,
+    },
+  });
+  const formattedRequest = await requestResolver({
+    req: reqStep.Request,
+    context: { currentUser: null, discordApi: undefined },
+    userGroupIds: [],
+  });
 
-    const requestFields = createRequestFieldsPayload({
-      requestFields: formattedRequest.flow.steps[0].request.fields,
-      requestFieldAnswers: formattedRequest.steps[0].requestFieldAnswers,
-    });
+  const requestFields = createRequestFieldsPayload({
+    requestFields: formattedRequest.flow.steps[0].request.fields,
+    requestFieldAnswers: formattedRequest.steps[0].requestFieldAnswers,
+  });
 
-    const results = createResultsPayload(formattedRequest);
+  const results = createResultsPayload(formattedRequest);
 
-    return {
-      createdAt: formattedRequest.createdAt,
-      flowName: formattedRequest.flow.name,
-      requestName: formattedRequest.name,
-      requestFields,
-      results,
-      requestUrl: createRequestUrl({ requestId: formattedRequest.requestId }),
-    };
-  } catch (error) {
-    console.error("Error in createResultsPayload:", error);
-    return null;
-  }
+  return {
+    createdAt: formattedRequest.createdAt,
+    flowName: formattedRequest.flow.name,
+    requestName: formattedRequest.name,
+    requestFields,
+    results,
+    requestUrl: createRequestUrl({ requestId: formattedRequest.requestId }),
+  };
 };

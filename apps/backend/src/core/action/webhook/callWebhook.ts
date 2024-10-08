@@ -8,19 +8,13 @@ export const callWebhook = async ({
 }: {
   uri: string;
   payload?: WebhookPayload | NotificationPayload;
-}): Promise<boolean> => {
+}) => {
   // attempt to callWebhook with Results from previous step
-  try {
-    const response = await fetch(uri, {
-      method: "POST",
-      body: JSON.stringify(payload ?? {}),
-    });
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-    return true;
-  } catch (e) {
-    console.log("Call webhook action error: ", e);
-    return false;
+  const response = await fetch(uri, {
+    method: "POST",
+    body: JSON.stringify(payload ?? {}),
+  });
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
   }
 };

@@ -720,6 +720,7 @@ model ActionExecution {
   actionId        String    @map("action_id") @db.Uuid
   requestStepId   String    @map("request_step_id") @db.Uuid
   complete        Boolean   @default(false)
+  final           Boolean   @default(false)
   lastAttemptedAt DateTime  @default(now()) @map("last_attempted_at")
   retryAttempts   Int       @default(0) @map("retry_attempts")
   nextRetryAt     DateTime? @map("next_retry_at")
