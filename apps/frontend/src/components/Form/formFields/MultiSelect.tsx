@@ -67,6 +67,7 @@ export const MultiSelect = <T extends FieldValues>({
                 <FormControlLabel
                   control={
                     <Checkbox
+                      //eslint-disable-next-line
                       checked={value?.some(
                         (checked: OptionSelectionSchemaType) => checked.optionId === option.value,
                       )}

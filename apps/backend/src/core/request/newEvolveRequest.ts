@@ -81,15 +81,15 @@ export const newEvolveRequest = async ({
       );
 
     const proposedFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find((field) => {
-      return field.Field.name === EvolveFlowFields.ProposedFlow;
+      return (field.Field.name as EvolveFlowFields) === EvolveFlowFields.ProposedFlow;
     });
 
     const currentFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
-      (field) => field.Field.name === EvolveFlowFields.CurrentFlow,
+      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.CurrentFlow,
     );
 
     const descriptionField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
-      (field) => field.Field.name === EvolveFlowFields.Description,
+      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.Description,
     );
 
     if (!proposedFlowField || !currentFlowField)

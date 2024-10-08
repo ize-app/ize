@@ -22,6 +22,7 @@ export const createNewRequestMutationArgs = async (
       ? [
           {
             options: formState.requestDefinedOptions.map(
+              //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               (option): FieldOptionArgs => ({ name: option.name, dataType: option.dataType }),
             ),
             fieldId: formState.flow.steps[0]?.response.fields[0].fieldId,

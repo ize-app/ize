@@ -36,7 +36,7 @@ export const getHatToken = async ({
 }): Promise<ApiHatToken> => {
   const hat = await hatsClient.forChain(chain).viewHat(tokenId);
   const res = await fetch(getIpfsUrl(hat.details));
-  const details: HatIpfsDetails = await res.json();
+  const details: HatIpfsDetails = (await res.json()) as HatIpfsDetails;
 
   const name = details.data.name;
   const description = details.data.description;

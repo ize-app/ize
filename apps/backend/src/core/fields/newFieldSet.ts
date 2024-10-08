@@ -1,6 +1,10 @@
 import { Prisma } from "@prisma/client";
 
-import { FieldArgs, FieldOptionsConfigArgs } from "@/graphql/generated/resolver-types";
+import {
+  FieldArgs,
+  FieldOptionsConfigArgs,
+  FieldOptionsSelectionType,
+} from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { FieldSetPrismaType, fieldSetInclude } from "./fieldPrismaTypes";
@@ -66,19 +70,18 @@ const createFieldOptionsConfig = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   // if option Configs hasn't changed, just use the existing Id
-  const {
-    selectionType,
-    options,
-    maxSelections,
-    requestOptionsDataType,
-    linkedResultOptions,
-  } = fieldOptionsConfigArgs;
+  const { selectionType, options, maxSelections, requestOptionsDataType, linkedResultOptions } =
+    fieldOptionsConfigArgs;
 
   const optionSetId = await newOptionSet({ options, transaction });
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
     data: {
       maxSelections:
-        selectionType === "MultiSelect" ? maxSelections : selectionType === "Select" ? 1 : null,
+        selectionType === FieldOptionsSelectionType.MultiSelect
+          ? maxSelections
+          : selectionType === FieldOptionsSelectionType.Select
+            ? 1
+            : null,
       requestOptionsDataType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((l) => {

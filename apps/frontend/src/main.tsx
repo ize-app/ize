@@ -5,7 +5,7 @@ import ReactGA from "react-ga4";
 
 import App from "./App.tsx";
 
-const trackingId = import.meta.env.VITE_GA_TRACKING_ID;
+const trackingId = import.meta.env.VITE_GA_TRACKING_ID as string;
 
 Sentry.init({
   dsn: "https://0dac8443b72a1921992ef6e00fffba0b@o4507419891204096.ingest.us.sentry.io/4507419911127040",

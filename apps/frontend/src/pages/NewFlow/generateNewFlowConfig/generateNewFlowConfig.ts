@@ -155,7 +155,7 @@ export const generateNewFlowConfig = ({
           defaultOptionId: DefaultOptionSelection.None,
         },
       },
-      steps: [ideationStep, step].filter((x) => x !== null) as StepSchemaType[],
+      steps: [ideationStep, step].filter((x) => x !== null),
     };
     return flow;
   } catch (e) {

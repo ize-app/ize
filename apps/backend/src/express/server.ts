@@ -39,12 +39,13 @@ app.use("/api/auth", authRouter);
 app.use(express.static(frontendPath));
 
 // Healthcheck endpoint used by Render
-app.get("/healthcheck", async (_req, res) => {
+app.get("/healthcheck", (_req, res) => {
   res.status(200).send();
 });
 
 // Webhook route
 app.post("/api/telegram", (req, res) => {
+  //eslint-disable-next-line
   telegramBot.handleUpdate(req.body); // Pass the request body to the bot
   res.sendStatus(200); // Respond with 200 OK
 });
@@ -88,7 +89,9 @@ server.start().then(() => {
     json(),
     expressMiddleware(server, {
       context: async ({ res }) =>
-        createRequestContext({ user: res.locals.user as MePrismaType | undefined }),
+        Promise.resolve(
+          createRequestContext({ user: res.locals.user as MePrismaType | undefined }),
+        ),
     }),
   );
 

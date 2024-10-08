@@ -23,7 +23,7 @@ export const evolveFlow = async ({
   });
 
   const proposedFlowField = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow;
+    return fieldAnswer.Field.name === EvolveFlowFields.ProposedFlow as string;
   });
 
   if (!proposedFlowField)

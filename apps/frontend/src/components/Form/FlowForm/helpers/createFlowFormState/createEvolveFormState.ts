@@ -1,5 +1,4 @@
 import {
-  DecisionType,
   FlowFragment,
   PermissionFragment,
   ResultType,
@@ -24,7 +23,7 @@ export const createEvolveFormState = (flow: FlowFragment): EvolveSchemaType => {
       flow.steps[0].response.permission as PermissionFragment,
     ),
     decision: {
-      type: flow.steps[0].result[0].decisionType as DecisionType,
+      type: flow.steps[0].result[0].decisionType,
       threshold: flow.steps[0].result[0].threshold,
       defaultOptionId:
         flow.steps[0].result[0].defaultOption?.optionId ?? DefaultOptionSelection.None,

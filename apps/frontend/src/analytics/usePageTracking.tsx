@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 const usePageTracking = () => {
   const location = useLocation();
-  const trackingId = import.meta.env.VITE_GA_TRACKING_ID;
+  const trackingId = import.meta.env.VITE_GA_TRACKING_ID as string;
   const path = location.pathname + location.search;
 
   useEffect(() => {

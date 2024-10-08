@@ -58,7 +58,7 @@ export const ResponseForm = ({
         formMethods.setValue(`responseFields.${field.fieldId}.dataType`, field.dataType);
         // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.required`, field.required);
-      } else if (field.__typename === FieldType.Options) {
+      } else {
         // @ts-expect-error not sure why react hook forms isn't picking up on record type
         formMethods.setValue(`responseFields.${field.fieldId}.selectionType`, field.selectionType);
         // @ts-expect-error not sure why react hook forms isn't picking up on record type

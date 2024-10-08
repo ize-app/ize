@@ -14,7 +14,8 @@
     "prisma-migrate-dev": "npx prisma migrate dev",
     "prisma-migrate-deploy": "npx prisma migrate deploy",
     "prisma-generate": "npx prisma generate",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ize --project ize-backend ./dist && sentry-cli sourcemaps upload --org ize --project ize-backend ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ize --project ize-backend ./dist && sentry-cli sourcemaps upload --org ize --project ize-backend ./dist",
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@apollo/server": "^4.7.5",

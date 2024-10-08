@@ -40,10 +40,10 @@ export const groupWatchFlow = async ({
   });
 
   const flowsToWatch = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === GroupWatchFlowFields.WatchFlow;
+    return fieldAnswer.Field.name === GroupWatchFlowFields.WatchFlow as string;
   });
   const flowsToStopWatching = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === GroupWatchFlowFields.UnwatchFlow;
+    return fieldAnswer.Field.name === GroupWatchFlowFields.UnwatchFlow as string;
   });
 
   const groupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.id;
@@ -54,7 +54,7 @@ export const groupWatchFlow = async ({
     });
 
   if (flowsToWatch && flowsToWatch.AnswerFreeInput[0].value) {
-    const flowIds: string[] = JSON.parse(flowsToWatch?.AnswerFreeInput[0].value);
+    const flowIds: string[] = JSON.parse(flowsToWatch?.AnswerFreeInput[0].value) as string[];
     await transaction.groupsWatchedFlows.createMany({
       data: flowIds.map((flowId) => ({
         groupId,
@@ -65,7 +65,7 @@ export const groupWatchFlow = async ({
   }
 
   if (flowsToStopWatching && flowsToStopWatching.AnswerFreeInput[0].value) {
-    const flowIds: string[] = JSON.parse(flowsToStopWatching?.AnswerFreeInput[0].value);
+    const flowIds: string[] = JSON.parse(flowsToStopWatching?.AnswerFreeInput[0].value) as string[];
     await transaction.groupsWatchedFlows.deleteMany({
       where: {
         groupId,

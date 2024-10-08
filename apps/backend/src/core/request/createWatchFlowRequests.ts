@@ -83,7 +83,7 @@ export const createWatchFlowRequests = async ({
       try {
         const watchFlowField =
           flow.CurrentFlowVersion?.Steps[0].RequestFieldSet?.FieldSetFields.find(
-            (field) => field.Field.name === GroupWatchFlowFields.WatchFlow,
+            (field) => field.Field.name === (GroupWatchFlowFields.WatchFlow as string),
           );
 
         if (!watchFlowField) return;

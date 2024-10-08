@@ -53,7 +53,7 @@ export class DiscordApi {
       headers: this.headers,
     });
 
-    return guildsResponse.json();
+    return guildsResponse.json() as Promise<Array<APIGuild>>;
   }
 
   async getDiscordServer(serverId: string): Promise<APIGuild> {
@@ -61,7 +61,7 @@ export class DiscordApi {
       headers: this.headers,
     });
 
-    return guildResponse.json();
+    return guildResponse.json() as Promise<APIGuild>;
   }
 
   async getDiscordServerRoles(serverId: string): Promise<APIRole[]> {
@@ -73,7 +73,7 @@ export class DiscordApi {
       headers: this.headers,
     });
 
-    return rolesResponse.json();
+    return rolesResponse.json() as Promise<APIRole[]>;
   }
 
   async getDiscordGuildMember({
@@ -94,7 +94,7 @@ export class DiscordApi {
       },
     );
 
-    return rolesResponse.json();
+    return rolesResponse.json() as Promise<APIGuildMember>;
   }
 
   async getDiscordGuildMembers({ serverId }: { serverId: string }): Promise<APIGuildMember[]> {
@@ -110,7 +110,7 @@ export class DiscordApi {
       },
     );
 
-    return rolesResponse.json();
+    return rolesResponse.json() as Promise<APIGuildMember[]>;
   }
 
   countRoleMembers(members: APIGuildMember[], roles: APIRole[]): { [roleId: string]: number } {

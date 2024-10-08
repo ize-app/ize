@@ -27,7 +27,8 @@ authRouter.get("/token", async (req, res, next) => {
   try {
     const { stytch_token_type, token } = req.query;
     // for when this endpoint is called to attach identity to existing user
-    const exitingSessionToken: string | undefined = req.cookies["stytch_session"];
+    // eslint-disable-next-line
+    const exitingSessionToken: string | undefined = req.cookies["stytch_session"] as string;
     let sessionToken: string | undefined;
     let user: MePrismaType | undefined;
 
@@ -101,7 +102,8 @@ authRouter.get("/token", async (req, res, next) => {
 // at which point user is directed through normal /token flow
 authRouter.post("/attach-discord", async (req, res, next) => {
   try {
-    const session_token = req.cookies["stytch_session"];
+    //eslint-disable-next-line
+    const session_token = req.cookies["stytch_session"] as string;
     if (!session_token) res.status(401).send();
     const resp = await stytchClient.oauth.attach({
       session_token,
@@ -118,7 +120,8 @@ authRouter.post("/attach-discord", async (req, res, next) => {
 authRouter.post("/crypto", async (req, res, next) => {
   let user: MePrismaType | undefined;
   try {
-    const session_token = req.cookies["stytch_session"];
+    //eslint-disable-next-line
+    const session_token = req.cookies["stytch_session"] as string;
     if (!session_token) res.status(401).send();
 
     const sessionData = await stytchClient.sessions.authenticate({
@@ -150,7 +153,8 @@ authRouter.post("/crypto", async (req, res, next) => {
 authRouter.post("/password", async (req, res, next) => {
   let user: MePrismaType | undefined;
   try {
-    const session_token = req.cookies["stytch_session"];
+    //eslint-disable-next-line
+    const session_token = req.cookies["stytch_session"] as string;
     const sessionData = await stytchClient.sessions.authenticate({
       session_token,
       session_duration_minutes: sessionDurationMinutes,
@@ -179,9 +183,11 @@ authRouter.post("/password", async (req, res, next) => {
 
 authRouter.post("/telegram", async (req, res, next) => {
   try {
-    const data = new Map(Object.entries(req.body)) as Map<string, string | number>;
+    //eslint-disable-next-line
+    const data = new Map(Object.entries(req.body));
     // note telegramValidator is implicitly using botToken to validate
     // if FE Telegram bot token is different from BE bot token, this will fail
+    // @ts-expect-error TODO
     const telegramUserData = await telegramValidator.validate(data);
     const user = res.locals.user as MePrismaType | undefined;
 
