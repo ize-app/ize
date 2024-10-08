@@ -6,9 +6,15 @@ import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 
 import { Permissions } from "../Permissions";
 
-export const RespondPermissionPanel = ({ step }: { step: StepFragment }) => {
+export const RespondPermissionPanel = ({
+  step,
+  initialOpenState = true,
+}: {
+  step: StepFragment;
+  initialOpenState?: boolean;
+}) => {
   return (
-    <PanelAccordion title="Respond permission" hasError={false}>
+    <PanelAccordion title="Respond permission" hasError={false} initialState={initialOpenState}>
       {step.response.permission && (
         <Permissions permission={step.response.permission} type="response" />
       )}
