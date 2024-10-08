@@ -35,7 +35,7 @@ export const UserDropDown = ({ me }: UserDropDownProps): JSX.Element => {
     await apolloClient.clearStore();
     // await apolloClient.resetStore();
     handleClose();
-    await window.location.reload();
+    window.location.reload();
   };
 
   return (

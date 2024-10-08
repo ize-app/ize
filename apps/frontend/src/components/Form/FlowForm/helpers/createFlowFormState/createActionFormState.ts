@@ -42,30 +42,9 @@ export const createActionFormState = (action: Action | null | undefined): Action
         locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };
-    case ActionType.GroupUpdateMembership: {
-      return {
-        type: ActionType.GroupUpdateMembership,
-        locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
-      };
-    }
     case ActionType.GroupWatchFlow: {
       return {
         type: ActionType.GroupWatchFlow,
-        locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
-      };
-    }
-    case ActionType.GroupUpdateMetadata: {
-      return {
-        type: ActionType.GroupUpdateMetadata,
-        locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
-      };
-    }
-    case ActionType.GroupUpdateNotifications: {
-      return {
-        type: ActionType.GroupUpdateNotifications,
         locked: action.locked,
         filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
       };

@@ -7,7 +7,6 @@ import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = {
   members: [],
   name: "",
-  notification: {},
   flows: {
     evolveGroup: {
       type: GroupFlowPolicyType.GroupAutoApprove,
