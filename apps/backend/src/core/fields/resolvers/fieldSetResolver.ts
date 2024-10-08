@@ -40,7 +40,7 @@ export const fieldSetResolver = ({
         defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
       };
       return freeInput;
-    } else if (f.Field.type === FieldType.Options) {
+    } else if ((f.Field.type as FieldType) === FieldType.Options) {
       if (!f.Field.FieldOptionsConfigs)
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

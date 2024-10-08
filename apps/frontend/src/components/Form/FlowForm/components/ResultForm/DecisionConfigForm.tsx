@@ -62,7 +62,8 @@ export const DecisionConfigForm = ({
   if (field.type === FieldType.Options) {
     (field.optionsConfig.options ?? []).forEach((o) => {
       defaultDecisionOptions.push({
-        name: o.name,
+        // TODO: revisit this - will probably cause errors
+        name: o.name as string,
         value: o.optionId,
       });
     });

@@ -27,7 +27,7 @@ export const flowSummaryResolver = ({
 
   if (!flow.CurrentFlowVersion.Steps[0])
     throw new GraphQLError(
-      `Missing first step to flow version. flowVersionId: ${flow.CurrentFlowVersion}`,
+      `Missing first step to flow version. flowVersionId: ${flow.CurrentFlowVersion.id}`,
       {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       },
@@ -37,7 +37,7 @@ export const flowSummaryResolver = ({
 
   if (!requestStep0Permission)
     throw new GraphQLError(
-      `Missing first step to flow version. flowVersionId: ${flow.CurrentFlowVersion}`,
+      `Missing first step to flow version. flowVersionId: ${flow.CurrentFlowVersion.id}`,
       {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       },

@@ -18,7 +18,7 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier . --write",
     "prepare": "husky || true",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --build"
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",

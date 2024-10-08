@@ -17,6 +17,7 @@ export const requestDefinedOptionSchema = z
     name: z.any(),
   })
   .superRefine((field, ctx) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     evaluateMultiTypeInput(field.name, field.dataType, ["name"], ctx);
   });
 

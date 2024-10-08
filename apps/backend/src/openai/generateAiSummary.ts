@@ -61,6 +61,7 @@ export const generateAiSummary = async ({
 };
 // the prompt instructs the AI to return list results in format {items: [item1, item2, item3]}
 // this parsing function handles both the desired output and situations where the AI doesn't return the desired format
+/* eslint-disable */
 const extractJsonArray = (json: string): string[] => {
   try {
     const parsed = JSON.parse(json);
@@ -75,3 +76,4 @@ const extractJsonArray = (json: string): string[] => {
     return [json];
   }
 };
+/* eslint-enable */

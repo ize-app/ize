@@ -60,7 +60,7 @@ interface ObjectWithId {
 }
 
 export const deduplicateArrayById = (inputArray: ObjectWithId[]) => {
-  const uniqueMap = new Map();
+  const uniqueMap = new Map<string, ObjectWithId>();
 
   for (const obj of inputArray) {
     uniqueMap.set(obj.id, obj);

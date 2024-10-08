@@ -13,6 +13,8 @@ export const redirectAtLogin = ({ req, res }: { req: Request; res: Response }) =
     // If next_route is not provided, redirect to a default page
     return res.redirect(isDev ? localUrl : prodUrl);
   }
+
+  // eslint-disable-next-line
   const nextRoutePath = decodeURIComponent(next_route.toString());
   // check that origin is valid before redirecting
   const validHosts = validOrigins.map((origin) => new URL(origin).host);

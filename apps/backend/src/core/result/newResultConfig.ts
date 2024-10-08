@@ -108,7 +108,7 @@ export const newResultConfig = async ({
 
   const resultConfig = await transaction.resultConfig.create({
     data: {
-      resultType: resultArgs.type as ResultType,
+      resultType: resultArgs.type,
       minAnswers: resultArgs.minimumAnswers ?? undefined,
       fieldId: responseField?.id,
       decisionId,

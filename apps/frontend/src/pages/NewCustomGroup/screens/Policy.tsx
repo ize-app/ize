@@ -45,7 +45,7 @@ export const Policy = () => {
     shouldUnregister: false,
   });
 
-  const onSubmit = async (data: GroupSetupAndPoliciesSchemaType) => {
+  const onSubmit = (data: GroupSetupAndPoliciesSchemaType) => {
     setFormState((prev) => ({
       ...prev,
       ...data,

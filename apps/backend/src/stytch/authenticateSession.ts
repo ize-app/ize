@@ -8,7 +8,7 @@ import { sessionDurationMinutes, stytchClient } from "./stytchClient";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
-  const session_token = req.cookies["stytch_session"];
+  const session_token = req.cookies["stytch_session"] as string;
   if (!session_token) {
     res.locals.user = null;
     return next();
@@ -36,5 +36,5 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
     } else console.log("Authentication error: ", error, req.path, req.method);
   }
 
-  await next();
+  next();
 };

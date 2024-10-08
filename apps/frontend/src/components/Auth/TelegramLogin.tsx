@@ -1,5 +1,5 @@
 import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
-const telegramBotName = import.meta.env.VITE_TELEGRAM_BOT_NAME;
+const telegramBotName = import.meta.env.VITE_TELEGRAM_BOT_NAME as string;
 
 export const TelegramLogin = () => {
   console.log("tg bot name", telegramBotName);

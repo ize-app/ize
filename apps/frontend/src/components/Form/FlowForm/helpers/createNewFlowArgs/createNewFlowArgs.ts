@@ -45,9 +45,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
     evolve: formState.evolve && {
       ...formState.evolve,
       decision: {
-        type: formState.evolve.decision.type,
-        // @ts-expect-error - need to fix this
-        threshold: formState.evolve.decision.threshold,
+        ...formState.evolve.decision,
       } as DecisionArgs,
       requestPermission: createPermissionArgs(formState.evolve.requestPermission),
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),

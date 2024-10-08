@@ -49,14 +49,14 @@ export const evolveGroup = async ({
     });
 
   const name = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === EvolveGroupFields.Name;
+    return fieldAnswer.Field.name === (EvolveGroupFields.Name as string);
   });
   const description = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === EvolveGroupFields.Description;
+    return fieldAnswer.Field.name === (EvolveGroupFields.Description as string);
   });
 
   const members = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === EvolveGroupFields.Members;
+    return fieldAnswer.Field.name === (EvolveGroupFields.Members as string);
   });
 
   /// validate members and create entity set for members ///

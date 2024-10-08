@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 
 import {
   FieldDataType,
+  FieldOptionsSelectionType,
   LinkedResult,
   OptionFieldAnswerSelection,
   Options,
@@ -75,7 +76,7 @@ export const FieldOptions = ({
     );
   }
   // if result is for a final ranking, display options that are part of result first and other options
-  else if (fieldOptions.selectionType === "Rank" && final) {
+  else if (fieldOptions.selectionType === FieldOptionsSelectionType.Rank && final) {
     const nonResultOptions = options.filter((option) => {
       return !optionSelections?.some((os) => os.optionId === option.optionId);
     });
@@ -130,7 +131,7 @@ export const FieldOptions = ({
               index={index}
               final={final}
               selectionType={fieldOptions.selectionType}
-              dataType={option.dataType as FieldDataType}
+              dataType={option.dataType}
             />
           );
         })}

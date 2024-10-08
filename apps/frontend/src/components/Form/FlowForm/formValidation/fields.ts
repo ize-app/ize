@@ -28,7 +28,7 @@ export const fieldOptionSchema = z
     dataType: z.nativeEnum(FieldDataType),
   })
   .superRefine((option, ctx) => {
-    evaluateMultiTypeInput(option.name, option.dataType, ["name"], ctx);
+    evaluateMultiTypeInput(option.name as string, option.dataType, ["name"], ctx);
   });
 // .transform((option) => ({
 //   ...option,

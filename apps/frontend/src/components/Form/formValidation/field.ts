@@ -137,6 +137,7 @@ const fieldAnswerSchema = z
   .superRefine((field, ctx) => {
     if (!field?.required && !field.value) return;
     if (!field.dataType) return;
+    //eslint-disable-next-line
     evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
   });
 

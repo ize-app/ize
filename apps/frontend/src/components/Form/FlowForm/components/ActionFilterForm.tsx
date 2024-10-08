@@ -125,8 +125,8 @@ export const ActionFilterForm = ({
       <Select<FlowSchemaType>
         control={formMethods.control}
         label="When to run action"
-        renderValue={(val) => {
-          if (val === DefaultOptionSelection.None) return "Action runs on every result";
+        renderValue={(val: string) => {
+          if (val === (DefaultOptionSelection.None as string)) return "Action runs on every result";
           const optionName = getSelectOptionName(filterOptions, val);
           if (optionName) {
             return "Only run action on: " + optionName;

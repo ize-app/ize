@@ -18,6 +18,7 @@ export const createFieldAnswersArgs = async (
     Object.entries((fieldAnswers ?? []) as FieldAnswerRecordSchemaType).map(
       async (entry): Promise<FieldAnswerArgs> => ({
         fieldId: entry[0],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         value: await formatAnswerValue(entry[1]),
         optionSelections: entry[1].optionSelections ?? [],
       }),
@@ -48,6 +49,7 @@ const formatAnswerValue = async (fieldAnswer: FieldAnswerSchemaType) => {
         return webhookId;
       }
       default:
+        //eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return fieldAnswer.value;
     }
   }

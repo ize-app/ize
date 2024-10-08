@@ -37,6 +37,7 @@ export const createFieldArgs = (
         options: optionsConfig.options.map((option) => {
           return {
             ...option,
+            //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             name: option.name,
           };
         }),

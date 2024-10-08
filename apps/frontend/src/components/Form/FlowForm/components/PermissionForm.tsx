@@ -25,7 +25,7 @@ export const PermissionForm = <T extends FieldValues>({
 
   // Construct the path to the permission type field
   const permissionTypePath = `${fieldName}.type` as Path<T>;
-  const permissionType = formMethods.watch(permissionTypePath as Path<T>) as PermissionType;
+  const permissionType = formMethods.watch(permissionTypePath) as PermissionType;
 
   const [prevPermissionType, setPrevPermissionType] = useState<PermissionType | undefined>(
     permissionType,
@@ -36,9 +36,10 @@ export const PermissionForm = <T extends FieldValues>({
       const permissionPath = `${fieldName}` as FieldPath<T>;
 
       // Use PathValue to ensure type safety for the value being set
-      const defaultPermissionState = createDefaultPermissionState(
-        permissionType,
-      ) as PermissionSchemaType as PathValue<T, typeof permissionPath>;
+      const defaultPermissionState = createDefaultPermissionState(permissionType) as PathValue<
+        T,
+        typeof permissionPath
+      >;
 
       formMethods.setValue(permissionPath, defaultPermissionState);
     }

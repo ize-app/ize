@@ -29,7 +29,7 @@ export const hasWriteIdentityPermission = async ({
     transaction,
   });
 
-  if (await hasIdentityPermission({ identities, userIdentities: [identity] })) return true;
+  if (hasIdentityPermission({ identities, userIdentities: [identity] })) return true;
 
   if (await hasTelegramChatGroupPermission({ telegramGroups, identities: [identity] })) return true;
 

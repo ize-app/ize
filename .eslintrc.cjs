@@ -6,7 +6,7 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    // "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier", // Integrate with Prettier for code formatting
     "plugin:import/recommended",
     "plugin:import/typescript",
@@ -19,6 +19,8 @@ module.exports = {
   rules: {
     // Common rules
     // "no-unused-vars": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "sort-imports": [

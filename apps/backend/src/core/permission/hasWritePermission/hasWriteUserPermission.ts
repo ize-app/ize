@@ -38,7 +38,7 @@ export const hasWriteUserPermission = async ({
     transaction,
   });
 
-  if (await hasIdentityPermission({ identities, userIdentities: context.currentUser.Identities }))
+  if (hasIdentityPermission({ identities, userIdentities: context.currentUser.Identities }))
     return true;
 
   if (

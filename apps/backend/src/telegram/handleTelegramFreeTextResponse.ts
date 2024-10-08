@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import { Message } from "@telegraf/types";
 import { Context } from "telegraf";
 
@@ -13,14 +14,16 @@ export const handleTelegramFreeTextResponse = async ({
   ctx: Context;
 }) => {
   //@ts-expect-error  reply field isn't in the type
-  const replyMessageId = message?.reply_to_message?.message_id;
+  //eslint-disable-next-line
+  const replyMessageId = message?.reply_to_message?.message_id as string;
   //@ts-expect-error  reply field isn't in the type
-  const textResponse = message.text;
+  const textResponse = message.text as string;
   const userId = message.from?.id;
   const chatId = message.chat.id;
 
   if (!replyMessageId) return;
 
+  //eslint-disable-next-line
   const fieldPrompt = await prisma.telegramMessages.findFirst({
     where: { messageId: BigInt(replyMessageId) },
   });
@@ -58,6 +61,7 @@ export const handleTelegramFreeTextResponse = async ({
 
   // create message record so that if someone replies to this response rather than the original prompt, we can still track the response
   // this creates a pseudo-thread in the db
+  //eslint-disable-next-line
   await prisma.telegramMessages.create({
     data: {
       fieldId,
@@ -68,5 +72,4 @@ export const handleTelegramFreeTextResponse = async ({
   });
 
   ctx.react("👀");
-
 };

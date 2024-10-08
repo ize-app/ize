@@ -17,6 +17,7 @@ export const OptionsForm = () => {
   });
 
   //@ts-expect-error TODO
+  //eslint-disable-next-line
   const error = optionsFormState.errors.optionsConfig?.root?.message;
 
   const hasLinkedOptions = watch("optionsConfig.linkedOptions.hasLinkedOptions");

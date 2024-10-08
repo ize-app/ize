@@ -161,7 +161,7 @@ export const FieldOptionsForm = ({
                   name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                   key={"links" + inputIndex.toString() + formIndex.toString()}
                   selectOptions={possibleLinkOptions}
-                  renderValue={(val) => {
+                  renderValue={(val: string) => {
                     return (
                       <div
                         style={{

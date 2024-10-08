@@ -145,7 +145,7 @@ export const FullConfigSetup = () => {
                         }
                         subtitle={fieldName}
                         key={"stage-" + item.id.toString() + index.toString()}
-                        deleteHandler={async () => {
+                        deleteHandler={() => {
                           if (index === 0) {
                             if (disableDelete) return;
                             const stepValues = useFormMethods.getValues(`steps.${index}`);

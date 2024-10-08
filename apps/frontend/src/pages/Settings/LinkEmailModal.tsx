@@ -47,7 +47,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
 
   const authenticateEmail = useCallback(
     async (email: string) => {
-      stytchClient.magicLinks.email.send(email, {
+      await stytchClient.magicLinks.email.send(email, {
         login_expiration_minutes: 60,
         signup_expiration_minutes: 60,
 
