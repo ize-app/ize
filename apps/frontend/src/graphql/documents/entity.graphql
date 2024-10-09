@@ -1,6 +1,6 @@
 mutation NewEntities($entities: [NewEntityArgs!]!) {
   newEntities(entities: $entities) {
-    ...EntitySummaryParts
+    ...Entity
   }
 }
 
@@ -29,13 +29,16 @@ query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter:
   }
 }
 
-fragment EntitySummaryParts on Entity {
+fragment Entity on Entity {
   __typename
   ... on Group {
     ...GroupSummaryParts
   }
   ... on Identity {
     ...IdentitySummaryParts
+  }
+  ... on User {
+    ...UserSummaryParts
   }
 }
 
@@ -73,11 +76,11 @@ fragment IzeGroup on IzeGroup {
     ...GroupSummaryParts
   }
   members {
-    ...EntitySummaryParts
+    ...Entity
   }
   description
   notificationEntity {
-    ...EntitySummaryParts
+    ...Entity
   }
   evolveGroupFlowId
 }

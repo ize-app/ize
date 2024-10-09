@@ -7,6 +7,7 @@ export const userResolver = (user: UserPrismaType): User => {
   return {
     __typename: "User",
     id: user.id,
+    entityId: user.entityId,
     name: user.name,
     createdAt: user.createdAt.toString(),
     icon: findFirstIdentityIcon(user),

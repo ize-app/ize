@@ -3,10 +3,7 @@ import Typography from "@mui/material/Typography";
 
 import { AvatarGroup } from "@/components/Avatar";
 
-import {
-  EntitySummaryPartsFragment,
-  UserSummaryPartsFragment,
-} from "../../../graphql/generated/graphql";
+import { EntityFragment, UserSummaryPartsFragment } from "../../../graphql/generated/graphql";
 
 export const RequestStepTitle = ({
   flowName,
@@ -17,7 +14,7 @@ export const RequestStepTitle = ({
 }: {
   flowName: string;
   requestName: string;
-  creator: EntitySummaryPartsFragment | UserSummaryPartsFragment;
+  creator: EntityFragment | UserSummaryPartsFragment;
   totalSteps: number;
   stepIndex: number;
 }) => {

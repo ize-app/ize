@@ -9,6 +9,7 @@ import {
   groupInclude,
 } from "@/core/entity/group/groupPrismaTypes";
 import { IdentityPrismaType, identityInclude } from "@/core/entity/identity/identityPrismaTypes";
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
 
 import { prisma } from "../../../prisma/client";
 import { PermissionPrismaType } from "../permissionPrismaTypes";
@@ -18,6 +19,7 @@ export interface ResolvedEntities {
   discordRoleGroups: GroupDiscordPrismaType[];
   telegramGroups: GroupTelegramChatPrismaType[];
   identities: IdentityPrismaType[];
+  users: UserPrismaType[];
 }
 
 // creates unique list of different group / identity types for a given permission set
@@ -36,6 +38,7 @@ export const resolveEntitySet = async ({
       discordRoleGroups: [],
       telegramGroups: [],
       identities: [],
+      users: [],
     };
 
   const customGroups = new Set<GroupCustomPrismaType>();
@@ -43,6 +46,7 @@ export const resolveEntitySet = async ({
   const nftGroups = new Set<GroupNftPrismaType>();
   const telegramGroups = new Set<GroupTelegramChatPrismaType>();
   const identities = new Set<IdentityPrismaType>();
+  const users = new Set<UserPrismaType>();
 
   const sortGroup = (group: GroupPrismaType) => {
     if (group.GroupCustom) customGroups.add(group.GroupCustom);
@@ -54,6 +58,7 @@ export const resolveEntitySet = async ({
   permission.EntitySet.EntitySetEntities.forEach((entity) => {
     if (entity.Entity.Group) sortGroup(entity.Entity.Group);
     else if (entity.Entity.Identity) identities.add(entity.Entity.Identity);
+    else if (entity.Entity.User) users.add(entity.Entity.User);
   });
 
   const customGroupIds = Array.from(customGroups).map((cg) => cg.id);
@@ -104,5 +109,6 @@ export const resolveEntitySet = async ({
     discordRoleGroups: Array.from(discordRoleGroups),
     telegramGroups: Array.from(telegramGroups),
     identities: Array.from(identities),
+    users: Array.from(users),
   };
 };

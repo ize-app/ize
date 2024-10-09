@@ -18,7 +18,7 @@ const groupFormSchema = z.object({
     .object({
       name: z.string(),
       icon: z.string().optional().nullable(),
-    }) 
+    })
     .nullable()
     .optional(),
   __typename: z.literal(EntityType.Group),
@@ -42,9 +42,18 @@ const identityFormSchema = z.object({
     .optional(),
 });
 
+const userFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  entityId: z.string(),
+  icon: z.string().optional().nullable(),
+  __typename: z.literal(EntityType.User),
+});
+
 export const entityFormSchema = z.discriminatedUnion("__typename", [
   identityFormSchema,
   groupFormSchema,
+  userFormSchema,
 ]);
 
 export const newEntityFormSchema = z.object({

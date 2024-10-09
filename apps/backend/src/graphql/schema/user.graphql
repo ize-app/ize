@@ -17,6 +17,7 @@ type Me {
 
 type User {
   id: String!
+  entityId: String!
   name: String!
   icon: String
   createdAt: String!
@@ -25,7 +26,6 @@ type User {
 input UpdateProfileArgs {
   name: String!
 }
-
 
 enum WatchFilter {
   All

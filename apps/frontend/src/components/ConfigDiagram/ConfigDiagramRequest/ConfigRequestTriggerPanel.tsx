@@ -27,8 +27,6 @@ export const ConfigRequestTriggerPanel = ({
       </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Trigger permission" hasError={false}>
-          {/* <Permissions permission={step.request.permission} type="request" /> */}
-          {/* TODO */}
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Created by: </Typography>
             <AvatarWithName avatar={creator} />

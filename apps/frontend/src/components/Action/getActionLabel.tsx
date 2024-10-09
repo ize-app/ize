@@ -1,10 +1,13 @@
-import { ActionFragment, EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
+import {
+  ActionFragment,
+  EntityFragment,
+} from "@/graphql/generated/graphql";
 
 import { actionProperties } from "./actionProperties";
 
 export const getActionLabel = (
   action: ActionFragment,
-  entity: EntitySummaryPartsFragment | null | undefined,
+  entity: EntityFragment | null | undefined,
 ) => {
   if (entity) {
     return `${actionProperties[action.__typename].label} for ${entity.name}`;

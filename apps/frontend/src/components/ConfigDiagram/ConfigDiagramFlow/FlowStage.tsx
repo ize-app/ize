@@ -2,7 +2,7 @@ import { WarningOutlined } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 
 import { AvatarGroup } from "@/components/Avatar";
-import { EntitySummaryPartsFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { colors } from "@/style/style";
 
 import { Stage, StageProps } from "../DiagramPanel/Stage";
@@ -12,7 +12,7 @@ interface FlowStageProps extends StageProps {
   label: string;
   subtitle?: string;
   deleteHandler?: () => void;
-  entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
+  entities?: (EntityFragment | UserSummaryPartsFragment)[];
   hasError?: boolean;
   disableDelete?: boolean;
 }

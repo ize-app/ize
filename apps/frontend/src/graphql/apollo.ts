@@ -11,7 +11,7 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     // apollo client needs help understanding union types
     possibleTypes: {
-      Entity: ["Identity", "Group"],
+      Entity: ["Identity", "Group", "User"],
       Field: ["Options", "FreeInput"],
       ResultConfig: ["Decision", "Ranking", "LlmSummary", "LlmSummaryList"],
       Action: ["CallWebhook", "EvolveFlow", "TriggerStep", "EvolveGroup", "GroupWatchFlow"],

@@ -35,5 +35,6 @@ fragment UserSummaryParts on User {
   id
   name
   icon
+  entityId
   createdAt
 }

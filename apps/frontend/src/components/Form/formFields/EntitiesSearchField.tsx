@@ -26,7 +26,7 @@ import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
-import { EntitySummaryPartsFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
+import { EntityFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
 import { EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
@@ -56,22 +56,31 @@ export const EntitiesSearchField = <T extends FieldValues>({
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
   const userIdentities = me
-    ? (me.identities as EntitySummaryPartsFragment[]).filter(
-        (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
+    ? (me.identities as EntityFragment[]).filter(
+        (id) =>
+          !(
+            id.__typename === "Identity" &&
+            (id.identityType.__typename === "IdentityDiscord" ||
+              id.identityType.__typename === "IdentityTelegram")
+          ),
       )
     : [];
+
+  const user = me?.user;
 
   const customGroups = hideCustomGroups ? [] : me?.groups ?? [];
 
   const options = [...userIdentities, ...recentAgents, ...customGroups];
 
+  if (user) options.unshift({ __typename: "User", ...user });
+
   const [open, setOpen] = useState(false);
   const [roleModalType, setRoleModalType] = useState(NewEntityTypes.IdentityEmail);
 
-  const onSubmit = (value: EntitySummaryPartsFragment[]) => {
+  const onSubmit = (value: EntityFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
+    const currentState = (getFieldValues(name) ?? []) as EntityFragment[];
     const newAgents = dedupEntities([...(currentState ?? []), ...(value ?? [])]);
 
     //@ts-expect-error TODO
@@ -102,12 +111,9 @@ export const EntitiesSearchField = <T extends FieldValues>({
                 {...field}
                 {...props}
                 options={options}
-                getOptionLabel={(option: EntitySummaryPartsFragment) => option.name}
+                getOptionLabel={(option: EntityFragment) => option.name}
                 onChange={(_event, data) => field.onChange(data)}
-                isOptionEqualToValue={(
-                  option: EntitySummaryPartsFragment,
-                  value: EntitySummaryPartsFragment,
-                ) => {
+                isOptionEqualToValue={(option: EntityFragment, value: EntityFragment) => {
                   return option.id === value.id;
                 }}
                 PaperComponent={({ children }) => {
@@ -205,8 +211,8 @@ export const EntitiesSearchField = <T extends FieldValues>({
                     </Paper>
                   );
                 }}
-                renderTags={(value: readonly EntitySummaryPartsFragment[], getTagProps) =>
-                  value.map((option: EntitySummaryPartsFragment, index: number) => {
+                renderTags={(value: readonly EntityFragment[], getTagProps) =>
+                  value.map((option: EntityFragment, index: number) => {
                     return (
                       <Chip
                         avatar={<Avatar id={option.id} avatar={option} />}
@@ -219,33 +225,37 @@ export const EntitiesSearchField = <T extends FieldValues>({
                     );
                   })
                 }
-                renderOption={(props, option) => (
-                  <Box
-                    {...props}
-                    component="li"
-                    sx={{
-                      display: "flex",
-                      width: "100%",
-                      justifyContent: "left",
-                      alignItems: "center",
-                      gap: "16px",
-                      verticalAlign: "middle",
-                    }}
-                    key={"option" + option.id}
-                  >
-                    <Avatar id={option.id} avatar={option} />
-                    <Typography
-                      variant="body1"
+                renderOption={(props, option) => {
+                  const detail = option.__typename === "User" && "Ize account";
+                  const name = option.name + (detail ? ` (${detail})` : "");
+                  return (
+                    <Box
+                      {...props}
+                      component="li"
                       sx={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        display: "flex",
+                        width: "100%",
+                        justifyContent: "left",
+                        alignItems: "center",
+                        gap: "16px",
+                        verticalAlign: "middle",
                       }}
+                      key={"option" + option.id}
                     >
-                      {option.name}
-                    </Typography>
-                  </Box>
-                )}
+                      <Avatar id={option.id} avatar={option} />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                    </Box>
+                  );
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}

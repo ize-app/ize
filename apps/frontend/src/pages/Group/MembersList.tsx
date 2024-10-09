@@ -2,9 +2,9 @@ import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 
 import { AvatarPopper, AvatarWithName } from "@/components/Avatar";
-import { EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
+import { EntityFragment } from "@/graphql/generated/graphql";
 
-export const MembersList = ({ members }: { members: EntitySummaryPartsFragment[] }) => {
+export const MembersList = ({ members }: { members: EntityFragment[] }) => {
   const maxAvatars = 3;
   const numAvatarsToDisplay = members.length <= 3 ? members.length : maxAvatars - 1;
 

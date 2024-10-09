@@ -12,7 +12,7 @@ import { DiscordLogoSvg } from "@/components/icons";
 import {
   Blockchain,
   DiscordServerRolesDocument,
-  EntitySummaryPartsFragment,
+  EntityFragment,
   Me,
   MutationNewEntitiesArgs,
   NewEntitiesDocument,
@@ -42,7 +42,7 @@ const style = {
 interface EntityModalProps {
   open: boolean;
   setOpen: (x: boolean) => void;
-  onSubmit: (value: EntitySummaryPartsFragment[]) => void;
+  onSubmit: (value: EntityFragment[]) => void;
   initialType: NewEntityTypes;
 }
 
@@ -136,7 +136,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
 
   const [disableSubmit, setDisableSubmit] = useState(false);
 
-  const handleEntitySelection = useCallback((entities: EntitySummaryPartsFragment[]) => {
+  const handleEntitySelection = useCallback((entities: EntityFragment[]) => {
     setOpen(false);
     onSubmit([...entities]);
   }, []);

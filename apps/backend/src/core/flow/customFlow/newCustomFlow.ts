@@ -46,8 +46,11 @@ export const newCustomFlow = async ({
     if (!args.flow.reusable) {
       // non-reusable flows are triggered automatically after creation
       // creator of flow is only one with permission to trigger flow
-      if (args.flow.steps[0].request) {
-        args.flow.steps[0].request.permission = { anyone: false, entities: [], userId: creatorId };
+      if (args.flow.steps[0].request && context.currentUser) {
+        args.flow.steps[0].request.permission = {
+          anyone: false,
+          entities: [{ id: context.currentUser.entityId }],
+        };
         args.flow.steps[0].request.fields = [];
       }
       // non-reusable flows can't be evolve

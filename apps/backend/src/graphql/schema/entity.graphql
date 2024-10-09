@@ -32,9 +32,10 @@ enum NewEntityTypes {
 enum EntityType {
   Group
   Identity
+  User
 }
 
-union Entity = Identity | Group
+union Entity = Identity | Group | User
 
 union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
 
@@ -159,6 +160,7 @@ type OnboardedDiscordServer {
 
 # used for associating an existing entity with some other object
 input EntityArgs {
+  # refers to entityId
   id: String!
 }
 

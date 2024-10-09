@@ -9,20 +9,22 @@ datasource db {
 }
 
 model User {
-  id                 String               @id @default(uuid()) @db.Uuid
-  stytchId           String               @unique @map("stytch_id")
-  name               String               @default("")
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  stytchId  String   @unique @map("stytch_id")
+  entityId  String   @unique @map("entity_id") @db.Uuid
+  name      String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   Group              Group[]
   Identities         Identity[]
   Oauths             Oauths[]
   Request            Request[]
   Response           Response[]
-  Permission         Permission[]
   CreatedFlows       Flow[]
   UsersWatchedGroups UsersWatchedGroups[]
   UsersWatchedFlows  UsersWatchedFlows[]
+  Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("users")
 }
@@ -373,14 +375,11 @@ model Permission {
 
   entitySetId String?  @map("entity_set_id") @db.Uuid
   anyone      Boolean  @default(false)
-  userId      String?  @map("user_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
 
   EntitySet                EntitySet? @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   RequestPermissionsSteps  Step[]     @relation("RequestPermissions")
   ResponsePermissionsSteps Step[]     @relation("ResponsePermissions")
-  // Refers to when a a particular Ize user's permission on a given flow
-  User                     User?      @relation(fields: [userId], references: [id])
 
   @@map("permissions")
 }
@@ -414,6 +413,7 @@ model Entity {
 
   Group                   Group?
   Identity                Identity?
+  User                    User?
   EntitySetEntities       EntitySetEntities[]
   NotifiesForCustomGroups GroupCustom[]
 

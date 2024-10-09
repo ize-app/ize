@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { groupInclude } from "./group/groupPrismaTypes";
 import { identityInclude } from "./identity/identityPrismaTypes";
+import { userInclude } from "../user/userPrismaTypes";
 
 export const entityInclude = Prisma.validator<Prisma.EntityInclude>()({
   Group: {
@@ -9,6 +10,9 @@ export const entityInclude = Prisma.validator<Prisma.EntityInclude>()({
   },
   Identity: {
     include: identityInclude,
+  },
+  User: {
+    include: userInclude,
   },
 });
 

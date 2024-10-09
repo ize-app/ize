@@ -7,7 +7,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { ActionFragment, ActionType, EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType, EntityFragment } from "@/graphql/generated/graphql";
 
 import { ActionDescription } from "../../Action/ActionDescription";
 import { ActionFilter } from "../../Action/ActionFilter";
@@ -17,7 +17,7 @@ export const ConfigFlowActionPanel = ({
   group,
 }: {
   action: ActionFragment;
-  group: EntitySummaryPartsFragment | undefined | null;
+  group: EntityFragment | undefined | null;
 }) => {
   return (
     <PanelContainer>
