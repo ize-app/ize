@@ -57,7 +57,7 @@ export const createGroupWatchFlowArgs = ({
       fieldsLocked: true,
     },
     response: createResponseConfigForPolicy({
-      creatorEntityId: context.currentUser.Identities[0].entityId,
+      creatorEntityId: context.currentUser.entityId,
       groupEntityId,
       policy,
     }),

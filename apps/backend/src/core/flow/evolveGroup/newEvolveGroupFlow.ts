@@ -40,7 +40,7 @@ export const newEvolveGroupFlow = async ({
       requestPermission: { anyone: false, entities: [{ id: groupEntityId }] },
       responsePermission: {
         anyone: false,
-        entities: [{ id: context.currentUser.Identities[0].entityId }],
+        entities: [{ id: context.currentUser.entityId }],
       },
       decision: { type: DecisionType.NumberThreshold, threshold: 1 },
     },

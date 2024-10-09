@@ -13,9 +13,11 @@ import { defaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDef
 import {
   ActionType,
   DecisionType,
+  EntityType,
   FieldOptionsSelectionType,
   FieldType,
   ResultType,
+  UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
@@ -33,10 +35,16 @@ import {
 
 export const generateNewFlowConfig = ({
   config,
+  creator,
 }: {
   config: IntitialFlowSetupSchemaType;
+  creator: UserSummaryPartsFragment | null | undefined;
 }): FlowSchemaType => {
   const permission: PermissionSchemaType = config.permission;
+  const creatorPermission: PermissionSchemaType = {
+    type: PermissionType.Entities,
+    entities: creator ? [{ ...creator, __typename: EntityType.User }] : [],
+  };
   let ideationStep: StepSchemaType | null = null;
   let ideationResult: ResultSchemaType | null = null;
 
@@ -151,8 +159,8 @@ export const generateNewFlowConfig = ({
       name: flowTitle,
       reusable,
       evolve: {
-        requestPermission: permission,
-        responsePermission: permission, // TODO switch out for creator
+        requestPermission: creatorPermission,
+        responsePermission: creatorPermission,
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,

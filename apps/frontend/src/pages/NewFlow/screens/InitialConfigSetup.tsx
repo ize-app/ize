@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Typography } from "@mui/material";
+import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
 import {
@@ -22,6 +24,7 @@ import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
+  const { me } = useContext(CurrentUserContext);
 
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
     defaultValues: formState.initialFlowSetup ?? { permission: { entities: [] } },
@@ -30,7 +33,7 @@ export const InitialConfigSetup = () => {
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
-    const newFlow = generateNewFlowConfig({ config: data });
+    const newFlow = generateNewFlowConfig({ config: data, creator: me?.user });
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },
