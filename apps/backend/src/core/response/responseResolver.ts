@@ -1,12 +1,8 @@
-import { GraphQLError } from "graphql";
-
-import { ApolloServerErrorCode } from "@/graphql/errors";
 import { Response, UserFieldAnswer, UserFieldAnswers } from "@/graphql/generated/resolver-types";
 
 import { ResponsePrismaType } from "./responsePrismaTypes";
-import { identityResolver } from "../entity/identity/identityResolver";
+import { entityResolver } from "../entity/entityResolver";
 import { fieldAnswerResolver } from "../fields/resolvers/fieldAnswerResolver";
-import { userResolver } from "../user/userResolver";
 
 export const responsesResolver = async (
   responses: ResponsePrismaType[],
@@ -17,22 +13,16 @@ export const responsesResolver = async (
 
   await Promise.all(
     responses.map(async (response) => {
-      const { createdAt, User, Identity, Answers } = response;
-      const user = User ? userResolver(User) : null;
-      const identity = Identity ? identityResolver(Identity, []) : null;
-      const creator = user ?? identity;
-      if (!creator)
-        throw new GraphQLError("Missing creator of response", {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        });
+      const { createdAt, CreatorEntity, Answers } = response;
+      const creator = entityResolver({ entity: CreatorEntity });
       // if (userId && userId === user.id)
       userResponses.push({
         responseId: response.id,
         createdAt: response.createdAt.toISOString(),
-        creator: creator,
+        creator,
         answers: await Promise.all(
           response.Answers.map(
-            async (a) => await fieldAnswerResolver({ fieldAnswer: a, userId: user?.id }),
+            async (a) => await fieldAnswerResolver({ fieldAnswer: a, userId: userId ?? undefined }),
           ),
         ),
       });

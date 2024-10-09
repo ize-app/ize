@@ -59,7 +59,7 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const createRequestStepSummaryInclude = (userId: string | undefined) =>
+export const createRequestStepSummaryInclude = (userEntityId: string | undefined) =>
   Prisma.validator<Prisma.RequestStepInclude>()({
     Request: {
       include: {
@@ -82,9 +82,7 @@ export const createRequestStepSummaryInclude = (userId: string | undefined) =>
     },
     Responses: {
       where: {
-        userId: {
-          equals: userId,
-        },
+        creatorEntityId: userEntityId,
       },
     },
     Step: {
@@ -95,7 +93,7 @@ export const createRequestStepSummaryInclude = (userId: string | undefined) =>
       },
     },
   });
-const exampleRequestStepSummaryInclude = createRequestStepSummaryInclude("userId");
+const exampleRequestStepSummaryInclude = createRequestStepSummaryInclude("userEntityId");
 
 export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof exampleRequestStepSummaryInclude;

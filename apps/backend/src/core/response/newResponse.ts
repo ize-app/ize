@@ -104,17 +104,15 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         where: {
           requestStepId,
           OR: [
-            { userId: context.currentUser.id },
-            {
-              Identity: { User: { id: context.currentUser.id } },
-            },
+            { creatorEntityId: context.currentUser.entityId },
+            { creatorEntityId: { in: context.currentUser.Identities.map((i) => i.entityId) } },
           ],
         },
       });
 
       newResponse = await transaction.response.create({
         data: {
-          userId: context.currentUser.id,
+          creatorEntityId: context.currentUser.entityId,
           requestStepId,
         },
       });
@@ -138,15 +136,27 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         where: {
           requestStepId,
           OR: [
-            { identityId: identity.id },
-            { User: { Identities: { some: { id: { equals: identity.id } } } } },
+            // response from the identity itself
+            { creatorEntityId: identity.entityId },
+            // response from user that owns this identity
+            {
+              CreatorEntity: {
+                User: {
+                  Identities: {
+                    some: {
+                      id: { equals: identity.id },
+                    },
+                  },
+                },
+              },
+            },
           ],
         },
       });
 
       newResponse = await transaction.response.create({
         data: {
-          identityId: identity.id,
+          creatorEntityId: identity.id,
           requestStepId,
         },
       });

@@ -20,7 +20,6 @@ model User {
   Identities         Identity[]
   Oauths             Oauths[]
   Request            Request[]
-  Response           Response[]
   CreatedFlows       Flow[]
   UsersWatchedGroups UsersWatchedGroups[]
   UsersWatchedFlows  UsersWatchedFlows[]
@@ -44,7 +43,6 @@ model Identity {
   IdentitiesGroups   IdentityGroup[]
   Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
   IdentityTelegram   IdentityTelegram?
-  Response           Response[]
 
   @@map("identities")
 }
@@ -416,6 +414,7 @@ model Entity {
   User                    User?
   EntitySetEntities       EntitySetEntities[]
   NotifiesForCustomGroups GroupCustom[]
+  Responses               Response[]
 
   @@map("entities")
 }
@@ -800,16 +799,15 @@ model RequestDefinedOptionSet {
 }
 
 model Response {
-  id            String   @id @default(uuid()) @db.Uuid
-  requestStepId String   @map("request_step_id") @db.Uuid
-  userId        String?  @map("user_id") @db.Uuid
-  identityId    String?  @map("identity_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
+  id              String   @id @default(uuid()) @db.Uuid
+  requestStepId   String   @map("request_step_id") @db.Uuid
+  // entity that created the response
+  creatorEntityId String   @map("entity_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
 
-  RequestStep RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
-  Answers     FieldAnswer[]
-  User        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Identity    Identity?     @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  RequestStep   RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  Answers       FieldAnswer[]
+  CreatorEntity Entity        @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
 
   @@map("responses")
 }

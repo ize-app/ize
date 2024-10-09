@@ -39,8 +39,6 @@ union Entity = Identity | Group | User
 
 union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
 
-union Respondant = User | Identity
-
 type Identity {
   id: String! # refers to id of Identity model
   name: String!
