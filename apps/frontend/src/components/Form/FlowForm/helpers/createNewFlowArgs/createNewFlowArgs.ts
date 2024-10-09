@@ -45,7 +45,10 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
     evolve: formState.evolve && {
       ...formState.evolve,
       decision: {
-        ...formState.evolve.decision,
+        type: formState.evolve.decision.type,
+        //@ts-expect-error Zod discriminated union limitation
+        // eslint-disable-next-line
+        threshold: formState.evolve.decision.threshold as number,
       } as DecisionArgs,
       requestPermission: createPermissionArgs(formState.evolve.requestPermission),
       responsePermission: createPermissionArgs(formState.evolve.responsePermission),

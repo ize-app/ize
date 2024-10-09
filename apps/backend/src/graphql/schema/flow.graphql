@@ -95,7 +95,7 @@ input NewFlowArgs {
   name: String!
   reusable: Boolean!
   steps: [NewStepArgs!]!
-  evolve: EvolveFlowArgs!
+  evolve: EvolveFlowArgs
 }
 
 input NewStepArgs {

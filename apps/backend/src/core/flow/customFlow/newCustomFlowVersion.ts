@@ -10,6 +10,7 @@ export const newCustomFlowVersion = async ({
   flowArgs,
   evolveFlowId,
   flowId,
+
   active,
   // each flow references an evolve flow id, not an evolve flow version id
   // when we are evolving a flow and or it's corresponding evolve flow
@@ -20,6 +21,7 @@ export const newCustomFlowVersion = async ({
   flowArgs: NewFlowArgs;
   flowId: string;
   evolveFlowId: string | null;
+  // active refers to whether the flowVersion is intended to be live on creation
   active: boolean;
   draftEvolveFlowVersionId: string | null;
 }): Promise<string> => {

@@ -27,6 +27,7 @@ export const getFlow = async ({
       include: createFlowInclude(context.currentUser?.id),
       where: {
         id: args.flowId,
+        reusable: true,
         FlowVersions: args.flowVersionId
           ? {
               some: { id: args.flowVersionId },

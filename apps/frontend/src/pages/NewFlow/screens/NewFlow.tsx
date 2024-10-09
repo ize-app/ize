@@ -23,8 +23,10 @@ export const NewFlow = () => {
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
-      const { newFlow: newFlowId } = data;
-      navigate(`/flow/${fullUUIDToShort(newFlowId)}`);
+      // if reusable flow, flow ID is returned, else request ID is returned
+      const { newFlow: id } = data;
+      if (formState.newFlow.reusable) navigate(`/flow/${fullUUIDToShort(id)}`);
+      else navigate(`/requests/${fullUUIDToShort(id)}`);
     },
   });
 

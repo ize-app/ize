@@ -1,6 +1,8 @@
 import { FlowType } from "@prisma/client";
 
 import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests";
+import { newRequest } from "@/core/request/newRequest";
+import { watchFlow } from "@/core/user/watchFlow";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
@@ -29,7 +31,7 @@ export const newCustomFlow = async ({
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
 
-    if (args.flow.evolve) {
+    if (args.flow.evolve && args.flow.reusable) {
       evolveFlowId = await newEvolveFlow({
         evolveArgs: args.flow.evolve,
         creatorId,
@@ -40,6 +42,17 @@ export const newCustomFlow = async ({
     const flow = await transaction.flow.create({
       data: { type: FlowType.Custom, reusable: args.flow.reusable, creatorId },
     });
+
+    if (!args.flow.reusable) {
+      // non-reusable flows are triggered automatically after creation
+      // creator of flow is only one with permission to trigger flow
+      if (args.flow.steps[0].request) {
+        args.flow.steps[0].request.permission = { anyone: false, entities: [], userId: creatorId };
+        args.flow.steps[0].request.fields = [];
+      }
+      // non-reusable flows can't be evolve
+      args.flow.evolve = undefined;
+    }
 
     await newCustomFlowVersion({
       transaction,
@@ -53,7 +66,23 @@ export const newCustomFlow = async ({
     return flow.id;
   });
 
-  createWatchFlowRequests({ flowId, context });
+  await createWatchFlowRequests({ flowId, context });
 
-  return flowId;
+  if (!args.flow.reusable) {
+    const requestId = await newRequest({
+      args: {
+        request: {
+          flowId: flowId,
+          name: args.flow.name,
+          requestFields: [],
+          requestDefinedOptions: [],
+        },
+      },
+      context,
+    });
+    return requestId;
+  } else {
+    await watchFlow({ flowId, watch: true, userId: context.currentUser.id });
+    return flowId;
+  }
 };

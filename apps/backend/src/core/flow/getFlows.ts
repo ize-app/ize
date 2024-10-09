@@ -34,6 +34,7 @@ export const getFlows = async ({
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
+      reusable: true,
       AND: [
         args.watchFilter !== WatchFilter.All
           ? createUserWatchedFlowFilter({

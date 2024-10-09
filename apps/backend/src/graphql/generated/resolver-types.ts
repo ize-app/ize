@@ -643,7 +643,7 @@ export type NewEvolveRequestArgs = {
 };
 
 export type NewFlowArgs = {
-  evolve: EvolveFlowArgs;
+  evolve?: InputMaybe<EvolveFlowArgs>;
   name: Scalars['String']['input'];
   reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;

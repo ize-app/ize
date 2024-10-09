@@ -152,13 +152,15 @@ export const Request = () => {
             acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
-                elevation={3}
+                elevation={4}
                 sx={{
                   display: "block",
-                  alignSelf: "flex-start",
+                  alignSelf: "center",
                   minWidth: "400px",
                   maxWidth: "800px",
-                  border: `solid ${colors.primaryContainer} 2px`,
+                  border: `solid ${colors.primary} 3px`,
+                  outline: `2px solid ${colors.primaryContainer}`,
+
                   [theme.breakpoints.down("md")]: {
                     width: "100%",
                     marginLeft: 0,

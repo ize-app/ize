@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -96,9 +96,9 @@ export const ResponseForm = ({
         padding: "16px",
       }}
     >
-      {/* <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+      <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
         Respond
-      </Typography> */}
+      </Typography>
       <form
         style={{
           display: "flex",

@@ -11,7 +11,6 @@ import {
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
-import { watchFlow } from "@/core/user/watchFlow";
 
 const getFlow: QueryResolvers["getFlow"] = async (
   root: unknown,
@@ -40,8 +39,6 @@ const newFlow: MutationResolvers["newFlow"] = async (
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
   const flowId = await newCustomFlowService({ args, context });
-
-  await watchFlow({ flowId, watch: true, userId: context.currentUser.id });
 
   // associate user with any new identities that were created when creating the new flow
   await updateUserGroups({ context });

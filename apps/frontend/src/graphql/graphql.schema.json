@@ -5374,13 +5374,9 @@
             "name": "evolve",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "EvolveFlowArgs",
-                "ofType": null
-              }
+              "kind": "INPUT_OBJECT",
+              "name": "EvolveFlowArgs",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
