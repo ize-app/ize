@@ -8143,28 +8143,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "UNION",
-        "name": "Respondant",
-        "description": null,
-        "isOneOf": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Identity",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          }
-        ]
-      },
-      {
         "kind": "OBJECT",
         "name": "Response",
         "description": null,
@@ -8219,7 +8197,7 @@
               "name": null,
               "ofType": {
                 "kind": "UNION",
-                "name": "Respondant",
+                "name": "Entity",
                 "ofType": null
               }
             },
@@ -9316,7 +9294,7 @@
               "name": null,
               "ofType": {
                 "kind": "UNION",
-                "name": "Respondant",
+                "name": "Entity",
                 "ofType": null
               }
             },
