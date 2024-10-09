@@ -21,6 +21,7 @@ export const OptionsForm = () => {
   const error = optionsFormState.errors.optionsConfig?.root?.message;
 
   const hasLinkedOptions = watch("optionsConfig.linkedOptions.hasLinkedOptions");
+  const reusable = watch("reusable");
 
   return (
     <>
@@ -59,12 +60,14 @@ export const OptionsForm = () => {
             sx={{ marginLeft: "8px" }}
             defaultValue={false}
           />
-          <Switch<IntitialFlowSetupSchemaType>
-            label={"Generate option ideas from partipants"}
-            name={"optionsConfig.linkedOptions.hasLinkedOptions"}
-            sx={{ marginLeft: "8px" }}
-            defaultValue={false}
-          />
+          {reusable && (
+            <Switch<IntitialFlowSetupSchemaType>
+              label={"Generate option ideas from partipants"}
+              name={"optionsConfig.linkedOptions.hasLinkedOptions"}
+              sx={{ marginLeft: "8px" }}
+              defaultValue={false}
+            />
+          )}
           {hasLinkedOptions && (
             <TextField<IntitialFlowSetupSchemaType>
               // assuming here that results to fields is 1:1 relationshp

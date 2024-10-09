@@ -74,6 +74,7 @@ export const FieldOptionsForm = ({
   });
 
   const steps = formMethods.getValues(`steps`);
+  const reusable = formMethods.getValues("reusable");
   const possibleLinkOptions = createLinkOptions(steps, formIndex);
 
   // remove linked option if that result is removed
@@ -255,7 +256,7 @@ export const FieldOptionsForm = ({
               Use previous result as option(s)
             </Button>
           )}
-          {!hasRequestDefinedOptions && formIndex === 0 && branch === "response" && (
+          {!hasRequestDefinedOptions && reusable && formIndex === 0 && branch === "response" && (
             <Button
               sx={{ position: "relative" }}
               variant="text"
