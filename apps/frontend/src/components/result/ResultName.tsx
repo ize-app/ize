@@ -1,7 +1,8 @@
 import { Box, Chip, Typography } from "@mui/material";
 
-import { statusProps } from "@/components/status/statusProps";
 import { ResultType, Status } from "@/graphql/generated/graphql";
+
+import { StatusTag } from "../status/StatusTag";
 
 export const ResultHeader = ({
   name,
@@ -21,14 +22,15 @@ export const ResultHeader = ({
         </Typography>
       </Box>
       {requestStatus && (
-        <Chip
-          label={statusProps[requestStatus].label}
-          sx={{
-            backgroundColor: statusProps[requestStatus].backgroundColor,
-            color: statusProps[requestStatus].color,
-          }}
-          size="small"
-        />
+        <StatusTag status={requestStatus} />
+        // <Chip
+        //   label={statusProps[requestStatus].label}
+        //   sx={{
+        //     backgroundColor: statusProps[requestStatus].backgroundColor,
+        //     color: statusProps[requestStatus].color,
+        //   }}
+        //   size="small"
+        // />
       )}
     </Box>
   );

@@ -5,12 +5,10 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { EndRequestStepDocument } from "@/graphql/generated/graphql";
-// import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 export const EndRequestStepButton = ({ requestStepId }: { requestStepId: string }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
-  // const { me } = useContext(CurrentUserContext);
 
   const navigate = useNavigate();
   const [mutate] = useMutation(EndRequestStepDocument, {
@@ -38,9 +36,9 @@ export const EndRequestStepButton = ({ requestStepId }: { requestStepId: string 
     >
       <Button
         color="warning"
-        variant="contained"
+        variant="outlined"
         endIcon={<AlarmIcon />}
-        sx={{ width: "300px" }}
+        sx={{ width: "300px", boxShadow: "4px solid" }}
         onClick={async () => {
           console.log("Ending step early");
           await mutate();
@@ -48,9 +46,6 @@ export const EndRequestStepButton = ({ requestStepId }: { requestStepId: string 
       >
         End this collaborative step early
       </Button>
-      {/* <Typography variant="description" marginTop="12px">
-      You can end this request early
-    </Typography> */}
     </Box>
   );
 };

@@ -54,6 +54,7 @@ export const Request = () => {
 
   const [currentTabIndex, setTabIndex] = useState(0);
 
+  let reusable = false;
   let acceptingNewResponses = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
@@ -75,6 +76,7 @@ export const Request = () => {
   const request = data?.getRequest;
 
   if (request) {
+    reusable = request.flow.reusable;
     acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
     userResponses = request.steps[request.currentStepIndex].userResponses;
     allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
@@ -109,20 +111,22 @@ export const Request = () => {
           <Typography variant={"h1"} marginBottom={".75rem"}>
             {request.name}
           </Typography>
-          <Typography variant={"description"} lineHeight={"24px"}>
-            <Link
-              to={generatePath(Route.Flow, {
-                flowId: fullUUIDToShort(request.flow.flowId),
-                // Link to old version of flow if request is made from an older version
-                flowVersionId:
-                  request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                    ? fullUUIDToShort(request.flow.flowVersionId)
-                    : null,
-              })}
-            >
-              {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
-            </Link>
-          </Typography>
+          {reusable && (
+            <Typography variant={"description"} lineHeight={"24px"}>
+              <Link
+                to={generatePath(Route.Flow, {
+                  flowId: fullUUIDToShort(request.flow.flowId),
+                  // Link to old version of flow if request is made from an older version
+                  flowVersionId:
+                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                      ? fullUUIDToShort(request.flow.flowVersionId)
+                      : null,
+                })}
+              >
+                {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
+              </Link>
+            </Typography>
+          )}
           <Box sx={{ display: "flex", gap: "6px" }}>
             <Typography variant="description" lineHeight={"24px"}>
               Created by{"  "}
@@ -178,11 +182,12 @@ export const Request = () => {
           <Box
             sx={(theme) => ({
               display: "flex",
-              [theme.breakpoints.down("lg")]: {
+              [theme.breakpoints.down("md")]: {
                 flexDirection: "column",
                 gap: "36px",
               },
               flexDirection: "row",
+              justifyContent: "space-between",
               width: "100%",
               minWidth: "300px",
               // outline: "1px solid rgba(0, 0, 0, 0.1)",
@@ -197,35 +202,44 @@ export const Request = () => {
             {request.steps[0].requestFieldAnswers.length > 0 && (
               <Box
                 sx={{
+                  [theme.breakpoints.down("md")]: {
+                    width: "100%",
+                  },
                   display: "flex",
                   flexDirection: "column",
                   minWidth: "300px",
-                  width: "100%",
+                  maxWidth: "700px",
+                  width: "50%",
                 }}
               >
-                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                  Request context
-                </Typography>
-                <Box
-                  sx={{
-                    borderRadius: "8px",
-                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                    padding: "12px 16px 12px",
-                  }}
-                >
-                  <Fields
-                    fields={request.flow.steps[0].request.fields}
-                    fieldAnswers={request.steps[0].requestFieldAnswers}
-                    onlyShowSelections={true}
-                  />
-                </Box>
+                <>
+                  <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                    Request context
+                  </Typography>
+                  <Box
+                    sx={{
+                      borderRadius: "8px",
+                      outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                      padding: "12px 16px 12px",
+                    }}
+                  >
+                    <Fields
+                      fields={request.flow.steps[0].request.fields}
+                      fieldAnswers={request.steps[0].requestFieldAnswers}
+                      onlyShowSelections={true}
+                    />
+                  </Box>
+                </>
               </Box>
             )}
             <Box
               sx={{
+                [theme.breakpoints.down("md")]: {
+                  width: "100%",
+                },
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
+                width: "50%",
                 minWidth: "300px",
                 maxWidth: "700px",
               }}
