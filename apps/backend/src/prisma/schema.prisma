@@ -283,6 +283,7 @@ model Flow {
   id        String   @id @default(uuid()) @db.Uuid
   groupId   String?  @map("custom_group_id") @db.Uuid
   type      FlowType
+  reusable  Boolean
   creatorId String   @map("creator_id") @db.Uuid
 
   currentFlowVersionId String? @unique @map("current_flow_version_id") @db.Uuid

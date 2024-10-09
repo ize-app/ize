@@ -7,7 +7,12 @@ import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 
 import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
-import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
+import {
+  FlowGoal,
+  IntitialFlowSetupSchemaType,
+  Reusable,
+  intitialFlowSetupSchema,
+} from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
@@ -25,10 +30,11 @@ export const InitialConfigSetup = () => {
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
+    const newFlow = generateNewFlowConfig({ config: data });
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },
-      newFlow: generateNewFlowConfig({ config: data }),
+      newFlow,
     }));
     onNext();
   };
@@ -36,6 +42,8 @@ export const InitialConfigSetup = () => {
 
   // console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
+
+  const reusable = formMethods.watch("reusable");
 
   const permissionType = formMethods.watch("permission.type");
 
@@ -68,6 +76,19 @@ export const InitialConfigSetup = () => {
           />
         </FieldBlockFadeIn>
         {goal && (
+          <FieldBlockFadeIn>
+            <Typography variant="description">Should this process be reusable?</Typography>
+            <ButtonGroupField<IntitialFlowSetupSchemaType>
+              label="Test"
+              name="reusable"
+              options={[
+                { name: "No", value: Reusable.NotReusable },
+                { name: "Yes", value: Reusable.Reusable },
+              ]}
+            />
+          </FieldBlockFadeIn>
+        )}
+        {reusable && (
           <FieldBlockFadeIn>
             <Typography variant="description">Who&apos;s participating?</Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>

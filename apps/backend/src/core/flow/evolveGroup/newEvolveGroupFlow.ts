@@ -27,7 +27,12 @@ export const newEvolveGroupFlow = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
   const flow = await transaction.flow.create({
-    data: { type: FlowType.EvolveGroup, creatorId: context.currentUser.id, groupId },
+    data: {
+      type: FlowType.EvolveGroup,
+      reusable: true,
+      creatorId: context.currentUser.id,
+      groupId,
+    },
   });
 
   const evolveFlowId = await newEvolveFlow({

@@ -44,6 +44,7 @@ export const FullConfigSetup = () => {
   const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
       name: formState.newFlow?.name ?? "",
+      reusable: formState.newFlow?.reusable ?? true,
       evolve: formState.newFlow?.evolve ?? {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
@@ -70,10 +71,12 @@ export const FullConfigSetup = () => {
     shouldUnregister: false,
   });
 
-  // console.log("errors are ", useFormMethods.formState.errors);
-  // console.log("values are ", useFormMethods.getValues());
+  console.log("errors are ", useFormMethods.formState.errors);
+  console.log("values are ", useFormMethods.getValues());
 
   const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
+
+  const reusable = !!useFormMethods.getValues(`reusable`);
 
   const stepsArrayMethods = useFieldArray({
     control: useFormMethods.control,
@@ -246,17 +249,19 @@ export const FullConfigSetup = () => {
                   />
                 )
               )}
-              <FlowStage
-                label={"Flow evolution"}
-                key={"evolve"}
-                hasError={!!useFormMethods.formState.errors.evolve}
-                id={"evolve"}
-                disableDelete={true}
-                icon={actionProperties[ActionType.EvolveFlow].icon}
-                setSelectedId={setSelectedId}
-                selectedId={selectedId}
-                sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
-              />
+              {reusable && (
+                <FlowStage
+                  label={"Flow evolution"}
+                  key={"evolve"}
+                  hasError={!!useFormMethods.formState.errors.evolve}
+                  id={"evolve"}
+                  disableDelete={true}
+                  icon={actionProperties[ActionType.EvolveFlow].icon}
+                  setSelectedId={setSelectedId}
+                  selectedId={selectedId}
+                  sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
+                />
+              )}
             </DiagramPanel>
           </PanelContainer>
           {/* Configuration panel*/}
@@ -292,6 +297,7 @@ export const FullConfigSetup = () => {
                   action={action}
                 />
               )}
+
               <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />
             </ConfigurationPanel>
           </PanelContainer>

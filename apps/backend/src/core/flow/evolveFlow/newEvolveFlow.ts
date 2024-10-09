@@ -14,7 +14,7 @@ export const newEvolveFlow = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   const flow = await transaction.flow.create({
-    data: { type: FlowType.Evolve, creatorId },
+    data: { type: FlowType.Evolve, reusable: true, creatorId },
   });
 
   await newEvolveFlowVersion({ transaction, flowId: flow.id, evolveArgs, active: true });

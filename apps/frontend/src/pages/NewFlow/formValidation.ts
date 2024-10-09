@@ -31,6 +31,11 @@ export enum FlowGoal {
   AiSummary = "AISummary",
 }
 
+export enum Reusable {
+  Reusable = "Reusable",
+  NotReusable = "NotReusable",
+}
+
 export enum ActionTriggerCondition {
   None = "None",
   Decision = "Decision",
@@ -72,6 +77,7 @@ const optionConfigSchema = z
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   z.object({
     goal: z.literal(FlowGoal.TriggerWebhook),
+    reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
     webhookTriggerCondition: z.nativeEnum(ActionTriggerCondition),
     // webhook: actionSchema,
@@ -81,18 +87,21 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
+    reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
     optionsConfig: optionConfigSchema,
     question: z.string(),
   }),
   z.object({
     goal: z.literal(FlowGoal.Prioritize),
+    reusable: z.nativeEnum(Reusable),
     question: z.string(),
     permission: permissionSchema,
     optionsConfig: optionConfigSchema,
   }),
   z.object({
     goal: z.literal(FlowGoal.AiSummary),
+    reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
     aiOutputType: z.nativeEnum(AIOutputType),
     question: z.string(),

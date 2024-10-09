@@ -27,7 +27,12 @@ export const newGroupWatchFlowFlow = async ({
     });
 
   const flow = await transaction.flow.create({
-    data: { type: FlowType.GroupWatchFlow, creatorId: context.currentUser.id, groupId },
+    data: {
+      type: FlowType.GroupWatchFlow,
+      reusable: true,
+      creatorId: context.currentUser.id,
+      groupId,
+    },
   });
 
   const evolveFlowId = await newEvolveFlow({

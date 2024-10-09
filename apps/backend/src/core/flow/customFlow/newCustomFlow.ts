@@ -38,7 +38,7 @@ export const newCustomFlow = async ({
     }
 
     const flow = await transaction.flow.create({
-      data: { type: FlowType.Custom, creatorId },
+      data: { type: FlowType.Custom, reusable: args.flow.reusable, creatorId },
     });
 
     await newCustomFlowVersion({

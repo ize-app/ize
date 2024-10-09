@@ -28,6 +28,7 @@ import {
   ActionTriggerCondition,
   FlowGoal,
   IntitialFlowSetupSchemaType,
+  Reusable,
 } from "../formValidation";
 
 export const generateNewFlowConfig = ({
@@ -45,6 +46,8 @@ export const generateNewFlowConfig = ({
   let step: StepSchemaType | null = null;
 
   let flowTitle: string = "New flow";
+
+  const reusable = config.reusable === Reusable.Reusable;
   if (
     config.goal !== FlowGoal.AiSummary &&
     config.optionsConfig?.linkedOptions.hasLinkedOptions &&
@@ -146,6 +149,7 @@ export const generateNewFlowConfig = ({
 
     const flow = {
       name: flowTitle,
+      reusable,
       evolve: {
         requestPermission: permission,
         responsePermission: permission, // TODO switch out for creator
@@ -157,11 +161,13 @@ export const generateNewFlowConfig = ({
       },
       steps: [ideationStep, step].filter((x) => x !== null),
     };
+
     return flow;
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
     return {
       name: "",
+      reusable: true,
       evolve: {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: { type: PermissionType.Anyone, entities: [] },
