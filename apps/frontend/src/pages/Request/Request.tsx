@@ -158,7 +158,7 @@ export const Request = () => {
                   alignSelf: "center",
                   minWidth: "400px",
                   maxWidth: "800px",
-                  border: `solid ${colors.primary} 3px`,
+                  border: `solid ${colors.primary} 2px`,
                   outline: `2px solid ${colors.primaryContainer}`,
 
                   [theme.breakpoints.down("md")]: {
@@ -185,7 +185,8 @@ export const Request = () => {
               flexDirection: "row",
               width: "100%",
               minWidth: "300px",
-              outline: "1px solid rgba(0, 0, 0, 0.1)",
+              // outline: "1px solid rgba(0, 0, 0, 0.1)",
+              outline: `1px solid ${theme.palette.primary.main}`,
               padding: "16px 24px 16px 16px",
               borderRadius: "8px",
 

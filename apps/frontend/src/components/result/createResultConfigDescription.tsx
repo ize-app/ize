@@ -54,12 +54,11 @@ export const createResultConfigDescription = (
     case ResultType.Decision: {
       return (
         <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
-          `${decisionTypeDescription(resultConfig.decisionType, resultConfig.threshold)}$
-          {minAnswersDescription(resultConfig.minimumAnswers, ResultType.Decision)}$
+          {decisionTypeDescription(resultConfig.decisionType, resultConfig.threshold)}
+          {minAnswersDescription(resultConfig.minimumAnswers, ResultType.Decision)}
           {resultConfig.defaultOption
             ? `If decision isn't made, default result is "${resultConfig.defaultOption.name}. `
             : ""}
-          `
         </Typography>
       );
     }
