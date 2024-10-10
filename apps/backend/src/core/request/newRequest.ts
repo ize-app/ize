@@ -34,7 +34,9 @@ export const newRequest = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const userEntityIds = getUserEntityIds(context.currentUser);
+  const user = context.currentUser;
+
+  const userEntityIds = getUserEntityIds(user);
 
   const [requestId, requestStepId, executeActionAutomatically] = await prisma.$transaction(
     async (transaction) => {
@@ -149,7 +151,7 @@ export const newRequest = async ({
     await executeAction({ requestStepId: requestStepId });
   }
 
-  await watchFlow({ flowId: flowId, watch: true, entityId: context.currentUser.entityId });
+  await watchFlow({ flowId: flowId, watch: true, entityId: user.entityId, user });
 
   await sendNewStepNotifications({
     flowId: flowId,

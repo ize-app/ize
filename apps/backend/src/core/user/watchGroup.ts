@@ -1,33 +1,43 @@
-import { GraphQLError } from "graphql";
-
-import { CustomErrorCodes } from "@/graphql/errors";
 import { MutationWatchGroupArgs } from "@graphql/generated/resolver-types";
 
-import { GraphqlRequestContext } from "../../graphql/context";
+import { getUserEntityIds } from "./getUserEntityIds";
+import { UserPrismaType } from "./userPrismaTypes";
 import { prisma } from "../../prisma/client";
 
 // for a user to watch a group
 export const watchGroup = async ({
   args,
-  context,
+  entityId,
+  user,
 }: {
   args: MutationWatchGroupArgs;
-  context: GraphqlRequestContext;
+  entityId: string;
+  user?: UserPrismaType;
 }): Promise<boolean> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
-
   await prisma.entityWatchedGroups.upsert({
     where: {
       entityId_groupId: {
         groupId: args.groupId,
-        entityId: context.currentUser.entityId,
+        entityId,
       },
     },
-    create: { groupId: args.groupId, entityId: context.currentUser.entityId, watched: args.watch },
+    create: { groupId: args.groupId, entityId, watched: args.watch },
     update: { watched: args.watch },
   });
+
+  // if watching group on behalf of a user, also set all their identities to watching this group
+  if (user) {
+    const userEntityIds = getUserEntityIds(user);
+    prisma.entityWatchedGroups.updateMany({
+      where: {
+        groupId: args.groupId,
+        entityId: { in: userEntityIds },
+      },
+      data: {
+        watched: args.watch,
+      },
+    });
+  }
+
   return args.watch;
 };

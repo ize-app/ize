@@ -82,7 +82,11 @@ export const watchGroup: MutationResolvers["watchGroup"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  return await watchGroupService({ args, context });
+  return await watchGroupService({
+    args,
+    user: context.currentUser,
+    entityId: context.currentUser.entityId,
+  });
 };
 
 export const watchFlow: MutationResolvers["watchFlow"] = async (
@@ -100,6 +104,7 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
       watch: args.watch,
       entityId: context.currentUser.entityId,
       transaction,
+      user: context.currentUser,
     });
   });
 };

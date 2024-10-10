@@ -122,6 +122,7 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         watch: true,
         entityId: context.currentUser.entityId,
         transaction,
+        user: context.currentUser,
       });
     } else if (type === "identity") {
       const { identity } = rest as NewIdentityResponseProps;

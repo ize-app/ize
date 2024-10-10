@@ -23,7 +23,9 @@ export const newCustomFlow = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const creatorEntityId = context.currentUser.entityId;
+  const user = context.currentUser;
+
+  const creatorEntityId = user.entityId;
   let evolveFlowId: string | null = null;
   const flowId = await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
@@ -50,10 +52,10 @@ export const newCustomFlow = async ({
     if (!args.flow.reusable) {
       // non-reusable flows are triggered automatically after creation
       // creator of flow is only one with permission to trigger flow
-      if (args.flow.steps[0].request && context.currentUser) {
+      if (args.flow.steps[0].request && user) {
         args.flow.steps[0].request.permission = {
           anyone: false,
-          entities: [{ id: context.currentUser.entityId }],
+          entities: [{ id: user.entityId }],
         };
         args.flow.steps[0].request.fields = [];
       }
@@ -89,7 +91,7 @@ export const newCustomFlow = async ({
     });
     return requestId;
   } else {
-    await watchFlow({ flowId, watch: true, entityId: context.currentUser.entityId });
+    await watchFlow({ flowId, watch: true, entityId: context.currentUser.entityId, user });
     return flowId;
   }
 };
