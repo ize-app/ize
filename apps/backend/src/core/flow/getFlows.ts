@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { GraphqlRequestContext } from "@/graphql/context";
 import {
   FlowSummary,
@@ -48,7 +50,6 @@ export const getFlows = async ({
           ? {
               OR: [
                 {
-                  //@ts-expect-error - this is a valid query but I believe the createWatchedFlowFilter
                   // OR/NOT logic is breaking the type checking
                   CurrentFlowVersion: {
                     name: {
@@ -85,41 +86,14 @@ export const getFlows = async ({
             }
           : { groupId: null },
         // TODO: reduce some non-DRY code with requestSteps permission logic
+
         args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
           ? {
               CurrentFlowVersion: {
+                // the type checking breaks with this is/not logic, so I had to move createFlowPermissionFilter to its own function
                 [args.triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
                   ? "is"
-                  : "NOT"]: {
-                  Steps: {
-                    some: {
-                      index: 0,
-                      OR: [
-                        {
-                          RequestPermissions: {
-                            OR: [
-                              { anyone: true },
-                              {
-                                EntitySet: {
-                                  EntitySetEntities: {
-                                    some: {
-                                      Entity: {
-                                        OR: [
-                                          { Group: { id: { in: groupIds } } },
-                                          { Identity: { id: { in: identityIds } } },
-                                        ],
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            ],
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
+                  : "NOT"]: createFlowPermissionFilter(groupIds, identityIds, user?.id),
               },
             }
           : {},
@@ -132,3 +106,39 @@ export const getFlows = async ({
 
   return flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
 };
+
+const createFlowPermissionFilter = (
+  groupIds: string[],
+  identityIds: string[],
+  userId: string | undefined,
+): Prisma.FlowVersionWhereInput => ({
+  Steps: {
+    some: {
+      index: 0,
+      OR: [
+        {
+          RequestPermissions: {
+            OR: [
+              { anyone: true },
+              {
+                EntitySet: {
+                  EntitySetEntities: {
+                    some: {
+                      Entity: {
+                        OR: [
+                          { Group: { id: { in: groupIds } } },
+                          { Identity: { id: { in: identityIds } } },
+                          { User: { id: userId } },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});

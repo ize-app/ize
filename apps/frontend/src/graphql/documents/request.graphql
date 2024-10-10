@@ -47,7 +47,7 @@ query getRequestSteps(
 fragment Request on Request {
   name
   creator {
-    ...UserSummaryParts
+    ...Entity
   }
   flow {
     ...Flow
@@ -97,7 +97,7 @@ fragment RequestStepSummary on RequestStepSummary {
   flowName
   userResponded
   creator {
-    ...UserSummaryParts
+    ...Entity
   }
   respondPermission {
     ...Permission

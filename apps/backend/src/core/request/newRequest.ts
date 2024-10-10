@@ -6,10 +6,10 @@ import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-ty
 import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
+import { entityInclude } from "../entity/entityPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
 import { hasWriteUserPermission } from "../permission/hasWritePermission";
-import { userInclude } from "../user/userPrismaTypes";
 import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
@@ -75,14 +75,14 @@ export const newRequest = async ({
 
       const request = await transaction.request.create({
         include: {
-          Creator: {
-            include: userInclude,
+          CreatorEntity: {
+            include: entityInclude,
           },
         },
         data: {
           name: args.request.name,
           flowVersionId: flow.CurrentFlowVersion.id,
-          creatorId: context.currentUser.id,
+          creatorEntityId: context.currentUser.entityId,
           proposedFlowVersionId,
           final: false,
         },

@@ -37,7 +37,7 @@ type FlowSummary {
   flowId: String!
   name: String!
   group: Group
-  creator: User!
+  creator: Entity!
   createdAt: String!
   # permission to trigger first step of the flow
   requestStep0Permission: Permission!

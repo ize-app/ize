@@ -1,7 +1,7 @@
+import { entityResolver } from "@/core/entity/entityResolver";
 import { getFlowName } from "@/core/flow/helpers/getFlowName";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
-import { userResolver } from "@/core/user/userResolver";
 import { RequestStepSummary } from "@/graphql/generated/resolver-types";
 
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
@@ -34,7 +34,7 @@ export const requestStepSummaryResolver = ({
         ownerGroupName: r.Request.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
         flowType: r.Request.FlowVersion.Flow.type,
       }),
-    creator: userResolver(r.Request.Creator),
+    creator: entityResolver({ entity: r.Request.CreatorEntity, userIdentityIds: identityIds }),
     stepIndex: r.Step.index,
     totalSteps: r.Request.FlowVersion.totalSteps,
     createdAt: r.createdAt.toISOString(),

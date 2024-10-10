@@ -1,4 +1,4 @@
-import { userResolver } from "@/core/user/userResolver";
+import { entityResolver } from "@/core/entity/entityResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, FlowType, Request, ResultConfig } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -71,7 +71,7 @@ export const requestResolver = async ({
 
   const Request: Request = {
     name: req.name,
-    creator: userResolver(req.Creator),
+    creator: entityResolver({ entity: req.CreatorEntity, userIdentityIds: identityIds }),
     flow: flow,
     createdAt: req.createdAt.toISOString(),
     currentStepIndex: getRequestStepIndex(req, req.currentRequestStepId),

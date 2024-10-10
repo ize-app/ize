@@ -1,7 +1,7 @@
+import { entityResolver } from "@/core/entity/entityResolver";
 import { groupResolver } from "@/core/entity/group/groupResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
-import { userResolver } from "@/core/user/userResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowSummary } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -55,7 +55,7 @@ export const flowSummaryResolver = ({
       ? isWatchedFlowSummary({ flowSummary: flow, user: context.currentUser })
       : false,
     createdAt: flow.createdAt.toISOString(),
-    creator: userResolver(flow.Creator),
+    creator: entityResolver({ entity: flow.CreatorEntity, userIdentityIds: identityIds }),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),
     group: flow.OwnerGroup ? groupResolver(flow.OwnerGroup) : null,
     userPermission: {

@@ -1,13 +1,13 @@
 import { Prisma } from "@prisma/client";
 
 import { actionExecutionInclude } from "../action/actionPrismaTypes";
+import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
 import { resultInclude } from "../result/resultPrismaTypes";
-import { userInclude } from "../user/userPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -72,8 +72,8 @@ export const createRequestStepSummaryInclude = (userEntityId: string | undefined
             },
           },
         },
-        Creator: {
-          include: userInclude,
+        CreatorEntity: {
+          include: entityInclude,
         },
         ProposedFlowVersionEvolution: {
           include: evolveRequestProposedFlowVersionInclude,
@@ -103,8 +103,8 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   RequestSteps: {
     include: requestStepInclude,
   },
-  Creator: {
-    include: userInclude,
+  CreatorEntity: {
+    include: entityInclude,
   },
   FlowVersion: {
     include: createFlowVersionInclude(undefined), // TODO: switch this out for the actual userId

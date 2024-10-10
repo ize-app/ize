@@ -6,15 +6,15 @@ import { newEvolveFlowVersion } from "./newEvolveFlowVersion";
 
 export const newEvolveFlow = async ({
   evolveArgs,
-  creatorId,
+  creatorEntityId,
   transaction,
 }: {
   evolveArgs: EvolveFlowArgs;
-  creatorId: string;
+  creatorEntityId: string;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   const flow = await transaction.flow.create({
-    data: { type: FlowType.Evolve, reusable: true, creatorId },
+    data: { type: FlowType.Evolve, reusable: true, creatorEntityId },
   });
 
   await newEvolveFlowVersion({ transaction, flowId: flow.id, evolveArgs, active: true });

@@ -26,11 +26,12 @@ export const newEvolveGroupFlow = async ({
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
+
   const flow = await transaction.flow.create({
     data: {
       type: FlowType.EvolveGroup,
       reusable: true,
-      creatorId: context.currentUser.id,
+      creatorEntityId: context.currentUser.entityId,
       groupId,
     },
   });
@@ -44,7 +45,7 @@ export const newEvolveGroupFlow = async ({
       },
       decision: { type: DecisionType.NumberThreshold, threshold: 1 },
     },
-    creatorId: context.currentUser.id,
+    creatorEntityId: context.currentUser.id,
     transaction,
   });
 

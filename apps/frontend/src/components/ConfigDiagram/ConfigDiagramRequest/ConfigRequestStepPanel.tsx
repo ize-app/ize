@@ -7,9 +7,9 @@ import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import {
   ActionFragment,
+  EntityFragment,
   RequestStepFragment,
   StepFragment,
-  UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
@@ -34,7 +34,7 @@ export const ConfigRequestStepPanel = ({
   triggeringAction: ActionFragment | null | undefined;
   requestStepIndex: number;
   currentStepIndex: number;
-  creator: UserSummaryPartsFragment;
+  creator: EntityFragment;
 }) => {
   const { me } = useContext(CurrentUserContext);
   const status = determineRequestStepStatus(

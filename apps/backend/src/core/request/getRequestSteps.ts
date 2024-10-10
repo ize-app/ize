@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import {
   QueryGetRequestStepsArgs,
   RequestStepRespondPermissionFilter,
@@ -124,33 +126,7 @@ export const getRequestSteps = async ({
                   [args.respondPermissionFilter ===
                   RequestStepRespondPermissionFilter.RespondPermission
                     ? "is"
-                    : "NOT"]: {
-                    FlowVersion: {
-                      Steps: {
-                        some: {
-                          ResponsePermissions: {
-                            OR: [
-                              { anyone: true },
-                              {
-                                EntitySet: {
-                                  EntitySetEntities: {
-                                    some: {
-                                      Entity: {
-                                        OR: [
-                                          { Group: { id: { in: groupIds } } },
-                                          { Identity: { id: { in: identityIds } } },
-                                        ],
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            ],
-                          },
-                        },
-                      },
-                    },
-                  },
+                    : "NOT"]: createPermissionFilter(groupIds, identityIds, user.id), // moved where logic to its own function so typechecking would still work
                 },
               }
             : {},
@@ -178,3 +154,36 @@ export const getRequestSteps = async ({
     );
   });
 };
+
+const createPermissionFilter = (
+  groupIds: string[],
+  identityIds: string[],
+  userId: string,
+): Prisma.RequestWhereInput => ({
+  FlowVersion: {
+    Steps: {
+      some: {
+        ResponsePermissions: {
+          OR: [
+            { anyone: true },
+            {
+              EntitySet: {
+                EntitySetEntities: {
+                  some: {
+                    Entity: {
+                      OR: [
+                        { Group: { id: { in: groupIds } } },
+                        { Identity: { id: { in: identityIds } } },
+                        { User: { id: userId } },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
+});

@@ -68,7 +68,7 @@ type Request {
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
   flow: Flow!
-  creator: User!
+  creator: Entity!
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!
@@ -97,7 +97,7 @@ type RequestStepSummary {
   requestId: String!
   flowId: String!
   # user who triggered the first step of this request
-  creator: User!
+  creator: Entity!
   requestName: String!
   respondPermission: Permission
   userRespondPermission: Boolean!

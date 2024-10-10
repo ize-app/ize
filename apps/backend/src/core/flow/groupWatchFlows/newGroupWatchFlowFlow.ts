@@ -30,7 +30,7 @@ export const newGroupWatchFlowFlow = async ({
     data: {
       type: FlowType.GroupWatchFlow,
       reusable: true,
-      creatorId: context.currentUser.id,
+      creatorEntityId: context.currentUser.entityId,
       groupId,
     },
   });
@@ -44,7 +44,7 @@ export const newGroupWatchFlowFlow = async ({
       },
       decision: { type: DecisionType.NumberThreshold, threshold: 1 },
     },
-    creatorId: context.currentUser.id,
+    creatorEntityId: context.currentUser.id,
     transaction,
   });
 

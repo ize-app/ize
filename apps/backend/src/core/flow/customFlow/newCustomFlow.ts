@@ -23,7 +23,7 @@ export const newCustomFlow = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const creatorId = context.currentUser.id;
+  const creatorEntityId = context.currentUser.entityId;
   let evolveFlowId: string | null = null;
   const flowId = await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
@@ -34,13 +34,17 @@ export const newCustomFlow = async ({
     if (args.flow.evolve && args.flow.reusable) {
       evolveFlowId = await newEvolveFlow({
         evolveArgs: args.flow.evolve,
-        creatorId,
+        creatorEntityId: creatorEntityId,
         transaction,
       });
     }
 
     const flow = await transaction.flow.create({
-      data: { type: FlowType.Custom, reusable: args.flow.reusable, creatorId },
+      data: {
+        type: FlowType.Custom,
+        reusable: args.flow.reusable,
+        creatorEntityId: creatorEntityId,
+      },
     });
 
     if (!args.flow.reusable) {

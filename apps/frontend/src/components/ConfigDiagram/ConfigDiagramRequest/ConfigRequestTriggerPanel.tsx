@@ -3,11 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import { Fields } from "@/components/Field/Fields";
-import {
-  RequestStepFragment,
-  StepFragment,
-  UserSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
+import { EntityFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 
 export const ConfigRequestTriggerPanel = ({
   step,
@@ -16,7 +12,7 @@ export const ConfigRequestTriggerPanel = ({
 }: {
   step: StepFragment;
   requestStep: RequestStepFragment;
-  creator: UserSummaryPartsFragment;
+  creator: EntityFragment;
 }) => {
   return (
     <PanelContainer>

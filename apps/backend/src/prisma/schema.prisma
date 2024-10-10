@@ -19,8 +19,6 @@ model User {
   Group              Group[]
   Identities         Identity[]
   Oauths             Oauths[]
-  Request            Request[]
-  CreatedFlows       Flow[]
   UsersWatchedGroups UsersWatchedGroups[]
   Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
@@ -279,18 +277,18 @@ enum FlowType {
 }
 
 model Flow {
-  id        String   @id @default(uuid()) @db.Uuid
-  groupId   String?  @map("custom_group_id") @db.Uuid
-  type      FlowType
-  reusable  Boolean
-  creatorId String   @map("creator_id") @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
+  groupId         String?  @map("custom_group_id") @db.Uuid
+  type            FlowType
+  reusable        Boolean
+  creatorEntityId String   @map("creator_entity_id") @db.Uuid
 
   currentFlowVersionId String? @unique @map("current_flow_version_id") @db.Uuid
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Creator                     User                 @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  CreatorEntity               Entity               @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
   OwnerGroup                  Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
   CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id], onDelete: Cascade)
   FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
@@ -415,6 +413,8 @@ model Entity {
   NotifiesForCustomGroups GroupCustom[]
   Responses               Response[]
   EntityWatchedFlows      EntityWatchedFlows[]
+  Flow                    Flow[]
+  Request                 Request[]
 
   @@map("entities")
 }
@@ -736,7 +736,7 @@ model ActionExecution {
 
 model Request {
   id                    String   @id @default(uuid()) @db.Uuid
-  creatorId             String   @map("creator_id") @db.Uuid
+  creatorEntityId       String   @map("creator_entity_id") @db.Uuid
   flowVersionId         String   @map("flow_version_id") @db.Uuid
   currentRequestStepId  String?  @unique @map("current_request_step_id") @db.Uuid
   name                  String
@@ -746,9 +746,9 @@ model Request {
   // if a request is an "evolve" request, this field will include the proposed flow version id
   proposedFlowVersionId String?  @unique @map("proposed_flow_version_id") @db.Uuid
 
+  CreatorEntity                Entity       @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
   FlowVersion                  FlowVersion  @relation("FlowVersion", fields: [flowVersionId], references: [id], onDelete: Cascade)
   ProposedFlowVersionEvolution FlowVersion? @relation("ProposedFlowVersionEvolution", fields: [proposedFlowVersionId], references: [id], onDelete: Cascade)
-  Creator                      User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   CurrentRequestStep           RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id], onDelete: Cascade)
 
   // For when the options are request are created by the requestor or the previous step

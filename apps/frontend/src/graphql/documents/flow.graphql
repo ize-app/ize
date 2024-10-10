@@ -40,7 +40,7 @@ fragment FlowSummary on FlowSummary {
   name
   createdAt
   creator {
-    ...UserSummaryParts
+    ...Entity
   }
   group {
     ...GroupSummaryParts
