@@ -16,11 +16,10 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Group              Group[]
-  Identities         Identity[]
-  Oauths             Oauths[]
-  UsersWatchedGroups UsersWatchedGroups[]
-  Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Group      Group[]
+  Identities Identity[]
+  Oauths     Oauths[]
+  Entity     Entity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("users")
 }
@@ -143,24 +142,24 @@ enum GroupType {
 }
 
 model Group {
-  id                 String               @id @default(uuid()) @db.Uuid
-  creator            User?                @relation(fields: [creatorId], references: [id])
-  creatorId          String?              @map("creator_id") @db.Uuid
-  entityId           String               @unique @map("entity_id") @db.Uuid
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
-  activeAt           DateTime?
-  deactivatedat      DateTime?
-  type               GroupType
-  Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  GroupDiscordRole   GroupDiscordRole?
-  GroupNft           GroupNft?
-  IdentitiesGroups   IdentityGroup[]
-  GroupCustom        GroupCustom?
-  UsersWatchedGroups UsersWatchedGroups[]
-  OwnedFlows         Flow[]
-  GroupsWatchedFlows GroupsWatchedFlows[]
-  GroupTelegramChat  GroupTelegramChat?
+  id                  String                @id @default(uuid()) @db.Uuid
+  creator             User?                 @relation(fields: [creatorId], references: [id])
+  creatorId           String?               @map("creator_id") @db.Uuid
+  entityId            String                @unique @map("entity_id") @db.Uuid
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at")
+  activeAt            DateTime?
+  deactivatedat       DateTime?
+  type                GroupType
+  Entity              Entity                @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  GroupDiscordRole    GroupDiscordRole?
+  GroupNft            GroupNft?
+  IdentitiesGroups    IdentityGroup[]
+  GroupCustom         GroupCustom?
+  EntityWatchedGroups EntityWatchedGroups[]
+  OwnedFlows          Flow[]
+  GroupsWatchedFlows  GroupsWatchedFlows[]
+  GroupTelegramChat   GroupTelegramChat?
 
   @@map("groups")
 }
@@ -413,6 +412,7 @@ model Entity {
   NotifiesForCustomGroups GroupCustom[]
   Responses               Response[]
   EntityWatchedFlows      EntityWatchedFlows[]
+  EntityWatchedGroups     EntityWatchedGroups[]
   Flow                    Flow[]
   Request                 Request[]
 
@@ -878,16 +878,16 @@ model ResultItems {
   @@map("result_items")
 }
 
-model UsersWatchedGroups {
-  userId  String  @map("user_id") @db.Uuid
-  groupId String  @map("group_id") @db.Uuid
-  watched Boolean
+model EntityWatchedGroups {
+  entityId String  @map("entity_id") @db.Uuid
+  groupId  String  @map("group_id") @db.Uuid
+  watched  Boolean
 
-  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Group  Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, groupId])
-  @@map("users_watched_groups")
+  @@unique([entityId, groupId])
+  @@map("entity_watched_groups")
 }
 
 model EntityWatchedFlows {

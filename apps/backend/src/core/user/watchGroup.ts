@@ -6,6 +6,7 @@ import { MutationWatchGroupArgs } from "@graphql/generated/resolver-types";
 import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
 
+// for a user to watch a group
 export const watchGroup = async ({
   args,
   context,
@@ -18,14 +19,14 @@ export const watchGroup = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  await prisma.usersWatchedGroups.upsert({
+  await prisma.entityWatchedGroups.upsert({
     where: {
-      userId_groupId: {
+      entityId_groupId: {
         groupId: args.groupId,
-        userId: context.currentUser.id,
+        entityId: context.currentUser.entityId,
       },
     },
-    create: { groupId: args.groupId, userId: context.currentUser.id, watched: args.watch },
+    create: { groupId: args.groupId, entityId: context.currentUser.entityId, watched: args.watch },
     update: { watched: args.watch },
   });
   return args.watch;

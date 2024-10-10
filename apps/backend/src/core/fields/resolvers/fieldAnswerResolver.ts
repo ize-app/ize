@@ -2,6 +2,7 @@ import { entityInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { createFlowSummaryInclude } from "@/core/flow/flowPrismaTypes";
 import { flowSummaryResolver } from "@/core/flow/resolvers/flowSummaryResolver";
+import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
 import {
   EntitiesFieldAnswer,
@@ -25,7 +26,6 @@ export const fieldAnswerResolver = async ({
   context: GraphqlRequestContext;
 }): Promise<FieldAnswer> => {
   const userIdentityIds = context.currentUser?.Identities.map((id) => id.id);
-  const user = context.currentUser ?? undefined;
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
       if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.EntityIds) {
@@ -42,9 +42,10 @@ export const fieldAnswerResolver = async ({
         };
         return entityAnswer;
       } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.FlowIds) {
+        const userEntityIds = getUserEntityIds(context.currentUser);
         const flowIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
         const flows = await prisma.flow.findMany({
-          include: createFlowSummaryInclude(user),
+          include: createFlowSummaryInclude(userEntityIds),
           where: { id: { in: flowIds } },
         });
         return {

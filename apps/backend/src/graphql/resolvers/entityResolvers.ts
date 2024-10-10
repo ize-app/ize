@@ -60,9 +60,9 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
     const groupId = await newCustomGroupService({ args, context, transaction });
 
     // Watch group for user
-    await transaction.usersWatchedGroups.create({
+    await transaction.entityWatchedGroups.create({
       data: {
-        userId: context.currentUser.id,
+        entityId: context.currentUser.entityId,
         groupId,
         watched: true,
       },

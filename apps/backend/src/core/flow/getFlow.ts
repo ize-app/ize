@@ -10,6 +10,7 @@ import {
 import { flowResolver } from "./resolvers/flowResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
+import { getUserEntityIds } from "../user/getUserEntityIds";
 
 // if flowID is provided, it returns current published version of that flow
 // if flowVersionID is provided, it returns that specific version/draft of the flow
@@ -21,10 +22,11 @@ export const getFlow = async ({
   context: GraphqlRequestContext;
 }): Promise<Flow> => {
   let flowVersion: FlowVersionPrismaType | null;
+  const entityIds = getUserEntityIds(context.currentUser);
 
   if (args.flowId) {
     const flow = await prisma.flow.findFirstOrThrow({
-      include: createFlowInclude(context.currentUser),
+      include: createFlowInclude(entityIds),
       where: {
         id: args.flowId,
         reusable: true,
@@ -39,7 +41,7 @@ export const getFlow = async ({
     flowVersion = flow.CurrentFlowVersion;
   } else if (args.flowVersionId) {
     flowVersion = await prisma.flowVersion.findFirstOrThrow({
-      include: createFlowVersionInclude(context.currentUser),
+      include: createFlowVersionInclude(entityIds),
       where: {
         id: args.flowVersionId,
       },
@@ -66,7 +68,7 @@ export const getFlow = async ({
     });
 
   const evolveFlow = await prisma.flow.findFirstOrThrow({
-    include: createFlowInclude(context.currentUser),
+    include: createFlowInclude(entityIds),
     where: {
       id: flowVersion.evolveFlowId,
     },

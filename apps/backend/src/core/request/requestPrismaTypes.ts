@@ -107,7 +107,7 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
     include: entityInclude,
   },
   FlowVersion: {
-    include: createFlowVersionInclude(undefined), // TODO: switch this out for the actual userId
+    include: createFlowVersionInclude([]), // TODO: switch this out for the actual userId
   },
   ProposedFlowVersionEvolution: {
     include: evolveRequestProposedFlowVersionInclude,

@@ -12,6 +12,7 @@ import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolv
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { createGroupWatchedFlowFilter, createUserWatchedFlowFilter } from "../flow/flowPrismaTypes";
+import { getUserEntityIds } from "../user/getUserEntityIds";
 import { MePrismaType } from "../user/userPrismaTypes";
 
 export const getRequestSteps = async ({
@@ -23,6 +24,7 @@ export const getRequestSteps = async ({
 }): Promise<RequestStepSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user?.Identities.map((id) => id.id) ?? [];
+  const entityIds = getUserEntityIds(user);
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.requestStep.findMany({
       take: args.limit,
@@ -60,14 +62,14 @@ export const getRequestSteps = async ({
                   {
                     Request: {
                       FlowVersion: {
-                        Flow: createUserWatchedFlowFilter({ user, watched: true }),
+                        Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
                       },
                     },
                   },
                   {
                     Request: {
                       ProposedFlowVersionEvolution: {
-                        Flow: createUserWatchedFlowFilter({ user, watched: true }),
+                        Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
                       },
                     },
                   },

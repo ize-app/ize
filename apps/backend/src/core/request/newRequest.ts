@@ -10,6 +10,7 @@ import { entityInclude } from "../entity/entityPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
 import { hasWriteUserPermission } from "../permission/hasWritePermission";
+import { getUserEntityIds } from "../user/getUserEntityIds";
 import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
@@ -33,13 +34,15 @@ export const newRequest = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
+  const userEntityIds = getUserEntityIds(context.currentUser);
+
   const [requestId, requestStepId, executeActionAutomatically] = await prisma.$transaction(
     async (transaction) => {
       const flow = await transaction.flow.findUniqueOrThrow({
         where: {
           id: flowId,
         },
-        include: createFlowInclude(context.currentUser ?? undefined),
+        include: createFlowInclude(userEntityIds),
       });
 
       if (!context.currentUser)
