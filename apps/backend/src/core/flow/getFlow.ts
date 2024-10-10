@@ -24,7 +24,7 @@ export const getFlow = async ({
 
   if (args.flowId) {
     const flow = await prisma.flow.findFirstOrThrow({
-      include: createFlowInclude(context.currentUser?.id),
+      include: createFlowInclude(context.currentUser),
       where: {
         id: args.flowId,
         reusable: true,
@@ -39,7 +39,7 @@ export const getFlow = async ({
     flowVersion = flow.CurrentFlowVersion;
   } else if (args.flowVersionId) {
     flowVersion = await prisma.flowVersion.findFirstOrThrow({
-      include: createFlowVersionInclude(context.currentUser?.id),
+      include: createFlowVersionInclude(context.currentUser),
       where: {
         id: args.flowVersionId,
       },
@@ -66,7 +66,7 @@ export const getFlow = async ({
     });
 
   const evolveFlow = await prisma.flow.findFirstOrThrow({
-    include: createFlowInclude(context.currentUser?.id),
+    include: createFlowInclude(context.currentUser),
     where: {
       id: flowVersion.evolveFlowId,
     },

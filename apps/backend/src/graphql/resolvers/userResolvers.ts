@@ -98,7 +98,7 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
     return await watchFlowService({
       flowId: args.flowId,
       watch: args.watch,
-      userId: context.currentUser.id,
+      entityId: context.currentUser.entityId,
       transaction,
     });
   });

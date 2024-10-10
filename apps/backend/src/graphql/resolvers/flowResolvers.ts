@@ -26,7 +26,7 @@ const getFlows: QueryResolvers["getFlows"] = async (
 
   context: GraphqlRequestContext,
 ) => {
-  return await getFlowsService({ args, user: context.currentUser });
+  return await getFlowsService({ args, context });
 };
 
 const newFlow: MutationResolvers["newFlow"] = async (

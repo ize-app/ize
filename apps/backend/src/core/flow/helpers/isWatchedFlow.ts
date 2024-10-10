@@ -1,16 +1,18 @@
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
+
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
 
 export const isWatchedFlow = ({
   flowVersion,
-  userId,
+  user,
 }: {
   flowVersion: FlowVersionPrismaType;
-  userId: string | undefined;
+  user: UserPrismaType | undefined | null;
 }) => {
-  if (!userId) return false;
+  if (!user) return false;
 
-  const isUnWatchedByUser = flowVersion.Flow.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && !watchedFlow.watched,
+  const isUnWatchedByUser = flowVersion.Flow.EntityWatchedFlows.some(
+    (watchedFlow) => watchedFlow.entityId === user.entityId && !watchedFlow.watched,
   );
 
   if (isUnWatchedByUser) return false;
@@ -20,8 +22,8 @@ export const isWatchedFlow = ({
 
   const isWatchedByWatchedGroup = flowVersion.Flow.GroupsWatchedFlows.length > 0;
 
-  const isWatchedByUser = flowVersion.Flow.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && watchedFlow.watched,
+  const isWatchedByUser = flowVersion.Flow.EntityWatchedFlows.some(
+    (watchedFlow) => watchedFlow.entityId === user.entityId && watchedFlow.watched,
   );
 
   if (isOwnedByWatchedGroup || isWatchedByWatchedGroup || isWatchedByUser) return true;

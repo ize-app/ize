@@ -3,24 +3,24 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/prisma/client";
 
 export const watchFlow = async ({
+  entityId,
   flowId,
-  userId,
   watch,
   transaction = prisma,
 }: {
+  entityId: string;
   flowId: string;
-  userId: string;
   watch: boolean;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
-  await transaction.usersWatchedFlows.upsert({
+  await transaction.entityWatchedFlows.upsert({
     where: {
-      userId_flowId: {
+      entityId_flowId: {
         flowId,
-        userId,
+        entityId,
       },
     },
-    create: { flowId: flowId, userId, watched: watch },
+    create: { flowId: flowId, entityId, watched: watch },
     update: { watched: watch },
   });
   return watch;

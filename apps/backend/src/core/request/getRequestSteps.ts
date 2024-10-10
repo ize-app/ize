@@ -58,14 +58,14 @@ export const getRequestSteps = async ({
                   {
                     Request: {
                       FlowVersion: {
-                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
+                        Flow: createUserWatchedFlowFilter({ user, watched: true }),
                       },
                     },
                   },
                   {
                     Request: {
                       ProposedFlowVersionEvolution: {
-                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
+                        Flow: createUserWatchedFlowFilter({ user, watched: true }),
                       },
                     },
                   },

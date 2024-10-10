@@ -1,3 +1,4 @@
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   FlowSummary,
   FlowTriggerPermissionFilter,
@@ -13,32 +14,32 @@ import {
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { MePrismaType } from "../user/userPrismaTypes";
 
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
 // TODO: In the future, this query will only pull flows that user has interacted with or created
 export const getFlows = async ({
   args,
-  user,
+  context,
 }: {
   args: QueryGetFlowsArgs;
-  user: MePrismaType | undefined | null;
+  context: GraphqlRequestContext;
 }): Promise<FlowSummary[]> => {
+  const user = context.currentUser;
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
 
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: createFlowSummaryInclude(user?.id),
+    include: createFlowSummaryInclude(user),
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
       reusable: true,
       AND: [
-        args.watchFilter !== WatchFilter.All
+        args.watchFilter !== WatchFilter.All && user
           ? createUserWatchedFlowFilter({
-              userId: user?.id ?? "",
+              user,
               watched: args.watchFilter === WatchFilter.Watched,
             })
           : {},
@@ -129,7 +130,5 @@ export const getFlows = async ({
     },
   });
 
-  return flows.map((flow) =>
-    flowSummaryResolver({ flow, identityIds, groupIds, userId: user?.id }),
-  );
+  return flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
 };

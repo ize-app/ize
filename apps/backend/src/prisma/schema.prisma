@@ -22,7 +22,6 @@ model User {
   Request            Request[]
   CreatedFlows       Flow[]
   UsersWatchedGroups UsersWatchedGroups[]
-  UsersWatchedFlows  UsersWatchedFlows[]
   Entity             Entity               @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@map("users")
@@ -297,7 +296,7 @@ model Flow {
   FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
   EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
   GroupsWatchedFlows          GroupsWatchedFlows[]
-  UsersWatchedFlows           UsersWatchedFlows[]
+  EntityWatchedFlows          EntityWatchedFlows[]
 
   @@map("flows")
 }
@@ -415,6 +414,7 @@ model Entity {
   EntitySetEntities       EntitySetEntities[]
   NotifiesForCustomGroups GroupCustom[]
   Responses               Response[]
+  EntityWatchedFlows      EntityWatchedFlows[]
 
   @@map("entities")
 }
@@ -890,16 +890,16 @@ model UsersWatchedGroups {
   @@map("users_watched_groups")
 }
 
-model UsersWatchedFlows {
-  userId  String  @map("user_id") @db.Uuid
-  flowId  String  @map("flow_id") @db.Uuid
-  watched Boolean
+model EntityWatchedFlows {
+  entityId String  @map("entity_id") @db.Uuid
+  flowId   String  @map("flow_id") @db.Uuid
+  watched  Boolean
 
-  Flow Flow @relation(fields: [flowId], references: [id], onDelete: Cascade)
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Flow   Flow   @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  Entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, flowId])
-  @@map("users_watched_flows")
+  @@unique([entityId, flowId])
+  @@map("entity_watched_flows")
 }
 
 model GroupsWatchedFlows {

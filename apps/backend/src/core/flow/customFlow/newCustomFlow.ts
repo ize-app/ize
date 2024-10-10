@@ -85,7 +85,7 @@ export const newCustomFlow = async ({
     });
     return requestId;
   } else {
-    await watchFlow({ flowId, watch: true, userId: context.currentUser.id });
+    await watchFlow({ flowId, watch: true, entityId: context.currentUser.entityId });
     return flowId;
   }
 };

@@ -16,7 +16,6 @@ export const requestStepResolver = async ({
   context,
   responseFieldsCache = [],
   resultConfigsCache = [],
-  userId,
   // refers to whether request as a whole, rather than just the request step is final
   requestFinal,
 }: {
@@ -28,10 +27,7 @@ export const requestStepResolver = async ({
   context: GraphqlRequestContext;
   requestFinal: boolean;
 }): Promise<RequestStep> => {
-  const [responseFieldAnswers, userResponses] = await responsesResolver(
-    reqStep.Responses,
-    context.currentUser?.id,
-  );
+  const [responseFieldAnswers, userResponses] = await responsesResolver(reqStep.Responses, context);
   const res: RequestStep = {
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),
@@ -41,8 +37,7 @@ export const requestStepResolver = async ({
         async (rfa) =>
           await fieldAnswerResolver({
             fieldAnswer: rfa,
-            userIdentityIds: context.currentUser?.Identities.map((id) => id.id),
-            userId: userId ?? undefined,
+            context,
           }),
       ),
     ),

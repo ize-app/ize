@@ -2,6 +2,7 @@ import { entityInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { createFlowSummaryInclude } from "@/core/flow/flowPrismaTypes";
 import { flowSummaryResolver } from "@/core/flow/resolvers/flowSummaryResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   EntitiesFieldAnswer,
   FieldAnswer,
@@ -18,13 +19,13 @@ import { FieldAnswerPrismaType } from "../fieldPrismaTypes";
 
 export const fieldAnswerResolver = async ({
   fieldAnswer,
-  userIdentityIds,
-  userId,
+  context,
 }: {
   fieldAnswer: FieldAnswerPrismaType;
-  userIdentityIds?: string[];
-  userId: string | undefined;
+  context: GraphqlRequestContext;
 }): Promise<FieldAnswer> => {
+  const userIdentityIds = context.currentUser?.Identities.map((id) => id.id);
+  const user = context.currentUser ?? undefined;
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
       if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.EntityIds) {
@@ -43,7 +44,7 @@ export const fieldAnswerResolver = async ({
       } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.FlowIds) {
         const flowIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
         const flows = await prisma.flow.findMany({
-          include: createFlowSummaryInclude(userId),
+          include: createFlowSummaryInclude(user),
           where: { id: { in: flowIds } },
         });
         return {
@@ -52,9 +53,8 @@ export const fieldAnswerResolver = async ({
           flows: flows.map((flow) =>
             flowSummaryResolver({
               flow,
-              identityIds: userIdentityIds ?? [],
+              context,
               groupIds: [], // TODO pass this in properly
-              userId: "", // TODO pass this in properly
             }),
           ),
         };

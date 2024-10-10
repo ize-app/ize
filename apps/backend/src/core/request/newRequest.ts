@@ -39,7 +39,7 @@ export const newRequest = async ({
         where: {
           id: flowId,
         },
-        include: createFlowInclude(context.currentUser?.id),
+        include: createFlowInclude(context.currentUser ?? undefined),
       });
 
       if (!context.currentUser)
@@ -146,7 +146,7 @@ export const newRequest = async ({
     await executeAction({ requestStepId: requestStepId });
   }
 
-  await watchFlow({ flowId: flowId, watch: true, userId: context.currentUser.id });
+  await watchFlow({ flowId: flowId, watch: true, entityId: context.currentUser.entityId });
 
   await sendNewStepNotifications({
     flowId: flowId,

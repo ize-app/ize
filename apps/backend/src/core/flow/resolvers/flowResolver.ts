@@ -83,7 +83,7 @@ export const flowResolver = async ({
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
-    isWatched: isWatchedFlow({ flowVersion: flowVersion, userId }),
+    isWatched: isWatchedFlow({ flowVersion: flowVersion, user: context.currentUser }),
     name: getFlowName({
       flowName: flowVersion.name,
       flowType: flowVersion.Flow.type,

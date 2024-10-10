@@ -2,6 +2,7 @@ import { groupResolver } from "@/core/entity/group/groupResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { userResolver } from "@/core/user/userResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowSummary } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -11,15 +12,15 @@ import { isWatchedFlowSummary } from "../helpers/isWatchedFlowSummary";
 
 export const flowSummaryResolver = ({
   flow,
-  identityIds,
+  context,
   groupIds,
-  userId,
 }: {
   flow: FlowSummaryPrismaType;
-  identityIds: string[];
+  context: GraphqlRequestContext;
   groupIds: string[];
-  userId: string | undefined;
 }): FlowSummary => {
+  const userId = context.currentUser?.id;
+  const identityIds = context.currentUser ? context.currentUser?.Identities.map((id) => id.id) : [];
   if (!flow.CurrentFlowVersion)
     throw new GraphQLError(`Missing flow version for flow. Flow Id: ${flow.id}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -50,7 +51,9 @@ export const flowSummaryResolver = ({
       flowType: flow.type,
       ownerGroupName: flow.OwnerGroup?.GroupCustom?.name,
     }),
-    isWatched: userId ? isWatchedFlowSummary({ flowSummary: flow, userId }) : false,
+    isWatched: context.currentUser
+      ? isWatchedFlowSummary({ flowSummary: flow, user: context.currentUser })
+      : false,
     createdAt: flow.createdAt.toISOString(),
     creator: userResolver(flow.Creator),
     requestStep0Permission: permissionResolver(requestStep0Permission, identityIds),

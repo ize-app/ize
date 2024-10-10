@@ -1,15 +1,16 @@
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
+
 import { FlowSummaryPrismaType } from "../flowPrismaTypes";
 
 export const isWatchedFlowSummary = ({
   flowSummary,
-  userId,
+  user,
 }: {
   flowSummary: FlowSummaryPrismaType;
-  userId: string;
+  user: UserPrismaType;
 }) => {
-
-  const isUnWatchedByUser = flowSummary.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && !watchedFlow.watched,
+  const isUnWatchedByUser = flowSummary.EntityWatchedFlows.some(
+    (watchedFlow) => watchedFlow.entityId === user.entityId && !watchedFlow.watched,
   );
 
   if (isUnWatchedByUser) return false;
@@ -19,8 +20,8 @@ export const isWatchedFlowSummary = ({
 
   const isWatchedByWatchedGroup = flowSummary.GroupsWatchedFlows.length > 0;
 
-  const isWatchedByUser = flowSummary.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && watchedFlow.watched,
+  const isWatchedByUser = flowSummary.EntityWatchedFlows.some(
+    (watchedFlow) => watchedFlow.entityId === user.entityId && watchedFlow.watched,
   );
 
   if (isOwnedByWatchedGroup || isWatchedByWatchedGroup || isWatchedByUser) return true;

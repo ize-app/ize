@@ -1,3 +1,4 @@
+import { GraphqlRequestContext } from "@/graphql/context";
 import { Response, UserFieldAnswer, UserFieldAnswers } from "@/graphql/generated/resolver-types";
 
 import { ResponsePrismaType } from "./responsePrismaTypes";
@@ -6,7 +7,7 @@ import { fieldAnswerResolver } from "../fields/resolvers/fieldAnswerResolver";
 
 export const responsesResolver = async (
   responses: ResponsePrismaType[],
-  userId: string | null | undefined,
+  context: GraphqlRequestContext,
 ): Promise<[UserFieldAnswers[], Response[]]> => {
   const fieldAnswers: { [key: string]: UserFieldAnswer[] } = {};
   const userResponses: Response[] = [];
@@ -21,16 +22,14 @@ export const responsesResolver = async (
         createdAt: response.createdAt.toISOString(),
         creator,
         answers: await Promise.all(
-          response.Answers.map(
-            async (a) => await fieldAnswerResolver({ fieldAnswer: a, userId: userId ?? undefined }),
-          ),
+          response.Answers.map(async (a) => await fieldAnswerResolver({ fieldAnswer: a, context })),
         ),
       });
 
       await Promise.all(
         Answers.map(async (a) => {
           const { fieldId } = a;
-          const answer = await fieldAnswerResolver({ fieldAnswer: a, userId: userId ?? undefined });
+          const answer = await fieldAnswerResolver({ fieldAnswer: a, context });
           const payload: UserFieldAnswer = {
             answer,
             creator,

@@ -120,7 +120,7 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
       await watchFlow({
         flowId: requestStep.Request.FlowVersion.flowId,
         watch: true,
-        userId: context.currentUser.id,
+        entityId: context.currentUser.entityId,
         transaction,
       });
     } else if (type === "identity") {
