@@ -1,5 +1,3 @@
-import { Response } from "@prisma/client";
-
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { MutationNewResponseArgs } from "@graphql/generated/resolver-types";
@@ -15,6 +13,8 @@ import {
 } from "../permission/hasWritePermission";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { getUserEntityIds } from "../user/getUserEntityIds";
+import { UserPrismaType } from "../user/userPrismaTypes";
 import { watchFlow } from "../user/watchFlow";
 
 interface NewUserResponseProps {
@@ -38,9 +38,12 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
     response: { answers, requestStepId },
   } = args;
 
+  // entityId that will be associated with this response
+  let entityId: string;
+  let user: UserPrismaType | undefined;
+  // all entityIds that are associated together as belonging to a single user
+  let entityIds: string[];
   let hasRespondPermissions = false;
-  let existingUserResponse: Response | null = null;
-  let newResponse: Response;
 
   const responseId = await prisma.$transaction(async (transaction) => {
     const requestStep = await transaction.requestStep.findUniqueOrThrow({
@@ -94,72 +97,25 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
           extensions: { code: CustomErrorCodes.Unauthenticated },
         });
 
+      user = context.currentUser;
+      entityId = context.currentUser.entityId;
+      entityIds = getUserEntityIds(context.currentUser);
+
       hasRespondPermissions = await hasWriteUserPermission({
         permission: requestStep.Step.ResponsePermissions,
         context,
         transaction,
       });
-
-      existingUserResponse = await transaction.response.findFirst({
-        where: {
-          requestStepId,
-          OR: [
-            { creatorEntityId: context.currentUser.entityId },
-            { creatorEntityId: { in: context.currentUser.Identities.map((i) => i.entityId) } },
-          ],
-        },
-      });
-
-      newResponse = await transaction.response.create({
-        data: {
-          creatorEntityId: context.currentUser.entityId,
-          requestStepId,
-        },
-      });
-
-      await watchFlow({
-        flowId: requestStep.Request.FlowVersion.flowId,
-        watch: true,
-        entityId: context.currentUser.entityId,
-        transaction,
-        user: context.currentUser,
-      });
     } else if (type === "identity") {
       const { identity } = rest as NewIdentityResponseProps;
+
+      entityId = identity.entityId;
+      entityIds = [entityId];
 
       hasRespondPermissions = await hasWriteIdentityPermission({
         permission: requestStep.Step.ResponsePermissions,
         identity,
         transaction,
-      });
-
-      existingUserResponse = await transaction.response.findFirst({
-        where: {
-          requestStepId,
-          OR: [
-            // response from the identity itself
-            { creatorEntityId: identity.entityId },
-            // response from user that owns this identity
-            {
-              CreatorEntity: {
-                User: {
-                  Identities: {
-                    some: {
-                      id: { equals: identity.id },
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-      });
-
-      newResponse = await transaction.response.create({
-        data: {
-          creatorEntityId: identity.id,
-          requestStepId,
-        },
       });
     }
 
@@ -168,6 +124,13 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         extensions: { code: CustomErrorCodes.InsufficientPermissions },
       });
     }
+
+    const existingUserResponse = await transaction.response.findFirst({
+      where: {
+        requestStepId,
+        creatorEntityId: { in: entityIds },
+      },
+    });
 
     if (!requestStep.Step.allowMultipleResponses) {
       if (existingUserResponse)
@@ -179,12 +142,27 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         );
     }
 
+    const newResponse = await transaction.response.create({
+      data: {
+        creatorEntityId: entityId,
+        requestStepId,
+      },
+    });
+
     await newFieldAnswers({
       fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
       requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
       responseId: newResponse.id,
       transaction,
+    });
+
+    await watchFlow({
+      flowId: requestStep.Request.FlowVersion.flowId,
+      watch: true,
+      entityId,
+      transaction,
+      user,
     });
 
     return newResponse.id;

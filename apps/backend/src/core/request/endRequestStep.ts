@@ -26,7 +26,7 @@ export const endRequestStep = async ({
   const creatorEntityId = requestStep.Request.creatorEntityId;
 
   if (
-    creatorEntityId !== context.currentUser?.id &&
+    creatorEntityId !== context.currentUser?.entityId &&
     !(context.currentUser?.Identities ?? []).some((i) => i.entityId === creatorEntityId)
   )
     throw new GraphQLError("User does not have permission to end this step early.", {
