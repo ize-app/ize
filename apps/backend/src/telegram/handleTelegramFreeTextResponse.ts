@@ -44,7 +44,7 @@ export const handleTelegramFreeTextResponse = async ({
   });
 
   await newResponse({
-    type: "identity",
+    entityContext: { type: "identity", identity },
     args: {
       response: {
         answers: [
@@ -56,7 +56,6 @@ export const handleTelegramFreeTextResponse = async ({
         requestStepId,
       },
     },
-    identity,
   });
 
   // create message record so that if someone replies to this response rather than the original prompt, we can still track the response

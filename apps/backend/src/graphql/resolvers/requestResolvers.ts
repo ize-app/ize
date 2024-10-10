@@ -75,7 +75,7 @@ const newResponse: MutationResolvers["newResponse"] = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newResponseService({ type: "user", args, context });
+  return await newResponseService({ entityContext: { type: "user", context }, args });
 };
 
 const endRequestStep: MutationResolvers["endRequestStep"] = async (

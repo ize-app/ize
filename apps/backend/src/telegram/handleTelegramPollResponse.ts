@@ -27,7 +27,7 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
   });
 
   await newResponse({
-    type: "identity",
+    entityContext: { type: "identity", identity },
     args: {
       response: {
         answers: [
@@ -39,6 +39,5 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
         requestStepId: poll.requestStepId,
       },
     },
-    identity,
   });
 };

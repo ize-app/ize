@@ -2,48 +2,28 @@ import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { MutationNewResponseArgs } from "@graphql/generated/resolver-types";
 
-import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
-import { IdentityPrismaType } from "../entity/identity/identityPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import {
-  hasWriteIdentityPermission,
-  hasWriteUserPermission,
-} from "../permission/hasWritePermission";
+  UserOrIdentityContextInterface,
+  getUserOrIdentityContext,
+} from "../permission/userOrIdentityPermissions";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
-import { getUserEntityIds } from "../user/getUserEntityIds";
-import { UserPrismaType } from "../user/userPrismaTypes";
 import { watchFlow } from "../user/watchFlow";
 
-interface NewUserResponseProps {
-  type: "user";
+interface NewResponseProps {
+  entityContext: UserOrIdentityContextInterface;
   args: MutationNewResponseArgs;
-  context: GraphqlRequestContext;
 }
-
-interface NewIdentityResponseProps {
-  type: "identity";
-  args: MutationNewResponseArgs;
-  identity: IdentityPrismaType;
-}
-
-type NewResponseProps = NewUserResponseProps | NewIdentityResponseProps;
 
 // creates a new response for a given request step
 // validates/creates field answers
-export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Promise<string> => {
+export const newResponse = async ({ entityContext, args }: NewResponseProps): Promise<string> => {
   const {
     response: { answers, requestStepId },
   } = args;
-
-  // entityId that will be associated with this response
-  let entityId: string;
-  let user: UserPrismaType | undefined;
-  // all entityIds that are associated together as belonging to a single user
-  let entityIds: string[];
-  let hasRespondPermissions = false;
 
   const responseId = await prisma.$transaction(async (transaction) => {
     const requestStep = await transaction.requestStep.findUniqueOrThrow({
@@ -88,36 +68,16 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         },
       );
 
-    if (type === "user") {
-      const { context } = rest as NewUserResponseProps;
-      // Use args and context here
-
-      if (!context?.currentUser)
-        throw new GraphQLError("Unauthenticated", {
-          extensions: { code: CustomErrorCodes.Unauthenticated },
-        });
-
-      user = context.currentUser;
-      entityId = context.currentUser.entityId;
-      entityIds = getUserEntityIds(context.currentUser);
-
-      hasRespondPermissions = await hasWriteUserPermission({
-        permission: requestStep.Step.ResponsePermissions,
-        context,
-        transaction,
-      });
-    } else if (type === "identity") {
-      const { identity } = rest as NewIdentityResponseProps;
-
-      entityId = identity.entityId;
-      entityIds = [entityId];
-
-      hasRespondPermissions = await hasWriteIdentityPermission({
-        permission: requestStep.Step.ResponsePermissions,
-        identity,
-        transaction,
-      });
-    }
+    const {
+      entityId,
+      user,
+      entityIds,
+      hasPermission: hasRespondPermissions,
+    } = await getUserOrIdentityContext({
+      entityContext,
+      permission: requestStep.Step.ResponsePermissions,
+      transaction,
+    });
 
     if (!hasRespondPermissions) {
       throw new GraphQLError("User does not have permission to respond", {
