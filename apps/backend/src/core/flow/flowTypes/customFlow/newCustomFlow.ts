@@ -6,10 +6,10 @@ import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests"
 import { newRequest } from "@/core/request/newRequest";
 import { watchFlow } from "@/core/user/watchFlow";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newCustomFlowVersion } from "./newCustomFlowVersion";
-import { prisma } from "../../../prisma/client";
 import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
 
 export const newCustomFlow = async ({

@@ -6,8 +6,8 @@ import { CustomErrorCodes } from "@/graphql/errors";
 import { DecisionType, GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { createEvolveGroupFlowVersionArgs } from "./createEvolveGroupFlowVersionArgs";
+import { newStep } from "../../helpers/newStep";
 import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
-import { newStep } from "../helpers/newStep";
 
 export const newEvolveGroupFlow = async ({
   groupEntityId,

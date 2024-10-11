@@ -11,19 +11,19 @@ import {
   NewStepArgs,
 } from "@/graphql/generated/resolver-types";
 
-import { GroupWatchFlowFields } from "./GroupWatchFlowFields";
-import { createActionConfigForPolicy } from "../helpers/createActionConfigForPolicy";
-import { createDecisionResultConfigForPolicy } from "../helpers/createDecisionResultConfigForPolicy";
-import { createResponseConfigForPolicy } from "../helpers/createResponseConfigForPolicy";
+import { EvolveGroupFields } from "./EvolveGroupFields";
+import { createActionConfigForPolicy } from "../../helpers/createActionConfigForPolicy";
+import { createDecisionResultConfigForPolicy } from "../../helpers/createDecisionResultConfigForPolicy";
+import { createResponseConfigForPolicy } from "../../helpers/createResponseConfigForPolicy";
 
-export const createGroupWatchFlowArgs = ({
+export const createEvolveGroupFlowVersionArgs = ({
   groupEntityId,
-  policy,
   context,
+  policy,
 }: {
   context: GraphqlRequestContext;
-  policy: GroupFlowPolicyArgs;
   groupEntityId: string;
+  policy: GroupFlowPolicyArgs;
 }): NewStepArgs => {
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
@@ -33,17 +33,24 @@ export const createGroupWatchFlowArgs = ({
   const requestFieldSetArgs: FieldArgs[] = [
     {
       type: FieldType.FreeInput,
-      fieldId: "watchFlow",
-      freeInputDataType: FieldDataType.FlowIds,
-      name: GroupWatchFlowFields.WatchFlow,
+      fieldId: "name",
+      freeInputDataType: FieldDataType.String,
+      name: EvolveGroupFields.Name,
+      required: true,
+    },
+    {
+      type: FieldType.FreeInput,
+      fieldId: "description",
+      freeInputDataType: FieldDataType.String,
+      name: EvolveGroupFields.Description,
       required: false,
     },
     {
       type: FieldType.FreeInput,
-      fieldId: "unwatchFlow",
-      freeInputDataType: FieldDataType.FlowIds,
-      name: GroupWatchFlowFields.UnwatchFlow,
-      required: false,
+      fieldId: "members",
+      freeInputDataType: FieldDataType.EntityIds,
+      name: EvolveGroupFields.Members,
+      required: true,
     },
   ];
 
@@ -61,9 +68,9 @@ export const createGroupWatchFlowArgs = ({
       groupEntityId,
       policy,
     }),
-    expirationSeconds: 259200,
     canBeManuallyEnded: false,
+    expirationSeconds: 259200,
     result: decisionResult ? [decisionResult] : [],
-    action: createActionConfigForPolicy({ actionType: ActionType.GroupWatchFlow, policy }),
+    action: createActionConfigForPolicy({ actionType: ActionType.EvolveGroup, policy }),
   };
 };

@@ -1,31 +1,23 @@
 import { Prisma } from "@prisma/client";
 
-import { GraphqlRequestContext } from "@/graphql/context";
-import { GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
+import { EvolveFlowArgs } from "@/graphql/generated/resolver-types";
 
-import { createGroupWatchFlowArgs } from "./createGroupWatchFlowArgs";
-import { newStep } from "../helpers/newStep";
-
-export const newGroupWatchFlowFlowVersion = async ({
+import { createEvolveStepArgs } from "./createEvolveStepArgs";
+import { newStep } from "../../helpers/newStep";
+export const newEvolveFlowVersion = async ({
   transaction,
   flowId,
-  evolveFlowId,
+  evolveArgs,
   active,
-  context,
-  policy,
-  groupEntityId,
 }: {
   transaction: Prisma.TransactionClient;
   flowId: string;
-  evolveFlowId: string;
+  evolveArgs: EvolveFlowArgs;
   active: boolean;
-  context: GraphqlRequestContext;
-  policy: GroupFlowPolicyArgs;
-  groupEntityId: string;
 }): Promise<string> => {
   const flowVersion = await transaction.flowVersion.create({
     data: {
-      name: "Watch/unwatch flow",
+      name: "Evolve flow",
       totalSteps: 1,
       reusable: true,
       active,
@@ -33,7 +25,7 @@ export const newGroupWatchFlowFlowVersion = async ({
       // evolve flow has evolve rights over itself.
       EvolveFlow: {
         connect: {
-          id: evolveFlowId,
+          id: flowId,
         },
       },
       FlowForCurrentVersion: !active
@@ -52,7 +44,7 @@ export const newGroupWatchFlowFlowVersion = async ({
   });
 
   await newStep({
-    args: createGroupWatchFlowArgs({ groupEntityId, context, policy }),
+    args: createEvolveStepArgs(evolveArgs),
     transaction,
     flowVersionId: flowVersion.id,
     index: 0,

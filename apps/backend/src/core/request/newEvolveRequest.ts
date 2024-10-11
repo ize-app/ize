@@ -10,9 +10,9 @@ import { newRequest } from "./newRequest";
 import { prisma } from "../../prisma/client";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { newCustomFlowVersion } from "../flow/customFlow/newCustomFlowVersion";
-import { EvolveFlowFields } from "../flow/evolveFlow/EvolveFlowFields";
-import { newEvolveFlowVersion } from "../flow/evolveFlow/newEvolveFlowVersion";
+import { newCustomFlowVersion } from "../flow/flowTypes/customFlow/newCustomFlowVersion";
+import { EvolveFlowFields } from "../flow/flowTypes/evolveFlow/EvolveFlowFields";
+import { newEvolveFlowVersion } from "../flow/flowTypes/evolveFlow/newEvolveFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options

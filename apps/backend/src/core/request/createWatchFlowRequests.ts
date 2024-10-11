@@ -6,7 +6,7 @@ import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { newRequest } from "./newRequest";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { GroupWatchFlowFields } from "../flow/groupWatchFlows/GroupWatchFlowFields";
+import { GroupWatchFlowFields } from "../flow/flowTypes/groupWatchFlows/GroupWatchFlowFields";
 import { PermissionPrismaType, permissionInclude } from "../permission/permissionPrismaTypes";
 
 export const createWatchFlowRequests = async ({

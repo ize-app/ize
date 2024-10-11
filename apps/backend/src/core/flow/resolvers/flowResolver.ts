@@ -13,8 +13,8 @@ import {
 import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
-import { EvolveGroupFields } from "../evolveGroup/EvolveGroupFields";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
+import { EvolveGroupFields } from "../flowTypes/evolveGroup/EvolveGroupFields";
 import { getFlowName } from "../helpers/getFlowName";
 import { isWatchedFlow } from "../helpers/isWatchedFlow";
 

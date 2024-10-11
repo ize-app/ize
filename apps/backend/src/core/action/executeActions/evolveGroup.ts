@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
-import { EvolveGroupFields } from "@/core/flow/evolveGroup/EvolveGroupFields";
+import { EvolveGroupFields } from "@/core/flow/flowTypes/evolveGroup/EvolveGroupFields";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
