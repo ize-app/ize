@@ -44,7 +44,7 @@ export const getUserEntities = async ({
         include: userInclude,
       });
 
-      entityId = user.entityId;
+      // entityId = user.entityId;
       entityIds = getUserEntityIds(user);
     }
   } else {

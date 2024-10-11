@@ -60,7 +60,7 @@ export const newRequest = async ({
   });
 
   if (!hasRequestPermission)
-    throw new GraphQLError("User does not have permission to respond", {
+    throw new GraphQLError("User does not have permission to request", {
       extensions: { code: CustomErrorCodes.InsufficientPermissions },
     });
 

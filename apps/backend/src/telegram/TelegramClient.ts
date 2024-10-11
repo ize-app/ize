@@ -1,12 +1,9 @@
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
-import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
-
+import { linkGroup, synthesize } from "./commands";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
-import { upsertTelegramChatGroup } from "./upsertTelegramChatGroup";
-import { upsertTelegramIdentity } from "./upsertTelegramIdentity";
 
 dotenv.config();
 
@@ -30,50 +27,19 @@ telegramBot
 
 telegramBot.telegram.setMyCommands([
   { command: "linkgroup", description: "Receive notifications in this chat from Ize" },
+  {
+    command: "synthesize",
+    description:
+      "Ask a question for the group to give their opinion about and have AI synethesize all perspectives.",
+  },
 ]);
 
 telegramBot.command("linkgroup", async (ctx) => {
-  try {
-    const chatId = ctx.message.chat.id; // Telegram group chat ID
-    const messageThreadId = ctx.message.message_thread_id; // topic thread id
-    const fromUserId = ctx.message.from.id; // User's Telegram ID from the group message
+  await linkGroup({ ctx });
+});
 
-    const chat = await ctx.getChat();
-    const chatMember = await ctx.telegram.getChatMember(chatId, fromUserId);
-
-    if (chat.type !== "group" && chat.type !== "supergroup") {
-      ctx.reply("Invalid chat for Ize bot.");
-      return;
-    }
-
-    if (chatMember.status !== "administrator" && chatMember.status !== "creator") {
-      ctx.reply("You do not have permissions to add the bot to this group.");
-      return;
-    }
-
-    const tgGroupId = await upsertTelegramChatGroup({
-      chatId,
-      messageThreadId,
-      title: chat.title,
-      adminTelegramUserId: fromUserId,
-    });
-
-    try {
-      const tgIdentity = await upsertTelegramIdentity({ telegramUserData: chatMember.user });
-      await upsertIdentityGroup({
-        identityId: tgIdentity.id,
-        groupId: tgGroupId,
-        active: true,
-      });
-    } catch (error) {
-      console.log("ERROR: Telegram bot linkgroup command. Error creating telegram identity", error);
-    }
-
-    ctx.reply("Ize will send notifications to this chat");
-  } catch (error) {
-    console.error("ERROR: Telegram bot linkgroup command ", error);
-    ctx.reply("Something went wrong. Please try again.");
-  }
+telegramBot.command("synthesize", async (ctx) => {
+  await synthesize({ ctx });
 });
 
 telegramBot.on("poll_answer", (ctx) => {

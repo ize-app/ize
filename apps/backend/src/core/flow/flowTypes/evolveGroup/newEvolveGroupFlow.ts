@@ -45,7 +45,7 @@ export const newEvolveGroupFlow = async ({
       },
       decision: { type: DecisionType.NumberThreshold, threshold: 1 },
     },
-    creatorEntityId: context.currentUser.id,
+    creatorEntityId: context.currentUser.entityId,
     transaction,
   });
 
