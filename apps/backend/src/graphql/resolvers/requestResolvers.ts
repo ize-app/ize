@@ -34,7 +34,10 @@ const newRequest: MutationResolvers["newRequest"] = async (
 
   return await newRequestService({
     args,
-    context,
+    entityContext: {
+      type: "user",
+      context,
+    },
   });
 };
 
@@ -47,7 +50,10 @@ const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  const requestId = await newEvolveRequestService({ args, context });
+  const requestId = await newEvolveRequestService({
+    args,
+    entityContext: { type: "user", context },
+  });
   // update user groups created while updating flow
   await updateUserGroups({ context });
   return requestId;

@@ -1,11 +1,12 @@
 import { FlowType } from "@prisma/client";
 
+import { getUserEntities } from "@/core/entity/getUserEntities";
+import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
 import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests";
 import { newRequest } from "@/core/request/newRequest";
 import { watchFlow } from "@/core/user/watchFlow";
-import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
-import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newCustomFlowVersion } from "./newCustomFlowVersion";
 import { prisma } from "../../../prisma/client";
@@ -13,19 +14,13 @@ import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
 
 export const newCustomFlow = async ({
   args,
-  context,
+  entityContext,
 }: {
   args: MutationNewFlowArgs;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
+  const { entityId, user } = await getUserEntities({ entityContext });
 
-  const user = context.currentUser;
-
-  const creatorEntityId = user.entityId;
   let evolveFlowId: string | null = null;
   const flowId = await prisma.$transaction(async (transaction) => {
     if (!args.flow.evolve && args.flow.reusable)
@@ -36,7 +31,7 @@ export const newCustomFlow = async ({
     if (args.flow.evolve && args.flow.reusable) {
       evolveFlowId = await newEvolveFlow({
         evolveArgs: args.flow.evolve,
-        creatorEntityId: creatorEntityId,
+        creatorEntityId: entityId,
         transaction,
       });
     }
@@ -45,7 +40,7 @@ export const newCustomFlow = async ({
       data: {
         type: FlowType.Custom,
         reusable: args.flow.reusable,
-        creatorEntityId: creatorEntityId,
+        creatorEntityId: entityId,
       },
     });
 
@@ -75,7 +70,7 @@ export const newCustomFlow = async ({
     return flow.id;
   });
 
-  await createWatchFlowRequests({ flowId, context });
+  await createWatchFlowRequests({ flowId, entityContext });
 
   if (!args.flow.reusable) {
     const requestId = await newRequest({
@@ -87,11 +82,12 @@ export const newCustomFlow = async ({
           requestDefinedOptions: [],
         },
       },
-      context,
+      entityContext,
     });
     return requestId;
   } else {
-    await watchFlow({ flowId, watch: true, entityId: context.currentUser.entityId, user });
+    // creating a request also watches flow so not calling that for nonreusable flow block
+    await watchFlow({ flowId, watch: true, entityId, user });
     return flowId;
   }
 };

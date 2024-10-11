@@ -1,27 +1,22 @@
 import { FlowType } from "@prisma/client";
 
-import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import { newRequest } from "./newRequest";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { GroupWatchFlowFields } from "../flow/groupWatchFlows/GroupWatchFlowFields";
 import { PermissionPrismaType, permissionInclude } from "../permission/permissionPrismaTypes";
 
 export const createWatchFlowRequests = async ({
   flowId,
-  context,
+  entityContext,
 }: {
   flowId: string;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
 }) => {
   try {
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-
     // Find all entities referenced on this flow
     const data = await prisma.flow.findUniqueOrThrow({
       include: {
@@ -97,7 +92,7 @@ export const createWatchFlowRequests = async ({
               flowId: flow.id,
             },
           },
-          context,
+          entityContext,
         });
       } catch (e) {
         // fail silently if insufficient permissions

@@ -4,80 +4,68 @@ import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
 
 import { createRequestDefinedOptionSet } from "./createRequestDefinedOptionSet";
-import { GraphqlRequestContext } from "../../graphql/context";
 import { executeAction } from "../action/executeActions/executeAction";
 import { entityInclude } from "../entity/entityPrismaTypes";
+import { getUserEntities } from "../entity/getUserEntities";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
-import { hasWriteUserPermission } from "../permission/hasWritePermission";
-import { getUserEntityIds } from "../user/getUserEntityIds";
+import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
 export const newRequest = async ({
   args,
-  context,
+  entityContext,
   // proposed flow version id is used when creating an evolution request
   proposedFlowVersionId,
 }: {
   args: MutationNewRequestArgs;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
   proposedFlowVersionId?: string;
 }): Promise<string> => {
   const {
     request: { requestDefinedOptions, requestFields, flowId },
   } = args;
 
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  const { entityId, entityIds, user } = await getUserEntities({ entityContext });
+
+  const flow = await prisma.flow.findUniqueOrThrow({
+    where: {
+      id: flowId,
+    },
+    include: createFlowInclude(entityIds),
+  });
+
+  if (!flow.CurrentFlowVersion)
+    throw new GraphQLError("Missing current version of flow", {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  const user = context.currentUser;
+  if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
+    throw new GraphQLError(
+      `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
-  const userEntityIds = getUserEntityIds(user);
+  const step = flow.CurrentFlowVersion.Steps[0];
+  const flowVersionId = flow.CurrentFlowVersion.id;
+
+  const hasRequestPermission = await getEntityPermissions({
+    entityContext,
+    permission: step.RequestPermissions,
+  });
+
+  if (!hasRequestPermission)
+    throw new GraphQLError("User does not have permission to respond", {
+      extensions: { code: CustomErrorCodes.InsufficientPermissions },
+    });
 
   const [requestId, requestStepId, executeActionAutomatically] = await prisma.$transaction(
     async (transaction) => {
-      const flow = await transaction.flow.findUniqueOrThrow({
-        where: {
-          id: flowId,
-        },
-        include: createFlowInclude(userEntityIds),
-      });
-
-      if (!context.currentUser)
-        throw new GraphQLError("Unauthenticated", {
-          extensions: { code: CustomErrorCodes.Unauthenticated },
-        });
-
-      if (!flow.CurrentFlowVersion)
-        throw new GraphQLError("Missing current version of flow", {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        });
-
-      if (flow.type === FlowType.Evolve && !proposedFlowVersionId)
-        throw new GraphQLError(
-          `Request for evolve flow id ${flow.id} is missing proposedFlowVersionId`,
-          {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          },
-        );
-
-      const step = flow.CurrentFlowVersion.Steps[0];
-
-      const hasRequestPermission = await hasWriteUserPermission({
-        permission: step.RequestPermissions,
-        context,
-        transaction,
-      });
-
-      if (!hasRequestPermission)
-        throw new GraphQLError("User does not have permission to respond", {
-          extensions: { code: CustomErrorCodes.InsufficientPermissions },
-        });
-
       const request = await transaction.request.create({
         include: {
           CreatorEntity: {
@@ -86,8 +74,8 @@ export const newRequest = async ({
         },
         data: {
           name: args.request.name,
-          flowVersionId: flow.CurrentFlowVersion.id,
-          creatorEntityId: context.currentUser.entityId,
+          flowVersionId: flowVersionId,
+          creatorEntityId: entityId,
           proposedFlowVersionId,
           final: false,
         },
@@ -151,7 +139,7 @@ export const newRequest = async ({
     await executeAction({ requestStepId: requestStepId });
   }
 
-  await watchFlow({ flowId: flowId, watch: true, entityId: user.entityId, user });
+  await watchFlow({ flowId: flowId, watch: true, entityId, user });
 
   await sendNewStepNotifications({
     flowId: flowId,

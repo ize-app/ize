@@ -7,8 +7,8 @@ import {
 } from "@graphql/generated/resolver-types";
 
 import { newRequest } from "./newRequest";
-import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { newCustomFlowVersion } from "../flow/customFlow/newCustomFlowVersion";
 import { EvolveFlowFields } from "../flow/evolveFlow/EvolveFlowFields";
@@ -18,10 +18,10 @@ import { newEvolveFlowVersion } from "../flow/evolveFlow/newEvolveFlowVersion";
 // validates/creates request fields and request defined options
 export const newEvolveRequest = async ({
   args,
-  context,
+  entityContext,
 }: {
   args: MutationNewEvolveRequestArgs;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
   const [requestArgs, proposedFlowVersionId] = await prisma.$transaction(async (transaction) => {
     let draftEvolveFlowVersionId: string | null = null;
@@ -159,7 +159,7 @@ export const newEvolveRequest = async ({
 
   return await newRequest({
     args: { request: requestArgs },
-    context,
+    entityContext,
     proposedFlowVersionId,
   });
 };

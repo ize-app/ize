@@ -38,7 +38,13 @@ const newFlow: MutationResolvers["newFlow"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  const flowId = await newCustomFlowService({ args, context });
+  const flowId = await newCustomFlowService({
+    args,
+    entityContext: {
+      type: "user",
+      context,
+    },
+  });
 
   // associate user with any new identities that were created when creating the new flow
   await updateUserGroups({ context });

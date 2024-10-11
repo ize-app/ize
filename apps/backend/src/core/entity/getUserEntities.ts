@@ -1,46 +1,25 @@
 import { Prisma } from "@prisma/client";
 
-import { GraphqlRequestContext } from "@/graphql/context";
+import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
-import { IdentityPrismaType } from "../entity/identity/identityPrismaTypes";
-import {
-  hasWriteIdentityPermission,
-  hasWriteUserPermission,
-} from "../permission/hasWritePermission";
-import { PermissionPrismaType } from "../permission/permissionPrismaTypes";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { getUserEntityIds } from "../user/getUserEntityIds";
 import { UserPrismaType, userInclude } from "../user/userPrismaTypes";
 
-interface IdentityContext {
-  type: "user";
-  context: GraphqlRequestContext;
-}
-
-interface UserContext {
-  type: "identity";
-  identity: IdentityPrismaType;
-}
-
-export type UserOrIdentityContextInterface = IdentityContext | UserContext;
-
-
-// an action can sometimes be initited by a user (when logged in into the app) or an identity (if the user is interacting via Ize through another platform)
-export const getUserOrIdentityContext = async ({
+// since functions can be called by both users and identities, this function returns normalized data for both entity types
+export const getUserEntities = async ({
   entityContext,
-  permission,
-  transaction,
+  transaction = prisma,
 }: {
   entityContext: UserOrIdentityContextInterface;
-  permission: PermissionPrismaType | null;
-  transaction: Prisma.TransactionClient;
+  transaction?: Prisma.TransactionClient;
 }) => {
   // entityId that will be associated with this response
   let entityId: string;
   let user: UserPrismaType | undefined;
   // all entityIds that are associated together as belonging to a single user
   let entityIds: string[];
-  let hasPermission = false;
   if (entityContext.type === "user") {
     const { context } = entityContext;
     // Use args and context here
@@ -53,35 +32,26 @@ export const getUserOrIdentityContext = async ({
     user = context.currentUser;
     entityId = context.currentUser.entityId;
     entityIds = getUserEntityIds(context.currentUser);
-
-    hasPermission = await hasWriteUserPermission({
-      permission: permission,
-      context,
-      transaction,
-    });
   } else if (entityContext.type === "identity") {
     const { identity } = entityContext;
+
+    entityId = identity.entityId;
+    entityIds = [entityId];
 
     if (identity.userId) {
       user = await transaction.user.findUniqueOrThrow({
         where: { id: identity.userId },
         include: userInclude,
       });
+
+      entityId = user.entityId;
+      entityIds = getUserEntityIds(user);
     }
-
-    entityId = identity.entityId;
-    entityIds = [entityId];
-
-    hasPermission = await hasWriteIdentityPermission({
-      permission: permission,
-      identity,
-      transaction,
-    });
   } else {
     throw new GraphQLError("Invalid entity context", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   }
 
-  return { entityId, user, entityIds, hasPermission };
+  return { entityId, entityIds, user };
 };

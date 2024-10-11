@@ -3,12 +3,11 @@ import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/
 import { MutationNewResponseArgs } from "@graphql/generated/resolver-types";
 
 import { prisma } from "../../prisma/client";
+import { getUserEntities } from "../entity/getUserEntities";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import {
-  UserOrIdentityContextInterface,
-  getUserOrIdentityContext,
-} from "../permission/userOrIdentityPermissions";
+import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 import { watchFlow } from "../user/watchFlow";
@@ -68,16 +67,13 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
         },
       );
 
-    const {
-      entityId,
-      user,
-      entityIds,
-      hasPermission: hasRespondPermissions,
-    } = await getUserOrIdentityContext({
+    const hasRespondPermissions = await getEntityPermissions({
       entityContext,
       permission: requestStep.Step.ResponsePermissions,
       transaction,
     });
+
+    const { entityId, entityIds, user } = await getUserEntities({ entityContext, transaction });
 
     if (!hasRespondPermissions) {
       throw new GraphQLError("User does not have permission to respond", {
