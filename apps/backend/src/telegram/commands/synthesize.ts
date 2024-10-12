@@ -22,7 +22,15 @@ export const synthesize = async ({
   if (!telegramUser) throw Error("No telegram user found");
 
   const identity = await upsertTelegramIdentity({ telegramUserData: telegramUser });
-  const prompt = ctx.message.text;
+  const rawPrompt = ctx.message.text;
+
+  // remove first word (command) from prompt and all trailing leading spaces
+  const prompt = rawPrompt.replace(/^\s*\S+\s*/, "").trim();
+
+  if (prompt.length < 2) {
+    ctx.reply("Please provide a complete question that you'd like to the group to respond to.");
+    return;
+  }
 
   const telegramGroup = await prisma.groupTelegramChat.findUniqueOrThrow({
     where: {
