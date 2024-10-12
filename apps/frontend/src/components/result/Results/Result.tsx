@@ -58,6 +58,9 @@ export const Result = ({
           resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
           requestStatus={requestStepStatus}
         />
+        <Typography color="primary" fontSize="1rem">
+          {field?.name}
+        </Typography>
         {displayDescripton && (
           <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
             {createResultConfigDescription(resultConfig)}

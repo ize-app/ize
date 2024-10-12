@@ -67,6 +67,7 @@ export const TextField = <T extends FieldValues>({
             InputProps={{
               endAdornment,
               startAdornment,
+              multiline: true,
             }}
           />
           <FormHelperText

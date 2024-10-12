@@ -77,7 +77,7 @@ export const newCustomFlow = async ({
       args: {
         request: {
           flowId: flowId,
-          name: args.flow.name,
+          name: args.flow.requestName ?? args.flow.name ?? "",
           requestFields: [],
           requestDefinedOptions: [],
         },

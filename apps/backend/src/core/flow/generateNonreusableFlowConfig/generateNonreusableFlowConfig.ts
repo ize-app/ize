@@ -31,6 +31,7 @@ export const generateNonreusableFlowConfig = ({
       return {
         name: "Synthesize group perspectives",
         reusable: false,
+        requestName: prompt,
         steps: [
           {
             request: { permission: { anyone: false, entities: [] }, fields: [] },

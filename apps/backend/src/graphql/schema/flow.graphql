@@ -96,6 +96,8 @@ input NewFlowArgs {
   reusable: Boolean!
   steps: [NewStepArgs!]!
   evolve: EvolveFlowArgs
+  # only used if flow is non-reusable (which means initial request is triggered automatically)
+  requestName: String
 }
 
 input NewStepArgs {

@@ -645,6 +645,7 @@ export type NewEvolveRequestArgs = {
 export type NewFlowArgs = {
   evolve?: InputMaybe<EvolveFlowArgs>;
   name: Scalars['String']['input'];
+  requestName?: InputMaybe<Scalars['String']['input']>;
   reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
 };
@@ -2284,6 +2285,7 @@ export type NewEvolveRequestArgs = {
 export type NewFlowArgs = {
   evolve?: InputMaybe<EvolveFlowArgs>;
   name: Scalars['String']['input'];
+  requestName?: InputMaybe<Scalars['String']['input']>;
   reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
 };
