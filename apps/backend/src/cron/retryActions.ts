@@ -1,6 +1,4 @@
 import { executeAction } from "../core/action/executeActions/executeAction";
-import { stepInclude } from "../core/flow/flowPrismaTypes";
-import { resultInclude } from "../core/result/resultPrismaTypes";
 import { prisma } from "../prisma/client";
 
 export const retryActions = async () => {
@@ -11,14 +9,6 @@ export const retryActions = async () => {
         resultsFinal: true,
         actionsFinal: false,
         final: false,
-      },
-      include: {
-        Step: {
-          include: stepInclude,
-        },
-        Results: {
-          include: resultInclude,
-        },
       },
     });
 

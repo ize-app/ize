@@ -5,12 +5,12 @@ export const createResultsPayload = (request: Request): WebhookValue[] => {
   const results: WebhookValue[] = [];
 
   request.steps.map((step, stepIndex) => {
-    (step.results ?? []).forEach((result) => {
+    (step.results ?? []).forEach((resultGroup) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
-        return r.resultConfigId === result.resultConfigId;
+        return r.resultConfigId === resultGroup.resultConfigId;
       });
       if (!resultConfig)
-        throw new GraphQLError(`Cannot find result config for result id: ${result.id}`, {
+        throw new GraphQLError(`Cannot find result config for result id: ${resultGroup.id}`, {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
@@ -24,6 +24,9 @@ export const createResultsPayload = (request: Request): WebhookValue[] => {
             extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
           },
         );
+
+      // TODO: change result output type for when there are multiple results in a result group
+      const result = resultGroup.results[0];
 
       if (result.resultItems.length === 1) {
         results.push({

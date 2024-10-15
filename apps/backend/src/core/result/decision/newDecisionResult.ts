@@ -5,7 +5,11 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { determineDecision } from "./determineDecision";
 import { prisma } from "../../../prisma/client";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import {
+  ResultConfigPrismaType,
+  ResultGroupPrismaType,
+  resultGroupInclude,
+} from "../resultPrismaTypes";
 
 // returns result if there is no result
 export const newDecisionResult = async ({
@@ -16,7 +20,7 @@ export const newDecisionResult = async ({
   resultConfig: ResultConfigPrismaType;
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
-}): Promise<ResultPrismaType> => {
+}): Promise<ResultGroupPrismaType> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
   let decisionFieldOption: FieldOption | null = null;
 
@@ -40,32 +44,39 @@ export const newDecisionResult = async ({
     });
   }
 
-  const resultArgs: Prisma.ResultUncheckedCreateInput = {
+  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
     itemCount: decisionFieldOption ? 1 : 0,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
     hasResult: !!decisionFieldOption,
-    ResultItems: decisionFieldOption
+    Result: decisionFieldOption
       ? {
           create: {
-            dataType: decisionFieldOption.dataType,
-            value: decisionFieldOption.name,
-            fieldOptionId: decisionFieldOption.id,
+            name: "Decision",
+            itemCount: 1,
+            index: 0,
+            ResultItems: {
+              create: {
+                dataType: decisionFieldOption.dataType,
+                value: decisionFieldOption.name,
+                fieldOptionId: decisionFieldOption.id,
+              },
+            },
           },
         }
       : undefined,
   };
 
   ////// upsert results for decision
-  return await prisma.result.upsert({
+  return await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
         resultConfigId: resultConfig.id,
       },
     },
-    include: resultInclude,
+    include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
   });

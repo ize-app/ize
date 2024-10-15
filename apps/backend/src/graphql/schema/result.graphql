@@ -1,8 +1,13 @@
-type Result {
+type ResultGroup {
   id: String!
   createdAt: String!
   resultConfigId: String!
   hasResult: Boolean!
+  results: [Result!]!
+}
+
+type Result {
+  name: String!
   resultItems: [ResultItem!]!
 }
 

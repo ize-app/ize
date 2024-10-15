@@ -25,9 +25,11 @@ export const getRequestResults = ({ request }: { request: Request }): GenericFie
           },
         );
 
+      // TODO fix this so that it shows all results in a result group
+
       results.push({
         fieldName: field.name,
-        value: result.resultItems.map((item) => item.value),
+        value: result.results[0].resultItems.map((item) => item.value),
       });
     });
   });

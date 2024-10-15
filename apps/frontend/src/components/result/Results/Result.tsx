@@ -8,7 +8,7 @@ import {
   FieldFragment,
   FieldType,
   ResultConfigFragment,
-  ResultFragment,
+  ResultGroupFragment,
   ResultType,
   Status,
 } from "@/graphql/generated/graphql";
@@ -21,7 +21,7 @@ import { resultTypeDisplay } from "../resultTypeDisplay";
 export const Result = ({
   resultConfig,
   field,
-  result,
+  resultGroup,
   requestStepStatus,
   displayDescripton,
   onlyShowSelections = false,
@@ -29,7 +29,7 @@ export const Result = ({
 }: {
   resultConfig: ResultConfigFragment;
   field: FieldFragment | null;
-  result: ResultFragment | null;
+  resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
@@ -66,7 +66,7 @@ export const Result = ({
             {createResultConfigDescription(resultConfig)}
           </Typography>
         )}
-        {result && !result?.hasResult && (
+        {resultGroup && !resultGroup?.hasResult && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
             <DoNotDisturbIcon color="warning" fontSize="small" />
             <Typography variant="description" color={(theme) => theme.palette.warning.main}>
@@ -75,21 +75,38 @@ export const Result = ({
             </Typography>
           </Box>
         )}
-        {field &&
+        {resultGroup &&
+          resultGroup.results.map((result) => {
+            return (
+              <>
+                {field &&
+                  field.__typename === FieldType.Options &&
+                  (resultGroup || (!resultGroup && displayFieldOptionsIfNoResult)) && (
+                    <FieldOptions
+                      fieldOptions={field}
+                      final={!!result}
+                      optionSelections={result.resultItems}
+                      onlyShowSelections={onlyShowSelections}
+                    />
+                  )}
+                {field &&
+                  field.__typename === FieldType.FreeInput &&
+                  result.resultItems.map((item) => (
+                    <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
+                  ))}
+              </>
+            );
+          })}
+        {!resultGroup &&
+          field &&
           field.__typename === FieldType.Options &&
-          (result || (!result && displayFieldOptionsIfNoResult)) && (
+          displayFieldOptionsIfNoResult && (
             <FieldOptions
               fieldOptions={field}
-              final={!!result}
-              optionSelections={result?.resultItems}
+              final={false}
               onlyShowSelections={onlyShowSelections}
             />
           )}
-        {field &&
-          field.__typename === FieldType.FreeInput &&
-          result?.resultItems.map((item) => (
-            <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
-          ))}
       </Box>
     </LabeledGroupedInputs>
   );

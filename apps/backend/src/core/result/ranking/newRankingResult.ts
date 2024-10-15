@@ -4,7 +4,11 @@ import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import {
+  ResultConfigPrismaType,
+  ResultGroupPrismaType,
+  resultGroupInclude,
+} from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
 // returns result if there is no result
@@ -16,7 +20,7 @@ export const newRankingResult = async ({
   resultConfig: ResultConfigPrismaType;
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
-}): Promise<ResultPrismaType> => {
+}): Promise<ResultGroupPrismaType> => {
   const rankConfig = resultConfig.ResultConfigRank;
 
   if (resultConfig.resultType !== ResultType.Ranking || !rankConfig)
@@ -39,39 +43,46 @@ export const newRankingResult = async ({
 
   const hasResult = rankFieldOptions.length > 0;
 
-  const resultArgs: Prisma.ResultUncheckedCreateInput = {
-    itemCount: rankFieldOptions.length,
+  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
+    itemCount: hasResult ? 1 : 0,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
     hasResult,
-    ResultItems: hasResult
+    Result: hasResult
       ? {
-          createMany: {
-            data: rankFieldOptions
-              .map((option) => ({
-                dataType: option.dataType,
-                value: option.name,
-                fieldOptionId: option.id,
-                // calculate average weight of each option
-                weight: optionCount[option.id] / fieldAnswers.length,
-              }))
-              // rank in ascending order of weight
-              .sort((a, b) => b.weight - a.weight)
-              .slice(0, rankConfig.numOptionsToInclude ?? undefined),
+          create: {
+            name: "Ranking",
+            itemCount: rankFieldOptions.length,
+            index: 0,
+            ResultItems: {
+              createMany: {
+                data: rankFieldOptions
+                  .map((option) => ({
+                    dataType: option.dataType,
+                    value: option.name,
+                    fieldOptionId: option.id,
+                    // calculate average weight of each option
+                    weight: optionCount[option.id] / fieldAnswers.length,
+                  }))
+                  // rank in ascending order of weight
+                  .sort((a, b) => b.weight - a.weight)
+                  .slice(0, rankConfig.numOptionsToInclude ?? undefined),
+              },
+            },
           },
         }
       : undefined,
   };
 
-  return await prisma.result.upsert({
+  return await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
         resultConfigId: resultConfig.id,
       },
     },
-    include: resultInclude,
+    include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
   });

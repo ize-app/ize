@@ -6,7 +6,7 @@ import { prisma } from "@/prisma/client";
 import { endTelegramPolls } from "@/telegram/endTelegramPolls";
 
 import { runResultsForStep } from "./runResultsForStep";
-import { resultInclude } from "../resultPrismaTypes";
+import { resultGroupInclude } from "../resultPrismaTypes";
 
 // creates the results and then runs actions for a given request Step
 // should only be run if resultsComplete is false
@@ -20,8 +20,8 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
         Step: {
           include: stepInclude,
         },
-        Results: {
-          include: resultInclude,
+        ResultGroups: {
+          include: resultGroupInclude,
         },
         Responses: {
           include: responseInclude,
@@ -32,7 +32,7 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
     const results = await runResultsForStep({
       step: reqStep.Step,
       responses: reqStep.Responses,
-      existingResults: reqStep.Results,
+      existingResults: reqStep.ResultGroups,
       requestStepId,
     });
 

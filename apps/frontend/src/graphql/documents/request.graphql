@@ -78,7 +78,7 @@ fragment RequestStep on RequestStep {
     ...Response
   }
   results {
-    ...Result
+    ...ResultGroup
   }
   actionExecution {
     ...ActionExecution

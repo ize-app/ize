@@ -84,7 +84,7 @@ type RequestStep {
   responseFieldAnswers: [UserFieldAnswers!]!
   responseFields: [Field!]!
   userResponses: [Response!]!
-  results: [Result!]!
+  results: [ResultGroup!]!
   actionExecution: ActionExecution
   responseComplete: Boolean!
   resultsComplete: Boolean!

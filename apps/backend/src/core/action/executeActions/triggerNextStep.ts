@@ -74,15 +74,27 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
         linkedResults.forEach((resultConfigId) => {
           // iterate through all request Steps's results to find results associated with the linked result config id
           reqData.Request.RequestSteps.forEach(async (rs) => {
-            const result = rs.Results.find((r) => r.resultConfigId === resultConfigId);
-            if (!result) {
+            const resultGroup = rs.ResultGroups.find((r) => r.resultConfigId === resultConfigId);
+            if (!resultGroup) {
               throw new GraphQLError(
-                `Cannot find result for resultConfigId ${resultConfigId} in requestStepId ${rs.id}`,
+                `Cannot find result group for resultConfigId ${resultConfigId} in requestStepId ${rs.id}`,
                 {
                   extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
                 },
               );
             }
+            // 0 index is primary result for the result group
+            const result = resultGroup.Result.find((r) => r.index === 0);
+
+            if (!result) {
+              throw new GraphQLError(
+                `Cannot find primary result in resultGroup ${resultGroup.id}`,
+                {
+                  extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+                },
+              );
+            }
+
             const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
               return {
                 dataType: ri.dataType as unknown as FieldDataType,

@@ -623,7 +623,7 @@ model ResultConfig {
   ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
   ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
   ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
-  Results                      Result[]
+  ResultGroups                 ResultGroup[]
   ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
 
   @@map("result_configs")
@@ -776,7 +776,7 @@ model RequestStep {
   Step                     Step                      @relation(fields: [stepId], references: [id], onDelete: Cascade)
   CurrentStepParent        Request?                  @relation("CurrentRequestStep")
   RequestFieldAnswers      FieldAnswer[]
-  Results                  Result[]
+  ResultGroups             ResultGroup[]
   RequestDefinedOptionSets RequestDefinedOptionSet[]
   Responses                Response[]
   ActionExecution          ActionExecution[]
@@ -840,25 +840,39 @@ model ResultConfigSetResultConfigs {
 // so if a step has two result Configs, there will be two Results every time that Result rows
 // A given result is associated with one or more result items (e.g. a single decision vs a prioritized list of options)
 // The result model is an attempt of a result creation, but there may not actually be results in this attempt (e.g. the minimum vote threshold isn't hit for a decision)
-model Result {
-  id             String    @id @default(uuid()) @db.Uuid
+model ResultGroup {
+  id             String       @id @default(uuid()) @db.Uuid
   // final doesn't mean that there are results, but rather that there will be no more attempts to create a result for this resultConfig
-  final          Boolean   @default(false)
-  requestStepId  String    @map("request_step_id") @db.Uuid
-  resultConfigId String    @map("result_config_id") @db.Uuid
+  final          Boolean      @default(false)
+  requestStepId  String       @map("request_step_id") @db.Uuid
+  resultConfigId String       @map("result_config_id") @db.Uuid
   // Number of items within result array
-  itemCount      Int       @map("itemCount")
-  hasResult      Boolean   @map("has_result")
-  retryAttempts  Int       @default(0) @map("retry_attempts")
-  nextRetryAt    DateTime? @map("next_retry_at")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
-
-  RequestStep  RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
-  ResultConfig ResultConfig  @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
-  ResultItems  ResultItems[]
+  itemCount      Int          @map("itemCount")
+  hasResult      Boolean      @map("has_result")
+  retryAttempts  Int          @default(0) @map("retry_attempts")
+  nextRetryAt    DateTime?    @map("next_retry_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  Result         Result[]
+  RequestStep    RequestStep  @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  ResultConfig   ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
 
   @@unique([requestStepId, resultConfigId])
+  @@map("result_groups")
+}
+
+model Result {
+  id            String @id @default(uuid()) @db.Uuid
+  itemCount     Int    @map("itemCount")
+  resultGroupId String @map("result_group_id") @db.Uuid
+  name          String
+
+  // 0 index is primary result
+  index Int
+
+  ResultGroup ResultGroup   @relation(fields: [resultGroupId], references: [id], onDelete: Cascade)
+  ResultItems ResultItems[]
+
   @@map("results")
 }
 

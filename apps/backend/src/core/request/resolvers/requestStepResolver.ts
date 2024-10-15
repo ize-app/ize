@@ -1,7 +1,7 @@
 import { actionExecutionResolver } from "@/core/action/actionExecutionResolver";
 import { responsesResolver } from "@/core/response/responseResolver";
-import { resultResolver } from "@/core/result/resolvers/resultResolver";
-import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
+import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
+import { ResultGroupPrismaType } from "@/core/result/resultPrismaTypes";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
 
@@ -50,7 +50,9 @@ export const requestStepResolver = async ({
     actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action, requestFinal),
     responseFieldAnswers,
     userResponses,
-    results: reqStep.Results.map((result: ResultPrismaType) => resultResolver(result)),
+    results: reqStep.ResultGroups.map((result: ResultGroupPrismaType) =>
+      resultGroupResolver(result),
+    ),
     responseComplete: reqStep.final,
     resultsComplete: reqStep.final,
     final: reqStep.final,

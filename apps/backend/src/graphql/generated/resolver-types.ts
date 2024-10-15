@@ -897,7 +897,7 @@ export type RequestStep = {
   responseComplete: Scalars['Boolean']['output'];
   responseFieldAnswers: Array<UserFieldAnswers>;
   responseFields: Array<Field>;
-  results: Array<Result>;
+  results: Array<ResultGroup>;
   resultsComplete: Scalars['Boolean']['output'];
   userResponses: Array<Response>;
 };
@@ -953,10 +953,7 @@ export type ResponseConfig = {
 
 export type Result = {
   __typename?: 'Result';
-  createdAt: Scalars['String']['output'];
-  hasResult: Scalars['Boolean']['output'];
-  id: Scalars['String']['output'];
-  resultConfigId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
   resultItems: Array<ResultItem>;
 };
 
@@ -972,6 +969,15 @@ export type ResultArgs = {
 };
 
 export type ResultConfig = Decision | LlmSummary | LlmSummaryList | Ranking;
+
+export type ResultGroup = {
+  __typename?: 'ResultGroup';
+  createdAt: Scalars['String']['output'];
+  hasResult: Scalars['Boolean']['output'];
+  id: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+  results: Array<Result>;
+};
 
 export type ResultItem = {
   __typename?: 'ResultItem';
@@ -1304,6 +1310,7 @@ export type ResolversTypes = {
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
+  ResultGroup: ResolverTypeWrapper<ResultGroup>;
   ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
   Status: Status;
@@ -1423,6 +1430,7 @@ export type ResolversParentTypes = {
   Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
+  ResultGroup: ResultGroup;
   ResultItem: ResultItem;
   Step: Omit<Step, 'action' | 'request' | 'response' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, request: ResolversParentTypes['RequestConfig'], response: ResolversParentTypes['ResponseConfig'], result: Array<ResolversParentTypes['ResultConfig']> };
   StepRequestArgs: StepRequestArgs;
@@ -1903,7 +1911,7 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   responseComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   responseFieldAnswers?: Resolver<Array<ResolversTypes['UserFieldAnswers']>, ParentType, ContextType>;
   responseFields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
-  results?: Resolver<Array<ResolversTypes['Result']>, ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['ResultGroup']>, ParentType, ContextType>;
   resultsComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   userResponses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1947,16 +1955,22 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
 };
 
 export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  hasResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
   __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'LlmSummaryList' | 'Ranking', ParentType, ContextType>;
+};
+
+export type ResultGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultGroup'] = ResolversParentTypes['ResultGroup']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hasResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Result']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ResultItemResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultItem'] = ResolversParentTypes['ResultItem']> = {
@@ -2107,6 +2121,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
+  ResultGroup?: ResultGroupResolvers<ContextType>;
   ResultItem?: ResultItemResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;

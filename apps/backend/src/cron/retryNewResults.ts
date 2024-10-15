@@ -1,9 +1,4 @@
-// import { telegramBot } from "@/telegram/TelegramClient";
-
-import { stepInclude } from "../core/flow/flowPrismaTypes";
-import { responseInclude } from "../core/response/responsePrismaTypes";
 import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
-import { resultInclude } from "../core/result/resultPrismaTypes";
 import { prisma } from "../prisma/client";
 export const retryNewResults = async () => {
   try {
@@ -13,17 +8,6 @@ export const retryNewResults = async () => {
         responseFinal: true,
         resultsFinal: false,
         final: false,
-      },
-      include: {
-        Step: {
-          include: stepInclude,
-        },
-        Responses: {
-          include: responseInclude,
-        },
-        Results: {
-          include: resultInclude,
-        },
       },
     });
 

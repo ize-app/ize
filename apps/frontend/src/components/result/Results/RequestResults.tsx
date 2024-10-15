@@ -5,7 +5,7 @@ import {
   FieldFragment,
   RequestFragment,
   ResultConfigFragment,
-  ResultFragment,
+  ResultGroupFragment,
   Status,
 } from "@/graphql/generated/graphql";
 
@@ -14,7 +14,7 @@ import { Result } from "./Result";
 interface HydratedResultData {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
-  result: ResultFragment | null;
+  resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
 }
 
@@ -32,11 +32,11 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
 
     step.result.forEach((resultConfig) => {
       const field = step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
-      const result =
+      const resultGroup =
         request.steps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
         ) ?? null;
-      if (field) hydratedResults.push({ field, resultConfig, result, requestStepStatus });
+      if (field) hydratedResults.push({ field, resultConfig, resultGroup, requestStepStatus });
     });
   });
 

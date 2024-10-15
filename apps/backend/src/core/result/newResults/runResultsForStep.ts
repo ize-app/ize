@@ -8,7 +8,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { newDecisionResult } from "../decision/newDecisionResult";
 import { newLlmSummaryResult } from "../llm/newLlmSummaryResult";
 import { newRankingResult } from "../ranking/newRankingResult";
-import { ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import { ResultGroupPrismaType, resultGroupInclude } from "../resultPrismaTypes";
 import { getFieldAnswersFromResponses } from "../utils/getFieldAnswersFromResponses";
 
 // goal is to attempt results for each resultConfig and create and array of both complete and incomplete results
@@ -23,13 +23,13 @@ export const runResultsForStep = async ({
   requestStepId: string;
   step: StepPrismaType;
   responses: ResponsePrismaType[];
-  existingResults?: ResultPrismaType[];
-}): Promise<ResultPrismaType[]> => {
+  existingResults?: ResultGroupPrismaType[];
+}): Promise<ResultGroupPrismaType[]> => {
   return await prisma.$transaction(async (transaction) => {
     const resultConfigs =
       step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
-    const attempetdResults = await Promise.all(
+    const attempetdResults: ResultGroupPrismaType[] = await Promise.all(
       resultConfigs.map(async (resultConfig) => {
         const maxResultRetries = 20;
 
@@ -38,7 +38,7 @@ export const runResultsForStep = async ({
         if (existingResult?.final) return existingResult;
         // if result has been retried too many times, mark as complete but with no result
         if ((existingResult?.retryAttempts ?? 0) > maxResultRetries) {
-          await prisma.result.update({
+          await prisma.resultGroup.update({
             where: {
               requestStepId_resultConfigId: {
                 requestStepId,
@@ -73,8 +73,8 @@ export const runResultsForStep = async ({
         // if there aren't enough anwers to create result, mark result as complete
         // remember that this function is only run once the response period has been clsoed
         if (fieldAnswers.length < resultConfig.minAnswers) {
-          return await prisma.result.create({
-            include: resultInclude,
+          return await prisma.resultGroup.create({
+            include: resultGroupInclude,
             data: {
               itemCount: 0,
               requestStepId,
@@ -121,14 +121,14 @@ export const runResultsForStep = async ({
           );
           const retryAttempts = existingResult?.retryAttempts ?? 1;
           const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
-          return await prisma.result.upsert({
+          return await prisma.resultGroup.upsert({
             where: {
               requestStepId_resultConfigId: {
                 requestStepId,
                 resultConfigId: resultConfig.id,
               },
             },
-            include: resultInclude,
+            include: resultGroupInclude,
             create: {
               itemCount: 0,
               requestStepId,

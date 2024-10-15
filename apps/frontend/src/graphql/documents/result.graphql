@@ -14,11 +14,18 @@ fragment ResultConfig on ResultConfig {
   }
 }
 
-fragment Result on Result {
+fragment ResultGroup on ResultGroup {
   id
   createdAt
   resultConfigId
   hasResult
+  results {
+    ...Result
+  }
+}
+
+fragment Result on Result {
+  name
   resultItems {
     ...ResultItem
   }

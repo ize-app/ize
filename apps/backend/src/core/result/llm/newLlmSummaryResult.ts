@@ -10,7 +10,11 @@ import { generateAiSummary } from "@/openai/generateAiSummary";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import {
+  ResultConfigPrismaType,
+  ResultGroupPrismaType,
+  resultGroupInclude,
+} from "../resultPrismaTypes";
 
 export const newLlmSummaryResult = async ({
   resultConfig,
@@ -22,7 +26,7 @@ export const newLlmSummaryResult = async ({
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
-}): Promise<ResultPrismaType> => {
+}): Promise<ResultGroupPrismaType> => {
   const llmConfig = resultConfig.ResultConfigLlm;
 
   if (
@@ -99,30 +103,37 @@ export const newLlmSummaryResult = async ({
       .map((r) => r.AnswerFreeInput[0].value),
   });
 
-  const resultArgs: Prisma.ResultUncheckedCreateInput = {
-    itemCount: res.length,
+  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
+    itemCount: 1,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
     hasResult: true,
-    ResultItems: {
-      createMany: {
-        data: res.map((value) => ({
-          dataType: FieldDataType.String,
-          value,
-        })),
+    Result: {
+      create: {
+        name: "LLM Summary",
+        itemCount: res.length,
+        index: 0,
+        ResultItems: {
+          createMany: {
+            data: res.map((value) => ({
+              dataType: FieldDataType.String,
+              value,
+            })),
+          },
+        },
       },
     },
   };
 
-  return await prisma.result.upsert({
+  return await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
         resultConfigId: resultConfig.id,
       },
     },
-    include: resultInclude,
+    include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
   });
