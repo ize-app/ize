@@ -1,7 +1,7 @@
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import { Typography } from "@mui/material";
+import { Typography, TypographyProps } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { ReactElement } from "react";
@@ -18,27 +18,28 @@ export const renderFreeInputValue = (
   type: FieldDataType,
   fontSize = "1rem",
 ): ReactElement => {
+  const defaultProps: TypographyProps = {
+    fontSize,
+    color: "primary",
+    sx: { whiteSpace: "pre-line" },
+  };
   switch (type) {
     case FieldDataType.String:
-      return (
-        <Typography fontSize={fontSize} sx={{ whiteSpace: "pre-line" }}>
-          {value}
-        </Typography>
-      );
+      return <Typography {...defaultProps}>{value}</Typography>;
     case FieldDataType.Number:
-      return <Typography>{value}</Typography>;
+      return <Typography {...defaultProps}>{value}</Typography>;
     case FieldDataType.Date:
       return (
         <>
           <InsertInvitationOutlinedIcon fontSize="small" color="primary" />
-          <Typography fontSize={fontSize}>{dayjs.utc(value).format("MMMM D YYYY")}</Typography>
+          <Typography {...defaultProps}>{dayjs.utc(value).format("MMMM D YYYY")}</Typography>
         </>
       );
     case FieldDataType.DateTime:
       return (
         <>
           <AccessTimeOutlinedIcon fontSize="small" color="primary" />
-          <Typography fontSize={fontSize}>
+          <Typography {...defaultProps}>
             {dayjs.utc(value).format("MMMM D YYYY, H:mm a").toString()}
           </Typography>
         </>
@@ -48,12 +49,11 @@ export const renderFreeInputValue = (
         <>
           <LinkOutlinedIcon fontSize="small" color="primary" />
           <Typography
-            marginLeft={"8px"}
-            fontSize={fontSize}
             component={"a"}
             href={value}
             target="_blank"
             rel="noopener noreferrer"
+            {...defaultProps}
           >
             {value}
           </Typography>

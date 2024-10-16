@@ -1,10 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { requestInclude } from "@/core/request/requestPrismaTypes";
-import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { getRequestResults } from "@/core/request/utils/getRequestResults";
-import { getRequestTriggerFieldAnswers } from "@/core/request/utils/getRequestTriggerFieldAnswers";
+import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
 import { prisma } from "@/prisma/client";
@@ -51,50 +48,20 @@ export const newLlmSummaryResult = async ({
       },
     );
 
-  const reqStep = await prisma.requestStep.findUniqueOrThrow({
-    include: {
-      Request: {
-        include: requestInclude,
-      },
-    },
-    where: {
-      id: requestStepId,
-    },
-  });
-
-  const request = await requestResolver({
-    req: reqStep.Request,
-    context: { currentUser: null, discordApi: undefined },
-    userGroupIds: [],
-  });
-
-  let fieldName: string | null = null;
-
-  request.flow.steps.forEach((step) => {
-    step.response.fields.map((field) => {
-      if (field.fieldId === resultConfig.fieldId) fieldName = field.name;
+  const { requestName, flowName, requestTriggerAnswers, requestResults, field } =
+    await createRequestPayload({
+      requestStepId,
+      fieldId: resultConfig.fieldId,
     });
-  });
 
-  if (!fieldName)
-    throw new GraphQLError(
-      `Can't find name of field for resultConfigId: ${resultConfig.id} and requestId ${request.requestId}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
-  const requestName = request.name;
-  const flowName = request.flow.name;
-  const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-  const requestResults = getRequestResults({ request });
+  if (!field) throw Error("Field is undefined");
 
   const res = await generateAiSummary({
     flowName,
     requestName,
     requestTriggerAnswers,
     requestResults,
-    fieldName,
+    fieldName: field?.name,
     type,
     exampleOutput: llmConfig.example,
     summaryPrompt: llmConfig.prompt,

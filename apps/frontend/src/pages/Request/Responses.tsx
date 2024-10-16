@@ -22,7 +22,7 @@ export const Responses = ({ request }: { request: RequestFragment }) => {
       fieldAnswersHydrated.set(field.fieldId, { answers: fieldAnswers.answers, field });
     });
   });
-
+ 
   return (
     <Box
       sx={{

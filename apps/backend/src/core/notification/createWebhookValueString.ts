@@ -1,6 +1,6 @@
 import { WebhookValue } from "@/graphql/generated/resolver-types";
 
-export const createWebhookValueString = (values: WebhookValue[]) => {
+export const  createWebhookValueString = (values: WebhookValue[]) => {
   return values
     .map((val) => {
       if (val.value) {

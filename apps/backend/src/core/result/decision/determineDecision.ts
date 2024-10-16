@@ -10,11 +10,9 @@ export const determineDecision = ({
 }: {
   decisionConfig: ResultConfigDecisionPrismaType;
   answers: FieldAnswerPrismaType[];
-  
 }): { decisionOptionId: string | null; criteria: string | null } => {
   let decisionOptionId: string | null = null;
   let criteria: string | null = null;
-  
 
   const totalAnswerCount = answers.length;
 
@@ -57,11 +55,10 @@ export const determineDecision = ({
       break;
     }
     case DecisionType.Ai: {
-
-      
-
-      decisionOptionId = "1";
-      criteria = "";
+      console.log("inside AI decision");
+      decisionOptionId = "de2bc668-8c82-4563-83ce-26e30c6f3843";
+      criteria = "Just a test";
+      break;
     }
   }
   return { decisionOptionId, criteria };

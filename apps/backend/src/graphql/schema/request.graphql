@@ -124,3 +124,19 @@ type GenericFieldAndValue {
   fieldName: String!
   value: [String!]!
 }
+
+type RequestPayload {
+  requestId: String!
+  requestName: String!
+  flowName: String!
+  triggerFieldAnswers: [FieldValue]!
+  results: [FieldValue]!
+  
+
+}
+
+type FieldValue {
+  fieldName: String!
+  value: String
+  optionSelections: [String!]
+}

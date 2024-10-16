@@ -76,13 +76,16 @@ export const Result = ({
           </Box>
         )}
         {resultGroup &&
-          resultGroup.results.map((result) => {
+          resultGroup.results.map((result, index) => {
             return (
-              <>
+              <Box key={"result" + index}>
+                {index > 0 && <Typography variant="description">{result.name}</Typography>}
                 {field &&
                   field.__typename === FieldType.Options &&
+                  result.resultItems.some((item) => item.optionId) &&
                   (resultGroup || (!resultGroup && displayFieldOptionsIfNoResult)) && (
                     <FieldOptions
+                      // key={"options" + index}
                       fieldOptions={field}
                       final={!!result}
                       optionSelections={result.resultItems}
@@ -90,11 +93,12 @@ export const Result = ({
                     />
                   )}
                 {field &&
-                  field.__typename === FieldType.FreeInput &&
+                  // field.__typename === FieldType.FreeInput &&
+                  result.resultItems.some((item) => !item.optionId) &&
                   result.resultItems.map((item) => (
                     <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
                   ))}
-              </>
+              </Box>
             );
           })}
         {!resultGroup &&

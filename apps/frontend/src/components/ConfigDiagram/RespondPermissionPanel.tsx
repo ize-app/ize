@@ -22,7 +22,7 @@ export const RespondPermissionPanel = ({
         <Typography>
           Respondants have {intervalToIntuitiveTimeString(step.expirationSeconds * 1000)} to respond
           and can respond
-          {step.allowMultipleResponses ? "multiple times" : "only once"}
+          {step.allowMultipleResponses ? " multiple times" : " only once"}
         </Typography>
       )}
       {step.canBeManuallyEnded && (

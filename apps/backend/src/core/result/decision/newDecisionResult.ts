@@ -1,4 +1,4 @@
-import { FieldOption, Prisma, ResultType } from "@prisma/client";
+import { FieldDataType, FieldOption, Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -33,7 +33,7 @@ export const newDecisionResult = async ({
     );
 
   // find the decision and choose default option if no decision was made
-  const { decisionOptionId } =
+  const { decisionOptionId, criteria } =
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
   if (decisionOptionId) {
@@ -45,7 +45,7 @@ export const newDecisionResult = async ({
   }
 
   const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
-    itemCount: decisionFieldOption ? 1 : 0,
+    itemCount: 2,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
@@ -54,7 +54,7 @@ export const newDecisionResult = async ({
       ? {
           create: {
             name: "Decision",
-            itemCount: 1,
+            itemCount: criteria ? 2 : 1,
             index: 0,
             ResultItems: {
               create: {
@@ -69,7 +69,7 @@ export const newDecisionResult = async ({
   };
 
   ////// upsert results for decision
-  return await prisma.resultGroup.upsert({
+  const resultGroup = await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
@@ -79,5 +79,32 @@ export const newDecisionResult = async ({
     include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
+  });
+
+  if (decisionOptionId && criteria) {
+    await prisma.result.create({
+      data: {
+        resultGroupId: resultGroup.id,
+        itemCount: 1,
+        index: 1,
+        name: "Explanation of AI decision",
+        ResultItems: {
+          create: {
+            dataType: FieldDataType.String,
+            value: criteria,
+          },
+        },
+      },
+    });
+  }
+
+  return await prisma.resultGroup.findUniqueOrThrow({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
+    },
+    include: resultGroupInclude,
   });
 };
