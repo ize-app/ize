@@ -5,6 +5,7 @@ import { DecisionType, ResultConfigFragment, ResultType } from "@/graphql/genera
 const decisionTypeDescription = (
   decisionType: DecisionType,
   threshold: number | null | undefined,
+  criteria: string | null | undefined,
 ) => {
   switch (decisionType) {
     case DecisionType.NumberThreshold: {
@@ -18,10 +19,14 @@ const decisionTypeDescription = (
     case DecisionType.WeightedAverage: {
       return `Decision is made based on the weighted average of all rankings. `;
     }
+    case DecisionType.Ai: {
+      return `AI automatically makes the decision ${criteria ? "based on the following criteria " + criteria : ""}`;
+    }
   }
 };
 
 const minAnswersDescription = (minAnswers: number, resultType: ResultType) => {
+  if (minAnswers === 0) return "";
   return `There must be at least ${minAnswers} ${
     resultType === ResultType.Decision ? "vote" : "answer"
   }${minAnswers > 1 ? "s" : ""} to ${
@@ -54,7 +59,11 @@ export const createResultConfigDescription = (
     case ResultType.Decision: {
       return (
         <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
-          {decisionTypeDescription(resultConfig.decisionType, resultConfig.threshold)}
+          {decisionTypeDescription(
+            resultConfig.decisionType,
+            resultConfig.threshold,
+            resultConfig.criteria,
+          )}
           {minAnswersDescription(resultConfig.minimumAnswers, ResultType.Decision)}
           {resultConfig.defaultOption
             ? `If decision isn't made, default result is "${resultConfig.defaultOption.name}. `

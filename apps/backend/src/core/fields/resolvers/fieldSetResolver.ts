@@ -33,6 +33,7 @@ export const fieldSetResolver = ({
     if (f.Field.type === FieldType.FreeInput) {
       const freeInput: FreeInput = {
         __typename: FieldType.FreeInput,
+        isInternal: f.Field.isInternal,
         fieldId: f.Field.id,
         name: f.Field.name,
         required: f.Field.required,
@@ -112,6 +113,7 @@ export const fieldSetResolver = ({
       const options: Options = {
         __typename: FieldType.Options,
         fieldId: f.Field.id,
+        isInternal: f.Field.isInternal,
         name: f.Field.name,
         required: f.Field.required,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,

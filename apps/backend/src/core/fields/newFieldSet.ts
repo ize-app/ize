@@ -40,6 +40,7 @@ export const newFieldSet = async ({
           name: field.name,
           type: field.type,
           freeInputDataType: field.freeInputDataType,
+          isInternal: field.isInternal,
           fieldOptionsConfigId,
           required: field.required,
         },

@@ -86,6 +86,11 @@ export const DecisionConfigForm = ({
           `steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`,
           DefaultOptionSelection.None,
         );
+        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}.isInternal`, true);
+        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 0);
+      } else {
+        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}.isInternal`, false);
+        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 2);
       }
     }
   }, [decisionType]);

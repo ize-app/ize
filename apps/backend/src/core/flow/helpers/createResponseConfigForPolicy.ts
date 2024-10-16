@@ -20,6 +20,7 @@ export const createResponseConfigForPolicy = ({
   const responseApprovalFieldArgs: FieldArgs = {
     type: FieldType.Options,
     fieldId: "new",
+    isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {

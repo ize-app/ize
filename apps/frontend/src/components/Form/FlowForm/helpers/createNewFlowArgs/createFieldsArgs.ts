@@ -17,19 +17,21 @@ export const createFieldArgs = (
   resultConfigCache: ResultConfigCache[],
 ): FieldArgs => {
   if (field.type === FieldType.FreeInput) {
-    const { fieldId, required, name, type, freeInputDataType } = field;
+    const { fieldId, required, name, type, freeInputDataType, isInternal } = field;
     return {
       type,
+      isInternal,
       fieldId,
       freeInputDataType,
       required,
       name,
     };
   } else if (field.type === FieldType.Options) {
-    const { fieldId, required, name, type, optionsConfig } = field;
+    const { fieldId, isInternal, required, name, type, optionsConfig } = field;
     return {
       type,
       fieldId,
+      isInternal,
       required,
       name,
       optionsConfig: {

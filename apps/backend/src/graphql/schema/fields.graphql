@@ -17,6 +17,7 @@ type Options {
   fieldId: String!
   name: String!
   required: Boolean!
+  isInternal: Boolean!
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
   selectionType: FieldOptionsSelectionType!
@@ -35,6 +36,7 @@ type LinkedResult {
 type FreeInput {
   fieldId: String!
   name: String!
+  isInternal: Boolean!
   required: Boolean!
   dataType: FieldDataType!
   defaultAnswer: FieldAnswer
@@ -126,6 +128,7 @@ input FieldArgs {
   type: FieldType!
   name: String!
   required: Boolean!
+  isInternal: Boolean!
   freeInputDataType: FieldDataType
   optionsConfig: FieldOptionsConfigArgs
 }

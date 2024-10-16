@@ -13,20 +13,27 @@ export const RespondPermissionPanel = ({
   step: StepFragment;
   initialOpenState?: boolean;
 }) => {
+  const noResponse = step.response.fields.every((field) => field.isInternal);
   return (
     <PanelAccordion title="Respond permission" hasError={false} initialState={initialOpenState}>
-      {step.response.permission && (
-        <Permissions permission={step.response.permission} type="response" />
-      )}
-      {step.expirationSeconds && (
-        <Typography>
-          Respondants have {intervalToIntuitiveTimeString(step.expirationSeconds * 1000)} to respond
-          and can respond
-          {step.allowMultipleResponses ? " multiple times" : " only once"}
-        </Typography>
-      )}
-      {step.canBeManuallyEnded && (
-        <Typography>Triggerer can end the response period early</Typography>
+      {!noResponse ? (
+        <>
+          {step.response.permission && (
+            <Permissions permission={step.response.permission} type="response" />
+          )}
+          {step.expirationSeconds && (
+            <Typography>
+              Respondants have {intervalToIntuitiveTimeString(step.expirationSeconds * 1000)} to
+              respond and can respond
+              {step.allowMultipleResponses ? " multiple times" : " only once"}
+            </Typography>
+          )}
+          {step.canBeManuallyEnded && (
+            <Typography>Triggerer can end the response period early</Typography>
+          )}
+        </>
+      ) : (
+        <Typography>No response required</Typography>
       )}
     </PanelAccordion>
   );

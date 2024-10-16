@@ -42,6 +42,7 @@ export const generateNonreusableFlowConfig = ({
                   fieldId: "",
                   type: FieldType.FreeInput,
                   name: prompt,
+                  isInternal: false,
                   required: true,
                   freeInputDataType: FieldDataType.String,
                 },

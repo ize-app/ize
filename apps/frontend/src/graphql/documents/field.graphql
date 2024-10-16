@@ -11,6 +11,7 @@ fragment Field on Field {
 fragment Options on Options {
   fieldId
   name
+  isInternal
   required
   previousStepOptions
   requestOptionsDataType
@@ -27,6 +28,7 @@ fragment Options on Options {
 fragment FreeInput on FreeInput {
   fieldId
   name
+  isInternal
   required
   dataType
   defaultAnswer {

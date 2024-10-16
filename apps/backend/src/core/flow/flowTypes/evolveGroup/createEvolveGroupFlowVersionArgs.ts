@@ -33,6 +33,7 @@ export const createEvolveGroupFlowVersionArgs = ({
   const requestFieldSetArgs: FieldArgs[] = [
     {
       type: FieldType.FreeInput,
+      isInternal: false,
       fieldId: "name",
       freeInputDataType: FieldDataType.String,
       name: EvolveGroupFields.Name,
@@ -41,6 +42,7 @@ export const createEvolveGroupFlowVersionArgs = ({
     {
       type: FieldType.FreeInput,
       fieldId: "description",
+      isInternal: false,
       freeInputDataType: FieldDataType.String,
       name: EvolveGroupFields.Description,
       required: false,
@@ -48,6 +50,7 @@ export const createEvolveGroupFlowVersionArgs = ({
     {
       type: FieldType.FreeInput,
       fieldId: "members",
+      isInternal: false,
       freeInputDataType: FieldDataType.EntityIds,
       name: EvolveGroupFields.Members,
       required: true,

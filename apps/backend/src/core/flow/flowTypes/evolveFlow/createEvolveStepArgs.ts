@@ -18,6 +18,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     {
       type: FieldType.FreeInput,
       fieldId: "proposed",
+      isInternal: false,
       freeInputDataType: FieldDataType.FlowVersionId,
       name: EvolveFlowFields.ProposedFlow,
       required: true,
@@ -25,6 +26,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     {
       type: FieldType.FreeInput,
       fieldId: "current",
+      isInternal: false,
       freeInputDataType: FieldDataType.FlowVersionId,
       name: EvolveFlowFields.CurrentFlow,
       required: true,
@@ -32,6 +34,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
     {
       type: FieldType.FreeInput,
       fieldId: "description",
+      isInternal: false,
       freeInputDataType: FieldDataType.String,
       name: EvolveFlowFields.Description,
       required: false,
@@ -41,6 +44,7 @@ export const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs =>
   const responseFieldSetArgs: FieldArgs = {
     type: FieldType.Options,
     fieldId: "new",
+    isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {

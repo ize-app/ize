@@ -63,7 +63,7 @@ const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(1),
+  minimumAnswers: z.coerce.number().int().default(1),
   decision: decisionSchema,
 });
 

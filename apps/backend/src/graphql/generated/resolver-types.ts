@@ -216,6 +216,7 @@ export type FieldAnswerArgs = {
 export type FieldArgs = {
   fieldId: Scalars['String']['input'];
   freeInputDataType?: InputMaybe<FieldDataType>;
+  isInternal: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   optionsConfig?: InputMaybe<FieldOptionsConfigArgs>;
   required: Scalars['Boolean']['input'];
@@ -259,6 +260,13 @@ export enum FieldType {
   FreeInput = 'FreeInput',
   Options = 'Options'
 }
+
+export type FieldValue = {
+  __typename?: 'FieldValue';
+  fieldName: Scalars['String']['output'];
+  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
+  value?: Maybe<Scalars['String']['output']>;
+};
 
 export type Flow = {
   __typename?: 'Flow';
@@ -322,6 +330,7 @@ export type FreeInput = {
   dataType: FieldDataType;
   defaultAnswer?: Maybe<FieldAnswer>;
   fieldId: Scalars['String']['output'];
+  isInternal: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   required: Scalars['Boolean']['output'];
 };
@@ -726,6 +735,7 @@ export type OptionSelectionArgs = {
 export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
+  isInternal: Scalars['Boolean']['output'];
   linkedResultOptions: Array<LinkedResult>;
   maxSelections?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
@@ -887,6 +897,15 @@ export type RequestConfig = {
 export type RequestDefinedOptionsArgs = {
   fieldId: Scalars['String']['input'];
   options: Array<FieldOptionArgs>;
+};
+
+export type RequestPayload = {
+  __typename?: 'RequestPayload';
+  flowName: Scalars['String']['output'];
+  requestId: Scalars['String']['output'];
+  requestName: Scalars['String']['output'];
+  results: Array<Maybe<FieldValue>>;
+  triggerFieldAnswers: Array<Maybe<FieldValue>>;
 };
 
 export type RequestStep = {
@@ -1239,6 +1258,7 @@ export type ResolversTypes = {
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
   FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldType: FieldType;
+  FieldValue: ResolverTypeWrapper<FieldValue>;
   Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversTypes['FlowReference']>, group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']> }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, requestStep0Permission: ResolversTypes['Permission'] }>;
@@ -1304,6 +1324,7 @@ export type ResolversTypes = {
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'steps'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], steps: Array<ResolversTypes['RequestStep']> }>;
   RequestConfig: ResolverTypeWrapper<Omit<RequestConfig, 'fields' | 'permission'> & { fields: Array<ResolversTypes['Field']>, permission?: Maybe<ResolversTypes['Permission']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
+  RequestPayload: ResolverTypeWrapper<RequestPayload>;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversTypes['UserFieldAnswers']>, responseFields: Array<ResolversTypes['Field']>, userResponses: Array<ResolversTypes['Response']> }>;
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatusFilter: RequestStepStatusFilter;
@@ -1367,6 +1388,7 @@ export type ResolversParentTypes = {
   FieldArgs: FieldArgs;
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
+  FieldValue: FieldValue;
   Flow: Omit<Flow, 'evolve' | 'flowsEvolvedByThisFlow' | 'group' | 'steps'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, flowsEvolvedByThisFlow: Array<ResolversParentTypes['FlowReference']>, group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']> };
   FlowReference: FlowReference;
   FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'requestStep0Permission'> & { creator: ResolversParentTypes['Entity'], group?: Maybe<ResolversParentTypes['Group']>, requestStep0Permission: ResolversParentTypes['Permission'] };
@@ -1426,6 +1448,7 @@ export type ResolversParentTypes = {
   Request: Omit<Request, 'creator' | 'flow' | 'steps'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], steps: Array<ResolversParentTypes['RequestStep']> };
   RequestConfig: Omit<RequestConfig, 'fields' | 'permission'> & { fields: Array<ResolversParentTypes['Field']>, permission?: Maybe<ResolversParentTypes['Permission']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
+  RequestPayload: RequestPayload;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'requestFieldAnswers' | 'responseFieldAnswers' | 'responseFields' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, requestFieldAnswers: Array<ResolversParentTypes['FieldAnswer']>, responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, responseFields: Array<ResolversParentTypes['Field']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
   Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Entity'] };
@@ -1581,6 +1604,13 @@ export type FieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType
   __resolveType: TypeResolveFn<'EntitiesFieldAnswer' | 'FlowsFieldAnswer' | 'FreeInputFieldAnswer' | 'OptionFieldAnswer' | 'WebhookFieldAnswer', ParentType, ContextType>;
 };
 
+export type FieldValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FieldValue'] = ResolversParentTypes['FieldValue']> = {
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  optionSelections?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Flow'] = ResolversParentTypes['Flow']> = {
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1629,6 +1659,7 @@ export type FreeInputResolvers<ContextType = GraphqlRequestContext, ParentType e
   dataType?: Resolver<ResolversTypes['FieldDataType'], ParentType, ContextType>;
   defaultAnswer?: Resolver<Maybe<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isInternal?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1838,6 +1869,7 @@ export type OptionFieldAnswerSelectionResolvers<ContextType = GraphqlRequestCont
 
 export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Options'] = ResolversParentTypes['Options']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isInternal?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   linkedResultOptions?: Resolver<Array<ResolversTypes['LinkedResult']>, ParentType, ContextType>;
   maxSelections?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1902,6 +1934,15 @@ export type RequestConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   fieldsLocked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   permission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RequestPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestPayload'] = ResolversParentTypes['RequestPayload']> = {
+  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  results?: Resolver<Array<Maybe<ResolversTypes['FieldValue']>>, ParentType, ContextType>;
+  triggerFieldAnswers?: Resolver<Array<Maybe<ResolversTypes['FieldValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2082,6 +2123,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   EvolveGroup?: EvolveGroupResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;
   FieldAnswer?: FieldAnswerResolvers<ContextType>;
+  FieldValue?: FieldValueResolvers<ContextType>;
   Flow?: FlowResolvers<ContextType>;
   FlowReference?: FlowReferenceResolvers<ContextType>;
   FlowSummary?: FlowSummaryResolvers<ContextType>;
@@ -2119,6 +2161,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Ranking?: RankingResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
   RequestConfig?: RequestConfigResolvers<ContextType>;
+  RequestPayload?: RequestPayloadResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;

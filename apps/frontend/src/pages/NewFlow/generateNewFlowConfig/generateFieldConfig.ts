@@ -22,6 +22,7 @@ export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
     fieldId: crypto.randomUUID(),
     name: arg.question,
     required: true,
+    isInternal: false,
   };
 
   switch (arg.type) {

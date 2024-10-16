@@ -75,6 +75,7 @@ export const fieldSchema = z
       fieldId: z.string(),
       name: z.string().min(1),
       required: z.boolean().optional().default(true),
+      isInternal: z.boolean().default(false),
       freeInputDataType: z.nativeEnum(FieldDataType),
     }),
     z.object({
@@ -82,6 +83,7 @@ export const fieldSchema = z
       fieldId: z.string(),
       name: z.string().min(1),
       required: z.boolean().optional().default(true),
+      isInternal: z.boolean().default(false),
       optionsConfig: fieldOptionsSchema,
     }),
   ])

@@ -1,13 +1,15 @@
 import { sendNewStepNotifications } from "@/core/notification/sendNewStepNotifications";
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
+import { canEndRequestStepWithResponse } from "@/core/request/utils/endRequestStepWithoutResponse";
+import { runResultsAndActions } from "@/core/result/newResults/runResultsAndActions";
 import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
 
 export const triggerNextStep = async ({ requestStepId }: { requestStepId: string }) => {
-  const flowId = await prisma.$transaction(async (transaction) => {
+  const { flowId, responseComplete } = await prisma.$transaction(async (transaction) => {
     // get the id of the next step and request
     const reqData = await transaction.requestStep.findFirst({
       where: {
@@ -42,12 +44,15 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
       );
     }
 
+    const responseComplete = canEndRequestStepWithResponse({ step: nextStep });
+
     // trigger the next step if it exists
     const nextRequestStep = await transaction.requestStep.create({
       data: {
         expirationDate: new Date(
           new Date().getTime() + (nextStep.expirationSeconds as number) * 1000,
         ),
+        responseFinal: responseComplete,
         Request: {
           connect: {
             id: reqData.requestId,
@@ -124,8 +129,15 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
       },
     });
 
-    return reqData.Request.FlowVersion.flowId;
+    return {
+      flowId: reqData.Request.FlowVersion.flowId,
+      responseComplete,
+    };
   });
+
+  if (responseComplete) {
+    await runResultsAndActions({ requestStepId });
+  }
 
   sendNewStepNotifications({
     flowId,

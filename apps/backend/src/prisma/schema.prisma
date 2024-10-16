@@ -468,6 +468,7 @@ model Field {
   type                 FieldType
   name                 String
   required             Boolean        @default(true)
+  isInternal           Boolean        @default(false) @map("is_internal")
   freeInputDataType    FieldDataType? @map("free_input_data_type")
   fieldOptionsConfigId String?        @map("field_options_config_id") @db.Uuid
   createdAt            DateTime       @default(now()) @map("created_at")

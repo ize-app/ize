@@ -33,7 +33,8 @@ export const sendTelegramNewStepMessage = async ({
 
   const requestName = request.name;
   const flowName = request.flow.name;
-  const { responseFields } = requestStep;
+  const { responseFields: allFields } = requestStep;
+  const responseFields = allFields.filter((f) => !f.isInternal);
   const firstField = responseFields[0];
   const url = createRequestUrl({ requestId: request.requestId });
 
