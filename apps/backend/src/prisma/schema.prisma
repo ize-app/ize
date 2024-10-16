@@ -633,6 +633,7 @@ enum DecisionType {
   NumberThreshold
   PercentageThreshold
   WeightedAverage
+  Ai
 }
 
 model ResultConfigDecision {
@@ -641,6 +642,7 @@ model ResultConfigDecision {
   defaultOptionId String?      @map("default_option_id") @db.Uuid
   // Threshold is interpreted as count when type is "threshold" and as a percentage when type is "Percentage"
   threshold       Int?         @map("threshold")
+  criteria        String?
   createdAt       DateTime     @default(now()) @map("created_at")
 
   FieldOption   FieldOption?   @relation(fields: [defaultOptionId], references: [id], onDelete: Cascade)

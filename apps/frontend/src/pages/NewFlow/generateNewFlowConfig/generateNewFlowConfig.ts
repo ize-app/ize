@@ -81,7 +81,11 @@ export const generateNewFlowConfig = ({
 
         flowTitle = config.question;
 
-        result = generateResultConfig({ type: ResultType.Decision, fieldId: field.fieldId });
+        result = generateResultConfig({
+          type: ResultType.Decision,
+          fieldId: field.fieldId,
+          decisionType: config.decisionType,
+        });
         break;
       }
       case FlowGoal.Prioritize: {
@@ -135,7 +139,11 @@ export const generateNewFlowConfig = ({
 
           flowTitle = config.webhookName;
 
-          result = generateResultConfig({ type: ResultType.Decision, fieldId: field.fieldId });
+          result = generateResultConfig({
+            type: ResultType.Decision,
+            fieldId: field.fieldId,
+            decisionType: DecisionType.NumberThreshold,
+          });
         }
 
         action = generateActionConfig({

@@ -108,6 +108,7 @@ export type CustomGroupArgs = {
 
 export type Decision = {
   __typename?: 'Decision';
+  criteria?: Maybe<Scalars['String']['output']>;
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
   fieldId?: Maybe<Scalars['String']['output']>;
@@ -117,12 +118,14 @@ export type Decision = {
 };
 
 export type DecisionArgs = {
+  criteria?: InputMaybe<Scalars['String']['input']>;
   defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
   threshold?: InputMaybe<Scalars['Int']['input']>;
   type: DecisionType;
 };
 
 export enum DecisionType {
+  Ai = 'Ai',
   NumberThreshold = 'NumberThreshold',
   PercentageThreshold = 'PercentageThreshold',
   WeightedAverage = 'WeightedAverage'
@@ -1502,6 +1505,7 @@ export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Decision'] = ResolversParentTypes['Decision']> = {
+  criteria?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

@@ -10,8 +10,11 @@ export const determineDecision = ({
 }: {
   decisionConfig: ResultConfigDecisionPrismaType;
   answers: FieldAnswerPrismaType[];
-}): string | null => {
+  
+}): { decisionOptionId: string | null; criteria: string | null } => {
   let decisionOptionId: string | null = null;
+  let criteria: string | null = null;
+  
 
   const totalAnswerCount = answers.length;
 
@@ -53,6 +56,13 @@ export const determineDecision = ({
       decisionOptionId = maxWeightOptionId;
       break;
     }
+    case DecisionType.Ai: {
+
+      
+
+      decisionOptionId = "1";
+      criteria = "";
+    }
   }
-  return decisionOptionId;
+  return { decisionOptionId, criteria };
 };

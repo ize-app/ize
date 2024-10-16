@@ -1,8 +1,9 @@
 import { Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
-import { TextField } from "@/components/Form/formFields";
+import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
+import { DecisionType } from "@/graphql/generated/graphql";
 
 import { OptionsForm } from "./OptionsForm";
 import { IntitialFlowSetupSchemaType } from "../formValidation";
@@ -11,6 +12,7 @@ export const DecisionForm = () => {
   const { watch, control } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const question = watch("question");
+  const decisionType = watch("decisionType");
 
   return (
     <>
@@ -26,7 +28,33 @@ export const DecisionForm = () => {
           defaultValue=""
         />
       </FieldBlockFadeIn>
-      {question && <OptionsForm />}
+      {question && (
+        <FieldBlockFadeIn>
+          <Typography variant="description">How will you decide?</Typography>
+          <ButtonGroupField<IntitialFlowSetupSchemaType>
+            label="Decision type"
+            name={`decisionType`}
+            options={[
+              {
+                name: "First option to reach threshold is chosen",
+                title: "Threshold",
+                value: DecisionType.NumberThreshold,
+              },
+              {
+                name: ">50% vote to decide",
+                title: "Majority vote",
+                value: DecisionType.NumberThreshold,
+              },
+              {
+                name: "Let AI decide",
+                title: "AI",
+                value: DecisionType.Ai,
+              },
+            ]}
+          />
+        </FieldBlockFadeIn>
+      )}
+      {decisionType && <OptionsForm />}
     </>
   );
 };

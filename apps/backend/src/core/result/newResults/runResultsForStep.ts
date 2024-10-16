@@ -88,7 +88,11 @@ export const runResultsForStep = async ({
           // TODO set result status to complete on success
           switch (resultConfig.resultType) {
             case ResultType.Decision: {
-              return await newDecisionResult({ resultConfig, fieldAnswers, requestStepId });
+              return await newDecisionResult({
+                resultConfig,
+                fieldAnswers,
+                requestStepId,
+              });
             }
             case ResultType.LlmSummary: {
               return await newLlmSummaryResult({

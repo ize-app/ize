@@ -825,6 +825,18 @@
         "isOneOf": null,
         "fields": [
           {
+            "name": "criteria",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "decisionType",
             "description": null,
             "args": [],
@@ -922,6 +934,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "criteria",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "defaultOptionIndex",
             "description": null,
             "type": {
@@ -975,6 +999,12 @@
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
+          {
+            "name": "Ai",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "NumberThreshold",
             "description": null,

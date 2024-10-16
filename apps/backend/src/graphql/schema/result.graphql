@@ -24,6 +24,7 @@ type Decision {
   resultConfigId: String!
   fieldId: String
   minimumAnswers: Int!
+  criteria: String
   decisionType: DecisionType!
   defaultOption: Option
   threshold: Int
@@ -65,6 +66,7 @@ enum DecisionType {
   NumberThreshold
   PercentageThreshold
   WeightedAverage
+  Ai
 }
 
 enum LlmSummaryType {
@@ -86,6 +88,7 @@ input ResultArgs {
 input DecisionArgs {
   type: DecisionType!
   defaultOptionIndex: Int
+  criteria: String
   threshold: Int
 }
 

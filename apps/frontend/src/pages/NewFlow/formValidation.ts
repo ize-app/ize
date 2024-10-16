@@ -7,6 +7,7 @@ import {
 } from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
+import { DecisionType } from "@/graphql/generated/graphql";
 
 export type NewFlowWizardFormSchema = z.infer<typeof newFlowWizardFormSchema>;
 
@@ -87,6 +88,7 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
+    decisionType: z.nativeEnum(DecisionType),
     reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
     optionsConfig: optionConfigSchema,

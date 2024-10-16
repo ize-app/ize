@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import {
-  DecisionType,
-  FieldOptionsSelectionType,
-  FieldType,
-  ResultType,
-} from "@/graphql/generated/graphql";
+import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
@@ -119,8 +114,6 @@ const ResultForm = ({
   const resultType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.type`);
 
   const resultField = formMethods.getValues(`steps.${formIndex}.response.fields.${resultIndex}`);
-  const optionSelectionType =
-    resultField.type === FieldType.Options ? resultField.optionsConfig.selectionType : null;
 
   const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(resultType);
   const [displayForm, setDisplayForm] = useState<boolean>(true);
@@ -148,31 +141,6 @@ const ResultForm = ({
     }
     setPrevResultType(resultType);
   }, [resultType]);
-
-  useEffect(() => {
-    if (optionSelectionType) {
-      if (optionSelectionType === FieldOptionsSelectionType.Rank) {
-        formMethods.setValue(
-          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.maxSelections`,
-          undefined,
-        );
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.WeightedAverage,
-        );
-      } else if (optionSelectionType === FieldOptionsSelectionType.Select) {
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.NumberThreshold,
-        );
-      } else if (optionSelectionType === FieldOptionsSelectionType.MultiSelect) {
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.WeightedAverage,
-        );
-      }
-    }
-  }, [optionSelectionType]);
 
   const resultError =
     formMethods.formState.errors?.steps?.[formIndex]?.result?.[resultIndex]?.root?.message;

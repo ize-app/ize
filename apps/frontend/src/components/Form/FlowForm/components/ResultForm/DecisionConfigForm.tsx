@@ -1,4 +1,5 @@
 import { InputAdornment, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
@@ -18,17 +19,29 @@ interface DecisionConfigFormProps {
   display?: boolean;
 }
 
-const decisionTypeOptions = (selectionType: FieldOptionsSelectionType) => {
-  switch (selectionType) {
-    case FieldOptionsSelectionType.Select:
-      return [
-        { name: "Threshold vote", value: DecisionType.NumberThreshold },
-        { name: "Percentage vote", value: DecisionType.PercentageThreshold },
-      ];
-    case FieldOptionsSelectionType.MultiSelect:
-      return [{ name: "Weighted average", value: DecisionType.WeightedAverage }];
-    case FieldOptionsSelectionType.Rank:
-      return [{ name: "Weighted average", value: DecisionType.WeightedAverage }];
+const selectTypeOptions = (decisionType: DecisionType) => {
+  const selectOne = {
+    name: "Vote for 1 option",
+    value: FieldOptionsSelectionType.Select,
+  };
+  const multiSelect = {
+    name: "Vote for multiple options",
+    value: FieldOptionsSelectionType.MultiSelect,
+  };
+  const rank = {
+    name: "Rank options",
+    value: FieldOptionsSelectionType.Rank,
+  };
+
+  switch (decisionType) {
+    case DecisionType.NumberThreshold:
+      return [selectOne];
+    case DecisionType.PercentageThreshold:
+      return [selectOne];
+    case DecisionType.WeightedAverage:
+      return [multiSelect, rank];
+    case DecisionType.Ai:
+      return [];
   }
 };
 
@@ -48,9 +61,34 @@ export const DecisionConfigForm = ({
   field,
   display = true,
 }: DecisionConfigFormProps) => {
-  const decisionType = formMethods.getValues(
-    `steps.${formIndex}.result.${resultIndex}.decision.type`,
-  );
+  const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
+
+  useEffect(() => {
+    if (decisionType) {
+      if (decisionType === DecisionType.WeightedAverage) {
+        formMethods.setValue(
+          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`,
+          FieldOptionsSelectionType.Rank,
+        );
+        formMethods.setValue(
+          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.maxSelections`,
+          2,
+        );
+      } else {
+        formMethods.setValue(
+          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`,
+          FieldOptionsSelectionType.Select,
+        );
+      }
+
+      if (decisionType === DecisionType.Ai) {
+        formMethods.setValue(
+          `steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`,
+          DefaultOptionSelection.None,
+        );
+      }
+    }
+  }, [decisionType]);
 
   const defaultDecisionOptions: SelectOption[] = [
     {
@@ -75,36 +113,28 @@ export const DecisionConfigForm = ({
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           control={formMethods.control}
-          name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
-          size="small"
-          defaultValue=""
-          selectOptions={[
-            {
-              name: "Vote for 1 option",
-              value: FieldOptionsSelectionType.Select,
-            },
-            {
-              name: "Vote for multiple options",
-              value: FieldOptionsSelectionType.MultiSelect,
-            },
-            {
-              name: "Rank options",
-              value: FieldOptionsSelectionType.Rank,
-            },
-          ]}
-          label="How do participants select options?"
-        />
-        <Select<FlowSchemaType>
-          control={formMethods.control}
           label="How do we determine the final result?"
-          selectOptions={
-            field.type === FieldType.Options
-              ? decisionTypeOptions(field.optionsConfig?.selectionType)
-              : []
-          }
+          selectOptions={[
+            { name: "Threshold vote", value: DecisionType.NumberThreshold },
+            { name: "Percentage vote", value: DecisionType.PercentageThreshold },
+            {
+              name: "Weighted average of multiple selections",
+              value: DecisionType.WeightedAverage,
+            },
+            { name: "AI decides", value: DecisionType.Ai },
+          ]}
           defaultValue=""
           name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
           size="small"
+        />
+        <Select<FlowSchemaType>
+          control={formMethods.control}
+          name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
+          size="small"
+          defaultValue=""
+          display={decisionType !== DecisionType.Ai}
+          selectOptions={selectTypeOptions(decisionType)}
+          label="How do participants select options?"
         />
       </ResponsiveFormRow>
       <ResponsiveFormRow>
@@ -138,9 +168,20 @@ export const DecisionConfigForm = ({
           label="Minimum # of responses for a result"
           showLabel={false}
           size={"small"}
+          display={decisionType !== DecisionType.Ai}
           defaultValue=""
           endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
           name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
+        />
+        <TextField<FlowSchemaType>
+          control={formMethods.control}
+          label="What criteria should the AI use to make a decision?"
+          placeholderText="What criteria should the AI use to make a decision?"
+          showLabel={false}
+          size={"small"}
+          display={decisionType === DecisionType.Ai}
+          defaultValue=""
+          name={`steps.${formIndex}.result.${resultIndex}.decision.criteria`}
         />
       </ResponsiveFormRow>
       {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
@@ -154,6 +195,7 @@ export const DecisionConfigForm = ({
           },
         }}
         defaultValue=""
+        display={decisionType !== DecisionType.Ai}
         renderValue={(val) => {
           if (val === DefaultOptionSelection.None) return "If no decision, no default result";
           const option = defaultDecisionOptions.find((option) => option.value === val);

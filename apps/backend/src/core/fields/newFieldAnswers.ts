@@ -3,6 +3,7 @@ import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { constructFieldOptions } from "./constructFieldOptions";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { validateInput } from "./validation/validateInput";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
@@ -112,20 +113,8 @@ export const newFieldAnswers = async ({
               },
             );
 
-          const stepDefinedOptions =
-            fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map((o) => o.FieldOption);
+          const options = constructFieldOptions({ field, requestDefinedOptionSets });
 
-          const requestDefinedOptionSet = requestDefinedOptionSets.find(
-            (rdos) => rdos.fieldId === field.id,
-          );
-
-          const requestDefinedOptions = requestDefinedOptionSet
-            ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map(
-                (o) => o.FieldOption,
-              )
-            : [];
-
-          const options = [...stepDefinedOptions, ...requestDefinedOptions];
           const totalOptionCount = options.length;
 
           if (

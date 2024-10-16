@@ -35,6 +35,11 @@ export const decisionSchema = z.discriminatedUnion("type", [
     type: z.literal(DecisionType.WeightedAverage),
     defaultOptionId: z.string().default(DefaultOptionSelection.None),
   }),
+  z.object({
+    type: z.literal(DecisionType.Ai),
+    criteria: z.string().optional(),
+    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+  }),
 ]);
 
 const prioritizationSchema = z.object({

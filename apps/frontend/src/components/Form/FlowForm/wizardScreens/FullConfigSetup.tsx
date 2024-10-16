@@ -71,8 +71,8 @@ export const FullConfigSetup = () => {
     shouldUnregister: false,
   });
 
-  console.log("errors are ", useFormMethods.formState.errors);
-  console.log("values are ", useFormMethods.getValues());
+  // console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("values are ", useFormMethods.getValues());
 
   const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 

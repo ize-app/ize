@@ -85,5 +85,11 @@ const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType
         type: DecisionType.WeightedAverage,
         defaultOptionId,
       };
+    case DecisionType.Ai:
+      return {
+        type: DecisionType.Ai,
+        criteria: decision.criteria ?? undefined,
+        defaultOptionId,
+      };
   }
 };

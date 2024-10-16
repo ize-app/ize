@@ -33,7 +33,7 @@ export const newDecisionResult = async ({
     );
 
   // find the decision and choose default option if no decision was made
-  const decisionOptionId =
+  const { decisionOptionId } =
     determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
 
   if (decisionOptionId) {

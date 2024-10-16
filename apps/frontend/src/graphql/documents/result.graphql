@@ -43,6 +43,7 @@ fragment Decision on Decision {
   resultConfigId
   minimumAnswers
   decisionType
+  criteria
   defaultOption {
     ...Option
   }
