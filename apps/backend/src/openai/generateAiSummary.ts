@@ -1,12 +1,7 @@
-import dotenv from "dotenv";
-import { default as OpenAI } from "openai";
-
 import { GenericFieldAndValue, ResultType } from "@/graphql/generated/resolver-types";
 
 import { createPrompt } from "./createPrompt";
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
+import { openAiClient } from "./openAiClient";
 
 // Function to summarize responses
 export const generateAiSummary = async ({
@@ -42,7 +37,7 @@ export const generateAiSummary = async ({
     exampleOutput,
     type,
   });
-  const completion = await openai.chat.completions.create({
+  const completion = await openAiClient.chat.completions.create({
     model: "gpt-4", //"gpt-4", //gpt-3.5-turbo
     messages: [
       {

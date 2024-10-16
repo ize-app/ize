@@ -1,3 +1,5 @@
+import { DecisionType } from "@prisma/client";
+
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -57,8 +59,9 @@ export const checkIfEarlyResult = async ({
         });
 
         if (r.minAnswers > fieldAnswers.length) return false;
+        if (r.ResultConfigDecision?.type === DecisionType.Ai) return true;
 
-        return !!determineDecision({ decisionConfig, answers: fieldAnswers });
+        return !!determineDecision({ resultConfig: r, answers: fieldAnswers, requestStepId });
       }
       return false;
     });

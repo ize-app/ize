@@ -16,15 +16,21 @@ export const responsesResolver = async (
     responses.map(async (response) => {
       const { createdAt, CreatorEntity, Answers } = response;
       const creator = entityResolver({ entity: CreatorEntity });
-      // if (userId && userId === user.id)
-      userResponses.push({
-        responseId: response.id,
-        createdAt: response.createdAt.toISOString(),
-        creator,
-        answers: await Promise.all(
-          response.Answers.map(async (a) => await fieldAnswerResolver({ fieldAnswer: a, context })),
-        ),
-      });
+      const userId = context.currentUser?.id;
+      if (userId) {
+        if (userId === CreatorEntity.User?.id || userId === CreatorEntity.Identity?.userId) {
+          userResponses.push({
+            responseId: response.id,
+            createdAt: response.createdAt.toISOString(),
+            creator,
+            answers: await Promise.all(
+              response.Answers.map(
+                async (a) => await fieldAnswerResolver({ fieldAnswer: a, context }),
+              ),
+            ),
+          });
+        }
+      }
 
       await Promise.all(
         Answers.map(async (a) => {

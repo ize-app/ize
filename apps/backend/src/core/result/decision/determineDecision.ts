@@ -1,18 +1,39 @@
+import { ResultType } from "@prisma/client";
+
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
+import { newAiDecision } from "./newAiDecision";
+import { ResultConfigPrismaType } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
-export const determineDecision = ({
-  decisionConfig,
+export interface DecisionResult {
+  optionId: string | null;
+  explanation: string | null;
+}
+
+export const determineDecision = async ({
+  resultConfig,
   answers,
+  requestStepId,
 }: {
-  decisionConfig: ResultConfigDecisionPrismaType;
+  resultConfig: ResultConfigPrismaType;
   answers: FieldAnswerPrismaType[];
-}): { decisionOptionId: string | null; criteria: string | null } => {
+  requestStepId: string;
+}): Promise<DecisionResult> => {
   let decisionOptionId: string | null = null;
-  let criteria: string | null = null;
+  let explanation: string | null = null;
+
+  const decisionConfig = resultConfig.ResultConfigDecision;
+
+  if (resultConfig.resultType !== ResultType.Decision || !decisionConfig)
+    throw new GraphQLError(
+      `Cannot create decision result without a decision config. resultConfigId: ${resultConfig.id}`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
   const totalAnswerCount = answers.length;
 
@@ -55,11 +76,14 @@ export const determineDecision = ({
       break;
     }
     case DecisionType.Ai: {
-      console.log("inside AI decision");
-      decisionOptionId = "de2bc668-8c82-4563-83ce-26e30c6f3843";
-      criteria = "Just a test";
+      const { optionId, explanation: aiExplaination } = await newAiDecision({
+        resultConfig,
+        requestStepId,
+      });
+      decisionOptionId = optionId;
+      explanation = aiExplaination;
       break;
     }
   }
-  return { decisionOptionId, criteria };
+  return { optionId: decisionOptionId, explanation: explanation };
 };

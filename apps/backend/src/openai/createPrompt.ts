@@ -1,5 +1,7 @@
 import { GenericFieldAndValue, ResultType } from "@/graphql/generated/resolver-types";
 
+import { createRequestContextPrompt } from "./createRequestContextPrompt";
+
 export const createPrompt = ({
   flowName,
   requestName,
@@ -21,7 +23,7 @@ export const createPrompt = ({
   exampleOutput?: string | null;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }) => {
-  const context = formatRequestContext({
+  const context = createRequestContextPrompt({
     flowName,
     requestName,
     requestResults,
@@ -38,31 +40,6 @@ export const createPrompt = ({
       Responses: ${formattedResponses}`;
 
   return prompt;
-};
-
-const formatFieldAndValue = (fieldAndValue: GenericFieldAndValue): string => {
-  return `${fieldAndValue.fieldName}: \n${fieldAndValue.value.reduce((acc, value) => {
-    return `${acc}- ${value}\n`;
-  }, "")}`;
-};
-
-const formatRequestContext = ({
-  flowName,
-  requestName,
-  requestResults,
-  requestTriggerAnswers,
-}: {
-  flowName: string;
-  requestName: string;
-  requestResults: GenericFieldAndValue[];
-  requestTriggerAnswers: GenericFieldAndValue[];
-}): string => {
-  return `Request context\n\nRequest name: [${flowName}] ${requestName}\n${[
-    ...requestResults,
-    ...requestTriggerAnswers,
-  ].reduce((acc, { fieldName, value }) => {
-    return formatFieldAndValue({ fieldName, value });
-  }, "")}`;
 };
 
 const formatResponses = (responses: string[]): string => {

@@ -33,8 +33,12 @@ export const newDecisionResult = async ({
     );
 
   // find the decision and choose default option if no decision was made
-  const { decisionOptionId, criteria } =
-    determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
+  const { optionId: decisionOptionId, explanation } =
+    (await determineDecision({
+      resultConfig,
+      answers: fieldAnswers,
+      requestStepId,
+    })) ?? decisionConfig.defaultOptionId;
 
   if (decisionOptionId) {
     decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
@@ -54,7 +58,7 @@ export const newDecisionResult = async ({
       ? {
           create: {
             name: "Decision",
-            itemCount: criteria ? 2 : 1,
+            itemCount: explanation ? 2 : 1,
             index: 0,
             ResultItems: {
               create: {
@@ -81,7 +85,7 @@ export const newDecisionResult = async ({
     update: resultArgs,
   });
 
-  if (decisionOptionId && criteria) {
+  if (decisionOptionId && explanation) {
     await prisma.result.create({
       data: {
         resultGroupId: resultGroup.id,
@@ -91,7 +95,7 @@ export const newDecisionResult = async ({
         ResultItems: {
           create: {
             dataType: FieldDataType.String,
-            value: criteria,
+            value: explanation,
           },
         },
       },
