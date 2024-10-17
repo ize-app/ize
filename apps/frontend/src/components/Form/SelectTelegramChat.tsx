@@ -19,7 +19,7 @@ export const SelectTelegramChat = <T extends FieldValues>({
 }: SelectTelegramChatProps<T>) => {
   const [getTelegramChats, { loading: telegramChatsLoading, data: telegramChats }] = useLazyQuery(
     TelegramChatsDocument,
-    { variables: { adminOnly } },
+    { variables: { adminOnly }, fetchPolicy: "network-only" },
   );
 
   return (

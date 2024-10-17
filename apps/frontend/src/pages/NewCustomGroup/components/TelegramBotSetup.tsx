@@ -22,26 +22,30 @@ export const TelegramBotSetup = () => {
       But the backend validation will fail if the bot's domain is not the same as the one set in the backend
       */}
       {!telegramIdentity && <TelegramLogin />}
-      <Typography variant="description">First, add the Ize bot to your Telegram</Typography>
-      <AddTelegramBotButton />
-      <Typography variant="description">
-        Send this slash command in the Telegram group where you want to add the bot
-      </Typography>
-      <CopyToClipboardButton
-        textComponent={
-          <>
-            <strong>/linkgroup</strong>
-          </>
-        }
-      />
-      <Typography variant="description">
-        Once you call the /linkgroup command, select the Telegram group below
-      </Typography>
-      <SelectTelegramChat<GroupSetupAndPoliciesSchemaType>
-        label="Chat"
-        name="notificationEntity"
-        adminOnly={true}
-      />
+      {telegramIdentity && (
+        <>
+          <Typography variant="description">First, add the Ize bot to your Telegram</Typography>
+          <AddTelegramBotButton />
+          <Typography variant="description">
+            Send this slash command in the Telegram group where you want to add the bot
+          </Typography>
+          <CopyToClipboardButton
+            textComponent={
+              <>
+                <strong>/linkgroup</strong>
+              </>
+            }
+          />
+          <Typography variant="description">
+            Once you call the /linkgroup command, select the Telegram group below
+          </Typography>
+          <SelectTelegramChat<GroupSetupAndPoliciesSchemaType>
+            label="Chat"
+            name="notificationEntity"
+            adminOnly={true}
+          />
+        </>
+      )}
     </>
   );
   // login button
