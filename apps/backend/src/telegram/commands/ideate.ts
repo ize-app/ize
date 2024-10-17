@@ -11,7 +11,7 @@ import { prisma } from "@/prisma/client";
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";
 import { trimCommandMessage } from "../utils/trimCommandMessage";
 
-export const synthesize = async ({
+export const ideate = async ({
   ctx,
 }: {
   ctx: Context<{
@@ -24,10 +24,11 @@ export const synthesize = async ({
 
   const identity = await upsertTelegramIdentity({ telegramUserData: telegramUser });
 
+  // remove first word (command) from prompt and all trailing leading spaces
   const prompt = trimCommandMessage(ctx.message.text);
 
   if (prompt.length < 2) {
-    ctx.reply("Please provide a complete prompt that you'd like the group to respond to.");
+    ctx.reply("Please provide a complete question that you'd like to the group to respond to.");
     return;
   }
 
@@ -43,7 +44,7 @@ export const synthesize = async ({
   const configArgs = generateNonreusableFlowConfig({
     respondEntityId: telegramGroup.Group.entityId,
     prompt,
-    type: FlowConfigGeneration.Synthesize,
+    type: FlowConfigGeneration.Ideate,
   });
 
   // new custom flow will also create request and send notification to the relevant groups

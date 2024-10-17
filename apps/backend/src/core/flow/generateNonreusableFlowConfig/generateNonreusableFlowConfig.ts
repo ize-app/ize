@@ -2,41 +2,44 @@ import {
   FieldDataType,
   FieldType,
   NewFlowArgs,
+  PermissionArgs,
   ResultType,
 } from "@/graphql/generated/resolver-types";
 
 export enum FlowConfigGeneration {
   Synthesize = "Synthesize",
+  Ideate = "Ideate",
 }
-
-interface SynthesizeFlowConfigGenerate {
-  type: FlowConfigGeneration.Synthesize;
-  prompt: string;
-}
-
-type FlowConfigArgs = SynthesizeFlowConfigGenerate;
 
 interface GenerateCustomFlowConfig {
   respondEntityId: string;
-  configArgs: FlowConfigArgs;
+  type: FlowConfigGeneration;
+  prompt: string;
 }
 
 export const generateNonreusableFlowConfig = ({
   respondEntityId,
-  configArgs,
+  type,
+  prompt,
 }: GenerateCustomFlowConfig): NewFlowArgs => {
-  switch (configArgs.type) {
+  const reusable = false;
+  const expirationSeconds = 60 * 60 * 24 * 3;
+  const canBeManuallyEnded = true;
+  const allowMultipleResponses = true;
+  const respondPermission: PermissionArgs = { anyone: false, entities: [{ id: respondEntityId }] };
+  const triggerPermission: PermissionArgs = { anyone: false, entities: [] };
+
+  switch (type) {
     case FlowConfigGeneration.Synthesize: {
-      const { prompt } = configArgs;
       return {
         name: "Synthesize group perspectives",
-        reusable: false,
+        reusable,
         requestName: prompt,
         steps: [
           {
-            request: { permission: { anyone: false, entities: [] }, fields: [] },
+            request: { permission: triggerPermission, fields: [] },
             response: {
-              permission: { anyone: false, entities: [{ id: respondEntityId }] },
+              permission: respondPermission,
               fields: [
                 {
                   fieldId: "",
@@ -57,9 +60,47 @@ export const generateNonreusableFlowConfig = ({
               },
             ],
             action: undefined,
-            expirationSeconds: 60 * 60 * 24 * 3,
-            allowMultipleResponses: false,
-            canBeManuallyEnded: true,
+            expirationSeconds,
+            allowMultipleResponses,
+            canBeManuallyEnded,
+          },
+        ],
+        evolve: undefined,
+      };
+    }
+    case FlowConfigGeneration.Ideate: {
+      return {
+        name: "Ideate together",
+        reusable,
+        requestName: prompt,
+        steps: [
+          {
+            request: { permission: triggerPermission, fields: [] },
+            response: {
+              permission: respondPermission,
+              fields: [
+                {
+                  fieldId: "",
+                  type: FieldType.FreeInput,
+                  name: prompt,
+                  isInternal: false,
+                  required: true,
+                  freeInputDataType: FieldDataType.String,
+                },
+              ],
+            },
+            result: [
+              {
+                type: ResultType.LlmSummaryList,
+                responseFieldIndex: 0,
+                minimumAnswers: 2,
+                llmSummary: { prompt: "", example: "" },
+              },
+            ],
+            action: undefined,
+            expirationSeconds,
+            allowMultipleResponses,
+            canBeManuallyEnded,
           },
         ],
         evolve: undefined,

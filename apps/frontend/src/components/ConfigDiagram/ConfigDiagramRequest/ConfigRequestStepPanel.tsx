@@ -37,6 +37,11 @@ export const ConfigRequestStepPanel = ({
   creator: EntityFragment;
 }) => {
   const { me } = useContext(CurrentUserContext);
+
+  const userIsCreator =
+    me?.user.entityId === creator.entityId ||
+    me?.identities.some((i) => i.entityId === creator.entityId);
+
   const status = determineRequestStepStatus(
     requestStepIndex,
     requestStep?.resultsComplete ?? false,
@@ -47,7 +52,7 @@ export const ConfigRequestStepPanel = ({
   let expirationDate: Date | null = null;
 
   const showManuallyEndButton =
-    step.canBeManuallyEnded && me?.user.id === creator.id && !requestStep?.responseComplete;
+    step.canBeManuallyEnded && userIsCreator && !requestStep?.responseComplete;
 
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);

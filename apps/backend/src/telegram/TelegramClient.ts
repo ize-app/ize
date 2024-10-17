@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
-import { linkGroup, synthesize } from "./commands";
+import { ideate, linkGroup, synthesize } from "./commands";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 
@@ -30,7 +30,12 @@ telegramBot.telegram.setMyCommands([
   {
     command: "synthesize",
     description:
-      "Ask a question for the group to give their opinion about and have AI synethesize all perspectives.",
+      "Ask a question for the group to give their opinion about and have AI synthesize all perspectives.",
+  },
+  {
+    command: "ideate",
+    description:
+      "Ask the group to ideate on a question and have AI summarize all perspectives into a coherent list",
   },
 ]);
 
@@ -40,6 +45,10 @@ telegramBot.command("linkgroup", async (ctx) => {
 
 telegramBot.command("synthesize", async (ctx) => {
   await synthesize({ ctx });
+});
+
+telegramBot.command("ideate", async (ctx) => {
+  await ideate({ ctx });
 });
 
 telegramBot.on("poll_answer", (ctx) => {

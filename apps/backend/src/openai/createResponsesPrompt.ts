@@ -30,6 +30,7 @@ const formatAnswer = ({ userFieldAnswer }: { userFieldAnswer: UserFieldAnswer })
     case "FreeInputFieldAnswer":
       value = answer.value;
       break;
+    // TODO need to fix this
     case "OptionFieldAnswer":
       value = answer.selections.map((selection) => selection.optionId).join(", ");
       break;
