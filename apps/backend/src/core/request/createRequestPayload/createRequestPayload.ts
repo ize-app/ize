@@ -63,7 +63,7 @@ export async function createRequestPayload({
   const fieldAnswers: UserFieldAnswers[] = [];
   request.steps.forEach((step) => {
     step.responseFieldAnswers.forEach((responseFieldAnswer) => {
-      if (fieldAnswers.length > 0) fieldAnswers.push(responseFieldAnswer);
+      if (responseFieldAnswer.answers.length > 0) fieldAnswers.push(responseFieldAnswer);
     });
   });
 

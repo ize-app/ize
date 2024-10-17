@@ -1,5 +1,8 @@
 import {
+  ActionType,
+  DecisionType,
   FieldDataType,
+  FieldOptionsSelectionType,
   FieldType,
   NewFlowArgs,
   PermissionArgs,
@@ -9,6 +12,7 @@ import {
 export enum FlowConfigGeneration {
   Synthesize = "Synthesize",
   Ideate = "Ideate",
+  LetAiDecide = "LetAiDecide",
 }
 
 interface GenerateCustomFlowConfig {
@@ -25,9 +29,8 @@ export const generateNonreusableFlowConfig = ({
   const reusable = false;
   const expirationSeconds = 60 * 60 * 24 * 3;
   const canBeManuallyEnded = true;
-  const allowMultipleResponses = true;
   const respondPermission: PermissionArgs = { anyone: false, entities: [{ id: respondEntityId }] };
-  const triggerPermission: PermissionArgs = { anyone: false, entities: [] };
+  const emptyPermission: PermissionArgs = { anyone: false, entities: [] };
 
   switch (type) {
     case FlowConfigGeneration.Synthesize: {
@@ -37,7 +40,7 @@ export const generateNonreusableFlowConfig = ({
         requestName: prompt,
         steps: [
           {
-            request: { permission: triggerPermission, fields: [] },
+            request: { permission: emptyPermission, fields: [] },
             response: {
               permission: respondPermission,
               fields: [
@@ -61,7 +64,7 @@ export const generateNonreusableFlowConfig = ({
             ],
             action: undefined,
             expirationSeconds,
-            allowMultipleResponses,
+            allowMultipleResponses: true,
             canBeManuallyEnded,
           },
         ],
@@ -75,7 +78,7 @@ export const generateNonreusableFlowConfig = ({
         requestName: prompt,
         steps: [
           {
-            request: { permission: triggerPermission, fields: [] },
+            request: { permission: emptyPermission, fields: [] },
             response: {
               permission: respondPermission,
               fields: [
@@ -99,7 +102,80 @@ export const generateNonreusableFlowConfig = ({
             ],
             action: undefined,
             expirationSeconds,
-            allowMultipleResponses,
+            allowMultipleResponses: true,
+            canBeManuallyEnded,
+          },
+        ],
+        evolve: undefined,
+      };
+    }
+    case FlowConfigGeneration.LetAiDecide: {
+      return {
+        name: "Ideate together",
+        reusable,
+        requestName: prompt,
+        steps: [
+          {
+            request: { permission: emptyPermission, fields: [] },
+            response: {
+              permission: respondPermission,
+              fields: [
+                {
+                  fieldId: "",
+                  type: FieldType.FreeInput,
+                  name: prompt,
+                  isInternal: false,
+                  required: true,
+                  freeInputDataType: FieldDataType.String,
+                },
+              ],
+            },
+            result: [
+              {
+                type: ResultType.LlmSummaryList,
+                responseFieldIndex: 0,
+                minimumAnswers: 2,
+                llmSummary: { prompt: "", example: "" },
+              },
+            ],
+            action: { type: ActionType.TriggerStep, locked: false },
+            expirationSeconds,
+            allowMultipleResponses: true,
+            canBeManuallyEnded,
+          },
+          {
+            request: { permission: emptyPermission, fields: [] },
+            response: {
+              permission: emptyPermission,
+              fields: [
+                {
+                  fieldId: "",
+                  type: FieldType.Options,
+                  name: prompt,
+                  isInternal: true,
+                  required: true,
+                  freeInputDataType: FieldDataType.String,
+                  optionsConfig: {
+                    options: [],
+                    previousStepOptions: true,
+                    selectionType: FieldOptionsSelectionType.Select,
+                    linkedResultOptions: [{ stepIndex: 0, resultIndex: 0 }],
+                  },
+                },
+              ],
+            },
+            result: [
+              {
+                type: ResultType.Decision,
+                responseFieldIndex: 0,
+                minimumAnswers: 0,
+
+                decision: { type: DecisionType.Ai },
+              },
+            ],
+            action: undefined,
+            expirationSeconds,
+            allowMultipleResponses: false,
             canBeManuallyEnded,
           },
         ],

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
-import { ideate, linkGroup, synthesize } from "./commands";
+import { ideate, letAiDecide, linkGroup, synthesize } from "./commands";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 
@@ -37,6 +37,10 @@ telegramBot.telegram.setMyCommands([
     description:
       "Ask the group to ideate on a question and have AI summarize all perspectives into a coherent list",
   },
+  {
+    command: "let_ai_decide",
+    description: "Ask the group their opinion and rationale, and have AI decide the best option",
+  },
 ]);
 
 telegramBot.command("linkgroup", async (ctx) => {
@@ -49,6 +53,10 @@ telegramBot.command("synthesize", async (ctx) => {
 
 telegramBot.command("ideate", async (ctx) => {
   await ideate({ ctx });
+});
+
+telegramBot.command("let_ai_decide", async (ctx) => {
+  await letAiDecide({ ctx });
 });
 
 telegramBot.on("poll_answer", (ctx) => {

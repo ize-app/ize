@@ -29,7 +29,7 @@ export const createDecisionPrompt = ({
     throw Error(`Field is not an options field ${field.fieldId}`);
 
   const defaultDecisionCriteria =
-    "Using the context provided about the request and responses provided, choose an opton that reflects both the goals of this request and the preferences of the respondants (if there are any responses).";
+    "Consider the goals of the request and the preferences of the respondants. Make a decision that balances the needs of the group and the goals of the request.";
 
   const criteriaInstructions = `Your decision must incororate the following decision criteria: ${criteria ? `${criteria}` : defaultDecisionCriteria}`;
 

@@ -151,6 +151,6 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
 
   sendNewStepNotifications({
     flowId,
-    requestStepId,
+    requestStepId: nextRquestStepId,
   });
 };
