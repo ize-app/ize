@@ -1,3 +1,5 @@
+import { FlowType } from "@prisma/client";
+
 import { prisma } from "@/prisma/client";
 
 import { sendTelegramResultsNotifications } from "./sendTelegramResultsNotifications";
@@ -12,10 +14,17 @@ export const sendResultNotifications = async ({ requestStepId }: { requestStepId
     },
     include: {
       Request: {
-        include: { FlowVersion: true },
+        include: {
+          FlowVersion: {
+            include: { Flow: true },
+          },
+        },
       },
     },
   });
+
+  // watch flow results are noisy, so going to ignore them for now
+  if (req.Request.FlowVersion.Flow.type === FlowType.GroupWatchFlow) return;
 
   const groups = await getGroupsToNotify(req.Request.FlowVersion.flowId);
 
