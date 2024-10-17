@@ -1,3 +1,5 @@
+import { RequestStep } from "@prisma/client";
+
 import { StepPrismaType } from "@/core/flow/flowPrismaTypes";
 import { ResponsePrismaType } from "@/core/response/responsePrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
@@ -24,7 +26,7 @@ export const runResultsForStep = async ({
   step: StepPrismaType;
   responses: ResponsePrismaType[];
   existingResults?: ResultGroupPrismaType[];
-}): Promise<ResultGroupPrismaType[]> => {
+}): Promise<RequestStep> => {
   return await prisma.$transaction(async (transaction) => {
     const resultConfigs =
       step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
@@ -154,7 +156,7 @@ export const runResultsForStep = async ({
     );
 
     // update request step with outcome
-    await transaction.requestStep.update({
+    return await transaction.requestStep.update({
       where: {
         id: requestStepId,
       },
@@ -163,7 +165,5 @@ export const runResultsForStep = async ({
         resultsFinal: attempetdResults.every((result) => result.final),
       },
     });
-
-    return attempetdResults;
   });
 };

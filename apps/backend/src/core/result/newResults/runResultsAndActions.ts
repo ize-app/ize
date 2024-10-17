@@ -36,7 +36,7 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
       requestStepId,
     });
 
-    const hasCompleteResults = results.every((result) => result.final);
+    const hasCompleteResults = results.resultsFinal;
 
     // this code block should only be run once per request step
     if (hasCompleteResults) {

@@ -101,7 +101,7 @@ export const Result = ({
               </Box>
             );
           })}
-        {!resultGroup &&
+        {(!resultGroup || !resultGroup.hasResult) &&
           field &&
           field.__typename === FieldType.Options &&
           displayFieldOptionsIfNoResult && (

@@ -1,8 +1,9 @@
-import { DecisionType, ResultType } from "@prisma/client";
+import { DecisionType, FieldType, ResultType } from "@prisma/client";
 
 import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { createDecisionPrompt } from "@/openai/createDecisionPrompt";
+import { AiDecisionResult, createDecisionPrompt } from "@/openai/createDecisionPrompt";
 import { createRequestContextPrompt } from "@/openai/createRequestContextPrompt";
+import { createResponsesPrompt } from "@/openai/createResponsesPrompt";
 import { openAiClient } from "@/openai/openAiClient";
 
 import { DecisionResult } from "./determineDecision";
@@ -24,7 +25,7 @@ export const newAiDecision = async ({
 
   const criteria = resultConfig.ResultConfigDecision.criteria;
 
-  const { requestName, flowName, requestTriggerAnswers, requestResults, field } =
+  const { requestName, flowName, requestTriggerAnswers, requestResults, field, fieldAnswers } =
     await createRequestPayload({
       requestStepId,
       fieldId: resultConfig.fieldId,
@@ -41,6 +42,8 @@ export const newAiDecision = async ({
 
   const decisionPrompt = createDecisionPrompt({ field, criteria });
 
+  const responsesPrompt = createResponsesPrompt({ fieldAnswers });
+
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
     messages: [
@@ -50,6 +53,7 @@ export const newAiDecision = async ({
           "You are a helpful assistant for a collective sensemaking platform called Ize. With Ize, users can create a 'request' to solicit group feedback about some topic. Each request contains context about what the user is being asked to respond to. Additionally, the request will include 'summarization instructions' providing additional context on how to summarize user responses. Get right to the point and don't use filler phrases like 'Based on the responses provided', 'Summary of responses' or ambiguous suggestions like 'It may be beneficial to further discuss...'. Be as consise as possible - do not repeat yourself.",
       },
       { role: "user", content: requestContext },
+      { role: "user", content: responsesPrompt },
       { role: "user", content: decisionPrompt },
     ],
     response_format: { type: "json_object" },
@@ -57,7 +61,13 @@ export const newAiDecision = async ({
 
   const message = completion.choices[0].message.content ?? "";
 
-  const result = JSON.parse(message) as DecisionResult;
+  const result = JSON.parse(message) as AiDecisionResult;
 
-  return result;
+  if (field.__typename !== FieldType.Options) throw Error("Field is not an options field");
+
+  const option = field.options[result.optionNumber];
+
+  if (!option) throw Error("Invalid option");
+
+  return { explanation: result.explanation, optionId: option.optionId };
 };

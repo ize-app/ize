@@ -1,6 +1,6 @@
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { Field } from "@/graphql/generated/resolver-types";
+import { Field, UserFieldAnswers } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -38,6 +38,7 @@ export async function createRequestPayload({
   flowName: string;
   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
   requestResults: ReturnType<typeof getRequestResults>;
+  fieldAnswers: UserFieldAnswers[];
   field?: Field | undefined; // General return type that covers both overloads
 }> {
   const reqStep = await prisma.requestStep.findUniqueOrThrow({
@@ -59,9 +60,16 @@ export async function createRequestPayload({
 
   let field: Field | undefined = undefined;
 
+  const fieldAnswers: UserFieldAnswers[] = [];
+  request.steps.forEach((step) => {
+    step.responseFieldAnswers.forEach((responseFieldAnswer) => {
+      if (fieldAnswers.length > 0) fieldAnswers.push(responseFieldAnswer);
+    });
+  });
+
   if (fieldId) {
-    request.flow.steps.forEach((step) => {
-      step.response.fields.forEach((f) => {
+    request.steps.forEach((step) => {
+      step.responseFields.forEach((f) => {
         if (f.fieldId === fieldId) field = f;
       });
     });
@@ -80,5 +88,5 @@ export async function createRequestPayload({
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
   const requestResults = getRequestResults({ request });
 
-  return { requestName, flowName, requestTriggerAnswers, requestResults, field };
+  return { requestName, flowName, requestTriggerAnswers, requestResults, field, fieldAnswers };
 }

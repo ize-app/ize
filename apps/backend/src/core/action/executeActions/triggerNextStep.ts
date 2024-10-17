@@ -9,134 +9,144 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { prisma } from "../../../prisma/client";
 
 export const triggerNextStep = async ({ requestStepId }: { requestStepId: string }) => {
-  const { flowId, responseComplete } = await prisma.$transaction(async (transaction) => {
-    // get the id of the next step and request
-    const reqData = await transaction.requestStep.findFirst({
-      where: {
-        id: requestStepId,
-      },
-      include: {
-        Request: {
-          include: requestInclude,
+  const { flowId, responseComplete, nextRquestStepId } = await prisma.$transaction(
+    async (transaction) => {
+      // get the id of the next step and request
+      const reqData = await transaction.requestStep.findFirst({
+        where: {
+          id: requestStepId,
         },
-        Step: true,
-      },
-    });
-
-    if (!reqData) {
-      throw new GraphQLError(`Cannot find requestStepId ${requestStepId}`, {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        include: {
+          Request: {
+            include: requestInclude,
+          },
+          Step: true,
+        },
       });
-    }
 
-    const nextStepIndex = reqData.Step.index + 1;
-
-    const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
-
-    if (!nextStep) {
-      throw new GraphQLError(
-        `Next step action was triggered but there is no step for flowVersion ${
-          reqData.Request.FlowVersion.id
-        }, request ${reqData.requestId}, and index ${nextStepIndex.toString()}`,
-        {
+      if (!reqData) {
+        throw new GraphQLError(`Cannot find requestStepId ${requestStepId}`, {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        },
-      );
-    }
-
-    const responseComplete = canEndRequestStepWithResponse({ step: nextStep });
-
-    // trigger the next step if it exists
-    const nextRequestStep = await transaction.requestStep.create({
-      data: {
-        expirationDate: new Date(
-          new Date().getTime() + (nextStep.expirationSeconds as number) * 1000,
-        ),
-        responseFinal: responseComplete,
-        Request: {
-          connect: {
-            id: reqData.requestId,
-          },
-        },
-        Step: {
-          connect: {
-            id: nextStep.id,
-          },
-        },
-        CurrentStepParent: {
-          connect: {
-            id: reqData.requestId,
-          },
-        },
-      },
-    });
-
-    // for each field, see if there are linked results
-    // then find those results in the previous request steps and create a requestDefinedOptionSet for that field
-    (nextStep.ResponseFieldSet?.FieldSetFields ?? []).map((f) => {
-      const linkedResults = f.Field.FieldOptionsConfigs?.linkedResultOptions;
-      if (linkedResults) {
-        linkedResults.forEach((resultConfigId) => {
-          // iterate through all request Steps's results to find results associated with the linked result config id
-          reqData.Request.RequestSteps.forEach(async (rs) => {
-            const resultGroup = rs.ResultGroups.find((r) => r.resultConfigId === resultConfigId);
-            if (!resultGroup) {
-              throw new GraphQLError(
-                `Cannot find result group for resultConfigId ${resultConfigId} in requestStepId ${rs.id}`,
-                {
-                  extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-                },
-              );
-            }
-            // 0 index is primary result for the result group
-            const result = resultGroup.Result.find((r) => r.index === 0);
-
-            if (!result) {
-              throw new GraphQLError(
-                `Cannot find primary result in resultGroup ${resultGroup.id}`,
-                {
-                  extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-                },
-              );
-            }
-
-            const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
-              return {
-                dataType: ri.dataType as unknown as FieldDataType,
-                name: ri.value,
-              };
-            });
-
-            return await createRequestDefinedOptionSet({
-              step: nextStep,
-              requestStepId: nextRequestStep.id,
-              newOptionArgs,
-              fieldId: f.Field.id,
-              isTriggerDefinedOptions: false,
-              transaction,
-            });
-          });
         });
       }
-    });
 
-    await transaction.request.update({
-      where: {
-        id: reqData.requestId,
-      },
-      data: {
-        currentRequestStepId: nextRequestStep.id,
-      },
-    });
+      const nextStepIndex = reqData.Step.index + 1;
 
-    return {
-      flowId: reqData.Request.FlowVersion.flowId,
-      responseComplete,
-    };
-  });
+      const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
+
+      if (!nextStep) {
+        throw new GraphQLError(
+          `Next step action was triggered but there is no step for flowVersion ${
+            reqData.Request.FlowVersion.id
+          }, request ${reqData.requestId}, and index ${nextStepIndex.toString()}`,
+          {
+            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+          },
+        );
+      }
+
+      const responseComplete = canEndRequestStepWithResponse({ step: nextStep });
+      // trigger the next step if it exists
+      const nextRequestStep = await transaction.requestStep.create({
+        data: {
+          expirationDate: new Date(
+            new Date().getTime() + (nextStep.expirationSeconds as number) * 1000,
+          ),
+          responseFinal: responseComplete,
+          Request: {
+            connect: {
+              id: reqData.requestId,
+            },
+          },
+          Step: {
+            connect: {
+              id: nextStep.id,
+            },
+          },
+          CurrentStepParent: {
+            connect: {
+              id: reqData.requestId,
+            },
+          },
+        },
+      });
+
+      // for each field, see if there are linked results
+      // then find those results in the previous request steps and create a requestDefinedOptionSet for that field
+      await Promise.all(
+        (nextStep.ResponseFieldSet?.FieldSetFields ?? []).map(async (f) => {
+          const linkedResults = f.Field.FieldOptionsConfigs?.linkedResultOptions;
+          if (linkedResults) {
+            await Promise.all(
+              linkedResults.map(async (resultConfigId) => {
+                // iterate through all request Steps's results to find results associated with the linked result config id
+                await Promise.all(
+                  reqData.Request.RequestSteps.map(async (rs) => {
+                    const resultGroup = rs.ResultGroups.find(
+                      (r) => r.resultConfigId === resultConfigId,
+                    );
+                    if (!resultGroup) {
+                      throw new GraphQLError(
+                        `Cannot find result group for resultConfigId ${resultConfigId} in requestStepId ${rs.id}`,
+                        {
+                          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+                        },
+                      );
+                    }
+                    // 0 index is primary result for the result group
+                    const result = resultGroup.Result.find((r) => r.index === 0);
+
+                    if (!result) {
+                      throw new GraphQLError(
+                        `Cannot find primary result in resultGroup ${resultGroup.id}`,
+                        {
+                          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+                        },
+                      );
+                    }
+
+                    const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
+                      return {
+                        dataType: ri.dataType as unknown as FieldDataType,
+                        name: ri.value,
+                      };
+                    });
+
+                    return await createRequestDefinedOptionSet({
+                      step: nextStep,
+                      requestStepId: nextRequestStep.id,
+                      newOptionArgs,
+                      fieldId: f.Field.id,
+                      isTriggerDefinedOptions: false,
+                      transaction,
+                    });
+                  }),
+                );
+              }),
+            );
+          }
+        }),
+      );
+
+      await transaction.request.update({
+        where: {
+          id: reqData.requestId,
+        },
+        data: {
+          currentRequestStepId: nextRequestStep.id,
+        },
+      });
+
+      return {
+        flowId: reqData.Request.FlowVersion.flowId,
+        responseComplete,
+        nextRquestStepId: nextRequestStep.id,
+      };
+    },
+  );
 
   if (responseComplete) {
-    await runResultsAndActions({ requestStepId });
+    await runResultsAndActions({ requestStepId: nextRquestStepId });
   }
 
   sendNewStepNotifications({

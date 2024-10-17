@@ -1,11 +1,21 @@
 import { FieldType } from "@prisma/client";
 
-import { DecisionResult } from "@/core/result/decision/determineDecision";
 import { Field } from "@/graphql/generated/resolver-types";
 
-const exampleDecision: DecisionResult = {
-  optionId: "1",
-  explanation: "criteria",
+export interface AiDecisionResult {
+  optionNumber: number;
+  explanation: string;
+}
+
+const exampleDecision1: AiDecisionResult = {
+  optionNumber: 2,
+  explanation: "This option balances consideration A and B. Though the downside is consideration C",
+};
+
+const exampleDecision2: AiDecisionResult = {
+  optionNumber: 3,
+  explanation:
+    "There wasn't enough context to make an informed decision, but this option is reasonable given the goals of the request",
 };
 
 export const createDecisionPrompt = ({
@@ -25,14 +35,14 @@ export const createDecisionPrompt = ({
 
   const fieldInstructions = `You must make a decision for the following question: ${field.name}`;
 
-  const options = field.options.map((option) => ({
-    optionId: option.optionId,
+  const options = field.options.map((option, index) => ({
+    optionNumber: index,
     value: option.name,
   }));
 
   const chooseOptionInstructions = `Decide one of the following options:\n ${JSON.stringify(options)} `;
 
-  const outputInstructions = `Provide your decision optionId and a brief explanation in the following JSON format: \n ${JSON.stringify(exampleDecision)}`;
+  const outputInstructions = `Provide the number of the option you are selecting and a brief explanation in the following example JSON formats: \n ${JSON.stringify(exampleDecision1)}\n\n ${JSON.stringify(exampleDecision2)}`;
 
   return `${fieldInstructions}\n\n${criteriaInstructions}\n\n${chooseOptionInstructions}\n\n${outputInstructions}`;
 };

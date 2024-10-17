@@ -131,8 +131,6 @@ type RequestPayload {
   flowName: String!
   triggerFieldAnswers: [FieldValue]!
   results: [FieldValue]!
-  
-
 }
 
 type FieldValue {

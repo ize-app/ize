@@ -57,7 +57,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                     request.currentStepIndex,
                     request.final,
                   )}
-                  subtitle={step.response.fields[index].name}
+                  subtitle={step.response.fields[0].name}
                   icon={Diversity3Outlined}
                   label={
                     request.flow.steps[index].result[0].__typename

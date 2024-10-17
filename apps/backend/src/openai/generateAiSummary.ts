@@ -38,7 +38,7 @@ export const generateAiSummary = async ({
     type,
   });
   const completion = await openAiClient.chat.completions.create({
-    model: "gpt-4", //"gpt-4", //gpt-3.5-turbo
+    model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
     messages: [
       {
         role: "system",

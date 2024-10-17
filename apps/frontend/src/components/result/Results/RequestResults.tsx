@@ -31,7 +31,12 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
     );
 
     step.result.forEach((resultConfig) => {
-      const field = step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
+      const responseField = request.steps[stepIndex]?.responseFields.find(
+        (field) => field.fieldId === resultConfig.fieldId,
+      );
+      const field =
+        responseField ??
+        step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
       const resultGroup =
         request.steps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
