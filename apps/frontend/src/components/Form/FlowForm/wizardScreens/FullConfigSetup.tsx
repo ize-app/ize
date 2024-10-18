@@ -45,6 +45,16 @@ export const FullConfigSetup = () => {
     defaultValues: {
       name: formState.newFlow?.name ?? "",
       reusable: formState.newFlow?.reusable ?? true,
+      fieldSet: formState.newFlow.fieldSet ?? {
+        fields: [],
+        locked: false,
+      },
+      trigger: formState.newFlow?.trigger ?? {
+        permission: {
+          type: PermissionType.Anyone,
+          entities: [],
+        },
+      },
       evolve: formState.newFlow?.evolve ?? {
         requestPermission: { type: PermissionType.Anyone, entities: [] },
         responsePermission: {
@@ -72,7 +82,7 @@ export const FullConfigSetup = () => {
   });
 
   console.log("errors are ", useFormMethods.formState.errors);
-  // console.log("values are ", useFormMethods.getValues());
+  console.log("values are ", useFormMethods.getValues());
 
   const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 

@@ -60,7 +60,7 @@ export const newFlow = async ({
           anyone: false,
           entities: [{ id: entityId }],
         };
-        args.steps[0].fieldSet = { fields: [], locked: false };
+        args.fieldSet = { fields: [], locked: false };
       }
       // non-reusable flows can't be evolve
       args.evolve = undefined;
