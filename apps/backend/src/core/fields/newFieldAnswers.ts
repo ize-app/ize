@@ -82,7 +82,6 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.FreeInput,
               fieldId: field.id,
-              requestStepId,
               responseId,
               AnswerFreeInput: {
                 create: {
@@ -152,7 +151,6 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.Options,
               fieldId: field.id,
-              requestStepId,
               responseId,
               AnswerOptionSelections: {
                 createMany: {

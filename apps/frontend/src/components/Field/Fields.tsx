@@ -1,21 +1,21 @@
 import Box from "@mui/material/Box";
 
-import { FieldAnswerFragment, FieldFragment } from "@/graphql/generated/graphql";
+import { FieldAnswerFragment, FieldSetFragment } from "@/graphql/generated/graphql";
 
 import { Field } from "./Field";
 
-export const Fields = ({
-  fields,
+export const FieldSet = ({
+  fieldSet: fieldSet,
   fieldAnswers,
   onlyShowSelections = false,
 }: {
-  fields: FieldFragment[];
+  fieldSet: FieldSetFragment;
   fieldAnswers?: FieldAnswerFragment[];
   onlyShowSelections?: boolean;
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {fields.map((field) => {
+      {fieldSet.fields.map((field) => {
         let fieldAnswer: FieldAnswerFragment | undefined;
         if (fieldAnswers) {
           fieldAnswer = fieldAnswers.find((fa) => fa.fieldId === field.fieldId) ?? undefined;

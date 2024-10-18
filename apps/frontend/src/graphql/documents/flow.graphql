@@ -35,25 +35,6 @@ fragment Flow on Flow {
   }
 }
 
-fragment FlowSummary on FlowSummary {
-  flowId
-  name
-  createdAt
-  creator {
-    ...Entity
-  }
-  group {
-    ...GroupSummaryParts
-  }
-  requestStep0Permission {
-    ...Permission
-  }
-  userPermission {
-    ...UserFlowPermission
-  }
-  isWatched
-}
-
 fragment FlowFields on Flow {
   id
   flowId
@@ -67,26 +48,48 @@ fragment FlowFields on Flow {
   versionPublishedAt
   active
   flowsEvolvedByThisFlow {
-    ...FlowRefernce
+    ...FlowReference
   }
   type
   name
   reusable
+  fieldSet {
+    ...FieldSet
+  }
+  trigger {
+    ...TriggerConfig
+  }
   steps {
     ...Step
   }
   isWatched
 }
 
-fragment FlowRefernce on FlowReference {
+fragment FlowSummary on FlowSummary {
+  flowId
+  name
+  createdAt
+  creator {
+    ...Entity
+  }
+  group {
+    ...GroupSummaryParts
+  }
+  trigger {
+    ...TriggerConfig
+  }
+  isWatched
+}
+
+fragment FlowReference on FlowReference {
   flowId
   flowName
 }
 
 fragment Step on Step {
   id
-  request {
-    ...RequestConfig
+  fieldSet {
+    ...FieldSet
   }
   response {
     ...ResponseConfig
@@ -97,39 +100,21 @@ fragment Step on Step {
   action {
     ...Action
   }
-  expirationSeconds
-  canBeManuallyEnded
-  allowMultipleResponses
-  userPermission {
-    ...UserPermission
-  }
 }
 
-fragment RequestConfig on RequestConfig {
+fragment TriggerConfig on TriggerConfig {
   permission {
     ...Permission
   }
-  fields {
-    ...Field
-  }
-  fieldsLocked
+  userPermission
 }
 
 fragment ResponseConfig on ResponseConfig {
   permission {
     ...Permission
   }
-  fields {
-    ...Field
-  }
-  fieldsLocked
-}
-
-fragment UserPermission on UserPermission {
-  request
-  response
-}
-
-fragment UserFlowPermission on UserFlowPermission {
-  request
+  expirationSeconds
+  canBeManuallyEnded
+  allowMultipleResponses
+  userPermission
 }

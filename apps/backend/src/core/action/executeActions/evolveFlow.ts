@@ -15,14 +15,18 @@ export const evolveFlow = async ({
   // find the current / proposed fields in the request
   const requestStep = await transaction.requestStep.findFirstOrThrow({
     include: {
-      RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+      Request: {
+        include: {
+          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+        },
+      },
     },
     where: {
       id: requestStepId,
     },
   });
 
-  const proposedFlowField = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const proposedFlowField = requestStep.Request.TriggerFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (EvolveFlowFields.ProposedFlow as string);
   });
 

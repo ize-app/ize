@@ -1,4 +1,5 @@
 import { entityResolver } from "@/core/entity/entityResolver";
+import { fieldAnswerResolver } from "@/core/fields/resolvers/fieldAnswerResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, FlowType, Request, ResultConfig } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -77,7 +78,16 @@ export const requestResolver = async ({
     currentStepIndex: getRequestStepIndex(req, req.currentRequestStepId),
     final: req.final,
     requestId: req.id,
-    steps: requestSteps,
+    triggerFieldAnswers: await Promise.all(
+      req.TriggerFieldAnswers.map(
+        async (rfa) =>
+          await fieldAnswerResolver({
+            fieldAnswer: rfa,
+            context,
+          }),
+      ),
+    ),
+    requestSteps: requestSteps,
   };
   return Request;
 };

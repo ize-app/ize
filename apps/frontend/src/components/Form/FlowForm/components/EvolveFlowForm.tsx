@@ -38,7 +38,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
           </FormHelperText>
         )}
         <Select
-          control={formMethods.control}
           name={`evolve.requestPermission.type`}
           selectOptions={[
             { name: "Certain individuals and groups", value: PermissionType.Entities },
@@ -63,7 +62,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
         hasError={!!formMethods.formState.errors.evolve?.responsePermission}
       >
         <Select
-          control={formMethods.control}
           name={`evolve.responsePermission.type`}
           selectOptions={[
             { name: "Certain individuals and groups", value: PermissionType.Entities },
@@ -91,7 +89,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
           After a decision, the proposed evolution will be autoamtically applied.
         </Typography>
         <Select<FlowSchemaType>
-          control={formMethods.control}
           label="How do we determine the final result?"
           selectOptions={[
             {
@@ -109,7 +106,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
 
         {decisionType === DecisionType.NumberThreshold && (
           <TextField<FlowSchemaType>
-            control={formMethods.control}
             label="Threshold votes"
             name={`evolve.decision.threshold`}
             size="small"
@@ -119,7 +115,6 @@ export const EvolveFlowForm = ({ formMethods, show }: EvolveProcessFormProps) =>
         )}
         {decisionType === DecisionType.PercentageThreshold && (
           <TextField<FlowSchemaType>
-            control={formMethods.control}
             label="Option selected with"
             size="small"
             showLabel={false}

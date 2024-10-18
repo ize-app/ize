@@ -14,15 +14,15 @@ export const Responses = ({ request }: { request: RequestFragment }) => {
   > = new Map();
 
   request.flow.steps.forEach((step, index) => {
-    step.response.fields.forEach((field) => {
-      const fieldAnswers = request.steps[index].responseFieldAnswers.find(
+    step.fieldSet.fields.forEach((field) => {
+      const fieldAnswers = request.requestSteps[index].responseFieldAnswers.find(
         (responseField) => responseField.fieldId === field.fieldId,
       );
       if (!fieldAnswers) return;
       fieldAnswersHydrated.set(field.fieldId, { answers: fieldAnswers.answers, field });
     });
   });
- 
+
   return (
     <Box
       sx={{

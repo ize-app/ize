@@ -111,7 +111,6 @@ export const Setup = () => {
               <Typography variant="body1">What should we call your group?</Typography>
               <TextField<GroupInitialSetupSchemaType>
                 name="name"
-                control={formMethods.control}
                 size="small"
                 label="Group name"
                 placeholderText="Group name"

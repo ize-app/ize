@@ -3,18 +3,18 @@ import { Box, FormHelperText, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { useEffect } from "react";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
-import { UsePresetOptionsForm } from "./UsePresetOptionsForm";
-import { Select } from "../../formFields";
-import { SelectOption } from "../../formFields/Select";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
-import { getSelectOptionName } from "../../utils/getSelectOptionName";
-import { OptionSelectionCountLimit } from "../formValidation/fields";
-import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
-import { createDefaultOptionState } from "../helpers/defaultFormState/createDefaultOptionState";
+import { Select } from "../../../formFields";
+import { SelectOption } from "../../../formFields/Select";
+import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
+import { getSelectOptionName } from "../../../utils/getSelectOptionName";
+import { OptionSelectionCountLimit } from "../../formValidation/fields";
+import { FlowSchemaType, StepSchemaType } from "../../formValidation/flow";
+import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
+import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
   const results: SelectOption[] = [];
@@ -22,7 +22,7 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
     // only include results from previous steps
     if (currentStepIndex <= stepIndex) return;
     s.result.forEach((r) => {
-      const field = (s.response?.fields ?? []).find((f) => f.fieldId === r.fieldId);
+      const field = (s.fieldSet?.fields ?? []).find((f) => f.fieldId === r.fieldId);
 
       results.push({
         name: `${r.type} from step ${stepIndex + 1}${field?.name ? `: "${field.name}"` : ""}`,
@@ -42,26 +42,22 @@ const multiSelectOptions = [
   { name: "No limit", value: OptionSelectionCountLimit.None },
 ];
 
-interface FieldOptionsFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+interface ResponseFieldOptionsFormProps {
+  stepIndex: number;
   fieldIndex: number;
-  branch: "request" | "response";
   locked: boolean;
 }
 
-export const FieldOptionsForm = ({
-  formMethods,
-  formIndex,
-  branch,
+export const ResponseFieldOptionsForm = ({
+  stepIndex,
   fieldIndex,
   locked,
-}: FieldOptionsFormProps) => {
-  const { control } = formMethods;
+}: ResponseFieldOptionsFormProps) => {
+  const { control, getValues, setValue, watch, formState } = useFormContext<FlowSchemaType>();
 
   const { PresetOptions, append } = UsePresetOptionsForm<FlowSchemaType>({
     locked,
-    fieldsArrayName: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.options`,
+    fieldsArrayName: `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.options`,
   });
 
   const {
@@ -69,19 +65,20 @@ export const FieldOptionsForm = ({
     remove: linksRemove,
     append: linksAppend,
   } = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
+    control,
+    name: `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
   });
 
-  const steps = formMethods.getValues(`steps`);
-  const reusable = formMethods.getValues("reusable");
-  const possibleLinkOptions = createLinkOptions(steps, formIndex);
+  const steps = getValues(`steps`);
+  const reusable = getValues("reusable");
+  const possibleLinkOptions = createLinkOptions(steps, stepIndex);
 
   // remove linked option if that result is removed
   useEffect(() => {
-    const linkedOptions = formMethods.getValues(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
+    const linkedOptions = getValues(
+      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
     );
+
     linkedOptions.forEach((result, index) => {
       if (!possibleLinkOptions.find((option) => option.value === result.id)) {
         linksRemove(index);
@@ -90,33 +87,33 @@ export const FieldOptionsForm = ({
   }, [possibleLinkOptions]);
 
   const enableRequestCreatedOptions = () => {
-    formMethods.setValue(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
+    setValue(
+      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
       FieldDataType.String,
     );
   };
 
   const disableRequestCreatedOptions = () => {
-    formMethods.setValue(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
+    setValue(
+      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
       null,
     );
   };
 
-  const hasRequestDefinedOptions = formMethods.watch(
-    `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
+  const hasRequestDefinedOptions = watch(
+    `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
   );
 
   const linkedOptions =
-    formMethods.getValues(
-      `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
+    getValues(
+      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
     ) ?? [];
 
   const optionsError =
-    formMethods.formState.errors?.steps?.[formIndex]?.[branch]?.fields?.[fieldIndex]?.message ?? "";
+    formState.errors?.steps?.[stepIndex]?.fieldSet?.fields?.[fieldIndex]?.message ?? "";
 
-  const optionSelectionType = formMethods.watch(
-    `steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.selectionType`,
+  const optionSelectionType = watch(
+    `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.selectionType`,
   );
 
   return (
@@ -130,7 +127,6 @@ export const FieldOptionsForm = ({
     >
       {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
         <Select<FlowSchemaType>
-          control={formMethods.control}
           defaultValue=""
           display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
           label="How many options can be selected?"
@@ -139,7 +135,7 @@ export const FieldOptionsForm = ({
             return "User can select " + option?.name + " maximum";
           }}
           selectOptions={multiSelectOptions}
-          name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.maxSelections`}
+          name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
           size={"small"}
         />
       )}
@@ -157,12 +153,11 @@ export const FieldOptionsForm = ({
                 }}
               >
                 <Select<FlowSchemaType>
-                  control={control}
                   size={"small"}
-                  name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
-                  key={"links" + inputIndex.toString() + formIndex.toString()}
+                  name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
+                  key={"links" + inputIndex.toString() + stepIndex.toString()}
                   selectOptions={possibleLinkOptions}
-                  renderValue={(val: string) => {
+                  renderValue={(val) => {
                     return (
                       <div
                         style={{
@@ -172,7 +167,7 @@ export const FieldOptionsForm = ({
                         }}
                       >
                         {val
-                          ? getSelectOptionName(possibleLinkOptions, val)
+                          ? getSelectOptionName(possibleLinkOptions, val as string)
                           : "Select a previous result"}
                       </div>
                     );
@@ -193,7 +188,7 @@ export const FieldOptionsForm = ({
           })}
         </Box>
       )}
-      {hasRequestDefinedOptions && branch === "response" && (
+      {hasRequestDefinedOptions && (
         <Box
           sx={{
             display: "flex",
@@ -205,9 +200,8 @@ export const FieldOptionsForm = ({
             {" "}
             <Typography>Options created at trigger</Typography>
             <Box>
-              <Select
-                control={formMethods.control}
-                name={`steps.${formIndex}.${branch}.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+              <Select<FlowSchemaType>
+                name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
                 defaultValue=""
                 selectOptions={[
                   { name: "Text", value: FieldDataType.String },
@@ -244,7 +238,7 @@ export const FieldOptionsForm = ({
           >
             Add option
           </Button>
-          {possibleLinkOptions.length > 0 && branch === "response" && (
+          {possibleLinkOptions.length > 0 && (
             <Button
               sx={{ position: "relative" }}
               variant="text"
@@ -256,7 +250,7 @@ export const FieldOptionsForm = ({
               Use previous result as option(s)
             </Button>
           )}
-          {!hasRequestDefinedOptions && reusable && formIndex === 0 && branch === "response" && (
+          {!hasRequestDefinedOptions && reusable && stepIndex === 0 && (
             <Button
               sx={{ position: "relative" }}
               variant="text"

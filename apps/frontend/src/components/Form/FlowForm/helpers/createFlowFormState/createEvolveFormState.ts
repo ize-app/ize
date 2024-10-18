@@ -1,8 +1,4 @@
-import {
-  FlowFragment,
-  PermissionFragment,
-  ResultType,
-} from "@/graphql/generated/graphql";
+import { FlowFragment, PermissionFragment, ResultType } from "@/graphql/generated/graphql";
 
 import { createPermissionFormState } from "./createPermissionFormState";
 import { EvolveSchemaType } from "../../formValidation/evolve";
@@ -16,11 +12,9 @@ export const createEvolveFormState = (flow: FlowFragment): EvolveSchemaType => {
   )
     throw Error("Invalid evolve flow state");
   return {
-    requestPermission: createPermissionFormState(
-      flow.steps[0].request.permission as PermissionFragment,
-    ),
+    requestPermission: createPermissionFormState(flow.trigger.permission),
     responsePermission: createPermissionFormState(
-      flow.steps[0].response.permission as PermissionFragment,
+      flow.steps[0].response?.permission as PermissionFragment,
     ),
     decision: {
       type: flow.steps[0].result[0].decisionType,

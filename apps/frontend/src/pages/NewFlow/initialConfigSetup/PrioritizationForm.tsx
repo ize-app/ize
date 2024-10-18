@@ -8,7 +8,7 @@ import { OptionsForm } from "./OptionsForm";
 import { IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const PrioritizationForm = () => {
-  const { control, watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const decisionName = watch("question");
 
@@ -19,7 +19,6 @@ export const PrioritizationForm = () => {
         <TextField<IntitialFlowSetupSchemaType>
           // assuming here that results to fields is 1:1 relationshp
           name={`question`}
-          control={control}
           multiline
           placeholderText={"What are you deciding on"}
           label={``}

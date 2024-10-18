@@ -17,29 +17,26 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
   const args: NewFlowArgs = {
     name: formState.name,
     reusable: formState.reusable,
+    fieldSet: {
+      fields: createFieldsArgs(formState.fieldSet.fields ?? [], []),
+      locked: formState.fieldSet.locked,
+    },
+    trigger: {
+      permission: createPermissionArgs(formState.trigger.permission),
+    },
     steps: formState.steps.map((step, index): NewStepArgs => {
       return {
         ...step,
-        request: step.request && {
-          fields: createFieldsArgs(step.request.fields ?? [], resultConfigCache),
-          permission: createPermissionArgs(step.request?.permission),
-          fieldsLocked: step.request.fieldsLocked ?? false,
+        fieldSet: {
+          fields: createFieldsArgs(step.fieldSet.fields ?? [], resultConfigCache),
+          locked: step.fieldSet.locked,
         },
         response: step.response && {
-          fields: createFieldsArgs(step.response.fields ?? [], resultConfigCache),
+          ...step.response,
           permission: createPermissionArgs(step.response.permission),
-          fieldsLocked: step.response.fieldsLocked ?? false,
         },
-        result: createResultsArgs(
-          step.result,
-          step.response?.fields ?? [],
-          index,
-          resultConfigCache,
-        ),
-        action: step.action ? createActionArgs(step.action, step.response?.fields) : null,
-        expirationSeconds: step.expirationSeconds ?? null,
-        allowMultipleResponses: step.allowMultipleResponses,
-        canBeManuallyEnded: step.canBeManuallyEnded,
+        result: createResultsArgs(step.result, step.fieldSet.fields, index, resultConfigCache),
+        action: step.action ? createActionArgs(step.action, step.fieldSet.fields) : null,
       };
     }),
     evolve: formState.evolve && {

@@ -51,7 +51,6 @@ export const PermissionForm = <T extends FieldValues>({
   return (
     <>
       <Select
-        control={formMethods.control}
         name={permissionTypePath}
         selectOptions={[
           { name: "Certain individuals and groups", value: PermissionType.Entities },

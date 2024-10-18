@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 
-import { FieldsForm } from "./FieldsForm";
 import { PermissionForm } from "./PermissionForm";
+import { TriggerFieldsForm } from "./TriggerFieldsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { Switch } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
@@ -14,13 +14,14 @@ interface TriggerFormProps {
 }
 
 export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
-  const error = formMethods.formState.errors.steps?.[formIndex]?.request;
+  const permissionsError = formMethods.formState.errors.trigger;
+  const fieldsError = formMethods.formState.errors.fieldSet;
 
   const isReusable = formMethods.watch(`reusable`);
 
   const fieldsArrayMethods = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.request.fields`,
+    name: `steps.${formIndex}.fieldSet.fields`,
   });
 
   return (
@@ -35,14 +36,11 @@ export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) 
         </Box>
         {isReusable && (
           <>
-            <PanelAccordion title="Permission" hasError={!!error?.permission}>
-              <PermissionForm<FlowSchemaType>
-                fieldName={`steps.${formIndex}.request.permission`}
-                branch={"request"}
-              />
+            <PanelAccordion title="Permission" hasError={!!permissionsError}>
+              <PermissionForm<FlowSchemaType> fieldName={`trigger.permission`} branch={"request"} />
             </PanelAccordion>
-            <PanelAccordion title="Request fields" hasError={!!error?.fields}>
-              <FieldsForm
+            <PanelAccordion title="Request fields" hasError={!!fieldsError?.fields}>
+              <TriggerFieldsForm
                 formIndex={formIndex}
                 branch={"request"}
                 formMethods={formMethods}

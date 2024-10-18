@@ -1,3 +1,10 @@
+fragment FieldSet on FieldSet {
+  fields {
+    ...Field
+  }
+  locked
+}
+
 fragment Field on Field {
   __typename
   ... on Options {
@@ -69,7 +76,7 @@ fragment UserFieldAnswers on UserFieldAnswers {
 fragment FlowsFieldAnswer on FlowsFieldAnswer {
   fieldId
   flows {
-    ...FlowSummary
+    ...FlowReference
   }
 }
 

@@ -249,7 +249,7 @@ export const Flow = () => {
             {isOldVersion && (
               <Button
                 variant="contained"
-                disabled={!flow.steps[0]?.userPermission.request}
+                disabled={!flow.trigger.userPermission}
                 sx={{
                   width: "300px",
                   display: !me ? "none" : "flex",

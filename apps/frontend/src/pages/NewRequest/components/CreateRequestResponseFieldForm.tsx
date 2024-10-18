@@ -63,7 +63,6 @@ export const CreateRequestResponseFieldForm = ({
               <TextField<RequestSchemaType>
                 name={`requestDefinedOptions.${index}.name`}
                 key={"option" + index.toString()}
-                control={formMethods.control}
                 showLabel={false}
                 label={`Option #${index + 1}`}
                 size="small"
@@ -126,7 +125,6 @@ export const CreateRequestResponseFieldForm = ({
                             <TextField<RequestSchemaType>
                               name={`requestDefinedOptions.${inputIndex}.dataType`}
                               key={"dataType" + inputIndex.toString()}
-                              control={formMethods.control}
                               showLabel={false}
                               label={`Option ID - ignore`}
                               variant="standard"

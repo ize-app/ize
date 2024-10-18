@@ -38,11 +38,16 @@ export const generateNonreusableFlowConfig = ({
         name: "Synthesize group perspectives",
         reusable,
         requestName: prompt,
+        trigger: {
+          permission: emptyPermission,
+        },
+        fieldSet: {
+          locked: false,
+          fields: [],
+        },
         steps: [
           {
-            request: { permission: emptyPermission, fields: [] },
-            response: {
-              permission: respondPermission,
+            fieldSet: {
               fields: [
                 {
                   fieldId: "",
@@ -53,6 +58,13 @@ export const generateNonreusableFlowConfig = ({
                   freeInputDataType: FieldDataType.String,
                 },
               ],
+              locked: false,
+            },
+            response: {
+              permission: respondPermission,
+              expirationSeconds,
+              allowMultipleResponses: true,
+              canBeManuallyEnded,
             },
             result: [
               {
@@ -63,9 +75,6 @@ export const generateNonreusableFlowConfig = ({
               },
             ],
             action: undefined,
-            expirationSeconds,
-            allowMultipleResponses: true,
-            canBeManuallyEnded,
           },
         ],
         evolve: undefined,
@@ -76,11 +85,16 @@ export const generateNonreusableFlowConfig = ({
         name: "Ideate together",
         reusable,
         requestName: prompt,
+        fieldSet: {
+          locked: false,
+          fields: [],
+        },
+        trigger: {
+          permission: emptyPermission,
+        },
         steps: [
           {
-            request: { permission: emptyPermission, fields: [] },
-            response: {
-              permission: respondPermission,
+            fieldSet: {
               fields: [
                 {
                   fieldId: "",
@@ -91,6 +105,13 @@ export const generateNonreusableFlowConfig = ({
                   freeInputDataType: FieldDataType.String,
                 },
               ],
+              locked: false,
+            },
+            response: {
+              permission: respondPermission,
+              expirationSeconds,
+              allowMultipleResponses: true,
+              canBeManuallyEnded,
             },
             result: [
               {
@@ -101,9 +122,6 @@ export const generateNonreusableFlowConfig = ({
               },
             ],
             action: undefined,
-            expirationSeconds,
-            allowMultipleResponses: true,
-            canBeManuallyEnded,
           },
         ],
         evolve: undefined,
@@ -114,11 +132,23 @@ export const generateNonreusableFlowConfig = ({
         name: "Ideate together",
         reusable,
         requestName: prompt,
+        trigger: { permission: emptyPermission },
+        fieldSet: {
+          fields: [
+            {
+              fieldId: "",
+              type: FieldType.FreeInput,
+              name: prompt,
+              isInternal: false,
+              required: true,
+              freeInputDataType: FieldDataType.String,
+            },
+          ],
+          locked: false,
+        },
         steps: [
           {
-            request: { permission: emptyPermission, fields: [] },
-            response: {
-              permission: respondPermission,
+            fieldSet: {
               fields: [
                 {
                   fieldId: "",
@@ -129,6 +159,13 @@ export const generateNonreusableFlowConfig = ({
                   freeInputDataType: FieldDataType.String,
                 },
               ],
+              locked: false,
+            },
+            response: {
+              permission: respondPermission,
+              expirationSeconds,
+              allowMultipleResponses: true,
+              canBeManuallyEnded,
             },
             result: [
               {
@@ -139,14 +176,9 @@ export const generateNonreusableFlowConfig = ({
               },
             ],
             action: { type: ActionType.TriggerStep, locked: false },
-            expirationSeconds,
-            allowMultipleResponses: true,
-            canBeManuallyEnded,
           },
           {
-            request: { permission: emptyPermission, fields: [] },
-            response: {
-              permission: emptyPermission,
+            fieldSet: {
               fields: [
                 {
                   fieldId: "",
@@ -163,6 +195,13 @@ export const generateNonreusableFlowConfig = ({
                   },
                 },
               ],
+              locked: false,
+            },
+            response: {
+              permission: emptyPermission,
+              expirationSeconds,
+              allowMultipleResponses: false,
+              canBeManuallyEnded,
             },
             result: [
               {
@@ -174,9 +213,6 @@ export const generateNonreusableFlowConfig = ({
               },
             ],
             action: undefined,
-            expirationSeconds,
-            allowMultipleResponses: false,
-            canBeManuallyEnded,
           },
         ],
         evolve: undefined,

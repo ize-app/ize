@@ -25,7 +25,7 @@ export const createRequestDefinedOptionSet = async ({
 
   transaction?: Prisma.TransactionClient;
 }) => {
-  if (!step.ResponseFieldSet)
+  if (!step.FieldSet)
     throw new GraphQLError(
       "Request defined options provided, but this flow step does not have response fields.",
       {
@@ -33,7 +33,7 @@ export const createRequestDefinedOptionSet = async ({
       },
     );
 
-  const field = step.ResponseFieldSet.FieldSetFields.find((f) => f.fieldId === fieldId);
+  const field = step.FieldSet.FieldSetFields.find((f) => f.fieldId === fieldId);
   if (!field)
     throw new GraphQLError("Cannot find flow field corresponding to request defined options.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },

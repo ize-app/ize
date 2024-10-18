@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 
+import { newFieldSet } from "@/core/fields/newFieldSet";
+import { newPermission } from "@/core/permission/newPermission";
 import { NewFlowArgs } from "@/graphql/generated/resolver-types";
 
 import { StepPrismaType } from "../../flowPrismaTypes";
@@ -10,7 +12,6 @@ export const newCustomFlowVersion = async ({
   flowArgs,
   evolveFlowId,
   flowId,
-
   active,
   // each flow references an evolve flow id, not an evolve flow version id
   // when we are evolving a flow and or it's corresponding evolve flow
@@ -25,6 +26,11 @@ export const newCustomFlowVersion = async ({
   active: boolean;
   draftEvolveFlowVersionId: string | null;
 }): Promise<string> => {
+  const triggerFieldsSet = await newFieldSet({
+    fieldSetArgs: flowArgs.fieldSet,
+    createdSteps: [],
+    transaction,
+  });
   const flowVersion = await transaction.flowVersion.create({
     data: {
       name: flowArgs.name,
@@ -32,16 +38,14 @@ export const newCustomFlowVersion = async ({
       totalSteps: flowArgs.steps.length,
       reusable: flowArgs.reusable,
       publishedAt: !active ? null : new Date(),
-      DraftEvolveFlowVersion: draftEvolveFlowVersionId
-        ? { connect: { id: draftEvolveFlowVersionId } }
-        : undefined,
-      EvolveFlow: evolveFlowId
-        ? {
-            connect: {
-              id: evolveFlowId,
-            },
-          }
-        : undefined,
+      triggerPermissionsId: await newPermission({
+        permission: flowArgs.trigger.permission,
+        transaction,
+      }),
+      triggerFieldSetId: triggerFieldsSet?.id,
+      draftEvolveFlowVersionId,
+      evolveFlowId,
+      // sets parent flow as using this newly created flow version
       FlowForCurrentVersion: !active
         ? undefined
         : {
@@ -49,11 +53,7 @@ export const newCustomFlowVersion = async ({
               id: flowId,
             },
           },
-      Flow: {
-        connect: {
-          id: flowId,
-        },
-      },
+      flowId: flowId,
     },
   });
 
@@ -68,7 +68,6 @@ export const newCustomFlowVersion = async ({
       flowVersionId: flowVersion.id,
       index: i,
       createdSteps,
-      reusable: flowArgs.reusable,
     });
   }
 

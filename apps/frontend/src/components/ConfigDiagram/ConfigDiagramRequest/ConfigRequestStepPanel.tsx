@@ -44,7 +44,7 @@ export const ConfigRequestStepPanel = ({
 
   const status = determineRequestStepStatus(
     requestStepIndex,
-    requestStep?.resultsComplete ?? false,
+    requestStep?.status.resultsFinal ?? false,
     currentStepIndex,
     requestFinal,
   );
@@ -52,7 +52,7 @@ export const ConfigRequestStepPanel = ({
   let expirationDate: Date | null = null;
 
   const showManuallyEndButton =
-    step.canBeManuallyEnded && userIsCreator && !requestStep?.responseComplete;
+    step.response?.canBeManuallyEnded && userIsCreator && !requestStep?.status.responseFinal;
 
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);
@@ -89,12 +89,15 @@ export const ConfigRequestStepPanel = ({
               <Typography>{new Date(requestStep?.expirationDate).toLocaleString()}</Typography>
             </Box>
           )}
-          {requestStep && !requestStep.responseComplete && remainingTime && remainingTime > 0 && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography>Remaining time to respond </Typography>
-              <TimeLeft msLeft={remainingTime} />
-            </Box>
-          )}
+          {requestStep &&
+            !requestStep.status.responseFinal &&
+            remainingTime &&
+            remainingTime > 0 && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Remaining time to respond </Typography>
+                <TimeLeft msLeft={remainingTime} />
+              </Box>
+            )}
         </PanelAccordion>
         {triggeringAction && triggeringAction.filterOption && (
           <PanelAccordion title="Filter" hasError={false}>
@@ -106,7 +109,7 @@ export const ConfigRequestStepPanel = ({
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
           <RequestStepResults
             resultConfigs={step.result}
-            responseFields={requestStep?.responseFields ?? step.response.fields}
+            responseFields={requestStep?.fieldSet.fields ?? step.fieldSet.fields}
             results={requestStep?.results ?? []}
             requestStatus={status}
           />

@@ -5,19 +5,14 @@ import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
 import { permissionInclude } from "../permission/permissionPrismaTypes";
+import { responseConfigInclude } from "../response/responseConfigPrismaTypes";
 import { resultConfigSetInclude } from "../result/resultPrismaTypes";
 
 export const stepInclude = Prisma.validator<Prisma.StepInclude>()({
-  RequestPermissions: {
-    include: permissionInclude,
+  ResponseConfig: {
+    include: responseConfigInclude,
   },
-  ResponsePermissions: {
-    include: permissionInclude,
-  },
-  RequestFieldSet: {
-    include: fieldSetInclude,
-  },
-  ResponseFieldSet: {
+  FieldSet: {
     include: fieldSetInclude,
   },
   ResultConfigSet: {
@@ -34,6 +29,12 @@ export type StepPrismaType = Prisma.StepGetPayload<{
 
 export const createFlowVersionInclude = (entityIds: string[]) =>
   Prisma.validator<Prisma.FlowVersionInclude>()({
+    TriggerFieldSet: {
+      include: fieldSetInclude,
+    },
+    TriggerPermissions: {
+      include: permissionInclude,
+    },
     Steps: {
       include: stepInclude,
     },
@@ -175,12 +176,8 @@ export const createFlowSummaryInclude = (entityIds: string[]) =>
   Prisma.validator<Prisma.FlowInclude>()({
     CurrentFlowVersion: {
       include: {
-        Steps: {
-          include: {
-            RequestPermissions: {
-              include: permissionInclude,
-            },
-          },
+        TriggerPermissions: {
+          include: permissionInclude,
         },
       },
     },

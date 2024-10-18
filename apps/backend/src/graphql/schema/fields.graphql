@@ -1,3 +1,8 @@
+type FieldSet {
+  fields: [Field!]!
+  locked: Boolean!
+}
+
 union Field = Options | FreeInput
 
 input FieldAnswerArgs {
@@ -96,7 +101,7 @@ type EntitiesFieldAnswer {
 
 type FlowsFieldAnswer {
   fieldId: String!
-  flows: [FlowSummary!]!
+  flows: [FlowReference!]!
 }
 
 type WebhookFieldAnswer {
@@ -121,6 +126,11 @@ type UserFieldAnswers {
 # later will use this type to add option free inputs
 type OptionFieldAnswerSelection {
   optionId: String
+}
+
+input FieldSetArgs {
+  fields: [FieldArgs!]!
+  locked: Boolean!
 }
 
 input FieldArgs {

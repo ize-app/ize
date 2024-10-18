@@ -4,19 +4,16 @@ import { StepSchemaType } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
 
 export const defaultStepFormValues: StepSchemaType = {
-  allowMultipleResponses: false,
-  request: {
-    permission: { type: PermissionType.Anyone, entities: [] },
+  fieldSet: {
     fields: [],
-    fieldsLocked: false,
+    locked: false,
   },
   response: {
     permission: { type: PermissionType.Anyone, entities: [] },
-    fields: [],
-    fieldsLocked: false,
+    expirationSeconds: 259200,
+    canBeManuallyEnded: true,
+    allowMultipleResponses: false,
   },
-  canBeManuallyEnded: true,
   result: [],
   action: { type: ActionType.None, locked: false },
-  expirationSeconds: 259200,
 };

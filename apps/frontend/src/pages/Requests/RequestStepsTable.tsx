@@ -74,7 +74,7 @@ const RequestStepRow = ({ requestStep }: { requestStep: RequestStepSummaryFragme
         <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
           <ResponseStatus
             userResponded={requestStep.userResponded}
-            responseComplete={requestStep.responseComplete}
+            responseComplete={requestStep.status.responseFinal}
           />
         </TableCellHideable>
       </TableRow>

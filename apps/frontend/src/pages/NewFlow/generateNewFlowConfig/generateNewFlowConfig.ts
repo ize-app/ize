@@ -157,15 +157,22 @@ export const generateNewFlowConfig = ({
     }
     step = generateStepConfig({
       permission,
-      requestFields: [],
       responseFields: field ? [field] : [],
       result: result ? [result] : [],
       action,
     });
 
-    const flow = {
+    const flow: FlowSchemaType = {
       name: flowTitle,
       reusable,
+      trigger: {
+        permission,
+      },
+      fieldSet: {
+        fields: [],
+        locked: false,
+      },
+      steps: [ideationStep, step].filter((x) => x !== null),
       evolve: {
         requestPermission: creatorPermission,
         responsePermission: creatorPermission,
@@ -175,18 +182,25 @@ export const generateNewFlowConfig = ({
           defaultOptionId: DefaultOptionSelection.None,
         },
       },
-      steps: [ideationStep, step].filter((x) => x !== null),
     };
 
     return flow;
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
+    const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
     return {
       name: "",
       reusable: true,
+      fieldSet: {
+        fields: [],
+        locked: false,
+      },
+      trigger: {
+        permission: anyonePermission,
+      },
       evolve: {
-        requestPermission: { type: PermissionType.Anyone, entities: [] },
-        responsePermission: { type: PermissionType.Anyone, entities: [] },
+        requestPermission: anyonePermission,
+        responsePermission: anyonePermission,
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,

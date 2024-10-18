@@ -39,19 +39,23 @@ export const requestStepSummaryResolver = ({
     totalSteps: r.Request.FlowVersion.totalSteps,
     createdAt: r.createdAt.toISOString(),
     expirationDate: r.expirationDate?.toISOString(),
-    responseComplete: r.responseFinal,
-    resultsComplete: r.resultsFinal,
-    actionsComplete: r.actionsFinal,
-    final: r.final,
     userResponded: r.Responses.length > 0,
-    respondPermission: r.Step.ResponsePermissions
-      ? permissionResolver(r.Step.ResponsePermissions, identityIds)
+    respondPermission: r.Step.ResponseConfig?.ResponsePermissions
+      ? permissionResolver(r.Step.ResponseConfig?.ResponsePermissions, identityIds)
       : null,
-    userRespondPermission: hasReadPermission({
-      permission: r.Step.ResponsePermissions,
-      groupIds: groupIds,
-      identityIds: identityIds,
-      userId,
-    }),
+    userRespondPermission: r.Step.ResponseConfig?.ResponsePermissions
+      ? hasReadPermission({
+          permission: r.Step.ResponseConfig?.ResponsePermissions,
+          groupIds: groupIds,
+          identityIds: identityIds,
+          userId,
+        })
+      : false,
+    status: {
+      responseFinal: r.responseFinal,
+      resultsFinal: r.resultsFinal,
+      actionsFinal: r.actionsFinal,
+      final: r.final,
+    },
   };
 };

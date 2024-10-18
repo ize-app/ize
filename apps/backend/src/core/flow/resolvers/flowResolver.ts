@@ -1,7 +1,9 @@
 import { Prisma } from "@prisma/client";
 
-import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 import { groupResolver } from "@/core/entity/group/groupResolver";
+import { fieldSetResolver } from "@/core/fields/resolvers/fieldSetResolver";
+import { hasReadPermission } from "@/core/permission/hasReadPermission";
+import { permissionResolver } from "@/core/permission/permissionResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import {
   Field,
@@ -14,7 +16,7 @@ import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
-import { EvolveGroupFields } from "../flowTypes/evolveGroup/EvolveGroupFields";
+import { getDefaultFlowValues } from "../helpers/getDefaultFlowValues";
 import { getFlowName } from "../helpers/getFlowName";
 import { isWatchedFlow } from "../helpers/isWatchedFlow";
 
@@ -43,32 +45,10 @@ export const flowResolver = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<Flow> => {
-  let defaultValues: DefaultEvolveGroupValues;
-
-  if (flowVersion.Flow.type === FlowType.EvolveGroup && flowVersion.Flow.OwnerGroup?.id) {
-    const group = await getIzeGroup({
-      groupId: flowVersion.Flow.OwnerGroup?.id,
-      context,
-      getWatchAndPermissionStatus: true,
-    });
-    defaultValues = {
-      [EvolveGroupFields.Name]: {
-        __typename: "FreeInputFieldAnswer",
-        fieldId: "",
-        value: group.group.name,
-      },
-      [EvolveGroupFields.Description]: {
-        __typename: "FreeInputFieldAnswer",
-        fieldId: "",
-        value: group.description ?? "",
-      },
-      [EvolveGroupFields.Members]: {
-        __typename: "EntitiesFieldAnswer",
-        fieldId: "",
-        entities: group.members,
-      },
-    };
-  }
+  const defaultValues: DefaultEvolveGroupValues | undefined = await getDefaultFlowValues({
+    flowVersion,
+    context,
+  });
 
   return {
     __typename: "Flow",
@@ -84,6 +64,19 @@ export const flowResolver = async ({
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.reusable,
     isWatched: isWatchedFlow({ flowVersion: flowVersion, user: context.currentUser }),
+    trigger: {
+      permission: permissionResolver(flowVersion.TriggerPermissions, userIdentityIds),
+      userPermission: hasReadPermission({
+        permission: flowVersion.TriggerPermissions,
+        identityIds: userIdentityIds,
+        groupIds: userGroupIds,
+        userId,
+      }),
+    },
+    fieldSet: fieldSetResolver({
+      fieldSet: flowVersion.TriggerFieldSet,
+      defaultValues,
+    }),
     name: getFlowName({
       flowName: flowVersion.name,
       flowType: flowVersion.Flow.type,

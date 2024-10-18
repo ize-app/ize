@@ -6,7 +6,7 @@ export const createTestWebhookArgs = (formState: FlowSchemaType, uri: string): T
   return {
     uri,
     flowName: formState.name ?? "flowName",
-    requestFields: (formState.steps[0].request?.fields ?? []).map((field) => ({
+    requestFields: (formState.fieldSet.fields ?? []).map((field) => ({
       fieldName: field.name ?? "Field name",
       fieldType: field.type ?? FieldType.FreeInput,
     })),
@@ -18,7 +18,7 @@ const createResultsArgs = (formState: FlowSchemaType): WebhookValueArgs[] => {
   const results: WebhookValueArgs[] = [];
 
   formState.steps.forEach((step) => {
-    const fields = step.response?.fields ?? [];
+    const fields = step.fieldSet?.fields ?? [];
     (step.result ?? []).forEach((result) => {
       const field = fields.find((f) => f.fieldId === result.fieldId);
       results.push({

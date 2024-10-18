@@ -15,7 +15,7 @@ export const getEntityPermissions = async ({
   transaction = prisma,
 }: {
   entityContext: UserOrIdentityContextInterface;
-  permission: PermissionPrismaType | null;
+  permission: PermissionPrismaType | null | undefined;
   transaction?: Prisma.TransactionClient;
 }) => {
   let hasPermission = false;
@@ -28,7 +28,7 @@ export const getEntityPermissions = async ({
       });
 
     hasPermission = await hasWriteUserPermission({
-      permission: permission,
+      permission,
       context,
       transaction,
     });

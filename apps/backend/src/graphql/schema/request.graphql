@@ -72,23 +72,21 @@ type Request {
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!
+  triggerFieldAnswers: [FieldAnswer!]!
   final: Boolean!
-  steps: [RequestStep!]!
+  requestSteps: [RequestStep!]!
 }
 
 type RequestStep {
   requestStepId: String!
   createdAt: String!
   expirationDate: String!
-  requestFieldAnswers: [FieldAnswer!]!
   responseFieldAnswers: [UserFieldAnswers!]!
-  responseFields: [Field!]!
+  fieldSet: FieldSet!
   userResponses: [Response!]!
   results: [ResultGroup!]!
   actionExecution: ActionExecution
-  responseComplete: Boolean!
-  resultsComplete: Boolean!
-  final: Boolean!
+  status: RequestStepStatus!
 }
 
 type RequestStepSummary {
@@ -106,11 +104,8 @@ type RequestStepSummary {
   stepIndex: Int!
   totalSteps: Int!
   createdAt: String!
+  status: RequestStepStatus!
   expirationDate: String!
-  responseComplete: Boolean!
-  resultsComplete: Boolean!
-  actionsComplete: Boolean!
-  final: Boolean!
 }
 
 type Response {
@@ -137,4 +132,11 @@ type FieldValue {
   fieldName: String!
   value: String
   optionSelections: [String!]
+}
+
+type RequestStepStatus {
+  responseFinal: Boolean!
+  resultsFinal: Boolean!
+  actionsFinal: Boolean!
+  final: Boolean!
 }

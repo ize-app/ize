@@ -165,25 +165,27 @@ const createPermissionFilter = (
   FlowVersion: {
     Steps: {
       some: {
-        ResponsePermissions: {
-          OR: [
-            { anyone: true },
-            {
-              EntitySet: {
-                EntitySetEntities: {
-                  some: {
-                    Entity: {
-                      OR: [
-                        { Group: { id: { in: groupIds } } },
-                        { Identity: { id: { in: identityIds } } },
-                        { User: { id: userId } },
-                      ],
+        ResponseConfig: {
+          ResponsePermissions: {
+            OR: [
+              { anyone: true },
+              {
+                EntitySet: {
+                  EntitySetEntities: {
+                    some: {
+                      Entity: {
+                        OR: [
+                          { Group: { id: { in: groupIds } } },
+                          { Identity: { id: { in: identityIds } } },
+                          { User: { id: userId } },
+                        ],
+                      },
                     },
                   },
                 },
               },
-            },
-          ],
+            ],
+          },
         },
       },
     },

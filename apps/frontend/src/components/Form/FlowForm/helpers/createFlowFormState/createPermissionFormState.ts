@@ -4,7 +4,7 @@ import { EntitySchemaType } from "../../../formValidation/entity";
 import { PermissionSchemaType, PermissionType } from "../../formValidation/permission";
 
 export const createPermissionFormState = (permission: PermissionFragment): PermissionSchemaType => {
-  if (permission.anyone) return { type: PermissionType.Anyone };
+  if (permission.anyone) return { type: PermissionType.Anyone, entities: [] };
   else
     return {
       type: PermissionType.Entities,

@@ -27,14 +27,14 @@ export const sendTelegramNewStepMessage = async ({
     resolvedEntities: ResolvedEntities;
   };
 }) => {
-  const requestStep = request.steps.find((step) => step.requestStepId === requestStepId);
+  const requestStep = request.requestSteps.find((step) => step.requestStepId === requestStepId);
 
   if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
   const requestName = request.name;
   const flowName = request.flow.name;
-  const { responseFields: allFields } = requestStep;
-  const responseFields = allFields.filter((f) => !f.isInternal);
+  const { fieldSet } = requestStep;
+  const responseFields = fieldSet.fields.filter((f) => !f.isInternal);
   const firstField = responseFields[0];
   const url = createRequestUrl({ requestId: request.requestId });
 
@@ -49,8 +49,8 @@ export const sendTelegramNewStepMessage = async ({
 
       const requestFieldsString = createWebhookValueString(
         createRequestFieldsPayload({
-          requestFieldAnswers: request.steps[0].requestFieldAnswers,
-          requestFields: request.flow.steps[0].request.fields,
+          requestFieldAnswers: request.triggerFieldAnswers,
+          requestFields: request.flow.fieldSet.fields,
         }),
       );
 

@@ -50,7 +50,7 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
       const nextRequestStep = await transaction.requestStep.create({
         data: {
           expirationDate: new Date(
-            new Date().getTime() + (nextStep.expirationSeconds as number) * 1000,
+            new Date().getTime() + (nextStep.ResponseConfig?.expirationSeconds ?? 0) * 1000,
           ),
           responseFinal: responseComplete,
           Request: {
@@ -74,7 +74,7 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
       // for each field, see if there are linked results
       // then find those results in the previous request steps and create a requestDefinedOptionSet for that field
       await Promise.all(
-        (nextStep.ResponseFieldSet?.FieldSetFields ?? []).map(async (f) => {
+        (nextStep.FieldSet?.FieldSetFields ?? []).map(async (f) => {
           const linkedResults = f.Field.FieldOptionsConfigs?.linkedResultOptions;
           if (linkedResults) {
             await Promise.all(

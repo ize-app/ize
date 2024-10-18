@@ -30,7 +30,7 @@ export const createRequestFieldsPayload = ({
       case "FlowsFieldAnswer":
         return {
           fieldName: field.name,
-          value: answer.flows.map((f) => f.name).join(", "),
+          value: answer.flows.map((f) => f.flowName).join(", "),
         };
       case "WebhookFieldAnswer":
         return {

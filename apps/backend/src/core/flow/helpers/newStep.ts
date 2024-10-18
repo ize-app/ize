@@ -2,10 +2,9 @@ import { Prisma } from "@prisma/client";
 
 import { newActionConfig } from "@/core/action/newAction";
 import { newFieldSet } from "@/core/fields/newFieldSet";
-import { newPermission } from "@/core/permission/newPermission";
+import { newResponseConfig } from "@/core/response/newResponseConfig";
 import { newResultConfigSet } from "@/core/result/newResultConfig";
 import { NewStepArgs } from "@/graphql/generated/resolver-types";
-import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { StepPrismaType, stepInclude } from "../flowPrismaTypes";
 
@@ -13,55 +12,24 @@ export const newStep = async ({
   args,
   flowVersionId,
   index,
-  reusable,
   createdSteps,
   transaction,
 }: {
   args: NewStepArgs;
   flowVersionId: string;
   index: number;
-  reusable: boolean;
   createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
-  if (!args.request?.permission && !(!reusable || index > 0))
-    throw new GraphQLError("Request permissions required for the first step of reusable flows.", {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-
-  const requestFieldSet = args.request
-    ? await newFieldSet({
-        fields: args.request.fields,
-        locked: args.request.fieldsLocked ?? false,
-        transaction,
-        createdSteps,
-      })
-    : null;
-
   const responseFieldSet = args.response
     ? await newFieldSet({
-        fields: args.response.fields,
-        locked: args.response.fieldsLocked ?? false,
+        fieldSetArgs: args.fieldSet,
         transaction,
         createdSteps,
       })
     : null;
 
-  const requestPermissionsId = args.request
-    ? await newPermission({
-        permission: args.request.permission,
-        stepIndex: index,
-        transaction,
-      })
-    : null;
-
-  const responsePermissionsId = args.response
-    ? await newPermission({
-        permission: args.response.permission,
-        stepIndex: index,
-        transaction,
-      })
-    : null;
+  const responseConfigId = await newResponseConfig({ args: args.response, transaction });
 
   const resultConfigSetId = await newResultConfigSet({
     resultsArgs: args.result,
@@ -82,17 +50,12 @@ export const newStep = async ({
   const step = await transaction.step.create({
     include: stepInclude,
     data: {
-      allowMultipleResponses: args.allowMultipleResponses,
-      requestFieldSetId: requestFieldSet?.id,
-      requestPermissionsId: requestPermissionsId,
-      responseFieldSetId: responseFieldSet?.id,
-      responsePermissionsId: responsePermissionsId,
+      fieldSetId: responseFieldSet?.id,
+      responseConfigId,
       actionId: actionId,
       resultConfigSetId: resultConfigSetId,
       index,
       flowVersionId,
-      expirationSeconds: args.expirationSeconds,
-      canBeManuallyEnded: args.canBeManuallyEnded,
     },
   });
 

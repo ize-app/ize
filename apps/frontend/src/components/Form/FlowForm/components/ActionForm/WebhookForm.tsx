@@ -26,7 +26,6 @@ export const WebhookForm = <T extends FieldValues>({ fieldName }: WebhookFormPro
   return (
     <>
       <TextField<T>
-        control={formMethods.control}
         label="What does this webhook do?"
         placeholderText="What does this webhook do?"
         size="small"

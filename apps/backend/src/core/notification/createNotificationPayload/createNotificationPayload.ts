@@ -34,8 +34,8 @@ export const createNotificationPayload = async ({
   });
 
   const requestFields = createRequestFieldsPayload({
-    requestFields: formattedRequest.flow.steps[0].request.fields,
-    requestFieldAnswers: formattedRequest.steps[0].requestFieldAnswers,
+    requestFields: formattedRequest.flow.fieldSet.fields,
+    requestFieldAnswers: formattedRequest.triggerFieldAnswers,
   });
 
   const results = createResultsPayload(formattedRequest);

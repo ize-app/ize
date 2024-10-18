@@ -4,7 +4,7 @@ import { FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { evolveFlowSchema } from "./evolve";
-import { fieldsSchema } from "./fields";
+import { fieldSetSchema } from "./fields";
 import { permissionSchema } from "./permission";
 import { resultsSchema } from "./result";
 
@@ -13,29 +13,22 @@ export type StepSchemaType = z.infer<typeof stepSchema>;
 
 const stepSchema = z
   .object({
-    request: z
-      .object({
-        permission: permissionSchema,
-        fields: fieldsSchema,
-        fieldsLocked: z.boolean().default(false),
-      })
-      .optional(),
+    fieldSet: fieldSetSchema,
     response: z
       .object({
         permission: permissionSchema,
-        fields: fieldsSchema,
-        fieldsLocked: z.boolean().default(false),
+        allowMultipleResponses: z.boolean().default(false),
+        canBeManuallyEnded: z.boolean().default(false),
+        expirationSeconds: z.coerce.number().int().positive(),
       })
       .optional(),
     result: resultsSchema,
     action: actionSchema.optional(),
-    allowMultipleResponses: z.boolean().default(false),
-    canBeManuallyEnded: z.boolean().default(false),
-    expirationSeconds: z.coerce.number().int().positive().optional(),
   })
+  // this superRefine isn't strictly necessary since the UI currently ties together fields and
   .superRefine((step, ctx) => {
     if (
-      (!step.response?.fields || !step.response.fields.find((f) => f.type === FieldType.Options)) &&
+      (!step.fieldSet.fields || !step.fieldSet.fields.find((f) => f.type === FieldType.Options)) &&
       step.result.length > 0
     ) {
       step.result.forEach((res, index) => {
@@ -51,21 +44,11 @@ const stepSchema = z
   })
   .refine(
     (step) => {
-      if (step.response && step.response.fields.length === 0) return false;
+      if (step.response && step.fieldSet.fields.length === 0) return false;
       else return true;
     },
     {
-      message: "Add a result to this collaboration step",
-    },
-  )
-  .refine(
-    (step) => {
-      if (step.response && !step.expirationSeconds) return false;
-      else return true;
-    },
-    {
-      message: "Required",
-      path: ["expirationSeconds"],
+      message: "Add a field to this collaboration step",
     },
   );
 
@@ -74,6 +57,11 @@ export const flowSchema = z.object({
   reusable: z.boolean(),
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   evolve: evolveFlowSchema,
+  fieldSet: fieldSetSchema,
+  trigger: z.object({
+    permission: permissionSchema,
+  }),
+  requestName: z.string().optional(),
 });
 // .superRefine((flow, ctx) => {});
 

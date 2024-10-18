@@ -44,7 +44,6 @@ export const InputField = <T extends FieldValues>({
       return (
         <TextField<T>
           name={fieldName}
-          control={control}
           defaultValue={"" as PathValue<T, Path<T>>}
           placeholderText={label}
           showLabel={false}

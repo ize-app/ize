@@ -26,10 +26,14 @@ export const createWatchFlowRequests = async ({
       include: {
         CurrentFlowVersion: {
           include: {
+            TriggerPermissions: { include: permissionInclude },
             Steps: {
               include: {
-                RequestPermissions: { include: permissionInclude },
-                ResponsePermissions: { include: permissionInclude },
+                ResponseConfig: {
+                  include: {
+                    ResponsePermissions: { include: permissionInclude },
+                  },
+                },
               },
             },
           },
@@ -45,15 +49,16 @@ export const createWatchFlowRequests = async ({
     const entitiesOnFlow: Set<string> = new Set();
 
     // get all entities referenced on this flow
-    const getCustomGroups = (permissions: PermissionPrismaType | null) => {
+    const getCustomGroups = (permissions: PermissionPrismaType | null | undefined) => {
       (permissions?.EntitySet?.EntitySetEntities ?? []).forEach((entity) => {
         entitiesOnFlow.add(entity.entityId);
       });
     };
 
+    getCustomGroups(data.CurrentFlowVersion?.TriggerPermissions);
+
     data.CurrentFlowVersion?.Steps.forEach((step) => {
-      getCustomGroups(step.RequestPermissions);
-      getCustomGroups(step.ResponsePermissions);
+      getCustomGroups(step.ResponseConfig?.ResponsePermissions);
     });
 
     const customGroups = await prisma.groupCustom.findMany({
@@ -75,12 +80,8 @@ export const createWatchFlowRequests = async ({
       include: {
         CurrentFlowVersion: {
           include: {
-            Steps: {
-              include: {
-                RequestFieldSet: {
-                  include: fieldSetInclude,
-                },
-              },
+            TriggerFieldSet: {
+              include: fieldSetInclude,
             },
           },
         },
@@ -94,10 +95,9 @@ export const createWatchFlowRequests = async ({
     await Promise.all(
       watchFlows.map(async (flow) => {
         try {
-          const watchFlowField =
-            flow.CurrentFlowVersion?.Steps[0].RequestFieldSet?.FieldSetFields.find(
-              (field) => field.Field.name === (GroupWatchFlowFields.WatchFlow as string),
-            );
+          const watchFlowField = (
+            flow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? []
+          ).find((field) => field.Field.name === (GroupWatchFlowFields.WatchFlow as string));
 
           if (!watchFlowField) return;
 

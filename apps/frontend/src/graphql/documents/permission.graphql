@@ -1,5 +1,4 @@
 fragment Permission on Permission {
-  stepTriggered
   anyone
   entities {
     ...Entity

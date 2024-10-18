@@ -3,17 +3,16 @@ import { GraphQLError } from "graphql";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
-import { DecisionType, GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
+import { GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
-import { newGroupWatchFlowFlowVersion } from "./newWatchFlowFlowVersion";
-import { newEvolveFlow } from "../evolveFlow/newEvolveFlow";
+import { createGroupWatchFlowFlowArgs } from "./createGroupWatchFlowFlowArgs";
+import { newFlow } from "../../newFlow";
 
 export const newGroupWatchFlowFlow = async ({
   groupEntityId,
   groupId,
   policy,
   context,
-  transaction,
 }: {
   context: GraphqlRequestContext;
   groupId: string;
@@ -26,37 +25,17 @@ export const newGroupWatchFlowFlow = async ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const flow = await transaction.flow.create({
-    data: {
-      type: FlowType.GroupWatchFlow,
-      reusable: true,
-      creatorEntityId: context.currentUser.entityId,
-      groupId,
+  const args = createGroupWatchFlowFlowArgs({ groupEntityId, context, policy });
+
+  const flowId = await newFlow({
+    args,
+    entityContext: {
+      type: "user",
+      context,
     },
+    type: FlowType.GroupWatchFlow,
+    groupId,
   });
 
-  const evolveFlowId = await newEvolveFlow({
-    evolveArgs: {
-      requestPermission: { anyone: false, entities: [{ id: groupEntityId }] },
-      responsePermission: {
-        anyone: false,
-        entities: [{ id: context.currentUser.entityId }],
-      },
-      decision: { type: DecisionType.NumberThreshold, threshold: 1 },
-    },
-    creatorEntityId: context.currentUser.entityId,
-    transaction,
-  });
-
-  await newGroupWatchFlowFlowVersion({
-    transaction,
-    flowId: flow.id,
-    evolveFlowId,
-    active: true,
-    groupEntityId,
-    policy,
-    context,
-  });
-
-  return flow.id;
+  return flowId;
 };

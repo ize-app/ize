@@ -1,23 +1,26 @@
 import { FlowType, Prisma } from "@prisma/client";
 
+import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
 import { EvolveFlowArgs } from "@/graphql/generated/resolver-types";
 
-import { newEvolveFlowVersion } from "./newEvolveFlowVersion";
+import { createEvolveFlowFlowArgs } from "./createEvolveFlowFlowArgs";
+import { newFlow } from "../../newFlow";
 
 export const newEvolveFlow = async ({
   evolveArgs,
-  creatorEntityId,
-  transaction,
+  entityContext,
 }: {
   evolveArgs: EvolveFlowArgs;
   creatorEntityId: string;
   transaction: Prisma.TransactionClient;
+  entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
-  const flow = await transaction.flow.create({
-    data: { type: FlowType.Evolve, reusable: true, creatorEntityId },
+  const args = createEvolveFlowFlowArgs(evolveArgs);
+  const flowId = await newFlow({
+    type: FlowType.Evolve,
+    args,
+    entityContext,
   });
 
-  await newEvolveFlowVersion({ transaction, flowId: flow.id, evolveArgs, active: true });
-
-  return flow.id;
+  return flowId;
 };

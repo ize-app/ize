@@ -12,7 +12,7 @@ export enum PermissionType {
 export const permissionSchema = z
   .object({
     type: z.nativeEnum(PermissionType),
-    entities: z.array(entityFormSchema).optional(),
+    entities: z.array(entityFormSchema).default([]),
   })
   .refine(
     (permission) => {

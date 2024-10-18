@@ -5,7 +5,6 @@ import { ResultGroupPrismaType } from "@/core/result/resultPrismaTypes";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
 
-import { fieldAnswerResolver } from "../../fields/resolvers/fieldAnswerResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
 import { RequestStepPrismaType } from "../requestPrismaTypes";
@@ -32,17 +31,8 @@ export const requestStepResolver = async ({
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),
     expirationDate: reqStep.expirationDate.toISOString(),
-    requestFieldAnswers: await Promise.all(
-      reqStep.RequestFieldAnswers.map(
-        async (rfa) =>
-          await fieldAnswerResolver({
-            fieldAnswer: rfa,
-            context,
-          }),
-      ),
-    ),
-    responseFields: fieldSetResolver({
-      fieldSet: step.ResponseFieldSet,
+    fieldSet: fieldSetResolver({
+      fieldSet: step.FieldSet,
       requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
       responseFieldsCache,
       resultConfigsCache,
@@ -53,9 +43,12 @@ export const requestStepResolver = async ({
     results: reqStep.ResultGroups.map((result: ResultGroupPrismaType) =>
       resultGroupResolver(result),
     ),
-    responseComplete: reqStep.final,
-    resultsComplete: reqStep.final,
-    final: reqStep.final,
+    status: {
+      responseFinal: reqStep.responseFinal,
+      resultsFinal: reqStep.resultsFinal,
+      actionsFinal: reqStep.actionsFinal,
+      final: reqStep.final,
+    },
   };
   return res;
 };

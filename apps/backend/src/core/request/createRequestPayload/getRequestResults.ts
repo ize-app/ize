@@ -4,7 +4,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 export const getRequestResults = ({ request }: { request: Request }): GenericFieldAndValue[] => {
   const results: GenericFieldAndValue[] = [];
 
-  request.steps.map((step, stepIndex) => {
+  request.requestSteps.map((step, stepIndex) => {
     step.results.forEach((result) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
         return r.resultConfigId === result.resultConfigId;
@@ -14,7 +14,7 @@ export const getRequestResults = ({ request }: { request: Request }): GenericFie
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      const field = request.flow.steps[stepIndex].response.fields.find((field) => {
+      const field = request.flow.steps[stepIndex].fieldSet.fields.find((field) => {
         return field.fieldId === resultConfig.fieldId;
       });
       if (!field)

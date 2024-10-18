@@ -17,7 +17,11 @@ export const evolveGroup = async ({
   // find the current / proposed fields in the request
   const requestStep = await transaction.requestStep.findFirstOrThrow({
     include: {
-      RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+      Request: {
+        include: {
+          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+        },
+      },
       Step: {
         include: {
           FlowVersion: {
@@ -48,14 +52,16 @@ export const evolveGroup = async ({
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  const name = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const requestFieldAnswers = requestStep.Request.TriggerFieldAnswers;
+
+  const name = requestFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (EvolveGroupFields.Name as string);
   });
-  const description = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const description = requestFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (EvolveGroupFields.Description as string);
   });
 
-  const members = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const members = requestFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (EvolveGroupFields.Members as string);
   });
 

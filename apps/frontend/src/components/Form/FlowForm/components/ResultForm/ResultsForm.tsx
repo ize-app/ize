@@ -11,6 +11,7 @@ import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/gene
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
+import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
 import { Select, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FieldSchemaType } from "../../formValidation/fields";
@@ -18,7 +19,6 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { ResultSchemaType } from "../../formValidation/result";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
-import { FieldOptionsForm } from "../FieldOptionsForm";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -43,7 +43,7 @@ interface ResultsFormProps {
 
 interface ResultFormProps {
   formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   resultIndex: number;
   id: string;
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
@@ -57,7 +57,7 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
     name: `steps.${formIndex}.result`,
   });
 
-  const isLocked = formMethods.getValues(`steps.${formIndex}.response.fieldsLocked`);
+  const locked = formMethods.getValues(`steps.${formIndex}.fieldSet.locked`);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -67,11 +67,11 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
           <ResultForm
             key={item.id}
             formMethods={formMethods}
-            formIndex={formIndex}
+            stepIndex={formIndex}
             resultIndex={resultIndex}
             fieldsArrayMethods={fieldsArrayMethods}
             id={item.id}
-            locked={isLocked}
+            locked={locked}
             //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
@@ -104,7 +104,7 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
 
 const ResultForm = ({
   formMethods,
-  formIndex,
+  stepIndex: formIndex,
   fieldsArrayMethods,
   id,
   resultsArrayMethods,
@@ -113,7 +113,7 @@ const ResultForm = ({
 }: ResultFormProps) => {
   const resultType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.type`);
 
-  const resultField = formMethods.getValues(`steps.${formIndex}.response.fields.${resultIndex}`);
+  const resultField = formMethods.getValues(`steps.${formIndex}.fieldSet.fields.${resultIndex}`);
 
   const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(resultType);
   const [displayForm, setDisplayForm] = useState<boolean>(true);
@@ -135,7 +135,7 @@ const ResultForm = ({
         resultType,
         fieldId: field.fieldId,
       });
-      formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
+      formMethods.setValue(`steps.${formIndex}.fieldSet.fields.${resultIndex}`, field);
       formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
       setDisplayForm(true);
     }
@@ -169,7 +169,6 @@ const ResultForm = ({
         >
           <FieldBlock>
             <Select<FlowSchemaType>
-              control={formMethods.control}
               label="What's the final result?"
               disabled={locked}
               selectOptions={[
@@ -185,9 +184,8 @@ const ResultForm = ({
             />
             <TextField<FlowSchemaType>
               // assuming here that results to fields is 1:1 relationshp
-              name={`steps.${formIndex}.response.fields.${resultIndex}.name`}
+              name={`steps.${formIndex}.fieldSet.fields.${resultIndex}.name`}
               key={"fieldName" + resultIndex.toString() + formIndex.toString()}
-              control={formMethods.control}
               disabled={locked}
               multiline
               placeholderText={resultFieldNamePlaceholderText(resultType)}
@@ -197,11 +195,9 @@ const ResultForm = ({
           </FieldBlock>
           {(resultType === ResultType.Decision || resultType === ResultType.Ranking) &&
             displayForm && (
-              <FieldOptionsForm
-                formMethods={formMethods}
-                formIndex={formIndex}
+              <ResponseFieldOptionsForm
+                stepIndex={formIndex}
                 fieldIndex={resultIndex}
-                branch={"response"}
                 locked={locked}
               />
             )}

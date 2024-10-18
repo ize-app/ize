@@ -47,7 +47,7 @@ export const ActionFilterForm = ({
   // get field options asssociated with decisions to use as action filters
   const results = formMethods.getValues(`steps.${formIndex}.result`);
 
-  const responseFields = formMethods.getValues(`steps.${formIndex}.response.fields`);
+  const responseFields = formMethods.getValues(`steps.${formIndex}.fieldSet.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
@@ -99,13 +99,11 @@ export const ActionFilterForm = ({
       <TextField<FlowSchemaType>
         display={false}
         name={`steps.${formIndex}.action.type`}
-        control={formMethods.control}
         label="fieldId"
         disabled={true}
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         display={false}
         label="Action type"
         name={`steps.${formIndex}.action.type`}
@@ -114,7 +112,6 @@ export const ActionFilterForm = ({
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         display={false}
         label="Action type"
         name={`steps.${formIndex}.action.filterOptionId`}
@@ -123,11 +120,10 @@ export const ActionFilterForm = ({
         defaultValue=""
       />
       <Select<FlowSchemaType>
-        control={formMethods.control}
         label="When to run action"
-        renderValue={(val: string) => {
+        renderValue={(val) => {
           if (val === (DefaultOptionSelection.None as string)) return "Action runs on every result";
-          const optionName = getSelectOptionName(filterOptions, val);
+          const optionName = getSelectOptionName(filterOptions, val as string);
           if (optionName) {
             return "Only run action on: " + optionName;
           } else "Action runs on every result";

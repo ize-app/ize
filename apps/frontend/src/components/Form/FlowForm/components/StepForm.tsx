@@ -28,7 +28,7 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
 
   const fieldsArrayMethods = useFieldArray({
     control: formMethods.control,
-    name: `steps.${formIndex}.response.fields`,
+    name: `steps.${formIndex}.fieldSet.fields`,
   });
 
   return (
@@ -53,41 +53,39 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
       )}
       <PanelAccordion
         title="Permissions"
-        hasError={
-          !!formMethods.formState.errors.steps?.[formIndex]?.response ||
-          !!formMethods.formState.errors.steps?.[formIndex]?.expirationSeconds ||
-          !!formMethods.formState.errors.steps?.[formIndex]?.allowMultipleResponses
-        }
+        hasError={!!formMethods.formState.errors.steps?.[formIndex]?.response}
       >
         <PermissionForm<FlowSchemaType>
           fieldName={`steps.${formIndex}.response.permission`}
           branch={"response"}
         />
         <Select<FlowSchemaType>
-          control={formMethods.control}
           label="How long do people have to respond?"
           renderValue={(val) => {
             const option = requestExpirationOptions.find((option) => option.value === val);
             return option?.name + " to respond";
           }}
           selectOptions={requestExpirationOptions}
-          name={`steps.${formIndex}.expirationSeconds`}
+          name={`steps.${formIndex}.response.expirationSeconds`}
           size={"small"}
         />
         <Switch<FlowSchemaType>
-          name={`steps.${formIndex}.allowMultipleResponses`}
+          name={`steps.${formIndex}.response.allowMultipleResponses`}
           control={formMethods.control}
           label="Allow multiple responses"
         />
         <Switch<FlowSchemaType>
-          name={`steps.${formIndex}.canBeManuallyEnded`}
+          name={`steps.${formIndex}.response.canBeManuallyEnded`}
           control={formMethods.control}
           label="Allow triggerer to end step early"
         />
       </PanelAccordion>
       <PanelAccordion
         title="Collaborations"
-        hasError={!!formMethods.formState.errors.steps?.[formIndex]?.request?.fields}
+        hasError={
+          !!formMethods.formState.errors.steps?.[formIndex]?.fieldSet ||
+          !!formMethods.formState.errors.steps?.[formIndex]?.result
+        }
       >
         <ResultsForm
           formIndex={formIndex}

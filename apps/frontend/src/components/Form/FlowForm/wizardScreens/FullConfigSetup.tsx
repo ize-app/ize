@@ -120,18 +120,21 @@ export const FullConfigSetup = () => {
                 id={"trigger0"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
-                hasError={!!useFormMethods.formState.errors.steps?.[0]?.request}
+                hasError={
+                  !!useFormMethods.formState.errors.fieldSet ||
+                  !!useFormMethods.formState.errors.trigger
+                }
                 icon={PlayCircleOutlineOutlinedIcon}
               />
               <StageConnectorButton />
               {/* TODO: This logic is brittle as hell */}
               {stepsArrayMethods.fields.map((item, index) => {
                 const responseFieldLocked = useFormMethods.getValues(
-                  `steps.${index}.response.fieldsLocked`,
+                  `steps.${index}.fieldSet.locked`,
                 );
                 const resultType = useFormMethods.getValues(`steps.${index}.result.${0}.type`);
                 const fieldName = useFormMethods.getValues(
-                  `steps.${index}.response.fields.${0}.name`,
+                  `steps.${index}.fieldSet.fields.${0}.name`,
                 );
                 // item.result[0].type
                 const disableDelete =

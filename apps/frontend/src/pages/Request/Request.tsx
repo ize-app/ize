@@ -8,7 +8,7 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
-import { Fields } from "@/components/Field/Fields";
+import { FieldSet } from "@/components/Field/Fields";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -77,9 +77,10 @@ export const Request = () => {
 
   if (request) {
     reusable = request.flow.reusable;
-    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
-    userResponses = request.steps[request.currentStepIndex].userResponses;
-    allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
+    acceptingNewResponses = !request.requestSteps[request.currentStepIndex].status.responseFinal;
+    userResponses = request.requestSteps[request.currentStepIndex].userResponses;
+    allowMultipleResponses =
+      !!request.flow.steps[request.currentStepIndex].response?.allowMultipleResponses;
   }
 
   // console.log("request is ", request);
@@ -173,9 +174,9 @@ export const Request = () => {
                 }}
               >
                 <ResponseForm
-                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
-                  responseFields={request.steps[request.currentStepIndex].responseFields}
-                  permission={request.flow.steps[request.currentStepIndex].response.permission}
+                  requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
+                  responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
+                  permission={request.flow.steps[request.currentStepIndex].response?.permission}
                 />
               </Paper>
             )}
@@ -199,7 +200,7 @@ export const Request = () => {
               backgroundColor: theme.palette.background.paper,
             })}
           >
-            {request.steps[0].requestFieldAnswers.length > 0 && (
+            {request.triggerFieldAnswers.length > 0 && (
               <Box
                 sx={{
                   [theme.breakpoints.down("md")]: {
@@ -223,9 +224,9 @@ export const Request = () => {
                       padding: "12px 16px 12px",
                     }}
                   >
-                    <Fields
-                      fields={request.flow.steps[0].request.fields}
-                      fieldAnswers={request.steps[0].requestFieldAnswers}
+                    <FieldSet
+                      fieldSet={request.flow.fieldSet}
+                      fieldAnswers={request.triggerFieldAnswers}
                       onlyShowSelections={true}
                     />
                   </Box>

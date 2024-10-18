@@ -34,7 +34,7 @@ export const ConfigStepPanel = ({
         )}
         <RespondPermissionPanel step={step} />
         <PanelAccordion title="Collaborations 👀" hasError={false}>
-          <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} />
+          <ResultConfigs resultConfigs={step.result} responseFields={step.fieldSet.fields} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

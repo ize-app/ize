@@ -7,7 +7,6 @@ import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/resu
 interface GenerateStepConfigProps {
   permission: PermissionSchemaType;
   responseFields: FieldSchemaType[];
-  requestFields: FieldSchemaType[];
   result: ResultSchemaType[];
   action: ActionSchemaType | undefined;
 }
@@ -15,28 +14,24 @@ interface GenerateStepConfigProps {
 export const generateStepConfig = ({
   permission,
   responseFields,
-  requestFields,
   result,
   action,
 }: GenerateStepConfigProps): StepSchemaType => {
   return {
-    request: {
-      permission,
-      fields: requestFields,
-      fieldsLocked: false,
+    fieldSet: {
+      fields: responseFields,
+      locked: false,
     },
     response:
       responseFields.length === 0
         ? undefined
         : {
             permission,
-            fields: responseFields,
-            fieldsLocked: false,
+            canBeManuallyEnded: true,
+            expirationSeconds: 259200,
+            allowMultipleResponses: false,
           },
     result,
     action,
-    canBeManuallyEnded: true,
-    expirationSeconds: 259200,
-    allowMultipleResponses: false,
   };
 };

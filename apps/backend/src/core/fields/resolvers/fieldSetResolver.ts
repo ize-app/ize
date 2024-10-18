@@ -3,6 +3,7 @@ import {
   Field,
   FieldDataType,
   FieldOptionsSelectionType,
+  FieldSet,
   FieldType,
   FreeInput,
   Option,
@@ -27,9 +28,9 @@ export const fieldSetResolver = ({
   requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
-}): Field[] => {
-  if (!fieldSet) return [];
-  return fieldSet.FieldSetFields.map((f) => {
+}): FieldSet => {
+  // if (!fieldSet) return [];
+  const fields: Field[] = (fieldSet?.FieldSetFields ?? []).map((f) => {
     if (f.Field.type === FieldType.FreeInput) {
       const freeInput: FreeInput = {
         __typename: FieldType.FreeInput,
@@ -130,4 +131,6 @@ export const fieldSetResolver = ({
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
   });
+
+  return { fields, locked: fieldSet?.locked ?? false };
 };

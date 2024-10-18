@@ -141,7 +141,6 @@ export const ResponseForm = ({
                         label={name}
                         variant="outlined"
                         showLabel={true}
-                        control={formMethods.control}
                         name={`responseFields.${field.fieldId}.value`}
                         required={required}
                         multiline

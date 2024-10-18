@@ -25,7 +25,6 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
       <TextField<FlowSchemaType>
         name={`steps.${formIndex}.action.locked`}
         key={"step" + formIndex.toString() + "actionLocked"}
-        control={formMethods.control}
         label="fieldId"
         disabled={true}
         display={false}
@@ -34,7 +33,6 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
       <TextField<FlowSchemaType>
         name={`steps.${formIndex}.action.type`}
         key={"step" + formIndex.toString() + "actionType"}
-        control={formMethods.control}
         label="fieldId"
         disabled={true}
         display={false}
@@ -43,7 +41,6 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
       <TextField<FlowSchemaType>
         name={`steps.${formIndex}.action.filterOptionId`}
         key={"step" + formIndex.toString() + "filterOptionId"}
-        control={formMethods.control}
         label="fieldId"
         disabled={true}
         display={false}

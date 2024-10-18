@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
 
 import {
-  FieldArgs,
   FieldOptionsConfigArgs,
   FieldOptionsSelectionType,
+  FieldSetArgs,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -13,16 +13,15 @@ import { prisma } from "../../prisma/client";
 import { StepPrismaType } from "../flow/flowPrismaTypes";
 
 export const newFieldSet = async ({
-  fields,
+  fieldSetArgs,
   createdSteps,
-  locked,
   transaction,
 }: {
-  fields: FieldArgs[];
+  fieldSetArgs: FieldSetArgs;
   createdSteps: StepPrismaType[];
-  locked: boolean;
   transaction: Prisma.TransactionClient;
 }): Promise<FieldSetPrismaType | null> => {
+  const { fields, locked } = fieldSetArgs;
   if (fields.length === 0) return null;
   const dbFields = await Promise.all(
     fields.map(async (field) => {

@@ -15,7 +15,11 @@ export const groupWatchFlow = async ({
   // find the current / proposed fields in the request
   const requestStep = await transaction.requestStep.findFirstOrThrow({
     include: {
-      RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+      Request: {
+        include: {
+          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+        },
+      },
       Step: {
         include: {
           FlowVersion: {
@@ -39,10 +43,12 @@ export const groupWatchFlow = async ({
     },
   });
 
-  const flowsToWatch = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const requestFieldAnswers = requestStep.Request.TriggerFieldAnswers;
+
+  const flowsToWatch = requestFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (GroupWatchFlowFields.WatchFlow as string);
   });
-  const flowsToStopWatching = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
+  const flowsToStopWatching = requestFieldAnswers.find((fieldAnswer) => {
     return fieldAnswer.Field.name === (GroupWatchFlowFields.UnwatchFlow as string);
   });
 

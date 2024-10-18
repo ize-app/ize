@@ -4,7 +4,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 export const createResultsPayload = (request: Request): WebhookValue[] => {
   const results: WebhookValue[] = [];
 
-  request.steps.map((step, stepIndex) => {
+  request.requestSteps.map((step, stepIndex) => {
     (step.results ?? []).forEach((resultGroup) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
         return r.resultConfigId === resultGroup.resultConfigId;
@@ -14,7 +14,7 @@ export const createResultsPayload = (request: Request): WebhookValue[] => {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      const field = request.flow.steps[stepIndex].response.fields.find((field) => {
+      const field = request.flow.steps[stepIndex].fieldSet.fields.find((field) => {
         return field.fieldId === resultConfig.fieldId;
       });
       if (!field)

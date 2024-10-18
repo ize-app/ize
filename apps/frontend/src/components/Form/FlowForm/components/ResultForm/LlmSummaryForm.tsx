@@ -15,20 +15,13 @@ interface LlmSummaryProps {
   type: ResultType;
 }
 
-export const LlmSummaryForm = ({
-  formMethods,
-  formIndex,
-  resultIndex,
-  display,
-  type,
-}: LlmSummaryProps) => {
+export const LlmSummaryForm = ({ formIndex, resultIndex, display, type }: LlmSummaryProps) => {
   if (type !== ResultType.LlmSummary && type !== ResultType.LlmSummaryList) return null;
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
       <Typography variant={"label2"}>AI summary configuration</Typography>
 
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         sx={{ width: "100%" }}
         label="Summarization instructions"
         variant="outlined"
@@ -41,7 +34,6 @@ export const LlmSummaryForm = ({
         defaultValue="test"
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         sx={{ width: "100%" }}
         label="Example output"
         variant="outlined"
@@ -58,7 +50,6 @@ export const LlmSummaryForm = ({
         defaultValue="test"
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         label="Minimum # of responses for a result"
         showLabel={false}
         size={"small"}

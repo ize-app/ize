@@ -25,7 +25,7 @@ const formatAnswer = ({ userFieldAnswer }: { userFieldAnswer: UserFieldAnswer })
       value = answer.entities.map((entity) => entity.name).join(", ");
       break;
     case "FlowsFieldAnswer":
-      value = answer.flows.map((flow) => flow.name).join(", ");
+      value = answer.flows.map((flow) => flow.flowName).join(", ");
       break;
     case "FreeInputFieldAnswer":
       value = answer.value;

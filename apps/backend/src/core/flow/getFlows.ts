@@ -115,33 +115,24 @@ const createFlowPermissionFilter = (
   identityIds: string[],
   userId: string | undefined,
 ): Prisma.FlowVersionWhereInput => ({
-  Steps: {
-    some: {
-      index: 0,
-      OR: [
-        {
-          RequestPermissions: {
-            OR: [
-              { anyone: true },
-              {
-                EntitySet: {
-                  EntitySetEntities: {
-                    some: {
-                      Entity: {
-                        OR: [
-                          { Group: { id: { in: groupIds } } },
-                          { Identity: { id: { in: identityIds } } },
-                          { User: { id: userId } },
-                        ],
-                      },
-                    },
-                  },
-                },
+  TriggerPermissions: {
+    OR: [
+      { anyone: true },
+      {
+        EntitySet: {
+          EntitySetEntities: {
+            some: {
+              Entity: {
+                OR: [
+                  { Group: { id: { in: groupIds } } },
+                  { Identity: { id: { in: identityIds } } },
+                  { User: { id: userId } },
+                ],
               },
-            ],
+            },
           },
         },
-      ],
-    },
+      },
+    ],
   },
 });

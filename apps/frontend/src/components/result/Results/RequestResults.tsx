@@ -25,20 +25,20 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
   request.flow.steps.forEach((step, stepIndex) => {
     const requestStepStatus = determineRequestStepStatus(
       stepIndex,
-      request.steps[stepIndex]?.resultsComplete ?? false,
+      request.requestSteps[stepIndex]?.status.resultsFinal ?? false,
       request.currentStepIndex,
       request.final,
     );
 
     step.result.forEach((resultConfig) => {
-      const responseField = request.steps[stepIndex]?.responseFields.find(
+      const responseField = request.requestSteps[stepIndex]?.fieldSet.fields.find(
         (field) => field.fieldId === resultConfig.fieldId,
       );
       const field =
         responseField ??
-        step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
+        step.fieldSet.fields.find((field) => field.fieldId === resultConfig.fieldId);
       const resultGroup =
-        request.steps[stepIndex]?.results.find(
+        request.requestSteps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
         ) ?? null;
       if (field) hydratedResults.push({ field, resultConfig, resultGroup, requestStepStatus });

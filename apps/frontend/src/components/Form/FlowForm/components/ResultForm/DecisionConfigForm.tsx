@@ -67,16 +67,16 @@ export const DecisionConfigForm = ({
     if (decisionType) {
       if (decisionType === DecisionType.WeightedAverage) {
         formMethods.setValue(
-          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`,
+          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
           FieldOptionsSelectionType.Rank,
         );
         formMethods.setValue(
-          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.maxSelections`,
+          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
           2,
         );
       } else {
         formMethods.setValue(
-          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`,
+          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
           FieldOptionsSelectionType.Select,
         );
       }
@@ -86,10 +86,10 @@ export const DecisionConfigForm = ({
           `steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`,
           DefaultOptionSelection.None,
         );
-        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}.isInternal`, true);
+        formMethods.setValue(`steps.${formIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
         formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 0);
       } else {
-        formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}.isInternal`, false);
+        formMethods.setValue(`steps.${formIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
         formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 2);
       }
     }
@@ -117,7 +117,6 @@ export const DecisionConfigForm = ({
       <Typography variant={"label2"}>Decision configuration</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
-          control={formMethods.control}
           label="How do we determine the final result?"
           selectOptions={[
             { name: "Threshold vote", value: DecisionType.NumberThreshold },
@@ -133,8 +132,7 @@ export const DecisionConfigForm = ({
           size="small"
         />
         <Select<FlowSchemaType>
-          control={formMethods.control}
-          name={`steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.selectionType`}
+          name={`steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
           size="small"
           defaultValue=""
           display={decisionType !== DecisionType.Ai}
@@ -145,7 +143,6 @@ export const DecisionConfigForm = ({
       <ResponsiveFormRow>
         {
           <TextField<FlowSchemaType>
-            control={formMethods.control}
             display={decisionType === DecisionType.NumberThreshold}
             label="Threshold votes"
             name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
@@ -157,7 +154,6 @@ export const DecisionConfigForm = ({
         }
         {
           <TextField<FlowSchemaType>
-            control={formMethods.control}
             display={decisionType === DecisionType.PercentageThreshold}
             sx={{ width: "200px" }}
             label="Percentage votes"
@@ -169,7 +165,6 @@ export const DecisionConfigForm = ({
           />
         }
         <TextField<FlowSchemaType>
-          control={formMethods.control}
           label="Minimum # of responses for a result"
           showLabel={false}
           size={"small"}
@@ -179,7 +174,6 @@ export const DecisionConfigForm = ({
           name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
         />
         <TextField<FlowSchemaType>
-          control={formMethods.control}
           label="What criteria should the AI use to make a decision?"
           placeholderText="What criteria should the AI use to make a decision?"
           showLabel={false}
@@ -191,7 +185,6 @@ export const DecisionConfigForm = ({
       </ResponsiveFormRow>
       {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
       <Select<FlowSchemaType>
-        control={formMethods.control}
         label="Default option"
         sx={{
           "& > input": {

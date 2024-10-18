@@ -61,15 +61,15 @@ export async function createRequestPayload({
   let field: Field | undefined = undefined;
 
   const fieldAnswers: UserFieldAnswers[] = [];
-  request.steps.forEach((step) => {
+  request.requestSteps.forEach((step) => {
     step.responseFieldAnswers.forEach((responseFieldAnswer) => {
       if (responseFieldAnswer.answers.length > 0) fieldAnswers.push(responseFieldAnswer);
     });
   });
 
   if (fieldId) {
-    request.steps.forEach((step) => {
-      step.responseFields.forEach((f) => {
+    request.requestSteps.forEach((step) => {
+      step.fieldSet.fields.forEach((f) => {
         if (f.fieldId === fieldId) field = f;
       });
     });

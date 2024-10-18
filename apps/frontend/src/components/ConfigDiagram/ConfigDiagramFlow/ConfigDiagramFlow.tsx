@@ -40,10 +40,10 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
               setSelectedId={setSelectedId}
               selectedId={selectedId}
               icon={PlayCircleOutlineOutlined}
-              entities={flow.steps[0].request.permission?.entities}
+              entities={flow.trigger.permission?.entities}
             />
             {flow.steps.map((step, index) => {
-              if (step.response.fields.length === 0) return null;
+              if (step.fieldSet.fields.length === 0) return null;
               return (
                 <Box key={index}>
                   <StageConnectorButton key={"connector-" + index.toString()} />
@@ -54,13 +54,13 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                         ? resultTypeDisplay[flow.steps[index].result[0].__typename]
                         : "Collaboration " + (index + 1).toString()
                     }
-                    subtitle={flow.steps[index].response.fields[0].name}
+                    subtitle={flow.steps[index].fieldSet.fields[0].name}
                     key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
-                    entities={flow.steps[index].response.permission?.entities}
+                    entities={flow.steps[index].response?.permission.entities}
                   />
                 </Box>
               );
@@ -80,7 +80,12 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
             )}
           </DiagramPanel>
         </PanelContainer>
-        {selectedId === "trigger0" && <ConfigFlowTriggerPanel step={flow.steps[0]} />}
+        {selectedId === "trigger0" && (
+          <ConfigFlowTriggerPanel
+            triggerFieldSet={flow.fieldSet}
+            triggerPermissions={flow.trigger.permission}
+          />
+        )}
         {flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (

@@ -36,10 +36,10 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
         Request: {
           include: {
             FlowVersion: true,
+            TriggerFieldAnswers: {
+              include: fieldAnswerInclude,
+            },
           },
-        },
-        RequestFieldAnswers: {
-          include: fieldAnswerInclude,
         },
         RequestDefinedOptionSets: {
           include: {
@@ -67,9 +67,30 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
         },
       );
 
+    if (
+      !requestStep.Step.FieldSet ||
+      requestStep.Step.FieldSet.FieldSetFields.every((f) => f.Field.isInternal)
+    )
+      throw new GraphQLError(
+        `Response received for request step that does not have response fields ${requestStepId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
+
+    if (!requestStep.Step.ResponseConfig)
+      throw new GraphQLError(
+        `Response received for request step that does not accept responses ${requestStepId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
+
+    const { allowMultipleResponses, ResponsePermissions } = requestStep.Step.ResponseConfig;
+
     const hasRespondPermissions = await getEntityPermissions({
       entityContext,
-      permission: requestStep.Step.ResponsePermissions,
+      permission: ResponsePermissions,
       transaction,
     });
 
@@ -88,7 +109,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
       },
     });
 
-    if (!requestStep.Step.allowMultipleResponses) {
+    if (!allowMultipleResponses) {
       if (existingUserResponse)
         throw new GraphQLError(
           `Response already exists for this request step. requestStepId: ${requestStepId}`,
@@ -106,7 +127,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     });
 
     await newFieldAnswers({
-      fieldSet: requestStep.Step.ResponseFieldSet,
+      fieldSet: requestStep.Step.FieldSet,
       fieldAnswers: answers,
       requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
       responseId: newResponse.id,

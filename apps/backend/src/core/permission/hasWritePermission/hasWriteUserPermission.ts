@@ -18,7 +18,7 @@ export const hasWriteUserPermission = async ({
   context,
   transaction = prisma,
 }: {
-  permission: PermissionPrismaType | null;
+  permission: PermissionPrismaType | null | undefined;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {

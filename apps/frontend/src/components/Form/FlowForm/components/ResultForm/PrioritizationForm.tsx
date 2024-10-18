@@ -39,7 +39,6 @@ const rankingStrategyDescription = (selectionType: FieldOptionsSelectionType) =>
 };
 
 export const PrioritizationForm = ({
-  formMethods,
   formIndex,
   resultIndex,
   field,
@@ -54,7 +53,6 @@ export const PrioritizationForm = ({
           : null}
       </Typography>
       <Select<FlowSchemaType>
-        control={formMethods.control}
         label="# of options in the final result"
         // defaultValue={""}
         renderValue={(val) => {
@@ -68,7 +66,6 @@ export const PrioritizationForm = ({
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         label="Minimum # of responses for a result"
         showLabel={false}
         size={"small"}

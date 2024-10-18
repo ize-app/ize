@@ -9,7 +9,6 @@ export const newPermission = async ({
   transaction,
 }: {
   permission: PermissionArgs;
-  stepIndex: number;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   let entitySetId = undefined;

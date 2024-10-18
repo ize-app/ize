@@ -27,6 +27,8 @@ type Flow {
   type: FlowType!
   name: String!
   reusable: Boolean!
+  fieldSet: FieldSet!
+  trigger: TriggerConfig!
   steps: [Step!]!
   flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
@@ -40,8 +42,7 @@ type FlowSummary {
   creator: Entity!
   createdAt: String!
   # permission to trigger first step of the flow
-  requestStep0Permission: Permission!
-  userPermission: UserFlowPermission!
+  trigger: TriggerConfig!
   isWatched: Boolean!
 }
 
@@ -57,57 +58,45 @@ enum FlowType {
   GroupWatchFlow
 }
 
+type TriggerConfig {
+  permission: Permission!
+  userPermission: Boolean!
+}
+
 type Step {
   id: String!
   index: Int!
-  request: RequestConfig!
-  response: ResponseConfig!
+  fieldSet: FieldSet!
+  response: ResponseConfig
   result: [ResultConfig!]!
   action: Action
-  expirationSeconds: Int
-  canBeManuallyEnded: Boolean!
-  allowMultipleResponses: Boolean!
-  userPermission: UserPermission!
-}
-
-type RequestConfig {
-  permission: Permission
-  fields: [Field!]!
-  fieldsLocked: Boolean!
 }
 
 type ResponseConfig {
-  permission: Permission
-  fields: [Field!]!
-  fieldsLocked: Boolean!
-}
-
-type UserPermission {
-  request: Boolean!
-  response: Boolean!
-}
-
-type UserFlowPermission {
-  request: Boolean!
+  permission: Permission!
+  expirationSeconds: Int!
+  canBeManuallyEnded: Boolean!
+  allowMultipleResponses: Boolean!
+  # whether or not that particular user has permission to respond
+  userPermission: Boolean!
 }
 
 input NewFlowArgs {
   name: String!
   reusable: Boolean!
   steps: [NewStepArgs!]!
+  fieldSet: FieldSetArgs!
+  trigger: TriggerConfigArgs!
   evolve: EvolveFlowArgs
   # only used if flow is non-reusable (which means initial request is triggered automatically)
   requestName: String
 }
 
 input NewStepArgs {
-  request: StepRequestArgs
-  response: StepResponseArgs
+  fieldSet: FieldSetArgs!
+  response: ResponseConfigArgs
   result: [ResultArgs!]!
   action: ActionArgs
-  expirationSeconds: Int
-  allowMultipleResponses: Boolean!
-  canBeManuallyEnded: Boolean!
 }
 
 input EvolveFlowArgs {
@@ -116,16 +105,15 @@ input EvolveFlowArgs {
   decision: DecisionArgs!
 }
 
-input StepRequestArgs {
-  fields: [FieldArgs!]!
+input TriggerConfigArgs {
   permission: PermissionArgs!
-  fieldsLocked: Boolean
 }
 
-input StepResponseArgs {
-  fields: [FieldArgs!]!
+input ResponseConfigArgs {
   permission: PermissionArgs!
-  fieldsLocked: Boolean
+  expirationSeconds: Int!
+  allowMultipleResponses: Boolean!
+  canBeManuallyEnded: Boolean!
 }
 
 enum FlowTriggerPermissionFilter {

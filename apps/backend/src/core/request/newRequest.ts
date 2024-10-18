@@ -57,7 +57,7 @@ export const newRequest = async ({
 
   const hasRequestPermission = await getEntityPermissions({
     entityContext,
-    permission: step.RequestPermissions,
+    permission: flow.CurrentFlowVersion.TriggerPermissions,
   });
 
   if (!hasRequestPermission)
@@ -87,7 +87,7 @@ export const newRequest = async ({
       const requestStep = await transaction.requestStep.create({
         data: {
           expirationDate: new Date(
-            new Date().getTime() + (step.expirationSeconds as number) * 1000,
+            new Date().getTime() + (step.ResponseConfig?.expirationSeconds ?? 0) * 1000,
           ),
           responseFinal: responseComplete,
           Request: {
@@ -123,13 +123,14 @@ export const newRequest = async ({
 
       // TODO: if auto approve, just create the result
 
-      await newFieldAnswers({
-        fieldSet: step.RequestFieldSet,
-        fieldAnswers: requestFields,
-        requestDefinedOptionSets: requestDefinedOptionSets,
-        requestStepId: requestStep.id,
-        transaction,
-      });
+      if (flow.CurrentFlowVersion?.TriggerFieldSet)
+        await newFieldAnswers({
+          fieldSet: flow.CurrentFlowVersion?.TriggerFieldSet,
+          fieldAnswers: requestFields,
+          requestDefinedOptionSets: requestDefinedOptionSets,
+          requestStepId: requestStep.id,
+          transaction,
+        });
 
       return {
         requestId: request.id,

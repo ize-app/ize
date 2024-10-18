@@ -51,13 +51,16 @@ export const fieldAnswerResolver = async ({
         return {
           __typename: "FlowsFieldAnswer",
           fieldId: fieldAnswer.fieldId,
-          flows: flows.map((flow) =>
-            flowSummaryResolver({
-              flow,
-              context,
-              groupIds: [], // TODO pass this in properly
-            }),
-          ),
+          // TODO remove inefficient query
+          flows: flows
+            .map((flow) =>
+              flowSummaryResolver({
+                flow,
+                context,
+                groupIds: [], // TODO pass this in properly
+              }),
+            )
+            .map((f) => ({ flowId: f.flowId, flowName: f.name })),
         };
       } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.Webhook) {
         if (fieldAnswer.AnswerFreeInput[0].value === "None") {

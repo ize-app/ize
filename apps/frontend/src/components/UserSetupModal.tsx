@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { UpdateProfileDocument } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -32,7 +32,7 @@ export function UserSetupModal() {
 
   const [open, setOpen] = useState(false);
 
-  const { control, reset, handleSubmit } = useForm<UserSettingsSchemaType>({
+  const formMethods = useForm<UserSettingsSchemaType>({
     defaultValues: {
       userName: me?.user.name ?? "",
     },
@@ -46,7 +46,7 @@ export function UserSetupModal() {
 
   useEffect(() => {
     if (me)
-      reset(
+      formMethods.reset(
         {
           userName: me.user.name,
         },
@@ -109,16 +109,18 @@ export function UserSetupModal() {
           <br />
           What should we call you?
         </Typography>
-        <form style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-          <TextField name={"userName"} control={control} label={"Name"} required size="small" />
+        <FormProvider {...formMethods}>
+          <form style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
+            <TextField name={"userName"} label={"Name"} required size="small" />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            {" "}
-            <Button onClick={handleSubmit(onSubmit)} variant="contained">
-              Get started
-            </Button>
-          </Box>
-        </form>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              {" "}
+              <Button onClick={formMethods.handleSubmit(onSubmit)} variant="contained">
+                Get started
+              </Button>
+            </Box>
+          </form>
+        </FormProvider>
       </Box>
     </Modal>
   );

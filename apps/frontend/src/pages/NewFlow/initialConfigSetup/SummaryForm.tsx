@@ -8,7 +8,7 @@ import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlock
 import { AIOutputType, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const SummaryForm = () => {
-  const { control, watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const question = watch("question");
   const aiOutputType = watch("aiOutputType");
@@ -31,7 +31,6 @@ export const SummaryForm = () => {
         <TextField<IntitialFlowSetupSchemaType>
           // assuming here that results to fields is 1:1 relationshp
           name={`question`}
-          control={control}
           multiline
           placeholderText={"What's your question to the group?"}
           label={``}
@@ -66,7 +65,6 @@ export const SummaryForm = () => {
             <TextField<IntitialFlowSetupSchemaType>
               // assuming here that results to fields is 1:1 relationshp
               name={`prompt`}
-              control={control}
               multiline
               placeholderText={"Prompt for the AI"}
               label={``}
@@ -75,7 +73,6 @@ export const SummaryForm = () => {
             <TextField<IntitialFlowSetupSchemaType>
               // assuming here that results to fields is 1:1 relationshp
               name={`example`}
-              control={control}
               multiline
               placeholderText={"example output from the AI"}
               label={``}

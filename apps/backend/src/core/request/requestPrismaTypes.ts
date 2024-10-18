@@ -5,7 +5,7 @@ import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
-import { permissionInclude } from "../permission/permissionPrismaTypes";
+import { responseConfigInclude } from "../response/responseConfigPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
 import { resultGroupInclude } from "../result/resultPrismaTypes";
 
@@ -34,12 +34,10 @@ export type EvolveRequestProposedFlowVersionPrismaType = Prisma.FlowVersionGetPa
 }>;
 
 export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()({
-  RequestFieldAnswers: {
-    include: fieldAnswerInclude,
-  },
   Responses: {
     include: responseInclude,
   },
+
   RequestDefinedOptionSets: {
     include: {
       FieldOptionSet: {
@@ -87,8 +85,8 @@ export const createRequestStepSummaryInclude = (userEntityIds: string[]) =>
     },
     Step: {
       include: {
-        ResponsePermissions: {
-          include: permissionInclude,
+        ResponseConfig: {
+          include: responseConfigInclude,
         },
       },
     },
@@ -100,6 +98,9 @@ export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
 }>;
 
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
+  TriggerFieldAnswers: {
+    include: fieldAnswerInclude,
+  },
   RequestSteps: {
     include: requestStepInclude,
   },

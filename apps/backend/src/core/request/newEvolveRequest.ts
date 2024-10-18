@@ -10,9 +10,9 @@ import { newRequest } from "./newRequest";
 import { prisma } from "../../prisma/client";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { newCustomFlowVersion } from "../flow/flowTypes/customFlow/newCustomFlowVersion";
+import { createEvolveFlowFlowArgs } from "../flow/flowTypes/evolveFlow/createEvolveFlowFlowArgs";
 import { EvolveFlowFields } from "../flow/flowTypes/evolveFlow/EvolveFlowFields";
-import { newEvolveFlowVersion } from "../flow/flowTypes/evolveFlow/newEvolveFlowVersion";
+import { newFlowVersion } from "../flow/newFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -72,36 +72,25 @@ export const newEvolveRequest = async ({
       include: {
         CurrentFlowVersion: {
           include: {
-            Steps: {
-              include: {
-                RequestFieldSet: {
-                  include: fieldSetInclude,
-                },
-              },
+            TriggerFieldSet: {
+              include: fieldSetInclude,
             },
           },
         },
       },
     });
-    const evolveFlowStep =
-      (evolveFlow.CurrentFlowVersion && evolveFlow.CurrentFlowVersion.Steps[0]) ?? null;
-    if (!evolveFlowStep || !evolveFlowStep.RequestFieldSet)
-      throw new GraphQLError(
-        `Invalid evolve flow configuration. Cannot find first step of flow. flowVersionId: ${evolveFlow.currentFlowVersionId}`,
-        {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        },
-      );
 
-    const proposedFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find((field) => {
+    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? [];
+
+    const proposedFlowField = evoleFlowFields.find((field) => {
       return (field.Field.name as EvolveFlowFields) === EvolveFlowFields.ProposedFlow;
     });
 
-    const currentFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
+    const currentFlowField = evoleFlowFields.find(
       (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.CurrentFlow,
     );
 
-    const descriptionField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
+    const descriptionField = evoleFlowFields.find(
       (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.Description,
     );
 
@@ -113,15 +102,18 @@ export const newEvolveRequest = async ({
     // create new evolve flow version
     // TODO - don't create this if there are no changes
     if (flow.CurrentFlowVersion?.evolveFlowId) {
-      draftEvolveFlowVersionId = await newEvolveFlowVersion({
+      draftEvolveFlowVersionId = await newFlowVersion({
         transaction,
-        flowId: flow.CurrentFlowVersion?.evolveFlowId,
-        evolveArgs: proposedFlow.evolve,
+        flowId: flow.CurrentFlowVersion.evolveFlowId,
         active: false,
+        draftEvolveFlowVersionId: null,
+        // evolve flow evolves itself
+        evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId,
+        flowArgs: createEvolveFlowFlowArgs(proposedFlow.evolve),
       });
     }
     // create new custom flow version
-    const proposedFlowVersionId = await newCustomFlowVersion({
+    const proposedFlowVersionId = await newFlowVersion({
       transaction,
       flowArgs: proposedFlow,
       flowId: flow.id,
