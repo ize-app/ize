@@ -44,7 +44,6 @@ export const Setup = () => {
 
   useEffect(() => {
     if (entity) {
-      console.log("about to set entity");
       formMethods.setValue("members", [entity]);
       formMethods.setValue("name", entity.name);
     }

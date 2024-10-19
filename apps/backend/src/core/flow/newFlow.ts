@@ -3,8 +3,6 @@ import { FlowType } from "@prisma/client";
 import { getUserEntities } from "@/core/entity/getUserEntities";
 import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
 import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests";
-import { newRequest } from "@/core/request/newRequest";
-import { watchFlow } from "@/core/user/watchFlow";
 import { NewFlowArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -23,11 +21,13 @@ export const newFlow = async ({
   entityContext: UserOrIdentityContextInterface;
   groupId?: string;
 }): Promise<string> => {
-  const { entityId, user } = await getUserEntities({ entityContext });
+  const { entityId } = await getUserEntities({ entityContext });
 
   let evolveFlowId: string | null = null;
   const flowId = await prisma.$transaction(async (transaction) => {
-    if (!args.evolve && args.reusable)
+    // reusable flows need evolve flow arguments
+    // unless the flow itself is an evolve flow, which evolves itself
+    if (!args.evolve && args.reusable && type !== FlowType.Evolve)
       throw new GraphQLError("Reusable flows must include evolve flow arguments.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
@@ -80,23 +80,5 @@ export const newFlow = async ({
 
   if (type === FlowType.Custom) await createWatchFlowRequests({ flowId, entityContext });
 
-  if (!args.reusable) {
-    const requestId = await newRequest({
-      args: {
-        request: {
-          flowId: flowId,
-          name: args.requestName ?? args.name ?? "",
-          requestFields: [],
-          requestDefinedOptions: [],
-        },
-      },
-      entityContext,
-    });
-    return requestId;
-  } else {
-    // creating a request also watches flow so not calling that for nonreusable flow block
-
-    if (type === FlowType.Custom) await watchFlow({ flowId, watch: true, entityId, user });
-    return flowId;
-  }
+  return flowId;
 };

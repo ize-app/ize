@@ -45,7 +45,7 @@ export const FullConfigSetup = () => {
     defaultValues: {
       name: formState.newFlow?.name ?? "",
       reusable: formState.newFlow?.reusable ?? true,
-      fieldSet: formState.newFlow.fieldSet ?? {
+      fieldSet: formState.newFlow?.fieldSet ?? {
         fields: [],
         locked: false,
       },
@@ -81,8 +81,8 @@ export const FullConfigSetup = () => {
     shouldUnregister: false,
   });
 
-  console.log("errors are ", useFormMethods.formState.errors);
-  console.log("values are ", useFormMethods.getValues());
+  // console.log("errors are ", useFormMethods.formState.errors);
+  // console.log("values are ", useFormMethods.getValues());
 
   const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 
@@ -285,18 +285,12 @@ export const FullConfigSetup = () => {
               </Typography>
             </PanelHeader>
             <ConfigurationPanel>
-              <TriggerForm
-                formMethods={useFormMethods}
-                formIndex={0}
-                show={selectedId === "trigger0"}
-              />
+              <TriggerForm show={selectedId === "trigger0"} />
               {stepsArrayMethods.fields.map((item, index) => {
                 if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) return null;
                 return (
                   <StepForm
-                    // id={item.id}
-                    formMethods={useFormMethods}
-                    formIndex={index}
+                    stepIndex={index}
                     key={"step-" + item.id}
                     show={selectedId === "step" + index.toString()}
                   />
@@ -304,8 +298,7 @@ export const FullConfigSetup = () => {
               })}
               {action && displayAction && (
                 <ActionForm
-                  formMethods={useFormMethods}
-                  formIndex={stepsArrayMethods.fields.length - 1}
+                  stepIndex={stepsArrayMethods.fields.length - 1}
                   show={selectedId === "webhook"}
                   action={action}
                 />

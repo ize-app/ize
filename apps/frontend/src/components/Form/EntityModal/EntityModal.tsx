@@ -183,7 +183,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
     // shouldUnregister: false,
   });
 
-  const { control, handleSubmit, watch } = formMethods;
+  const { handleSubmit, watch } = formMethods;
 
   const createAgents = async (data: NewEntitySchemaType) => {
     setDisableSubmit(true);
@@ -418,7 +418,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                       >
                         <Switch<NewEntitySchemaType>
                           name={"nft.allTokens"}
-                          control={control}
                           label="Include all token Ids"
                           sx={{ flexGrow: 1 }}
                         />

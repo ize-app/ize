@@ -53,9 +53,6 @@ export const Policy = () => {
     onNext();
   };
 
-  console.log("errors are  ", formMethods.formState.errors);
-  console.log("form state is ", formMethods.getValues());
-
   const evolveGroupPolicyType = formMethods.watch("flows.evolveGroup.type");
   const watchGroupPolicyType = formMethods.watch("flows.watch.type");
 

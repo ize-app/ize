@@ -1,5 +1,5 @@
 import { Box, FormHelperText } from "@mui/material";
-import { UseFormReturn } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { ActionDescription } from "@/components/Action/ActionDescription";
 import { TextField } from "@/components/Form/formFields";
@@ -12,41 +12,41 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { ActionFilterForm } from "../ActionFilterForm";
 
 interface ActionFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   show: boolean;
   action: ActionSchemaType;
 }
 
-export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormProps) => {
-  const actionError = formMethods.formState.errors.steps?.[formIndex]?.action;
+export const ActionForm = ({ stepIndex, show, action }: ActionFormProps) => {
+  const { formState } = useFormContext<FlowSchemaType>();
+  const actionError = formState.errors.steps?.[stepIndex]?.action;
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
       <TextField<FlowSchemaType>
-        name={`steps.${formIndex}.action.locked`}
-        key={"step" + formIndex.toString() + "actionLocked"}
+        name={`steps.${stepIndex}.action.locked`}
+        key={"step" + stepIndex.toString() + "actionLocked"}
         label="fieldId"
         disabled={true}
         display={false}
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        name={`steps.${formIndex}.action.type`}
-        key={"step" + formIndex.toString() + "actionType"}
+        name={`steps.${stepIndex}.action.type`}
+        key={"step" + stepIndex.toString() + "actionType"}
         label="fieldId"
         disabled={true}
         display={false}
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        name={`steps.${formIndex}.action.filterOptionId`}
-        key={"step" + formIndex.toString() + "filterOptionId"}
+        name={`steps.${stepIndex}.action.filterOptionId`}
+        key={"step" + stepIndex.toString() + "filterOptionId"}
         label="fieldId"
         disabled={true}
         display={false}
         defaultValue=""
       />
-      <ActionFilterForm formMethods={formMethods} formIndex={formIndex} action={action} />
+      <ActionFilterForm stepIndex={stepIndex} action={action} />
       <PanelAccordion title="Setup" hasError={!!actionError}>
         <ActionDescription actionType={action.type} groupName="the group" />
         {!!actionError?.root && (
@@ -59,7 +59,7 @@ export const ActionForm = ({ formMethods, formIndex, show, action }: ActionFormP
           </FormHelperText>
         )}
         {action.type === ActionType.CallWebhook && (
-          <WebhookForm fieldName={`steps.${formIndex}.action`} />
+          <WebhookForm fieldName={`steps.${stepIndex}.action`} />
         )}
       </PanelAccordion>
     </Box>

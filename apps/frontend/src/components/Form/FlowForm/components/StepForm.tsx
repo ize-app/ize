@@ -1,5 +1,5 @@
 import { Box, FormHelperText } from "@mui/material";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { ActionFilterForm } from "./ActionFilterForm";
 import { PermissionForm } from "./PermissionForm";
@@ -9,8 +9,7 @@ import { Select, Switch } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface StepFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   show: boolean;
 }
 
@@ -23,12 +22,13 @@ const requestExpirationOptions = [
   { name: "30 days", value: 2592000 },
 ];
 
-export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepFormProps) => {
-  const stepError = formMethods.formState.errors.steps?.[formIndex];
+export const StepForm = ({ stepIndex, show }: StepFormProps) => {
+  const { formState, control, getValues } = useFormContext<FlowSchemaType>();
+  const stepError = formState.errors.steps?.[stepIndex];
 
   const fieldsArrayMethods = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.fieldSet.fields`,
+    control: control,
+    name: `steps.${stepIndex}.fieldSet.fields`,
   });
 
   return (
@@ -43,20 +43,19 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
           {stepError?.root.message}
         </FormHelperText>
       )}
-      {formIndex > 0 && (
+      {stepIndex > 0 && (
         <ActionFilterForm
-          formIndex={formIndex - 1}
-          formMethods={formMethods}
-          action={formMethods.getValues(`steps.${formIndex - 1}.action`)}
+          stepIndex={stepIndex - 1}
+          action={getValues(`steps.${stepIndex - 1}.action`)}
           isTriggerAction={true}
         />
       )}
       <PanelAccordion
         title="Permissions"
-        hasError={!!formMethods.formState.errors.steps?.[formIndex]?.response}
+        hasError={!!formState.errors.steps?.[stepIndex]?.response}
       >
         <PermissionForm<FlowSchemaType>
-          fieldName={`steps.${formIndex}.response.permission`}
+          fieldName={`steps.${stepIndex}.response.permission`}
           branch={"response"}
         />
         <Select<FlowSchemaType>
@@ -66,30 +65,27 @@ export const StepForm = ({ formMethods: formMethods, formIndex, show }: StepForm
             return option?.name + " to respond";
           }}
           selectOptions={requestExpirationOptions}
-          name={`steps.${formIndex}.response.expirationSeconds`}
+          name={`steps.${stepIndex}.response.expirationSeconds`}
           size={"small"}
         />
         <Switch<FlowSchemaType>
-          name={`steps.${formIndex}.response.allowMultipleResponses`}
-          control={formMethods.control}
+          name={`steps.${stepIndex}.response.allowMultipleResponses`}
           label="Allow multiple responses"
         />
         <Switch<FlowSchemaType>
-          name={`steps.${formIndex}.response.canBeManuallyEnded`}
-          control={formMethods.control}
+          name={`steps.${stepIndex}.response.canBeManuallyEnded`}
           label="Allow triggerer to end step early"
         />
       </PanelAccordion>
       <PanelAccordion
         title="Collaborations"
         hasError={
-          !!formMethods.formState.errors.steps?.[formIndex]?.fieldSet ||
-          !!formMethods.formState.errors.steps?.[formIndex]?.result
+          !!formState.errors.steps?.[stepIndex]?.fieldSet ||
+          !!formState.errors.steps?.[stepIndex]?.result
         }
       >
         <ResultsForm
-          formIndex={formIndex}
-          formMethods={formMethods}
+          stepIndex={stepIndex}
           //@ts-expect-error TODO
           fieldsArrayMethods={fieldsArrayMethods}
         />

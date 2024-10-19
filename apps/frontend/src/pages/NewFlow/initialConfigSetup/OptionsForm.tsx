@@ -59,7 +59,6 @@ export const OptionsForm = () => {
               label={"Requestor can create additional options"}
               name={"optionsConfig.requestCreatedOptions"}
               sx={{ marginLeft: "8px" }}
-              defaultValue={false}
             />
           )}
 
@@ -67,7 +66,6 @@ export const OptionsForm = () => {
             label={"Generate option ideas from partipants"}
             name={"optionsConfig.linkedOptions.hasLinkedOptions"}
             sx={{ marginLeft: "8px" }}
-            defaultValue={false}
           />
 
           {hasLinkedOptions && (

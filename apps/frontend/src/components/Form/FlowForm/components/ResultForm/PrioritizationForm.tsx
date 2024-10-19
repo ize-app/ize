@@ -1,6 +1,5 @@
 import { InputAdornment } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { UseFormReturn } from "react-hook-form";
 
 import { Select, TextField } from "@/components/Form/formFields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
@@ -11,7 +10,6 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { ResultListCountLimit } from "../../formValidation/result";
 
 interface PrioritizationFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
   formIndex: number;
   resultIndex: number;
   field: FieldSchemaType;

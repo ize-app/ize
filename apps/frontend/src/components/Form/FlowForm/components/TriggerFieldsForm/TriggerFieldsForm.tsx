@@ -11,11 +11,8 @@ import { createDefaultFieldState } from "../../helpers/defaultFormState/createDe
 export const triggerFieldSetPath = `fieldSet`;
 export const triggerFieldsPath = `${triggerFieldSetPath}.fields`;
 
-interface FieldsFormProps {
+export interface FieldFormProps {
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
-}
-
-export interface FieldFormProps extends FieldsFormProps {
   fieldIndex: number;
   locked: boolean;
 }
@@ -39,10 +36,14 @@ export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType)
     ];
 };
 
-export const TriggerFieldsForm = ({ fieldsArrayMethods }: FieldsFormProps) => {
+export const TriggerFieldsForm = () => {
+  const { control, getValues } = useFormContext<FlowSchemaType>();
   // const { register, setValue } = formMethods;
   // ths def needs to be FlowSchemaType
-  const { getValues } = useFormContext<FlowSchemaType>();
+  const fieldsArrayMethods = useFieldArray({
+    control: control,
+    name: triggerFieldsPath,
+  });
 
   const lockedPath = `${triggerFieldSetPath}.locked`;
 
@@ -53,6 +54,7 @@ export const TriggerFieldsForm = ({ fieldsArrayMethods }: FieldsFormProps) => {
       {fieldsArrayMethods.fields.map((item, inputIndex) => (
         <FieldForm
           key={item.id}
+          //@ts-expect-error Not sure why this is throwing an error
           fieldsArrayMethods={fieldsArrayMethods}
           locked={isLocked}
           fieldIndex={inputIndex}

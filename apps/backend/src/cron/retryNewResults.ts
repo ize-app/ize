@@ -14,7 +14,6 @@ export const retryNewResults = async () => {
     // retry getting results for each result
     await Promise.all(
       stepsWithoutResults.map(async (reqStep) => {
-        console.log("rerunning results for request step: ", reqStep.id);
         await runResultsAndActions({
           requestStepId: reqStep.id,
         });

@@ -1,6 +1,6 @@
 import { InputAdornment, Typography } from "@mui/material";
 import { useEffect } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { DecisionType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
@@ -12,8 +12,7 @@ import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fi
 import { FlowSchemaType } from "../../formValidation/flow";
 
 interface DecisionConfigFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   resultIndex: number;
   field: FieldSchemaType;
   display?: boolean;
@@ -55,42 +54,42 @@ const selectTypeOptions = (decisionType: DecisionType) => {
 // };
 
 export const DecisionConfigForm = ({
-  formMethods,
-  formIndex,
+  stepIndex,
   resultIndex,
   field,
   display = true,
 }: DecisionConfigFormProps) => {
-  const decisionType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.decision.type`);
+  const { watch, setValue } = useFormContext<FlowSchemaType>();
+  const decisionType = watch(`steps.${stepIndex}.result.${resultIndex}.decision.type`);
 
   useEffect(() => {
     if (decisionType) {
       if (decisionType === DecisionType.WeightedAverage) {
-        formMethods.setValue(
-          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+        setValue(
+          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
           FieldOptionsSelectionType.Rank,
         );
-        formMethods.setValue(
-          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
+        setValue(
+          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
           2,
         );
       } else {
-        formMethods.setValue(
-          `steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+        setValue(
+          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
           FieldOptionsSelectionType.Select,
         );
       }
 
       if (decisionType === DecisionType.Ai) {
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`,
+        setValue(
+          `steps.${stepIndex}.result.${resultIndex}.decision.defaultOptionId`,
           DefaultOptionSelection.None,
         );
-        formMethods.setValue(`steps.${formIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
-        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 0);
+        setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
+        setValue(`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`, 0);
       } else {
-        formMethods.setValue(`steps.${formIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
-        formMethods.setValue(`steps.${formIndex}.result.${resultIndex}.minimumAnswers`, 2);
+        setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
+        setValue(`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`, 2);
       }
     }
   }, [decisionType]);
@@ -128,11 +127,11 @@ export const DecisionConfigForm = ({
             { name: "AI decides", value: DecisionType.Ai },
           ]}
           defaultValue=""
-          name={`steps.${formIndex}.result.${resultIndex}.decision.type`}
+          name={`steps.${stepIndex}.result.${resultIndex}.decision.type`}
           size="small"
         />
         <Select<FlowSchemaType>
-          name={`steps.${formIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
+          name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
           size="small"
           defaultValue=""
           display={decisionType !== DecisionType.Ai}
@@ -145,7 +144,7 @@ export const DecisionConfigForm = ({
           <TextField<FlowSchemaType>
             display={decisionType === DecisionType.NumberThreshold}
             label="Threshold votes"
-            name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
+            name={`steps.${stepIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
             showLabel={false}
             defaultValue=""
@@ -160,7 +159,7 @@ export const DecisionConfigForm = ({
             size="small"
             showLabel={false}
             defaultValue=""
-            name={`steps.${formIndex}.result.${resultIndex}.decision.threshold`}
+            name={`steps.${stepIndex}.result.${resultIndex}.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
           />
         }
@@ -171,7 +170,7 @@ export const DecisionConfigForm = ({
           display={decisionType !== DecisionType.Ai}
           defaultValue=""
           endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-          name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
+          name={`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`}
         />
         <TextField<FlowSchemaType>
           label="What criteria should the AI use to make a decision?"
@@ -180,7 +179,7 @@ export const DecisionConfigForm = ({
           size={"small"}
           display={decisionType === DecisionType.Ai}
           defaultValue=""
-          name={`steps.${formIndex}.result.${resultIndex}.decision.criteria`}
+          name={`steps.${stepIndex}.result.${resultIndex}.decision.criteria`}
         />
       </ResponsiveFormRow>
       {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
@@ -202,7 +201,7 @@ export const DecisionConfigForm = ({
           } else return "No default result";
         }}
         selectOptions={defaultDecisionOptions}
-        name={`steps.${formIndex}.result.${resultIndex}.decision.defaultOptionId`}
+        name={`steps.${stepIndex}.result.${resultIndex}.decision.defaultOptionId`}
       />
     </FieldBlock>
   );

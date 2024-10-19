@@ -49,7 +49,7 @@ const generateDecisionConfig = ({
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
-        criteria: "Choose the option that best reflects the group's opinion",
+        criteria: "",
         defaultOptionId: DefaultOptionSelection.None,
       };
     case DecisionType.WeightedAverage:

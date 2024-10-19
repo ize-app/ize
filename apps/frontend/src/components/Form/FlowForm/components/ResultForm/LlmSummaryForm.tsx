@@ -1,5 +1,4 @@
 import { InputAdornment, Typography } from "@mui/material";
-import { UseFormReturn } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
@@ -8,14 +7,13 @@ import { TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 interface LlmSummaryProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   resultIndex: number;
   display: boolean;
   type: ResultType;
 }
 
-export const LlmSummaryForm = ({ formIndex, resultIndex, display, type }: LlmSummaryProps) => {
+export const LlmSummaryForm = ({ stepIndex, resultIndex, display, type }: LlmSummaryProps) => {
   if (type !== ResultType.LlmSummary && type !== ResultType.LlmSummaryList) return null;
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
@@ -27,7 +25,7 @@ export const LlmSummaryForm = ({ formIndex, resultIndex, display, type }: LlmSum
         variant="outlined"
         multiline
         placeholderText="Describe how you want the AI to summarize the responses."
-        name={`steps.${formIndex}.result.${resultIndex}.llmSummary.prompt`}
+        name={`steps.${stepIndex}.result.${resultIndex}.llmSummary.prompt`}
         size="small"
         // startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
         showLabel={false}
@@ -44,7 +42,7 @@ export const LlmSummaryForm = ({ formIndex, resultIndex, display, type }: LlmSum
             ? "Example output for an item in the AI generated list"
             : "Example output of the AI summarization."
         }
-        name={`steps.${formIndex}.result.${resultIndex}.llmSummary.example`}
+        name={`steps.${stepIndex}.result.${resultIndex}.llmSummary.example`}
         size="small"
         showLabel={false}
         defaultValue="test"
@@ -55,7 +53,7 @@ export const LlmSummaryForm = ({ formIndex, resultIndex, display, type }: LlmSum
         size={"small"}
         defaultValue=""
         endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-        name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
+        name={`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`}
       />
     </FieldBlock>
   );

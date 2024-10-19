@@ -34,6 +34,7 @@ export const InitialConfigSetup = () => {
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
     const newFlow = generateNewFlowConfig({ config: data, creator: me?.user });
+
     setFormState((prev) => ({
       ...prev,
       initialFlowSetup: { ...data },

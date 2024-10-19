@@ -1,6 +1,8 @@
 import { UserFieldAnswer, UserFieldAnswers } from "@/graphql/generated/resolver-types";
 
 export const createResponsesPrompt = ({ fieldAnswers }: { fieldAnswers: UserFieldAnswers[] }) => {
+  if (fieldAnswers.length === 0)
+    return "This request was designed to not have responses. Use the other information in the request to make a decision.";
   const formattedResponses = fieldAnswers
     .map((fieldAnswer) => createResponsePrompt({ fieldAnswers: fieldAnswer }))
     .join("\n\n");
@@ -9,6 +11,9 @@ export const createResponsesPrompt = ({ fieldAnswers }: { fieldAnswers: UserFiel
 };
 
 const createResponsePrompt = ({ fieldAnswers }: { fieldAnswers: UserFieldAnswers }) => {
+  if (fieldAnswers.answers.length === 0) {
+    return "";
+  }
   const formattedAnswers = fieldAnswers.answers
     .map((answer) => {
       return `- ${formatAnswer({ userFieldAnswer: answer })}`;

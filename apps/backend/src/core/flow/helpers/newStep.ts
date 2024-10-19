@@ -21,6 +21,8 @@ export const newStep = async ({
   createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
+  let responseConfigId: string | null = null;
+
   const responseFieldSet = args.response
     ? await newFieldSet({
         fieldSetArgs: args.fieldSet,
@@ -29,7 +31,9 @@ export const newStep = async ({
       })
     : null;
 
-  const responseConfigId = await newResponseConfig({ args: args.response, transaction });
+  const hasResponse = args.fieldSet.fields.filter((f) => !f.isInternal).length > 0;
+
+  if (hasResponse) responseConfigId = await newResponseConfig({ args: args.response, transaction });
 
   const resultConfigSetId = await newResultConfigSet({
     resultsArgs: args.result,

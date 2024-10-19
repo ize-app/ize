@@ -42,7 +42,7 @@ export const DecisionForm = () => {
               {
                 name: ">50% vote to decide",
                 title: "Majority vote",
-                value: DecisionType.NumberThreshold,
+                value: DecisionType.PercentageThreshold,
               },
               {
                 name: "Let AI decide",
