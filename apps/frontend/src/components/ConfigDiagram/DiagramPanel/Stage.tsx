@@ -48,7 +48,7 @@ export const Stage = ({
           border: "1px solid",
           borderWidth: isSelected ? "4px" : "1px",
           borderColor: isSelected ? muiTheme.palette.primary.main : "rgba(0, 0, 0, 0.1)",
-          width: "240px",
+          width: "300px",
           padding: "8px",
           "&&:hover": {
             boxShadow: `0px 0px 0px 2px ${muiTheme.palette.primary.light} inset`,

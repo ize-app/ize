@@ -9,14 +9,13 @@ import {
   FieldType,
   ResultConfigFragment,
   ResultGroupFragment,
-  ResultType,
   Status,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
+import { getResultLabel } from "../getResultLabel";
 import { ResultHeader } from "../ResultName";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const Result = ({
   resultConfig,
@@ -55,7 +54,7 @@ export const Result = ({
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <ResultHeader
           name={field?.name}
-          resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
+          label={getResultLabel({ type: "resultConfig", result: resultConfig })}
           requestStatus={requestStepStatus}
         />
         <Typography color="primary" fontSize="1rem">

@@ -16,7 +16,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { resultTypeDisplay } from "@/components/result/resultTypeDisplay";
+import { getResultLabel } from "@/components/result/getResultLabel";
 import { WizardNav } from "@/components/Wizard";
 import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -142,7 +142,7 @@ export const FullConfigSetup = () => {
                 const responseFieldLocked = useFormMethods.getValues(
                   `steps.${index}.fieldSet.locked`,
                 );
-                const resultType = useFormMethods.getValues(`steps.${index}.result.${0}.type`);
+                const result = useFormMethods.getValues(`steps.${index}.result.${0}`);
                 const fieldName = useFormMethods.getValues(
                   `steps.${index}.fieldSet.fields.${0}.name`,
                 );
@@ -154,11 +154,7 @@ export const FullConfigSetup = () => {
                     <Box key={item.id}>
                       <FlowStage
                         icon={Diversity3OutlinedIcon}
-                        label={
-                          (resultType ? resultTypeDisplay[resultType] : "Collaboration") +
-                          " " +
-                          (index + 1).toString()
-                        }
+                        label={getResultLabel({ type: "setup", result })}
                         subtitle={fieldName}
                         key={"stage-" + item.id.toString() + index.toString()}
                         deleteHandler={() => {

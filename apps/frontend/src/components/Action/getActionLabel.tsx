@@ -1,7 +1,4 @@
-import {
-  ActionFragment,
-  EntityFragment,
-} from "@/graphql/generated/graphql";
+import { ActionFragment, EntityFragment } from "@/graphql/generated/graphql";
 
 import { actionProperties } from "./actionProperties";
 

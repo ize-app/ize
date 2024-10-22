@@ -1,16 +1,11 @@
 import { Box } from "@mui/material";
 
 import { FieldOptions } from "@/components/Field/FieldOptions";
-import {
-  FieldFragment,
-  FieldType,
-  ResultConfigFragment,
-  ResultType,
-} from "@/graphql/generated/graphql";
+import { FieldFragment, FieldType, ResultConfigFragment } from "@/graphql/generated/graphql";
 
 import { createResultConfigDescription } from "../createResultConfigDescription";
+import { getResultLabel } from "../getResultLabel";
 import { ResultHeader } from "../ResultName";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const ResultConfig = ({
   resultConfig,
@@ -23,7 +18,7 @@ export const ResultConfig = ({
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <ResultHeader
         name={field?.name}
-        resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
+        label={getResultLabel({ type: "resultConfig", result: resultConfig })}
       />
       {createResultConfigDescription(resultConfig)}
       {field && field.__typename === FieldType.Options && (
