@@ -16,17 +16,17 @@ export const newFieldAnswers = async ({
   fieldAnswers,
   transaction,
   responseId,
-  requestStepId,
+  requestId,
 }: {
   fieldSet: FieldSetPrismaType | null;
   fieldAnswers: FieldAnswerArgs[];
   requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   transaction: Prisma.TransactionClient;
   responseId?: string | null | undefined;
-  requestStepId?: string | null | undefined;
+  requestId?: string | null | undefined;
 }): Promise<void> => {
   if (!fieldSet) return;
-  if (!responseId && !requestStepId)
+  if (!responseId && !requestId)
     throw new GraphQLError("Missing response Id or requestStepId", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
@@ -83,6 +83,7 @@ export const newFieldAnswers = async ({
               type: FieldType.FreeInput,
               fieldId: field.id,
               responseId,
+              requestId,
               AnswerFreeInput: {
                 create: {
                   dataType: field.freeInputDataType as FieldDataType,

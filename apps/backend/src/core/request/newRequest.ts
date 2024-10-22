@@ -123,14 +123,15 @@ export const newRequest = async ({
 
       // TODO: if auto approve, just create the result
 
-      if (flow.CurrentFlowVersion?.TriggerFieldSet)
+      if (flow.CurrentFlowVersion?.TriggerFieldSet) {
         await newFieldAnswers({
           fieldSet: flow.CurrentFlowVersion?.TriggerFieldSet,
           fieldAnswers: requestFields,
           requestDefinedOptionSets: requestDefinedOptionSets,
-          requestStepId: requestStep.id,
+          requestId: request.id,
           transaction,
         });
+      }
 
       return {
         requestId: request.id,
