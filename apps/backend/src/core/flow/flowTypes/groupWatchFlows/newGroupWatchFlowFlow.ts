@@ -13,6 +13,7 @@ export const newGroupWatchFlowFlow = async ({
   groupId,
   policy,
   context,
+  transaction,
 }: {
   context: GraphqlRequestContext;
   groupId: string;
@@ -35,6 +36,7 @@ export const newGroupWatchFlowFlow = async ({
     },
     type: FlowType.GroupWatchFlow,
     groupId,
+    transaction,
   });
 
   return flowId;

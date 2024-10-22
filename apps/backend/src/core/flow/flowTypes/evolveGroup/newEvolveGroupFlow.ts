@@ -12,6 +12,7 @@ export const newEvolveGroupFlow = async ({
   groupEntityId,
   groupId,
   context,
+  transaction,
   policy,
 }: {
   context: GraphqlRequestContext;
@@ -35,6 +36,7 @@ export const newEvolveGroupFlow = async ({
     },
     type: FlowType.EvolveGroup,
     groupId,
+    transaction,
   });
 
   return flowId;

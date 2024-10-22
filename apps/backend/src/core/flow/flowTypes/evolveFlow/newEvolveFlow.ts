@@ -9,9 +9,9 @@ import { newFlow } from "../../newFlow";
 export const newEvolveFlow = async ({
   evolveArgs,
   entityContext,
+  transaction,
 }: {
   evolveArgs: EvolveFlowArgs;
-  creatorEntityId: string;
   transaction: Prisma.TransactionClient;
   entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
@@ -20,6 +20,7 @@ export const newEvolveFlow = async ({
     type: FlowType.Evolve,
     args,
     entityContext,
+    transaction,
   });
 
   return flowId;
