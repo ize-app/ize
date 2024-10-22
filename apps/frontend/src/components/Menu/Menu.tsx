@@ -1,22 +1,26 @@
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import Diversity2Icon from "@mui/icons-material/Diversity2";
+import AddIcon from "@mui/icons-material/Add";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
-import { Box, Toolbar } from "@mui/material";
-import Divider from "@mui/material/Divider";
+import InboxIcon from "@mui/icons-material/Inbox";
+import { Box, Button, Toolbar, Typography } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
-import { Route } from "@/routers/routes";
-
-import { CreateListButton } from "./CreateButton";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import {
+  NewCustomGroupRoute,
+  NewFlowRoute,
+  Route,
+  newCustomGroupRoute,
+  newFlowRoute,
+} from "@/routers/routes";
+import { fullUUIDToShort } from "@/utils/inputs";
 
 interface MenuProps {
   open: boolean;
@@ -26,6 +30,7 @@ interface MenuProps {
 
 export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
   const navigate = useNavigate();
+  const { me } = useContext(CurrentUserContext);
 
   useEffect(() => {
     setMenuOpen(true);
@@ -53,19 +58,15 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
         <Toolbar variant="dense" />
         <List>
           <ListItem disablePadding>
-            <CreateListButton />
-          </ListItem>
-          <Divider />
-          <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
                 navigate(Route.Requests);
               }}
             >
-              <ListItemIcon>
-                <CheckCircleOutlineIcon />
+              <ListItemIcon sx={{ minWidth: "36px" }}>
+                <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary={"Requests"} />
+              <ListItemText primary={"Inbox"} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -74,27 +75,79 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 navigate(Route.Flows);
               }}
             >
-              <ListItemIcon>
-                <AccountTreeIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Flows"} />
+              <ListItemText
+                primary={"Flows"}
+                primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
+              />
             </ListItemButton>
           </ListItem>
+          <List sx={{ padding: "0px 12px" }}>
+            <ListItem disablePadding>
+              <Button
+                color="secondary"
+                startIcon={<AddIcon fontSize="small" />}
+                onClick={() => {
+                  navigate(newFlowRoute(NewFlowRoute.InitialSetup));
+                }}
+              >
+                <Box sx={{ display: "flex" }}>
+                  <Typography variant="description" fontWeight={400}>
+                    New flow
+                  </Typography>
+                </Box>
+              </Button>
+            </ListItem>
+          </List>
           <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
                 navigate(Route.Groups);
               }}
             >
-              <ListItemIcon>
-                <Diversity2Icon />
-              </ListItemIcon>
-              <ListItemText primary={"Groups"} />
+              <ListItemText
+                primary={"Groups"}
+                primaryTypographyProps={{ variant: "description", fontWeight: "600" }}
+              />
             </ListItemButton>
           </ListItem>
+          <List sx={{ padding: "0px 12px" }}>
+            {me?.groups.map((group) => (
+              <ListItem disablePadding key={group.entityId}>
+                <ListItemButton
+                  sx={{ padding: "0px 12px" }}
+                  onClick={() => {
+                    navigate(
+                      generatePath(Route.Group, {
+                        groupId: fullUUIDToShort(group.id),
+                      }),
+                    );
+                  }}
+                >
+                  <ListItemText
+                    primary={group.name}
+                    primaryTypographyProps={{ variant: "description" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            <ListItem disablePadding>
+              <Button
+                color="secondary"
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  navigate(newCustomGroupRoute(NewCustomGroupRoute.Setup));
+                }}
+              >
+                <Box sx={{ display: "flex" }}>
+                  <Typography variant="description" fontWeight={400}>
+                    New group
+                  </Typography>
+                </Box>
+              </Button>
+            </ListItem>
+          </List>
         </List>
       </Box>
-
       <List>
         <ListItem disablePadding>
           <ListItemButton
