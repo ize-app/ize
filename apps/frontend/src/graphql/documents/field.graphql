@@ -50,8 +50,9 @@ fragment Option on Option {
 }
 
 fragment LinkedResult on LinkedResult {
-  resultConfigId
-  resultType
+  resultConfig {
+    ...ResultConfig
+  }
   fieldId
   fieldName
 }

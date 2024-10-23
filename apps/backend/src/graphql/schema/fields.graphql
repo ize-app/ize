@@ -32,8 +32,7 @@ type Options {
 }
 
 type LinkedResult {
-  resultConfigId: String!
-  resultType: ResultType!
+  resultConfig: ResultConfig!
   fieldId: String!
   fieldName: String!
 }

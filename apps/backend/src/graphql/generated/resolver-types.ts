@@ -510,8 +510,7 @@ export type LinkedResult = {
   __typename?: 'LinkedResult';
   fieldId: Scalars['String']['output'];
   fieldName: Scalars['String']['output'];
-  resultConfigId: Scalars['String']['output'];
-  resultType: ResultType;
+  resultConfig: ResultConfig;
 };
 
 export type LinkedResultOptionsArgs = {
@@ -1211,7 +1210,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupWatchFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<_RefType['User']>, groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
-  Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
+  Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<_RefType['LinkedResult']> } );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
@@ -1292,7 +1291,7 @@ export type ResolversTypes = {
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
-  LinkedResult: ResolverTypeWrapper<LinkedResult>;
+  LinkedResult: ResolverTypeWrapper<Omit<LinkedResult, 'resultConfig'> & { resultConfig: ResolversTypes['ResultConfig'] }>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<LlmSummary>;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1314,7 +1313,7 @@ export type ResolversTypes = {
   OptionFieldAnswer: ResolverTypeWrapper<OptionFieldAnswer>;
   OptionFieldAnswerSelection: ResolverTypeWrapper<OptionFieldAnswerSelection>;
   OptionSelectionArgs: OptionSelectionArgs;
-  Options: ResolverTypeWrapper<Options>;
+  Options: ResolverTypeWrapper<Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<ResolversTypes['LinkedResult']> }>;
   Organization: ResolverTypeWrapper<Organization>;
   Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   PermissionArgs: PermissionArgs;
@@ -1420,7 +1419,7 @@ export type ResolversParentTypes = {
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
   IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
-  LinkedResult: LinkedResult;
+  LinkedResult: Omit<LinkedResult, 'resultConfig'> & { resultConfig: ResolversParentTypes['ResultConfig'] };
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: LlmSummary;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1439,7 +1438,7 @@ export type ResolversParentTypes = {
   OptionFieldAnswer: OptionFieldAnswer;
   OptionFieldAnswerSelection: OptionFieldAnswerSelection;
   OptionSelectionArgs: OptionSelectionArgs;
-  Options: Options;
+  Options: Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<ResolversParentTypes['LinkedResult']> };
   Organization: Organization;
   Permission: Omit<Permission, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   PermissionArgs: PermissionArgs;
@@ -1790,8 +1789,7 @@ export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType ex
 export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LinkedResult'] = ResolversParentTypes['LinkedResult']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  resultType?: Resolver<ResolversTypes['ResultType'], ParentType, ContextType>;
+  resultConfig?: Resolver<ResolversTypes['ResultConfig'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

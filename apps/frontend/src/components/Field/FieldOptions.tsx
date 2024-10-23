@@ -12,9 +12,11 @@ import {
 import muiTheme from "@/style/muiTheme";
 
 import { FieldOption } from "./FieldOption";
+import { getResultLabel } from "../result/getResultLabel";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
-  return `${linkedResult.resultType} from "${linkedResult.fieldName}"`;
+  const label = getResultLabel({ type: "resultConfig", result: linkedResult.resultConfig });
+  return `Options created via previous result: "${label} from [${linkedResult.fieldName}]"`;
 };
 
 const FieldOptionsContainer = ({ children }: { children: ReactNode }) => {
@@ -149,7 +151,7 @@ export const FieldOptions = ({
           linkedResultOptions.map((lr) => {
             return (
               <FieldOption
-                key={lr.resultConfigId + lr.fieldId}
+                key={lr.resultConfig.resultConfigId + lr.fieldId}
                 selectionType={fieldOptions.selectionType}
                 sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
                 value={linkedResultDescription(lr)}

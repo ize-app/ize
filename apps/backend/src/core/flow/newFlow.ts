@@ -25,13 +25,6 @@ export const newFlow = async ({
 
   let evolveFlowId: string | null = null;
 
-  // reusable flows need evolve flow arguments
-  // unless the flow itself is an evolve flow, which evolves itself
-  if (!args.evolve && args.reusable && type !== FlowType.Evolve)
-    throw new GraphQLError("Reusable flows must include evolve flow arguments.", {
-      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-    });
-
   const flow = await transaction.flow.create({
     data: {
       type,
@@ -41,14 +34,22 @@ export const newFlow = async ({
     },
   });
 
-  if (args.evolve && args.reusable) {
+  console.log("args.reusable", args.reusable, "args.evolve", args.evolve);
+  // only reusable flows get an evolve flow
+  if (args.reusable) {
+    // evolve flows evolve themselves
     if (type === FlowType.Evolve) evolveFlowId = flow.id;
-    else
+    // if normal, resuable flow, create evolve flow
+    else if (args.evolve)
       evolveFlowId = await newEvolveFlow({
         evolveArgs: args.evolve,
 
         transaction,
         entityContext,
+      });
+    else
+      throw new GraphQLError("Reusable flows must include evolve flow arguments.", {
+        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
   }
 

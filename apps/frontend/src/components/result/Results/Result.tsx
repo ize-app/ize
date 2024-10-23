@@ -53,7 +53,6 @@ export const Result = ({
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <ResultHeader
-          name={field?.name}
           label={getResultLabel({ type: "resultConfig", result: resultConfig })}
           requestStatus={requestStepStatus}
         />

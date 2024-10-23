@@ -4476,31 +4476,15 @@
             "deprecationReason": null
           },
           {
-            "name": "resultConfigId",
+            "name": "resultConfig",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "resultType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ResultType",
+                "kind": "UNION",
+                "name": "ResultConfig",
                 "ofType": null
               }
             },

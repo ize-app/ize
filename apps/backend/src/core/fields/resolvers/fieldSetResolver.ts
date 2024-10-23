@@ -9,7 +9,6 @@ import {
   Option,
   Options,
   ResultConfig,
-  ResultType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -104,8 +103,7 @@ export const fieldSetResolver = ({
           );
 
         return {
-          resultConfigId: linkedResultConfigId,
-          resultType: resultConfig.__typename as ResultType,
+          resultConfig: resultConfig,
           fieldId: field.fieldId,
           fieldName: field.name,
         };
