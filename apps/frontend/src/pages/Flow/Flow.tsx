@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { InfoOutlined } from "@mui/icons-material";
-import { Chip, IconButton, Tooltip } from "@mui/material";
+import { Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -187,29 +186,6 @@ export const Flow = () => {
                   </Link>
                 </Typography>
               </>
-            )}
-            {flow.evolve && (
-              <Box sx={{ display: "flex", alignItems: "Center" }}>
-                <Typography variant="description" lineHeight={"24px"}>
-                  <Link
-                    style={{ color: "inherit" }}
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(flow.evolve.flowId),
-                      flowVersionId: flow.evolve.currentFlowVersionId
-                        ? fullUUIDToShort(flow.evolve.currentFlowVersionId)
-                        : null,
-                      // flowVersionId: null,
-                    })}
-                  >
-                    How this flow evolves
-                  </Link>
-                </Typography>
-                <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
-                  <IconButton size="small" sx={{ padding: "4px" }}>
-                    <InfoOutlined sx={{ fontSize: "16px" }} />
-                  </IconButton>
-                </Tooltip>
-              </Box>
             )}
           </Box>
           <Box
