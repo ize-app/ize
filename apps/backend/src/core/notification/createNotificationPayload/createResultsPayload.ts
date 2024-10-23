@@ -26,7 +26,10 @@ export const createResultsPayload = (request: Request): WebhookValue[] => {
         );
 
       // TODO: change result output type for when there are multiple results in a result group
+
       const result = resultGroup.results[0];
+
+      if (!result || !result.resultItems || result.resultItems?.length === 0) return;
 
       if (result.resultItems.length === 1) {
         results.push({

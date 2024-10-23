@@ -34,37 +34,48 @@ export const checkIfEarlyResult = async ({
     const resultConfigs =
       reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
-    const earlyResult = resultConfigs.find((r) => {
-      if (r.resultType === ResultType.Decision) {
-        const decisionConfig = r.ResultConfigDecision;
-        if (!decisionConfig)
-          throw new GraphQLError(
-            `Missing decision config for resutl config. resultConfigId: ${r.id}`,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
+    const earlyResults = await Promise.all(
+      resultConfigs.map(async (r) => {
+        if (r.resultType === ResultType.Decision) {
+          const decisionConfig = r.ResultConfigDecision;
+          if (!decisionConfig)
+            throw new GraphQLError(
+              `Missing decision config for resutl config. resultConfigId: ${r.id}`,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
 
-        if (!r.fieldId)
-          throw new GraphQLError(
-            `Result config for decision is missing a fieldId: resultConfigId: ${r.id}`,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
+          if (!r.fieldId)
+            throw new GraphQLError(
+              `Result config for decision is missing a fieldId: resultConfigId: ${r.id}`,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
 
-        const fieldAnswers = getFieldAnswersFromResponses({
-          fieldId: r.fieldId,
-          responses: reqStep.Responses,
-        });
+          const fieldAnswers = getFieldAnswersFromResponses({
+            fieldId: r.fieldId,
+            responses: reqStep.Responses,
+          });
 
-        if (r.minAnswers > fieldAnswers.length) return false;
-        if (r.ResultConfigDecision?.type === DecisionType.Ai) return true;
+          if (r.minAnswers > fieldAnswers.length) return false;
+          if (r.ResultConfigDecision?.type === DecisionType.Ai) return true;
 
-        return !!determineDecision({ resultConfig: r, answers: fieldAnswers, requestStepId });
-      }
-      return false;
-    });
+          const { optionId } = await determineDecision({
+            resultConfig: r,
+            answers: fieldAnswers,
+            requestStepId,
+          });
+
+          return !!optionId;
+        }
+        return false;
+      }),
+    );
+
+    // if there is an early result, return true
+    const earlyResult = earlyResults.find((r) => r);
 
     return !!earlyResult;
   } catch (e) {

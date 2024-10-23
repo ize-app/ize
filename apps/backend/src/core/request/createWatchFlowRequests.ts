@@ -71,6 +71,8 @@ export const createWatchFlowRequests = async ({
       },
     });
 
+    console.log("custom groups", customGroups);
+
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
       where: {
@@ -87,6 +89,8 @@ export const createWatchFlowRequests = async ({
         },
       },
     });
+
+    console.log("watch flows", watchFlows);
 
     const fieldAnswerValue = JSON.stringify([flowId]);
 

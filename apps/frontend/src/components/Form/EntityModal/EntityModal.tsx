@@ -448,7 +448,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                 <>
                   <ResponsiveFormRow
                     sx={{
-                      alignItems: "center",
+                      alignItems: "flex-start",
                       justifyContent: "space-between",
                     }}
                   >
@@ -461,6 +461,7 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                       name={"hat.tokenId"}
                       placeholderText="Hat ID (hex or decimal)"
                       label={"Hat Token Id"}
+                      multiline={false}
                       variant="outlined"
                       sx={{ flexGrow: 1, minWidth: "200px" }}
                     />

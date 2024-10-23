@@ -29,7 +29,7 @@ export const generateStepConfig = ({
             permission,
             canBeManuallyEnded: true,
             expirationSeconds: 259200,
-            allowMultipleResponses: false,
+            allowMultipleResponses: true,
           },
     result,
     action,
