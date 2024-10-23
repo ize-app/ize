@@ -17,4 +17,4 @@ export const ResultHeader = ({
       {requestStatus && <StatusTag status={requestStatus} />}
     </Box>
   );
-};
+}

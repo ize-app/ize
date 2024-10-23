@@ -4,10 +4,12 @@ import { Chip, IconButton, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
+import TabPanel from "@/components/Tables/TabPanel";
+import { TabProps, Tabs } from "@/components/Tables/Tabs";
 import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
@@ -34,8 +36,8 @@ import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
   const { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
-
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const [currentTabIndex, setTabIndex] = useState(0);
 
   const flowId: string | null = flowIdShort ? shortUUIDToFull(flowIdShort) : null;
   const flowVersionId: string | null = flowVersionIdShort
@@ -56,6 +58,19 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
+
+  const tabs: TabProps[] = [
+    {
+      title: "Flow",
+      content: <ConfigDiagramFlow flow={flow} />,
+    },
+  ];
+
+  if (flow.evolve)
+    tabs.push({
+      title: "Evolve flow",
+      content: <ConfigDiagramFlow flow={flow.evolve} />,
+    });
 
   // console.log("flow", flow);
 
@@ -289,7 +304,22 @@ export const Flow = () => {
             </>
           )}
         </Box>
-        <ConfigDiagramFlow flow={flow} />
+        {/* <ConfigDiagramFlow flow={flow} /> */}
+        <Box>
+          <Tabs
+            tabs={tabs}
+            currentTabIndex={currentTabIndex}
+            handleChange={(_event: React.SyntheticEvent, newValue: number) => {
+              setTabIndex(newValue);
+            }}
+          />
+
+          {tabs.map((tab: TabProps, index) => (
+            <TabPanel value={currentTabIndex} index={index} key={index}>
+              {tab.content}
+            </TabPanel>
+          ))}
+        </Box>
         {isCurrentFlowVersion && (
           <RequestStepsSearch
             userOnly={false}
