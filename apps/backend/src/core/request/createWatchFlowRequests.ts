@@ -63,15 +63,24 @@ export const createWatchFlowRequests = async ({
 
     const customGroups = await prisma.groupCustom.findMany({
       where: {
-        MemberEntitySet: {
-          EntitySetEntities: {
-            some: { entityId: { in: Array.from(entitiesOnFlow) } },
+        OR: [
+          // member of custom group is referenced on the flow
+          {
+            MemberEntitySet: {
+              EntitySetEntities: {
+                some: { entityId: { in: Array.from(entitiesOnFlow) } },
+              },
+            },
           },
-        },
+          // custom group is itself referenced on the flow
+          {
+            group: {
+              entityId: { in: Array.from(entitiesOnFlow) },
+            },
+          },
+        ],
       },
     });
-
-    console.log("custom groups", customGroups);
 
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
@@ -89,8 +98,6 @@ export const createWatchFlowRequests = async ({
         },
       },
     });
-
-    console.log("watch flows", watchFlows);
 
     const fieldAnswerValue = JSON.stringify([flowId]);
 
