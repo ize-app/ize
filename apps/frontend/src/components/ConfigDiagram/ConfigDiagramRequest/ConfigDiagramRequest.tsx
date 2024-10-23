@@ -53,7 +53,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <RequestStage
                   status={determineRequestStepStatus(
                     index,
-                    request.requestSteps[index].status.resultsFinal ?? false,
+                    request.requestSteps[index]?.status?.resultsFinal ?? false,
                     request.currentStepIndex,
                     request.final,
                   )}

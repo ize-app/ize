@@ -161,7 +161,7 @@ export const Request = () => {
                 sx={{
                   display: "block",
                   alignSelf: "center",
-                  minWidth: "400px",
+                  minWidth: "500px",
                   maxWidth: "800px",
                   border: `solid ${colors.primary} 2px`,
                   outline: `2px solid ${colors.primaryContainer}`,
@@ -170,6 +170,7 @@ export const Request = () => {
                     width: "100%",
                     marginLeft: 0,
                     maxWidth: "100%",
+                    minWidth: "300px",
                   },
                 }}
               >
@@ -252,7 +253,7 @@ export const Request = () => {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ padding: "0px 12px" }}>
+        <Box>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}

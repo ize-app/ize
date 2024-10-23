@@ -1,3 +1,4 @@
+import { FormLabel } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -13,6 +14,7 @@ interface DateTimePickerProps<T extends FieldValues> extends UseControllerProps<
   required?: boolean;
   showLabel?: boolean;
   placeholderText?: string;
+  seperateLabel?: boolean;
   size?: "small" | "medium";
 }
 
@@ -21,8 +23,10 @@ export const DateTimePicker = <T extends FieldValues>({
   name,
   control,
   showLabel = true,
+  seperateLabel = false,
   required = false,
 }: DateTimePickerProps<T>) => {
+  const labelText = label + " (" + userTimezone + ")";
   return (
     <Controller
       name={name}
@@ -31,6 +35,7 @@ export const DateTimePicker = <T extends FieldValues>({
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
           <FormControl error={Boolean(error)} required={required}>
+            {showLabel && seperateLabel && <FormLabel>{labelText}</FormLabel>}
             <MuiDateTimePicker
               {...field}
               sx={{
@@ -45,7 +50,7 @@ export const DateTimePicker = <T extends FieldValues>({
               }}
               aria-label={label}
               timezone={userTimezone}
-              label={showLabel ? label + " (" + userTimezone + ")" : ""}
+              label={showLabel && !seperateLabel ? labelText : ""}
             />
             <FormHelperText
               sx={{

@@ -137,15 +137,18 @@ export const ResponseForm = ({
                       );
                     default:
                       return (
-                        <TextField<ResponseSchemaType>
-                          key={fieldId}
-                          label={name}
-                          variant="outlined"
-                          showLabel={true}
-                          name={`responseFields.${field.fieldId}.value`}
-                          required={required}
-                          multiline
-                        />
+                        <Box>
+                          <TextField<ResponseSchemaType>
+                            key={fieldId}
+                            label={name}
+                            seperateLabel={true}
+                            variant="outlined"
+                            showLabel={true}
+                            name={`responseFields.${field.fieldId}.value`}
+                            required={required}
+                            multiline
+                          />
+                        </Box>
                       );
                   }
                 }

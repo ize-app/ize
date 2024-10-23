@@ -1,4 +1,5 @@
 import {
+  FormLabel,
   TextField as MuiTextField,
   TextFieldProps as MuiTextFieldProps,
   SxProps,
@@ -14,6 +15,7 @@ type TextFieldProps<T extends FieldValues> = MuiTextFieldProps & {
   label: string;
   display?: boolean;
   showLabel?: boolean;
+  seperateLabel?: boolean;
   placeholderText?: string;
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
@@ -23,6 +25,7 @@ export const TextField = <T extends FieldValues>({
   label,
   name,
   showLabel = false,
+  seperateLabel = false,
   required = false,
   size = "small",
   multiline = false,
@@ -46,11 +49,12 @@ export const TextField = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => (
         <FormControl sx={styles} error={Boolean(error)} required={required} disabled={disabled}>
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
+          {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
           <MuiTextField
             {...field}
             aria-label={label}
             variant={variant}
-            label={showLabel ? label : ""}
+            label={showLabel && !seperateLabel ? label : ""}
             required={required}
             multiline={multiline}
             size={size}

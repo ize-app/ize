@@ -84,10 +84,14 @@ export const createResultConfigDescription = (
     case ResultType.LlmSummary: {
       return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <Typography variant="description">
-            All responses will be summarized with AI using the following prompt:
-          </Typography>{" "}
-          <PromptBox prompt={resultConfig.prompt} />
+          {resultConfig.prompt && (
+            <>
+              <Typography variant="description">
+                All responses will be summarized with AI using the following prompt:
+              </Typography>{" "}
+              <PromptBox prompt={resultConfig.prompt} />
+            </>
+          )}
           {resultConfig.example ? (
             <>
               <Typography variant="description">Example output: </Typography>
@@ -106,10 +110,14 @@ export const createResultConfigDescription = (
     case ResultType.LlmSummaryList: {
       return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <Typography variant="description">
-            All responses will be summarized with AI using the following prompt:
-          </Typography>{" "}
-          <PromptBox prompt={resultConfig.prompt} />
+          {resultConfig.prompt && (
+            <>
+              <Typography variant="description">
+                All responses will be summarized with AI using the following prompt:
+              </Typography>{" "}
+              <PromptBox prompt={resultConfig.prompt} />
+            </>
+          )}
           {resultConfig.example ? (
             <>
               <Typography variant="description">Example output: </Typography>
