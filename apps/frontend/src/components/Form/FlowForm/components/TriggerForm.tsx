@@ -1,28 +1,27 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 import { PermissionForm } from "./PermissionForm";
 import { TriggerFieldsForm } from "./TriggerFieldsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { Switch } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface TriggerFormProps {
   show: boolean;
+  isReusable: boolean;
 }
 
-export const TriggerForm = ({ show }: TriggerFormProps) => {
-  const { formState, watch } = useFormContext<FlowSchemaType>();
+export const TriggerForm = ({ show, isReusable }: TriggerFormProps) => {
+  const { formState } = useFormContext<FlowSchemaType>();
   const permissionsError = formState.errors.trigger;
   const fieldsError = formState.errors.fieldSet;
 
-  const isReusable = watch(`reusable`);
+  // const isReusable = watch(`reusable`);
+  console.log("trigger form isReusable", isReusable);
+
   return (
     <Box sx={{ display: show ? "block" : "none" }}>
-      <Box sx={{ padding: "16px" }}>
-        <Switch<FlowSchemaType> name={`reusable`} label="Flow can be reused" />
-      </Box>
-      {isReusable && (
+      {isReusable ? (
         <>
           <PanelAccordion title="Permission" hasError={!!permissionsError}>
             <PermissionForm<FlowSchemaType> fieldName={`trigger.permission`} branch={"request"} />
@@ -31,6 +30,10 @@ export const TriggerForm = ({ show }: TriggerFormProps) => {
             <TriggerFieldsForm />
           </PanelAccordion>
         </>
+      ) : (
+        <Typography variant="body2" sx={{ padding: "16px" }}>
+          Flow will automatically be triggered once flow is created
+        </Typography>
       )}
     </Box>
   );

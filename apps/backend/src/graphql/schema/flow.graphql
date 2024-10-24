@@ -1,5 +1,5 @@
 type Mutation {
-  newFlow(flow: NewFlowArgs!): String!
+  newFlow(new: NewFlowWithEvolveArgs!): String!
 }
 
 type Query {
@@ -81,13 +81,17 @@ type ResponseConfig {
   userPermission: Boolean!
 }
 
+input NewFlowWithEvolveArgs {
+  flow: NewFlowArgs!
+  evolve: NewFlowArgs
+  reusable: Boolean!
+}
+
 input NewFlowArgs {
   name: String!
-  reusable: Boolean!
   steps: [NewStepArgs!]!
   fieldSet: FieldSetArgs!
   trigger: TriggerConfigArgs!
-  evolve: EvolveFlowArgs
   # only used if flow is non-reusable (which means initial request is triggered automatically)
   requestName: String
 }
@@ -97,12 +101,6 @@ input NewStepArgs {
   response: ResponseConfigArgs
   result: [ResultArgs!]!
   action: ActionArgs
-}
-
-input EvolveFlowArgs {
-  requestPermission: PermissionArgs!
-  responsePermission: PermissionArgs!
-  decision: DecisionArgs!
 }
 
 input TriggerConfigArgs {

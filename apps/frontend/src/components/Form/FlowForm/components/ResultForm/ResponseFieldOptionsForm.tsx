@@ -46,12 +46,14 @@ interface ResponseFieldOptionsFormProps {
   stepIndex: number;
   fieldIndex: number;
   locked: boolean;
+  reusable: boolean;
 }
 
 export const ResponseFieldOptionsForm = ({
   stepIndex,
   fieldIndex,
   locked,
+  reusable,
 }: ResponseFieldOptionsFormProps) => {
   const { control, getValues, setValue, watch, formState } = useFormContext<FlowSchemaType>();
 
@@ -70,7 +72,7 @@ export const ResponseFieldOptionsForm = ({
   });
 
   const steps = getValues(`steps`);
-  const reusable = getValues("reusable");
+
   const possibleLinkOptions = createLinkOptions(steps, stepIndex);
 
   // remove linked option if that result is removed

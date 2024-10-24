@@ -2,10 +2,9 @@ import { FlowType, Prisma } from "@prisma/client";
 
 import { getUserEntities } from "@/core/entity/getUserEntities";
 import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
-import { NewFlowArgs } from "@/graphql/generated/resolver-types";
+import { NewFlowWithEvolveArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { newEvolveFlow } from "./flowTypes/evolveFlow/newEvolveFlow";
 import { newFlowVersion } from "./newFlowVersion";
 
 export const newFlow = async ({
@@ -16,7 +15,7 @@ export const newFlow = async ({
   transaction,
 }: {
   type: FlowType;
-  args: NewFlowArgs;
+  args: NewFlowWithEvolveArgs;
   entityContext: UserOrIdentityContextInterface;
   transaction: Prisma.TransactionClient;
   groupId?: string;
@@ -34,16 +33,19 @@ export const newFlow = async ({
     },
   });
 
-  console.log("args.reusable", args.reusable, "args.evolve", args.evolve);
   // only reusable flows get an evolve flow
   if (args.reusable) {
     // evolve flows evolve themselves
     if (type === FlowType.Evolve) evolveFlowId = flow.id;
     // if normal, resuable flow, create evolve flow
     else if (args.evolve)
-      evolveFlowId = await newEvolveFlow({
-        evolveArgs: args.evolve,
-
+      evolveFlowId = await newFlow({
+        // evolveArgs: args.evolve,
+        args: {
+          flow: args.evolve,
+          reusable: true,
+        },
+        type: FlowType.Evolve,
         transaction,
         entityContext,
       });
@@ -56,12 +58,12 @@ export const newFlow = async ({
   if (!args.reusable) {
     // non-reusable flows are triggered automatically after creation
     // creator of flow is only one with permission to trigger flow
-    if (args.trigger) {
-      args.trigger.permission = {
+    if (args.flow.trigger) {
+      args.flow.trigger.permission = {
         anyone: false,
         entities: [{ id: entityId }],
       };
-      args.fieldSet = { fields: [], locked: false };
+      args.flow.fieldSet = { fields: [], locked: false };
     }
     // non-reusable flows can't be evolve
     args.evolve = undefined;
@@ -69,7 +71,7 @@ export const newFlow = async ({
 
   await newFlowVersion({
     transaction,
-    flowArgs: args,
+    flowArgs: args.flow,
     flowId: flow.id,
     evolveFlowId,
     active: true,

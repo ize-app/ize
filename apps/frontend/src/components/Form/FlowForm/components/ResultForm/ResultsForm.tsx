@@ -38,6 +38,7 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
 interface ResultsFormProps {
   stepIndex: number; // react-hook-form name
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
+  reusable: boolean;
 }
 
 interface ResultFormProps {
@@ -47,9 +48,10 @@ interface ResultFormProps {
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
   resultsArrayMethods: ReturnType<typeof useFieldArray>;
   locked: boolean;
+  reusable: boolean;
 }
 
-export const ResultsForm = ({ stepIndex, fieldsArrayMethods }: ResultsFormProps) => {
+export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: ResultsFormProps) => {
   const { control, getValues } = useFormContext<FlowSchemaType>();
   const resultsArrayMethods = useFieldArray({
     control,
@@ -70,6 +72,7 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods }: ResultsFormProps)
             fieldsArrayMethods={fieldsArrayMethods}
             id={item.id}
             locked={locked}
+            reusable={reusable}
             //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
@@ -107,9 +110,11 @@ const ResultForm = ({
   resultsArrayMethods,
   resultIndex,
   locked,
+  reusable,
 }: ResultFormProps) => {
   const { watch, getValues, setValue, formState } = useFormContext<FlowSchemaType>();
   const resultType = watch(`steps.${stepIndex}.result.${resultIndex}.type`);
+  console.log("resultType", resultType);
 
   const resultField = getValues(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`);
 
@@ -193,6 +198,7 @@ const ResultForm = ({
           {(resultType === ResultType.Decision || resultType === ResultType.Ranking) &&
             displayForm && (
               <ResponseFieldOptionsForm
+                reusable={reusable}
                 stepIndex={stepIndex}
                 fieldIndex={resultIndex}
                 locked={locked}

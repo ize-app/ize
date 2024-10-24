@@ -62,7 +62,7 @@ export const flowResolver = async ({
     versionPublishedAt: flowVersion.publishedAt && flowVersion.publishedAt.toISOString(),
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
-    reusable: flowVersion.reusable,
+    reusable: flowVersion.Flow.reusable,
     isWatched: isWatchedFlow({ flowVersion: flowVersion, user: context.currentUser }),
     trigger: {
       permission: permissionResolver(flowVersion.TriggerPermissions, userIdentityIds),

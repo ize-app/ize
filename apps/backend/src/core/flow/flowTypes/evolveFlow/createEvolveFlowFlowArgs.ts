@@ -1,7 +1,7 @@
 import {
   ActionArgs,
   ActionType,
-  EvolveFlowArgs,
+  DecisionType,
   FieldArgs,
   FieldDataType,
   FieldOptionsSelectionType,
@@ -41,22 +41,27 @@ const requestFieldSetArgs: FieldArgs[] = [
   },
 ];
 
-export const createEvolveFlowFlowArgs = (evolveArgs: EvolveFlowArgs): NewFlowArgs => {
+export const createEvolveFlowFlowArgs = ({
+  groupEntityId,
+  creatorEntityId,
+}: {
+  groupEntityId: string;
+  creatorEntityId: string;
+}): NewFlowArgs => {
   return {
-    reusable: true,
     name: "Evolve flow",
     fieldSet: {
       locked: true,
       fields: requestFieldSetArgs,
     },
     trigger: {
-      permission: evolveArgs.requestPermission,
+      permission: { anyone: false, entities: [{ id: groupEntityId }] },
     },
-    steps: [createEvolveStepArgs(evolveArgs)],
+    steps: [createEvolveStepArgs(creatorEntityId)],
   };
 };
 
-const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
+const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
   const responseFieldSetArgs: FieldArgs = {
     type: FieldType.Options,
     fieldId: "new",
@@ -77,7 +82,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
 
   const resultArgs: ResultArgs = {
     type: ResultType.Decision,
-    decision: { ...evolveArgs.decision },
+    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionIndex: null },
     responseFieldIndex: 0,
     minimumAnswers: 1,
   };
@@ -92,7 +97,7 @@ const createEvolveStepArgs = (evolveArgs: EvolveFlowArgs): NewStepArgs => {
   return {
     fieldSet: { fields: [responseFieldSetArgs], locked: true },
     response: {
-      permission: evolveArgs.responsePermission,
+      permission: { anyone: false, entities: [{ id: creatorEntityId }] },
       expirationSeconds: 259200,
       allowMultipleResponses: false,
       canBeManuallyEnded: false,

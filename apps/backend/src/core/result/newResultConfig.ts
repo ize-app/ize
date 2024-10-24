@@ -107,7 +107,7 @@ export const newResultConfig = async ({
   }
 
   const minAnswers: number | undefined =
-    resultArgs.decision?.type === DecisionType.Ai
+    resultArgs.decision?.type !== DecisionType.Ai
       ? resultArgs.minimumAnswers ?? undefined
       : undefined;
 

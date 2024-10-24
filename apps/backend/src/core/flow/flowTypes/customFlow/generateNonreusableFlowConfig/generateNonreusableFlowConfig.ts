@@ -26,7 +26,6 @@ export const generateNonreusableFlowConfig = ({
   type,
   prompt,
 }: GenerateCustomFlowConfig): NewFlowArgs => {
-  const reusable = false;
   const expirationSeconds = 60 * 60 * 24 * 3;
   const canBeManuallyEnded = true;
   const respondPermission: PermissionArgs = { anyone: false, entities: [{ id: respondEntityId }] };
@@ -36,7 +35,7 @@ export const generateNonreusableFlowConfig = ({
     case FlowConfigGeneration.Synthesize: {
       return {
         name: "Synthesize group perspectives",
-        reusable,
+
         requestName: prompt,
         trigger: {
           permission: emptyPermission,
@@ -77,13 +76,12 @@ export const generateNonreusableFlowConfig = ({
             action: undefined,
           },
         ],
-        evolve: undefined,
       };
     }
     case FlowConfigGeneration.Ideate: {
       return {
         name: "Ideate together",
-        reusable,
+
         requestName: prompt,
         fieldSet: {
           locked: false,
@@ -124,13 +122,12 @@ export const generateNonreusableFlowConfig = ({
             action: undefined,
           },
         ],
-        evolve: undefined,
       };
     }
     case FlowConfigGeneration.LetAiDecide: {
       return {
         name: "Ideate together",
-        reusable,
+
         requestName: prompt,
         trigger: { permission: emptyPermission },
         fieldSet: {
@@ -215,7 +212,6 @@ export const generateNonreusableFlowConfig = ({
             action: undefined,
           },
         ],
-        evolve: undefined,
       };
     }
   }

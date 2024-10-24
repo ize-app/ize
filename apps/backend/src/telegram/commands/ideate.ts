@@ -49,7 +49,12 @@ export const ideate = async ({
 
   // new custom flow will also create request and send notification to the relevant groups
   await newCustomFlow({
-    args: { flow: configArgs },
+    args: {
+      new: {
+        flow: configArgs,
+        reusable: false,
+      },
+    },
     entityContext: { type: "identity", identity },
   });
 };

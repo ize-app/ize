@@ -21,6 +21,7 @@ export const StreamlinedTextField = <T extends FieldValues>({
   required = false,
   endAdornment,
   startAdornment,
+  disabled,
   placeholderText,
   sx = {},
 }: StreamlinedTextFieldProps<T>) => {
@@ -38,6 +39,7 @@ export const StreamlinedTextField = <T extends FieldValues>({
             aria-label={label}
             variant={"standard"}
             required={required}
+            disabled={disabled}
             size={"small"}
             placeholder={placeholderText}
             error={Boolean(error)}

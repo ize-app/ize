@@ -36,7 +36,6 @@ export const newFlowVersion = async ({
       name: flowArgs.name,
       active,
       totalSteps: flowArgs.steps.length,
-      reusable: flowArgs.reusable,
       publishedAt: !active ? null : new Date(),
       triggerPermissionsId: await newPermission({
         permission: flowArgs.trigger.permission,

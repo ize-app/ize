@@ -1,315 +1,88 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
-import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
-import { Typography } from "@mui/material";
+import WarningIcon from "@mui/icons-material/Warning";
 import Box from "@mui/material/Box";
-import { useContext, useState } from "react";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
-import { actionProperties } from "@/components/Action/actionProperties";
-import {
-  AddStageButton,
-  ConfigurationPanel,
-  DiagramPanel,
-  FlowConfigDiagramContainer,
-  FlowStage,
-  PanelContainer,
-  PanelHeader,
-} from "@/components/ConfigDiagram";
-import { getResultLabel } from "@/components/result/getResultLabel";
+import TabPanel from "@/components/Tables/TabPanel";
+import { TabProps, Tabs } from "@/components/Tables/Tabs";
 import { WizardNav } from "@/components/Wizard";
-import { ActionType, DecisionType, EntityType } from "@/graphql/generated/graphql";
-import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
-import { StageConnectorButton } from "../../../ConfigDiagram/DiagramPanel/StageConnectorButton";
-import { StreamlinedTextField } from "../../formFields";
-import { ActionForm } from "../components/ActionForm/ActionForm";
-import { EvolveFlowForm } from "../components/EvolveFlowForm";
-import { StepForm } from "../components/StepForm";
-import { TriggerForm } from "../components/TriggerForm";
-import { DefaultOptionSelection } from "../formValidation/fields";
-import { FlowSchemaType, flowSchema } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
+import { Switch } from "../../formFields";
+import { FlowForm, FlowFormRef } from "../FlowForm";
+import { ReusableSchema, reusableSchema } from "../formValidation/flow";
 
-export const FullConfigSetup = () => {
-  const { formState, setFormState, onNext, onPrev, nextLabel } = useNewFlowWizardState();
-  const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
-
-  const fieldArrayName = "steps";
-
-  const { me } = useContext(CurrentUserContext);
-
-  const useFormMethods = useForm<FlowSchemaType>({
+export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
+  const { onPrev, nextLabel, formState } = useNewFlowWizardState();
+  const [currentTabIndex, setTabIndex] = useState(0);
+  const [flowError, setFlowError] = useState(false);
+  const formMethods = useForm<ReusableSchema>({
     defaultValues: {
-      name: formState.newFlow?.name ?? "",
-      reusable: formState.newFlow?.reusable ?? true,
-      fieldSet: formState.newFlow?.fieldSet ?? {
-        fields: [],
-        locked: false,
-      },
-      trigger: formState.newFlow?.trigger ?? {
-        permission: {
-          type: PermissionType.Anyone,
-          entities: [],
-        },
-      },
-      evolve: formState.newFlow?.evolve ?? {
-        requestPermission: { type: PermissionType.Anyone, entities: [] },
-        responsePermission: {
-          type: PermissionType.Entities,
-          entities: me?.identities
-            ? [
-                // This would be an issue if there was ever not any other id but the discord id
-                // but each discord auth also creates email identity
-                // TODO: brittle, should handle better
-                me.identities
-                  .filter((id) => id.identityType.__typename !== "IdentityDiscord")
-                  .map((id) => ({ ...id, __typename: "Identity" as EntityType }))[0],
-              ]
-            : [],
-        },
-        decision: {
-          type: DecisionType.NumberThreshold,
-          threshold: 1,
-        },
-      },
-      steps: formState.newFlow?.steps ? [...formState.newFlow.steps] : [defaultStepFormValues],
+      reusable: formState.new.reusable ?? false,
     },
-    resolver: zodResolver(flowSchema),
+    resolver: zodResolver(reusableSchema),
     shouldUnregister: false,
   });
+  // const [evolveFlowError, setEvolveFlowError] = useState(false);
+  const isReusable = formMethods.watch("reusable");
 
-  // console.log("errors are ", useFormMethods.formState.errors);
-  // console.log("values are ", useFormMethods.getValues());
+  const form1Ref = useRef<FlowFormRef>(null);
+  const form2Ref = useRef<FlowFormRef>(null);
 
-  const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
-
-  const reusable = !!useFormMethods.getValues(`reusable`);
-
-  const stepsArrayMethods = useFieldArray({
-    control: useFormMethods.control,
-    name: fieldArrayName,
-  });
-
-  const onSubmit = (data: FlowSchemaType) => {
-    setFormState((prev) => ({ ...prev, newFlow: { ...data } }));
-    onNext();
+  const handleAllFormsSubmit = () => {
+    if (!form1Ref.current) console.log("form1Ref.current is null");
+    if (form1Ref.current) {
+      setFlowError(form1Ref.current.getErrors());
+      form1Ref.current.submit();
+    }
+    // if (form2Ref.current) form2Ref.current.submit();
+    // also add submit for reusable
   };
 
-  const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
-  const displayAction =
-    action &&
-    action.type &&
-    action.type !== ActionType.TriggerStep &&
-    action.type !== ActionType.None
-      ? true
-      : false;
+  const flowForm = <FlowForm ref={form1Ref} name="flow" isReusable={isReusable} />;
+
+  const tabs: TabProps[] = [
+    {
+      title: "Flow",
+      content: flowForm,
+      icon: flowError ? formState.new.flow && <WarningIcon fontSize="small" /> : undefined,
+    },
+  ];
+
+  if (isReusable)
+    tabs.push({
+      title: "Evolve Flow",
+      content: formState.new.evolve && <FlowForm ref={form2Ref} name="evolve" isReusable={true} />,
+    });
 
   return (
-    <FormProvider {...useFormMethods}>
-      <form style={{ height: "100%" }}>
-        <FlowConfigDiagramContainer>
-          {/* Flow diagram*/}
-          <PanelContainer>
-            <PanelHeader>
-              <StreamlinedTextField
-                control={useFormMethods.control}
-                sx={{ width: "100%" }}
-                label="Name of this flow"
-                placeholderText="Name of this flow"
-                size="small"
-                name={`name`}
-              />
-            </PanelHeader>
-            <DiagramPanel>
-              <FlowStage
-                label="Trigger"
-                key="trigger0"
-                id={"trigger0"}
-                setSelectedId={setSelectedId}
-                selectedId={selectedId}
-                hasError={
-                  !!useFormMethods.formState.errors.fieldSet ||
-                  !!useFormMethods.formState.errors.trigger
-                }
-                icon={PlayCircleOutlineOutlinedIcon}
-              />
-              <StageConnectorButton />
-              {/* TODO: This logic is brittle as hell */}
-              {stepsArrayMethods.fields.map((item, index) => {
-                const responseFieldLocked = useFormMethods.getValues(
-                  `steps.${index}.fieldSet.locked`,
-                );
-                const result = useFormMethods.getValues(`steps.${index}.result.${0}`);
-                const fieldName = useFormMethods.getValues(
-                  `steps.${index}.fieldSet.fields.${0}.name`,
-                );
-                // item.result[0].type
-                const disableDelete =
-                  index === 0 && (stepsArrayMethods.fields.length > 1 || !displayAction);
-                return (
-                  (index > 0 || hasStep0Response) && (
-                    <Box key={item.id}>
-                      <FlowStage
-                        icon={Diversity3OutlinedIcon}
-                        label={getResultLabel({ type: "setup", result })}
-                        subtitle={fieldName}
-                        key={"stage-" + item.id.toString() + index.toString()}
-                        deleteHandler={() => {
-                          if (index === 0) {
-                            if (disableDelete) return;
-                            const stepValues = useFormMethods.getValues(`steps.${index}`);
-                            stepsArrayMethods.update(index, {
-                              ...stepValues,
-                              response: undefined,
-                            });
-                          } else {
-                            stepsArrayMethods.remove(index);
-                          }
-                          setSelectedId("trigger0");
-                        }}
-                        disableDelete={responseFieldLocked || disableDelete}
-                        hasError={!!useFormMethods.formState.errors.steps?.[index]}
-                        id={"step" + index.toString()}
-                        setSelectedId={setSelectedId}
-                        selectedId={selectedId}
-                      />
-                      <StageConnectorButton
-                        key={"connector-" + item.id.toString() + index.toString()}
-                      />
-                    </Box>
-                  )
-                );
-              })}
-              {!displayAction ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
-                    flexWrap: "wrap",
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "8px",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <AddStageButton
-                    label={"Add collaborative step"}
-                    onClick={() => {
-                      if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) {
-                        useFormMethods.setValue(
-                          `steps.${0}.response`,
-                          defaultStepFormValues.response,
-                        );
-                      } else {
-                        const secondToLastIndex = stepsArrayMethods.fields.length - 1;
-                        stepsArrayMethods.append(defaultStepFormValues);
-                        useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
-                          filterOptionId: DefaultOptionSelection.None,
-                          type: ActionType.TriggerStep,
-                          locked: false,
-                        });
-                        // navigate to newly created step
-                        setSelectedId(`step${stepsArrayMethods.fields.length}`);
-                      }
-                    }}
-                  />
-                  <AddStageButton
-                    label={"Trigger webhook"}
-                    onClick={() => {
-                      useFormMethods.setValue(
-                        `steps.${stepsArrayMethods.fields.length - 1}.action`,
-                        {
-                          filterOptionId: DefaultOptionSelection.None,
-                          type: ActionType.CallWebhook,
-                          locked: false,
-                          callWebhook: {},
-                        },
-                      );
-                      setSelectedId("webhook");
-                    }}
-                  />
-                </Box>
-              ) : (
-                action && (
-                  <FlowStage
-                    label={actionProperties[action.type].label}
-                    id={"webhook"}
-                    icon={actionProperties[action.type].icon}
-                    setSelectedId={setSelectedId}
-                    selectedId={selectedId}
-                    disableDelete={action.locked || !hasStep0Response}
-                    deleteHandler={() => {
-                      setSelectedId("trigger0");
-                      useFormMethods.setValue(
-                        `steps.${stepsArrayMethods.fields.length - 1}.action`,
-                        undefined,
-                      );
-                    }}
-                    sx={{ marginBottom: "16px" }}
-                    hasError={
-                      !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
-                        ?.action
-                    }
-                  />
-                )
-              )}
-              {reusable && (
-                <FlowStage
-                  label={"Flow evolution"}
-                  key={"evolve"}
-                  hasError={!!useFormMethods.formState.errors.evolve}
-                  id={"evolve"}
-                  disableDelete={true}
-                  icon={actionProperties[ActionType.EvolveFlow].icon}
-                  setSelectedId={setSelectedId}
-                  selectedId={selectedId}
-                  sx={{ marginTop: "48px", backgroundColor: "#f9f0fc" }} //#f7f7d7
-                />
-              )}
-            </DiagramPanel>
-          </PanelContainer>
-          {/* Configuration panel*/}
-          <PanelContainer>
-            <PanelHeader>
-              <Typography color="primary" variant="label">
-                Configuration
-              </Typography>
-            </PanelHeader>
-            <ConfigurationPanel>
-              <TriggerForm show={selectedId === "trigger0"} />
-              {stepsArrayMethods.fields.map((item, index) => {
-                if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) return null;
-                return (
-                  <StepForm
-                    stepIndex={index}
-                    key={"step-" + item.id}
-                    show={selectedId === "step" + index.toString()}
-                  />
-                );
-              })}
-              {action && displayAction && (
-                <ActionForm
-                  stepIndex={stepsArrayMethods.fields.length - 1}
-                  show={selectedId === "webhook"}
-                  action={action}
-                />
-              )}
+    <>
+      <Box>
+        <FormProvider {...formMethods}>
+          {!evolve && (
+            <form style={{ padding: "16px" }}>
+              <Switch<ReusableSchema> name={`reusable`} label="Flow can be reused" />
+            </form>
+          )}
+        </FormProvider>
 
-              <EvolveFlowForm formMethods={useFormMethods} show={selectedId === "evolve"} />
-            </ConfigurationPanel>
-          </PanelContainer>
-        </FlowConfigDiagramContainer>
-        <WizardNav
-          onNext={useFormMethods.handleSubmit(onSubmit)}
-          onPrev={onPrev}
-          nextLabel={nextLabel}
+        <Tabs
+          tabs={tabs}
+          currentTabIndex={currentTabIndex}
+          handleChange={(_event: React.SyntheticEvent, newValue: number) => {
+            setTabIndex(newValue);
+          }}
         />
-      </form>
-    </FormProvider>
+
+        {tabs.map((tab: TabProps, index) => (
+          <TabPanel value={currentTabIndex} index={index} key={index}>
+            {tab.content}
+          </TabPanel>
+        ))}
+      </Box>
+      {/* <FlowForm ref={form1Ref} name="flow" /> */}
+      <WizardNav onNext={handleAllFormsSubmit} onPrev={onPrev} nextLabel={nextLabel} />
+    </>
   );
 };

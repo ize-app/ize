@@ -12,6 +12,7 @@ import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlock
 import {
   FlowGoal,
   IntitialFlowSetupSchemaType,
+  NewFlowWizardFormSchema,
   Reusable,
   intitialFlowSetupSchema,
 } from "../formValidation";
@@ -33,13 +34,16 @@ export const InitialConfigSetup = () => {
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
-    const newFlow = generateNewFlowConfig({ config: data, creator: me?.user });
+    const newConfig = generateNewFlowConfig({ config: data, creator: me?.user });
 
-    setFormState((prev) => ({
-      ...prev,
-      initialFlowSetup: { ...data },
-      newFlow,
-    }));
+    setFormState(
+      (prev): NewFlowWizardFormSchema => ({
+        ...prev,
+        initialFlowSetup: { ...data },
+        new: { ...newConfig },
+        // newFlow,
+      }),
+    );
     onNext();
   };
   // console.log("errors are", formMethods.formState.errors);

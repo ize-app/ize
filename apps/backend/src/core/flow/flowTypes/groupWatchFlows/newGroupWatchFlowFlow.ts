@@ -7,6 +7,7 @@ import { GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { createGroupWatchFlowFlowArgs } from "./createGroupWatchFlowFlowArgs";
 import { newFlow } from "../../newFlow";
+import { createEvolveFlowFlowArgs } from "../evolveFlow/createEvolveFlowFlowArgs";
 
 export const newGroupWatchFlowFlow = async ({
   groupEntityId,
@@ -29,7 +30,14 @@ export const newGroupWatchFlowFlow = async ({
   const args = createGroupWatchFlowFlowArgs({ groupEntityId, context, policy });
 
   const flowId = await newFlow({
-    args,
+    args: {
+      flow: args,
+      evolve: createEvolveFlowFlowArgs({
+        creatorEntityId: context.currentUser.entityId,
+        groupEntityId,
+      }),
+      reusable: true,
+    },
     entityContext: {
       type: "user",
       context,

@@ -3,13 +3,14 @@ import * as z from "zod";
 import { FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
-import { evolveFlowSchema } from "./evolve";
 import { fieldSetSchema } from "./fields";
 import { permissionSchema } from "./permission";
 import { resultsSchema } from "./result";
 
 export type FlowSchemaType = z.infer<typeof flowSchema>;
 export type StepSchemaType = z.infer<typeof stepSchema>;
+export type ReusableSchema = z.infer<typeof reusableSchema>;
+export type FlowWithEvolveFlowSchemaType = z.infer<typeof flowWithEvolveFlowSchema>;
 
 const stepSchema = z
   .object({
@@ -54,9 +55,8 @@ const stepSchema = z
 
 export const flowSchema = z.object({
   name: z.string().min(1, "Enter a name"),
-  reusable: z.boolean(),
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-  evolve: evolveFlowSchema,
+  // evolve: evolveFlowSchema,
   fieldSet: fieldSetSchema,
   trigger: z.object({
     permission: permissionSchema,
@@ -65,6 +65,16 @@ export const flowSchema = z.object({
 });
 // .superRefine((flow, ctx) => {});
 
+export const reusableSchema = z.object({
+  reusable: z.boolean(),
+});
+
+export const flowWithEvolveFlowSchema = z.object({
+  reusable: z.boolean(),
+  flow: flowSchema,
+  evolve: flowSchema,
+});
+
 export const newFlowFormSchema = z.object({
-  newFlow: flowSchema,
+  new: flowWithEvolveFlowSchema,
 });

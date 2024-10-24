@@ -1,9 +1,10 @@
 import { ActionSchemaType } from "@/components/Form/FlowForm/formValidation/action";
+import { FieldSchemaType } from "@/components/Form/FlowForm/formValidation/fields";
 import {
-  DefaultOptionSelection,
-  FieldSchemaType,
-} from "@/components/Form/FlowForm/formValidation/fields";
-import { FlowSchemaType, StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
+  FlowSchemaType,
+  FlowWithEvolveFlowSchemaType,
+  StepSchemaType,
+} from "@/components/Form/FlowForm/formValidation/flow";
 import {
   PermissionSchemaType,
   PermissionType,
@@ -21,6 +22,7 @@ import {
 } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
+import { generateEvolveConfig } from "./generateEvolveConfig";
 import { generateFieldConfig } from "./generateFieldConfig";
 import { generateIdeaCreationStep } from "./generateIdeaCreationStep";
 import { generateResultConfig } from "./generateResultConfig";
@@ -39,7 +41,7 @@ export const generateNewFlowConfig = ({
 }: {
   config: IntitialFlowSetupSchemaType;
   creator: UserSummaryPartsFragment | null | undefined;
-}): FlowSchemaType => {
+}): FlowWithEvolveFlowSchemaType => {
   const permission: PermissionSchemaType = config.permission;
   const creatorPermission: PermissionSchemaType = {
     type: PermissionType.Entities,
@@ -56,17 +58,19 @@ export const generateNewFlowConfig = ({
   let flowTitle: string = "New flow";
 
   const reusable = config.reusable === Reusable.Reusable;
-  if (
-    config.goal !== FlowGoal.AiSummary &&
-    config.optionsConfig?.linkedOptions.hasLinkedOptions &&
-    config.optionsConfig?.linkedOptions.question
-  ) {
-    [ideationStep, ideationResult] = generateIdeaCreationStep({
-      permission,
-      question: config.optionsConfig.linkedOptions.question,
-    });
-  }
+
   try {
+    if (
+      config.goal !== FlowGoal.AiSummary &&
+      config.optionsConfig?.linkedOptions.hasLinkedOptions &&
+      config.optionsConfig?.linkedOptions.question
+    ) {
+      [ideationStep, ideationResult] = generateIdeaCreationStep({
+        permission,
+        question: config.optionsConfig.linkedOptions.question,
+      });
+    }
+
     switch (config.goal) {
       case FlowGoal.Decision: {
         // create options config
@@ -162,9 +166,10 @@ export const generateNewFlowConfig = ({
       action,
     });
 
+    const evolve = generateEvolveConfig({ permission: creatorPermission });
+
     const flow: FlowSchemaType = {
       name: flowTitle,
-      reusable,
       trigger: {
         permission,
       },
@@ -173,24 +178,14 @@ export const generateNewFlowConfig = ({
         locked: false,
       },
       steps: [ideationStep, step].filter((x) => x !== null),
-      evolve: {
-        requestPermission: creatorPermission,
-        responsePermission: creatorPermission,
-        decision: {
-          type: DecisionType.NumberThreshold,
-          threshold: 1,
-          defaultOptionId: DefaultOptionSelection.None,
-        },
-      },
     };
 
-    return flow;
+    return { flow, evolve, reusable };
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
     const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
-    return {
+    const flow = {
       name: "",
-      reusable: true,
       fieldSet: {
         fields: [],
         locked: false,
@@ -198,15 +193,9 @@ export const generateNewFlowConfig = ({
       trigger: {
         permission: anyonePermission,
       },
-      evolve: {
-        requestPermission: anyonePermission,
-        responsePermission: anyonePermission,
-        decision: {
-          type: DecisionType.NumberThreshold,
-          threshold: 1,
-        },
-      },
       steps: [defaultStepFormValues],
     };
+    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    return { flow, evolve, reusable };
   }
 };

@@ -1,9 +1,12 @@
 import * as z from "zod";
 
-import { flowSchema, newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
+import {
+  flowWithEvolveFlowSchema,
+  newFlowFormSchema,
+} from "@/components/Form/FlowForm/formValidation/flow";
 
 export const evolveExistingFlowSchema = newFlowFormSchema.extend({
-  currentFlow: flowSchema,
+  original: flowWithEvolveFlowSchema,
   requestName: z.string(),
   requestDescription: z.string().optional(),
 });

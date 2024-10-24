@@ -9,6 +9,7 @@ import { DefaultOptionSelection } from "../../formValidation/fields";
 import {
   DecisionResultSchemaType,
   DecisionSchemaType,
+  LlmSummaryListResultSchemaType,
   LlmSummaryResultSchemaType,
   RankingResultSchemaType,
   ResultSchemaType,
@@ -48,13 +49,13 @@ export const createResultFormState = (results: ResultConfig[]): ResultSchemaType
         } as LlmSummaryResultSchemaType;
       case ResultType.LlmSummaryList:
         return {
-          type: ResultType.LlmSummary,
+          type: ResultType.LlmSummaryList,
           ...resultBase,
           llmSummary: {
             prompt: result.prompt ?? undefined,
             example: result.example ?? undefined,
           },
-        } as LlmSummaryResultSchemaType;
+        } as LlmSummaryListResultSchemaType;
       default:
         throw Error(`Unknown result type`);
     }

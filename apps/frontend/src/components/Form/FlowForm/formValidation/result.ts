@@ -9,6 +9,7 @@ export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
+export type LlmSummaryListResultSchemaType = z.infer<typeof llmListResultSchema>;
 export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 
 export enum LlmSummaryType {

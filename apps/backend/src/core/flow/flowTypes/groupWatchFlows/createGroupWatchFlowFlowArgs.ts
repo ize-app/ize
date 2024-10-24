@@ -4,7 +4,6 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
   ActionType,
-  DecisionType,
   FieldArgs,
   FieldDataType,
   FieldOptionsSelectionType,
@@ -70,10 +69,7 @@ export const createGroupWatchFlowFlowArgs = ({
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
 
-  const creatorEntityId = context.currentUser.entityId;
-
   return {
-    reusable: true,
     name: "Watch/unwatch flow",
     fieldSet: {
       locked: true,
@@ -83,11 +79,6 @@ export const createGroupWatchFlowFlowArgs = ({
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
     },
     steps: [createGroupWatchStepArgs({ groupEntityId, context, policy })],
-    evolve: {
-      requestPermission: { anyone: false, entities: [{ id: groupEntityId }] },
-      responsePermission: { anyone: false, entities: [{ id: creatorEntityId }] },
-      decision: { type: DecisionType.NumberThreshold, threshold: 1 },
-    },
   };
 };
 

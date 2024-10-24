@@ -25,7 +25,7 @@ export const NewFlow = () => {
     onCompleted: (data) => {
       // if reusable flow, flow ID is returned, else request ID is returned
       const { newFlow: id } = data;
-      if (formState.newFlow.reusable) navigate(`/flow/${fullUUIDToShort(id)}`);
+      if (formState.new.reusable) navigate(`/flow/${fullUUIDToShort(id)}`);
       else navigate(`/requests/${fullUUIDToShort(id)}`);
     },
   });
@@ -35,7 +35,13 @@ export const NewFlow = () => {
       if (!me?.user.id) throw Error("Missing user Id");
       await mutate({
         variables: {
-          flow: createNewFlowArgs(formState.newFlow, me?.user.id),
+          new: {
+            flow: createNewFlowArgs(formState.new.flow, me?.user.id),
+            evolve: formState.new.reusable
+              ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+              : undefined,
+            reusable: formState.new.reusable,
+          },
         },
       });
       setSnackbarData({

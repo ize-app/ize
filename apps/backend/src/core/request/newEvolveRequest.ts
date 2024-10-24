@@ -10,7 +10,6 @@ import { newRequest } from "./newRequest";
 import { prisma } from "../../prisma/client";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { createEvolveFlowFlowArgs } from "../flow/flowTypes/evolveFlow/createEvolveFlowFlowArgs";
 import { EvolveFlowFields } from "../flow/flowTypes/evolveFlow/EvolveFlowFields";
 import { newFlowVersion } from "../flow/newFlowVersion";
 
@@ -27,7 +26,7 @@ export const newEvolveRequest = async ({
     let draftEvolveFlowVersionId: string | null = null;
 
     const {
-      request: { proposedFlow, flowId },
+      request: { new: proposedFlow, flowId },
     } = args;
 
     const flow = await transaction.flow.findUniqueOrThrow({
@@ -109,13 +108,13 @@ export const newEvolveRequest = async ({
         draftEvolveFlowVersionId: null,
         // evolve flow evolves itself
         evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId,
-        flowArgs: createEvolveFlowFlowArgs(proposedFlow.evolve),
+        flowArgs: proposedFlow.evolve,
       });
     }
     // create new custom flow version
     const proposedFlowVersionId = await newFlowVersion({
       transaction,
-      flowArgs: proposedFlow,
+      flowArgs: proposedFlow.flow,
       flowId: flow.id,
       evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId ?? null,
       active: false,

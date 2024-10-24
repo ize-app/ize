@@ -1,5 +1,5 @@
-mutation NewFlow($flow: NewFlowArgs!) {
-  newFlow(flow: $flow)
+mutation NewFlow($new: NewFlowWithEvolveArgs!) {
+  newFlow(new: $new)
 }
 
 query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Boolean) {

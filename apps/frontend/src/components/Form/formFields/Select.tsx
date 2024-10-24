@@ -33,6 +33,7 @@ export const Select = <T extends FieldValues>({
   required = false,
   loading = false,
   onChange,
+  disabled = false,
   variant = "outlined",
   size = "small",
   display = true,
@@ -58,6 +59,7 @@ export const Select = <T extends FieldValues>({
               inputProps={{ multiline: "true" }}
               {...field}
               label={""}
+              disabled={disabled}
               onChange={(e) => {
                 field.onChange(e.target.value);
 

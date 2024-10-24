@@ -17,16 +17,21 @@ export const newCustomFlow = async ({
 }): Promise<string> => {
   const { entityId, user } = await getUserEntities({ entityContext });
   const flowId = await prisma.$transaction(async (transaction) => {
-    return await newFlow({ type: FlowType.Custom, args: args.flow, entityContext, transaction });
+    return await newFlow({
+      type: FlowType.Custom,
+      args: args.new,
+      entityContext,
+      transaction,
+    });
   });
   await createWatchFlowRequests({ flowId, entityContext });
-  
-  if (!args.flow.reusable) {
+
+  if (!args.new.reusable) {
     const requestId = await newRequest({
       args: {
         request: {
           flowId: flowId,
-          name: args.flow.requestName ?? args.flow.name ?? "",
+          name: args.new.flow.requestName ?? args.new.flow.name ?? "",
           requestFields: [],
           requestDefinedOptions: [],
         },

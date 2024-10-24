@@ -57,6 +57,7 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
+  console.log("flow", flow);
 
   const tabs: TabProps[] = [
     {
@@ -65,13 +66,11 @@ export const Flow = () => {
     },
   ];
 
-  if (flow.evolve)
+  if (flow && flow.evolve)
     tabs.push({
       title: "Evolve flow",
       content: <ConfigDiagramFlow flow={flow.evolve} />,
     });
-
-  // console.log("flow", flow);
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;

@@ -11,6 +11,7 @@ function a11yProps(index: number) {
 export interface TabProps {
   title: string;
   content: JSX.Element | null;
+  icon?: React.ReactElement;
 }
 
 export interface TabsProps {
@@ -26,7 +27,16 @@ export const Tabs = ({ tabs, currentTabIndex, handleChange, sx = {} }: TabsProps
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <MuiTabs value={currentTabIndex} onChange={handleChange} aria-label="tabs">
           {tabs.map((tab: TabProps, index) => {
-            return <Tab label={tab.title} key={index} {...a11yProps(index)} />;
+            return (
+              <Tab
+                label={tab.title}
+                key={index}
+                {...a11yProps(index)}
+                icon={tab.icon}
+                iconPosition="end"
+                sx={{ minHeight: "40px" }}
+              />
+            );
           })}
         </MuiTabs>
       </Box>

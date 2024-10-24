@@ -29,6 +29,6 @@ export const EVOLVE_FLOW_WIZARD_STEPS: WizardSteps<EvolveExistingFlowSchemaType>
     title: "Confirm evoution request",
     progressBarStep: 2,
     canNext: () => true,
-    validWizardState: (formState: EvolveExistingFlowSchemaType) => !!formState.newFlow.name,
+    validWizardState: (formState: EvolveExistingFlowSchemaType) => !!formState.new.flow.name,
   },
 ];

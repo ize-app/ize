@@ -138,7 +138,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: Routes.evolveFlowRoute(Routes.EvolveFlowRoute.Setup),
-            element: <FullConfigSetup />,
+            element: <FullConfigSetup evolve={true} />,
             index: true,
           },
           {

@@ -191,12 +191,6 @@ export type EvolveFlow = {
   locked: Scalars['Boolean']['output'];
 };
 
-export type EvolveFlowArgs = {
-  decision: DecisionArgs;
-  requestPermission: PermissionArgs;
-  responsePermission: PermissionArgs;
-};
-
 export type EvolveGroup = {
   __typename?: 'EvolveGroup';
   filterOption?: Maybe<Option>;
@@ -598,7 +592,7 @@ export type MutationNewEvolveRequestArgs = {
 
 
 export type MutationNewFlowArgs = {
-  flow: NewFlowArgs;
+  new: NewFlowWithEvolveArgs;
 };
 
 
@@ -659,21 +653,24 @@ export enum NewEntityTypes {
 }
 
 export type NewEvolveRequestArgs = {
-  currentFlow: NewFlowArgs;
   description?: InputMaybe<Scalars['String']['input']>;
   flowId: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  proposedFlow: NewFlowArgs;
+  new: NewFlowWithEvolveArgs;
 };
 
 export type NewFlowArgs = {
-  evolve?: InputMaybe<EvolveFlowArgs>;
   fieldSet: FieldSetArgs;
   name: Scalars['String']['input'];
   requestName?: InputMaybe<Scalars['String']['input']>;
-  reusable: Scalars['Boolean']['input'];
   steps: Array<NewStepArgs>;
   trigger: TriggerConfigArgs;
+};
+
+export type NewFlowWithEvolveArgs = {
+  evolve?: InputMaybe<NewFlowArgs>;
+  flow: NewFlowArgs;
+  reusable: Scalars['Boolean']['input'];
 };
 
 export type NewRequestArgs = {
@@ -1244,7 +1241,6 @@ export type ResolversTypes = {
   EntityArgs: EntityArgs;
   EntityType: EntityType;
   EvolveFlow: ResolverTypeWrapper<EvolveFlow>;
-  EvolveFlowArgs: EvolveFlowArgs;
   EvolveGroup: ResolverTypeWrapper<EvolveGroup>;
   Field: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Field']>;
   FieldAnswer: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['FieldAnswer']>;
@@ -1303,6 +1299,7 @@ export type ResolversTypes = {
   NewEntityTypes: NewEntityTypes;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
+  NewFlowWithEvolveArgs: NewFlowWithEvolveArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
   NewStepArgs: NewStepArgs;
@@ -1378,7 +1375,6 @@ export type ResolversParentTypes = {
   Entity: ResolversUnionTypes<ResolversParentTypes>['Entity'];
   EntityArgs: EntityArgs;
   EvolveFlow: EvolveFlow;
-  EvolveFlowArgs: EvolveFlowArgs;
   EvolveGroup: EvolveGroup;
   Field: ResolversUnionTypes<ResolversParentTypes>['Field'];
   FieldAnswer: ResolversUnionTypes<ResolversParentTypes>['FieldAnswer'];
@@ -1429,6 +1425,7 @@ export type ResolversParentTypes = {
   NewEntityArgs: NewEntityArgs;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
+  NewFlowWithEvolveArgs: NewFlowWithEvolveArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
   NewStepArgs: NewStepArgs;
@@ -1825,7 +1822,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
-  newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'flow'>>;
+  newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'new'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   testNotificationWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestNotificationWebhookArgs, 'uri'>>;

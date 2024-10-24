@@ -301,7 +301,6 @@ model Flow {
 model FlowVersion {
   id           String  @id @default(uuid()) @db.Uuid
   name         String
-  reusable     Boolean
   totalSteps   Int     @map("total_steps")
   flowId       String  @map("flow_id") @db.Uuid
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
