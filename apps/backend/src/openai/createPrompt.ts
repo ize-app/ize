@@ -6,7 +6,7 @@ export const createPrompt = ({
   flowName,
   requestName,
   requestTriggerAnswers,
-  requestResults,
+  results,
   summaryPrompt,
   fieldName,
   responses,
@@ -17,7 +17,7 @@ export const createPrompt = ({
   flowName: string;
   fieldName: string;
   requestTriggerAnswers: GenericFieldAndValue[];
-  requestResults: GenericFieldAndValue[];
+  results: GenericFieldAndValue[];
   summaryPrompt: string;
   responses: string[];
   exampleOutput?: string | null;
@@ -26,7 +26,7 @@ export const createPrompt = ({
   const context = createRequestContextPrompt({
     flowName,
     requestName,
-    requestResults,
+    results,
     requestTriggerAnswers,
   });
 

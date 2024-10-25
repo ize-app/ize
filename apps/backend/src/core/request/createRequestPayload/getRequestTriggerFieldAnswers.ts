@@ -8,41 +8,51 @@ export const getRequestTriggerFieldAnswers = ({
 }): GenericFieldAndValue[] => {
   const requestFields: GenericFieldAndValue[] = request.flow.fieldSet.fields.map((field) => {
     const answer = request.triggerFieldAnswers.find((fa) => fa.fieldId === field.fieldId);
+
     if (!answer) throw Error("");
-    if (field.__typename === FieldType.FreeInput) {
-      if (answer.__typename !== "FreeInputFieldAnswer")
-        throw new GraphQLError(
-          `Free input field ${field.fieldId} has field answer that is not free input answer`,
-          {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          },
-        );
-      return {
-        fieldName: field.name,
-        value: [answer.value],
-      };
-    } else if (field.__typename === FieldType.Options) {
-      if (answer.__typename !== "OptionFieldAnswer")
-        throw new GraphQLError(
-          `Options field ${field.fieldId} has field answer that is not options answer`,
-          {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          },
-        );
-      return {
-        fieldName: field.name,
-        value: answer.selections.map((s) => {
+
+    let value: string[] = [];
+
+    switch (answer.__typename) {
+      case "FreeInputFieldAnswer":
+        value = [answer.value];
+        break;
+      case "EntitiesFieldAnswer":
+        value = answer.entities.map((e) => e.name);
+        break;
+      case "FlowsFieldAnswer":
+        value = answer.flows.map((f) => f.flowName);
+        break;
+      case "WebhookFieldAnswer":
+        value = [answer.uri];
+        break;
+      case "OptionFieldAnswer": {
+        if (field.__typename !== FieldType.Options)
+          throw new GraphQLError(
+            `Options field answer not associated to options field. fieldId: ${field.fieldId}`,
+            {
+              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+            },
+          );
+        value = answer.selections.map((s) => {
           const option = field.options.find((o) => {
             if (o.optionId === s.optionId) return o.name;
           });
           if (!option) throw Error("");
           return option.name;
-        }),
-      };
-    } else
-      throw new GraphQLError(`Unknown field type. field ID: ${field.fieldId}`, {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
+        });
+        break;
+      }
+      default:
+        throw new GraphQLError(`Unknown field answer type`, {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+    }
+
+    return {
+      fieldName: field.name,
+      value,
+    };
   });
 
   return requestFields;

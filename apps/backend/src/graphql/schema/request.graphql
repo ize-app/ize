@@ -119,13 +119,13 @@ type GenericFieldAndValue {
   value: [String!]!
 }
 
-type RequestPayload {
-  requestId: String!
-  requestName: String!
-  flowName: String!
-  triggerFieldAnswers: [FieldValue]!
-  results: [FieldValue]!
-}
+# type RequestPayload {
+#   requestId: String!
+#   requestName: String!
+#   flowName: String!
+#   triggerFieldAnswers: [FieldValue]!
+#   results: [FieldValue]!
+# }
 
 type FieldValue {
   fieldName: String!

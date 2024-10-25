@@ -1,4 +1,4 @@
-import { NotificationPayload } from "@/core/notification/createNotificationPayload";
+import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { WebhookPayload } from "@/graphql/generated/resolver-types";
 
 // TODO: create the payload for the webhook
@@ -7,7 +7,7 @@ export const callWebhook = async ({
   payload,
 }: {
   uri: string;
-  payload?: WebhookPayload | NotificationPayload;
+  payload?: WebhookPayload | RequestPayload;
 }) => {
   // attempt to callWebhook with Results from previous step
   const response = await fetch(uri, {

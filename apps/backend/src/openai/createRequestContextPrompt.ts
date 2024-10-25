@@ -9,16 +9,16 @@ const formatFieldAndValue = (fieldAndValue: GenericFieldAndValue): string => {
 export const createRequestContextPrompt = ({
   flowName,
   requestName,
-  requestResults,
+  results,
   requestTriggerAnswers,
 }: {
   flowName: string;
   requestName: string;
-  requestResults: GenericFieldAndValue[];
+  results: GenericFieldAndValue[];
   requestTriggerAnswers: GenericFieldAndValue[];
 }): string => {
   return `Here is context about the results from this request so far \n\nRequest name: [${flowName}] ${requestName}\n${[
-    ...requestResults,
+    ...results,
     ...requestTriggerAnswers,
   ].reduce((acc, { fieldName, value }) => {
     return formatFieldAndValue({ fieldName, value });

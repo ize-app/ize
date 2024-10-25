@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
+import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { resultGroupInclude } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
 import { decrypt } from "@/prisma/encrypt";
@@ -11,7 +12,6 @@ import { evolveGroup } from "./evolveGroup";
 import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
-import { createNotificationPayload } from "../../notification/createNotificationPayload/createNotificationPayload";
 import { ActionNewPrismaType } from "../actionPrismaTypes";
 import { callWebhook } from "../webhook/callWebhook";
 
@@ -111,7 +111,7 @@ export const executeAction = async ({
         switch (action.type) {
           case ActionType.CallWebhook: {
             if (!action.Webhook) throw Error("");
-            const payload = await createNotificationPayload({ requestStepId, transaction });
+            const payload = await createRequestPayload({ requestStepId });
             const uri = decrypt(action.Webhook.uri);
             await callWebhook({ uri, payload });
             break;

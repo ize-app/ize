@@ -8,10 +8,6 @@ mutation NewCustomGroup($inputs: CustomGroupArgs!) {
   newCustomGroup(inputs: $inputs)
 }
 
-mutation TestNotificationWebhook($uri: String!) {
-  testNotificationWebhook(uri: $uri)
-}
-
 query Group($id: String!) {
   group(id: $id) {
     ...IzeGroup

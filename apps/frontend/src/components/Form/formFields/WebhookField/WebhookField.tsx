@@ -3,11 +3,7 @@ import { Box, FormHelperText } from "@mui/material";
 import { useState } from "react";
 import { Controller, FieldValues, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import {
-  Status,
-  TestNotificationWebhookDocument,
-  TestWebhookDocument,
-} from "@/graphql/generated/graphql";
+import { Status, TestWebhookDocument } from "@/graphql/generated/graphql";
 
 import { WebhookTestButton } from "./WebhookTestButton";
 import { createTestWebhookArgs } from "../../FlowForm/helpers/createTestWebhookArgs";
@@ -27,7 +23,6 @@ export const WebhookField = <T extends FieldValues>({
 }: WebhookFieldProps<T>): JSX.Element => {
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
   const [testWebhook] = useMutation(TestWebhookDocument, {});
-  const [testNotificationWebhook] = useMutation(TestNotificationWebhookDocument, {});
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
     // @ts-expect-error TODO: figure out how to bring in webhook schema
     const uri = formMethods.getValues(`${name}.uri`);
@@ -42,13 +37,6 @@ export const WebhookField = <T extends FieldValues>({
           },
         });
         success = res.data?.testWebhook ?? false;
-      } else {
-        const res = await testNotificationWebhook({
-          variables: {
-            uri,
-          },
-        });
-        success = res.data?.testNotificationWebhook ?? false;
       }
       // @ts-expect-error TODO: figure out how to bring in webhook schema
       formMethods.setValue(`${name}.valid`, success);

@@ -48,7 +48,7 @@ export const newLlmSummaryResult = async ({
       },
     );
 
-  const { requestName, flowName, requestTriggerAnswers, requestResults, field } =
+  const { requestName, flowName, requestTriggerAnswers, results, field } =
     await createRequestPayload({
       requestStepId,
       fieldId: resultConfig.fieldId,
@@ -60,7 +60,7 @@ export const newLlmSummaryResult = async ({
     flowName,
     requestName,
     requestTriggerAnswers,
-    requestResults,
+    results,
     fieldName: field?.name,
     type,
     exampleOutput: llmConfig.example,

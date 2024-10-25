@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
 import { Field, UserFieldAnswers } from "@/graphql/generated/resolver-types";
@@ -7,41 +9,26 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { getRequestResults } from "./getRequestResults";
 import { getRequestTriggerFieldAnswers } from "./getRequestTriggerFieldAnswers";
 
-// export function createPromptContext(params: { requestStepId: string; fieldId: string }): Promise<{
-//   requestName: string;
-//   flowName: string;
-//   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
-//   requestResults: ReturnType<typeof getRequestResults>;
-//   field: Field;
-// }>;
-
-// export function createPromptContext(params: {
-//   requestStepId: string;
-//   fieldId?: undefined;
-// }): Promise<{
-//   requestName: string;
-//   flowName: string;
-//   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
-//   requestResults: ReturnType<typeof getRequestResults>;
-//   field?: undefined;
-// }>;
+export interface RequestPayload {
+  requestName: string;
+  flowName: string;
+  requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
+  results: ReturnType<typeof getRequestResults>;
+  fieldAnswers: UserFieldAnswers[];
+  field?: Field | undefined; // General return type that covers both overloads
+}
 
 // Implement the function
 export async function createRequestPayload({
   requestStepId,
   fieldId,
+  transaction = prisma,
 }: {
   requestStepId: string;
   fieldId?: string | undefined;
-}): Promise<{
-  requestName: string;
-  flowName: string;
-  requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
-  requestResults: ReturnType<typeof getRequestResults>;
-  fieldAnswers: UserFieldAnswers[];
-  field?: Field | undefined; // General return type that covers both overloads
-}> {
-  const reqStep = await prisma.requestStep.findUniqueOrThrow({
+  transaction?: Prisma.TransactionClient;
+}): Promise<RequestPayload> {
+  const reqStep = await transaction.requestStep.findUniqueOrThrow({
     include: {
       Request: {
         include: requestInclude,
@@ -86,7 +73,7 @@ export async function createRequestPayload({
   const requestName = request.name;
   const flowName = request.flow.name;
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-  const requestResults = getRequestResults({ request });
+  const results = getRequestResults({ request });
 
-  return { requestName, flowName, requestTriggerAnswers, requestResults, field, fieldAnswers };
+  return { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers };
 }

@@ -560,7 +560,6 @@ export type Mutation = {
   newFlow: Scalars['String']['output'];
   newRequest: Scalars['String']['output'];
   newResponse: Scalars['String']['output'];
-  testNotificationWebhook: Scalars['Boolean']['output'];
   testWebhook: Scalars['Boolean']['output'];
   updateProfile: Scalars['Boolean']['output'];
   watchFlow: Scalars['Boolean']['output'];
@@ -605,11 +604,6 @@ export type MutationNewRequestArgs = {
 
 export type MutationNewResponseArgs = {
   response: NewResponseArgs;
-};
-
-
-export type MutationTestNotificationWebhookArgs = {
-  uri: Scalars['String']['input'];
 };
 
 
@@ -901,15 +895,6 @@ export type Request = {
 export type RequestDefinedOptionsArgs = {
   fieldId: Scalars['String']['input'];
   options: Array<FieldOptionArgs>;
-};
-
-export type RequestPayload = {
-  __typename?: 'RequestPayload';
-  flowName: Scalars['String']['output'];
-  requestId: Scalars['String']['output'];
-  requestName: Scalars['String']['output'];
-  results: Array<Maybe<FieldValue>>;
-  triggerFieldAnswers: Array<Maybe<FieldValue>>;
 };
 
 export type RequestStep = {
@@ -1334,7 +1319,6 @@ export type ResolversTypes = {
   Ranking: ResolverTypeWrapper<Ranking>;
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['FieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestPayload: ResolverTypeWrapper<RequestPayload>;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['UserFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatus: ResolverTypeWrapper<RequestStepStatus>;
@@ -1460,7 +1444,6 @@ export type ResolversParentTypes = {
   Ranking: Ranking;
   Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['FieldAnswer']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestPayload: RequestPayload;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepStatus: RequestStepStatus;
   RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
@@ -1842,7 +1825,6 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'new'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
-  testNotificationWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestNotificationWebhookArgs, 'uri'>>;
   testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
   updateProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
   watchFlow?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationWatchFlowArgs, 'flowId' | 'watch'>>;
@@ -1947,15 +1929,6 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestSteps?: Resolver<Array<ResolversTypes['RequestStep']>, ParentType, ContextType>;
   triggerFieldAnswers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RequestPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestPayload'] = ResolversParentTypes['RequestPayload']> = {
-  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  results?: Resolver<Array<Maybe<ResolversTypes['FieldValue']>>, ParentType, ContextType>;
-  triggerFieldAnswers?: Resolver<Array<Maybe<ResolversTypes['FieldValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2169,7 +2142,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
-  RequestPayload?: RequestPayloadResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepStatus?: RequestStepStatusResolvers<ContextType>;
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;

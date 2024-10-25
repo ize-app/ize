@@ -8,7 +8,7 @@ export const generateAiSummary = async ({
   flowName,
   requestName,
   requestTriggerAnswers,
-  requestResults,
+  results,
   summaryPrompt,
   fieldName,
   exampleOutput,
@@ -20,7 +20,7 @@ export const generateAiSummary = async ({
   flowName: string;
   fieldName: string;
   requestTriggerAnswers: GenericFieldAndValue[];
-  requestResults: GenericFieldAndValue[];
+  results: GenericFieldAndValue[];
   summaryPrompt: string;
   exampleOutput?: string | null;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
@@ -30,7 +30,7 @@ export const generateAiSummary = async ({
     flowName,
     requestName,
     requestTriggerAnswers,
-    requestResults,
+    results,
     summaryPrompt,
     fieldName,
     responses,

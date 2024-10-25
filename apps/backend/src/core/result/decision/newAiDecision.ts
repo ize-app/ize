@@ -34,7 +34,7 @@ export const newAiDecision = async ({
     },
   ];
 
-  const { requestName, flowName, requestTriggerAnswers, requestResults, field, fieldAnswers } =
+  const { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers } =
     await createRequestPayload({
       requestStepId,
       fieldId: resultConfig.fieldId,
@@ -48,12 +48,12 @@ export const newAiDecision = async ({
     requestName,
     flowName,
     requestTriggerAnswers,
-    requestResults,
+    results,
   });
   prompts.push({ role: "user", content: requestContext });
 
   const decisionPrompt = createDecisionPrompt({ field, criteria, hasResponse });
-  
+
   prompts.push({ role: "system", content: decisionPrompt });
 
   if (hasResponse) prompts.push({ role: "user", content: createResponsesPrompt({ fieldAnswers }) });
@@ -67,7 +67,6 @@ export const newAiDecision = async ({
   const message = completion.choices[0].message.content ?? "";
 
   const result = JSON.parse(message) as AiDecisionResult;
-
 
   if (field.__typename !== FieldType.Options) throw Error("Field is not an options field");
 

@@ -1,10 +1,10 @@
 import { GroupTelegramChat } from "@prisma/client";
 
-import { WebhookPayload } from "@/graphql/generated/resolver-types";
+import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createWebhookValueString } from "../createWebhookValueString";
+import { createGenericFieldValuesString } from "../../request/createRequestPayload/createGenericFieldValuesString";
 
 export const sendTelegramResultsNotifications = async ({
   telegramGroups,
@@ -12,11 +12,11 @@ export const sendTelegramResultsNotifications = async ({
   requestStepId,
 }: {
   telegramGroups: GroupTelegramChat[];
-  payload: WebhookPayload;
+  payload: RequestPayload;
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
-  const message = `New results in Ize 👀\n\n${payload.requestName} (<i>${payload.flowName}</i>)\n\n${createWebhookValueString(payload.results)}`;
+  const message = `New results in Ize 👀\n\n${payload.requestName} (<i>${payload.flowName}</i>)\n\n${createGenericFieldValuesString(payload.results)}`;
   await Promise.all(
     telegramGroups.map(async (group) => {
       try {

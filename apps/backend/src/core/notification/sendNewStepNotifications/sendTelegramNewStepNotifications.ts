@@ -1,6 +1,7 @@
 import { FieldType, GroupTelegramChat } from "@prisma/client";
 
 import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
+import { getRequestTriggerFieldAnswers } from "@/core/request/createRequestPayload/getRequestTriggerFieldAnswers";
 import {
   FieldDataType,
   FieldOptionsSelectionType,
@@ -9,9 +10,8 @@ import {
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createRequestFieldsPayload } from "../createNotificationPayload/createRequestFieldsPayload";
-import { createRequestUrl } from "../createNotificationPayload/createRequestUrl";
-import { createWebhookValueString } from "../createWebhookValueString";
+import { createGenericFieldValuesString } from "../../request/createRequestPayload/createGenericFieldValuesString";
+import { createRequestUrl } from "../../request/createRequestPayload/createRequestUrl";
 
 export const sendTelegramNewStepMessage = async ({
   telegramGroups,
@@ -47,11 +47,8 @@ export const sendTelegramNewStepMessage = async ({
 
       if (responseFields.length === 0) return;
 
-      const requestFieldsString = createWebhookValueString(
-        createRequestFieldsPayload({
-          requestFieldAnswers: request.triggerFieldAnswers,
-          requestFields: request.flow.fieldSet.fields,
-        }),
+      const requestFieldsString = createGenericFieldValuesString(
+        getRequestTriggerFieldAnswers({ request }),
       );
 
       const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
