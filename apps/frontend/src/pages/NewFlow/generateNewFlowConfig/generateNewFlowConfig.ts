@@ -17,6 +17,7 @@ import {
   EntityType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   ResultType,
   UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
@@ -169,6 +170,7 @@ export const generateNewFlowConfig = ({
     const evolve = generateEvolveConfig({ permission: creatorPermission });
 
     const flow: FlowSchemaType = {
+      type: FlowType.Custom,
       name: flowTitle,
       trigger: {
         permission,
@@ -186,6 +188,7 @@ export const generateNewFlowConfig = ({
     const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
     const flow = {
       name: "",
+      type: FlowType.Custom,
       fieldSet: {
         fields: [],
         locked: false,

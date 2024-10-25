@@ -1,6 +1,6 @@
 import { FieldDataType, Prisma } from "@prisma/client";
 
-import { EvolveFlowFields } from "@/core/flow/flowTypes/evolveFlow/EvolveFlowFields";
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
@@ -27,7 +27,7 @@ export const evolveFlow = async ({
   });
 
   const proposedFlowField = requestStep.Request.TriggerFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveFlowFields.ProposedFlow as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.EvolveFlowProposed;
   });
 
   if (!proposedFlowField)

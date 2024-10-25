@@ -88,6 +88,7 @@ input NewFlowWithEvolveArgs {
 }
 
 input NewFlowArgs {
+  type: FlowType!
   name: String!
   steps: [NewStepArgs!]!
   fieldSet: FieldSetArgs!

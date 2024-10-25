@@ -40,7 +40,6 @@ export const EndRequestStepButton = ({ requestStepId }: { requestStepId: string 
         endIcon={<AlarmIcon />}
         sx={{ width: "300px", boxShadow: "4px solid" }}
         onClick={async () => {
-          console.log("Ending step early");
           await mutate();
         }}
       >

@@ -5,22 +5,14 @@ import { fieldSetResolver } from "@/core/fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
-import {
-  Field,
-  FieldAnswer,
-  Flow,
-  FlowType,
-  ResultConfig,
-} from "@/graphql/generated/resolver-types";
+import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
-import { getDefaultFlowValues } from "../helpers/getDefaultFlowValues";
+import { DefaultEvolveGroupValues, getDefaultFlowValues } from "../helpers/getDefaultFlowValues";
 import { getFlowName } from "../helpers/getFlowName";
 import { isWatchedFlow } from "../helpers/isWatchedFlow";
-
-export type DefaultEvolveGroupValues = Record<string, FieldAnswer>;
 
 export const flowResolver = async ({
   flowVersion,
@@ -97,7 +89,6 @@ export const flowResolver = async ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
-        defaultValues,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow

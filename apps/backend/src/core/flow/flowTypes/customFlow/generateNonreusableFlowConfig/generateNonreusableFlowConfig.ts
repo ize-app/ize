@@ -4,6 +4,7 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   NewFlowArgs,
   PermissionArgs,
   ResultType,
@@ -34,6 +35,7 @@ export const generateNonreusableFlowConfig = ({
   switch (type) {
     case FlowConfigGeneration.Synthesize: {
       return {
+        type: FlowType.Custom,
         name: "Synthesize group perspectives",
 
         requestName: prompt,
@@ -80,6 +82,7 @@ export const generateNonreusableFlowConfig = ({
     }
     case FlowConfigGeneration.Ideate: {
       return {
+        type: FlowType.Custom,
         name: "Ideate together",
 
         requestName: prompt,
@@ -126,6 +129,7 @@ export const generateNonreusableFlowConfig = ({
     }
     case FlowConfigGeneration.LetAiDecide: {
       return {
+        type: FlowType.Custom,
         name: "Ideate together",
 
         requestName: prompt,

@@ -25,6 +25,7 @@ type Options {
   isInternal: Boolean!
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
+  systemType: SystemFieldType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
   linkedResultOptions: [LinkedResult!]!
@@ -42,6 +43,7 @@ type FreeInput {
   name: String!
   isInternal: Boolean!
   required: Boolean!
+  systemType: SystemFieldType
   dataType: FieldDataType!
   defaultAnswer: FieldAnswer
 }
@@ -63,6 +65,17 @@ enum FieldDataType {
   EntityIds
   FlowIds
   Webhook
+}
+
+enum SystemFieldType {
+  EvolveFlowProposed
+  EvolveFlowCurrent
+  EvolveFlowDescription
+  GroupName
+  GroupDescription
+  GroupMembers
+  WatchFlow
+  UnwatchFlow
 }
 
 enum FieldType {
@@ -138,6 +151,7 @@ input FieldArgs {
   name: String!
   required: Boolean!
   isInternal: Boolean!
+  systemType: SystemFieldType
   freeInputDataType: FieldDataType
   optionsConfig: FieldOptionsConfigArgs
 }

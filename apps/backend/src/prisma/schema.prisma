@@ -476,16 +476,28 @@ enum FieldType {
   FreeInput
 }
 
+enum SystemFieldType {
+  EvolveFlowProposed
+  EvolveFlowCurrent
+  EvolveFlowDescription
+  GroupName
+  GroupDescription
+  GroupMembers
+  WatchFlow
+  UnwatchFlow
+}
+
 // Describes a single ask for a users input (e.g. select an option)
 model Field {
-  id                   String         @id @default(uuid()) @db.Uuid
+  id                   String           @id @default(uuid()) @db.Uuid
   type                 FieldType
   name                 String
-  required             Boolean        @default(true)
-  isInternal           Boolean        @default(false) @map("is_internal")
-  freeInputDataType    FieldDataType? @map("free_input_data_type")
-  fieldOptionsConfigId String?        @map("field_options_config_id") @db.Uuid
-  createdAt            DateTime       @default(now()) @map("created_at")
+  required             Boolean          @default(true)
+  isInternal           Boolean          @default(false) @map("is_internal")
+  systemType           SystemFieldType? @map("system_field_type")
+  freeInputDataType    FieldDataType?   @map("free_input_data_type")
+  fieldOptionsConfigId String?          @map("field_options_config_id") @db.Uuid
+  createdAt            DateTime         @default(now()) @map("created_at")
 
   FieldOptionsConfigs     FieldOptionsConfig?       @relation(fields: [fieldOptionsConfigId], references: [id], onDelete: Cascade)
   Answers                 FieldAnswer[]

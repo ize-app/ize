@@ -114,7 +114,6 @@ const ResultForm = ({
 }: ResultFormProps) => {
   const { watch, getValues, setValue, formState } = useFormContext<FlowSchemaType>();
   const resultType = watch(`steps.${stepIndex}.result.${resultIndex}.type`);
-  console.log("resultType", resultType);
 
   const resultField = getValues(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`);
 

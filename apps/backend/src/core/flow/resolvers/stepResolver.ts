@@ -1,12 +1,12 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
-import { DefaultEvolveGroupValues } from "./flowResolver";
 import { actionResolver } from "../../action/actionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { permissionResolver } from "../../permission/permissionResolver";
 import { StepPrismaType } from "../flowPrismaTypes";
+import { DefaultEvolveGroupValues } from "../helpers/getDefaultFlowValues";
 
 export const stepResolver = ({
   step,

@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { GroupWatchFlowFields } from "@/core/flow/flowTypes/groupWatchFlows/GroupWatchFlowFields";
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
@@ -46,10 +46,10 @@ export const groupWatchFlow = async ({
   const requestFieldAnswers = requestStep.Request.TriggerFieldAnswers;
 
   const flowsToWatch = requestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (GroupWatchFlowFields.WatchFlow as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.WatchFlow;
   });
   const flowsToStopWatching = requestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (GroupWatchFlowFields.UnwatchFlow as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.UnwatchFlow;
   });
 
   const groupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.id;

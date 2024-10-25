@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
-import { EvolveGroupFields } from "@/core/flow/flowTypes/evolveGroup/EvolveGroupFields";
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
@@ -55,14 +55,14 @@ export const evolveGroup = async ({
   const requestFieldAnswers = requestStep.Request.TriggerFieldAnswers;
 
   const name = requestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Name as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupName;
   });
   const description = requestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Description as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupDescription;
   });
 
   const members = requestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Members as string);
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupMembers;
   });
 
   /// validate members and create entity set for members ///

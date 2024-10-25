@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { FieldType, ResultType } from "@/graphql/generated/graphql";
+import { FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { fieldSetSchema } from "./fields";
@@ -54,6 +54,7 @@ const stepSchema = z
   );
 
 export const flowSchema = z.object({
+  type: z.nativeEnum(FlowType),
   name: z.string().min(1, "Enter a name"),
   steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
   // evolve: evolveFlowSchema,

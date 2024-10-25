@@ -1,5 +1,7 @@
+import { SystemFieldType } from "@prisma/client";
 import { GraphQLError } from "graphql";
 
+import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
@@ -8,41 +10,20 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   GroupFlowPolicyArgs,
   GroupFlowPolicyType,
   NewFlowArgs,
   NewStepArgs,
 } from "@/graphql/generated/resolver-types";
 
-import { EvolveGroupFields } from "./EvolveGroupFields";
 import { createActionConfigForPolicy } from "../../helpers/createActionConfigForPolicy";
 import { createDecisionResultConfigForPolicy } from "../../helpers/createDecisionResultConfigForPolicy";
 
 const requestFieldSetArgs: FieldArgs[] = [
-  {
-    type: FieldType.FreeInput,
-    isInternal: false,
-    fieldId: "name",
-    freeInputDataType: FieldDataType.String,
-    name: EvolveGroupFields.Name,
-    required: true,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: "description",
-    isInternal: false,
-    freeInputDataType: FieldDataType.String,
-    name: EvolveGroupFields.Description,
-    required: false,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: "members",
-    isInternal: false,
-    freeInputDataType: FieldDataType.EntityIds,
-    name: EvolveGroupFields.Members,
-    required: true,
-  },
+  systemFieldDefaults[SystemFieldType.GroupName],
+  systemFieldDefaults[SystemFieldType.GroupDescription],
+  systemFieldDefaults[SystemFieldType.GroupMembers],
 ];
 
 const responseApprovalFieldArgs: FieldArgs = {
@@ -78,6 +59,7 @@ export const createEvolveGroupFlowArgs = ({
     });
 
   return {
+    type: FlowType.EvolveGroup,
     name: "Evolve group",
     fieldSet: {
       locked: true,

@@ -57,7 +57,7 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-  console.log("flow", flow);
+  // console.log("flow", flow);
 
   const tabs: TabProps[] = [
     {

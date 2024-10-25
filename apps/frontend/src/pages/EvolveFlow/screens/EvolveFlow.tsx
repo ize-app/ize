@@ -40,7 +40,6 @@ export const EvolveFlow = () => {
     onCompleted: (data) => {
       const flowFormState = createFlowFormState(data.getFlow as FlowFragment);
       const evolveFormState = createFlowFormState(data.getFlow.evolve as FlowFragment);
-      console.log("flow ", data.getFlow);
       setFormState((prev): EvolveExistingFlowSchemaType => {
         return {
           ...prev,
@@ -81,6 +80,7 @@ export const EvolveFlow = () => {
   const onComplete = async () => {
     try {
       if (!me?.user.id) throw Error("Missing user Id");
+      console.log("new evolve flow args", createNewFlowArgs(formState.new.evolve, me?.user.id));
       await mutate({
         variables: {
           request: {

@@ -16,6 +16,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
   const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
     name: formState.name,
+    type: formState.type,
     fieldSet: {
       fields: createFieldsArgs(formState.fieldSet.fields ?? [], []),
       locked: formState.fieldSet.locked,

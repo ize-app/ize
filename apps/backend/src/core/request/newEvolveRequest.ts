@@ -4,13 +4,13 @@ import {
   FlowType,
   MutationNewEvolveRequestArgs,
   NewRequestArgs,
+  SystemFieldType,
 } from "@graphql/generated/resolver-types";
 
 import { newRequest } from "./newRequest";
 import { prisma } from "../../prisma/client";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { EvolveFlowFields } from "../flow/flowTypes/evolveFlow/EvolveFlowFields";
 import { newFlowVersion } from "../flow/newFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
@@ -82,15 +82,15 @@ export const newEvolveRequest = async ({
     const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? [];
 
     const proposedFlowField = evoleFlowFields.find((field) => {
-      return (field.Field.name as EvolveFlowFields) === EvolveFlowFields.ProposedFlow;
+      return field.Field.systemType === SystemFieldType.EvolveFlowProposed;
     });
 
     const currentFlowField = evoleFlowFields.find(
-      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.CurrentFlow,
+      (field) => field.Field.systemType === SystemFieldType.EvolveFlowCurrent,
     );
 
     const descriptionField = evoleFlowFields.find(
-      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.Description,
+      (field) => field.Field.systemType === SystemFieldType.EvolveFlowDescription,
     );
 
     if (!proposedFlowField || !currentFlowField)
@@ -109,6 +109,7 @@ export const newEvolveRequest = async ({
         // evolve flow evolves itself
         evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId,
         flowArgs: proposedFlow.evolve,
+        type: FlowType.Evolve,
       });
     }
     // create new custom flow version
@@ -119,6 +120,7 @@ export const newEvolveRequest = async ({
       evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId ?? null,
       active: false,
       draftEvolveFlowVersionId,
+      type: flow.type as FlowType,
     });
 
     const requestFields: FieldAnswerArgs[] = [

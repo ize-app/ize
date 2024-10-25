@@ -214,6 +214,7 @@ export type FieldArgs = {
   name: Scalars['String']['input'];
   optionsConfig?: InputMaybe<FieldOptionsConfigArgs>;
   required: Scalars['Boolean']['input'];
+  systemType?: InputMaybe<SystemFieldType>;
   type: FieldType;
 };
 
@@ -339,6 +340,7 @@ export type FreeInput = {
   isInternal: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   required: Scalars['Boolean']['output'];
+  systemType?: Maybe<SystemFieldType>;
 };
 
 export type FreeInputFieldAnswer = {
@@ -665,6 +667,7 @@ export type NewFlowArgs = {
   requestName?: InputMaybe<Scalars['String']['input']>;
   steps: Array<NewStepArgs>;
   trigger: TriggerConfigArgs;
+  type: FlowType;
 };
 
 export type NewFlowWithEvolveArgs = {
@@ -751,6 +754,7 @@ export type Options = {
   requestOptionsDataType?: Maybe<FieldDataType>;
   required: Scalars['Boolean']['output'];
   selectionType: FieldOptionsSelectionType;
+  systemType?: Maybe<SystemFieldType>;
 };
 
 export type Organization = {
@@ -1045,6 +1049,17 @@ export type Step = {
   result: Array<ResultConfig>;
 };
 
+export enum SystemFieldType {
+  EvolveFlowCurrent = 'EvolveFlowCurrent',
+  EvolveFlowDescription = 'EvolveFlowDescription',
+  EvolveFlowProposed = 'EvolveFlowProposed',
+  GroupDescription = 'GroupDescription',
+  GroupMembers = 'GroupMembers',
+  GroupName = 'GroupName',
+  UnwatchFlow = 'UnwatchFlow',
+  WatchFlow = 'WatchFlow'
+}
+
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
   requestFields: Array<WebhookValueArgs>;
@@ -1337,6 +1352,7 @@ export type ResolversTypes = {
   Status: Status;
   Step: ResolverTypeWrapper<Omit<Step, 'action' | 'fieldSet' | 'response' | 'result'> & { action?: Maybe<ResolversTypes['Action']>, fieldSet: ResolversTypes['FieldSet'], response?: Maybe<ResolversTypes['ResponseConfig']>, result: Array<ResolversTypes['ResultConfig']> }>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  SystemFieldType: SystemFieldType;
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
@@ -1665,6 +1681,7 @@ export type FreeInputResolvers<ContextType = GraphqlRequestContext, ParentType e
   isInternal?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  systemType?: Resolver<Maybe<ResolversTypes['SystemFieldType']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1880,6 +1897,7 @@ export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType ext
   requestOptionsDataType?: Resolver<Maybe<ResolversTypes['FieldDataType']>, ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   selectionType?: Resolver<ResolversTypes['FieldOptionsSelectionType'], ParentType, ContextType>;
+  systemType?: Resolver<Maybe<ResolversTypes['SystemFieldType']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

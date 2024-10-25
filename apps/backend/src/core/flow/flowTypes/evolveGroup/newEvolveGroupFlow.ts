@@ -1,9 +1,9 @@
-import { FlowType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { GraphQLError } from "graphql";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
-import { GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
+import { FlowType, GroupFlowPolicyArgs } from "@/graphql/generated/resolver-types";
 
 import { createEvolveGroupFlowArgs } from "./createEvolveGroupFlowArgs";
 import { newFlow } from "../../newFlow";

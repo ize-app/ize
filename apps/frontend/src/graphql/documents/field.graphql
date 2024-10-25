@@ -23,6 +23,7 @@ fragment Options on Options {
   previousStepOptions
   requestOptionsDataType
   selectionType
+  systemType
   maxSelections
   linkedResultOptions {
     ...LinkedResult
@@ -38,6 +39,7 @@ fragment FreeInput on FreeInput {
   isInternal
   required
   dataType
+  systemType
   defaultAnswer {
     ...FieldAnswer
   }

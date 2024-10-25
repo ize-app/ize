@@ -16,9 +16,6 @@ export const TriggerForm = ({ show, isReusable }: TriggerFormProps) => {
   const permissionsError = formState.errors.trigger;
   const fieldsError = formState.errors.fieldSet;
 
-  // const isReusable = watch(`reusable`);
-  console.log("trigger form isReusable", isReusable);
-
   return (
     <Box sx={{ display: show ? "block" : "none" }}>
       {isReusable ? (

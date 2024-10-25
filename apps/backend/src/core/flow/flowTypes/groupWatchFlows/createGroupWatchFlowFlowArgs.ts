@@ -1,5 +1,6 @@
 import { GraphQLError } from "graphql";
 
+import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
@@ -8,33 +9,20 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   GroupFlowPolicyArgs,
   GroupFlowPolicyType,
   NewFlowArgs,
   NewStepArgs,
+  SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 
-import { GroupWatchFlowFields } from "./GroupWatchFlowFields";
 import { createActionConfigForPolicy } from "../../helpers/createActionConfigForPolicy";
 import { createDecisionResultConfigForPolicy } from "../../helpers/createDecisionResultConfigForPolicy";
 
 const requestFieldSetArgs: FieldArgs[] = [
-  {
-    type: FieldType.FreeInput,
-    fieldId: "watchFlow",
-    freeInputDataType: FieldDataType.FlowIds,
-    isInternal: false,
-    name: GroupWatchFlowFields.WatchFlow,
-    required: false,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: "unwatchFlow",
-    isInternal: false,
-    freeInputDataType: FieldDataType.FlowIds,
-    name: GroupWatchFlowFields.UnwatchFlow,
-    required: false,
-  },
+  systemFieldDefaults[SystemFieldType.WatchFlow],
+  systemFieldDefaults[SystemFieldType.UnwatchFlow],
 ];
 
 const responseApprovalFieldArgs: FieldArgs = {
@@ -70,6 +58,7 @@ export const createGroupWatchFlowFlowArgs = ({
     });
 
   return {
+    type: FlowType.GroupWatchFlow,
     name: "Watch/unwatch flow",
     fieldSet: {
       locked: true,

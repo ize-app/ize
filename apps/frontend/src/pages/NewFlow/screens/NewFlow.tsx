@@ -58,7 +58,7 @@ export const NewFlow = () => {
         navigate("/");
       }
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Process creation failed", type: "error" });
+      setSnackbarData({ message: "Flow creation failed", type: "error" });
     }
   };
 

@@ -18,7 +18,7 @@ import {
 } from "@/components/ConfigDiagram";
 import { StageConnectorButton } from "@/components/ConfigDiagram/DiagramPanel/StageConnectorButton";
 import { getResultLabel } from "@/components/result/getResultLabel";
-import { ActionType } from "@/graphql/generated/graphql";
+import { ActionType, FlowType } from "@/graphql/generated/graphql";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { ActionForm } from "./components/ActionForm/ActionForm";
@@ -36,7 +36,7 @@ interface FlowFormProps {
 }
 
 export interface FlowFormRef {
-  submit: () => void;
+  submit: () => Promise<void>;
   getErrors: () => boolean;
 }
 
@@ -49,6 +49,7 @@ export const FlowForm = forwardRef(({ name, isReusable }: FlowFormProps, ref) =>
   const useFormMethods = useForm<FlowSchemaType>({
     defaultValues: {
       name: formState.new[name].name ?? "",
+      type: formState.new[name].type ?? FlowType.Custom,
       fieldSet: formState.new[name].fieldSet ?? {
         fields: [],
         locked: false,
@@ -59,34 +60,14 @@ export const FlowForm = forwardRef(({ name, isReusable }: FlowFormProps, ref) =>
           entities: [],
         },
       },
-      //   evolve: formState.newFlow?.evolve ?? {
-      //     requestPermission: { type: PermissionType.Anyone, entities: [] },
-      //     responsePermission: {
-      //       type: PermissionType.Entities,
-      //       entities: me?.identities
-      //         ? [
-      //             // This would be an issue if there was ever not any other id but the discord id
-      //             // but each discord auth also creates email identity
-      //             // TODO: brittle, should handle better
-      //             me.identities
-      //               .filter((id) => id.identityType.__typename !== "IdentityDiscord")
-      //               .map((id) => ({ ...id, __typename: "Identity" as EntityType }))[0],
-      //           ]
-      //         : [],
-      //     },
-      //     decision: {
-      //       type: DecisionType.NumberThreshold,
-      //       threshold: 1,
-      //     },
-      //   },
       steps: formState.new[name].steps ? [...formState.new[name].steps] : [defaultStepFormValues],
     },
     resolver: zodResolver(flowSchema),
     shouldUnregister: false,
   });
 
-  console.log(name, "errors are ", useFormMethods.formState.errors);
-  console.log("values are ", useFormMethods.getValues());
+  // console.log(name, "errors are ", useFormMethods.formState.errors);
+  // console.log("values are ", useFormMethods.getValues());
 
   const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 
@@ -97,7 +78,8 @@ export const FlowForm = forwardRef(({ name, isReusable }: FlowFormProps, ref) =>
 
   useImperativeHandle(ref, () => ({
     submit: useFormMethods.handleSubmit((data) => {
-      //   console.log("Form submitted with data:", data);
+      console.log(name, "inside submit");
+      console.log(name, useFormMethods.getValues());
       setFormState((prev) => ({
         ...prev,
         new: {
@@ -108,14 +90,10 @@ export const FlowForm = forwardRef(({ name, isReusable }: FlowFormProps, ref) =>
       onNext();
     }),
     getErrors: () => {
+      console.log(name, "inside validation, errors are", useFormMethods.formState.errors);
       return !!useFormMethods.formState.errors;
     },
   }));
-
-  //   const onSubmit = (data: FlowSchemaType) => {
-  //     setFormState((prev) => ({ ...prev, newFlow: { ...data } }));
-  //     onNext();
-  //   };
 
   const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
   const displayAction =
@@ -126,7 +104,6 @@ export const FlowForm = forwardRef(({ name, isReusable }: FlowFormProps, ref) =>
       ? true
       : false;
 
-  console.log(name, name === "evolve");
   return (
     <FormProvider {...useFormMethods}>
       <form style={{ height: "100%" }}>

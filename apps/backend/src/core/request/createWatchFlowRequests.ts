@@ -1,12 +1,12 @@
 import { FlowType } from "@prisma/client";
 
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import { newRequest } from "./newRequest";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { GroupWatchFlowFields } from "../flow/flowTypes/groupWatchFlows/GroupWatchFlowFields";
 import { PermissionPrismaType, permissionInclude } from "../permission/permissionPrismaTypes";
 
 // creates watch flow requests for a flow
@@ -108,7 +108,7 @@ export const createWatchFlowRequests = async ({
         try {
           const watchFlowField = (
             flow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? []
-          ).find((field) => field.Field.name === (GroupWatchFlowFields.WatchFlow as string));
+          ).find((field) => field.Field.systemType === SystemFieldType.WatchFlow);
 
           if (!watchFlowField) return;
 

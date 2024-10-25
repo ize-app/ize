@@ -1,8 +1,8 @@
-import { FlowType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { getUserEntities } from "@/core/entity/getUserEntities";
 import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
-import { NewFlowWithEvolveArgs } from "@/graphql/generated/resolver-types";
+import { FlowType, NewFlowWithEvolveArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newFlowVersion } from "./newFlowVersion";
@@ -76,6 +76,7 @@ export const newFlow = async ({
     evolveFlowId,
     active: true,
     draftEvolveFlowVersionId: null,
+    type,
   });
 
   return flow.id;

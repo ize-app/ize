@@ -1,3 +1,4 @@
+import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
 import {
   ActionArgs,
   ActionType,
@@ -6,39 +7,18 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   NewFlowArgs,
   NewStepArgs,
   ResultArgs,
   ResultType,
+  SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 
-import { EvolveFlowFields } from "./EvolveFlowFields";
-
 const requestFieldSetArgs: FieldArgs[] = [
-  {
-    type: FieldType.FreeInput,
-    fieldId: "proposed",
-    isInternal: false,
-    freeInputDataType: FieldDataType.FlowVersionId,
-    name: EvolveFlowFields.ProposedFlow,
-    required: true,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: "current",
-    isInternal: false,
-    freeInputDataType: FieldDataType.FlowVersionId,
-    name: EvolveFlowFields.CurrentFlow,
-    required: true,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: "description",
-    isInternal: false,
-    freeInputDataType: FieldDataType.String,
-    name: EvolveFlowFields.Description,
-    required: false,
-  },
+  systemFieldDefaults[SystemFieldType.EvolveFlowProposed],
+  systemFieldDefaults[SystemFieldType.EvolveFlowCurrent],
+  systemFieldDefaults[SystemFieldType.EvolveFlowDescription],
 ];
 
 export const createEvolveFlowFlowArgs = ({
@@ -49,6 +29,7 @@ export const createEvolveFlowFlowArgs = ({
   creatorEntityId: string;
 }): NewFlowArgs => {
   return {
+    type: FlowType.Evolve,
     name: "Evolve flow",
     fieldSet: {
       locked: true,

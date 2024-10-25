@@ -30,6 +30,14 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
   const form1Ref = useRef<FlowFormRef>(null);
   const form2Ref = useRef<FlowFormRef>(null);
 
+  // useEffect(() => {
+  //   console.log("form1Ref.current", form1Ref.current);
+  // }, [form1Ref]);
+
+  // useEffect(() => {
+  //   console.log("form2Ref.current", form2Ref.current);
+  // }, [form2Ref]);
+
   const handleAllFormsSubmit = () => {
     if (!form1Ref.current) console.log("form1Ref.current is null");
     if (form1Ref.current) {

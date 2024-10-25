@@ -1,6 +1,11 @@
 import * as z from "zod";
 
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import {
+  FieldDataType,
+  FieldOptionsSelectionType,
+  FieldType,
+  SystemFieldType,
+} from "@/graphql/generated/graphql";
 
 import { evaluateMultiTypeInput } from "../../formValidation/field";
 
@@ -80,6 +85,7 @@ export const fieldSchema = z
       type: z.literal(FieldType.FreeInput),
       fieldId: z.string(),
       name: z.string().min(1),
+      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),
       isInternal: z.boolean().default(false),
       freeInputDataType: z.nativeEnum(FieldDataType),
@@ -88,6 +94,7 @@ export const fieldSchema = z
       type: z.literal(FieldType.Options),
       fieldId: z.string(),
       name: z.string().min(1),
+      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),
       isInternal: z.boolean().default(false),
       optionsConfig: fieldOptionsSchema,

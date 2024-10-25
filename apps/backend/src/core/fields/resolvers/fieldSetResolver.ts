@@ -1,4 +1,4 @@
-import { DefaultEvolveGroupValues } from "@/core/flow/resolvers/flowResolver";
+import { DefaultEvolveGroupValues } from "@/core/flow/helpers/getDefaultFlowValues";
 import {
   Field,
   FieldDataType,
@@ -9,6 +9,7 @@ import {
   Option,
   Options,
   ResultConfig,
+  SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -36,9 +37,11 @@ export const fieldSetResolver = ({
         isInternal: f.Field.isInternal,
         fieldId: f.Field.id,
         name: f.Field.name,
+        systemType: f.Field.systemType as SystemFieldType,
         required: f.Field.required,
         dataType: f.Field.freeInputDataType as FieldDataType,
-        defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
+        defaultAnswer:
+          defaultValues && f.Field.systemType ? defaultValues[f.Field.systemType] : undefined,
       };
       return freeInput;
     } else if ((f.Field.type as FieldType) === FieldType.Options) {
@@ -115,6 +118,7 @@ export const fieldSetResolver = ({
         isInternal: f.Field.isInternal,
         name: f.Field.name,
         required: f.Field.required,
+        systemType: f.Field.systemType as SystemFieldType,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
         linkedResultOptions,
         previousStepOptions: config.previousStepOptions,

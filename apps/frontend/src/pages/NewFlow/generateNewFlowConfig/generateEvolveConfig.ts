@@ -12,22 +12,19 @@ import {
   FieldDataType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   ResultType,
+  SystemFieldType,
 } from "@/graphql/generated/graphql";
-
-export enum EvolveFlowFields {
-  ProposedFlow = "Proposed flow",
-  CurrentFlow = "Current flow",
-  Description = "Description",
-}
 
 const requestFieldSetArgs: FieldSchemaType[] = [
   {
     type: FieldType.FreeInput,
     fieldId: crypto.randomUUID(),
     isInternal: false,
+    systemType: SystemFieldType.EvolveFlowProposed,
     freeInputDataType: FieldDataType.FlowVersionId,
-    name: EvolveFlowFields.ProposedFlow,
+    name: "Proposed flow",
     required: true,
   },
   {
@@ -35,7 +32,8 @@ const requestFieldSetArgs: FieldSchemaType[] = [
     fieldId: crypto.randomUUID(),
     isInternal: false,
     freeInputDataType: FieldDataType.FlowVersionId,
-    name: EvolveFlowFields.CurrentFlow,
+    systemType: SystemFieldType.EvolveFlowCurrent,
+    name: "Current flow",
     required: true,
   },
   {
@@ -43,7 +41,8 @@ const requestFieldSetArgs: FieldSchemaType[] = [
     fieldId: crypto.randomUUID(),
     isInternal: false,
     freeInputDataType: FieldDataType.String,
-    name: EvolveFlowFields.Description,
+    systemType: SystemFieldType.EvolveFlowDescription,
+    name: "Description of changes",
     required: false,
   },
 ];
@@ -102,6 +101,7 @@ export const generateEvolveConfig = ({
   };
 
   return {
+    type: FlowType.Evolve,
     name: "Evolve flow",
     fieldSet: {
       locked: true,
