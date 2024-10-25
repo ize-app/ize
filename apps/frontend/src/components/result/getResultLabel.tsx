@@ -15,6 +15,7 @@ interface ResultLabelFlowProps {
 export type ResultLabelProps = ResultLabelConfigProps | ResultLabelFlowProps;
 
 export const getResultLabel = ({ type, result }: ResultLabelProps) => {
+  if (!type || !result) return "Collaborative step";
   let resultType: ResultType;
   let decisionType: DecisionType | null;
   if (type === "resultConfig") {
@@ -29,7 +30,7 @@ export const getResultLabel = ({ type, result }: ResultLabelProps) => {
     case ResultType.Decision: {
       switch (decisionType) {
         case DecisionType.Ai:
-          return "AI decides";
+          return "Let AI decide";
         case DecisionType.NumberThreshold:
           return "Vote to approve";
         case DecisionType.PercentageThreshold:
@@ -37,7 +38,7 @@ export const getResultLabel = ({ type, result }: ResultLabelProps) => {
         case DecisionType.WeightedAverage:
           return "Prioritize options";
         default:
-          return "Let AI decide";
+          return "Decision";
       }
     }
     case ResultType.Ranking:
@@ -47,6 +48,6 @@ export const getResultLabel = ({ type, result }: ResultLabelProps) => {
     case ResultType.LlmSummaryList:
       return "Summarize options w/ AI";
     default:
-      return "Result";
+      return "Collaborative step";
   }
 };

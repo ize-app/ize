@@ -73,7 +73,7 @@ export const reusableSchema = z.object({
 export const flowWithEvolveFlowSchema = z.object({
   reusable: z.boolean(),
   flow: flowSchema,
-  evolve: flowSchema,
+  evolve: flowSchema.optional(),
 });
 
 export const newFlowFormSchema = z.object({

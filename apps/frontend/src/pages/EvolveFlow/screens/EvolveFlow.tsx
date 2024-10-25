@@ -80,7 +80,6 @@ export const EvolveFlow = () => {
   const onComplete = async () => {
     try {
       if (!me?.user.id) throw Error("Missing user Id");
-      console.log("new evolve flow args", createNewFlowArgs(formState.new.evolve, me?.user.id));
       await mutate({
         variables: {
           request: {
@@ -89,7 +88,9 @@ export const EvolveFlow = () => {
             description: formState.requestDescription,
             new: {
               flow: createNewFlowArgs(formState.new.flow, me?.user.id),
-              evolve: createNewFlowArgs(formState.new.evolve, me?.user.id),
+              evolve: formState.new?.evolve
+                ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+                : undefined,
               reusable: formState.new.reusable,
             },
           },

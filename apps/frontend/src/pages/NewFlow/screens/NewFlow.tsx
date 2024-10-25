@@ -37,9 +37,10 @@ export const NewFlow = () => {
         variables: {
           new: {
             flow: createNewFlowArgs(formState.new.flow, me?.user.id),
-            evolve: formState.new.reusable
-              ? createNewFlowArgs(formState.new.evolve, me?.user.id)
-              : undefined,
+            evolve:
+              formState.new.reusable && formState.new?.evolve
+                ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+                : undefined,
             reusable: formState.new.reusable,
           },
         },
