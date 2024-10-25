@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import WarningIcon from "@mui/icons-material/Warning";
 import Box from "@mui/material/Box";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import TabPanel from "@/components/Tables/TabPanel";
@@ -17,27 +17,27 @@ import { PermissionType } from "../formValidation/permission";
 import { defaultFlowFormValues } from "../helpers/getDefaultFormValues";
 
 export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
-  const form1Ref = useRef<FlowFormRef>(null);
-  const form2Ref = useRef<FlowFormRef>(null);
-  const MemoizedFlowForm = memo(FlowForm);
+  // refs expose methods of child forms
+  const flowFormRef = useRef<FlowFormRef>(null);
+  const evolveFormRef = useRef<FlowFormRef>(null);
 
   return (
     <FullConfig
       evolve={evolve}
-      form1Ref={form1Ref}
-      form2Ref={form2Ref}
+      flowFormRef={flowFormRef}
+      evolveFormRef={evolveFormRef}
       // tabs={tabs}
       flowForm={
-        <MemoizedFlowForm
-          ref={form1Ref}
+        <FlowForm
+          ref={flowFormRef}
           name="flow"
           isReusable={true}
           defaultFormValues={{ ...defaultFlowFormValues }}
         />
       }
       evolveForm={
-        <MemoizedFlowForm
-          ref={form2Ref}
+        <FlowForm
+          ref={evolveFormRef}
           name="evolve"
           isReusable={true}
           defaultFormValues={generateEvolveConfig({
@@ -51,15 +51,15 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
 
 export const FullConfig = ({
   evolve = false,
-  form1Ref,
-  form2Ref,
+  flowFormRef,
+  evolveFormRef,
   flowForm,
   evolveForm,
   // tabs,
 }: {
   evolve?: boolean;
-  form1Ref: React.RefObject<FlowFormRef>;
-  form2Ref: React.RefObject<FlowFormRef>;
+  flowFormRef: React.RefObject<FlowFormRef>;
+  evolveFormRef: React.RefObject<FlowFormRef>;
   flowForm: React.ReactElement;
   evolveForm: React.ReactElement;
   // tabs: TabProps[];
@@ -76,26 +76,27 @@ export const FullConfig = ({
     resolver: zodResolver(reusableSchema),
     shouldUnregister: false,
   });
-  // const [evolveFlowError, setEvolveFlowError] = useState(false);
+
   const isReusable = formMethods.watch("reusable");
-  // const isReusable = true;
 
   useEffect(() => {
     if (!isReusable) setTabIndex(0);
   }, [isReusable]);
 
-  const handleAllFormsSubmit = useCallback(async () => {
+  const handleAllFormsSubmit = async () => {
     const isReusable = formMethods.getValues("reusable");
-    if (form1Ref.current && form2Ref.current) {
-      const { isValid: flowIsValid, values: flow } = await form1Ref.current.validate();
-      const { isValid: evolveIsValid, values: evolve } = isReusable
-        ? await form2Ref.current.validate()
-        : { isValid: true, values: undefined };
+    if (flowFormRef.current && (isReusable ? evolveFormRef.current : true)) {
+      const { isValid: flowIsValid, values: flow } = await flowFormRef.current.validate();
+      const { isValid: evolveIsValid, values: evolve } =
+        isReusable && evolveFormRef.current
+          ? await evolveFormRef.current.validate()
+          : { isValid: true, values: undefined };
 
       const reusableFormIsValid = await formMethods.trigger();
-      const reusableForm = formMethods.getValues();
+      const reusableForm = reusableSchema.parse(formMethods.getValues());
 
       if (flowIsValid && evolveIsValid && reusableFormIsValid) {
+        // didn't call setFormState within each child form to avoid unnecessary re-renders
         setFormState((prev) => ({
           ...prev,
           new: { flow, evolve, reusable: reusableForm.reusable },
@@ -106,7 +107,7 @@ export const FullConfig = ({
         setEvolveError(!evolveIsValid);
       }
     }
-  }, []);
+  };
 
   const tabs: TabProps[] = [
     {

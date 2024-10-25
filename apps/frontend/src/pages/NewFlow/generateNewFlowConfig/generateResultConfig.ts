@@ -66,7 +66,7 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
   const base = {
     resultId: crypto.randomUUID(),
     fieldId: arg.fieldId,
-    minimumAnswers: 2,
+    minimumAnswers: 1,
   };
   switch (arg.type) {
     case ResultType.Decision: {

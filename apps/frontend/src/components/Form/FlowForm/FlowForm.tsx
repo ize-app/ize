@@ -70,12 +70,14 @@ export const FlowForm = forwardRef(
       name: fieldArrayName,
     });
 
+    // allows parent component to call validate on this component
     useImperativeHandle(
       ref,
       (): FlowFormRef => ({
         validate: async () => {
           const isValid = await useFormMethods.trigger();
-          const values = useFormMethods.getValues();
+          const values = flowSchema.parse(useFormMethods.getValues());
+
           return { isValid, values };
         },
       }),
