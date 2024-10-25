@@ -1,14 +1,7 @@
 import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { WebhookPayload } from "@/graphql/generated/resolver-types";
 
 // TODO: create the payload for the webhook
-export const callWebhook = async ({
-  uri,
-  payload,
-}: {
-  uri: string;
-  payload?: WebhookPayload | RequestPayload;
-}) => {
+export const callWebhook = async ({ uri, payload }: { uri: string; payload?: RequestPayload }) => {
   // attempt to callWebhook with Results from previous step
   const response = await fetch(uri, {
     method: "POST",

@@ -1109,23 +1109,6 @@ export type WebhookFieldAnswer = {
   webhookId?: Maybe<Scalars['String']['output']>;
 };
 
-export type WebhookPayload = {
-  __typename?: 'WebhookPayload';
-  createdAt: Scalars['String']['output'];
-  flowName: Scalars['String']['output'];
-  requestFields: Array<WebhookValue>;
-  requestName: Scalars['String']['output'];
-  requestUrl: Scalars['String']['output'];
-  results: Array<WebhookValue>;
-};
-
-export type WebhookValue = {
-  __typename?: 'WebhookValue';
-  fieldName: Scalars['String']['output'];
-  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
-  value?: Maybe<Scalars['String']['output']>;
-};
-
 export type WebhookValueArgs = {
   fieldName: Scalars['String']['input'];
   fieldType: FieldType;
@@ -1347,8 +1330,6 @@ export type ResolversTypes = {
   UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   WatchFilter: WatchFilter;
   WebhookFieldAnswer: ResolverTypeWrapper<WebhookFieldAnswer>;
-  WebhookPayload: ResolverTypeWrapper<WebhookPayload>;
-  WebhookValue: ResolverTypeWrapper<WebhookValue>;
   WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
@@ -1466,8 +1447,6 @@ export type ResolversParentTypes = {
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['FieldAnswer'], creator: ResolversParentTypes['Entity'] };
   UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   WebhookFieldAnswer: WebhookFieldAnswer;
-  WebhookPayload: WebhookPayload;
-  WebhookValue: WebhookValue;
   WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
@@ -2069,23 +2048,6 @@ export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type WebhookPayloadResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookPayload'] = ResolversParentTypes['WebhookPayload']> = {
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestFields?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
-  requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  results?: Resolver<Array<ResolversTypes['WebhookValue']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type WebhookValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookValue'] = ResolversParentTypes['WebhookValue']> = {
-  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  optionSelections?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type Resolvers<ContextType = GraphqlRequestContext> = {
   Action?: ActionResolvers<ContextType>;
   ActionExecution?: ActionExecutionResolvers<ContextType>;
@@ -2158,7 +2120,5 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   UserFieldAnswer?: UserFieldAnswerResolvers<ContextType>;
   UserFieldAnswers?: UserFieldAnswersResolvers<ContextType>;
   WebhookFieldAnswer?: WebhookFieldAnswerResolvers<ContextType>;
-  WebhookPayload?: WebhookPayloadResolvers<ContextType>;
-  WebhookValue?: WebhookValueResolvers<ContextType>;
 };
 

@@ -71,21 +71,6 @@ input TestWebhookArgs {
   results: [WebhookValueArgs!]!
 }
 
-type WebhookPayload {
-  flowName: String!
-  requestName: String!
-  createdAt: String!
-  requestFields: [WebhookValue!]!
-  results: [WebhookValue!]!
-  requestUrl: String!
-}
-
-type WebhookValue {
-  fieldName: String!
-  value: String
-  optionSelections: [String!]
-}
-
 input WebhookValueArgs {
   fieldName: String!
   fieldType: FieldType!

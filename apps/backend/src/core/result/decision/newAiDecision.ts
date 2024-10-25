@@ -42,7 +42,7 @@ export const newAiDecision = async ({
 
   if (!field) throw Error("Field is undefined");
 
-  const hasResponse = fieldAnswers.length > 0;
+  const hasResponse = (fieldAnswers ?? []).length > 0;
 
   const requestContext = createRequestContextPrompt({
     requestName,
@@ -56,7 +56,11 @@ export const newAiDecision = async ({
 
   prompts.push({ role: "system", content: decisionPrompt });
 
-  if (hasResponse) prompts.push({ role: "user", content: createResponsesPrompt({ fieldAnswers }) });
+  if (hasResponse)
+    prompts.push({
+      role: "user",
+      content: createResponsesPrompt({ fieldAnswers: fieldAnswers ?? [] }),
+    });
 
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo

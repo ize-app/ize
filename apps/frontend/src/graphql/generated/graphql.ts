@@ -1108,23 +1108,6 @@ export type WebhookFieldAnswer = {
   webhookId?: Maybe<Scalars['String']['output']>;
 };
 
-export type WebhookPayload = {
-  __typename?: 'WebhookPayload';
-  createdAt: Scalars['String']['output'];
-  flowName: Scalars['String']['output'];
-  requestFields: Array<WebhookValue>;
-  requestName: Scalars['String']['output'];
-  requestUrl: Scalars['String']['output'];
-  results: Array<WebhookValue>;
-};
-
-export type WebhookValue = {
-  __typename?: 'WebhookValue';
-  fieldName: Scalars['String']['output'];
-  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
-  value?: Maybe<Scalars['String']['output']>;
-};
-
 export type WebhookValueArgs = {
   fieldName: Scalars['String']['input'];
   fieldType: FieldType;
@@ -2763,23 +2746,6 @@ export type WebhookFieldAnswer = {
   originalUri?: Maybe<Scalars['String']['output']>;
   uri: Scalars['String']['output'];
   webhookId?: Maybe<Scalars['String']['output']>;
-};
-
-export type WebhookPayload = {
-  __typename?: 'WebhookPayload';
-  createdAt: Scalars['String']['output'];
-  flowName: Scalars['String']['output'];
-  requestFields: Array<WebhookValue>;
-  requestName: Scalars['String']['output'];
-  requestUrl: Scalars['String']['output'];
-  results: Array<WebhookValue>;
-};
-
-export type WebhookValue = {
-  __typename?: 'WebhookValue';
-  fieldName: Scalars['String']['output'];
-  optionSelections?: Maybe<Array<Scalars['String']['output']>>;
-  value?: Maybe<Scalars['String']['output']>;
 };
 
 export type WebhookValueArgs = {

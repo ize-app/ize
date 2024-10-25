@@ -6,6 +6,7 @@ import { Field, UserFieldAnswers } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { createRequestUrl } from "./createRequestUrl";
 import { getRequestResults } from "./getRequestResults";
 import { getRequestTriggerFieldAnswers } from "./getRequestTriggerFieldAnswers";
 
@@ -14,7 +15,8 @@ export interface RequestPayload {
   flowName: string;
   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
   results: ReturnType<typeof getRequestResults>;
-  fieldAnswers: UserFieldAnswers[];
+  requestUrl: string;
+  fieldAnswers?: UserFieldAnswers[];
   field?: Field | undefined; // General return type that covers both overloads
 }
 
@@ -74,6 +76,7 @@ export async function createRequestPayload({
   const flowName = request.flow.name;
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
   const results = getRequestResults({ request });
+  const requestUrl = createRequestUrl({ requestId: request.requestId });
 
-  return { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers };
+  return { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers, requestUrl };
 }
