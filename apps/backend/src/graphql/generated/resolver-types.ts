@@ -170,7 +170,6 @@ export type DiscordServerOnboarded = {
 export type EntitiesFieldAnswer = {
   __typename?: 'EntitiesFieldAnswer';
   entities: Array<Entity>;
-  fieldId: Scalars['String']['output'];
 };
 
 export type Entity = Group | Identity | User;
@@ -328,7 +327,6 @@ export enum FlowType {
 
 export type FlowsFieldAnswer = {
   __typename?: 'FlowsFieldAnswer';
-  fieldId: Scalars['String']['output'];
   flows: Array<FlowReference>;
 };
 
@@ -345,7 +343,6 @@ export type FreeInput = {
 
 export type FreeInputFieldAnswer = {
   __typename?: 'FreeInputFieldAnswer';
-  fieldId: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -722,7 +719,6 @@ export type Option = {
 
 export type OptionFieldAnswer = {
   __typename?: 'OptionFieldAnswer';
-  fieldId: Scalars['String']['output'];
   selections: Array<OptionFieldAnswerSelection>;
 };
 
@@ -889,7 +885,7 @@ export type Request = {
   name: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
   requestSteps: Array<RequestStep>;
-  triggerFieldAnswers: Array<FieldAnswer>;
+  triggerFieldAnswers: Array<TriggerFieldAnswer>;
 };
 
 export type RequestDefinedOptionsArgs = {
@@ -904,7 +900,7 @@ export type RequestStep = {
   expirationDate: Scalars['String']['output'];
   fieldSet: FieldSet;
   requestStepId: Scalars['String']['output'];
-  responseFieldAnswers: Array<UserFieldAnswers>;
+  responseFieldAnswers: Array<ResponseFieldAnswers>;
   results: Array<ResultGroup>;
   status: RequestStepStatus;
   userResponses: Array<Response>;
@@ -971,6 +967,12 @@ export type ResponseConfigArgs = {
   canBeManuallyEnded: Scalars['Boolean']['input'];
   expirationSeconds: Scalars['Int']['input'];
   permission: PermissionArgs;
+};
+
+export type ResponseFieldAnswers = {
+  __typename?: 'ResponseFieldAnswers';
+  answers: Array<UserFieldAnswer>;
+  field: Field;
 };
 
 export type Result = {
@@ -1062,6 +1064,12 @@ export type TriggerConfigArgs = {
   permission: PermissionArgs;
 };
 
+export type TriggerFieldAnswer = {
+  __typename?: 'TriggerFieldAnswer';
+  answer: UserFieldAnswer;
+  field: Field;
+};
+
 export type TriggerStep = {
   __typename?: 'TriggerStep';
   filterOption?: Maybe<Option>;
@@ -1088,12 +1096,6 @@ export type UserFieldAnswer = {
   creator: Entity;
 };
 
-export type UserFieldAnswers = {
-  __typename?: 'UserFieldAnswers';
-  answers: Array<UserFieldAnswer>;
-  fieldId: Scalars['String']['output'];
-};
-
 export enum WatchFilter {
   All = 'All',
   Unwatched = 'Unwatched',
@@ -1102,7 +1104,6 @@ export enum WatchFilter {
 
 export type WebhookFieldAnswer = {
   __typename?: 'WebhookFieldAnswer';
-  fieldId: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   originalUri?: Maybe<Scalars['String']['output']>;
   uri: Scalars['String']['output'];
@@ -1300,9 +1301,9 @@ export type ResolversTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Ranking>;
-  Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['FieldAnswer']> }>;
+  Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['TriggerFieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['UserFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
+  RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatus: ResolverTypeWrapper<RequestStepStatus>;
   RequestStepStatusFilter: RequestStepStatusFilter;
@@ -1310,6 +1311,7 @@ export type ResolversTypes = {
   Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversTypes['FieldAnswer']>, creator: ResolversTypes['Entity'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   ResponseConfigArgs: ResponseConfigArgs;
+  ResponseFieldAnswers: ResolverTypeWrapper<Omit<ResponseFieldAnswers, 'answers' | 'field'> & { answers: Array<ResolversTypes['UserFieldAnswer']>, field: ResolversTypes['Field'] }>;
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
@@ -1323,11 +1325,11 @@ export type ResolversTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerFieldAnswer: ResolverTypeWrapper<Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversTypes['UserFieldAnswer'], field: ResolversTypes['Field'] }>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
   UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversTypes['FieldAnswer'], creator: ResolversTypes['Entity'] }>;
-  UserFieldAnswers: ResolverTypeWrapper<Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversTypes['UserFieldAnswer']> }>;
   WatchFilter: WatchFilter;
   WebhookFieldAnswer: ResolverTypeWrapper<WebhookFieldAnswer>;
   WebhookValueArgs: WebhookValueArgs;
@@ -1423,14 +1425,15 @@ export type ResolversParentTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: {};
   Ranking: Ranking;
-  Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['FieldAnswer']> };
+  Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['TriggerFieldAnswer']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
-  RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['UserFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
+  RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepStatus: RequestStepStatus;
   RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
   Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Entity'] };
   ResponseConfig: Omit<ResponseConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   ResponseConfigArgs: ResponseConfigArgs;
+  ResponseFieldAnswers: Omit<ResponseFieldAnswers, 'answers' | 'field'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']>, field: ResolversParentTypes['Field'] };
   Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
@@ -1441,11 +1444,11 @@ export type ResolversParentTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: Omit<TriggerConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerFieldAnswer: Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversParentTypes['UserFieldAnswer'], field: ResolversParentTypes['Field'] };
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
   User: User;
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['FieldAnswer'], creator: ResolversParentTypes['Entity'] };
-  UserFieldAnswers: Omit<UserFieldAnswers, 'answers'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']> };
   WebhookFieldAnswer: WebhookFieldAnswer;
   WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
@@ -1550,7 +1553,6 @@ export type DiscordServerOnboardedResolvers<ContextType = GraphqlRequestContext,
 
 export type EntitiesFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EntitiesFieldAnswer'] = ResolversParentTypes['EntitiesFieldAnswer']> = {
   entities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1631,7 +1633,6 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type FlowsFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowsFieldAnswer'] = ResolversParentTypes['FlowsFieldAnswer']> = {
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flows?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1648,7 +1649,6 @@ export type FreeInputResolvers<ContextType = GraphqlRequestContext, ParentType e
 };
 
 export type FreeInputFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FreeInputFieldAnswer'] = ResolversParentTypes['FreeInputFieldAnswer']> = {
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1837,7 +1837,6 @@ export type OptionResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type OptionFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['OptionFieldAnswer'] = ResolversParentTypes['OptionFieldAnswer']> = {
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   selections?: Resolver<Array<ResolversTypes['OptionFieldAnswerSelection']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1907,7 +1906,7 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestSteps?: Resolver<Array<ResolversTypes['RequestStep']>, ParentType, ContextType>;
-  triggerFieldAnswers?: Resolver<Array<ResolversTypes['FieldAnswer']>, ParentType, ContextType>;
+  triggerFieldAnswers?: Resolver<Array<ResolversTypes['TriggerFieldAnswer']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1917,7 +1916,7 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fieldSet?: Resolver<ResolversTypes['FieldSet'], ParentType, ContextType>;
   requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  responseFieldAnswers?: Resolver<Array<ResolversTypes['UserFieldAnswers']>, ParentType, ContextType>;
+  responseFieldAnswers?: Resolver<Array<ResolversTypes['ResponseFieldAnswers']>, ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['ResultGroup']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['RequestStepStatus'], ParentType, ContextType>;
   userResponses?: Resolver<Array<ResolversTypes['Response']>, ParentType, ContextType>;
@@ -1968,6 +1967,12 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ResponseFieldAnswersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseFieldAnswers'] = ResolversParentTypes['ResponseFieldAnswers']> = {
+  answers?: Resolver<Array<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
@@ -2011,6 +2016,12 @@ export type TriggerConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TriggerFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerFieldAnswer'] = ResolversParentTypes['TriggerFieldAnswer']> = {
+  answer?: Resolver<ResolversTypes['UserFieldAnswer'], ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TriggerStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerStep'] = ResolversParentTypes['TriggerStep']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -2033,14 +2044,7 @@ export type UserFieldAnswerResolvers<ContextType = GraphqlRequestContext, Parent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserFieldAnswersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UserFieldAnswers'] = ResolversParentTypes['UserFieldAnswers']> = {
-  answers?: Resolver<Array<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['WebhookFieldAnswer'] = ResolversParentTypes['WebhookFieldAnswer']> = {
-  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   originalUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2109,16 +2113,17 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
+  ResponseFieldAnswers?: ResponseFieldAnswersResolvers<ContextType>;
   Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
   ResultGroup?: ResultGroupResolvers<ContextType>;
   ResultItem?: ResultItemResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerConfig?: TriggerConfigResolvers<ContextType>;
+  TriggerFieldAnswer?: TriggerFieldAnswerResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserFieldAnswer?: UserFieldAnswerResolvers<ContextType>;
-  UserFieldAnswers?: UserFieldAnswersResolvers<ContextType>;
   WebhookFieldAnswer?: WebhookFieldAnswerResolvers<ContextType>;
 };
 

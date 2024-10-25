@@ -1,31 +1,32 @@
 import Box from "@mui/material/Box";
 
-import { FieldAnswerFragment, FieldSetFragment } from "@/graphql/generated/graphql";
+import { FieldSetFragment, TriggerFieldAnswerFragment } from "@/graphql/generated/graphql";
 
 import { Field } from "./Field";
 
-export const FieldSet = ({
+export const TriggerFieldSet = ({
   fieldSet: fieldSet,
   fieldAnswers,
   onlyShowSelections = false,
 }: {
   fieldSet: FieldSetFragment;
-  fieldAnswers?: FieldAnswerFragment[];
+  fieldAnswers?: TriggerFieldAnswerFragment[];
   onlyShowSelections?: boolean;
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {fieldSet.fields.map((field) => {
-        let fieldAnswer: FieldAnswerFragment | undefined;
+        let triggerFieldAnswer: TriggerFieldAnswerFragment | undefined;
         if (fieldAnswers) {
-          fieldAnswer = fieldAnswers.find((fa) => fa.fieldId === field.fieldId) ?? undefined;
+          triggerFieldAnswer =
+            fieldAnswers.find((fa) => fa.field.fieldId === field.fieldId) ?? undefined;
         }
 
         return (
           <Field
             key={field.fieldId}
             field={field}
-            fieldAnswer={fieldAnswer}
+            fieldAnswer={triggerFieldAnswer?.answer.answer ?? undefined}
             onlyShowSelections={onlyShowSelections}
           />
         );

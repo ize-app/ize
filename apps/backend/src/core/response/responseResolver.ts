@@ -1,18 +1,32 @@
 import { GraphqlRequestContext } from "@/graphql/context";
-import { Response, UserFieldAnswer, UserFieldAnswers } from "@/graphql/generated/resolver-types";
+import {
+  Field,
+  Response,
+  ResponseFieldAnswers,
+  UserFieldAnswer,
+} from "@/graphql/generated/resolver-types";
 
 import { ResponsePrismaType } from "./responsePrismaTypes";
 import { entityResolver } from "../entity/entityResolver";
 import { fieldAnswerResolver } from "../fields/resolvers/fieldAnswerResolver";
 
-export const responsesResolver = async (
-  responses: ResponsePrismaType[],
-  context: GraphqlRequestContext,
-): Promise<[UserFieldAnswers[], Response[]]> => {
-  const fieldAnswers: { [key: string]: UserFieldAnswer[] } = {};
+export const responsesResolver = async ({
+  responses,
+  fields,
+  context,
+}: {
+  responses: ResponsePrismaType[];
+  fields: Field[];
+  context: GraphqlRequestContext;
+}): Promise<[ResponseFieldAnswers[], Response[]]> => {
+  const responseFieldAnswers: ResponseFieldAnswers[] = fields.map((f) => {
+    return { field: f, answers: [] };
+  });
+
   const userResponses: Response[] = [];
 
   await Promise.all(
+    // go thorugh each response
     responses.map(async (response) => {
       const { createdAt, CreatorEntity, Answers } = response;
       const creator = entityResolver({ entity: CreatorEntity });
@@ -36,22 +50,22 @@ export const responsesResolver = async (
         Answers.map(async (a) => {
           const { fieldId } = a;
           const answer = await fieldAnswerResolver({ fieldAnswer: a, context });
-          const payload: UserFieldAnswer = {
+          const userAnswer: UserFieldAnswer = {
             answer,
             creator,
             createdAt: createdAt.toISOString(),
           };
-          if (fieldAnswers[fieldId]) fieldAnswers[fieldId].push(payload);
-          else fieldAnswers[fieldId] = [payload];
+
+          const answersArr = responseFieldAnswers.find((f) => f.field.fieldId === fieldId)?.answers;
+          if (!answersArr)
+            throw new Error(
+              `Response ${response.id} has answer for field ${fieldId} but field is not part of request step`,
+            );
+          answersArr.push(userAnswer);
         }),
       );
     }),
   );
 
-  const userFieldAnswers: UserFieldAnswers[] = Object.keys(fieldAnswers).map((key) => ({
-    fieldId: key,
-    answers: fieldAnswers[key],
-  }));
-
-  return [userFieldAnswers, userResponses];
+  return [responseFieldAnswers, userResponses];
 };

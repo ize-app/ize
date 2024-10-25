@@ -97,27 +97,22 @@ union FieldAnswer =
   | WebhookFieldAnswer
 
 type OptionFieldAnswer {
-  fieldId: String!
   selections: [OptionFieldAnswerSelection!]!
 }
 
 type FreeInputFieldAnswer {
-  fieldId: String!
   value: String!
 }
 
 type EntitiesFieldAnswer {
-  fieldId: String!
   entities: [Entity!]!
 }
 
 type FlowsFieldAnswer {
-  fieldId: String!
   flows: [FlowReference!]!
 }
 
 type WebhookFieldAnswer {
-  fieldId: String!
   uri: String!
   webhookId: String
   originalUri: String
@@ -130,9 +125,14 @@ type UserFieldAnswer {
   answer: FieldAnswer!
 }
 
-type UserFieldAnswers {
-  fieldId: String!
+type ResponseFieldAnswers {
+  field: Field!
   answers: [UserFieldAnswer!]!
+}
+
+type TriggerFieldAnswer {
+  field: Field!
+  answer: UserFieldAnswer!
 }
 
 # later will use this type to add option free inputs

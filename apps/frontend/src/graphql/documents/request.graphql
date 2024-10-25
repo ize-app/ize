@@ -53,7 +53,7 @@ fragment Request on Request {
     ...Flow
   }
   triggerFieldAnswers {
-    ...FieldAnswer
+    ...TriggerFieldAnswer
   }
   requestId
   currentStepIndex
@@ -69,7 +69,7 @@ fragment RequestStep on RequestStep {
   createdAt
   expirationDate
   responseFieldAnswers {
-    ...UserFieldAnswers
+    ...ResponseFieldAnswers
   }
   fieldSet {
     ...FieldSet

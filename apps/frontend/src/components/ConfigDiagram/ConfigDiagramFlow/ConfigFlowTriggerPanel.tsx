@@ -6,7 +6,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { FieldSet } from "@/components/Field/Fields";
+import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { FieldSetFragment, PermissionFragment } from "@/graphql/generated/graphql";
 
 import { Permissions } from "../../Permissions";
@@ -36,7 +36,7 @@ export const ConfigFlowTriggerPanel = ({
             <Typography variant="description">
               The following fields must be answered to trigger the flow:
             </Typography>
-            <FieldSet fieldSet={triggerFieldSet} />
+            <TriggerFieldSet fieldSet={triggerFieldSet} />
           </PanelAccordion>
         )}
       </ConfigurationPanel>

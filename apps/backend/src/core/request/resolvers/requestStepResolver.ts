@@ -3,7 +3,7 @@ import { responsesResolver } from "@/core/response/responseResolver";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
 import { ResultGroupPrismaType } from "@/core/result/resultPrismaTypes";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { Field, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
+import { Field, FieldSet, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
 
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
@@ -26,17 +26,24 @@ export const requestStepResolver = async ({
   context: GraphqlRequestContext;
   requestFinal: boolean;
 }): Promise<RequestStep> => {
-  const [responseFieldAnswers, userResponses] = await responsesResolver(reqStep.Responses, context);
+  const fieldSet: FieldSet = fieldSetResolver({
+    fieldSet: step.FieldSet,
+    requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
+    responseFieldsCache,
+    resultConfigsCache,
+  });
+
+  const [responseFieldAnswers, userResponses] = await responsesResolver({
+    responses: reqStep.Responses,
+    fields: fieldSet.fields,
+    context,
+  });
+  
   const res: RequestStep = {
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),
     expirationDate: reqStep.expirationDate.toISOString(),
-    fieldSet: fieldSetResolver({
-      fieldSet: step.FieldSet,
-      requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
-      responseFieldsCache,
-      resultConfigsCache,
-    }),
+    fieldSet,
     actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action, requestFinal),
     responseFieldAnswers,
     userResponses,

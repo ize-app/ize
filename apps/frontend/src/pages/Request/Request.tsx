@@ -8,7 +8,7 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
-import { FieldSet } from "@/components/Field/Fields";
+import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -225,7 +225,7 @@ export const Request = () => {
                       padding: "12px 16px 12px",
                     }}
                   >
-                    <FieldSet
+                    <TriggerFieldSet
                       fieldSet={request.flow.fieldSet}
                       fieldAnswers={request.triggerFieldAnswers}
                       onlyShowSelections={true}

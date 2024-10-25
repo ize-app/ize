@@ -71,16 +71,17 @@ type Request {
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!
-  triggerFieldAnswers: [FieldAnswer!]!
+  triggerFieldAnswers: [TriggerFieldAnswer!]!
   final: Boolean!
   requestSteps: [RequestStep!]!
 }
+
 
 type RequestStep {
   requestStepId: String!
   createdAt: String!
   expirationDate: String!
-  responseFieldAnswers: [UserFieldAnswers!]!
+  responseFieldAnswers: [ResponseFieldAnswers!]!
   fieldSet: FieldSet!
   userResponses: [Response!]!
   results: [ResultGroup!]!

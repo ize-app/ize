@@ -1,10 +1,10 @@
 import { entityResolver } from "@/core/entity/entityResolver";
-import { fieldAnswerResolver } from "@/core/fields/resolvers/fieldAnswerResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, FlowType, Request, ResultConfig } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { requestStepResolver } from "./requestStepResolver";
+import { triggerFieldAnswersResolver } from "./triggerFieldAnswersResolver";
 import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestPrismaType } from "../requestPrismaTypes";
@@ -29,6 +29,8 @@ export const requestResolver = async ({
       proposedFlowVersion: req.ProposedFlowVersionEvolution,
     });
   }
+
+  const creator = entityResolver({ entity: req.CreatorEntity, userIdentityIds: identityIds });
 
   // note: this call needs to happen before requestStepResolver is called
   // so that the response and result caches can be populated
@@ -72,21 +74,18 @@ export const requestResolver = async ({
 
   const Request: Request = {
     name: req.name,
-    creator: entityResolver({ entity: req.CreatorEntity, userIdentityIds: identityIds }),
+    creator,
     flow: flow,
     createdAt: req.createdAt.toISOString(),
     currentStepIndex: getRequestStepIndex(req, req.currentRequestStepId),
     final: req.final,
     requestId: req.id,
-    triggerFieldAnswers: await Promise.all(
-      req.TriggerFieldAnswers.map(
-        async (rfa) =>
-          await fieldAnswerResolver({
-            fieldAnswer: rfa,
-            context,
-          }),
-      ),
-    ),
+    triggerFieldAnswers: await triggerFieldAnswersResolver({
+      fields: flow.fieldSet.fields,
+      answers: req.TriggerFieldAnswers,
+      creator,
+      context,
+    }),
     requestSteps: requestSteps,
   };
   return Request;

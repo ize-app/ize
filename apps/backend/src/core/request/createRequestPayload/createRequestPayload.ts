@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { Field, UserFieldAnswers } from "@/graphql/generated/resolver-types";
+import { Field, ResponseFieldAnswers } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -16,7 +16,7 @@ export interface RequestPayload {
   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
   results: ReturnType<typeof getRequestResults>;
   requestUrl: string;
-  fieldAnswers?: UserFieldAnswers[];
+  fieldAnswers?: ResponseFieldAnswers[];
   field?: Field | undefined; // General return type that covers both overloads
 }
 
@@ -49,10 +49,10 @@ export async function createRequestPayload({
 
   let field: Field | undefined = undefined;
 
-  const fieldAnswers: UserFieldAnswers[] = [];
+  const fieldAnswers: ResponseFieldAnswers[] = [];
   request.requestSteps.forEach((step) => {
     step.responseFieldAnswers.forEach((responseFieldAnswer) => {
-      if (responseFieldAnswer.answers.length > 0) fieldAnswers.push(responseFieldAnswer);
+      fieldAnswers.push(responseFieldAnswer);
     });
   });
 

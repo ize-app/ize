@@ -7,7 +7,10 @@ export const getRequestTriggerFieldAnswers = ({
   request: Request;
 }): GenericFieldAndValue[] => {
   const requestFields: GenericFieldAndValue[] = request.flow.fieldSet.fields.map((field) => {
-    const answer = request.triggerFieldAnswers.find((fa) => fa.fieldId === field.fieldId);
+    const triggerFieldAnswer = request.triggerFieldAnswers.find(
+      (fa) => fa.field.fieldId === field.fieldId,
+    );
+    const answer = triggerFieldAnswer?.answer.answer;
 
     if (!answer) throw Error("");
 

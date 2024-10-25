@@ -69,17 +69,21 @@ fragment UserFieldAnswer on UserFieldAnswer {
   }
 }
 
-fragment UserFieldAnswers on UserFieldAnswers {
-  fieldId
+fragment ResponseFieldAnswers on ResponseFieldAnswers {
+  field {
+    ...Field
+  }
   answers {
     ...UserFieldAnswer
   }
 }
 
-fragment FlowsFieldAnswer on FlowsFieldAnswer {
-  fieldId
-  flows {
-    ...FlowReference
+fragment TriggerFieldAnswer on TriggerFieldAnswer {
+  field {
+    ...Field
+  }
+  answer {
+    ...UserFieldAnswer
   }
 }
 
@@ -103,19 +107,22 @@ fragment FieldAnswer on FieldAnswer {
 }
 
 fragment OptionFieldAnswer on OptionFieldAnswer {
-  fieldId
   selections {
     ...OptionFieldAnswerSelection
   }
 }
 
 fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
-  fieldId
   value
 }
 
+fragment FlowsFieldAnswer on FlowsFieldAnswer {
+  flows {
+    ...FlowReference
+  }
+}
+
 fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
-  fieldId
   entities {
     ...Entity
   }
@@ -126,7 +133,6 @@ fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
 }
 
 fragment WebhookFieldAnswer on WebhookFieldAnswer {
-  fieldId
   uri
   webhookId
   originalUri

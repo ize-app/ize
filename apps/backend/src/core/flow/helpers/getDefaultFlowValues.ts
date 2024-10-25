@@ -27,17 +27,14 @@ export const getDefaultFlowValues = async ({
     defaultValues = {
       [SystemFieldType.GroupName]: {
         __typename: "FreeInputFieldAnswer",
-        fieldId: "",
         value: group.group.name,
       },
       [SystemFieldType.GroupDescription]: {
         __typename: "FreeInputFieldAnswer",
-        fieldId: "",
         value: group.description ?? "",
       },
       [SystemFieldType.GroupMembers]: {
         __typename: "EntitiesFieldAnswer",
-        fieldId: "",
         entities: group.members,
       },
     };

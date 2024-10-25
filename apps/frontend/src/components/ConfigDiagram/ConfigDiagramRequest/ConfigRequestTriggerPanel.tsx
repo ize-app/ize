@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
-import { FieldSet } from "@/components/Field/Fields";
+import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { RequestFragment } from "@/graphql/generated/graphql";
 
 export const ConfigRequestTriggerPanel = ({ request }: { request: RequestFragment }) => {
@@ -21,7 +21,10 @@ export const ConfigRequestTriggerPanel = ({ request }: { request: RequestFragmen
         </PanelAccordion>
         {request.flow.fieldSet.fields.length > 0 && (
           <PanelAccordion title="Request fields" hasError={false}>
-            <FieldSet fieldSet={request.flow.fieldSet} fieldAnswers={request.triggerFieldAnswers} />
+            <TriggerFieldSet
+              fieldSet={request.flow.fieldSet}
+              fieldAnswers={request.triggerFieldAnswers}
+            />
           </PanelAccordion>
         )}
       </ConfigurationPanel>

@@ -37,7 +37,6 @@ export const fieldAnswerResolver = async ({
 
         const entityAnswer: EntitiesFieldAnswer = {
           __typename: "EntitiesFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           entities: entities.map((entity) => entityResolver({ entity, userIdentityIds })),
         };
         return entityAnswer;
@@ -50,7 +49,6 @@ export const fieldAnswerResolver = async ({
         });
         return {
           __typename: "FlowsFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           // TODO remove inefficient query
           flows: flows
             .map((flow) =>
@@ -66,7 +64,6 @@ export const fieldAnswerResolver = async ({
         if (fieldAnswer.AnswerFreeInput[0].value === "None") {
           return {
             __typename: "WebhookFieldAnswer",
-            fieldId: fieldAnswer.fieldId,
             uri: "",
           };
         }
@@ -75,13 +72,11 @@ export const fieldAnswerResolver = async ({
         });
         return {
           __typename: "WebhookFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           uri: webhook?.uriPreview ?? "",
         };
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           value: fieldAnswer.AnswerFreeInput[0].value,
         };
         return freeInputAnswer;
@@ -90,7 +85,6 @@ export const fieldAnswerResolver = async ({
     case FieldType.Options: {
       const optionsAnswer: OptionFieldAnswer = {
         __typename: "OptionFieldAnswer",
-        fieldId: fieldAnswer.fieldId,
         selections: fieldAnswer.AnswerOptionSelections.map(
           (s): OptionFieldAnswerSelection => ({
             optionId: s.fieldOptionId,
