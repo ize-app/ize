@@ -1,7 +1,7 @@
 import {
   DecisionFragment,
   DecisionType,
-  ResultConfig,
+  ResultConfigFragment,
   ResultType,
 } from "@/graphql/generated/graphql";
 
@@ -15,11 +15,11 @@ import {
   ResultSchemaType,
 } from "../../formValidation/result";
 
-export const createResultFormState = (results: ResultConfig[]): ResultSchemaType[] => {
+export const createResultFormState = (results: ResultConfigFragment[]): ResultSchemaType[] => {
   return results.map((result) => {
     const resultBase = {
       resultId: result.resultConfigId,
-      fieldId: result.fieldId ?? null,
+      fieldId: result.field.fieldId,
       minimumAnswers: result.minimumAnswers,
     };
 

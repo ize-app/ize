@@ -1,4 +1,4 @@
-import { FlowFragment, Step } from "@/graphql/generated/graphql";
+import { FlowFragment } from "@/graphql/generated/graphql";
 
 import { createFieldsFormState } from "./createFieldsFormState";
 import { createPermissionFormState } from "./createPermissionFormState";
@@ -19,6 +19,6 @@ export const createFlowFormState = (flow: FlowFragment): FlowSchemaType => {
       ...trigger,
       permission: createPermissionFormState(trigger.permission),
     },
-    steps: steps.map((step) => createStepFormState(step as Step)),
+    steps: steps.map((step) => createStepFormState(step)),
   };
 };

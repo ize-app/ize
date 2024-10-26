@@ -111,8 +111,9 @@ export type Decision = {
   criteria?: Maybe<Scalars['String']['output']>;
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
-  fieldId?: Maybe<Scalars['String']['output']>;
+  field: Field;
   minimumAnswers: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
   threshold?: Maybe<Scalars['Int']['output']>;
 };
@@ -503,7 +504,8 @@ export type LinkedResult = {
   __typename?: 'LinkedResult';
   fieldId: Scalars['String']['output'];
   fieldName: Scalars['String']['output'];
-  resultConfig: ResultConfig;
+  resultConfigId: Scalars['String']['output'];
+  resultName: Scalars['String']['output'];
 };
 
 export type LinkedResultOptionsArgs = {
@@ -514,8 +516,9 @@ export type LinkedResultOptionsArgs = {
 export type LlmSummary = {
   __typename?: 'LlmSummary';
   example?: Maybe<Scalars['String']['output']>;
-  fieldId?: Maybe<Scalars['String']['output']>;
+  field: Field;
   minimumAnswers: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
 };
@@ -528,8 +531,9 @@ export type LlmSummaryArgs = {
 export type LlmSummaryList = {
   __typename?: 'LlmSummaryList';
   example?: Maybe<Scalars['String']['output']>;
-  fieldId?: Maybe<Scalars['String']['output']>;
+  field: Field;
   minimumAnswers: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
 };
@@ -869,8 +873,9 @@ export type QueryTelegramChatsArgs = {
 
 export type Ranking = {
   __typename?: 'Ranking';
-  fieldId?: Maybe<Scalars['String']['output']>;
+  field: Field;
   minimumAnswers: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
   numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
   resultConfigId: Scalars['String']['output'];
 };
@@ -1191,11 +1196,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupWatchFlow ) | ( TriggerStep );
   Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<_RefType['User']>, groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
-  Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<_RefType['LinkedResult']> } );
+  Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
-  ResultConfig: ( Decision ) | ( LlmSummary ) | ( LlmSummaryList ) | ( Ranking );
+  ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummaryList, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } );
 };
 
 
@@ -1213,7 +1218,7 @@ export type ResolversTypes = {
   CallWebhook: ResolverTypeWrapper<CallWebhook>;
   CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
-  Decision: ResolverTypeWrapper<Decision>;
+  Decision: ResolverTypeWrapper<Omit<Decision, 'field'> & { field: ResolversTypes['Field'] }>;
   DecisionArgs: DecisionArgs;
   DecisionType: DecisionType;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
@@ -1271,11 +1276,11 @@ export type ResolversTypes = {
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
-  LinkedResult: ResolverTypeWrapper<Omit<LinkedResult, 'resultConfig'> & { resultConfig: ResolversTypes['ResultConfig'] }>;
+  LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
-  LlmSummary: ResolverTypeWrapper<LlmSummary>;
+  LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
-  LlmSummaryList: ResolverTypeWrapper<LlmSummaryList>;
+  LlmSummaryList: ResolverTypeWrapper<Omit<LlmSummaryList, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']>, user: ResolversTypes['User'] }>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -1294,13 +1299,13 @@ export type ResolversTypes = {
   OptionFieldAnswer: ResolverTypeWrapper<OptionFieldAnswer>;
   OptionFieldAnswerSelection: ResolverTypeWrapper<OptionFieldAnswerSelection>;
   OptionSelectionArgs: OptionSelectionArgs;
-  Options: ResolverTypeWrapper<Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<ResolversTypes['LinkedResult']> }>;
+  Options: ResolverTypeWrapper<Options>;
   Organization: ResolverTypeWrapper<Organization>;
   Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
   Query: ResolverTypeWrapper<{}>;
-  Ranking: ResolverTypeWrapper<Ranking>;
+  Ranking: ResolverTypeWrapper<Omit<Ranking, 'field'> & { field: ResolversTypes['Field'] }>;
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['TriggerFieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
@@ -1348,7 +1353,7 @@ export type ResolversParentTypes = {
   CallWebhook: CallWebhook;
   CallWebhookArgs: CallWebhookArgs;
   CustomGroupArgs: CustomGroupArgs;
-  Decision: Decision;
+  Decision: Omit<Decision, 'field'> & { field: ResolversParentTypes['Field'] };
   DecisionArgs: DecisionArgs;
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
@@ -1398,11 +1403,11 @@ export type ResolversParentTypes = {
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
   IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
-  LinkedResult: Omit<LinkedResult, 'resultConfig'> & { resultConfig: ResolversParentTypes['ResultConfig'] };
+  LinkedResult: LinkedResult;
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
-  LlmSummary: LlmSummary;
+  LlmSummary: Omit<LlmSummary, 'field'> & { field: ResolversParentTypes['Field'] };
   LlmSummaryArgs: LlmSummaryArgs;
-  LlmSummaryList: LlmSummaryList;
+  LlmSummaryList: Omit<LlmSummaryList, 'field'> & { field: ResolversParentTypes['Field'] };
   Me: Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']>, user: ResolversParentTypes['User'] };
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
@@ -1418,13 +1423,13 @@ export type ResolversParentTypes = {
   OptionFieldAnswer: OptionFieldAnswer;
   OptionFieldAnswerSelection: OptionFieldAnswerSelection;
   OptionSelectionArgs: OptionSelectionArgs;
-  Options: Omit<Options, 'linkedResultOptions'> & { linkedResultOptions: Array<ResolversParentTypes['LinkedResult']> };
+  Options: Options;
   Organization: Organization;
   Permission: Omit<Permission, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   PermissionArgs: PermissionArgs;
   PrioritizationArgs: PrioritizationArgs;
   Query: {};
-  Ranking: Ranking;
+  Ranking: Omit<Ranking, 'field'> & { field: ResolversParentTypes['Field'] };
   Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['TriggerFieldAnswer']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
@@ -1508,8 +1513,9 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   criteria?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
-  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   threshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1765,14 +1771,16 @@ export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType ex
 export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LinkedResult'] = ResolversParentTypes['LinkedResult']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  resultConfig?: Resolver<ResolversTypes['ResultConfig'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1780,8 +1788,9 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummaryList'] = ResolversParentTypes['LlmSummaryList']> = {
   example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1890,8 +1899,9 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 };
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
-  fieldId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   numOptionsToInclude?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

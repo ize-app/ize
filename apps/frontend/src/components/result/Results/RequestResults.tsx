@@ -2,7 +2,6 @@ import { Box } from "@mui/material";
 
 import { determineRequestStepStatus } from "@/components/ConfigDiagram/ConfigDiagramRequest/determineRequestStepStatus";
 import {
-  FieldFragment,
   RequestFragment,
   ResultConfigFragment,
   ResultGroupFragment,
@@ -12,7 +11,6 @@ import {
 import { Result } from "./Result";
 
 interface HydratedResultData {
-  field: FieldFragment;
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
@@ -31,17 +29,11 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
     );
 
     step.result.forEach((resultConfig) => {
-      const responseField = request.requestSteps[stepIndex]?.fieldSet.fields.find(
-        (field) => field.fieldId === resultConfig.fieldId,
-      );
-      const field =
-        responseField ??
-        step.fieldSet.fields.find((field) => field.fieldId === resultConfig.fieldId);
       const resultGroup =
         request.requestSteps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
         ) ?? null;
-      if (field) hydratedResults.push({ field, resultConfig, resultGroup, requestStepStatus });
+      hydratedResults.push({ resultConfig, resultGroup, requestStepStatus });
     });
   });
 

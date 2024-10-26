@@ -14,21 +14,10 @@ export const getRequestResults = ({ request }: { request: Request }): GenericFie
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      const field = request.flow.steps[stepIndex].fieldSet.fields.find((field) => {
-        return field.fieldId === resultConfig.fieldId;
-      });
-      if (!field)
-        throw new GraphQLError(
-          `Cannot find field for result config Id ${resultConfig.resultConfigId}`,
-          {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          },
-        );
-
       // TODO fix this so that it shows all results in a result group
 
       results.push({
-        fieldName: field.name,
+        fieldName: `${resultConfig.name}: ${resultConfig.field.name}`,
         value: result.results[0].resultItems.map((item) => item.value),
       });
     });

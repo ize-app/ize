@@ -1,4 +1,4 @@
-import { PermissionFragment, Step } from "@/graphql/generated/graphql";
+import { PermissionFragment, StepFragment } from "@/graphql/generated/graphql";
 
 import { createActionFormState } from "./createActionFormState";
 import { createFieldsFormState } from "./createFieldsFormState";
@@ -6,7 +6,7 @@ import { createPermissionFormState } from "./createPermissionFormState";
 import { createResultFormState } from "./createResultsFormState";
 import { StepSchemaType } from "../../formValidation/flow";
 
-export const createStepFormState = (step: Step): StepSchemaType => {
+export const createStepFormState = (step: StepFragment): StepSchemaType => {
   const { fieldSet, response, result, action } = step;
   return {
     response: response

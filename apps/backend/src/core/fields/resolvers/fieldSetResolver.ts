@@ -6,6 +6,7 @@ import {
   FieldSet,
   FieldType,
   FreeInput,
+  LinkedResult,
   Option,
   Options,
   ResultConfig,
@@ -89,13 +90,7 @@ export const fieldSetResolver = ({
             },
           );
 
-        // TODO: Not sure why the type here can be undefined. Need to investigate
-        if (!resultConfig.__typename)
-          throw new GraphQLError(`Mmissing __typename for resultConfigId ${linkedResultConfigId}`, {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          });
-
-        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.fieldId);
+        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.field.fieldId);
 
         if (!field)
           throw new GraphQLError(
@@ -106,10 +101,11 @@ export const fieldSetResolver = ({
           );
 
         return {
-          resultConfig: resultConfig,
+          resultConfigId: linkedResultConfigId,
+          resultName: resultConfig.name,
           fieldId: field.fieldId,
           fieldName: field.name,
-        };
+        } as LinkedResult;
       });
 
       const options: Options = {

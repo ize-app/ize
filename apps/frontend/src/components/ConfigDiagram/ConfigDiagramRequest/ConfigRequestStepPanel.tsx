@@ -109,7 +109,6 @@ export const ConfigRequestStepPanel = ({
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
           <RequestStepResults
             resultConfigs={step.result}
-            responseFields={requestStep?.fieldSet.fields ?? step.fieldSet.fields}
             results={requestStep?.results ?? []}
             requestStatus={status}
           />

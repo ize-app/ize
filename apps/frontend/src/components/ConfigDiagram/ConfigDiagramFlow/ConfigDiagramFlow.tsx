@@ -11,7 +11,6 @@ import {
   FlowStage,
   PanelContainer,
 } from "@/components/ConfigDiagram";
-import { getResultLabel } from "@/components/result/getResultLabel";
 import { FlowFragment } from "@/graphql/generated/graphql";
 
 import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
@@ -49,7 +48,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                   <StageConnectorButton key={"connector-" + index.toString()} />
                   <FlowStage
                     icon={Diversity3Outlined}
-                    label={getResultLabel({ type: "resultConfig", result: step.result[0] })}
+                    label={step.result[0].name}
                     subtitle={flow.steps[index].fieldSet.fields[0].name}
                     key={"stage-" + step?.id}
                     hasError={false}

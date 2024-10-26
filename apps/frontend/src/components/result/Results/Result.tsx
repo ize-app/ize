@@ -5,7 +5,6 @@ import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
 import { statusProps } from "@/components/status/statusProps";
 import {
-  FieldFragment,
   FieldType,
   ResultConfigFragment,
   ResultGroupFragment,
@@ -19,7 +18,6 @@ import { ResultHeader } from "../ResultName";
 
 export const Result = ({
   resultConfig,
-  field,
   resultGroup,
   requestStepStatus,
   displayDescripton,
@@ -27,13 +25,13 @@ export const Result = ({
   displayFieldOptionsIfNoResult = true,
 }: {
   resultConfig: ResultConfigFragment;
-  field: FieldFragment | null;
   resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
   displayFieldOptionsIfNoResult?: boolean;
 }) => {
+  const { field } = resultConfig;
   return (
     <LabeledGroupedInputs
       sx={{
