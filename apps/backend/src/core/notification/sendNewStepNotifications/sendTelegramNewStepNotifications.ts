@@ -2,6 +2,7 @@ import { FieldType, GroupTelegramChat } from "@prisma/client";
 
 import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
 import { getRequestTriggerFieldAnswers } from "@/core/request/createRequestPayload/getRequestTriggerFieldAnswers";
+import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTriggerFields";
 import {
   FieldDataType,
   FieldOptionsSelectionType,
@@ -10,7 +11,6 @@ import {
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createGenericFieldValuesString } from "../../request/createRequestPayload/createGenericFieldValuesString";
 import { createRequestUrl } from "../../request/createRequestPayload/createRequestUrl";
 
 export const sendTelegramNewStepMessage = async ({
@@ -47,9 +47,10 @@ export const sendTelegramNewStepMessage = async ({
 
       if (responseFields.length === 0) return;
 
-      const requestFieldsString = createGenericFieldValuesString(
-        getRequestTriggerFieldAnswers({ request }),
-      );
+      const requestFieldsString = stringifyTriggerFields({
+        triggerFields: getRequestTriggerFieldAnswers({ request }),
+        type: "html",
+      });
 
       const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
 

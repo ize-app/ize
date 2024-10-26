@@ -4,7 +4,7 @@ import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { newAiDecision } from "./newAiDecision";
+import { generateAiDecision } from "../../../openai/generateAiDecision";
 import { ResultConfigPrismaType } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
@@ -76,7 +76,7 @@ export const determineDecision = async ({
       break;
     }
     case DecisionType.Ai: {
-      const { optionId, explanation: aiExplaination } = await newAiDecision({
+      const { optionId, explanation: aiExplaination } = await generateAiDecision({
         resultConfig,
         requestStepId,
       });

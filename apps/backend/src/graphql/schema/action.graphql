@@ -68,6 +68,11 @@ input TestWebhookArgs {
   flowName: String!
   uri: String!
   requestFields: [WebhookValueArgs!]!
+  results: [ResultGroupTestWebhookArgs!]!
+}
+
+input ResultGroupTestWebhookArgs {
+  fieldName: String!
   results: [WebhookValueArgs!]!
 }
 

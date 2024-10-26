@@ -1008,6 +1008,11 @@ export type ResultGroup = {
   results: Array<Result>;
 };
 
+export type ResultGroupTestWebhookArgs = {
+  fieldName: Scalars['String']['input'];
+  results: Array<WebhookValueArgs>;
+};
+
 export type ResultItem = {
   __typename?: 'ResultItem';
   dataType: FieldDataType;
@@ -1055,7 +1060,7 @@ export enum SystemFieldType {
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
   requestFields: Array<WebhookValueArgs>;
-  results: Array<WebhookValueArgs>;
+  results: Array<ResultGroupTestWebhookArgs>;
   uri: Scalars['String']['input'];
 };
 
@@ -1321,6 +1326,7 @@ export type ResolversTypes = {
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultGroup: ResolverTypeWrapper<ResultGroup>;
+  ResultGroupTestWebhookArgs: ResultGroupTestWebhookArgs;
   ResultItem: ResolverTypeWrapper<ResultItem>;
   ResultType: ResultType;
   Status: Status;
@@ -1443,6 +1449,7 @@ export type ResolversParentTypes = {
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
   ResultGroup: ResultGroup;
+  ResultGroupTestWebhookArgs: ResultGroupTestWebhookArgs;
   ResultItem: ResultItem;
   Step: Omit<Step, 'action' | 'fieldSet' | 'response' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, fieldSet: ResolversParentTypes['FieldSet'], response?: Maybe<ResolversParentTypes['ResponseConfig']>, result: Array<ResolversParentTypes['ResultConfig']> };
   String: Scalars['String']['output'];

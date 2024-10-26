@@ -7,20 +7,20 @@ import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { createRequestUrl } from "./createRequestUrl";
-import { getRequestResults } from "./getRequestResults";
+import { getRequestResultGroups } from "./getRequestResults";
 import { getRequestTriggerFieldAnswers } from "./getRequestTriggerFieldAnswers";
 
 export interface RequestPayload {
   requestName: string;
   flowName: string;
   requestTriggerAnswers: ReturnType<typeof getRequestTriggerFieldAnswers>;
-  results: ReturnType<typeof getRequestResults>;
+  results: ReturnType<typeof getRequestResultGroups>;
   requestUrl: string;
   fieldAnswers?: ResponseFieldAnswers[];
   field?: Field | undefined; // General return type that covers both overloads
 }
 
-// Implement the function
+// Purpose of this function is to simplify output of request data so it can be output to other tools and stringified
 export async function createRequestPayload({
   requestStepId,
   fieldId,
@@ -75,7 +75,7 @@ export async function createRequestPayload({
   const requestName = request.name;
   const flowName = request.flow.name;
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-  const results = getRequestResults({ request });
+  const results = getRequestResultGroups({ request });
   const requestUrl = createRequestUrl({ requestId: request.requestId });
 
   return { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers, requestUrl };

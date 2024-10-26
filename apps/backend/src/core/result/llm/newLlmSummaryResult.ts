@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
@@ -15,12 +14,11 @@ import {
 
 export const newLlmSummaryResult = async ({
   resultConfig,
-  fieldAnswers,
   requestStepId,
   type,
 }: {
   resultConfig: ResultConfigPrismaType;
-  fieldAnswers: FieldAnswerPrismaType[];
+
   requestStepId: string;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }): Promise<ResultGroupPrismaType> => {
@@ -48,26 +46,16 @@ export const newLlmSummaryResult = async ({
       },
     );
 
-  const { requestName, flowName, requestTriggerAnswers, results, field } =
-    await createRequestPayload({
-      requestStepId,
-      fieldId: resultConfig.fieldId,
-    });
-
-  if (!field) throw Error("Field is undefined");
+  const requestPayload = await createRequestPayload({
+    requestStepId,
+    fieldId: resultConfig.fieldId,
+  });
 
   const res = await generateAiSummary({
-    flowName,
-    requestName,
-    requestTriggerAnswers,
-    results,
-    fieldName: field?.name,
+    requestPayload,
     type,
     exampleOutput: llmConfig.example,
     summaryPrompt: llmConfig.prompt,
-    responses: fieldAnswers
-      .filter((r) => r.AnswerFreeInput.length > 0)
-      .map((r) => r.AnswerFreeInput[0].value),
   });
 
   const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {

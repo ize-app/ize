@@ -1,6 +1,33 @@
-import { Field, FieldType, UserFieldAnswer } from "@/graphql/generated/resolver-types";
+import {
+  Field,
+  FieldType,
+  ResponseFieldAnswers,
+  UserFieldAnswer,
+} from "@/graphql/generated/resolver-types";
 
-export const stringifyFieldAnswer = ({
+export const stringifyFieldResponses = ({
+  fieldAnswers,
+}: {
+  fieldAnswers: ResponseFieldAnswers[];
+}) => {
+  return fieldAnswers
+    .map((fieldAnswer) => stringifyFieldResponse({ fieldAnswers: fieldAnswer }))
+    .join("\n\n");
+};
+
+const stringifyFieldResponse = ({ fieldAnswers }: { fieldAnswers: ResponseFieldAnswers }) => {
+  if (fieldAnswers.answers.length === 0) {
+    return "";
+  }
+  const formattedAnswers = fieldAnswers.answers
+    .map((answer) => {
+      return `- ${stringifyFieldAnswer({ userFieldAnswer: answer, field: fieldAnswers.field })}`;
+    })
+    .join("\n");
+  return `Question: ${fieldAnswers.field.name} \nAnswers: \n${formattedAnswers}`;
+};
+
+const stringifyFieldAnswer = ({
   userFieldAnswer,
   field,
 }: {

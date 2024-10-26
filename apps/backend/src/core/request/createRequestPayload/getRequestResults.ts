@@ -1,27 +1,36 @@
 import { GenericFieldAndValue, Request } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-export const getRequestResults = ({ request }: { request: Request }): GenericFieldAndValue[] => {
-  const results: GenericFieldAndValue[] = [];
+export interface RequestResultGroup {
+  fieldName: string;
+  result: GenericFieldAndValue[];
+}
 
-  request.requestSteps.map((step, stepIndex) => {
-    step.results.forEach((result) => {
+export const getRequestResultGroups = ({ request }: { request: Request }): RequestResultGroup[] => {
+  const requestResults: RequestResultGroup[] = [];
+
+  request.requestSteps.forEach((requestStep, stepIndex) => {
+    requestStep.results.forEach((resultGroup) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
-        return r.resultConfigId === result.resultConfigId;
+        r.resultConfigId === resultGroup.resultConfigId;
       });
+
       if (!resultConfig)
-        throw new GraphQLError(`Cannot find result config for result id: ${result.id}`, {
+        throw new GraphQLError(`Cannot find result group for result config id: ${resultGroup.id}`, {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      // TODO fix this so that it shows all results in a result group
-
-      results.push({
-        fieldName: `${resultConfig.name}: ${resultConfig.field.name}`,
-        value: result.results[0].resultItems.map((item) => item.value),
-      });
+      const requestResult: RequestResultGroup = {
+        fieldName: resultConfig.field.name,
+        result: resultGroup.results.map((result) => {
+          return {
+            fieldName: resultConfig.name,
+            value: result.resultItems.map((item) => item.value),
+          };
+        }),
+      };
+      requestResults.push(requestResult);
     });
   });
-
-  return results;
+  return requestResults;
 };

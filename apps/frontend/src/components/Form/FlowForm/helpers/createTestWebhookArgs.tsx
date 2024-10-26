@@ -1,4 +1,8 @@
-import { FieldType, TestWebhookArgs, WebhookValueArgs } from "@/graphql/generated/graphql";
+import {
+  FieldType,
+  ResultGroupTestWebhookArgs,
+  TestWebhookArgs,
+} from "@/graphql/generated/graphql";
 
 import { FlowSchemaType } from "../formValidation/flow";
 
@@ -14,19 +18,25 @@ export const createTestWebhookArgs = (formState: FlowSchemaType, uri: string): T
   };
 };
 
-const createResultsArgs = (formState: FlowSchemaType): WebhookValueArgs[] => {
-  const results: WebhookValueArgs[] = [];
+const createResultsArgs = (formState: FlowSchemaType): ResultGroupTestWebhookArgs[] => {
+  const resultGroups: ResultGroupTestWebhookArgs[] = [];
 
   formState.steps.forEach((step) => {
     const fields = step.fieldSet?.fields ?? [];
     (step.result ?? []).forEach((result) => {
       const field = fields.find((f) => f.fieldId === result.fieldId);
-      results.push({
+      const resultGroup: ResultGroupTestWebhookArgs = {
         fieldName: field?.name ?? "Field name",
-        fieldType: field?.type ?? FieldType.FreeInput,
-      });
+        results: [
+          {
+            fieldName: field?.name ?? "Field name",
+            fieldType: field?.type ?? FieldType.FreeInput,
+          },
+        ],
+      };
+      resultGroups.push(resultGroup);
     });
   });
 
-  return results;
+  return resultGroups;
 };

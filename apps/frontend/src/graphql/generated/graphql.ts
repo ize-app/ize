@@ -1007,6 +1007,11 @@ export type ResultGroup = {
   results: Array<Result>;
 };
 
+export type ResultGroupTestWebhookArgs = {
+  fieldName: Scalars['String']['input'];
+  results: Array<WebhookValueArgs>;
+};
+
 export type ResultItem = {
   __typename?: 'ResultItem';
   dataType: FieldDataType;
@@ -1054,7 +1059,7 @@ export enum SystemFieldType {
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
   requestFields: Array<WebhookValueArgs>;
-  results: Array<WebhookValueArgs>;
+  results: Array<ResultGroupTestWebhookArgs>;
   uri: Scalars['String']['input'];
 };
 
@@ -2656,6 +2661,11 @@ export type ResultGroup = {
   results: Array<Result>;
 };
 
+export type ResultGroupTestWebhookArgs = {
+  fieldName: Scalars['String']['input'];
+  results: Array<WebhookValueArgs>;
+};
+
 export type ResultItem = {
   __typename?: 'ResultItem';
   dataType: FieldDataType;
@@ -2703,7 +2713,7 @@ export enum SystemFieldType {
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
   requestFields: Array<WebhookValueArgs>;
-  results: Array<WebhookValueArgs>;
+  results: Array<ResultGroupTestWebhookArgs>;
   uri: Scalars['String']['input'];
 };
 
