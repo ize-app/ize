@@ -1,5 +1,5 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
-import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
+import { Field, Group, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
 import { actionResolver } from "../../action/actionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
@@ -15,6 +15,7 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
+  ownerGroup,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -22,6 +23,7 @@ export const stepResolver = ({
   userId: string | undefined;
   responseFieldsCache: Field[];
   resultConfigsCache: ResultConfig[];
+  ownerGroup: Group | null;
   hideSensitiveInfo?: boolean;
   defaultValues?: DefaultEvolveGroupValues | undefined;
 }): Step => {
@@ -54,7 +56,11 @@ export const stepResolver = ({
           allowMultipleResponses: step.ResponseConfig.allowMultipleResponses,
         }
       : undefined,
-    action: actionResolver(step.Action, responseFieldsCache),
+    action: actionResolver({
+      action: step.Action,
+      responseFields: responseFieldsCache,
+      ownerGroup,
+    }),
     result,
   };
 };

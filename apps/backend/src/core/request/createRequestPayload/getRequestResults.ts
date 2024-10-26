@@ -6,10 +6,18 @@ export interface RequestResultGroup {
   result: GenericFieldAndValue[];
 }
 
-export const getRequestResultGroups = ({ request }: { request: Request }): RequestResultGroup[] => {
+export const getRequestResultGroups = ({
+  request,
+  limitToRequestStepId,
+}: {
+  request: Request;
+  limitToRequestStepId?: string | undefined;
+}): RequestResultGroup[] => {
   const requestResults: RequestResultGroup[] = [];
 
   request.requestSteps.forEach((requestStep, stepIndex) => {
+    if (limitToRequestStepId && requestStep.requestStepId !== limitToRequestStepId) return;
+
     requestStep.results.forEach((resultGroup) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
         r.resultConfigId === resultGroup.resultConfigId;

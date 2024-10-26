@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { Field, ResponseFieldAnswers } from "@/graphql/generated/resolver-types";
+import { Action, Field, ResponseFieldAnswers } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -17,16 +17,20 @@ export interface RequestPayload {
   results: ReturnType<typeof getRequestResultGroups>;
   requestUrl: string;
   fieldAnswers?: ResponseFieldAnswers[];
+  // final action of the request
+  action?: Action | undefined | null;
   field?: Field | undefined; // General return type that covers both overloads
 }
 
 // Purpose of this function is to simplify output of request data so it can be output to other tools and stringified
 export async function createRequestPayload({
   requestStepId,
+  limitToCurrentStep = false,
   fieldId,
   transaction = prisma,
 }: {
   requestStepId: string;
+  limitToCurrentStep?: boolean;
   fieldId?: string | undefined;
   transaction?: Prisma.TransactionClient;
 }): Promise<RequestPayload> {
@@ -50,11 +54,18 @@ export async function createRequestPayload({
   let field: Field | undefined = undefined;
 
   const fieldAnswers: ResponseFieldAnswers[] = [];
-  request.requestSteps.forEach((step) => {
-    step.responseFieldAnswers.forEach((responseFieldAnswer) => {
-      fieldAnswers.push(responseFieldAnswer);
-    });
+
+  request.requestSteps.forEach((rs) => {
+    if (limitToCurrentStep && rs.requestStepId !== requestStepId) return;
+    fieldAnswers.push(...rs.responseFieldAnswers);
   });
+
+  const finalStep = request.flow.steps[request.flow.steps.length - 1];
+
+  const action: Action | undefined | null =
+    !limitToCurrentStep || finalStep.id === reqStep.stepId
+      ? request.flow.steps[request.flow.steps.length - 1].action
+      : undefined;
 
   if (fieldId) {
     request.requestSteps.forEach((step) => {
@@ -75,8 +86,20 @@ export async function createRequestPayload({
   const requestName = request.name;
   const flowName = request.flow.name;
   const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-  const results = getRequestResultGroups({ request });
+  const results = getRequestResultGroups({
+    request,
+    limitToRequestStepId: limitToCurrentStep ? requestStepId : undefined,
+  });
   const requestUrl = createRequestUrl({ requestId: request.requestId });
 
-  return { requestName, flowName, requestTriggerAnswers, results, field, fieldAnswers, requestUrl };
+  return {
+    requestName,
+    flowName,
+    requestTriggerAnswers,
+    results,
+    field,
+    fieldAnswers,
+    requestUrl,
+    action,
+  };
 }

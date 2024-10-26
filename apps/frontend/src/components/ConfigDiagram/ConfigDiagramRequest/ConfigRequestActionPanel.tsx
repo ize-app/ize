@@ -1,5 +1,4 @@
 import { ActionExecution } from "@/components/Action/ActionExecution";
-import { getActionLabel } from "@/components/Action/getActionLabel";
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import {
   ActionExecutionFragment,
@@ -12,7 +11,6 @@ import { ActionFilter } from "../../Action/ActionFilter";
 export const ConfigRequestActionPanel = ({
   action,
   actionExecution,
-  group,
 }: {
   action: ActionFragment;
   actionExecution: ActionExecutionFragment | null;
@@ -26,7 +24,7 @@ export const ConfigRequestActionPanel = ({
             <ActionFilter action={action} />
           </PanelAccordion>
         )}
-        <PanelAccordion title={getActionLabel(action, group)} hasError={false}>
+        <PanelAccordion title={action.name} hasError={false}>
           <ActionExecution action={action} actionExecution={actionExecution} />
         </PanelAccordion>
       </ConfigurationPanel>

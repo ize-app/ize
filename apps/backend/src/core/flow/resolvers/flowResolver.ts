@@ -5,7 +5,7 @@ import { fieldSetResolver } from "@/core/fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { Field, Flow, FlowType, ResultConfig } from "@/graphql/generated/resolver-types";
+import { Field, Flow, FlowType, Group, ResultConfig } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
@@ -42,12 +42,16 @@ export const flowResolver = async ({
     context,
   });
 
+  const ownerGroup: Group | null = flowVersion.Flow.OwnerGroup
+    ? groupResolver(flowVersion.Flow.OwnerGroup)
+    : null;
+
   return {
     __typename: "Flow",
     id: flowVersion.Flow.id,
     flowId: flowVersion.Flow.id,
     flowVersionId: flowVersion.id,
-    group: flowVersion.Flow.OwnerGroup ? groupResolver(flowVersion.Flow.OwnerGroup) : null,
+    group: ownerGroup,
     currentFlowVersionId: flowVersion.Flow.currentFlowVersionId,
     createdAt: flowVersion.Flow.createdAt.toISOString(),
     versionCreatedAt: flowVersion.createdAt.toISOString(),
@@ -89,6 +93,7 @@ export const flowResolver = async ({
         userId,
         responseFieldsCache,
         resultConfigsCache,
+        ownerGroup: ownerGroup,
       }),
     ).sort((a, b) => a.index - b.index),
     evolve: evolveFlow

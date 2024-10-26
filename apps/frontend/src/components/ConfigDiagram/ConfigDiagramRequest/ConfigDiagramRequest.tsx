@@ -4,7 +4,6 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
-import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -76,7 +75,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   request.requestSteps[finalStepIndex]?.actionExecution?.status ??
                   (request.final ? Status.Cancelled : Status.NotAttempted)
                 }
-                label={getActionLabel(finalAction, request.flow.group)}
+                label={finalAction.name}
                 id={"action"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}

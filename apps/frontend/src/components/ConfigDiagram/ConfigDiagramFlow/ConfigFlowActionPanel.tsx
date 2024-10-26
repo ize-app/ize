@@ -1,6 +1,5 @@
 import { Typography } from "@mui/material";
 
-import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   ConfigurationPanel,
   PanelAccordion,
@@ -23,7 +22,7 @@ export const ConfigFlowActionPanel = ({
     <PanelContainer>
       <PanelHeader>
         <Typography color="primary" variant="label">
-          {getActionLabel(action, group) + " configuration"}
+          {action.name + " configuration"}
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
@@ -32,7 +31,7 @@ export const ConfigFlowActionPanel = ({
             <ActionFilter action={action} />
           </PanelAccordion>
         )}
-        <PanelAccordion title={getActionLabel(action, group)} hasError={false}>
+        <PanelAccordion title={action.name} hasError={false}>
           <ActionDescription
             action={action}
             actionType={action.__typename as ActionType}

@@ -4,7 +4,6 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
-import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -65,7 +64,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <StageConnectorButton key={"connector-final"} />
                 <FlowStage
                   hasError={false}
-                  label={getActionLabel(finalAction, flow.group)}
+                  label={finalAction.name}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}

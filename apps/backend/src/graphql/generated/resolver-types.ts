@@ -89,6 +89,7 @@ export type CallWebhook = {
   name: Scalars['String']['output'];
   uri: Scalars['String']['output'];
   webhookId: Scalars['String']['output'];
+  webhookName: Scalars['String']['output'];
 };
 
 export type CallWebhookArgs = {
@@ -189,12 +190,14 @@ export type EvolveFlow = {
   __typename?: 'EvolveFlow';
   filterOption?: Maybe<Option>;
   locked: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type EvolveGroup = {
   __typename?: 'EvolveGroup';
   filterOption?: Maybe<Option>;
   locked: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type Field = FreeInput | Options;
@@ -435,6 +438,7 @@ export type GroupWatchFlow = {
   __typename?: 'GroupWatchFlow';
   filterOption?: Maybe<Option>;
   locked: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type Identity = {
@@ -1084,6 +1088,7 @@ export type TriggerStep = {
   __typename?: 'TriggerStep';
   filterOption?: Maybe<Option>;
   locked: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type UpdateProfileArgs = {
@@ -1513,6 +1518,7 @@ export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   webhookId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  webhookName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1576,12 +1582,14 @@ export type EntityResolvers<ContextType = GraphqlRequestContext, ParentType exte
 export type EvolveFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveFlow'] = ResolversParentTypes['EvolveFlow']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EvolveGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveGroup'] = ResolversParentTypes['EvolveGroup']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1719,6 +1727,7 @@ export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType e
 export type GroupWatchFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupWatchFlow'] = ResolversParentTypes['GroupWatchFlow']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2042,6 +2051,7 @@ export type TriggerFieldAnswerResolvers<ContextType = GraphqlRequestContext, Par
 export type TriggerStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerStep'] = ResolversParentTypes['TriggerStep']> = {
   filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

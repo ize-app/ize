@@ -1,15 +1,20 @@
 import { ActionType, FieldType } from "@prisma/client";
 
-import { Action, Field, Option } from "@/graphql/generated/resolver-types";
+import { Action, Field, Group, Option } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ActionNewPrismaType } from "./actionPrismaTypes";
 import { callWebhookResolver } from "./webhook/webhookResolver";
 
-export const actionResolver = (
-  action: ActionNewPrismaType | null | undefined,
-  responseFields: Field[] | undefined,
-): Action | null => {
+export const actionResolver = ({
+  action,
+  responseFields,
+  ownerGroup,
+}: {
+  action: ActionNewPrismaType | null | undefined;
+  responseFields: Field[] | undefined;
+  ownerGroup: Group | null;
+}): Action | null => {
   if (!action) return null;
   let filterOption: Option | undefined = undefined;
 
@@ -41,24 +46,28 @@ export const actionResolver = (
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
+        name: "Trigger a new step",
         filterOption,
         locked: action.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
+        name: "Evolve flow",
         filterOption,
         locked: action.locked,
       };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
+        name: `Watch/unwatch flow${ownerGroup ? ` for ${ownerGroup.name}` : ""}`,
         filterOption,
         locked: action.locked,
       };
     case ActionType.EvolveGroup:
       return {
         __typename: "EvolveGroup",
+        name: `Evolve group${ownerGroup ? `: ${ownerGroup.name}` : ""}`,
         filterOption,
         locked: action.locked,
       };

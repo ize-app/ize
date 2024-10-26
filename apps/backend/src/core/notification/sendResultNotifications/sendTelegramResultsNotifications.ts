@@ -1,6 +1,7 @@
 import { GroupTelegramChat } from "@prisma/client";
 
 import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { stringifyAction } from "@/core/request/stringify/stringifyAction";
 import { stringifyResultGroups } from "@/core/request/stringify/stringifyResultGroups";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
@@ -15,7 +16,7 @@ export const sendTelegramResultsNotifications = async ({
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
-  const message = `New results in Ize 👀\n\n${payload.requestName} (<i>${payload.flowName}</i>)\n\n${stringifyResultGroups({ results: payload.results, type: "html" })}`;
+  const message = `New results in Ize 👀\n\n${payload.requestName} (<i>${payload.flowName}</i>)\n\n${stringifyResultGroups({ results: payload.results, type: "html" })}${payload.action ? `\n\nTriggering action: ${stringifyAction({ action: payload.action })}` : ""}`;
   await Promise.all(
     telegramGroups.map(async (group) => {
       try {

@@ -12,9 +12,10 @@ export const callWebhookResolver = (
 ): CallWebhook => {
   return {
     __typename: "CallWebhook",
+    name: webhook.name,
     webhookId: webhook.id,
     uri: "https://" + webhook.uriPreview, // Only return the hostname for privacy
-    name: webhook.name,
+    webhookName: webhook.name,
     filterOption,
     locked,
   };
