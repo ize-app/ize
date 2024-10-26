@@ -22,7 +22,7 @@ import {
   FieldOptionsSelectionType,
   FieldType,
 } from "../../../graphql/generated/graphql";
-import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
+// import { CreateRequestResponseFieldForm } from "../components/CreateRequestResponseFieldForm";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
@@ -63,6 +63,7 @@ export const RequestForm = () => {
           <Box
             sx={{
               display: "flex",
+
               flexDirection: "column",
               gap: "8px",
               marginBottom: "24px",
@@ -76,7 +77,7 @@ export const RequestForm = () => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
+                gap: "30px",
                 maxWidth: "800px",
               }}
             >
@@ -89,145 +90,165 @@ export const RequestForm = () => {
                 required={true}
                 multiline
               />
-              {flow.fieldSet.fields.map((field) => {
-                switch (field.__typename) {
-                  case FieldType.FreeInput: {
-                    const { dataType, name, required, fieldId } = field;
+              {/* <hr style={{ border: "1px solid #ddd", width: "100%", margin: "18px 0px" }} /> */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  marginBottom: "24px",
+                  padding: "20px",
+                  outline: "1px solid rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                {flow.fieldSet.fields.map((field) => {
+                  switch (field.__typename) {
+                    case FieldType.FreeInput: {
+                      const { dataType, name, required, fieldId } = field;
 
-                    switch (dataType) {
-                      case FieldDataType.Date:
-                        return (
-                          <DatePicker<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.value`}
-                            key={fieldId}
-                            control={formMethods.control}
-                            // showLabel={false}
-                            required={required}
-                            label={name}
-                          />
-                        );
-                      case FieldDataType.DateTime:
-                        return (
-                          <DateTimePicker<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.value`}
-                            key={fieldId}
-                            control={formMethods.control}
-                            // showLabel={false}
-                            label={name}
-                            required={required}
-                          />
-                        );
-                      case FieldDataType.FlowVersionId:
-                        throw Error("Flow version Id cannot be directly editted");
-                      case FieldDataType.EntityIds:
-                        return (
-                          <EntitiesSearchField<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.value`}
-                            key={fieldId}
-                            ariaLabel={name}
-                            hideCustomGroups={true}
-                            setFieldValue={formMethods.setValue}
-                            getFieldValues={formMethods.getValues}
-                            control={formMethods.control}
-                            label={name}
-                          />
-                        );
-                      case FieldDataType.FlowIds:
-                        return (
-                          <FlowsSearchField<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.value`}
-                            key={fieldId}
-                            ariaLabel={name}
-                            control={formMethods.control}
-                            label={name}
-                          />
-                        );
-                      case FieldDataType.Webhook:
-                        return (
-                          <WebhookField
-                            formMethods={formMethods}
-                            type="notification"
-                            name={`requestFields.${field.fieldId}.value`}
-                            key={fieldId}
-                            control={formMethods.control}
-                            required={required}
-                          />
-                        );
-                      default:
-                        return (
-                          <TextField<RequestSchemaType>
-                            key={fieldId}
-                            label={name}
-                            variant="outlined"
-                            name={`requestFields.${field.fieldId}.value`}
-                            required={required}
-                            multiline
-                          />
-                        );
-                    }
-                  }
-                  case FieldType.Options: {
-                    const { options, name, selectionType, fieldId } = field;
-
-                    switch (selectionType) {
-                      case FieldOptionsSelectionType.Select: {
-                        return (
-                          <Radio<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.optionSelections[0].optionId`}
-                            key={fieldId}
-                            control={formMethods.control}
-                            label={name}
-                            sx={{ flexDirection: "column", gap: "4px" }}
-                            options={options.map((option) => ({
-                              label: option.name,
-                              value: option.optionId,
-                            }))}
-                          />
-                        );
-                      }
-                      case FieldOptionsSelectionType.MultiSelect: {
-                        return (
-                          <MultiSelect<RequestSchemaType>
-                            name={`requestFields.${field.fieldId}.optionSelections`}
-                            control={formMethods.control}
-                            label={name}
-                            key={fieldId}
-                            sx={{ flexDirection: "column", gap: "4px" }}
-                            options={options.map((option) => ({
-                              label: option.name,
-                              value: option.optionId,
-                            }))}
-                          />
-                        );
-                      }
-                      case FieldOptionsSelectionType.Rank: {
-                        return (
-                          <SortableList<RequestSchemaType>
-                            control={formMethods.control}
-                            label={name}
-                            key={fieldId}
-                            formMethods={formMethods}
-                            name={`requestFields.${field.fieldId}.optionSelections`}
-                            options={options.map((option) => ({
-                              label: option.name,
-                              value: option.optionId,
-                            }))}
-                          />
-                        );
+                      switch (dataType) {
+                        case FieldDataType.Date:
+                          return (
+                            <DatePicker<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.value`}
+                              key={fieldId}
+                              control={formMethods.control}
+                              // showLabel={false}
+                              required={required}
+                              label={name}
+                              showLabel={true}
+                              seperateLabel={true}
+                            />
+                          );
+                        case FieldDataType.DateTime:
+                          return (
+                            <DateTimePicker<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.value`}
+                              key={fieldId}
+                              control={formMethods.control}
+                              // showLabel={false}
+                              label={name}
+                              required={required}
+                              showLabel={true}
+                              seperateLabel={true}
+                            />
+                          );
+                        case FieldDataType.FlowVersionId:
+                          throw Error("Flow version Id cannot be directly editted");
+                        case FieldDataType.EntityIds:
+                          return (
+                            <EntitiesSearchField<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.value`}
+                              key={fieldId}
+                              ariaLabel={name}
+                              hideCustomGroups={true}
+                              setFieldValue={formMethods.setValue}
+                              getFieldValues={formMethods.getValues}
+                              control={formMethods.control}
+                              label={name}
+                              showLabel={true}
+                              seperateLabel={true}
+                            />
+                          );
+                        case FieldDataType.FlowIds:
+                          return (
+                            <FlowsSearchField<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.value`}
+                              key={fieldId}
+                              ariaLabel={name}
+                              control={formMethods.control}
+                              label={name}
+                            />
+                          );
+                        case FieldDataType.Webhook:
+                          return (
+                            <WebhookField
+                              formMethods={formMethods}
+                              type="notification"
+                              name={`requestFields.${field.fieldId}.value`}
+                              key={fieldId}
+                              control={formMethods.control}
+                              required={required}
+                            />
+                          );
+                        default:
+                          return (
+                            <TextField<RequestSchemaType>
+                              key={fieldId}
+                              label={name}
+                              showLabel={true}
+                              seperateLabel={true}
+                              variant="outlined"
+                              name={`requestFields.${field.fieldId}.value`}
+                              required={required}
+                              multiline
+                            />
+                          );
                       }
                     }
-                    break;
+                    case FieldType.Options: {
+                      const { options, name, selectionType, fieldId } = field;
+
+                      switch (selectionType) {
+                        case FieldOptionsSelectionType.Select: {
+                          return (
+                            <Radio<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.optionSelections[0].optionId`}
+                              key={fieldId}
+                              control={formMethods.control}
+                              label={name}
+                              sx={{ flexDirection: "column", gap: "4px" }}
+                              options={options.map((option) => ({
+                                label: option.name,
+                                value: option.optionId,
+                              }))}
+                            />
+                          );
+                        }
+                        case FieldOptionsSelectionType.MultiSelect: {
+                          return (
+                            <MultiSelect<RequestSchemaType>
+                              name={`requestFields.${field.fieldId}.optionSelections`}
+                              control={formMethods.control}
+                              label={name}
+                              key={fieldId}
+                              sx={{ flexDirection: "column", gap: "4px" }}
+                              options={options.map((option) => ({
+                                label: option.name,
+                                value: option.optionId,
+                              }))}
+                            />
+                          );
+                        }
+                        case FieldOptionsSelectionType.Rank: {
+                          return (
+                            <SortableList<RequestSchemaType>
+                              control={formMethods.control}
+                              label={name}
+                              key={fieldId}
+                              formMethods={formMethods}
+                              name={`requestFields.${field.fieldId}.optionSelections`}
+                              options={options.map((option) => ({
+                                label: option.name,
+                                value: option.optionId,
+                              }))}
+                            />
+                          );
+                        }
+                      }
+                      break;
+                    }
+                    default:
+                      throw Error("Invalid field type");
                   }
-                  default:
-                    throw Error("Invalid field type");
-                }
-              })}
+                })}
+              </Box>
             </Box>
-            <Typography fontStyle={"italic"}>How respondants will be able to respond:</Typography>
+            {/* <Typography fontStyle={"italic"}>How respondants will be able to respond:</Typography>
             <CreateRequestResponseFieldForm
               field={step?.fieldSet.fields[0]}
               formMethods={formMethods}
-            />
+            /> */}
           </Box>
         </WizardScreenBodyNarrow>
         <WizardNav

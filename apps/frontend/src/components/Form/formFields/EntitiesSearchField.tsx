@@ -1,5 +1,5 @@
 import { MailOutline } from "@mui/icons-material";
-import { SvgIcon } from "@mui/material";
+import { FormLabel, SvgIcon } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -39,6 +39,7 @@ interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T>
   setFieldValue: UseFormSetValue<T>;
   getFieldValues: UseFormGetValues<T>;
   showLabel?: boolean;
+  seperateLabel?: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
@@ -50,6 +51,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
   setFieldValue,
   getFieldValues,
   showLabel,
+  seperateLabel = false,
   ...props
 }: EntitySearchProps<T>) => {
   const { me } = useContext(CurrentUserContext);
@@ -102,6 +104,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
         render={({ field, fieldState: { error } }) => {
           return (
             <FormControl required>
+              {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
               <Autocomplete
                 includeInputInList={true}
                 multiple
@@ -259,7 +262,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={showLabel ? label : ""}
+                    label={showLabel && !seperateLabel ? label : ""}
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,
