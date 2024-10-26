@@ -11,7 +11,6 @@ import {
   PanelContainer,
   RequestStage,
 } from "@/components/ConfigDiagram";
-import { getResultLabel } from "@/components/result/getResultLabel";
 import { RequestFragment, Status } from "@/graphql/generated/graphql";
 
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
@@ -59,7 +58,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   )}
                   subtitle={step.fieldSet.fields[0].name}
                   icon={Diversity3Outlined}
-                  label={getResultLabel({ type: "resultConfig", result: step.result[0] })}
+                  label={step.result[0].name}
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
                   setSelectedId={setSelectedId}

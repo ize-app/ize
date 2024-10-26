@@ -13,7 +13,6 @@ import {
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
-import { getResultLabel } from "../getResultLabel";
 import { ResultHeader } from "../ResultName";
 
 export const Result = ({
@@ -50,10 +49,7 @@ export const Result = ({
       key={resultConfig.resultConfigId}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <ResultHeader
-          label={getResultLabel({ type: "resultConfig", result: resultConfig })}
-          requestStatus={requestStepStatus}
-        />
+        <ResultHeader label={resultConfig.name} requestStatus={requestStepStatus} />
         <Typography color="primary" fontSize="1rem">
           {field?.name}
         </Typography>

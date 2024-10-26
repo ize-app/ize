@@ -17,7 +17,7 @@ import {
   PanelHeader,
 } from "@/components/ConfigDiagram";
 import { StageConnectorButton } from "@/components/ConfigDiagram/DiagramPanel/StageConnectorButton";
-import { getResultLabel } from "@/components/result/getResultLabel";
+import { getResultFormLabel } from "@/components/Form/FlowForm/helpers/getResultFormLabel";
 import { ActionType } from "@/graphql/generated/graphql";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
@@ -140,7 +140,7 @@ export const FlowForm = forwardRef(
                       <Box key={item.id}>
                         <FlowStage
                           icon={Diversity3OutlinedIcon}
-                          label={getResultLabel({ type: "setup", result })}
+                          label={getResultFormLabel({ result })}
                           subtitle={fieldName}
                           key={"stage-" + item.id.toString() + index.toString()}
                           deleteHandler={() => {
