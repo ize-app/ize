@@ -19,11 +19,12 @@ export const About = () => {
             background: "rgba(255, 255, 255, 0.95)",
             padding: "60px",
             width: "75%",
+            maxWidth: "700px",
             borderRadius: "10px",
             [theme.breakpoints.down("sm")]: { width: "90%", padding: "36px" },
           })}
         >
-          <Typography variant="h1">Ize: The Collaboration Engine</Typography>
+          <Typography variant="h1">Ize: The Process Engine</Typography>
           <p>
             The human brain isn&#39;t cut out for modern online collaboration. Whereas our ancestors
             collaborated in a single time and place, modern collaboration is spread across the
