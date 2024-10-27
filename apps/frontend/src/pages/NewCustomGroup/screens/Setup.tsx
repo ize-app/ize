@@ -3,6 +3,8 @@ import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import discordLogoUrl from "@/assets/discord-logo-blue.svg";
+import slackLogoUrl from "@/assets/slack-logo.svg";
 import telegramLogoUrl from "@/assets/telegram-logo.svg";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
@@ -72,8 +74,23 @@ export const Setup = () => {
               options={[
                 {
                   value: GroupCommunicationType.Telegram,
-                  name: "Telegram",
+                  // name: "Telegram",
+                  title: "Telegram",
                   icon: telegramLogoUrl,
+                },
+                {
+                  value: GroupCommunicationType.Telegram,
+                  name: "Coming soon",
+                  disabled: true,
+                  title: "Discord",
+                  icon: discordLogoUrl,
+                },
+                {
+                  value: GroupCommunicationType.Telegram,
+                  name: "Coming soon",
+                  disabled: true,
+                  title: "Slack",
+                  icon: slackLogoUrl,
                 },
                 { value: GroupCommunicationType.Other, name: "Other" },
               ]}

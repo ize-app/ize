@@ -4,7 +4,7 @@ import { Controller, FieldPath, FieldValues, UseControllerProps } from "react-ho
 interface ButtonGroupFieldProps<T extends FieldValues> extends UseControllerProps<T> {
   name: FieldPath<T>;
   label: string;
-  options: { value: string; name: string; icon?: string; title?: string }[];
+  options: { value: string; name?: string; icon?: string; title?: string; disabled?: boolean }[];
   buttonWidth?: string;
 }
 
@@ -35,6 +35,9 @@ export const ButtonGroupField = <T extends FieldValues>({
                 //   justifyContent: "center",
                 gap: "12px",
 
+                "& .MuiToggleButton-root.Mui-disabled": {
+                  border: "1px solid rgba(0, 0, 0, 0.12)",
+                },
                 "& .MuiToggleButtonGroup-middleButton": {
                   border: "1px solid rgba(0, 0, 0, 0.12)",
                 },
@@ -48,6 +51,7 @@ export const ButtonGroupField = <T extends FieldValues>({
               {options.map((option) => (
                 <ToggleButton
                   key={option.value}
+                  disabled={option.disabled ?? false}
                   value={option.value}
                   size="small"
                   aria-label={option.name}
