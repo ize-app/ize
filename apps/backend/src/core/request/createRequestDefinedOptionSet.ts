@@ -27,7 +27,6 @@ export const createRequestDefinedOptionSet = async ({
   transaction?: Prisma.TransactionClient;
 }) => {
   let field: FieldPrismaType | null = null;
-  console.log("creating request defined option set", fieldId, newOptionArgs);
   for (const step of flowVersion.Steps ?? []) {
     const f = (step.FieldSet?.FieldSetFields ?? []).find((f) => f.fieldId === fieldId);
     if (f) {
@@ -35,8 +34,6 @@ export const createRequestDefinedOptionSet = async ({
       break;
     }
   }
-
-  console.log("field is ", field);
 
   if (!field)
     throw new GraphQLError("Cannot find flow field corresponding to request defined options.", {

@@ -164,10 +164,18 @@ export const createUserWatchedFlowFilter = ({
   });
 };
 
-export const createGroupWatchedFlowFilter = ({ groupId }: { groupId: string }) =>
+export const createGroupWatchedFlowFilter = ({
+  groupId,
+  watched,
+  excudeOwnedFlows = false,
+}: {
+  groupId: string;
+  watched: boolean;
+  excudeOwnedFlows?: boolean;
+}) =>
   Prisma.validator<Prisma.FlowWhereInput>()({
-    OR: [
-      { OwnerGroup: { id: groupId } },
+    [watched ? "OR" : "NOT"]: [
+      !excudeOwnedFlows ? { OwnerGroup: { id: groupId } } : {},
       { GroupsWatchedFlows: { some: { groupId: groupId, watched: true } } },
     ],
   });

@@ -808,6 +808,7 @@ export type QueryGetFlowArgs = {
 
 export type QueryGetFlowsArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
+  excludeOwnedFlows?: InputMaybe<Scalars['Boolean']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];

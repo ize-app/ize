@@ -11,6 +11,7 @@ import {
 import {
   FlowSummaryPrismaType,
   createFlowSummaryInclude,
+  createGroupWatchedFlowFilter,
   createUserWatchedFlowFilter,
 } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
@@ -20,7 +21,6 @@ import { getUserEntityIds } from "../user/getUserEntityIds";
 
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
-// TODO: In the future, this query will only pull flows that user has interacted with or created
 export const getFlows = async ({
   args,
   context,
@@ -42,7 +42,8 @@ export const getFlows = async ({
     where: {
       reusable: true,
       AND: [
-        args.watchFilter !== WatchFilter.All && user
+        // when query is for a user's watched flows
+        args.watchFilter !== WatchFilter.All && user && !args.groupId
           ? createUserWatchedFlowFilter({
               entityIds: userEntityIds,
               watched: args.watchFilter === WatchFilter.Watched,
@@ -53,7 +54,6 @@ export const getFlows = async ({
           ? {
               OR: [
                 {
-                  // OR/NOT logic is breaking the type checking
                   CurrentFlowVersion: {
                     name: {
                       contains: args.searchQuery,
@@ -76,19 +76,24 @@ export const getFlows = async ({
           : {},
         args.groupId
           ? {
-              OR: [
-                { groupId: args.groupId },
-                {
-                  GroupsWatchedFlows: {
-                    some: {
-                      groupId: args.groupId,
-                    },
-                  },
-                },
+              AND: [
+                createGroupWatchedFlowFilter({
+                  excudeOwnedFlows: args.excludeOwnedFlows ?? false,
+                  groupId: args.groupId,
+                  watched: args.watchFilter !== WatchFilter.Unwatched,
+                }),
+                // when showing "unwatched flows" for a group,
+                // show flows that are watched by the user (though excluding flows watched by groups)
+                // this is useful for the flow "unwatch" field
+                args.watchFilter === WatchFilter.Unwatched
+                  ? createUserWatchedFlowFilter({
+                      entityIds: userEntityIds,
+                      watched: true,
+                    })
+                  : {},
               ],
             }
           : { groupId: null },
-        // TODO: reduce some non-DRY code with requestSteps permission logic
 
         args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
           ? {
@@ -107,7 +112,8 @@ export const getFlows = async ({
     },
   });
 
-  return flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
+  const res = flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
+  return res;
 };
 
 const createFlowPermissionFilter = (

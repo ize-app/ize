@@ -35,7 +35,7 @@ export const RequestForm = () => {
     shouldUnregister: false,
   });
 
-  console.log("form state is ", formMethods.getValues());
+  // console.log("form state is ", formMethods.getValues());
   // console.log("errors are  ", formMethods.formState.errors);
 
   const onSubmit = (data: RequestSchemaType) => {
@@ -148,6 +148,10 @@ export const RequestForm = () => {
                                 key={fieldId}
                                 ariaLabel={name}
                                 label={name}
+                                showLabel={true}
+                                seperateLabel={true}
+                                groupId={flow.group?.id}
+                                systemFieldType={field.systemType}
                               />
                             );
                           case FieldDataType.Webhook:

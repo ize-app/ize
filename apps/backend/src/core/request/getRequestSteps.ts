@@ -107,12 +107,18 @@ export const getRequestSteps = async ({
                   OR: [
                     {
                       ProposedFlowVersionEvolution: {
-                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
+                        Flow: createGroupWatchedFlowFilter({
+                          groupId: args.groupId,
+                          watched: true,
+                        }),
                       },
                     },
                     {
                       FlowVersion: {
-                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
+                        Flow: createGroupWatchedFlowFilter({
+                          groupId: args.groupId,
+                          watched: true,
+                        }),
                       },
                     },
                   ],

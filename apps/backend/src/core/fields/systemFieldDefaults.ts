@@ -74,8 +74,8 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
     systemType: SystemFieldType.WatchFlow,
     isInternal: false,
     freeInputDataType: FieldDataType.FlowIds,
-    name: "Membership definition",
-    required: true,
+    name: "Flows to watch",
+    required: false,
   },
 
   [SystemFieldType.UnwatchFlow]: {
@@ -84,7 +84,7 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
     isInternal: false,
     systemType: SystemFieldType.UnwatchFlow,
     freeInputDataType: FieldDataType.FlowIds,
-    name: "Membership definition",
-    required: true,
+    name: "Flows to unwatch",
+    required: false,
   },
 };

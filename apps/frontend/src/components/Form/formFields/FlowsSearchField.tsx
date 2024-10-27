@@ -1,3 +1,4 @@
+import { FormLabel } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,25 +13,47 @@ import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { Avatar, AvatarGroup } from "@/components/Avatar";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 
-import { FlowSummaryFragment } from "../../../graphql/generated/graphql";
+import {
+  FlowSummaryFragment,
+  SystemFieldType,
+  WatchFilter,
+} from "../../../graphql/generated/graphql";
 
 interface FlowSearchProps<T extends FieldValues> {
   name: Path<T>;
   label?: string;
   ariaLabel: string;
   placeholderText?: string;
+  showLabel?: boolean;
+  seperateLabel?: boolean;
+  groupId?: string;
+  systemFieldType?: SystemFieldType | undefined | null;
 }
 
 export const FlowsSearchField = <T extends FieldValues>({
   name,
   label,
   ariaLabel,
+  showLabel = false,
+  seperateLabel = false,
+  groupId,
+  systemFieldType,
   ...props
 }: FlowSearchProps<T>) => {
   const { control } = useFormContext<T>();
+  let initialWatchFilter: WatchFilter = WatchFilter.All;
+  let excludeOwnedFlows: boolean = false;
+
+  if (systemFieldType === SystemFieldType.WatchFlow) {
+    initialWatchFilter = WatchFilter.Unwatched;
+  } else if (systemFieldType === SystemFieldType.UnwatchFlow) {
+    excludeOwnedFlows = true;
+    initialWatchFilter = WatchFilter.Watched;
+  }
+
   const queryResultLimit = 20;
   const { setSearchQuery, oldCursor, setOldCursor, newCursor, flows, fetchMore, queryVars } =
-    useFlowsSearch({ queryResultLimit });
+    useFlowsSearch({ queryResultLimit, groupId, initialWatchFilter, excludeOwnedFlows });
 
   const options: FlowSummaryFragment[] = [...flows];
 
@@ -42,6 +65,7 @@ export const FlowsSearchField = <T extends FieldValues>({
         render={({ field, fieldState: { error } }) => {
           return (
             <FormControl required>
+              {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
               <Autocomplete
                 // need to override autocomplete filtering behavior for async options
                 filterOptions={(x) => x}
@@ -139,7 +163,7 @@ export const FlowsSearchField = <T extends FieldValues>({
                       setSearchQuery(event.target.value);
                     }}
                     {...params}
-                    label={label}
+                    label={showLabel && !seperateLabel ? label : ""}
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,
