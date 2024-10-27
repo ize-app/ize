@@ -6978,7 +6978,7 @@
             "deprecationReason": null
           },
           {
-            "name": "getRequestSteps",
+            "name": "getRequests",
             "description": null,
             "args": [
               {
@@ -7109,7 +7109,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "RequestStepSummary",
+                    "name": "RequestSummary",
                     "ofType": null
                   }
                 }
@@ -8129,7 +8129,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "RequestStepSummary",
+        "name": "RequestSummary",
         "description": null,
         "isOneOf": null,
         "fields": [

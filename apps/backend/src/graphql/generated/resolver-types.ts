@@ -782,7 +782,7 @@ export type Query = {
   getFlow: Flow;
   getFlows: Array<FlowSummary>;
   getRequest: Request;
-  getRequestSteps: Array<RequestStepSummary>;
+  getRequests: Array<RequestSummary>;
   group: IzeGroup;
   groupsForCurrentUser: Array<Group>;
   hatToken?: Maybe<ApiHatToken>;
@@ -822,7 +822,7 @@ export type QueryGetRequestArgs = {
 };
 
 
-export type QueryGetRequestStepsArgs = {
+export type QueryGetRequestsArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   flowId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
@@ -936,8 +936,8 @@ export enum RequestStepStatusFilter {
   Open = 'Open'
 }
 
-export type RequestStepSummary = {
-  __typename?: 'RequestStepSummary';
+export type RequestSummary = {
+  __typename?: 'RequestSummary';
   createdAt: Scalars['String']['output'];
   creator: Entity;
   expirationDate: Scalars['String']['output'];
@@ -1323,7 +1323,7 @@ export type ResolversTypes = {
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatus: ResolverTypeWrapper<RequestStepStatus>;
   RequestStepStatusFilter: RequestStepStatusFilter;
-  RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['Entity'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
+  RequestSummary: ResolverTypeWrapper<Omit<RequestSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['Entity'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversTypes['FieldAnswer']>, creator: ResolversTypes['Entity'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   ResponseConfigArgs: ResponseConfigArgs;
@@ -1446,7 +1446,7 @@ export type ResolversParentTypes = {
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
   RequestStepStatus: RequestStepStatus;
-  RequestStepSummary: Omit<RequestStepSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
+  RequestSummary: Omit<RequestSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
   Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Entity'] };
   ResponseConfig: Omit<ResponseConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   ResponseConfigArgs: ResponseConfigArgs;
@@ -1904,7 +1904,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'triggerPermissionFilter' | 'watchFilter'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequestSteps?: Resolver<Array<ResolversTypes['RequestStepSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestStepsArgs, 'limit' | 'respondPermissionFilter' | 'searchQuery' | 'statusFilter' | 'userOnly'>>;
+  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'limit' | 'respondPermissionFilter' | 'searchQuery' | 'statusFilter' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
@@ -1958,7 +1958,7 @@ export type RequestStepStatusResolvers<ContextType = GraphqlRequestContext, Pare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepSummary'] = ResolversParentTypes['RequestStepSummary']> = {
+export type RequestSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestSummary'] = ResolversParentTypes['RequestSummary']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
   expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2138,7 +2138,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Request?: RequestResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepStatus?: RequestStepStatusResolvers<ContextType>;
-  RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
+  RequestSummary?: RequestSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   ResponseFieldAnswers?: ResponseFieldAnswersResolvers<ContextType>;

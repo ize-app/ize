@@ -30,7 +30,7 @@ import {
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestStepsSearch";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -296,7 +296,7 @@ export const Flow = () => {
           ))}
         </Box>
         {isCurrentFlowVersion && (
-          <RequestStepsSearch
+          <RequestSearch
             userOnly={false}
             flowId={flow.flowId}
             initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}

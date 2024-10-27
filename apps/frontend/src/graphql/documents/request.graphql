@@ -20,7 +20,7 @@ mutation EndRequestStep($requestStepId: String!) {
   endRequestStep(requestStepId: $requestStepId)
 }
 
-query getRequestSteps(
+query getRequests(
   $cursor: String
   $limit: Int!
   $userOnly: Boolean!
@@ -30,7 +30,7 @@ query getRequestSteps(
   $statusFilter: RequestStepStatusFilter!
   $respondPermissionFilter: RequestStepRespondPermissionFilter!
 ) {
-  getRequestSteps(
+  getRequests(
     cursor: $cursor
     limit: $limit
     userOnly: $userOnly
@@ -40,7 +40,7 @@ query getRequestSteps(
     statusFilter: $statusFilter
     respondPermissionFilter: $respondPermissionFilter
   ) {
-    ...RequestStepSummary
+    ...RequestSummary
   }
 }
 
@@ -88,7 +88,7 @@ fragment RequestStep on RequestStep {
   }
 }
 
-fragment RequestStepSummary on RequestStepSummary {
+fragment RequestSummary on RequestSummary {
   id
   requestStepId
   requestId

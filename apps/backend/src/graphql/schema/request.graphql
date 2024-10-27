@@ -7,7 +7,7 @@ type Mutation {
 
 type Query {
   getRequest(requestId: String!): Request!
-  getRequestSteps(
+  getRequests(
     cursor: String
     limit: Int!
     userOnly: Boolean!
@@ -16,7 +16,7 @@ type Query {
     searchQuery: String!
     statusFilter: RequestStepStatusFilter!
     respondPermissionFilter: RequestStepRespondPermissionFilter!
-  ): [RequestStepSummary!]!
+  ): [RequestSummary!]!
 }
 
 input NewRequestArgs {
@@ -76,7 +76,6 @@ type Request {
   requestSteps: [RequestStep!]!
 }
 
-
 type RequestStep {
   requestStepId: String!
   createdAt: String!
@@ -89,7 +88,7 @@ type RequestStep {
   status: RequestStepStatus!
 }
 
-type RequestStepSummary {
+type RequestSummary {
   id: String! # same as requestStepId, might delete requestStepId later
   requestStepId: String!
   requestId: String!

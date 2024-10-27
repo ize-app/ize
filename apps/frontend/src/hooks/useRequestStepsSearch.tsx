@@ -3,11 +3,11 @@ import { debounce } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
-  GetRequestStepsDocument,
-  GetRequestStepsQueryVariables,
+  GetRequestsDocument,
+  GetRequestsQueryVariables,
   RequestStepRespondPermissionFilter,
   RequestStepStatusFilter,
-  RequestStepSummaryFragment,
+  RequestSummaryFragment,
 } from "@/graphql/generated/graphql";
 
 const useRequestStepsSearch = ({
@@ -31,13 +31,13 @@ const useRequestStepsSearch = ({
   const [respondPermissionFilter, setRespondPermissionFilter] =
     useState<RequestStepRespondPermissionFilter>(initialRespondPermissionFilter);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestStepsDocument);
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument);
 
-  const newCursor = data?.getRequestSteps.length
-    ? data.getRequestSteps[data.getRequestSteps.length - 1].requestStepId
+  const newCursor = data?.getRequests.length
+    ? data.getRequests[data.getRequests.length - 1].requestStepId
     : "";
 
-  const queryVarsRef = useRef<GetRequestStepsQueryVariables>({
+  const queryVarsRef = useRef<GetRequestsQueryVariables>({
     userOnly,
     flowId,
     groupId,
@@ -84,7 +84,7 @@ const useRequestStepsSearch = ({
   useEffect(() => {
     getResults({ variables: queryVarsRef.current });
   }, []);
-  const requestSteps = (data?.getRequestSteps ?? []) as RequestStepSummaryFragment[];
+  const requestSteps = (data?.getRequests ?? []) as RequestSummaryFragment[];
 
   return {
     searchQuery,

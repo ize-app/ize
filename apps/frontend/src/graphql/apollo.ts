@@ -30,7 +30,7 @@ export const apolloClient = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          getRequestSteps: {
+          getRequests: {
             keyArgs: [
               "userOnly",
               "groupId",

@@ -26,7 +26,7 @@ import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { FlowsSearch } from "../Flows/FlowsSearch";
-import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestStepsSearch";
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();
@@ -64,7 +64,7 @@ export const Group = () => {
     {
       title: "Requests",
       content: !loading ? (
-        <RequestStepsSearch
+        <RequestSearch
           userOnly={false}
           groupId={groupId}
           initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}

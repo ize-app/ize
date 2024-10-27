@@ -7,6 +7,8 @@ import { intervalToIntuitiveTimeString } from "@/utils/inputs";
 export const ExpirationStatus = ({ expirationDate }: { expirationDate: Date }) => {
   const now = new Date();
 
+  if (expirationDate < now) return "";
+
   const timeLeft = expirationDate.getTime() - now.getTime();
   const timeLeftStr = intervalToIntuitiveTimeString(Math.max(timeLeft, 0));
 

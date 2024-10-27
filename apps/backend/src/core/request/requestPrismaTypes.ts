@@ -49,44 +49,44 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const createRequestStepSummaryInclude = (userEntityIds: string[]) =>
-  Prisma.validator<Prisma.RequestStepInclude>()({
-    Request: {
+export const createRequestSummaryInclude = (userEntityIds: string[]) =>
+  Prisma.validator<Prisma.RequestInclude>()({
+    FlowVersion: {
       include: {
-        FlowVersion: {
+        Flow: {
           include: {
-            Flow: {
-              include: {
-                OwnerGroup: { include: groupInclude },
-              },
-            },
+            OwnerGroup: { include: groupInclude },
           },
         },
-        CreatorEntity: {
-          include: entityInclude,
-        },
-        ProposedFlowVersionEvolution: {
-          include: evolveRequestProposedFlowVersionInclude,
-        },
       },
     },
-    Responses: {
-      where: {
-        creatorEntityId: { in: userEntityIds },
-      },
+    CreatorEntity: {
+      include: entityInclude,
     },
-    Step: {
+    ProposedFlowVersionEvolution: {
+      include: evolveRequestProposedFlowVersionInclude,
+    },
+    CurrentRequestStep: {
       include: {
-        ResponseConfig: {
-          include: responseConfigInclude,
+        Responses: {
+          where: {
+            creatorEntityId: { in: userEntityIds },
+          },
+        },
+        Step: {
+          include: {
+            ResponseConfig: {
+              include: responseConfigInclude,
+            },
+          },
         },
       },
     },
   });
-const exampleRequestStepSummaryInclude = createRequestStepSummaryInclude([]);
+const exampleRequestSummaryInclude = createRequestSummaryInclude([]);
 
-export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
-  include: typeof exampleRequestStepSummaryInclude;
+export type RequestSummaryPrismaType = Prisma.RequestGetPayload<{
+  include: typeof exampleRequestSummaryInclude;
 }>;
 
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({

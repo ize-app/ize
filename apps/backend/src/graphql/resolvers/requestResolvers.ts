@@ -1,5 +1,5 @@
 import { getRequest as getRequestService } from "@/core/request/getRequest";
-import { getRequestSteps as getRequestStepsService } from "@/core/request/getRequestSteps";
+import { getRequestSummaries as getRequestSummariesService } from "@/core/request/getRequestSteps";
 import { newEvolveRequest as newEvolveRequestService } from "@/core/request/newEvolveRequest";
 import { newRequest as newRequestService } from "@/core/request/newRequest";
 import { newResponse as newResponseService } from "@/core/response/newResponse";
@@ -11,10 +11,10 @@ import {
   MutationNewResponseArgs,
   MutationResolvers,
   QueryGetRequestArgs,
-  QueryGetRequestStepsArgs,
+  QueryGetRequestsArgs,
   QueryResolvers,
   Request,
-  RequestStepSummary,
+  RequestSummary,
 } from "@graphql/generated/resolver-types";
 
 import { endRequestStep as endRequestStepService } from "@/core/request/endRequestStep";
@@ -68,12 +68,12 @@ const getRequest: QueryResolvers["getRequest"] = async (
 };
 
 // getRequestSteps is called on user's dashboard to get all the request steps that the user has access to
-const getRequestSteps: QueryResolvers["getRequestSteps"] = async (
+const getRequests: QueryResolvers["getRequests"] = async (
   root: unknown,
-  args: QueryGetRequestStepsArgs,
+  args: QueryGetRequestsArgs,
   context: GraphqlRequestContext,
-): Promise<RequestStepSummary[]> => {
-  return await getRequestStepsService({ args, user: context.currentUser });
+): Promise<RequestSummary[]> => {
+  return await getRequestSummariesService({ args, user: context.currentUser });
 };
 
 const newResponse: MutationResolvers["newResponse"] = async (
@@ -94,7 +94,7 @@ const endRequestStep: MutationResolvers["endRequestStep"] = async (
 
 export const requestQueries = {
   getRequest,
-  getRequestSteps,
+  getRequests,
 };
 
 export const requestMutations = { newRequest, newEvolveRequest, newResponse, endRequestStep };

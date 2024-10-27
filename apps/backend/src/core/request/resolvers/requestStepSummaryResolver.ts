@@ -2,59 +2,63 @@ import { entityResolver } from "@/core/entity/entityResolver";
 import { getFlowName } from "@/core/flow/helpers/getFlowName";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
-import { RequestStepSummary } from "@/graphql/generated/resolver-types";
+import { RequestSummary } from "@/graphql/generated/resolver-types";
 
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
-import { RequestStepSummaryPrismaType } from "../requestPrismaTypes";
+import { RequestSummaryPrismaType } from "../requestPrismaTypes";
 
-export const requestStepSummaryResolver = ({
-  requestStepSummary,
+export const requestSummaryResolver = ({
+  requestSummary: requestSummary,
   identityIds,
   groupIds,
   userId,
 }: {
-  requestStepSummary: RequestStepSummaryPrismaType;
+  requestSummary: RequestSummaryPrismaType;
   identityIds: string[];
   groupIds: string[];
   userId: string | undefined;
-}): RequestStepSummary => {
-  const r = requestStepSummary;
+}): RequestSummary => {
+  const r = requestSummary;
+  if (!r.CurrentRequestStep) throw Error("Request does not have current request step");
   return {
     id: r.id,
     requestStepId: r.id,
-    requestId: r.Request.id,
-    flowId: r.Request.FlowVersion.Flow.id,
-    requestName: r.Request.name,
+    requestId: r.id,
+    flowId: r.FlowVersion.Flow.id,
+    requestName: r.name,
     flowName:
       getEvolveRequestFlowName({
-        proposedFlowVersion: r.Request.ProposedFlowVersionEvolution,
+        proposedFlowVersion: r.ProposedFlowVersionEvolution,
       }) ??
       getFlowName({
-        flowName: r.Request.FlowVersion.name,
-        ownerGroupName: r.Request.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
-        flowType: r.Request.FlowVersion.Flow.type,
+        flowName: r.FlowVersion.name,
+        ownerGroupName: r.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+        flowType: r.FlowVersion.Flow.type,
       }),
-    creator: entityResolver({ entity: r.Request.CreatorEntity, userIdentityIds: identityIds }),
-    stepIndex: r.Step.index,
-    totalSteps: r.Request.FlowVersion.totalSteps,
+    creator: entityResolver({ entity: r.CreatorEntity, userIdentityIds: identityIds }),
+    stepIndex: 0, // TODO remove this
+    totalSteps: r.FlowVersion.totalSteps,
     createdAt: r.createdAt.toISOString(),
-    expirationDate: r.expirationDate?.toISOString(),
-    userResponded: r.Responses.length > 0,
-    respondPermission: r.Step.ResponseConfig?.ResponsePermissions
-      ? permissionResolver(r.Step.ResponseConfig?.ResponsePermissions, identityIds)
+    expirationDate: r.CurrentRequestStep.expirationDate?.toISOString(),
+    userResponded: r.CurrentRequestStep.Responses.length > 0,
+    respondPermission: r.CurrentRequestStep.Step.ResponseConfig?.ResponsePermissions
+      ? permissionResolver(
+          r.CurrentRequestStep.Step.ResponseConfig?.ResponsePermissions,
+          identityIds,
+        )
       : null,
-    userRespondPermission: r.Step.ResponseConfig?.ResponsePermissions
+    userRespondPermission: r.CurrentRequestStep.Step.ResponseConfig?.ResponsePermissions
       ? hasReadPermission({
-          permission: r.Step.ResponseConfig?.ResponsePermissions,
+          permission: r.CurrentRequestStep.Step.ResponseConfig?.ResponsePermissions,
           groupIds: groupIds,
           identityIds: identityIds,
           userId,
         })
       : false,
     status: {
-      responseFinal: r.responseFinal,
-      resultsFinal: r.resultsFinal,
-      actionsFinal: r.actionsFinal,
+      responseFinal: r.CurrentRequestStep.responseFinal,
+      resultsFinal: r.CurrentRequestStep.resultsFinal,
+      actionsFinal: r.CurrentRequestStep.actionsFinal,
       final: r.final,
     },
   };
