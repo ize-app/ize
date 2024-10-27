@@ -120,7 +120,6 @@ export const ResponseForm = ({
                         <DatePicker<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.value`}
                           key={fieldId}
-                          control={formMethods.control}
                           // showLabel={false}
 
                           label={name}
@@ -131,7 +130,6 @@ export const ResponseForm = ({
                         <DateTimePicker<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.value`}
                           key={fieldId}
-                          control={formMethods.control}
                           label={name}
                         />
                       );
@@ -161,7 +159,6 @@ export const ResponseForm = ({
                         <Radio<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
                           key={fieldId}
-                          control={formMethods.control}
                           label={name}
                           sx={{ flexDirection: "column", gap: "4px" }}
                           options={options.map((option) => ({
@@ -175,7 +172,6 @@ export const ResponseForm = ({
                       return (
                         <MultiSelect<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.optionSelections`}
-                          control={formMethods.control}
                           label={name}
                           key={fieldId}
                           sx={{ flexDirection: "column", gap: "4px" }}
@@ -189,7 +185,6 @@ export const ResponseForm = ({
                     case FieldOptionsSelectionType.Rank: {
                       return (
                         <SortableList<ResponseSchemaType>
-                          control={formMethods.control}
                           label={name}
                           key={fieldId}
                           formMethods={formMethods}

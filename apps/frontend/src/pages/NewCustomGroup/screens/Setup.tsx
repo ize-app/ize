@@ -93,12 +93,9 @@ export const Setup = () => {
               </Typography>
               <EntitySearch<GroupInitialSetupSchemaType>
                 ariaLabel={"Individuals and groups to add to custom group"}
-                control={formMethods.control}
                 name={"members"}
                 hideCustomGroups={true}
                 label={"Group members *"}
-                setFieldValue={formMethods.setValue}
-                getFieldValues={formMethods.getValues}
                 showLabel={false}
               />
             </FieldBlockFadeIn>

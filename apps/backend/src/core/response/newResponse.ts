@@ -39,12 +39,12 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
             TriggerFieldAnswers: {
               include: fieldAnswerInclude,
             },
-          },
-        },
-        RequestDefinedOptionSets: {
-          include: {
-            FieldOptionSet: {
-              include: fieldOptionSetInclude,
+            RequestDefinedOptionSets: {
+              include: {
+                FieldOptionSet: {
+                  include: fieldOptionSetInclude,
+                },
+              },
             },
           },
         },
@@ -129,7 +129,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     await newFieldAnswers({
       fieldSet: requestStep.Step.FieldSet,
       fieldAnswers: answers,
-      requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
+      requestDefinedOptionSets: requestStep.Request.RequestDefinedOptionSets,
       responseId: newResponse.id,
       transaction,
     });

@@ -3,13 +3,15 @@ import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import { zodDay } from "../formValidation/field";
 
-interface DatePickerProps<T extends FieldValues> extends UseControllerProps<T> {
+interface DatePickerProps<T extends FieldValues> {
+  name: Path<T>;
   label: string;
   required?: boolean;
+  disabled?: boolean;
   showLabel?: boolean;
   placeholderText?: string;
   size?: "small" | "medium";
@@ -19,11 +21,12 @@ interface DatePickerProps<T extends FieldValues> extends UseControllerProps<T> {
 export const DatePicker = <T extends FieldValues>({
   label,
   name,
-  control,
   showLabel = false,
+  disabled = false,
   required = false,
   seperateLabel = false,
 }: DatePickerProps<T>) => {
+  const { control } = useFormContext<T>();
   return (
     <Controller
       name={name}
@@ -36,6 +39,7 @@ export const DatePicker = <T extends FieldValues>({
             <MuiDatePicker
               {...field}
               value={field.value}
+              disabled={disabled}
               sx={{
                 flexGrow: 1,
                 "& .MuiInputBase-input": {

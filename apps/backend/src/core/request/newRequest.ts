@@ -1,4 +1,4 @@
-import { createFlowInclude } from "@/core/flow/flowPrismaTypes";
+import { FlowVersionPrismaType, createFlowInclude } from "@/core/flow/flowPrismaTypes";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
@@ -111,8 +111,8 @@ export const newRequest = async ({
       const requestDefinedOptionSets = await Promise.all(
         requestDefinedOptions.map(async (r) => {
           return await createRequestDefinedOptionSet({
-            step,
-            requestStepId: requestStep.id,
+            flowVersion: flow.CurrentFlowVersion as FlowVersionPrismaType,
+            requestId: request.id,
             newOptionArgs: r.options,
             fieldId: r.fieldId,
             isTriggerDefinedOptions: true,

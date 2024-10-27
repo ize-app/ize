@@ -1,4 +1,4 @@
-import { FieldPath, FieldValues, Path, PathValue, useFormContext } from "react-hook-form";
+import { FieldPath, FieldValues, Path, PathValue } from "react-hook-form";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
@@ -17,14 +17,11 @@ export const InputField = <T extends FieldValues>({
   label,
   disabled,
 }: RenderInputProps<T>) => {
-  const { control } = useFormContext<T>();
-
   switch (dataType) {
     case FieldDataType.Date:
       return (
         <DatePicker<T>
           name={fieldName}
-          control={control}
           // showLabel={false}
           label={label}
           disabled={disabled}
@@ -32,13 +29,7 @@ export const InputField = <T extends FieldValues>({
       );
     case FieldDataType.DateTime:
       return (
-        <DateTimePicker<T>
-          name={fieldName}
-          control={control}
-          showLabel={false}
-          label={label}
-          disabled={disabled}
-        />
+        <DateTimePicker<T> name={fieldName} showLabel={false} label={label} disabled={disabled} />
       );
     default:
       return (

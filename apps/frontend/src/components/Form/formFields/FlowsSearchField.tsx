@@ -7,26 +7,27 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import { Avatar, AvatarGroup } from "@/components/Avatar";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 
 import { FlowSummaryFragment } from "../../../graphql/generated/graphql";
 
-interface FlowSearchProps<T extends FieldValues> extends UseControllerProps<T> {
+interface FlowSearchProps<T extends FieldValues> {
+  name: Path<T>;
   label?: string;
   ariaLabel: string;
   placeholderText?: string;
 }
 
 export const FlowsSearchField = <T extends FieldValues>({
-  control,
   name,
   label,
   ariaLabel,
   ...props
 }: FlowSearchProps<T>) => {
+  const { control } = useFormContext<T>();
   const queryResultLimit = 20;
   const { setSearchQuery, oldCursor, setOldCursor, newCursor, flows, fetchMore, queryVars } =
     useFlowsSearch({ queryResultLimit });

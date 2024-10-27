@@ -34,8 +34,7 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
 
   const fields = getValues(`steps.${stepIndex}.fieldSet.fields`);
 
-  const allInternalFields = fields.every((field) => field.isInternal);
-
+const allInternalFields = fields.every((field) => field.isInternal);
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
@@ -87,6 +86,7 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
       )}
       <PanelAccordion
         title="Collaborations"
+        sx={{ paddingBottom: "40px" }}
         hasError={
           !!formState.errors.steps?.[stepIndex]?.fieldSet ||
           !!formState.errors.steps?.[stepIndex]?.result

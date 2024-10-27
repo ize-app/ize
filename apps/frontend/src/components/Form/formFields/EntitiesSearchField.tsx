@@ -10,13 +10,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
-import {
-  Controller,
-  FieldValues,
-  UseControllerProps,
-  UseFormGetValues,
-  UseFormSetValue,
-} from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import discordLogo from "@/assets/discord-logo-blue.svg";
 import hatsLogoUrl from "@/assets/hats-logo.svg";
@@ -31,29 +25,26 @@ import { EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
 
-interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T> {
+interface EntitySearchProps<T extends FieldValues> {
   label?: string;
+  name: Path<T>;
   ariaLabel: string;
   placeholderText?: string;
   hideCustomGroups?: boolean;
-  setFieldValue: UseFormSetValue<T>;
-  getFieldValues: UseFormGetValues<T>;
   showLabel?: boolean;
   seperateLabel?: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
-  control,
   name,
   label,
   ariaLabel,
   hideCustomGroups = false,
-  setFieldValue,
-  getFieldValues,
   showLabel,
   seperateLabel = false,
   ...props
 }: EntitySearchProps<T>) => {
+  const { control, setValue, getValues } = useFormContext<T>();
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
@@ -82,11 +73,11 @@ export const EntitiesSearchField = <T extends FieldValues>({
   const onSubmit = (value: EntityFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = (getFieldValues(name) ?? []) as EntityFragment[];
+    const currentState = (getValues(name) ?? []) as EntityFragment[];
     const newAgents = dedupEntities([...(currentState ?? []), ...(value ?? [])]);
 
     //@ts-expect-error TODO
-    setFieldValue(name, newAgents);
+    setValue(name, newAgents);
   };
   return me ? (
     <>

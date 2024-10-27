@@ -56,7 +56,7 @@ export const fieldSetResolver = ({
       // find options defined by request for this field.
       // these options will be combined with flow defined fields
       const requestDefinedOptionSet = requestDefinedOptionSets
-        ? requestDefinedOptionSets.find((s) => s.fieldId)
+        ? requestDefinedOptionSets.find((s) => s.fieldId === f.fieldId)
         : undefined;
 
       const requestOptions = requestDefinedOptionSet

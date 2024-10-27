@@ -6,9 +6,10 @@ import {
   ArrayPath,
   FieldArray,
   FieldValues,
-  UseControllerProps,
+  Path,
   UseFormReturn,
   useFieldArray,
+  useFormContext,
 } from "react-hook-form";
 
 import { SortableItem } from "./SortableItem";
@@ -23,8 +24,9 @@ export type SampleFormData = {
   textFields: { text: string }[];
 };
 
-interface SortableListProps<T extends FieldValues> extends UseControllerProps<T> {
+interface SortableListProps<T extends FieldValues> {
   label: string;
+  name: Path<T>;
   displayLabel?: boolean;
   options: OptionProps[];
   formMethods: UseFormReturn<T>;
@@ -32,11 +34,11 @@ interface SortableListProps<T extends FieldValues> extends UseControllerProps<T>
 
 // TODO: Lots of ts-ignore here. Not quite sure how to make fieldArray a generic type
 export const SortableList = <T extends FieldValues>({
-  control,
   name,
   options,
   label,
 }: SortableListProps<T>) => {
+  const { control } = useFormContext<T>();
   const { fields, append, move } = useFieldArray({
     control,
     name: name as ArrayPath<T>,

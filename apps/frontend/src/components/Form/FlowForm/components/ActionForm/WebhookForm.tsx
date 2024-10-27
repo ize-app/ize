@@ -32,11 +32,7 @@ export const WebhookForm = <T extends FieldValues>({ fieldName }: WebhookFormPro
         showLabel={false}
         name={`${fieldName}.callWebhook.name` as Path<T>}
       />
-      <WebhookField<T>
-        formMethods={formMethods}
-        name={`${fieldName}.callWebhook` as Path<T>}
-        type="result"
-      />
+      <WebhookField<T> name={`${fieldName}.callWebhook` as Path<T>} type="result" />
     </>
   );
 };

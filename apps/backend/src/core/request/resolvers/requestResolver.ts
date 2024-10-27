@@ -30,6 +30,8 @@ export const requestResolver = async ({
     });
   }
 
+  const requestDefinedOptionSets = req.RequestDefinedOptionSets;
+
   const creator = entityResolver({ entity: req.CreatorEntity, userIdentityIds: identityIds });
 
   // note: this call needs to happen before requestStepResolver is called
@@ -66,6 +68,7 @@ export const requestResolver = async ({
         userId: context.currentUser?.id,
         responseFieldsCache,
         resultConfigsCache,
+        requestDefinedOptionSets,
         requestFinal: req.final,
         context,
       });

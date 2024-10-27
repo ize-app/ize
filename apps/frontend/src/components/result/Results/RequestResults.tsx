@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 
 import { determineRequestStepStatus } from "@/components/ConfigDiagram/ConfigDiagramRequest/determineRequestStepStatus";
 import {
+  FieldFragment,
   RequestFragment,
   ResultConfigFragment,
   ResultGroupFragment,
@@ -14,6 +15,7 @@ interface HydratedResultData {
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
+  field: FieldFragment;
 }
 
 // lists all results from a given request
@@ -33,7 +35,13 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         request.requestSteps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
         ) ?? null;
-      hydratedResults.push({ resultConfig, resultGroup, requestStepStatus });
+
+      const field =
+        request.requestSteps[stepIndex]?.fieldSet.fields.find(
+          (field) => field.fieldId === resultConfig.field.fieldId,
+        ) ?? null;
+      if (!field) throw Error("Missing field for resultConfig");
+      hydratedResults.push({ resultConfig, resultGroup, requestStepStatus, field });
     });
   });
 

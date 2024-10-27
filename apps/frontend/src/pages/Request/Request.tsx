@@ -83,7 +83,7 @@ export const Request = () => {
       !!request.flow.steps[request.currentStepIndex].response?.allowMultipleResponses;
   }
 
-  // console.log("request is ", request);
+  console.log("request is ", request);
 
   if (loading || !request) return <Loading />;
 

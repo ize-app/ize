@@ -781,8 +781,9 @@ model Request {
   CurrentRequestStep           RequestStep? @relation("CurrentRequestStep", fields: [currentRequestStepId], references: [id], onDelete: Cascade)
 
   // For when the options are request are created by the requestor or the previous step
-  RequestSteps        RequestStep[]
-  TriggerFieldAnswers FieldAnswer[]
+  RequestSteps             RequestStep[]
+  TriggerFieldAnswers      FieldAnswer[]
+  RequestDefinedOptionSets RequestDefinedOptionSet[]
 
   @@map("requests")
 }
@@ -802,14 +803,13 @@ model RequestStep {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Request                  Request                   @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  Step                     Step                      @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  CurrentStepParent        Request?                  @relation("CurrentRequestStep")
-  ResultGroups             ResultGroup[]
-  RequestDefinedOptionSets RequestDefinedOptionSet[]
-  Responses                Response[]
-  ActionExecution          ActionExecution[]
-  TelegramMessages         TelegramMessages[]
+  Request           Request            @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  Step              Step               @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  CurrentStepParent Request?           @relation("CurrentRequestStep")
+  ResultGroups      ResultGroup[]
+  Responses         Response[]
+  ActionExecution   ActionExecution[]
+  TelegramMessages  TelegramMessages[]
 
   @@unique([stepId, requestId])
   @@map("request_steps")
@@ -817,10 +817,10 @@ model RequestStep {
 
 model RequestDefinedOptionSet {
   id               String         @id @default(uuid()) @db.Uuid
-  requestStepId    String         @map("request_step_id") @db.Uuid
+  requestId        String         @map("request_step_id") @db.Uuid
   fieldId          String         @map("field_id") @db.Uuid
   fieldOptionSetId String         @map("field_option_set_id") @db.Uuid
-  RequestStep      RequestStep    @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  Request          Request        @relation(fields: [requestId], references: [id], onDelete: Cascade)
   Field            Field          @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
 

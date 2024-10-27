@@ -76,11 +76,10 @@ const createRequestFormState = (flow: Flow): RequestSchemaType => {
     }
   }, {});
 
-  const newFormState = {
-    flow,
+  const newFormState: RequestSchemaType = {
     name: "",
     requestFields,
-    requestDefinedOptions: [],
+    requestDefinedOptions: {},
   };
   return newFormState;
 };
@@ -104,7 +103,8 @@ export const RequestFormContainer = () => {
       setFormState((prev) => {
         return {
           ...prev,
-          ...createRequestFormState(flow),
+          flow,
+          request: { ...createRequestFormState(flow) },
         };
       });
     },

@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { CheckCircleOutline } from "@mui/icons-material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
@@ -32,6 +33,8 @@ export const Group = () => {
   const groupId = shortUUIDToFull(groupIdShort as string);
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { data, loading, error } = useQuery(GroupDocument, {
     variables: {
@@ -134,7 +137,9 @@ export const Group = () => {
               />
             </Box>
 
-            <EvolveGroupButton evolveGroupFlowId={group.evolveGroupFlowId} />
+            {!isSmallScreenSize && (
+              <EvolveGroupButton evolveGroupFlowId={group.evolveGroupFlowId} />
+            )}
           </Box>
           <Box
             sx={(theme) => ({

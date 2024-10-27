@@ -108,6 +108,7 @@ export const ConfigRequestStepPanel = ({
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
           <RequestStepResults
+            requestStep={requestStep}
             resultConfigs={step.result}
             results={requestStep?.results ?? []}
             requestStatus={status}

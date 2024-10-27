@@ -37,14 +37,6 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
   Responses: {
     include: responseInclude,
   },
-
-  RequestDefinedOptionSets: {
-    include: {
-      FieldOptionSet: {
-        include: fieldOptionSetInclude,
-      },
-    },
-  },
   ResultGroups: {
     include: resultGroupInclude,
   },
@@ -100,6 +92,13 @@ export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
   TriggerFieldAnswers: {
     include: fieldAnswerInclude,
+  },
+  RequestDefinedOptionSets: {
+    include: {
+      FieldOptionSet: {
+        include: fieldOptionSetInclude,
+      },
+    },
   },
   RequestSteps: {
     include: requestStepInclude,

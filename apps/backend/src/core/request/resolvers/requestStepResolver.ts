@@ -7,7 +7,7 @@ import { Field, FieldSet, RequestStep, ResultConfig } from "@/graphql/generated/
 
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
-import { RequestStepPrismaType } from "../requestPrismaTypes";
+import { RequestDefinedOptionSetPrismaType, RequestStepPrismaType } from "../requestPrismaTypes";
 
 export const requestStepResolver = async ({
   reqStep,
@@ -15,6 +15,7 @@ export const requestStepResolver = async ({
   context,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  requestDefinedOptionSets,
   // refers to whether request as a whole, rather than just the request step is final
   requestFinal,
 }: {
@@ -23,12 +24,13 @@ export const requestStepResolver = async ({
   userId: string | null | undefined;
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
+  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   context: GraphqlRequestContext;
   requestFinal: boolean;
 }): Promise<RequestStep> => {
   const fieldSet: FieldSet = fieldSetResolver({
     fieldSet: step.FieldSet,
-    requestDefinedOptionSets: reqStep.RequestDefinedOptionSets,
+    requestDefinedOptionSets,
     responseFieldsCache,
     resultConfigsCache,
   });
@@ -38,7 +40,7 @@ export const requestStepResolver = async ({
     fields: fieldSet.fields,
     context,
   });
-  
+
   const res: RequestStep = {
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),

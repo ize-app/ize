@@ -68,9 +68,6 @@ export const PermissionForm = <T extends FieldValues>({
             branch === "request" ? "trigger this flow" : "respond"
           }`}
           name={`${fieldName}.entities` as Path<T>}
-          control={formMethods.control}
-          setFieldValue={formMethods.setValue}
-          getFieldValues={formMethods.getValues}
         />
       )}
     </>

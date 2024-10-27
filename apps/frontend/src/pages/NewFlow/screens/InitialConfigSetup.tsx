@@ -112,12 +112,9 @@ export const InitialConfigSetup = () => {
               {permissionType === PermissionType.Entities && (
                 <EntitySearch<IntitialFlowSetupSchemaType>
                   ariaLabel={"Individuals and groups to add to custom group"}
-                  control={formMethods.control}
                   name={"permission.entities"}
                   hideCustomGroups={false}
                   label={"Group members *"}
-                  setFieldValue={formMethods.setValue}
-                  getFieldValues={formMethods.getValues}
                 />
               )}
             </Box>

@@ -113,8 +113,8 @@ export const triggerNextStep = async ({ requestStepId }: { requestStepId: string
                     });
 
                     return await createRequestDefinedOptionSet({
-                      step: nextStep,
-                      requestStepId: nextRequestStep.id,
+                      flowVersion: reqData.Request.FlowVersion,
+                      requestId: reqData.requestId,
                       newOptionArgs,
                       fieldId: f.Field.id,
                       isTriggerDefinedOptions: false,
