@@ -123,7 +123,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
               )}
               {action && (
                 <Box sx={{ display: "flex", gap: "4px" }}>
-                  <BoltIcon color="primary" fontSize="small" />
+                  <BoltIcon color="secondary" fontSize="small" />
                   <Typography
                     variant="description"
                     sx={{

@@ -16,7 +16,7 @@ export const ExpirationStatus = ({ expirationDate }: { expirationDate: Date }) =
 
   const lessThanOneDayLeft = timeLeft < 86400000 * 2;
 
-  const color = !lessThanOneDayLeft ? theme.palette.warning.main : theme.palette.text.primary;
+  const color = theme.palette.warning.main;
 
   return (
     <Box
