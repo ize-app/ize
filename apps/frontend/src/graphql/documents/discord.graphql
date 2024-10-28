@@ -4,6 +4,12 @@ query DiscordServerRoles($serverId: String!) {
   }
 }
 
+query GetDiscordServers {
+  getDiscordServers {
+    ...DiscordServerParts
+  }
+}
+
 fragment DiscordServerParts on DiscordServer {
   id
   name

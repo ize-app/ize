@@ -60,8 +60,15 @@ export const newEntityFormSchema = z.object({
   type: z.nativeEnum(NewEntityTypes),
   discordRole: z
     .object({
-      serverId: z.string().trim().min(1, { message: "Select a server" }),
-      roleId: z.string().trim().min(1, { message: "Select a role" }),
+      server: z.object({
+        id: z.string().min(1),
+        name: z.string(),
+        hasCultsBot: z.boolean(),
+      }),
+      role: z.object({
+        name: z.string(),
+        value: z.string(),
+      }),
     })
     .optional(),
   ethAddress: z

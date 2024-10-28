@@ -14,6 +14,7 @@ import { getSelectOptionName } from "../../../utils/getSelectOptionName";
 import { OptionSelectionCountLimit } from "../../formValidation/fields";
 import { FlowSchemaType, StepSchemaType } from "../../formValidation/flow";
 import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
+import { getResultFormLabel } from "../../helpers/getResultFormLabel";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
@@ -23,9 +24,8 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
     if (currentStepIndex <= stepIndex) return;
     s.result.forEach((r) => {
       const field = (s.fieldSet?.fields ?? []).find((f) => f.fieldId === r.fieldId);
-
       results.push({
-        name: `${r.type} from step ${stepIndex + 1}${field?.name ? `: "${field.name}"` : ""}`,
+        name: `${getResultFormLabel({ result: r })} from step ${stepIndex + 1}${field?.name ? `: "${field.name}"` : ""}`,
         value: r.resultId,
       });
     });

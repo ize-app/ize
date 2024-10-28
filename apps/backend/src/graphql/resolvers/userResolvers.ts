@@ -29,11 +29,6 @@ const me: QueryResolvers["me"] = async (
 ): Promise<Me | null> => {
   if (!context.currentUser) return null;
 
-  // const discordServers = await getDiscordServers({ context });
-  // await updateUserDiscordGroups({ context, discordServers });
-  // await updateUserNftGroups({ context });
-  // await updateUserCustomGroups({ context });
-
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return identityResolver(
       identity,
@@ -55,7 +50,6 @@ const me: QueryResolvers["me"] = async (
 
   return {
     user,
-    discordServers: [],
     groups,
     identities: [...identities],
   };

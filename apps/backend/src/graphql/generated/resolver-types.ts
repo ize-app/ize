@@ -163,12 +163,6 @@ export type DiscordServer = {
   name: Scalars['String']['output'];
 };
 
-export type DiscordServerOnboarded = {
-  __typename?: 'DiscordServerOnboarded';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
 export type EntitiesFieldAnswer = {
   __typename?: 'EntitiesFieldAnswer';
   entities: Array<Entity>;
@@ -549,7 +543,6 @@ export enum LlmSummaryType {
 
 export type Me = {
   __typename?: 'Me';
-  discordServers: Array<DiscordServer>;
   groups: Array<Group>;
   identities: Array<Identity>;
   user: User;
@@ -779,6 +772,7 @@ export type PrioritizationArgs = {
 export type Query = {
   __typename?: 'Query';
   discordServerRoles: Array<DiscordApiServerRole>;
+  getDiscordServers: Array<DiscordServer>;
   getFlow: Flow;
   getFlows: Array<FlowSummary>;
   getRequest: Request;
@@ -1248,7 +1242,6 @@ export type ResolversTypes = {
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
   DiscordServer: ResolverTypeWrapper<DiscordServer>;
-  DiscordServerOnboarded: ResolverTypeWrapper<DiscordServerOnboarded>;
   EntitiesFieldAnswer: ResolverTypeWrapper<Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
   Entity: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Entity']>;
   EntityArgs: EntityArgs;
@@ -1385,7 +1378,6 @@ export type ResolversParentTypes = {
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
-  DiscordServerOnboarded: DiscordServerOnboarded;
   EntitiesFieldAnswer: Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<ResolversParentTypes['Entity']> };
   Entity: ResolversUnionTypes<ResolversParentTypes>['Entity'];
   EntityArgs: EntityArgs;
@@ -1577,12 +1569,6 @@ export type DiscordRoleGroupResolvers<ContextType = GraphqlRequestContext, Paren
 export type DiscordServerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordServer'] = ResolversParentTypes['DiscordServer']> = {
   hasCultsBot?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type DiscordServerOnboardedResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DiscordServerOnboarded'] = ResolversParentTypes['DiscordServerOnboarded']> = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1831,7 +1817,6 @@ export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentT
 };
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
-  discordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -1918,6 +1903,7 @@ export type PermissionResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
+  getDiscordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'triggerPermissionFilter' | 'watchFilter'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
@@ -2121,7 +2107,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   DiscordAPIServerRole?: DiscordApiServerRoleResolvers<ContextType>;
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;
   DiscordServer?: DiscordServerResolvers<ContextType>;
-  DiscordServerOnboarded?: DiscordServerOnboardedResolvers<ContextType>;
   EntitiesFieldAnswer?: EntitiesFieldAnswerResolvers<ContextType>;
   Entity?: EntityResolvers<ContextType>;
   EvolveFlow?: EvolveFlowResolvers<ContextType>;

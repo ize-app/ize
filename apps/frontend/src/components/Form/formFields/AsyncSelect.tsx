@@ -63,7 +63,7 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
                 <TextField
                   {...params}
                   name="ignore"
-                  placeholder="Choose a Telegram group"
+                  placeholder={label}
                   label={showLabel ? label : ""}
                   aria-label={label}
                   autoComplete="off"

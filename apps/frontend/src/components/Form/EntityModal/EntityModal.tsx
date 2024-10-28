@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -7,13 +7,10 @@ import { useCallback, useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { attachDiscord } from "@/components/Auth/attachDiscord";
-import discordBotInviteUrl from "@/components/Auth/discordBotInviteUrl";
 import { DiscordLogoSvg } from "@/components/icons";
 import {
   Blockchain,
-  DiscordServerRolesDocument,
   EntityFragment,
-  Me,
   MutationNewEntitiesArgs,
   NewEntitiesDocument,
   NewEntityTypes,
@@ -26,6 +23,7 @@ import { Switch, TextField } from "../formFields";
 import { Select, SelectOption } from "../formFields/Select";
 import { ResponsiveFormRow } from "../formLayout/ResponsiveFormRow";
 import { NewEntitySchemaType, newEntityFormSchema } from "../formValidation/entity";
+import { SelectDisordServer } from "../SelectDiscordServer";
 
 const style = {
   position: "absolute" as const,
@@ -80,8 +78,8 @@ const createNewAgentArgs = (data: NewEntitySchemaType): MutationNewEntitiesArgs 
           ? [
               {
                 groupDiscordRole: {
-                  serverId: data.discordRole?.serverId,
-                  roleId: data.discordRole?.roleId,
+                  serverId: data.discordRole?.server?.id,
+                  roleId: data.discordRole?.role.value,
                 },
               },
             ]
@@ -129,11 +127,6 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
     (id) => id.identityType.__typename === "IdentityDiscord",
   );
 
-  const serverOptions: SelectOption[] = (me as Me).discordServers.map((server) => ({
-    name: server.name,
-    value: server.id,
-  }));
-
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   const handleEntitySelection = useCallback((entities: EntityFragment[]) => {
@@ -173,8 +166,8 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
         tokenId: "",
       },
       discordRole: {
-        serverId: "",
-        roleId: "",
+        server: undefined,
+        role: undefined,
       },
       telegramChat: undefined,
     },
@@ -196,32 +189,12 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
   };
 
   const inputType = watch("type");
-  const discordServerId = watch("discordRole.serverId");
   const nftChain = watch("nft.chain");
   const nftContractAddress = watch("nft.contractAddress");
   const nftTokenId = watch("nft.tokenId");
   const nftAllTokens = watch("nft.allTokens");
   const hatTokenId = watch("hat.tokenId");
   const hatChain = watch("hat.chain");
-
-  const serverHasCultsBot = ((me as Me).discordServers ?? []).some(
-    (server) => server.id === discordServerId && !!server.hasCultsBot,
-  );
-
-  const defaultServerRoleOptions: SelectOption[] = [{ name: "@everyone", value: "@everyone" }];
-
-  const { data: roleData, loading: roleLoading } = useQuery(DiscordServerRolesDocument, {
-    variables: {
-      serverId: discordServerId,
-    },
-    skip: !discordServerId || !serverHasCultsBot,
-  });
-
-  const discordServerRoles = serverHasCultsBot
-    ? (roleData?.discordServerRoles ?? [])
-        .filter((role) => !role.botRole)
-        .map((role) => ({ name: role.name, value: role.id }))
-    : defaultServerRoleOptions;
 
   return (
     <Modal
@@ -338,48 +311,19 @@ export function EntityModal({ open, setOpen, onSubmit, initialType }: EntityModa
                           display: "flex",
                           flexDirection: "row",
                           gap: "16px",
-                          alignItems: "center",
+                          alignItems: "flex-end",
                         }}
                       >
-                        <Box sx={{ width: "300px" }}>
-                          <Select<NewEntitySchemaType>
-                            name="discordRole.serverId"
-                            label="Server"
-                            selectOptions={serverOptions}
-                          />
-                        </Box>
-                        {discordServerId && (
-                          <>
-                            <Select<NewEntitySchemaType>
-                              name="discordRole.roleId"
-                              label="Role"
-                              loading={roleLoading}
-                              selectOptions={discordServerRoles}
-                            />
-                            <Button
-                              type="submit"
-                              onClick={handleSubmit(createAgents)}
-                              variant="contained"
-                              disabled={disableSubmit}
-                            >
-                              Submit
-                            </Button>
-                          </>
-                        )}
+                        <SelectDisordServer<NewEntitySchemaType> name={"discordRole"} />
+                        <Button
+                          type="submit"
+                          onClick={handleSubmit(createAgents)}
+                          variant="contained"
+                          disabled={disableSubmit}
+                        >
+                          Submit
+                        </Button>
                       </Box>
-                      {!serverHasCultsBot && discordServerId && (
-                        <Typography>
-                          To use all roles in this server, ask your admin to{" "}
-                          <a
-                            href={discordBotInviteUrl.toString()}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            add the Ize Discord bot
-                          </a>{" "}
-                          to this server.
-                        </Typography>
-                      )}
                     </>
                   )}
                 </>

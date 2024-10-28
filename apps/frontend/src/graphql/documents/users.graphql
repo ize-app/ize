@@ -20,9 +20,6 @@ fragment MeParts on Me {
   user {
     ...UserSummaryParts
   }
-  discordServers {
-    ...DiscordServerParts
-  }
   identities {
     ...IdentitySummaryParts
   }
