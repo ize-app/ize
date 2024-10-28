@@ -20,13 +20,16 @@ CREATE TYPE "FieldDataType" AS ENUM ('String', 'Number', 'Uri', 'Date', 'DateTim
 CREATE TYPE "FieldType" AS ENUM ('Options', 'FreeInput');
 
 -- CreateEnum
+CREATE TYPE "SystemFieldType" AS ENUM ('EvolveFlowProposed', 'EvolveFlowCurrent', 'EvolveFlowDescription', 'GroupName', 'GroupDescription', 'GroupMembers', 'WatchFlow', 'UnwatchFlow');
+
+-- CreateEnum
 CREATE TYPE "OptionSelectionType" AS ENUM ('Rank', 'MultiSelect', 'Select');
 
 -- CreateEnum
 CREATE TYPE "ResultType" AS ENUM ('Decision', 'Ranking', 'LlmSummary', 'LlmSummaryList');
 
 -- CreateEnum
-CREATE TYPE "DecisionType" AS ENUM ('NumberThreshold', 'PercentageThreshold', 'WeightedAverage');
+CREATE TYPE "DecisionType" AS ENUM ('NumberThreshold', 'PercentageThreshold', 'WeightedAverage', 'Ai');
 
 -- CreateEnum
 CREATE TYPE "LlmSummaryType" AS ENUM ('AfterEveryResponse', 'AtTheEnd');
@@ -38,6 +41,7 @@ CREATE TYPE "ActionType" AS ENUM ('CallWebhook', 'TriggerStep', 'EvolveFlow', 'E
 CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "stytch_id" TEXT NOT NULL,
+    "entity_id" UUID NOT NULL,
     "name" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -229,7 +233,8 @@ CREATE TABLE "flows" (
     "id" UUID NOT NULL,
     "custom_group_id" UUID,
     "type" "FlowType" NOT NULL,
-    "creator_id" UUID NOT NULL,
+    "reusable" BOOLEAN NOT NULL,
+    "creator_entity_id" UUID NOT NULL,
     "current_flow_version_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -241,10 +246,11 @@ CREATE TABLE "flows" (
 CREATE TABLE "flow_versions" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "reusable" BOOLEAN NOT NULL,
     "total_steps" INTEGER NOT NULL,
     "flow_id" UUID NOT NULL,
     "evolve_flow_id" UUID,
+    "trigger_permissions_id" UUID NOT NULL,
+    "trigger_field_set_id" UUID,
     "active" BOOLEAN NOT NULL,
     "draft_evolve_flow_version_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -258,13 +264,8 @@ CREATE TABLE "steps" (
     "id" UUID NOT NULL,
     "flow_version_id" UUID NOT NULL,
     "index" INTEGER NOT NULL,
-    "request_expiration_seconds" INTEGER DEFAULT 0,
-    "can_be_manually_ended" BOOLEAN NOT NULL DEFAULT false,
-    "allow_multiple_responses" BOOLEAN NOT NULL DEFAULT false,
-    "request_permissions_id" UUID,
-    "response_permissions_id" UUID,
-    "request_field_set_id" UUID,
-    "response_field_set_id" UUID,
+    "field_set_id" UUID,
+    "response_config_id" UUID,
     "result_config_set_id" UUID,
     "action_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -273,11 +274,23 @@ CREATE TABLE "steps" (
 );
 
 -- CreateTable
+CREATE TABLE "response_configs" (
+    "id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "permissions_id" UUID NOT NULL,
+    "request_expiration_seconds" INTEGER NOT NULL DEFAULT 0,
+    "can_be_manually_ended" BOOLEAN NOT NULL DEFAULT false,
+    "allow_multiple_responses" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "response_configs_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "permissions" (
     "id" UUID NOT NULL,
     "entity_set_id" UUID,
     "anyone" BOOLEAN NOT NULL DEFAULT false,
-    "user_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "permissions_pkey" PRIMARY KEY ("id")
@@ -326,6 +339,8 @@ CREATE TABLE "fields" (
     "type" "FieldType" NOT NULL,
     "name" TEXT NOT NULL,
     "required" BOOLEAN NOT NULL DEFAULT true,
+    "is_internal" BOOLEAN NOT NULL DEFAULT false,
+    "system_field_type" "SystemFieldType",
     "free_input_data_type" "FieldDataType",
     "field_options_config_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -377,7 +392,7 @@ CREATE TABLE "answers" (
     "id" UUID NOT NULL,
     "type" "FieldType" NOT NULL,
     "response_id" UUID,
-    "request_step_id" UUID,
+    "request_id" UUID,
     "field_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -427,6 +442,7 @@ CREATE TABLE "result_config_decisions" (
     "type" "DecisionType" NOT NULL,
     "default_option_id" UUID,
     "threshold" INTEGER,
+    "criteria" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "result_config_decisions_pkey" PRIMARY KEY ("id")
@@ -494,7 +510,7 @@ CREATE TABLE "action_executions" (
 -- CreateTable
 CREATE TABLE "requests" (
     "id" UUID NOT NULL,
-    "creator_id" UUID NOT NULL,
+    "creator_entity_id" UUID NOT NULL,
     "flow_version_id" UUID NOT NULL,
     "current_request_step_id" UUID,
     "name" TEXT NOT NULL,
@@ -536,8 +552,7 @@ CREATE TABLE "request_defined_option_sets" (
 CREATE TABLE "responses" (
     "id" UUID NOT NULL,
     "request_step_id" UUID NOT NULL,
-    "user_id" UUID,
-    "identity_id" UUID,
+    "entity_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "responses_pkey" PRIMARY KEY ("id")
@@ -558,7 +573,7 @@ CREATE TABLE "result_config_set_result_configs" (
 );
 
 -- CreateTable
-CREATE TABLE "results" (
+CREATE TABLE "result_groups" (
     "id" UUID NOT NULL,
     "final" BOOLEAN NOT NULL DEFAULT false,
     "request_step_id" UUID NOT NULL,
@@ -569,6 +584,17 @@ CREATE TABLE "results" (
     "next_retry_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "result_groups_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "results" (
+    "id" UUID NOT NULL,
+    "itemCount" INTEGER NOT NULL,
+    "result_group_id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "index" INTEGER NOT NULL,
 
     CONSTRAINT "results_pkey" PRIMARY KEY ("id")
 );
@@ -587,15 +613,15 @@ CREATE TABLE "result_items" (
 );
 
 -- CreateTable
-CREATE TABLE "users_watched_groups" (
-    "user_id" UUID NOT NULL,
+CREATE TABLE "entity_watched_groups" (
+    "entity_id" UUID NOT NULL,
     "group_id" UUID NOT NULL,
     "watched" BOOLEAN NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "users_watched_flows" (
-    "user_id" UUID NOT NULL,
+CREATE TABLE "entity_watched_flows" (
+    "entity_id" UUID NOT NULL,
     "flow_id" UUID NOT NULL,
     "watched" BOOLEAN NOT NULL
 );
@@ -622,6 +648,9 @@ CREATE TABLE "telegram_messages" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_stytch_id_key" ON "users"("stytch_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_entity_id_key" ON "users"("entity_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "identities_entity_id_key" ON "identities"("entity_id");
@@ -717,13 +746,13 @@ CREATE UNIQUE INDEX "request_steps_step_id_request_id_key" ON "request_steps"("s
 CREATE UNIQUE INDEX "result_config_set_result_configs_result_config_id_result_co_key" ON "result_config_set_result_configs"("result_config_id", "result_config_set_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "results_request_step_id_result_config_id_key" ON "results"("request_step_id", "result_config_id");
+CREATE UNIQUE INDEX "result_groups_request_step_id_result_config_id_key" ON "result_groups"("request_step_id", "result_config_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_watched_groups_user_id_group_id_key" ON "users_watched_groups"("user_id", "group_id");
+CREATE UNIQUE INDEX "entity_watched_groups_entity_id_group_id_key" ON "entity_watched_groups"("entity_id", "group_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_watched_flows_user_id_flow_id_key" ON "users_watched_flows"("user_id", "flow_id");
+CREATE UNIQUE INDEX "entity_watched_flows_entity_id_flow_id_key" ON "entity_watched_flows"("entity_id", "flow_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "groups_watched_flows_flow_id_group_id_key" ON "groups_watched_flows"("flow_id", "group_id");
@@ -733,6 +762,9 @@ CREATE UNIQUE INDEX "telegram_messages_message_id_key" ON "telegram_messages"("m
 
 -- CreateIndex
 CREATE UNIQUE INDEX "telegram_messages_poll_id_key" ON "telegram_messages"("poll_id");
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "identities" ADD CONSTRAINT "identities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -792,7 +824,7 @@ ALTER TABLE "groups_nft" ADD CONSTRAINT "groups_nft_group_id_fkey" FOREIGN KEY (
 ALTER TABLE "groups_nft" ADD CONSTRAINT "groups_nft_collection_id_fkey" FOREIGN KEY ("collection_id") REFERENCES "nft_collections"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "flows" ADD CONSTRAINT "flows_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "flows" ADD CONSTRAINT "flows_creator_entity_id_fkey" FOREIGN KEY ("creator_entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "flows" ADD CONSTRAINT "flows_custom_group_id_fkey" FOREIGN KEY ("custom_group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -807,22 +839,22 @@ ALTER TABLE "flow_versions" ADD CONSTRAINT "flow_versions_flow_id_fkey" FOREIGN 
 ALTER TABLE "flow_versions" ADD CONSTRAINT "flow_versions_evolve_flow_id_fkey" FOREIGN KEY ("evolve_flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "flow_versions" ADD CONSTRAINT "flow_versions_trigger_permissions_id_fkey" FOREIGN KEY ("trigger_permissions_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "flow_versions" ADD CONSTRAINT "flow_versions_trigger_field_set_id_fkey" FOREIGN KEY ("trigger_field_set_id") REFERENCES "field_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "flow_versions" ADD CONSTRAINT "flow_versions_draft_evolve_flow_version_id_fkey" FOREIGN KEY ("draft_evolve_flow_version_id") REFERENCES "flow_versions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "steps" ADD CONSTRAINT "steps_flow_version_id_fkey" FOREIGN KEY ("flow_version_id") REFERENCES "flow_versions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "steps" ADD CONSTRAINT "steps_request_permissions_id_fkey" FOREIGN KEY ("request_permissions_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "steps" ADD CONSTRAINT "steps_field_set_id_fkey" FOREIGN KEY ("field_set_id") REFERENCES "field_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "steps" ADD CONSTRAINT "steps_request_field_set_id_fkey" FOREIGN KEY ("request_field_set_id") REFERENCES "field_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "steps" ADD CONSTRAINT "steps_response_field_set_id_fkey" FOREIGN KEY ("response_field_set_id") REFERENCES "field_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "steps" ADD CONSTRAINT "steps_response_permissions_id_fkey" FOREIGN KEY ("response_permissions_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "steps" ADD CONSTRAINT "steps_response_config_id_fkey" FOREIGN KEY ("response_config_id") REFERENCES "response_configs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "steps" ADD CONSTRAINT "steps_result_config_set_id_fkey" FOREIGN KEY ("result_config_set_id") REFERENCES "result_config_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -831,10 +863,10 @@ ALTER TABLE "steps" ADD CONSTRAINT "steps_result_config_set_id_fkey" FOREIGN KEY
 ALTER TABLE "steps" ADD CONSTRAINT "steps_action_id_fkey" FOREIGN KEY ("action_id") REFERENCES "actions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "permissions" ADD CONSTRAINT "permissions_entity_set_id_fkey" FOREIGN KEY ("entity_set_id") REFERENCES "entity_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "response_configs" ADD CONSTRAINT "response_configs_permissions_id_fkey" FOREIGN KEY ("permissions_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "permissions" ADD CONSTRAINT "permissions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "permissions" ADD CONSTRAINT "permissions_entity_set_id_fkey" FOREIGN KEY ("entity_set_id") REFERENCES "entity_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "entity_set_entities" ADD CONSTRAINT "entity_set_entities_entity_set_id_fkey" FOREIGN KEY ("entity_set_id") REFERENCES "entity_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -867,7 +899,7 @@ ALTER TABLE "answers" ADD CONSTRAINT "answers_field_id_fkey" FOREIGN KEY ("field
 ALTER TABLE "answers" ADD CONSTRAINT "answers_response_id_fkey" FOREIGN KEY ("response_id") REFERENCES "responses"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers" ADD CONSTRAINT "answers_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "answers" ADD CONSTRAINT "answers_request_id_fkey" FOREIGN KEY ("request_id") REFERENCES "requests"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "answer_option_selections" ADD CONSTRAINT "answer_option_selections_field_option_id_fkey" FOREIGN KEY ("field_option_id") REFERENCES "field_options"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -909,13 +941,13 @@ ALTER TABLE "action_executions" ADD CONSTRAINT "action_executions_action_id_fkey
 ALTER TABLE "action_executions" ADD CONSTRAINT "action_executions_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "requests" ADD CONSTRAINT "requests_creator_entity_id_fkey" FOREIGN KEY ("creator_entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "requests" ADD CONSTRAINT "requests_flow_version_id_fkey" FOREIGN KEY ("flow_version_id") REFERENCES "flow_versions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "requests" ADD CONSTRAINT "requests_proposed_flow_version_id_fkey" FOREIGN KEY ("proposed_flow_version_id") REFERENCES "flow_versions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "requests" ADD CONSTRAINT "requests_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "requests" ADD CONSTRAINT "requests_current_request_step_id_fkey" FOREIGN KEY ("current_request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -927,7 +959,7 @@ ALTER TABLE "request_steps" ADD CONSTRAINT "request_steps_request_id_fkey" FOREI
 ALTER TABLE "request_steps" ADD CONSTRAINT "request_steps_step_id_fkey" FOREIGN KEY ("step_id") REFERENCES "steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "request_defined_option_sets" ADD CONSTRAINT "request_defined_option_sets_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "request_defined_option_sets" ADD CONSTRAINT "request_defined_option_sets_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "requests"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "request_defined_option_sets" ADD CONSTRAINT "request_defined_option_sets_field_id_fkey" FOREIGN KEY ("field_id") REFERENCES "fields"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -939,10 +971,7 @@ ALTER TABLE "request_defined_option_sets" ADD CONSTRAINT "request_defined_option
 ALTER TABLE "responses" ADD CONSTRAINT "responses_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "responses" ADD CONSTRAINT "responses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "responses" ADD CONSTRAINT "responses_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "responses" ADD CONSTRAINT "responses_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "result_config_set_result_configs" ADD CONSTRAINT "result_config_set_result_configs_result_config_set_id_fkey" FOREIGN KEY ("result_config_set_id") REFERENCES "result_config_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -951,10 +980,13 @@ ALTER TABLE "result_config_set_result_configs" ADD CONSTRAINT "result_config_set
 ALTER TABLE "result_config_set_result_configs" ADD CONSTRAINT "result_config_set_result_configs_result_config_id_fkey" FOREIGN KEY ("result_config_id") REFERENCES "result_configs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "results" ADD CONSTRAINT "results_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "result_groups" ADD CONSTRAINT "result_groups_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "results" ADD CONSTRAINT "results_result_config_id_fkey" FOREIGN KEY ("result_config_id") REFERENCES "result_configs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "result_groups" ADD CONSTRAINT "result_groups_result_config_id_fkey" FOREIGN KEY ("result_config_id") REFERENCES "result_configs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "results" ADD CONSTRAINT "results_result_group_id_fkey" FOREIGN KEY ("result_group_id") REFERENCES "result_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "result_items" ADD CONSTRAINT "result_items_resultId_fkey" FOREIGN KEY ("resultId") REFERENCES "results"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -963,16 +995,16 @@ ALTER TABLE "result_items" ADD CONSTRAINT "result_items_resultId_fkey" FOREIGN K
 ALTER TABLE "result_items" ADD CONSTRAINT "result_items_field_option_id_fkey" FOREIGN KEY ("field_option_id") REFERENCES "field_options"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_watched_groups" ADD CONSTRAINT "users_watched_groups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entity_watched_groups" ADD CONSTRAINT "entity_watched_groups_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_watched_groups" ADD CONSTRAINT "users_watched_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entity_watched_groups" ADD CONSTRAINT "entity_watched_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_watched_flows" ADD CONSTRAINT "users_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entity_watched_flows" ADD CONSTRAINT "entity_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_watched_flows" ADD CONSTRAINT "users_watched_flows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entity_watched_flows" ADD CONSTRAINT "entity_watched_flows_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "groups_watched_flows" ADD CONSTRAINT "groups_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
