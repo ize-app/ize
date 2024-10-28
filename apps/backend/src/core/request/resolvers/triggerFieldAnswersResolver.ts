@@ -23,16 +23,17 @@ export const triggerFieldAnswersResolver = async ({
   return await Promise.all(
     fields.map(async (field) => {
       const answer = answers.find((answer) => answer.fieldId === field.fieldId);
-      if (!answer) throw Error("");
 
-      const userFieldAnswer: UserFieldAnswer = {
-        creator,
-        createdAt: answer.createdAt.toISOString(),
-        answer: await fieldAnswerResolver({
-          fieldAnswer: answer,
-          context,
-        }),
-      };
+      const userFieldAnswer: UserFieldAnswer | null = answer
+        ? {
+            creator,
+            createdAt: answer.createdAt.toISOString(),
+            answer: await fieldAnswerResolver({
+              fieldAnswer: answer,
+              context,
+            }),
+          }
+        : null;
 
       return {
         field,

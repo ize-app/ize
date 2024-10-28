@@ -3,11 +3,12 @@ import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 import { ResultSchemaType } from "../formValidation/result";
 
 interface ResultLabelConfigProps {
-  result: ResultSchemaType;
+  result: ResultSchemaType | undefined;
 }
 
 // note: this mirrors getResultConfigName on the backend
 export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
+  if (!result) return "Collaborative step";
   switch (result.type) {
     case ResultType.Decision: {
       const decisionType = result.decision.type;

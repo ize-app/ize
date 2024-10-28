@@ -10,7 +10,7 @@ export const stringifyResultGroups = ({
 }) => {
   return results
     .map((resultGroup) => {
-      return `Result for ${resultGroup.fieldName}:\n\n${stringifyGenericFieldValues({ values: resultGroup.result, type })}`;
+      return `${stringifyGenericFieldValues({ values: resultGroup.result, type })}`;
     })
     .join(`\n\n`);
 };

@@ -16,7 +16,6 @@ export const sendTelegramResultsNotifications = async ({
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
-  const message = `New results in Ize 👀\n\n${payload.requestName} (<i>${payload.flowName}</i>)\n\n${stringifyResultGroups({ results: payload.results, type: "html" })}${payload.action ? `\n\nTriggering action: ${stringifyAction({ action: payload.action })}` : ""}`;
   await Promise.all(
     telegramGroups.map(async (group) => {
       try {
@@ -31,6 +30,13 @@ export const sendTelegramResultsNotifications = async ({
           },
         });
 
+        // only add title string if message won't be on a thread
+        const titleString = !originalMessage
+          ? `\n\n${payload.requestName} (<i>${payload.flowName}</i>)`
+          : "";
+
+        const message = `New results in Ize 👀${titleString}\n\n${stringifyResultGroups({ results: payload.results, type: "html" })}${payload.action ? `\n\n<i>⚡ Triggering action: ${stringifyAction({ action: payload.action })}</i>` : ""}`;
+
         await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
           // reply_markup: {
           //   inline_keyboard: [[{ url, text: "See request on Ize" }]],
@@ -43,6 +49,12 @@ export const sendTelegramResultsNotifications = async ({
             : undefined,
           parse_mode: "HTML",
           message_thread_id: messageThreadId,
+          // if message isn't on the thread, we send link to request for context
+          reply_markup: !originalMessage
+            ? {
+                inline_keyboard: [[{ url: payload.requestUrl, text: "See request on Ize" }]],
+              }
+            : undefined,
         });
         return;
       } catch (e) {

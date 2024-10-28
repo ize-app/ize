@@ -20,11 +20,11 @@ export const getRequestResultGroups = ({
 
     requestStep.results.forEach((resultGroup) => {
       const resultConfig = request.flow.steps[stepIndex].result.find((r) => {
-        r.resultConfigId === resultGroup.resultConfigId;
+        return r.resultConfigId === resultGroup.resultConfigId;
       });
 
       if (!resultConfig)
-        throw new GraphQLError(`Cannot find result group for result config id: ${resultGroup.id}`, {
+        throw new GraphQLError(`Cannot find result config for resultGroup id: ${resultGroup.id}`, {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
@@ -32,7 +32,7 @@ export const getRequestResultGroups = ({
         fieldName: resultConfig.field.name,
         result: resultGroup.results.map((result) => {
           return {
-            fieldName: resultConfig.name,
+            fieldName: `${resultConfig.field.name} (${resultConfig.name})`,
             value: result.resultItems.map((item) => item.value),
           };
         }),

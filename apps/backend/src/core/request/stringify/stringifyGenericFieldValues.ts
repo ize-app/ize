@@ -16,7 +16,7 @@ export const stringifyGenericFieldValues = ({
       } else if (val.value.length === 1) {
         return `${boldOpen}${val.fieldName}${boldClose}:\n${val.value[0]}`;
       } else {
-        return `${boldOpen}${val.fieldName}${boldClose}:\n- ${val.value.map((v) => `- ${v}`).join(`\n`)}`;
+        return `${boldOpen}${val.fieldName}${boldClose}:\n${val.value.map((v) => `- ${v}`).join(`\n`)}`;
       }
     })
     .join(`\n`);

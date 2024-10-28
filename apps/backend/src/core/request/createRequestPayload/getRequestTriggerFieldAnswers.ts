@@ -6,28 +6,29 @@ export const getRequestTriggerFieldAnswers = ({
 }: {
   request: Request;
 }): GenericFieldAndValue[] => {
-  const requestFields: GenericFieldAndValue[] = request.flow.fieldSet.fields.map((field) => {
+  const requestFields: GenericFieldAndValue[] = [];
+  request.flow.fieldSet.fields.forEach((field) => {
     const triggerFieldAnswer = request.triggerFieldAnswers.find(
       (fa) => fa.field.fieldId === field.fieldId,
     );
-    const answer = triggerFieldAnswer?.answer.answer;
+    const rawAnswer = triggerFieldAnswer?.answer?.answer;
 
-    if (!answer) throw Error("");
+    if (!rawAnswer) return;
 
     let value: string[] = [];
 
-    switch (answer.__typename) {
+    switch (rawAnswer.__typename) {
       case "FreeInputFieldAnswer":
-        value = [answer.value];
+        value = [rawAnswer.value];
         break;
       case "EntitiesFieldAnswer":
-        value = answer.entities.map((e) => e.name);
+        value = rawAnswer.entities.map((e) => e.name);
         break;
       case "FlowsFieldAnswer":
-        value = answer.flows.map((f) => f.flowName);
+        value = rawAnswer.flows.map((f) => f.flowName);
         break;
       case "WebhookFieldAnswer":
-        value = [answer.uri];
+        value = [rawAnswer.uri];
         break;
       case "OptionFieldAnswer": {
         if (field.__typename !== FieldType.Options)
@@ -37,7 +38,7 @@ export const getRequestTriggerFieldAnswers = ({
               extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
             },
           );
-        value = answer.selections.map((s) => {
+        value = rawAnswer.selections.map((s) => {
           const option = field.options.find((o) => {
             if (o.optionId === s.optionId) return o.name;
           });
@@ -46,16 +47,17 @@ export const getRequestTriggerFieldAnswers = ({
         });
         break;
       }
+
       default:
         throw new GraphQLError(`Unknown field answer type`, {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
     }
 
-    return {
+    requestFields.push({
       fieldName: field.name,
       value,
-    };
+    });
   });
 
   return requestFields;

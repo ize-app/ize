@@ -6,6 +6,7 @@ import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTrigge
 import {
   FieldDataType,
   FieldOptionsSelectionType,
+  FlowType,
   Request,
 } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -46,13 +47,15 @@ export const sendTelegramNewStepMessage = async ({
         permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
 
       if (responseFields.length === 0) return;
-
+      0;
       const requestFieldsString = stringifyTriggerFields({
         triggerFields: getRequestTriggerFieldAnswers({ request }),
         type: "html",
       });
 
-      const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
+      const displayTriggerFields = request.flow.type !== FlowType.Evolve;
+
+      const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 && displayTriggerFields ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
 
       const message = await telegramBot.telegram.sendMessage(group.chatId.toString(), messageText, {
         reply_markup: {
@@ -70,7 +73,7 @@ export const sendTelegramNewStepMessage = async ({
         },
       });
 
-      if (responseFields.length > 1 && !chatHasRespondPermission) return;
+      if (responseFields.length > 1 || !chatHasRespondPermission) return;
 
       if (
         firstField.__typename === FieldType.Options &&

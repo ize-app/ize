@@ -39,7 +39,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
       const field =
         request.requestSteps[stepIndex]?.fieldSet.fields.find(
           (field) => field.fieldId === resultConfig.field.fieldId,
-        ) ?? null;
+        ) ?? resultConfig.field;
       if (!field) throw Error("Missing field for resultConfig");
       hydratedResults.push({ resultConfig, resultGroup, requestStepStatus, field });
     });

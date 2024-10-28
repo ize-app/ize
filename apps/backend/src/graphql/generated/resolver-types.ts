@@ -1094,7 +1094,7 @@ export type TriggerConfigArgs = {
 
 export type TriggerFieldAnswer = {
   __typename?: 'TriggerFieldAnswer';
-  answer: UserFieldAnswer;
+  answer?: Maybe<UserFieldAnswer>;
   field: Field;
 };
 
@@ -1357,7 +1357,7 @@ export type ResolversTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
-  TriggerFieldAnswer: ResolverTypeWrapper<Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversTypes['UserFieldAnswer'], field: ResolversTypes['Field'] }>;
+  TriggerFieldAnswer: ResolverTypeWrapper<Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer?: Maybe<ResolversTypes['UserFieldAnswer']>, field: ResolversTypes['Field'] }>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
   User: ResolverTypeWrapper<User>;
@@ -1479,7 +1479,7 @@ export type ResolversParentTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: Omit<TriggerConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   TriggerConfigArgs: TriggerConfigArgs;
-  TriggerFieldAnswer: Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversParentTypes['UserFieldAnswer'], field: ResolversParentTypes['Field'] };
+  TriggerFieldAnswer: Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer?: Maybe<ResolversParentTypes['UserFieldAnswer']>, field: ResolversParentTypes['Field'] };
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
   User: User;
@@ -2074,7 +2074,7 @@ export type TriggerConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
 };
 
 export type TriggerFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerFieldAnswer'] = ResolversParentTypes['TriggerFieldAnswer']> = {
-  answer?: Resolver<ResolversTypes['UserFieldAnswer'], ParentType, ContextType>;
+  answer?: Resolver<Maybe<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

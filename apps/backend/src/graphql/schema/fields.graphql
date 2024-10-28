@@ -133,7 +133,7 @@ type ResponseFieldAnswers {
 
 type TriggerFieldAnswer {
   field: Field!
-  answer: UserFieldAnswer!
+  answer: UserFieldAnswer
 }
 
 # later will use this type to add option free inputs
