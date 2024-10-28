@@ -14,14 +14,28 @@ export const newDecisionConfig = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   let defaultOptionId: null | string = null;
+  let threshold: null | number = null;
+  let criteria: null | string = null;
 
+  // Doing these manual checks in case a decision config has settings that
+  // aren't relevant to that decision type
   if (responseField.type !== FieldType.Options) {
     throw new GraphQLError("Option field required for decision result", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
   }
 
-  if (typeof decisionArgs.defaultOptionIndex === "number") {
+  if (
+    decisionArgs.type === DecisionType.NumberThreshold ||
+    decisionArgs.type === DecisionType.PercentageThreshold
+  ) {
+    threshold = decisionArgs.threshold ?? null;
+  }
+
+  if (
+    typeof decisionArgs.defaultOptionIndex === "number" &&
+    decisionArgs.type !== DecisionType.Ai
+  ) {
     defaultOptionId =
       responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
         (fo) => fo.index === decisionArgs.defaultOptionIndex,
@@ -33,7 +47,15 @@ export const newDecisionConfig = async ({
       });
   }
 
-  if (decisionArgs.type !== DecisionType.WeightedAverage && !decisionArgs.threshold) {
+  if (decisionArgs.type === DecisionType.Ai) {
+    criteria = decisionArgs.criteria ?? null;
+  }
+
+  if (
+    (decisionArgs.type === DecisionType.NumberThreshold ||
+      decisionArgs.type === DecisionType.PercentageThreshold) &&
+    !decisionArgs.threshold
+  ) {
     throw new GraphQLError("Missing decision threshold", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
@@ -43,7 +65,8 @@ export const newDecisionConfig = async ({
     data: {
       type: decisionArgs.type,
       defaultOptionId,
-      threshold: decisionArgs.threshold,
+      threshold,
+      criteria,
     },
   });
 

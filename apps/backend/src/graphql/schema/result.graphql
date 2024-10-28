@@ -1,8 +1,13 @@
-type Result {
+type ResultGroup {
   id: String!
   createdAt: String!
   resultConfigId: String!
   hasResult: Boolean!
+  results: [Result!]!
+}
+
+type Result {
+  name: String!
   resultItems: [ResultItem!]!
 }
 
@@ -17,8 +22,10 @@ union ResultConfig = Decision | Ranking | LlmSummary | LlmSummaryList
 
 type Decision {
   resultConfigId: String!
-  fieldId: String
+  name: String!
+  field: Field!
   minimumAnswers: Int!
+  criteria: String
   decisionType: DecisionType!
   defaultOption: Option
   threshold: Int
@@ -26,14 +33,16 @@ type Decision {
 
 type Ranking {
   resultConfigId: String!
-  fieldId: String
+  name: String!
+  field: Field!
   minimumAnswers: Int!
   numOptionsToInclude: Int
 }
 
 type LlmSummary {
   resultConfigId: String!
-  fieldId: String
+  name: String!
+  field: Field!
   minimumAnswers: Int!
   prompt: String!
   example: String
@@ -41,7 +50,8 @@ type LlmSummary {
 
 type LlmSummaryList {
   resultConfigId: String!
-  fieldId: String
+  field: Field!
+  name: String!
   minimumAnswers: Int!
   prompt: String!
   example: String
@@ -60,6 +70,7 @@ enum DecisionType {
   NumberThreshold
   PercentageThreshold
   WeightedAverage
+  Ai
 }
 
 enum LlmSummaryType {
@@ -81,6 +92,7 @@ input ResultArgs {
 input DecisionArgs {
   type: DecisionType!
   defaultOptionIndex: Int
+  criteria: String
   threshold: Int
 }
 

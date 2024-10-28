@@ -4,14 +4,12 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 
 import { actionProperties } from "@/components/Action/actionProperties";
-import { getActionLabel } from "@/components/Action/getActionLabel";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
   PanelContainer,
   RequestStage,
 } from "@/components/ConfigDiagram";
-import { resultTypeDisplay } from "@/components/result/resultTypeDisplay";
 import { RequestFragment, Status } from "@/graphql/generated/graphql";
 
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
@@ -24,12 +22,11 @@ import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
   // if the current step has an action, select the action, otherwise select the step
   const [selectedId, setSelectedId] = useState<string | false>(
-    request.steps[request.currentStepIndex].resultsComplete
+    request.requestSteps[request.currentStepIndex].status.resultsFinal
       ? "action"
       : "step" + request.currentStepIndex.toString(),
   );
 
-  console.log("selectedId", selectedId);
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;
   return (
@@ -44,32 +41,28 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             setSelectedId={setSelectedId}
             selectedId={selectedId}
             icon={PlayCircleOutlineOutlined}
-            entities={request.flow.steps[0].request.permission?.entities}
+            entities={request.flow.trigger.permission.entities}
           />
           {request.flow.steps.map((step, index) => {
-            if (step.response.fields.length === 0) return null;
+            if (step.fieldSet.fields.length === 0) return null;
             return (
               <Box key={index}>
                 <StageConnectorButton key={"connector-" + index.toString()} />
                 <RequestStage
                   status={determineRequestStepStatus(
                     index,
-                    request.steps[index]?.resultsComplete ?? false,
+                    request.requestSteps[index]?.status?.resultsFinal ?? false,
                     request.currentStepIndex,
                     request.final,
                   )}
-                  subtitle={step.response.fields[index].name}
+                  subtitle={step.fieldSet.fields[0].name}
                   icon={Diversity3Outlined}
-                  label={
-                    request.flow.steps[index].result[0].__typename
-                      ? resultTypeDisplay[request.flow.steps[index].result[0].__typename]
-                      : "Collaboration " + (index + 1).toString()
-                  }
+                  label={step.result[0].name}
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  entities={request.flow.steps[0].response.permission?.entities}
+                  entities={step.response?.permission.entities}
                 />
               </Box>
             );
@@ -79,10 +72,10 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <StageConnectorButton key={"connector-final"} />
               <RequestStage
                 status={
-                  request.steps[finalStepIndex]?.actionExecution?.status ??
+                  request.requestSteps[finalStepIndex]?.actionExecution?.status ??
                   (request.final ? Status.Cancelled : Status.NotAttempted)
                 }
-                label={getActionLabel(finalAction, request.flow.group)}
+                label={finalAction.name}
                 id={"action"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
@@ -92,20 +85,14 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
           )}
         </DiagramPanel>
       </PanelContainer>
-      {selectedId === "trigger0" && (
-        <ConfigRequestTriggerPanel
-          step={request.flow.steps[0]}
-          requestStep={request.steps[0]}
-          creator={request.creator}
-        />
-      )}
+      {selectedId === "trigger0" && <ConfigRequestTriggerPanel request={request} />}
       {request.flow.steps.map((step, index) => {
         return (
           selectedId === "step" + index.toString() && (
             <ConfigRequestStepPanel
               key={"steppanel-" + step?.id}
               step={step}
-              requestStep={request.steps[index]}
+              requestStep={request.requestSteps[index]}
               requestStepIndex={index}
               currentStepIndex={request.currentStepIndex}
               triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
@@ -118,7 +105,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
       {selectedId === "action" && finalAction && (
         <ConfigRequestActionPanel
           action={finalAction}
-          actionExecution={request.steps[finalStepIndex]?.actionExecution ?? null}
+          actionExecution={request.requestSteps[finalStepIndex]?.actionExecution ?? null}
           group={request.flow.group}
         />
       )}

@@ -13,7 +13,7 @@ export const createFieldsFormState = (fields: Field[]): FieldsSchemaType => {
 };
 
 const createFieldFormState = (field: Field): FieldSchemaType => {
-  const { fieldId, name, required } = field;
+  const { fieldId, name, required, isInternal, systemType } = field;
   switch (field.__typename) {
     case FieldType.FreeInput:
       return {
@@ -21,6 +21,8 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
         fieldId,
         name,
         required,
+        systemType,
+        isInternal,
         freeInputDataType: field.dataType,
       };
     case FieldType.Options:
@@ -28,10 +30,14 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
         type: FieldType.Options,
         fieldId,
         name,
+        isInternal,
+        systemType,
         required,
         optionsConfig: {
           // array of resultConfig ids
-          linkedResultOptions: field.linkedResultOptions.map((lr) => ({ id: lr.resultConfigId })),
+          linkedResultOptions: field.linkedResultOptions.map((lr) => ({
+            id: lr.resultConfigId,
+          })),
           previousStepOptions: field.previousStepOptions,
           requestOptionsDataType: field.requestOptionsDataType ?? undefined,
           maxSelections: field.maxSelections,

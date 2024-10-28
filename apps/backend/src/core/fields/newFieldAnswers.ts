@@ -3,6 +3,7 @@ import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { constructFieldOptions } from "./constructFieldOptions";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { validateInput } from "./validation/validateInput";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
@@ -15,17 +16,17 @@ export const newFieldAnswers = async ({
   fieldAnswers,
   transaction,
   responseId,
-  requestStepId,
+  requestId,
 }: {
   fieldSet: FieldSetPrismaType | null;
   fieldAnswers: FieldAnswerArgs[];
   requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   transaction: Prisma.TransactionClient;
   responseId?: string | null | undefined;
-  requestStepId?: string | null | undefined;
+  requestId?: string | null | undefined;
 }): Promise<void> => {
   if (!fieldSet) return;
-  if (!responseId && !requestStepId)
+  if (!responseId && !requestId)
     throw new GraphQLError("Missing response Id or requestStepId", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
@@ -36,7 +37,9 @@ export const newFieldAnswers = async ({
       (a.optionSelections && a.optionSelections.length > 0),
   );
   const answerFieldIds = fieldAnswersFiltered.map((a) => a.fieldId);
-  const fields = fieldSet.FieldSetFields.map((f) => f.Field);
+
+  const fields = fieldSet.FieldSetFields.map((f) => f.Field).filter((f) => !f.isInternal);
+
   if (fields.some((f) => f.required && !answerFieldIds.includes(f.id)))
     throw new GraphQLError("Missing required fields", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
@@ -79,8 +82,8 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.FreeInput,
               fieldId: field.id,
-              requestStepId,
               responseId,
+              requestId,
               AnswerFreeInput: {
                 create: {
                   dataType: field.freeInputDataType as FieldDataType,
@@ -112,20 +115,8 @@ export const newFieldAnswers = async ({
               },
             );
 
-          const stepDefinedOptions =
-            fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map((o) => o.FieldOption);
+          const options = constructFieldOptions({ field, requestDefinedOptionSets });
 
-          const requestDefinedOptionSet = requestDefinedOptionSets.find(
-            (rdos) => rdos.fieldId === field.id,
-          );
-
-          const requestDefinedOptions = requestDefinedOptionSet
-            ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map(
-                (o) => o.FieldOption,
-              )
-            : [];
-
-          const options = [...stepDefinedOptions, ...requestDefinedOptions];
           const totalOptionCount = options.length;
 
           if (
@@ -161,7 +152,6 @@ export const newFieldAnswers = async ({
             data: {
               type: FieldType.Options,
               fieldId: field.id,
-              requestStepId,
               responseId,
               AnswerOptionSelections: {
                 createMany: {

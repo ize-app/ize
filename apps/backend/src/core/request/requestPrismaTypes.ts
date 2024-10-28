@@ -1,13 +1,17 @@
 import { Prisma } from "@prisma/client";
 
-import { actionExecutionInclude } from "../action/actionPrismaTypes";
+import { actionExecutionInclude, actionInclude } from "../action/actionPrismaTypes";
+import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
-import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
+import {
+  fieldAnswerInclude,
+  fieldOptionSetInclude,
+  fieldSetInclude,
+} from "../fields/fieldPrismaTypes";
 import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
-import { permissionInclude } from "../permission/permissionPrismaTypes";
+import { responseConfigInclude } from "../response/responseConfigPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
-import { resultInclude } from "../result/resultPrismaTypes";
-import { userInclude } from "../user/userPrismaTypes";
+import { resultConfigSetInclude, resultGroupInclude } from "../result/resultPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -34,21 +38,11 @@ export type EvolveRequestProposedFlowVersionPrismaType = Prisma.FlowVersionGetPa
 }>;
 
 export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()({
-  RequestFieldAnswers: {
-    include: fieldAnswerInclude,
-  },
   Responses: {
     include: responseInclude,
   },
-  RequestDefinedOptionSets: {
-    include: {
-      FieldOptionSet: {
-        include: fieldOptionSetInclude,
-      },
-    },
-  },
-  Results: {
-    include: resultInclude,
+  ResultGroups: {
+    include: resultGroupInclude,
   },
   ActionExecution: {
     include: actionExecutionInclude,
@@ -59,57 +53,80 @@ export type RequestStepPrismaType = Prisma.RequestStepGetPayload<{
   include: typeof requestStepInclude;
 }>;
 
-export const createRequestStepSummaryInclude = (userId: string | undefined) =>
-  Prisma.validator<Prisma.RequestStepInclude>()({
-    Request: {
+export const createRequestSummaryInclude = (userEntityIds: string[]) =>
+  Prisma.validator<Prisma.RequestInclude>()({
+    FlowVersion: {
       include: {
-        FlowVersion: {
+        Flow: {
           include: {
-            Flow: {
-              include: {
-                OwnerGroup: { include: groupInclude },
-              },
-            },
+            OwnerGroup: { include: groupInclude },
           },
         },
-        Creator: {
-          include: userInclude,
-        },
-        ProposedFlowVersionEvolution: {
-          include: evolveRequestProposedFlowVersionInclude,
-        },
       },
     },
-    Responses: {
-      where: {
-        userId: {
-          equals: userId,
-        },
-      },
+    CreatorEntity: {
+      include: entityInclude,
     },
-    Step: {
+    ProposedFlowVersionEvolution: {
+      include: evolveRequestProposedFlowVersionInclude,
+    },
+    CurrentRequestStep: {
       include: {
-        ResponsePermissions: {
-          include: permissionInclude,
+        Responses: {
+          where: {
+            creatorEntityId: { in: userEntityIds },
+          },
+        },
+        ResultGroups: {
+          include: resultGroupInclude,
+        },
+        ActionExecution: {
+          include: actionExecutionInclude,
+        },
+        Step: {
+          include: {
+            ResponseConfig: {
+              include: responseConfigInclude,
+            },
+            Action: {
+              include: actionInclude,
+            },
+            ResultConfigSet: {
+              include: resultConfigSetInclude,
+            },
+            FieldSet: {
+              include: fieldSetInclude,
+            },
+          },
         },
       },
     },
   });
-const exampleRequestStepSummaryInclude = createRequestStepSummaryInclude("userId");
+const exampleRequestSummaryInclude = createRequestSummaryInclude([]);
 
-export type RequestStepSummaryPrismaType = Prisma.RequestStepGetPayload<{
-  include: typeof exampleRequestStepSummaryInclude;
+export type RequestSummaryPrismaType = Prisma.RequestGetPayload<{
+  include: typeof exampleRequestSummaryInclude;
 }>;
 
 export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
+  TriggerFieldAnswers: {
+    include: fieldAnswerInclude,
+  },
+  RequestDefinedOptionSets: {
+    include: {
+      FieldOptionSet: {
+        include: fieldOptionSetInclude,
+      },
+    },
+  },
   RequestSteps: {
     include: requestStepInclude,
   },
-  Creator: {
-    include: userInclude,
+  CreatorEntity: {
+    include: entityInclude,
   },
   FlowVersion: {
-    include: createFlowVersionInclude(undefined), // TODO: switch this out for the actual userId
+    include: createFlowVersionInclude([]), // TODO: switch this out for the actual userId
   },
   ProposedFlowVersionEvolution: {
     include: evolveRequestProposedFlowVersionInclude,

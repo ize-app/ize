@@ -28,7 +28,10 @@ export const ActionDescription = ({
                   label: "Webhook integration",
                   value: renderFreeInputValue(action.uri, FieldDataType.Uri, "1rem"),
                 },
-                { label: "What this webhook does", value: <Typography>{action.name}</Typography> },
+                {
+                  label: "What this webhook does",
+                  value: <Typography>{action.webhookName}</Typography>,
+                },
               ]}
               ariaLabel="Webhook context table"
             />

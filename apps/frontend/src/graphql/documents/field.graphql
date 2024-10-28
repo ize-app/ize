@@ -1,3 +1,10 @@
+fragment FieldSet on FieldSet {
+  fields {
+    ...Field
+  }
+  locked
+}
+
 fragment Field on Field {
   __typename
   ... on Options {
@@ -11,10 +18,12 @@ fragment Field on Field {
 fragment Options on Options {
   fieldId
   name
+  isInternal
   required
   previousStepOptions
   requestOptionsDataType
   selectionType
+  systemType
   maxSelections
   linkedResultOptions {
     ...LinkedResult
@@ -27,8 +36,10 @@ fragment Options on Options {
 fragment FreeInput on FreeInput {
   fieldId
   name
+  isInternal
   required
   dataType
+  systemType
   defaultAnswer {
     ...FieldAnswer
   }
@@ -42,7 +53,7 @@ fragment Option on Option {
 
 fragment LinkedResult on LinkedResult {
   resultConfigId
-  resultType
+  resultName
   fieldId
   fieldName
 }
@@ -50,24 +61,28 @@ fragment LinkedResult on LinkedResult {
 fragment UserFieldAnswer on UserFieldAnswer {
   createdAt
   creator {
-    ...Respondant
+    ...Entity
   }
   answer {
     ...FieldAnswer
   }
 }
 
-fragment UserFieldAnswers on UserFieldAnswers {
-  fieldId
+fragment ResponseFieldAnswers on ResponseFieldAnswers {
+  field {
+    ...Field
+  }
   answers {
     ...UserFieldAnswer
   }
 }
 
-fragment FlowsFieldAnswer on FlowsFieldAnswer {
-  fieldId
-  flows {
-    ...FlowSummary
+fragment TriggerFieldAnswer on TriggerFieldAnswer {
+  field {
+    ...Field
+  }
+  answer {
+    ...UserFieldAnswer
   }
 }
 
@@ -91,21 +106,24 @@ fragment FieldAnswer on FieldAnswer {
 }
 
 fragment OptionFieldAnswer on OptionFieldAnswer {
-  fieldId
   selections {
     ...OptionFieldAnswerSelection
   }
 }
 
 fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
-  fieldId
   value
 }
 
+fragment FlowsFieldAnswer on FlowsFieldAnswer {
+  flows {
+    ...FlowReference
+  }
+}
+
 fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
-  fieldId
   entities {
-    ...EntitySummaryParts
+    ...Entity
   }
 }
 
@@ -114,7 +132,6 @@ fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
 }
 
 fragment WebhookFieldAnswer on WebhookFieldAnswer {
-  fieldId
   uri
   webhookId
   originalUri

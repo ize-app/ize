@@ -1,6 +1,6 @@
 import { getFlow as getFlowService } from "@/core/flow/getFlow";
 import { getFlows as getFlowsService } from "@/core/flow/getFlows";
-import { newCustomFlow as newCustomFlowService } from "@/core/flow/customFlow/newCustomFlow";
+import { newCustomFlow as newCustomFlowService } from "@/core/flow/flowTypes/customFlow/newCustomFlow";
 import { GraphqlRequestContext } from "@graphql/context";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import {
@@ -11,7 +11,6 @@ import {
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
-import { watchFlow } from "@/core/user/watchFlow";
 
 const getFlow: QueryResolvers["getFlow"] = async (
   root: unknown,
@@ -27,7 +26,7 @@ const getFlows: QueryResolvers["getFlows"] = async (
 
   context: GraphqlRequestContext,
 ) => {
-  return await getFlowsService({ args, user: context.currentUser });
+  return await getFlowsService({ args, context });
 };
 
 const newFlow: MutationResolvers["newFlow"] = async (
@@ -39,9 +38,13 @@ const newFlow: MutationResolvers["newFlow"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  const flowId = await newCustomFlowService({ args, context });
-
-  await watchFlow({ flowId, watch: true, userId: context.currentUser.id });
+  const flowId = await newCustomFlowService({
+    args,
+    entityContext: {
+      type: "user",
+      context,
+    },
+  });
 
   // associate user with any new identities that were created when creating the new flow
   await updateUserGroups({ context });

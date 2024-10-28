@@ -5,41 +5,42 @@ import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
+import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { newOptionSet } from "../fields/newOptionSet";
-import { StepPrismaType } from "../flow/flowPrismaTypes";
+import { FlowVersionPrismaType } from "../flow/flowPrismaTypes";
 
 // creates dynamic additional options to be appended to field's predefined options
 export const createRequestDefinedOptionSet = async ({
-  step,
-  requestStepId,
+  flowVersion,
+  requestId,
   fieldId,
   newOptionArgs,
   isTriggerDefinedOptions,
   transaction = prisma,
 }: {
-  step: StepPrismaType;
-  requestStepId: string;
+  flowVersion: FlowVersionPrismaType;
+  requestId: string;
   fieldId: string;
   isTriggerDefinedOptions: boolean;
   newOptionArgs: FieldOptionArgs[];
 
   transaction?: Prisma.TransactionClient;
 }) => {
-  if (!step.ResponseFieldSet)
-    throw new GraphQLError(
-      "Request defined options provided, but this flow step does not have response fields.",
-      {
-        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-      },
-    );
+  let field: FieldPrismaType | null = null;
+  for (const step of flowVersion.Steps ?? []) {
+    const f = (step.FieldSet?.FieldSetFields ?? []).find((f) => f.fieldId === fieldId);
+    if (f) {
+      field = f.Field;
+      break;
+    }
+  }
 
-  const field = step.ResponseFieldSet.FieldSetFields.find((f) => f.fieldId === fieldId);
   if (!field)
     throw new GraphQLError("Cannot find flow field corresponding to request defined options.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  if (isTriggerDefinedOptions && !field.Field.FieldOptionsConfigs?.requestOptionsDataType)
+  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType)
     throw new GraphQLError(
       "Request defined options provided but this field does not allow request defined options.",
       {
@@ -51,16 +52,16 @@ export const createRequestDefinedOptionSet = async ({
     transaction,
     options: newOptionArgs,
     dataType: isTriggerDefinedOptions
-      ? field.Field.FieldOptionsConfigs?.requestOptionsDataType ?? undefined
+      ? field.FieldOptionsConfigs?.requestOptionsDataType ?? undefined
       : undefined,
   });
 
   return await transaction.requestDefinedOptionSet.create({
     include: requestDefinedOptionSetInclude,
     data: {
-      RequestStep: {
+      Request: {
         connect: {
-          id: requestStepId,
+          id: requestId,
         },
       },
       Field: {

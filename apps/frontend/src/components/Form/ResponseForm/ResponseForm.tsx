@@ -1,9 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useContext, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -96,123 +96,124 @@ export const ResponseForm = ({
         padding: "16px",
       }}
     >
-      {/* <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+      <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
         Respond
-      </Typography> */}
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "12px",
-        }}
-      >
-        {responseFields.map((field) => {
-          switch (field.__typename) {
-            case FieldType.FreeInput: {
-              const { dataType, name, required, fieldId } = field;
-
-              switch (dataType) {
-                case FieldDataType.Date:
-                  return (
-                    <DatePicker<ResponseSchemaType>
-                      name={`responseFields.${field.fieldId}.value`}
-                      key={fieldId}
-                      control={formMethods.control}
-                      // showLabel={false}
-
-                      label={name}
-                    />
-                  );
-                case FieldDataType.DateTime:
-                  return (
-                    <DateTimePicker<ResponseSchemaType>
-                      name={`responseFields.${field.fieldId}.value`}
-                      key={fieldId}
-                      control={formMethods.control}
-                      label={name}
-                    />
-                  );
-                default:
-                  return (
-                    <TextField<ResponseSchemaType>
-                      key={fieldId}
-                      label={name}
-                      variant="outlined"
-                      showLabel={true}
-                      control={formMethods.control}
-                      name={`responseFields.${field.fieldId}.value`}
-                      required={required}
-                      multiline
-                    />
-                  );
-              }
-            }
-            case FieldType.Options: {
-              const { options, name, selectionType, fieldId } = field;
-
-              switch (selectionType) {
-                case FieldOptionsSelectionType.Select: {
-                  return (
-                    <Radio<ResponseSchemaType>
-                      name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
-                      key={fieldId}
-                      control={formMethods.control}
-                      label={name}
-                      sx={{ flexDirection: "column", gap: "4px" }}
-                      options={options.map((option) => ({
-                        label: option.name,
-                        value: option.optionId,
-                      }))}
-                    />
-                  );
-                }
-                case FieldOptionsSelectionType.MultiSelect: {
-                  return (
-                    <MultiSelect<ResponseSchemaType>
-                      name={`responseFields.${field.fieldId}.optionSelections`}
-                      control={formMethods.control}
-                      label={name}
-                      key={fieldId}
-                      sx={{ flexDirection: "column", gap: "4px" }}
-                      options={options.map((option) => ({
-                        label: option.name,
-                        value: option.optionId,
-                      }))}
-                    />
-                  );
-                }
-                case FieldOptionsSelectionType.Rank: {
-                  return (
-                    <SortableList<ResponseSchemaType>
-                      control={formMethods.control}
-                      label={name}
-                      key={fieldId}
-                      formMethods={formMethods}
-                      name={`responseFields.${field.fieldId}.optionSelections`}
-                      options={options.map((option) => ({
-                        label: option.name,
-                        value: option.optionId,
-                      }))}
-                    />
-                  );
-                }
-              }
-              break;
-            }
-            default:
-              throw Error("Invalid field type");
-          }
-        })}
-
-        <Button
-          variant={"contained"}
-          size="small"
-          sx={{ width: "200px" }}
-          onClick={formMethods.handleSubmit(onSubmit)}
+      </Typography>
+      <FormProvider {...formMethods}>
+        <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
         >
-          Submit
-        </Button>
-      </form>
+          {responseFields
+            .filter((f) => !f.isInternal)
+            .map((field) => {
+              switch (field.__typename) {
+                case FieldType.FreeInput: {
+                  const { dataType, name, required, fieldId } = field;
+
+                  switch (dataType) {
+                    case FieldDataType.Date:
+                      return (
+                        <DatePicker<ResponseSchemaType>
+                          name={`responseFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          // showLabel={false}
+
+                          label={name}
+                        />
+                      );
+                    case FieldDataType.DateTime:
+                      return (
+                        <DateTimePicker<ResponseSchemaType>
+                          name={`responseFields.${field.fieldId}.value`}
+                          key={fieldId}
+                          label={name}
+                        />
+                      );
+                    default:
+                      return (
+                        <Box>
+                          <TextField<ResponseSchemaType>
+                            key={fieldId}
+                            label={name}
+                            seperateLabel={true}
+                            variant="outlined"
+                            showLabel={true}
+                            name={`responseFields.${field.fieldId}.value`}
+                            required={required}
+                            multiline
+                          />
+                        </Box>
+                      );
+                  }
+                }
+                case FieldType.Options: {
+                  const { options, name, selectionType, fieldId } = field;
+
+                  switch (selectionType) {
+                    case FieldOptionsSelectionType.Select: {
+                      return (
+                        <Radio<ResponseSchemaType>
+                          name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
+                          key={fieldId}
+                          label={name}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.MultiSelect: {
+                      return (
+                        <MultiSelect<ResponseSchemaType>
+                          name={`responseFields.${field.fieldId}.optionSelections`}
+                          label={name}
+                          key={fieldId}
+                          sx={{ flexDirection: "column", gap: "4px" }}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                    case FieldOptionsSelectionType.Rank: {
+                      return (
+                        <SortableList<ResponseSchemaType>
+                          label={name}
+                          key={fieldId}
+                          formMethods={formMethods}
+                          name={`responseFields.${field.fieldId}.optionSelections`}
+                          options={options.map((option) => ({
+                            label: option.name,
+                            value: option.optionId,
+                          }))}
+                        />
+                      );
+                    }
+                  }
+                  break;
+                }
+                default:
+                  throw Error("Invalid field type");
+              }
+            })}
+
+          <Button
+            variant={"contained"}
+            size="small"
+            sx={{ width: "200px", alignSelf: "center" }}
+            onClick={formMethods.handleSubmit(onSubmit)}
+          >
+            Submit
+          </Button>
+        </form>
+      </FormProvider>
     </Box>
   );
 };

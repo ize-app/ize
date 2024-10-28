@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 
+// get groups that a user is a member of
 export const getGroupIdsOfUser = async ({
   user,
   transaction = prisma,

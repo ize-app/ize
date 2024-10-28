@@ -1,26 +1,32 @@
+import { FormLabel } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import { zodDay } from "../formValidation/field";
 
-interface DatePickerProps<T extends FieldValues> extends UseControllerProps<T> {
+interface DatePickerProps<T extends FieldValues> {
+  name: Path<T>;
   label: string;
   required?: boolean;
+  disabled?: boolean;
   showLabel?: boolean;
   placeholderText?: string;
   size?: "small" | "medium";
+  seperateLabel?: boolean;
 }
 
 export const DatePicker = <T extends FieldValues>({
   label,
   name,
-  control,
   showLabel = false,
+  disabled = false,
   required = false,
+  seperateLabel = false,
 }: DatePickerProps<T>) => {
+  const { control } = useFormContext<T>();
   return (
     <Controller
       name={name}
@@ -29,9 +35,11 @@ export const DatePicker = <T extends FieldValues>({
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
           <FormControl error={Boolean(error)} required={required}>
+            {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
             <MuiDatePicker
               {...field}
               value={field.value}
+              disabled={disabled}
               sx={{
                 flexGrow: 1,
                 "& .MuiInputBase-input": {
@@ -44,7 +52,7 @@ export const DatePicker = <T extends FieldValues>({
               }}
               aria-label={label}
               timezone="system"
-              label={showLabel ? label : ""}
+              label={showLabel && !seperateLabel ? label : ""}
             />
             <FormHelperText
               sx={{

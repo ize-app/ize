@@ -1,27 +1,18 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { UserFieldAnswers } from "@/components/Field/UserFieldAnswers";
-import {
-  FieldFragment,
-  RequestFragment,
-  UserFieldAnswerFragment,
-} from "@/graphql/generated/graphql";
+import { RequestFragment, ResponseFieldAnswersFragment } from "@/graphql/generated/graphql";
 
 export const Responses = ({ request }: { request: RequestFragment }) => {
-  const fieldAnswersHydrated: Map<
-    string,
-    { answers: UserFieldAnswerFragment[]; field: FieldFragment }
-  > = new Map();
+  const responseFieldAnswers: ResponseFieldAnswersFragment[] = [];
 
-  request.flow.steps.forEach((step, index) => {
-    step.response.fields.forEach((field) => {
-      const fieldAnswers = request.steps[index].responseFieldAnswers.find(
-        (responseField) => responseField.fieldId === field.fieldId,
-      );
-      if (!fieldAnswers) return;
-      fieldAnswersHydrated.set(field.fieldId, { answers: fieldAnswers.answers, field });
-    });
+  request.requestSteps.forEach((step) => {
+    responseFieldAnswers.push(...step.responseFieldAnswers);
   });
+
+  const filteredResponseFieldAnswers = responseFieldAnswers.filter(
+    (responseFieldAnswer) => responseFieldAnswer.answers.length > 0,
+  );
 
   return (
     <Box
@@ -31,9 +22,13 @@ export const Responses = ({ request }: { request: RequestFragment }) => {
         gap: "36px",
       }}
     >
-      {Array.from(fieldAnswersHydrated.values()).map(({ answers, field }) => (
-        <UserFieldAnswers key={field.fieldId} field={field} fieldAnswers={answers} />
-      ))}
+      {filteredResponseFieldAnswers.length > 0 ? (
+        filteredResponseFieldAnswers.map(({ answers, field }) => (
+          <UserFieldAnswers key={field.fieldId} field={field} fieldAnswers={answers} />
+        ))
+      ) : (
+        <Typography>No responses yet</Typography>
+      )}
     </Box>
   );
 };

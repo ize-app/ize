@@ -12,29 +12,34 @@ type ActionExecution {
 }
 
 type CallWebhook {
+  name: String!
   locked: Boolean!
   webhookId: String!
   filterOption: Option
   uri: String!
-  name: String!
+  webhookName: String!
 }
 
 type EvolveFlow {
+  name: String!
   locked: Boolean!
   filterOption: Option
 }
 
 type TriggerStep {
+  name: String!
   locked: Boolean!
   filterOption: Option
 }
 
 type GroupWatchFlow {
+  name: String!
   locked: Boolean!
   filterOption: Option
 }
 
 type EvolveGroup {
+  name: String!
   locked: Boolean!
   filterOption: Option
 }
@@ -68,22 +73,12 @@ input TestWebhookArgs {
   flowName: String!
   uri: String!
   requestFields: [WebhookValueArgs!]!
-  results: [WebhookValueArgs!]!
+  results: [ResultGroupTestWebhookArgs!]!
 }
 
-type WebhookPayload {
-  flowName: String!
-  requestName: String!
-  createdAt: String!
-  requestFields: [WebhookValue!]!
-  results: [WebhookValue!]!
-  requestUrl: String!
-}
-
-type WebhookValue {
+input ResultGroupTestWebhookArgs {
   fieldName: String!
-  value: String
-  optionSelections: [String!]
+  results: [WebhookValueArgs!]!
 }
 
 input WebhookValueArgs {

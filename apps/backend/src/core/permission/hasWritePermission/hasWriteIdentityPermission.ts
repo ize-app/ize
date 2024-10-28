@@ -16,7 +16,7 @@ export const hasWriteIdentityPermission = async ({
   identity,
   transaction = prisma,
 }: {
-  permission: PermissionPrismaType | null;
+  permission: PermissionPrismaType | null | undefined;
   identity: IdentityPrismaType;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {

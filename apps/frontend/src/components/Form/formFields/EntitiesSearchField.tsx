@@ -1,5 +1,5 @@
 import { MailOutline } from "@mui/icons-material";
-import { SvgIcon } from "@mui/material";
+import { FormLabel, SvgIcon } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,13 +10,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
-import {
-  Controller,
-  FieldValues,
-  UseControllerProps,
-  UseFormGetValues,
-  UseFormSetValue,
-} from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import discordLogo from "@/assets/discord-logo-blue.svg";
 import hatsLogoUrl from "@/assets/hats-logo.svg";
@@ -26,56 +20,64 @@ import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { RecentAgentsContext } from "@/hooks/contexts/RecentAgentContext";
 import { dedupEntities } from "@/utils/dedupEntities";
 
-import { EntitySummaryPartsFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
+import { EntityFragment, NewEntityTypes } from "../../../graphql/generated/graphql";
 import { EthLogoSvg } from "../../icons";
 import NftSvg from "../../icons/NftSvg";
 import { EntityModal } from "../EntityModal/EntityModal";
 
-interface EntitySearchProps<T extends FieldValues> extends UseControllerProps<T> {
+interface EntitySearchProps<T extends FieldValues> {
   label?: string;
+  name: Path<T>;
   ariaLabel: string;
   placeholderText?: string;
   hideCustomGroups?: boolean;
-  setFieldValue: UseFormSetValue<T>;
-  getFieldValues: UseFormGetValues<T>;
   showLabel?: boolean;
+  seperateLabel?: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
-  control,
   name,
   label,
   ariaLabel,
   hideCustomGroups = false,
-  setFieldValue,
-  getFieldValues,
   showLabel,
+  seperateLabel = false,
   ...props
 }: EntitySearchProps<T>) => {
+  const { control, setValue, getValues } = useFormContext<T>();
   const { me } = useContext(CurrentUserContext);
   const { recentAgents, setRecentAgents } = useContext(RecentAgentsContext);
   // Filtering discord roles since we don't yet have a good way of searching for other user's discord role
   const userIdentities = me
-    ? (me.identities as EntitySummaryPartsFragment[]).filter(
-        (id) => !(id.__typename === "Identity" && id.identityType.__typename === "IdentityDiscord"),
+    ? (me.identities as EntityFragment[]).filter(
+        (id) =>
+          !(
+            id.__typename === "Identity" &&
+            (id.identityType.__typename === "IdentityDiscord" ||
+              id.identityType.__typename === "IdentityTelegram")
+          ),
       )
     : [];
+
+  const user = me?.user;
 
   const customGroups = hideCustomGroups ? [] : me?.groups ?? [];
 
   const options = [...userIdentities, ...recentAgents, ...customGroups];
 
+  if (user) options.unshift({ __typename: "User", ...user });
+
   const [open, setOpen] = useState(false);
   const [roleModalType, setRoleModalType] = useState(NewEntityTypes.IdentityEmail);
 
-  const onSubmit = (value: EntitySummaryPartsFragment[]) => {
+  const onSubmit = (value: EntityFragment[]) => {
     setRecentAgents(value);
 
-    const currentState = (getFieldValues(name) ?? []) as EntitySummaryPartsFragment[];
+    const currentState = (getValues(name) ?? []) as EntityFragment[];
     const newAgents = dedupEntities([...(currentState ?? []), ...(value ?? [])]);
 
     //@ts-expect-error TODO
-    setFieldValue(name, newAgents);
+    setValue(name, newAgents);
   };
   return me ? (
     <>
@@ -93,6 +95,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
         render={({ field, fieldState: { error } }) => {
           return (
             <FormControl required>
+              {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
               <Autocomplete
                 includeInputInList={true}
                 multiple
@@ -102,12 +105,9 @@ export const EntitiesSearchField = <T extends FieldValues>({
                 {...field}
                 {...props}
                 options={options}
-                getOptionLabel={(option: EntitySummaryPartsFragment) => option.name}
+                getOptionLabel={(option: EntityFragment) => option.name}
                 onChange={(_event, data) => field.onChange(data)}
-                isOptionEqualToValue={(
-                  option: EntitySummaryPartsFragment,
-                  value: EntitySummaryPartsFragment,
-                ) => {
+                isOptionEqualToValue={(option: EntityFragment, value: EntityFragment) => {
                   return option.id === value.id;
                 }}
                 PaperComponent={({ children }) => {
@@ -205,8 +205,8 @@ export const EntitiesSearchField = <T extends FieldValues>({
                     </Paper>
                   );
                 }}
-                renderTags={(value: readonly EntitySummaryPartsFragment[], getTagProps) =>
-                  value.map((option: EntitySummaryPartsFragment, index: number) => {
+                renderTags={(value: readonly EntityFragment[], getTagProps) =>
+                  value.map((option: EntityFragment, index: number) => {
                     return (
                       <Chip
                         avatar={<Avatar id={option.id} avatar={option} />}
@@ -219,37 +219,41 @@ export const EntitiesSearchField = <T extends FieldValues>({
                     );
                   })
                 }
-                renderOption={(props, option) => (
-                  <Box
-                    {...props}
-                    component="li"
-                    sx={{
-                      display: "flex",
-                      width: "100%",
-                      justifyContent: "left",
-                      alignItems: "center",
-                      gap: "16px",
-                      verticalAlign: "middle",
-                    }}
-                    key={"option" + option.id}
-                  >
-                    <Avatar id={option.id} avatar={option} />
-                    <Typography
-                      variant="body1"
+                renderOption={(props, option) => {
+                  const detail = option.__typename === "User" && "Ize account";
+                  const name = option.name + (detail ? ` (${detail})` : "");
+                  return (
+                    <Box
+                      {...props}
+                      component="li"
                       sx={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        display: "flex",
+                        width: "100%",
+                        justifyContent: "left",
+                        alignItems: "center",
+                        gap: "16px",
+                        verticalAlign: "middle",
                       }}
+                      key={"option" + option.id}
                     >
-                      {option.name}
-                    </Typography>
-                  </Box>
-                )}
+                      <Avatar id={option.id} avatar={option} />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                    </Box>
+                  );
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={showLabel ? label : ""}
+                    label={showLabel && !seperateLabel ? label : ""}
                     placeholder="Add a group or identity..."
                     InputProps={{
                       ...params.InputProps,

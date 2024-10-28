@@ -32,6 +32,9 @@ export const upsertUser = async ({
       update: {},
       create: {
         stytchId: stytchUser.user_id,
+        Entity: {
+          create: {},
+        },
         name:
           (stytchUser.name?.first_name ? stytchUser.name?.first_name + " " : "") +
           (stytchUser.name?.last_name ?? ""),

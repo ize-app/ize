@@ -1,34 +1,36 @@
-import { TextField as MuiTextField, SxProps, TextFieldVariants } from "@mui/material";
+import {
+  FormLabel,
+  TextField as MuiTextField,
+  TextFieldProps as MuiTextFieldProps,
+  SxProps,
+} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { ReactNode } from "react";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
-interface TextFieldProps<T extends FieldValues> extends UseControllerProps<T> {
+type TextFieldProps<T extends FieldValues> = MuiTextFieldProps & {
+  name: Path<T>;
+  // label is overrideing the label in MuiTextFieldProps
   label: string;
-  variant?: TextFieldVariants;
-  required?: boolean;
+  display?: boolean;
   showLabel?: boolean;
+  seperateLabel?: boolean;
   placeholderText?: string;
   endAdornment?: ReactNode;
   startAdornment?: ReactNode;
-  multiline?: boolean;
-  rows?: number;
-  size?: "small" | "medium";
-  sx?: SxProps;
-  display?: boolean;
-  helperText?: string;
-}
+};
 
 export const TextField = <T extends FieldValues>({
   label,
   name,
-  control,
   showLabel = false,
+  seperateLabel = false,
   required = false,
   size = "small",
   multiline = false,
   variant = "outlined",
+  disabled = false,
   rows,
   endAdornment,
   startAdornment,
@@ -36,8 +38,8 @@ export const TextField = <T extends FieldValues>({
   display = true,
   helperText,
   sx = {},
-  ...props
 }: TextFieldProps<T>) => {
+  const { control } = useFormContext<T>();
   const defaultStyles: SxProps = { flexGrow: 1, display: display ? "flex" : "none" };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
@@ -45,28 +47,25 @@ export const TextField = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl
-          sx={styles}
-          error={Boolean(error)}
-          required={required}
-          disabled={props.disabled}
-        >
+        <FormControl sx={styles} error={Boolean(error)} required={required} disabled={disabled}>
           {/* <OutlinedInput id="component-outlined" {...props} {...field} label={label} /> */}
+          {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
           <MuiTextField
             {...field}
             aria-label={label}
             variant={variant}
-            label={showLabel ? label : ""}
+            label={showLabel && !seperateLabel ? label : ""}
             required={required}
             multiline={multiline}
             size={size}
             rows={rows}
             placeholder={placeholderText}
             error={Boolean(error)}
-            disabled={props.disabled}
+            disabled={disabled}
             InputProps={{
               endAdornment,
               startAdornment,
+              multiline: true,
             }}
           />
           <FormHelperText

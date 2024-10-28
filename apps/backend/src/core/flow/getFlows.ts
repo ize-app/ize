@@ -1,3 +1,6 @@
+import { Prisma } from "@prisma/client";
+
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   FlowSummary,
   FlowTriggerPermissionFilter,
@@ -8,36 +11,41 @@ import {
 import {
   FlowSummaryPrismaType,
   createFlowSummaryInclude,
+  createGroupWatchedFlowFilter,
   createUserWatchedFlowFilter,
 } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { MePrismaType } from "../user/userPrismaTypes";
+import { getUserEntityIds } from "../user/getUserEntityIds";
 
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
-// TODO: In the future, this query will only pull flows that user has interacted with or created
 export const getFlows = async ({
   args,
-  user,
+  context,
 }: {
   args: QueryGetFlowsArgs;
-  user: MePrismaType | undefined | null;
+  context: GraphqlRequestContext;
 }): Promise<FlowSummary[]> => {
+  const user = context.currentUser;
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
 
+  const userEntityIds = getUserEntityIds(user);
+
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: createFlowSummaryInclude(user?.id),
+    include: createFlowSummaryInclude(userEntityIds),
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
     where: {
+      reusable: true,
       AND: [
-        args.watchFilter !== WatchFilter.All
+        // when query is for a user's watched flows
+        args.watchFilter !== WatchFilter.All && user && !args.groupId
           ? createUserWatchedFlowFilter({
-              userId: user?.id ?? "",
+              entityIds: userEntityIds,
               watched: args.watchFilter === WatchFilter.Watched,
             })
           : {},
@@ -46,8 +54,6 @@ export const getFlows = async ({
           ? {
               OR: [
                 {
-                  //@ts-expect-error - this is a valid query but I believe the createWatchedFlowFilter
-                  // OR/NOT logic is breaking the type checking
                   CurrentFlowVersion: {
                     name: {
                       contains: args.searchQuery,
@@ -70,54 +76,32 @@ export const getFlows = async ({
           : {},
         args.groupId
           ? {
-              OR: [
-                { groupId: args.groupId },
-                {
-                  GroupsWatchedFlows: {
-                    some: {
-                      groupId: args.groupId,
-                    },
-                  },
-                },
+              AND: [
+                createGroupWatchedFlowFilter({
+                  excudeOwnedFlows: args.excludeOwnedFlows ?? false,
+                  groupId: args.groupId,
+                  watched: args.watchFilter !== WatchFilter.Unwatched,
+                }),
+                // when showing "unwatched flows" for a group,
+                // show flows that are watched by the user (though excluding flows watched by groups)
+                // this is useful for the flow "unwatch" field
+                args.watchFilter === WatchFilter.Unwatched
+                  ? createUserWatchedFlowFilter({
+                      entityIds: userEntityIds,
+                      watched: true,
+                    })
+                  : {},
               ],
             }
           : { groupId: null },
-        // TODO: reduce some non-DRY code with requestSteps permission logic
+
         args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
           ? {
               CurrentFlowVersion: {
+                // the type checking breaks with this is/not logic, so I had to move createFlowPermissionFilter to its own function
                 [args.triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
                   ? "is"
-                  : "NOT"]: {
-                  Steps: {
-                    some: {
-                      index: 0,
-                      OR: [
-                        {
-                          RequestPermissions: {
-                            OR: [
-                              { anyone: true },
-                              {
-                                EntitySet: {
-                                  EntitySetEntities: {
-                                    some: {
-                                      Entity: {
-                                        OR: [
-                                          { Group: { id: { in: groupIds } } },
-                                          { Identity: { id: { in: identityIds } } },
-                                        ],
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            ],
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
+                  : "NOT"]: createFlowPermissionFilter(groupIds, identityIds, user?.id),
               },
             }
           : {},
@@ -128,7 +112,33 @@ export const getFlows = async ({
     },
   });
 
-  return flows.map((flow) =>
-    flowSummaryResolver({ flow, identityIds, groupIds, userId: user?.id }),
-  );
+  const res = flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
+  return res;
 };
+
+const createFlowPermissionFilter = (
+  groupIds: string[],
+  identityIds: string[],
+  userId: string | undefined,
+): Prisma.FlowVersionWhereInput => ({
+  TriggerPermissions: {
+    OR: [
+      { anyone: true },
+      {
+        EntitySet: {
+          EntitySetEntities: {
+            some: {
+              Entity: {
+                OR: [
+                  { Group: { id: { in: groupIds } } },
+                  { Identity: { id: { in: identityIds } } },
+                  { User: { id: userId } },
+                ],
+              },
+            },
+          },
+        },
+      },
+    ],
+  },
+});

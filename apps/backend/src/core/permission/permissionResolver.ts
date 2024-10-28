@@ -7,7 +7,7 @@ export const permissionResolver = (
   permission: PermissionPrismaType,
   userIdentityIds: string[],
 ): Permission => {
-  if (!permission) return { stepTriggered: true, anyone: false, entities: [] };
+  if (!permission) return { anyone: false, entities: [] };
 
   const entities = permission.EntitySet
     ? permission.EntitySet.EntitySetEntities.map((entity) => {
@@ -16,7 +16,6 @@ export const permissionResolver = (
     : [];
 
   return {
-    stepTriggered: false,
     anyone: permission.anyone,
     entities,
   };

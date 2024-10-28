@@ -3,14 +3,17 @@ import Typography from "@mui/material/Typography";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
-import { RequestStepsSearch } from "./RequestStepsSearch";
+import { RequestSearch } from "./RequestStepsSearch";
 
 export const Requests = () => {
   return (
     <PageContainer>
-      <Head title={"Requests"} description={"View and trigger requests for your collaborative workflows."} />
+      <Head
+        title={"Requests"}
+        description={"View and trigger requests for your collaborative workflows."}
+      />
       <Typography variant="h1">Requests</Typography>
-      <RequestStepsSearch userOnly />
+      <RequestSearch userOnly />
     </PageContainer>
   );
 };

@@ -15,6 +15,7 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
         fieldId: crypto.randomUUID(),
         type: FieldType.Options,
         name: "",
+        isInternal: false,
         required: true,
         optionsConfig: {
           options: [],
@@ -33,6 +34,7 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
     case FieldType.FreeInput: {
       return {
         fieldId: crypto.randomUUID(),
+        isInternal: false,
         type: FieldType.FreeInput,
         name: "",
         required: true,

@@ -38,12 +38,21 @@ export const EvolveFlow = () => {
       isForEvolveRequest: true,
     },
     onCompleted: (data) => {
-      const formState = createFlowFormState(data.getFlow as FlowFragment);
-      setFormState((prev) => {
+      const flowFormState = createFlowFormState(data.getFlow as FlowFragment);
+      const evolveFormState = createFlowFormState(data.getFlow.evolve as FlowFragment);
+      setFormState((prev): EvolveExistingFlowSchemaType => {
         return {
           ...prev,
-          newFlow: { ...formState },
-          currentFlow: formState,
+          original: {
+            reusable: data.getFlow.reusable,
+            flow: { ...flowFormState },
+            evolve: { ...evolveFormState },
+          },
+          new: {
+            reusable: data.getFlow.reusable,
+            flow: { ...flowFormState },
+            evolve: { ...evolveFormState },
+          },
         };
       });
     },
@@ -77,8 +86,13 @@ export const EvolveFlow = () => {
             flowId: flowId,
             name: formState.requestName,
             description: formState.requestDescription,
-            proposedFlow: createNewFlowArgs(formState.newFlow, me?.user.id),
-            currentFlow: createNewFlowArgs(formState.currentFlow, me?.user.id),
+            new: {
+              flow: createNewFlowArgs(formState.new.flow, me?.user.id),
+              evolve: formState.new?.evolve
+                ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+                : undefined,
+              reusable: formState.new.reusable,
+            },
           },
         },
       });
@@ -123,7 +137,7 @@ export const EvolveFlow = () => {
           {title}
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-          {loading || !formState.currentFlow ? (
+          {loading || !formState.new?.flow ? (
             <Loading />
           ) : (
             <Outlet

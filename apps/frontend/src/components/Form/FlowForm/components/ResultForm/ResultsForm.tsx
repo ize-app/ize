@@ -3,19 +3,15 @@ import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { useEffect, useState } from "react";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import {
-  DecisionType,
-  FieldOptionsSelectionType,
-  FieldType,
-  ResultType,
-} from "@/graphql/generated/graphql";
+import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
+import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
 import { Select, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FieldSchemaType } from "../../formValidation/fields";
@@ -23,7 +19,6 @@ import { FlowSchemaType } from "../../formValidation/flow";
 import { ResultSchemaType } from "../../formValidation/result";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
-import { FieldOptionsForm } from "../FieldOptionsForm";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -41,28 +36,29 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
 };
 
 interface ResultsFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
+  reusable: boolean;
 }
 
 interface ResultFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   resultIndex: number;
   id: string;
   fieldsArrayMethods: ReturnType<typeof useFieldArray>;
   resultsArrayMethods: ReturnType<typeof useFieldArray>;
   locked: boolean;
+  reusable: boolean;
 }
 
-export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: ResultsFormProps) => {
+export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: ResultsFormProps) => {
+  const { control, getValues } = useFormContext<FlowSchemaType>();
   const resultsArrayMethods = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.result`,
+    control,
+    name: `steps.${stepIndex}.result`,
   });
 
-  const isLocked = formMethods.getValues(`steps.${formIndex}.response.fieldsLocked`);
+  const locked = getValues(`steps.${stepIndex}.fieldSet.locked`);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -71,12 +67,12 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
         return (
           <ResultForm
             key={item.id}
-            formMethods={formMethods}
-            formIndex={formIndex}
+            stepIndex={stepIndex}
             resultIndex={resultIndex}
             fieldsArrayMethods={fieldsArrayMethods}
             id={item.id}
-            locked={isLocked}
+            locked={locked}
+            reusable={reusable}
             //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
@@ -108,19 +104,18 @@ export const ResultsForm = ({ formMethods, formIndex, fieldsArrayMethods }: Resu
 };
 
 const ResultForm = ({
-  formMethods,
-  formIndex,
+  stepIndex,
   fieldsArrayMethods,
   id,
   resultsArrayMethods,
   resultIndex,
   locked,
+  reusable,
 }: ResultFormProps) => {
-  const resultType = formMethods.watch(`steps.${formIndex}.result.${resultIndex}.type`);
+  const { watch, getValues, setValue, formState } = useFormContext<FlowSchemaType>();
+  const resultType = watch(`steps.${stepIndex}.result.${resultIndex}.type`);
 
-  const resultField = formMethods.getValues(`steps.${formIndex}.response.fields.${resultIndex}`);
-  const optionSelectionType =
-    resultField.type === FieldType.Options ? resultField.optionsConfig.selectionType : null;
+  const resultField = getValues(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`);
 
   const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(resultType);
   const [displayForm, setDisplayForm] = useState<boolean>(true);
@@ -142,40 +137,14 @@ const ResultForm = ({
         resultType,
         fieldId: field.fieldId,
       });
-      formMethods.setValue(`steps.${formIndex}.response.fields.${resultIndex}`, field);
-      formMethods.setValue(`steps.${formIndex}.result.${resultIndex}`, result);
+      setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`, field);
+      setValue(`steps.${stepIndex}.result.${resultIndex}`, result);
       setDisplayForm(true);
     }
     setPrevResultType(resultType);
   }, [resultType]);
 
-  useEffect(() => {
-    if (optionSelectionType) {
-      if (optionSelectionType === FieldOptionsSelectionType.Rank) {
-        formMethods.setValue(
-          `steps.${formIndex}.response.fields.${resultIndex}.optionsConfig.maxSelections`,
-          undefined,
-        );
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.WeightedAverage,
-        );
-      } else if (optionSelectionType === FieldOptionsSelectionType.Select) {
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.NumberThreshold,
-        );
-      } else if (optionSelectionType === FieldOptionsSelectionType.MultiSelect) {
-        formMethods.setValue(
-          `steps.${formIndex}.result.${resultIndex}.decision.type`,
-          DecisionType.WeightedAverage,
-        );
-      }
-    }
-  }, [optionSelectionType]);
-
-  const resultError =
-    formMethods.formState.errors?.steps?.[formIndex]?.result?.[resultIndex]?.root?.message;
+  const resultError = formState.errors?.steps?.[stepIndex]?.result?.[resultIndex]?.root?.message;
 
   return (
     <Box
@@ -201,7 +170,6 @@ const ResultForm = ({
         >
           <FieldBlock>
             <Select<FlowSchemaType>
-              control={formMethods.control}
               label="What's the final result?"
               disabled={locked}
               selectOptions={[
@@ -210,16 +178,15 @@ const ResultForm = ({
                 { name: "AI generated summary", value: ResultType.LlmSummary },
                 { name: "AI generated list", value: ResultType.LlmSummaryList },
               ]}
-              name={`steps.${formIndex}.result.${resultIndex}.type`}
+              name={`steps.${stepIndex}.result.${resultIndex}.type`}
               onChange={() => setDisplayForm(false)}
               size="small"
               defaultValue=""
             />
             <TextField<FlowSchemaType>
               // assuming here that results to fields is 1:1 relationshp
-              name={`steps.${formIndex}.response.fields.${resultIndex}.name`}
-              key={"fieldName" + resultIndex.toString() + formIndex.toString()}
-              control={formMethods.control}
+              name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
+              key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
               disabled={locked}
               multiline
               placeholderText={resultFieldNamePlaceholderText(resultType)}
@@ -229,18 +196,16 @@ const ResultForm = ({
           </FieldBlock>
           {(resultType === ResultType.Decision || resultType === ResultType.Ranking) &&
             displayForm && (
-              <FieldOptionsForm
-                formMethods={formMethods}
-                formIndex={formIndex}
+              <ResponseFieldOptionsForm
+                reusable={reusable}
+                stepIndex={stepIndex}
                 fieldIndex={resultIndex}
-                branch={"response"}
                 locked={locked}
               />
             )}
           {resultType === ResultType.Decision && displayForm && (
             <DecisionConfigForm
-              formIndex={formIndex}
-              formMethods={formMethods}
+              stepIndex={stepIndex}
               resultIndex={resultIndex}
               field={resultField}
               display={resultType === ResultType.Decision}
@@ -250,8 +215,7 @@ const ResultForm = ({
           {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) &&
             displayForm && (
               <LlmSummaryForm
-                formIndex={formIndex}
-                formMethods={formMethods}
+                stepIndex={stepIndex}
                 resultIndex={resultIndex}
                 display={
                   resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
@@ -262,8 +226,7 @@ const ResultForm = ({
 
           {resultType === ResultType.Ranking && displayForm && (
             <PrioritizationForm
-              formIndex={formIndex}
-              formMethods={formMethods}
+              formIndex={stepIndex}
               resultIndex={resultIndex}
               field={resultField}
               display={resultType === ResultType.Ranking}

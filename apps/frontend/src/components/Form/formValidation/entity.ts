@@ -18,7 +18,7 @@ const groupFormSchema = z.object({
     .object({
       name: z.string(),
       icon: z.string().optional().nullable(),
-    }) 
+    })
     .nullable()
     .optional(),
   __typename: z.literal(EntityType.Group),
@@ -42,17 +42,33 @@ const identityFormSchema = z.object({
     .optional(),
 });
 
+const userFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  entityId: z.string(),
+  icon: z.string().optional().nullable(),
+  __typename: z.literal(EntityType.User),
+});
+
 export const entityFormSchema = z.discriminatedUnion("__typename", [
   identityFormSchema,
   groupFormSchema,
+  userFormSchema,
 ]);
 
 export const newEntityFormSchema = z.object({
   type: z.nativeEnum(NewEntityTypes),
   discordRole: z
     .object({
-      serverId: z.string().trim().min(1, { message: "Select a server" }),
-      roleId: z.string().trim().min(1, { message: "Select a role" }),
+      server: z.object({
+        id: z.string().min(1),
+        name: z.string(),
+        hasCultsBot: z.boolean(),
+      }),
+      role: z.object({
+        name: z.string(),
+        value: z.string(),
+      }),
     })
     .optional(),
   ethAddress: z

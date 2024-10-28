@@ -1,17 +1,6 @@
 fragment Permission on Permission {
-  stepTriggered
   anyone
   entities {
     ...Entity
-  }
-}
-
-fragment Entity on Entity {
-  __typename
-  ... on Group {
-    ...GroupSummaryParts
-  }
-  ... on Identity {
-    ...IdentitySummaryParts
   }
 }

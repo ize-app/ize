@@ -67,7 +67,7 @@ export const identityResolver = (
       },
     };
   else {
-    throw new GraphQLError("Invalid identity type.", {
+    throw new GraphQLError(`Invalid identity type. identityId ${identity.id}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   }

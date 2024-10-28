@@ -5,17 +5,17 @@ import {
   FieldFragment,
   RequestFragment,
   ResultConfigFragment,
-  ResultFragment,
+  ResultGroupFragment,
   Status,
 } from "@/graphql/generated/graphql";
 
 import { Result } from "./Result";
 
 interface HydratedResultData {
-  field: FieldFragment;
   resultConfig: ResultConfigFragment;
-  result: ResultFragment | null;
+  resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
+  field: FieldFragment;
 }
 
 // lists all results from a given request
@@ -25,18 +25,23 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
   request.flow.steps.forEach((step, stepIndex) => {
     const requestStepStatus = determineRequestStepStatus(
       stepIndex,
-      request.steps[stepIndex]?.resultsComplete ?? false,
+      request.requestSteps[stepIndex]?.status.resultsFinal ?? false,
       request.currentStepIndex,
       request.final,
     );
 
     step.result.forEach((resultConfig) => {
-      const field = step.response.fields.find((field) => field.fieldId === resultConfig.fieldId);
-      const result =
-        request.steps[stepIndex]?.results.find(
+      const resultGroup =
+        request.requestSteps[stepIndex]?.results.find(
           (result) => result.resultConfigId === resultConfig.resultConfigId,
         ) ?? null;
-      if (field) hydratedResults.push({ field, resultConfig, result, requestStepStatus });
+
+      const field =
+        request.requestSteps[stepIndex]?.fieldSet.fields.find(
+          (field) => field.fieldId === resultConfig.field.fieldId,
+        ) ?? resultConfig.field;
+      if (!field) throw Error("Missing field for resultConfig");
+      hydratedResults.push({ resultConfig, resultGroup, requestStepStatus, field });
     });
   });
 

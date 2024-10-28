@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
-import { EvolveGroupFields } from "@/core/flow/evolveGroup/EvolveGroupFields";
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { prisma } from "../../../prisma/client";
@@ -17,7 +17,11 @@ export const evolveGroup = async ({
   // find the current / proposed fields in the request
   const requestStep = await transaction.requestStep.findFirstOrThrow({
     include: {
-      RequestFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+      Request: {
+        include: {
+          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+        },
+      },
       Step: {
         include: {
           FlowVersion: {
@@ -48,15 +52,17 @@ export const evolveGroup = async ({
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  const name = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Name as string);
+  const requestFieldAnswers = requestStep.Request.TriggerFieldAnswers;
+
+  const name = requestFieldAnswers.find((fieldAnswer) => {
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupName;
   });
-  const description = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Description as string);
+  const description = requestFieldAnswers.find((fieldAnswer) => {
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupDescription;
   });
 
-  const members = requestStep.RequestFieldAnswers.find((fieldAnswer) => {
-    return fieldAnswer.Field.name === (EvolveGroupFields.Members as string);
+  const members = requestFieldAnswers.find((fieldAnswer) => {
+    return fieldAnswer.Field.systemType === SystemFieldType.GroupMembers;
   });
 
   /// validate members and create entity set for members ///

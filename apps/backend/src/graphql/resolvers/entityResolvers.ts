@@ -11,12 +11,10 @@ import {
   MutationNewCustomGroupArgs,
   MutationNewEntitiesArgs,
   MutationResolvers,
-  MutationTestNotificationWebhookArgs,
   QueryGroupArgs,
   QueryGroupsForCurrentUserArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
-import { testNotificationWebhook as testNotificationWebhookService } from "@/core/notification/testNotificationWebhook";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
@@ -60,9 +58,9 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
     const groupId = await newCustomGroupService({ args, context, transaction });
 
     // Watch group for user
-    await transaction.usersWatchedGroups.create({
+    await transaction.entityWatchedGroups.create({
       data: {
-        userId: context.currentUser.id,
+        entityId: context.currentUser.entityId,
         groupId,
         watched: true,
       },
@@ -75,18 +73,9 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   return groupId;
 };
 
-export const testNotificationWebhook: MutationResolvers["testNotificationWebhook"] = async (
-  root: unknown,
-  args: MutationTestNotificationWebhookArgs,
-  context: GraphqlRequestContext,
-): Promise<boolean> => {
-  return testNotificationWebhookService({ args, context });
-};
-
 export const entityMutations = {
   newCustomGroup,
   newEntities,
-  testNotificationWebhook,
 };
 
 export const entityQueries = {

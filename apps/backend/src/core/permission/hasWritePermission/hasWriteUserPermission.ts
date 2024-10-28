@@ -18,7 +18,7 @@ export const hasWriteUserPermission = async ({
   context,
   transaction = prisma,
 }: {
-  permission: PermissionPrismaType | null;
+  permission: PermissionPrismaType | null | undefined;
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
@@ -31,12 +31,13 @@ export const hasWriteUserPermission = async ({
 
   if (permission.anyone) return true;
 
-  if (permission.userId === context.currentUser.id) return true;
+  const { discordRoleGroups, nftGroups, telegramGroups, identities, users } =
+    await resolveEntitySet({
+      permission,
+      transaction,
+    });
 
-  const { discordRoleGroups, nftGroups, telegramGroups, identities } = await resolveEntitySet({
-    permission,
-    transaction,
-  });
+  if (users.find((user) => user.id === context.currentUser?.id)) return true;
 
   if (hasIdentityPermission({ identities, userIdentities: context.currentUser.Identities }))
     return true;

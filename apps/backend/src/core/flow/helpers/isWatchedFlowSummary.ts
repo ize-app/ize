@@ -1,26 +1,32 @@
+import { getUserEntityIds } from "@/core/user/getUserEntityIds";
+import { UserPrismaType } from "@/core/user/userPrismaTypes";
+
 import { FlowSummaryPrismaType } from "../flowPrismaTypes";
 
 export const isWatchedFlowSummary = ({
   flowSummary,
-  userId,
+  user,
 }: {
   flowSummary: FlowSummaryPrismaType;
-  userId: string;
+  user: UserPrismaType;
 }) => {
+  const entityIds = getUserEntityIds(user);
 
-  const isUnWatchedByUser = flowSummary.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && !watchedFlow.watched,
+  // if at least one of a user's identities has unwatched the flow, consider flow unwatched
+  const isUnWatchedByUser = flowSummary.EntityWatchedFlows.some((watchedFlow) =>
+    entityIds.some((id) => id === watchedFlow.entityId && !watchedFlow.watched),
   );
 
   if (isUnWatchedByUser) return false;
 
   const isOwnedByWatchedGroup =
-    flowSummary.OwnerGroup && flowSummary.OwnerGroup.UsersWatchedGroups.length > 0;
+    flowSummary.OwnerGroup && flowSummary.OwnerGroup.EntityWatchedGroups.length > 0;
 
   const isWatchedByWatchedGroup = flowSummary.GroupsWatchedFlows.length > 0;
 
-  const isWatchedByUser = flowSummary.UsersWatchedFlows.some(
-    (watchedFlow) => watchedFlow.userId === userId && watchedFlow.watched,
+  // if at least one of a user's identities has unwatched the flow, consider flow watched
+  const isWatchedByUser = flowSummary.EntityWatchedFlows.some((watchedFlow) =>
+    entityIds.some((id) => id === watchedFlow.entityId && watchedFlow.watched),
   );
 
   if (isOwnedByWatchedGroup || isWatchedByWatchedGroup || isWatchedByUser) return true;

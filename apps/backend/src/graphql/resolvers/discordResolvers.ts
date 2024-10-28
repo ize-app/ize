@@ -3,11 +3,12 @@ import { APIGuild } from "discord.js";
 import { DiscordApi } from "@discord/api";
 import {
   DiscordServer,
-  DiscordServerOnboarded,
   QueryDiscordServerRolesArgs,
+  QueryResolvers,
 } from "@graphql/generated/resolver-types";
 
 import { GraphqlRequestContext } from "../context";
+import { getDiscordServers as getDiscordServersService } from "@/discord/getDiscordServers";
 
 // Returns all of a users discord servers, regardless of whether they connected Ize bot
 export const discordServers = async (
@@ -29,30 +30,16 @@ export const discordServers = async (
   return servers;
 };
 
-// returns only the discord servers with Bot attached
-export const discordServersWithBot = async (
+export const getDiscordServers: QueryResolvers["getDiscordServers"] = async (
   root: unknown,
   args: Record<string, never>,
   context: GraphqlRequestContext,
-): Promise<Array<DiscordServerOnboarded>> => {
-  const botApi = DiscordApi.forBotUser();
-  const botGuilds = await botApi.getDiscordServers();
-  if (!context.discordApi) throw Error("No Discord authentication data for user");
-  const userGuilds = await context.discordApi.getDiscordServers();
-
-  const guilds = userGuilds.filter((guild: APIGuild) => {
-    return botGuilds.some((botGuild: APIGuild) => botGuild.id === guild.id);
-  });
-
-  const servers = guilds.map((guild: APIGuild) => ({
-    id: guild.id,
-    name: guild.name,
-  }));
-
-  return servers;
+): Promise<Array<DiscordServer>> => {
+  return await getDiscordServersService({ context });
 };
 
 const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesArgs) => {
+  if (!args.serverId) return [];
   const botApi = DiscordApi.forBotUser();
   const roles = await botApi.getDiscordServerRoles(args.serverId);
   const cleanedRoles = roles.map((role) => ({
@@ -65,4 +52,5 @@ const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesAr
 
 export const discordQueries = {
   discordServerRoles,
+  getDiscordServers,
 };

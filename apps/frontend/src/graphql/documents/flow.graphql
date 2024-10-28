@@ -1,5 +1,5 @@
-mutation NewFlow($flow: NewFlowArgs!) {
-  newFlow(flow: $flow)
+mutation NewFlow($new: NewFlowWithEvolveArgs!) {
+  newFlow(new: $new)
 }
 
 query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Boolean) {
@@ -14,6 +14,7 @@ query GetFlows(
   $groupId: String
   $searchQuery: String!
   $watchFilter: WatchFilter!
+  $excludeOwnedFlows: Boolean
   $triggerPermissionFilter: FlowTriggerPermissionFilter!
 ) {
   getFlows(
@@ -23,6 +24,7 @@ query GetFlows(
     searchQuery: $searchQuery
     watchFilter: $watchFilter
     triggerPermissionFilter: $triggerPermissionFilter
+    excludeOwnedFlows: $excludeOwnedFlows
   ) {
     ...FlowSummary
   }
@@ -33,25 +35,6 @@ fragment Flow on Flow {
   evolve {
     ...FlowFields
   }
-}
-
-fragment FlowSummary on FlowSummary {
-  flowId
-  name
-  createdAt
-  creator {
-    ...UserSummaryParts
-  }
-  group {
-    ...GroupSummaryParts
-  }
-  requestStep0Permission {
-    ...Permission
-  }
-  userPermission {
-    ...UserFlowPermission
-  }
-  isWatched
 }
 
 fragment FlowFields on Flow {
@@ -67,26 +50,48 @@ fragment FlowFields on Flow {
   versionPublishedAt
   active
   flowsEvolvedByThisFlow {
-    ...FlowRefernce
+    ...FlowReference
   }
   type
   name
   reusable
+  fieldSet {
+    ...FieldSet
+  }
+  trigger {
+    ...TriggerConfig
+  }
   steps {
     ...Step
   }
   isWatched
 }
 
-fragment FlowRefernce on FlowReference {
+fragment FlowSummary on FlowSummary {
+  flowId
+  name
+  createdAt
+  creator {
+    ...Entity
+  }
+  group {
+    ...GroupSummaryParts
+  }
+  trigger {
+    ...TriggerConfig
+  }
+  isWatched
+}
+
+fragment FlowReference on FlowReference {
   flowId
   flowName
 }
 
 fragment Step on Step {
   id
-  request {
-    ...RequestConfig
+  fieldSet {
+    ...FieldSet
   }
   response {
     ...ResponseConfig
@@ -97,39 +102,21 @@ fragment Step on Step {
   action {
     ...Action
   }
-  expirationSeconds
-  canBeManuallyEnded
-  allowMultipleResponses
-  userPermission {
-    ...UserPermission
-  }
 }
 
-fragment RequestConfig on RequestConfig {
+fragment TriggerConfig on TriggerConfig {
   permission {
     ...Permission
   }
-  fields {
-    ...Field
-  }
-  fieldsLocked
+  userPermission
 }
 
 fragment ResponseConfig on ResponseConfig {
   permission {
     ...Permission
   }
-  fields {
-    ...Field
-  }
-  fieldsLocked
-}
-
-fragment UserPermission on UserPermission {
-  request
-  response
-}
-
-fragment UserFlowPermission on UserFlowPermission {
-  request
+  expirationSeconds
+  canBeManuallyEnded
+  allowMultipleResponses
+  userPermission
 }

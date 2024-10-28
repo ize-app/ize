@@ -1,6 +1,11 @@
 import * as z from "zod";
 
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import {
+  FieldDataType,
+  FieldOptionsSelectionType,
+  FieldType,
+  SystemFieldType,
+} from "@/graphql/generated/graphql";
 
 import { evaluateMultiTypeInput } from "../../formValidation/field";
 
@@ -8,6 +13,7 @@ export type FieldOptionSchemaType = z.infer<typeof fieldOptionSchema>;
 export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
 export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
+export type FieldSetSchemaType = z.infer<typeof fieldSetSchema>;
 
 export enum DefaultOptionSelection {
   None = "None",
@@ -19,6 +25,11 @@ export enum DefaultFieldSelection {
 
 export enum OptionSelectionCountLimit {
   None = "None",
+}
+
+export enum FieldContextType {
+  Trigger = "Trigger",
+  Response = "Response",
 }
 
 export const fieldOptionSchema = z
@@ -74,14 +85,18 @@ export const fieldSchema = z
       type: z.literal(FieldType.FreeInput),
       fieldId: z.string(),
       name: z.string().min(1),
+      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),
+      isInternal: z.boolean().default(false),
       freeInputDataType: z.nativeEnum(FieldDataType),
     }),
     z.object({
       type: z.literal(FieldType.Options),
       fieldId: z.string(),
       name: z.string().min(1),
+      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),
+      isInternal: z.boolean().default(false),
       optionsConfig: fieldOptionsSchema,
     }),
   ])
@@ -100,3 +115,8 @@ export const fieldSchema = z
   );
 
 export const fieldsSchema = z.array(fieldSchema).default([]);
+
+export const fieldSetSchema = z.object({
+  fields: fieldsSchema,
+  locked: z.boolean().default(false),
+});

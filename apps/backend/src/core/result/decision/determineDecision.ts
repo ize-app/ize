@@ -1,17 +1,39 @@
+import { ResultType } from "@prisma/client";
+
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { DecisionType } from "@/graphql/generated/resolver-types";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ResultConfigDecisionPrismaType } from "../resultPrismaTypes";
+import { generateAiDecision } from "../../../openai/generateAiDecision";
+import { ResultConfigPrismaType } from "../resultPrismaTypes";
 import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOptionWeights";
 
-export const determineDecision = ({
-  decisionConfig,
+export interface DecisionResult {
+  optionId: string | null;
+  explanation: string | null;
+}
+
+export const determineDecision = async ({
+  resultConfig,
   answers,
+  requestStepId,
 }: {
-  decisionConfig: ResultConfigDecisionPrismaType;
+  resultConfig: ResultConfigPrismaType;
   answers: FieldAnswerPrismaType[];
-}): string | null => {
+  requestStepId: string;
+}): Promise<DecisionResult> => {
   let decisionOptionId: string | null = null;
+  let explanation: string | null = null;
+
+  const decisionConfig = resultConfig.ResultConfigDecision;
+
+  if (resultConfig.resultType !== ResultType.Decision || !decisionConfig)
+    throw new GraphQLError(
+      `Cannot create decision result without a decision config. resultConfigId: ${resultConfig.id}`,
+      {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      },
+    );
 
   const totalAnswerCount = answers.length;
 
@@ -53,6 +75,15 @@ export const determineDecision = ({
       decisionOptionId = maxWeightOptionId;
       break;
     }
+    case DecisionType.Ai: {
+      const { optionId, explanation: aiExplaination } = await generateAiDecision({
+        resultConfig,
+        requestStepId,
+      });
+      decisionOptionId = optionId;
+      explanation = aiExplaination;
+      break;
+    }
   }
-  return decisionOptionId;
+  return { optionId: decisionOptionId, explanation: explanation };
 };

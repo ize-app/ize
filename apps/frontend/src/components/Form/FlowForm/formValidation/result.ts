@@ -9,6 +9,7 @@ export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
+export type LlmSummaryListResultSchemaType = z.infer<typeof llmListResultSchema>;
 export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 
 export enum LlmSummaryType {
@@ -35,6 +36,11 @@ export const decisionSchema = z.discriminatedUnion("type", [
     type: z.literal(DecisionType.WeightedAverage),
     defaultOptionId: z.string().default(DefaultOptionSelection.None),
   }),
+  z.object({
+    type: z.literal(DecisionType.Ai),
+    criteria: z.string().optional(),
+    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+  }),
 ]);
 
 const prioritizationSchema = z.object({
@@ -58,7 +64,7 @@ const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(1),
+  minimumAnswers: z.coerce.number().int().default(1),
   decision: decisionSchema,
 });
 
@@ -93,12 +99,12 @@ export const resultSchema = z
     llmResultSchema,
     llmListResultSchema,
   ])
-  .refine(
-    (result) => {
-      if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
-      return true;
-    },
-    { message: "There must be at least 2 responses to create a result" },
-  );
+  // .refine(
+  //   (result) => {
+  //     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
+  //     return true;
+  //   },
+  //   { message: "There must be at least 2 responses to create a result" },
+  // );
 
 export const resultsSchema = z.array(resultSchema).default([]);

@@ -1,28 +1,27 @@
 import { Prisma } from "@prisma/client";
 
-import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { requestInclude } from "@/core/request/requestPrismaTypes";
-import { requestResolver } from "@/core/request/resolvers/requestResolver";
-import { getRequestResults } from "@/core/request/utils/getRequestResults";
-import { getRequestTriggerFieldAnswers } from "@/core/request/utils/getRequestTriggerFieldAnswers";
+import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import {
+  ResultConfigPrismaType,
+  ResultGroupPrismaType,
+  resultGroupInclude,
+} from "../resultPrismaTypes";
 
 export const newLlmSummaryResult = async ({
   resultConfig,
-  fieldAnswers,
   requestStepId,
   type,
 }: {
   resultConfig: ResultConfigPrismaType;
-  fieldAnswers: FieldAnswerPrismaType[];
+
   requestStepId: string;
   type: ResultType.LlmSummary | ResultType.LlmSummaryList;
-}): Promise<ResultPrismaType> => {
+}): Promise<ResultGroupPrismaType> => {
   const llmConfig = resultConfig.ResultConfigLlm;
 
   if (
@@ -47,82 +46,49 @@ export const newLlmSummaryResult = async ({
       },
     );
 
-  const reqStep = await prisma.requestStep.findUniqueOrThrow({
-    include: {
-      Request: {
-        include: requestInclude,
-      },
-    },
-    where: {
-      id: requestStepId,
-    },
+  const requestPayload = await createRequestPayload({
+    requestStepId,
+    fieldId: resultConfig.fieldId,
   });
-
-  const request = await requestResolver({
-    req: reqStep.Request,
-    context: { currentUser: null, discordApi: undefined },
-    userGroupIds: [],
-  });
-
-  let fieldName: string | null = null;
-
-  request.flow.steps.forEach((step) => {
-    step.response.fields.map((field) => {
-      if (field.fieldId === resultConfig.fieldId) fieldName = field.name;
-    });
-  });
-
-  if (!fieldName)
-    throw new GraphQLError(
-      `Can't find name of field for resultConfigId: ${resultConfig.id} and requestId ${request.requestId}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
-  const requestName = request.name;
-  const flowName = request.flow.name;
-  const requestTriggerAnswers = getRequestTriggerFieldAnswers({ request });
-  const requestResults = getRequestResults({ request });
 
   const res = await generateAiSummary({
-    flowName,
-    requestName,
-    requestTriggerAnswers,
-    requestResults,
-    fieldName,
+    requestPayload,
     type,
     exampleOutput: llmConfig.example,
     summaryPrompt: llmConfig.prompt,
-    responses: fieldAnswers
-      .filter((r) => r.AnswerFreeInput.length > 0)
-      .map((r) => r.AnswerFreeInput[0].value),
   });
 
-  const resultArgs: Prisma.ResultUncheckedCreateInput = {
-    itemCount: res.length,
+  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
+    itemCount: 1,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
     hasResult: true,
-    ResultItems: {
-      createMany: {
-        data: res.map((value) => ({
-          dataType: FieldDataType.String,
-          value,
-        })),
+    Result: {
+      create: {
+        name: "LLM Summary",
+        itemCount: res.length,
+        index: 0,
+        ResultItems: {
+          createMany: {
+            data: res.map((value) => ({
+              dataType: FieldDataType.String,
+              value,
+            })),
+          },
+        },
       },
     },
   };
 
-  return await prisma.result.upsert({
+  return await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
         resultConfigId: resultConfig.id,
       },
     },
-    include: resultInclude,
+    include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
   });

@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { FlowSummaryFragment } from "./generated/graphql";
 
 const graphqlUri = `${import.meta.env.MODE === "development" ? import.meta.env.VITE_LOCAL_BACKEND_URL : window.location.origin}/graphql`;
 
@@ -11,12 +12,11 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     // apollo client needs help understanding union types
     possibleTypes: {
-      Entity: ["Identity", "Group"],
+      Entity: ["Identity", "Group", "User"],
       Field: ["Options", "FreeInput"],
       ResultConfig: ["Decision", "Ranking", "LlmSummary", "LlmSummaryList"],
       Action: ["CallWebhook", "EvolveFlow", "TriggerStep", "EvolveGroup", "GroupWatchFlow"],
-      Respondant: ["Identity", "User"],
-      DecisionTypes: ["AbsoluteDecision", "PercentageDecision"],
+      DecisionTypes: ["AbsoluteDecision", "PercentageDecision", "WeightedAverage", "Ai"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
       GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom", "GroupTelegramChat "],
       FieldAnswer: [
@@ -30,7 +30,7 @@ export const apolloClient = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          getRequestSteps: {
+          getRequests: {
             keyArgs: [
               "userOnly",
               "groupId",
@@ -55,14 +55,33 @@ export const apolloClient = new ApolloClient({
             },
           },
           getFlows: {
-            keyArgs: ["groupId", "searchQuery", "watchFilter", "triggerPermissionFilter"],
+            keyArgs: [
+              "groupId",
+              "searchQuery",
+              "watchFilter",
+              "triggerPermissionFilter",
+              "excludeOwnedFlows",
+            ],
+            // used a different merge function here to solve a problem
+            // multiple getFlow queries happening on a single page
+            // this problem is no longer relevant, but keeping this modified merge function here for reference
             merge(existing, incoming, { args, readField }) {
-              const cursor = args && args.cursor;
+              const cursor = args?.cursor;
               const merged = existing ? existing.slice(0) : [];
+
+              // Deduplicate results if they already exist
+              const incomingFiltered = incoming.filter((item: FlowSummaryFragment) => {
+                const itemId = readField("flowId", item);
+                return !merged.some(
+                  (existingItem: FlowSummaryFragment) =>
+                    readField("flowId", existingItem) === itemId,
+                );
+              });
+
               let offset = offsetFromCursor(merged, cursor, readField);
               if (offset < 0) offset = merged.length;
-              for (let i = 0; i < incoming.length; ++i) {
-                merged[offset + i] = incoming[i];
+              for (let i = 0; i < incomingFiltered.length; ++i) {
+                merged[offset + i] = incomingFiltered[i];
               }
               return merged;
             },

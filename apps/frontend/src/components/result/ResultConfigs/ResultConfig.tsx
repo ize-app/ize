@@ -1,30 +1,17 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { FieldOptions } from "@/components/Field/FieldOptions";
-import {
-  FieldFragment,
-  FieldType,
-  ResultConfigFragment,
-  ResultType,
-} from "@/graphql/generated/graphql";
+import { FieldType, ResultConfigFragment } from "@/graphql/generated/graphql";
 
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { ResultHeader } from "../ResultName";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 
-export const ResultConfig = ({
-  resultConfig,
-  field,
-}: {
-  resultConfig: ResultConfigFragment;
-  field: FieldFragment | null;
-}) => {
+export const ResultConfig = ({ resultConfig }: { resultConfig: ResultConfigFragment }) => {
+  const { field } = resultConfig;
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <ResultHeader
-        name={field?.name}
-        resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
-      />
+      <ResultHeader label={resultConfig.name} />
+      <Typography color="primary">{field?.name}</Typography>
       {createResultConfigDescription(resultConfig)}
       {field && field.__typename === FieldType.Options && (
         <FieldOptions fieldOptions={field} final={false} />

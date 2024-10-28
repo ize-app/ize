@@ -8,7 +8,7 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
-import { Fields } from "@/components/Field/Fields";
+import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -54,6 +54,7 @@ export const Request = () => {
 
   const [currentTabIndex, setTabIndex] = useState(0);
 
+  let reusable = false;
   let acceptingNewResponses = false;
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
@@ -75,12 +76,14 @@ export const Request = () => {
   const request = data?.getRequest;
 
   if (request) {
-    acceptingNewResponses = !request.steps[request.currentStepIndex].responseComplete;
-    userResponses = request.steps[request.currentStepIndex].userResponses;
-    allowMultipleResponses = request.flow.steps[request.currentStepIndex].allowMultipleResponses;
+    reusable = request.flow.reusable;
+    acceptingNewResponses = !request.requestSteps[request.currentStepIndex].status.responseFinal;
+    userResponses = request.requestSteps[request.currentStepIndex].userResponses;
+    allowMultipleResponses =
+      !!request.flow.steps[request.currentStepIndex].response?.allowMultipleResponses;
   }
 
-  console.log("request is ", request);
+  // console.log("request is ", request);
 
   if (loading || !request) return <Loading />;
 
@@ -106,23 +109,35 @@ export const Request = () => {
           <Typography variant={"body1"} fontWeight={600} color="primary">
             Request
           </Typography>
-          <Typography variant={"h1"} marginBottom={".75rem"}>
+          <Typography
+            variant={"h1"}
+            marginBottom={".75rem"}
+            sx={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: "4",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {request.name}
           </Typography>
-          <Typography variant={"description"} lineHeight={"24px"}>
-            <Link
-              to={generatePath(Route.Flow, {
-                flowId: fullUUIDToShort(request.flow.flowId),
-                // Link to old version of flow if request is made from an older version
-                flowVersionId:
-                  request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                    ? fullUUIDToShort(request.flow.flowVersionId)
-                    : null,
-              })}
-            >
-              {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
-            </Link>
-          </Typography>
+          {reusable && (
+            <Typography variant={"description"} lineHeight={"24px"}>
+              <Link
+                to={generatePath(Route.Flow, {
+                  flowId: fullUUIDToShort(request.flow.flowId),
+                  // Link to old version of flow if request is made from an older version
+                  flowVersionId:
+                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                      ? fullUUIDToShort(request.flow.flowVersionId)
+                      : null,
+                })}
+              >
+                {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
+              </Link>
+            </Typography>
+          )}
           <Box sx={{ display: "flex", gap: "6px" }}>
             <Typography variant="description" lineHeight={"24px"}>
               Created by{"  "}
@@ -152,38 +167,44 @@ export const Request = () => {
             acceptingNewResponses &&
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
-                elevation={3}
+                elevation={4}
                 sx={{
                   display: "block",
-                  alignSelf: "flex-start",
-                  minWidth: "400px",
+                  alignSelf: "center",
+                  minWidth: "500px",
                   maxWidth: "800px",
-                  border: `solid ${colors.primaryContainer} 2px`,
+                  border: `solid ${colors.primary} 2px`,
+                  outline: `2px solid ${colors.primaryContainer}`,
+
                   [theme.breakpoints.down("md")]: {
                     width: "100%",
                     marginLeft: 0,
                     maxWidth: "100%",
+                    minWidth: "300px",
                   },
                 }}
               >
                 <ResponseForm
-                  requestStepId={request.steps[request.currentStepIndex].requestStepId}
-                  responseFields={request.steps[request.currentStepIndex].responseFields}
-                  permission={request.flow.steps[request.currentStepIndex].response.permission}
+                  requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
+                  responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
+                  permission={request.flow.steps[request.currentStepIndex].response?.permission}
                 />
               </Paper>
             )}
           <Box
             sx={(theme) => ({
               display: "flex",
-              [theme.breakpoints.down("lg")]: {
+              [theme.breakpoints.down("md")]: {
                 flexDirection: "column",
                 gap: "36px",
               },
               flexDirection: "row",
+              justifyContent: "space-between",
               width: "100%",
               minWidth: "300px",
-              outline: "1px solid rgba(0, 0, 0, 0.1)",
+
+              // outline: "1px solid rgba(0, 0, 0, 0.1)",
+              outline: `1px solid ${theme.palette.primary.main}`,
               padding: "16px 24px 16px 16px",
               borderRadius: "8px",
 
@@ -191,38 +212,47 @@ export const Request = () => {
               backgroundColor: theme.palette.background.paper,
             })}
           >
-            {request.steps[0].requestFieldAnswers.length > 0 && (
+            {request.triggerFieldAnswers.length > 0 && (
               <Box
                 sx={{
+                  [theme.breakpoints.down("md")]: {
+                    width: "100%",
+                  },
                   display: "flex",
                   flexDirection: "column",
                   minWidth: "300px",
-                  width: "100%",
+                  maxWidth: "700px",
+                  width: "50%",
                 }}
               >
-                <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                  Request context
-                </Typography>
-                <Box
-                  sx={{
-                    borderRadius: "8px",
-                    outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                    padding: "12px 16px 12px",
-                  }}
-                >
-                  <Fields
-                    fields={request.flow.steps[0].request.fields}
-                    fieldAnswers={request.steps[0].requestFieldAnswers}
-                    onlyShowSelections={true}
-                  />
-                </Box>
+                <>
+                  <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+                    Request context
+                  </Typography>
+                  <Box
+                    sx={{
+                      borderRadius: "8px",
+                      outline: "1.25px solid rgba(0, 0, 0, 0.1)",
+                      padding: "12px 16px 12px",
+                    }}
+                  >
+                    <TriggerFieldSet
+                      fieldSet={request.flow.fieldSet}
+                      fieldAnswers={request.triggerFieldAnswers}
+                      onlyShowSelections={true}
+                    />
+                  </Box>
+                </>
               </Box>
             )}
             <Box
               sx={{
+                [theme.breakpoints.down("md")]: {
+                  width: "100%",
+                },
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
+                width: "50%",
                 minWidth: "300px",
                 maxWidth: "700px",
               }}
@@ -234,7 +264,7 @@ export const Request = () => {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ padding: "0px 12px" }}>
+        <Box>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}

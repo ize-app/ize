@@ -6,6 +6,8 @@ import { identityInclude } from "@/core/entity/identity/identityPrismaTypes";
 import { newResponse } from "@/core/response/newResponse";
 import { prisma } from "@/prisma/client";
 
+import { upsertTelegramIdentity } from "./upsertTelegramIdentity";
+
 export const handleTelegramFreeTextResponse = async ({
   message,
   ctx,
@@ -34,7 +36,11 @@ export const handleTelegramFreeTextResponse = async ({
 
   if (!fieldId) return;
 
-  const identity = await prisma.identity.findFirstOrThrow({
+  if (!message.from) return;
+
+  const identity = await upsertTelegramIdentity({ telegramUserData: message.from });
+
+  prisma.identity.findFirstOrThrow({
     include: identityInclude,
     where: {
       IdentityTelegram: {
@@ -44,7 +50,7 @@ export const handleTelegramFreeTextResponse = async ({
   });
 
   await newResponse({
-    type: "identity",
+    entityContext: { type: "identity", identity },
     args: {
       response: {
         answers: [
@@ -56,7 +62,6 @@ export const handleTelegramFreeTextResponse = async ({
         requestStepId,
       },
     },
-    identity,
   });
 
   // create message record so that if someone replies to this response rather than the original prompt, we can still track the response

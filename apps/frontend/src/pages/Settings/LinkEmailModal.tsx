@@ -7,7 +7,7 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { useStytch } from "@stytch/react";
 import { useCallback, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -69,7 +69,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
     }
   };
 
-  const { control, handleSubmit } = useForm<FormFields>({
+  const formMethods = useForm<FormFields>({
     defaultValues: {
       emailAddress: "",
     },
@@ -88,50 +88,56 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
         <Typography variant="h2" sx={{ mb: "16px" }}>
           Link email address with Ize
         </Typography>
-        <form style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "24px",
-            }}
-          >
-            <Controller
-              name={"emailAddress"}
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <FormControl sx={{ width: "100%" }}>
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label={"Email address"}
-                    required
-                    error={Boolean(error)}
-                    disabled={success}
-                  />
-                  <FormHelperText
-                    sx={{
-                      color: error?.message ? "error.main" : "black",
-                    }}
-                  >
-                    {error?.message ?? apiErrorMessage ?? ""}
-                  </FormHelperText>
-                </FormControl>
-              )}
-            />
-            <Button onClick={handleSubmit(onSubmit)} variant="contained" disabled={success}>
-              Submit
-            </Button>
-          </Box>
-          {success && (
-            <Typography>
-              Check your email! We&apos;ve sent you a link to authenticate your email address with
-              Ize.
-            </Typography>
-          )}
-        </form>
+        <FormProvider {...formMethods}>
+          <form style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "24px",
+              }}
+            >
+              <Controller
+                name={"emailAddress"}
+                control={formMethods.control}
+                render={({ field, fieldState: { error } }) => (
+                  <FormControl sx={{ width: "100%" }}>
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label={"Email address"}
+                      required
+                      error={Boolean(error)}
+                      disabled={success}
+                    />
+                    <FormHelperText
+                      sx={{
+                        color: error?.message ? "error.main" : "black",
+                      }}
+                    >
+                      {error?.message ?? apiErrorMessage ?? ""}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
+              <Button
+                onClick={formMethods.handleSubmit(onSubmit)}
+                variant="contained"
+                disabled={success}
+              >
+                Submit
+              </Button>
+            </Box>
+            {success && (
+              <Typography>
+                Check your email! We&apos;ve sent you a link to authenticate your email address with
+                Ize.
+              </Typography>
+            )}
+          </form>
+        </FormProvider>
       </Box>
     </Modal>
   );

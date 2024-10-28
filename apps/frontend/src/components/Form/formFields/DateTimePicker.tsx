@@ -1,28 +1,35 @@
+import { FormLabel } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import { userTimezone } from "@/utils/datetime";
 
 import { zodDay } from "../formValidation/field";
 
-interface DateTimePickerProps<T extends FieldValues> extends UseControllerProps<T> {
+interface DateTimePickerProps<T extends FieldValues> {
+  name: Path<T>;
   label: string;
   required?: boolean;
+  disabled?: boolean;
   showLabel?: boolean;
   placeholderText?: string;
+  seperateLabel?: boolean;
   size?: "small" | "medium";
 }
 
 export const DateTimePicker = <T extends FieldValues>({
   label,
   name,
-  control,
+  disabled = false,
   showLabel = true,
+  seperateLabel = false,
   required = false,
 }: DateTimePickerProps<T>) => {
+  const labelText = label + " (" + userTimezone + ")";
+  const { control } = useFormContext<T>();
   return (
     <Controller
       name={name}
@@ -31,8 +38,10 @@ export const DateTimePicker = <T extends FieldValues>({
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
           <FormControl error={Boolean(error)} required={required}>
+            {showLabel && seperateLabel && <FormLabel>{labelText}</FormLabel>}
             <MuiDateTimePicker
               {...field}
+              disabled={disabled}
               sx={{
                 flexGrow: 1,
                 "& .MuiInputBase-input": {
@@ -45,7 +54,7 @@ export const DateTimePicker = <T extends FieldValues>({
               }}
               aria-label={label}
               timezone={userTimezone}
-              label={showLabel ? label + " (" + userTimezone + ")" : ""}
+              label={showLabel && !seperateLabel ? labelText : ""}
             />
             <FormHelperText
               sx={{

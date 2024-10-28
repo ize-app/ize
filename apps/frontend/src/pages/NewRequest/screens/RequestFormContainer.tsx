@@ -58,9 +58,8 @@ const getFreeInputDefaultValue = (
 };
 
 const createRequestFormState = (flow: Flow): RequestSchemaType => {
-  const step = flow.steps[0];
   const requestFields: FieldAnswerRecordSchemaType = {};
-  step.request.fields.forEach((field) => {
+  flow.fieldSet.fields.forEach((field) => {
     if (field.__typename === FieldType.FreeInput) {
       const defaultValue = getFreeInputDefaultValue(field?.defaultAnswer, field.dataType);
       requestFields[field.fieldId] = {
@@ -77,11 +76,10 @@ const createRequestFormState = (flow: Flow): RequestSchemaType => {
     }
   }, {});
 
-  const newFormState = {
-    flow,
+  const newFormState: RequestSchemaType = {
     name: "",
     requestFields,
-    requestDefinedOptions: [],
+    requestDefinedOptions: {},
   };
   return newFormState;
 };
@@ -101,10 +99,12 @@ export const RequestFormContainer = () => {
     },
     onCompleted: (data) => {
       const flow = data.getFlow as Flow;
+      // console.log("flow", flow);
       setFormState((prev) => {
         return {
           ...prev,
-          ...createRequestFormState(flow),
+          flow,
+          request: { ...createRequestFormState(flow) },
         };
       });
     },
@@ -126,7 +126,5 @@ export const RequestFormContainer = () => {
     return <Loading />;
   }
 
-  // console.log("form errors are ", formMethods.formState.errors);
-  // console.log("form state is ", formMethods.getValues());
   return <RequestForm />;
 };

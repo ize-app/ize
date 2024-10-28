@@ -7,7 +7,7 @@ type Mutation {
 
 type Query {
   getRequest(requestId: String!): Request!
-  getRequestSteps(
+  getRequests(
     cursor: String
     limit: Int!
     userOnly: Boolean!
@@ -16,7 +16,7 @@ type Query {
     searchQuery: String!
     statusFilter: RequestStepStatusFilter!
     respondPermissionFilter: RequestStepRespondPermissionFilter!
-  ): [RequestStepSummary!]!
+  ): [RequestSummary!]!
 }
 
 input NewRequestArgs {
@@ -30,8 +30,7 @@ input NewEvolveRequestArgs {
   flowId: String!
   name: String!
   description: String
-  proposedFlow: NewFlowArgs!
-  currentFlow: NewFlowArgs!
+  new: NewFlowWithEvolveArgs!
 }
 
 input RequestDefinedOptionsArgs {
@@ -68,59 +67,85 @@ type Request {
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
   flow: Flow!
-  creator: User!
+  creator: Entity!
   requestId: String!
   currentStepIndex: Int!
   createdAt: String!
+  triggerFieldAnswers: [TriggerFieldAnswer!]!
   final: Boolean!
-  steps: [RequestStep!]!
+  requestSteps: [RequestStep!]!
 }
 
 type RequestStep {
   requestStepId: String!
   createdAt: String!
   expirationDate: String!
-  requestFieldAnswers: [FieldAnswer!]!
-  responseFieldAnswers: [UserFieldAnswers!]!
-  responseFields: [Field!]!
+  responseFieldAnswers: [ResponseFieldAnswers!]!
+  fieldSet: FieldSet!
   userResponses: [Response!]!
-  results: [Result!]!
+  results: [ResultGroup!]!
   actionExecution: ActionExecution
-  responseComplete: Boolean!
-  resultsComplete: Boolean!
-  final: Boolean!
+  status: RequestStepStatus!
+}
+
+type RequestSummary {
+  requestId: String!
+  flowId: String!
+  requestName: String!
+  flowName: String!
+  creator: Entity!
+  createdAt: String!
+  status: Boolean!
+  currentStep: RequestStepSummary!
 }
 
 type RequestStepSummary {
-  id: String! # same as requestStepId, might delete requestStepId later
   requestStepId: String!
-  requestId: String!
-  flowId: String!
-  # user who triggered the first step of this request
-  creator: User!
-  requestName: String!
+  status: RequestStepStatus!
+  expirationDate: String!
+  action: RequestStepActionSummary
   respondPermission: Permission
+  # note: Field set here is what's defined on the step. doesn't include options defined within a request
+  fieldName: String!
+  resultName: String!
+  result: ResultGroup
   userRespondPermission: Boolean!
   userResponded: Boolean!
-  flowName: String!
-  stepIndex: Int!
-  totalSteps: Int!
-  createdAt: String!
-  expirationDate: String!
-  responseComplete: Boolean!
-  resultsComplete: Boolean!
-  actionsComplete: Boolean!
-  final: Boolean!
+}
+type RequestStepActionSummary {
+  name: String!
+  status: Status!
 }
 
 type Response {
   responseId: String!
   createdAt: String!
-  creator: Respondant!
+  creator: Entity!
   answers: [FieldAnswer!]!
 }
 
 type GenericFieldAndValue {
   fieldName: String!
   value: [String!]!
+}
+
+# type RequestPayload {
+#   requestId: String!
+#   requestName: String!
+#   flowName: String!
+#   triggerFieldAnswers: [FieldValue]!
+#   results: [FieldValue]!
+# }
+
+type FieldValue {
+  fieldName: String!
+  value: String
+  optionSelections: [String!]
+}
+
+type RequestStepStatus {
+  responseFinal: Boolean!
+  resultsFinal: Boolean!
+  actionsFinal: Boolean!
+  final: Boolean!
 }

@@ -18,7 +18,9 @@ function TabPanel(props: TabPanelProps) {
       {...other}
       style={{ height: "100%" }}
     >
-      {value === index && <Box sx={{ paddingTop: "12px", height: "100%" }}>{children}</Box>}
+      <Box sx={{ paddingTop: "12px", height: "100%" }} display={value === index ? "block" : "none"}>
+        {children}
+      </Box>
     </div>
   );
 }

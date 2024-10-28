@@ -1,6 +1,6 @@
 import { FormHelperText } from "@mui/material";
 import { useEffect } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 
@@ -13,41 +13,40 @@ import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface ActionFilterFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
+  stepIndex: number; // react-hook-form name
   action: ActionSchemaType | undefined;
   isTriggerAction?: boolean;
 }
 
 export const ActionFilterForm = ({
-  formMethods,
-  formIndex,
+  stepIndex,
   action,
   isTriggerAction = false,
 }: ActionFilterFormProps) => {
+  const { formState, getValues, setValue } = useFormContext<FlowSchemaType>();
   useEffect(() => {
     // formMethods.setValue(`steps.${formIndex}.action`, {
     //   filterOptionId: DefaultOptionSelection.None,
     //   // type: actionType,
     // });
     if (isTriggerAction) {
-      formMethods.setValue(`steps.${formIndex}.action`, {
+      setValue(`steps.${stepIndex}.action`, {
         filterOptionId: DefaultOptionSelection.None,
         type: ActionType.TriggerStep,
         locked: false,
       });
     }
     if (!action || (action.type !== ActionType.None && !action.filterOptionId)) {
-      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
+      setValue(`steps.${stepIndex}.action.filterOptionId`, DefaultOptionSelection.None);
     }
-  }, [action?.type, formIndex]);
+  }, [action?.type, stepIndex]);
 
-  const error = formMethods.formState.errors.steps?.[formIndex]?.action;
+  const error = formState.errors.steps?.[stepIndex]?.action;
 
   // get field options asssociated with decisions to use as action filters
-  const results = formMethods.getValues(`steps.${formIndex}.result`);
+  const results = getValues(`steps.${stepIndex}.result`);
 
-  const responseFields = formMethods.getValues(`steps.${formIndex}.response.fields`);
+  const responseFields = getValues(`steps.${stepIndex}.fieldSet.fields`);
   const filterOptions: SelectOption[] = [
     { name: "Action runs for every result", value: DefaultOptionSelection.None },
   ];
@@ -58,10 +57,7 @@ export const ActionFilterForm = ({
       if (!responseFields) return;
       const field = responseFields.find((f) => f.fieldId === res.fieldId);
       if (!field || field.type !== FieldType.Options) {
-        formMethods.setValue(
-          `steps.${formIndex}.action.filterOptionId`,
-          DefaultOptionSelection.None,
-        );
+        setValue(`steps.${stepIndex}.action.filterOptionId`, DefaultOptionSelection.None);
       } else {
         (field.optionsConfig.options ?? []).map((o) => {
           filterOptions.push({
@@ -72,12 +68,12 @@ export const ActionFilterForm = ({
       }
     });
 
-  const actionFilterId = formMethods.getValues(`steps.${formIndex}.action.filterOptionId`);
+  const actionFilterId = getValues(`steps.${stepIndex}.action.filterOptionId`);
 
   // remove linked option if that result is removed
   useEffect(() => {
     if (!filterOptions.find((option) => option.value === actionFilterId)) {
-      formMethods.setValue(`steps.${formIndex}.action.filterOptionId`, DefaultOptionSelection.None);
+      setValue(`steps.${stepIndex}.action.filterOptionId`, DefaultOptionSelection.None);
     }
   }, [filterOptions, actionFilterId]);
 
@@ -98,43 +94,39 @@ export const ActionFilterForm = ({
       )}
       <TextField<FlowSchemaType>
         display={false}
-        name={`steps.${formIndex}.action.type`}
-        control={formMethods.control}
+        name={`steps.${stepIndex}.action.type`}
         label="fieldId"
         disabled={true}
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         display={false}
         label="Action type"
-        name={`steps.${formIndex}.action.type`}
+        name={`steps.${stepIndex}.action.type`}
         size="small"
         showLabel={false}
         defaultValue=""
       />
       <TextField<FlowSchemaType>
-        control={formMethods.control}
         display={false}
         label="Action type"
-        name={`steps.${formIndex}.action.filterOptionId`}
+        name={`steps.${stepIndex}.action.filterOptionId`}
         size="small"
         showLabel={false}
         defaultValue=""
       />
       <Select<FlowSchemaType>
-        control={formMethods.control}
         label="When to run action"
-        renderValue={(val: string) => {
+        renderValue={(val) => {
           if (val === (DefaultOptionSelection.None as string)) return "Action runs on every result";
-          const optionName = getSelectOptionName(filterOptions, val);
+          const optionName = getSelectOptionName(filterOptions, val as string);
           if (optionName) {
             return "Only run action on: " + optionName;
           } else "Action runs on every result";
         }}
         selectOptions={[...filterOptions]}
         defaultValue=""
-        name={`steps.${formIndex}.action.filterOptionId`}
+        name={`steps.${stepIndex}.action.filterOptionId`}
       />
     </PanelAccordion>
     // )

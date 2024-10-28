@@ -60,3 +60,15 @@ export const resultInclude = Prisma.validator<Prisma.ResultInclude>()({
 export type ResultPrismaType = Prisma.ResultGetPayload<{
   include: typeof resultInclude;
 }>;
+
+export const resultGroupInclude = Prisma.validator<Prisma.ResultGroupInclude>()({
+  Result: {
+    // heighest weight = highest preference
+    include: resultInclude,
+    orderBy: { index: "asc" },
+  },
+});
+
+export type ResultGroupPrismaType = Prisma.ResultGroupGetPayload<{
+  include: typeof resultGroupInclude;
+}>;

@@ -8,7 +8,7 @@ import { DecisionType } from "@/graphql/generated/graphql";
 import { GroupSetupAndPoliciesSchemaType } from "../formValidation";
 
 export const PolicyDecisionForm = ({ flowType }: { flowType: "evolveGroup" | "watch" }) => {
-  const { watch, control } = useFormContext<GroupSetupAndPoliciesSchemaType>();
+  const { watch } = useFormContext<GroupSetupAndPoliciesSchemaType>();
 
   const decisionType = watch(`flows.${flowType}.decision.type`);
 
@@ -16,7 +16,6 @@ export const PolicyDecisionForm = ({ flowType }: { flowType: "evolveGroup" | "wa
     <ResponsiveFormRow sx={{ gap: "16px" }}>
       {" "}
       <Select<GroupSetupAndPoliciesSchemaType>
-        control={control}
         label="How do we determine the final result?"
         selectOptions={[
           { name: "Threshold vote", value: DecisionType.NumberThreshold },
@@ -30,7 +29,6 @@ export const PolicyDecisionForm = ({ flowType }: { flowType: "evolveGroup" | "wa
       />
       {decisionType === DecisionType.NumberThreshold && (
         <TextField<GroupSetupAndPoliciesSchemaType>
-          control={control}
           label="Threshold votes"
           name={`flows.${flowType}.decision.threshold`}
           size="small"
@@ -43,7 +41,6 @@ export const PolicyDecisionForm = ({ flowType }: { flowType: "evolveGroup" | "wa
       )}
       {decisionType === DecisionType.PercentageThreshold && (
         <TextField<GroupSetupAndPoliciesSchemaType>
-          control={control}
           sx={{ maxWidth: "180px" }}
           label="Percentage votes"
           size="small"

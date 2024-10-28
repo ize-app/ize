@@ -1,12 +1,12 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
-import { Field, ResultConfig, Step } from "@/graphql/generated/resolver-types";
+import { Field, Group, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
-import { DefaultEvolveGroupValues } from "./flowResolver";
 import { actionResolver } from "../../action/actionResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { permissionResolver } from "../../permission/permissionResolver";
 import { StepPrismaType } from "../flowPrismaTypes";
+import { DefaultEvolveGroupValues } from "../helpers/getDefaultFlowValues";
 
 export const stepResolver = ({
   step,
@@ -15,7 +15,7 @@ export const stepResolver = ({
   userId,
   responseFieldsCache,
   resultConfigsCache,
-  defaultValues,
+  ownerGroup,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -23,59 +23,44 @@ export const stepResolver = ({
   userId: string | undefined;
   responseFieldsCache: Field[];
   resultConfigsCache: ResultConfig[];
+  ownerGroup: Group | null;
   hideSensitiveInfo?: boolean;
   defaultValues?: DefaultEvolveGroupValues | undefined;
 }): Step => {
   const responseFields = fieldSetResolver({
-    fieldSet: step.ResponseFieldSet,
+    fieldSet: step.FieldSet,
     responseFieldsCache,
     resultConfigsCache,
   });
-  responseFieldsCache.push(...responseFields);
+  responseFieldsCache.push(...responseFields.fields);
 
-  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields);
+  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields.fields);
   resultConfigsCache.push(...result);
 
   return {
     id: step.id,
     index: step.index,
-    request: {
-      permission: step.RequestPermissions
-        ? permissionResolver(step.RequestPermissions, userIdentityIds)
-        : null,
-      fields: fieldSetResolver({
-        fieldSet: step.RequestFieldSet,
-        responseFieldsCache,
-        resultConfigsCache,
-        defaultValues,
-      }),
-      fieldsLocked: step.RequestFieldSet?.locked ?? false,
-    },
-    response: {
-      permission: step.ResponsePermissions
-        ? permissionResolver(step.ResponsePermissions, userIdentityIds)
-        : null,
-      fields: responseFields,
-      fieldsLocked: step.ResponseFieldSet?.locked ?? false,
-    },
-    action: actionResolver(step.Action, responseFieldsCache),
+    fieldSet: responseFields,
+    response: step.ResponseConfig
+      ? {
+          permission: permissionResolver(step.ResponseConfig.ResponsePermissions, userIdentityIds),
+
+          userPermission: hasReadPermission({
+            permission: step.ResponseConfig.ResponsePermissions,
+            identityIds: userIdentityIds,
+            groupIds: userGroupIds,
+            userId,
+          }),
+          canBeManuallyEnded: step.ResponseConfig.canBeManuallyEnded,
+          expirationSeconds: step.ResponseConfig.expirationSeconds,
+          allowMultipleResponses: step.ResponseConfig.allowMultipleResponses,
+        }
+      : undefined,
+    action: actionResolver({
+      action: step.Action,
+      responseFields: responseFieldsCache,
+      ownerGroup,
+    }),
     result,
-    canBeManuallyEnded: step.canBeManuallyEnded,
-    expirationSeconds: step.expirationSeconds,
-    allowMultipleResponses: step.allowMultipleResponses,
-    userPermission: {
-      request: hasReadPermission({
-        permission: step.RequestPermissions,
-        identityIds: userIdentityIds,
-        groupIds: userGroupIds,
-        userId,
-      }),
-      response: hasReadPermission({
-        permission: step.ResponsePermissions,
-        identityIds: userIdentityIds,
-        groupIds: userGroupIds,
-        userId,
-      }),
-    },
   };
 };

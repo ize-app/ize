@@ -1,4 +1,4 @@
-import { Box, Paper, SvgIcon, SvgIconProps, SxProps } from "@mui/material";
+import { Box, Paper, SvgIcon, SvgIconProps, SxProps, useMediaQuery, useTheme } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 
 import muiTheme from "@/style/muiTheme";
@@ -26,12 +26,15 @@ export const Stage = ({
   sx = {},
 }: StageProps) => {
   const isSelected = selectedId === id;
+  const theme = useTheme();
+  const isSmallScreenSize = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
         marginLeft: "36px",
+        width: "310px",
       }}
     >
       <Paper
@@ -41,6 +44,7 @@ export const Stage = ({
         }}
         sx={{
           display: "flex",
+          width: "100%",
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "flex-start",
@@ -48,7 +52,7 @@ export const Stage = ({
           border: "1px solid",
           borderWidth: isSelected ? "4px" : "1px",
           borderColor: isSelected ? muiTheme.palette.primary.main : "rgba(0, 0, 0, 0.1)",
-          width: "240px",
+
           padding: "8px",
           "&&:hover": {
             boxShadow: `0px 0px 0px 2px ${muiTheme.palette.primary.light} inset`,
@@ -56,7 +60,7 @@ export const Stage = ({
           ...sx,
         }}
       >
-        {icon ? (
+        {icon && isSmallScreenSize ? (
           <Box sx={{ marginRight: "12px", display: "flex" }}>
             <SvgIcon component={icon} style={{ color: color ?? colors.primary }} />
           </Box>

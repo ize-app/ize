@@ -14,14 +14,12 @@ export const hasTelegramChatGroupPermission = async ({
 
   identities: IdentityPrismaType[];
 }): Promise<boolean> => {
-
   // for now, there is only one discord account per user
   const telegramIdentity = identities.find((id) => !!id.IdentityTelegram);
   if (!telegramIdentity?.IdentityTelegram) return false;
 
   for (let i = 0; i <= telegramGroups.length - 1; i++) {
     const telegramGroup = telegramGroups[i];
-
     try {
       const chatMember = await telegramBot.telegram.getChatMember(
         telegramGroup.chatId.toString(),
@@ -46,8 +44,10 @@ export const hasTelegramChatGroupPermission = async ({
           groupId: telegramGroup.groupId,
           active: false,
         });
+        return false;
       }
-    } catch {
+    } catch (e) {
+      return false;
       // if telegram call throws error, user is not in the chat
       // I don't think updating identity_groups is necessary here because
       // I think telegram API would return chatMember if user used to be in the chat

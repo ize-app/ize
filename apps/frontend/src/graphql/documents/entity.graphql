@@ -1,15 +1,11 @@
 mutation NewEntities($entities: [NewEntityArgs!]!) {
   newEntities(entities: $entities) {
-    ...EntitySummaryParts
+    ...Entity
   }
 }
 
 mutation NewCustomGroup($inputs: CustomGroupArgs!) {
   newCustomGroup(inputs: $inputs)
-}
-
-mutation TestNotificationWebhook($uri: String!) {
-  testNotificationWebhook(uri: $uri)
 }
 
 query Group($id: String!) {
@@ -29,7 +25,7 @@ query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter:
   }
 }
 
-fragment EntitySummaryParts on Entity {
+fragment Entity on Entity {
   __typename
   ... on Group {
     ...GroupSummaryParts
@@ -37,15 +33,8 @@ fragment EntitySummaryParts on Entity {
   ... on Identity {
     ...IdentitySummaryParts
   }
-}
-
-fragment Respondant on Respondant {
-  __typename
   ... on User {
     ...UserSummaryParts
-  }
-  ... on Identity {
-    ...IdentitySummaryParts
   }
 }
 
@@ -73,11 +62,11 @@ fragment IzeGroup on IzeGroup {
     ...GroupSummaryParts
   }
   members {
-    ...EntitySummaryParts
+    ...Entity
   }
   description
   notificationEntity {
-    ...EntitySummaryParts
+    ...Entity
   }
   evolveGroupFlowId
 }

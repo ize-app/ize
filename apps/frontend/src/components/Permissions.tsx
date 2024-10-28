@@ -18,6 +18,7 @@ export const Permissions = ({
           {type === "request" ? "Anyone can trigger this flow" : "Anyone can respond"}
         </Typography>
       )}
+
       {permission.entities.length > 0 && <EntityList entities={permission.entities} />}
     </>
   );

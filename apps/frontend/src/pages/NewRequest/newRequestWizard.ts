@@ -1,15 +1,12 @@
 import { Flow } from "@/graphql/generated/graphql";
 import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
-import { RequestDefinedOptionsSchemaType } from "./formValidation";
-import { FieldAnswerRecordSchemaType } from "../../components/Form/formValidation/field";
+import { RequestSchemaType } from "./formValidation";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 
 export interface NewRequestFormSchema {
   flow?: Flow;
-  requestFields?: FieldAnswerRecordSchemaType;
-  requestDefinedOptions?: RequestDefinedOptionsSchemaType;
-  name?: string;
+  request?: RequestSchemaType;
 }
 
 export interface RequestFields {

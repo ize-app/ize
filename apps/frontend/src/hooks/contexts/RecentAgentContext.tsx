@@ -1,11 +1,11 @@
 import { createContext, useState } from "react";
 
-import { EntitySummaryPartsFragment } from "../../graphql/generated/graphql";
+import { EntityFragment } from "../../graphql/generated/graphql";
 import { dedupEntities } from "../../utils/dedupEntities";
 
 interface RecentAgentsContextValue {
-  recentAgents: EntitySummaryPartsFragment[];
-  setRecentAgents: (agents: EntitySummaryPartsFragment[]) => void;
+  recentAgents: EntityFragment[];
+  setRecentAgents: (agents: EntityFragment[]) => void;
 }
 
 export const RecentAgentsContext = createContext<RecentAgentsContextValue>({
@@ -16,11 +16,11 @@ export const RecentAgentsContext = createContext<RecentAgentsContextValue>({
 });
 
 export const RecentAgentsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [recentAgents, set] = useState<EntitySummaryPartsFragment[]>([]);
+  const [recentAgents, set] = useState<EntityFragment[]>([]);
 
   // limit results
   // TODO: Dedup results
-  const setRecentAgents = (agents: EntitySummaryPartsFragment[]) => {
+  const setRecentAgents = (agents: EntityFragment[]) => {
     set((prev) => {
       const newAgents = dedupEntities([...prev, ...agents]);
       return newAgents.slice(-20);

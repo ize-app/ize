@@ -1,6 +1,3 @@
-import { Box } from "@mui/material";
-import { ReactNode } from "react";
-
 import {
   FieldDataType,
   FieldOptionsSelectionType,
@@ -12,29 +9,10 @@ import {
 import muiTheme from "@/style/muiTheme";
 
 import { FieldOption } from "./FieldOption";
+import { FieldOptionsContainer } from "./FieldOptionsContainer";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
-  return `${linkedResult.resultType} from "${linkedResult.fieldName}"`;
-};
-
-const FieldOptionsContainer = ({ children }: { children: ReactNode }) => {
-  return (
-    <Box
-      component="ul"
-      sx={{
-        borderRadius: "4px",
-        outline: "1px solid rgba(0, 0, 0, 0.1)",
-        marginBlockStart: "0px",
-        marginBlockEnd: "0px",
-        paddingInlineStart: "0px",
-        listStyleType: "none",
-        backgroundColor: "white",
-        // "& li": { borderBottom: "1px solid rgba(0, 0, 0, 0.1)" },
-      }}
-    >
-      {children}
-    </Box>
-  );
+  return `Options created via previous result: "${linkedResult.resultName} (${linkedResult.fieldName})"`;
 };
 
 // renders only the full list of options for a field and option selections, if they are provided

@@ -15,11 +15,13 @@ const useFlowsSearch = ({
   queryResultLimit,
   initialWatchFilter = WatchFilter.Watched,
   initialTriggerPermissionFilter = FlowTriggerPermissionFilter.All,
+  excludeOwnedFlows = false,
 }: {
   groupId?: string;
   queryResultLimit: number;
   initialWatchFilter?: WatchFilter;
   initialTriggerPermissionFilter?: FlowTriggerPermissionFilter;
+  excludeOwnedFlows?: boolean;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
@@ -36,6 +38,7 @@ const useFlowsSearch = ({
     searchQuery,
     watchFilter,
     triggerPermissionFilter,
+    excludeOwnedFlows,
     limit: queryResultLimit,
     cursor: newCursor,
   });
@@ -55,6 +58,7 @@ const useFlowsSearch = ({
       groupId,
       searchQuery,
       watchFilter,
+      excludeOwnedFlows,
       triggerPermissionFilter,
       limit: queryResultLimit,
       cursor: undefined,

@@ -1,8 +1,8 @@
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
+import BoltIcon from "@mui/icons-material/Bolt";
 import CloseIcon from "@mui/icons-material/Close";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import WebhookIcon from "@mui/icons-material/Webhook";
 import { SvgIconProps } from "@mui/material";
 
 import { ActionType } from "@/graphql/generated/graphql";
@@ -17,7 +17,7 @@ type ActionProps = {
 export const actionProperties: ActionProps = {
   [ActionType.CallWebhook]: {
     label: "Call webhook",
-    icon: WebhookIcon,
+    icon: BoltIcon,
   },
   [ActionType.EvolveFlow]: {
     label: "Evolve this flow",

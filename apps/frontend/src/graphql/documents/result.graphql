@@ -14,11 +14,18 @@ fragment ResultConfig on ResultConfig {
   }
 }
 
-fragment Result on Result {
+fragment ResultGroup on ResultGroup {
   id
   createdAt
   resultConfigId
   hasResult
+  results {
+    ...Result
+  }
+}
+
+fragment Result on Result {
+  name
   resultItems {
     ...ResultItem
   }
@@ -32,10 +39,14 @@ fragment ResultItem on ResultItem {
 }
 
 fragment Decision on Decision {
-  fieldId
+  field {
+    ...Field
+  }
+  name
   resultConfigId
   minimumAnswers
   decisionType
+  criteria
   defaultOption {
     ...Option
   }
@@ -43,14 +54,20 @@ fragment Decision on Decision {
 }
 
 fragment Ranking on Ranking {
-  fieldId
+  field {
+    ...Field
+  }
+  name
   resultConfigId
   numOptionsToInclude
   minimumAnswers
 }
 
 fragment LlmSummary on LlmSummary {
-  fieldId
+  field {
+    ...Field
+  }
+  name
   resultConfigId
   prompt
   example
@@ -58,7 +75,10 @@ fragment LlmSummary on LlmSummary {
 }
 
 fragment LlmSummaryList on LlmSummaryList {
-  fieldId
+  field {
+    ...Field
+  }
+  name
   resultConfigId
   prompt
   example

@@ -6,7 +6,6 @@ input setUpDiscordServerInput {
 type Mutation {
   newCustomGroup(inputs: CustomGroupArgs!): String!
   newEntities(entities: [NewEntityArgs!]!): [Entity!]!
-  testNotificationWebhook(uri: String!): Boolean!
 }
 
 type Query {
@@ -32,13 +31,12 @@ enum NewEntityTypes {
 enum EntityType {
   Group
   Identity
+  User
 }
 
-union Entity = Identity | Group
+union Entity = Identity | Group | User
 
 union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
-
-union Respondant = User | Identity
 
 type Identity {
   id: String! # refers to id of Identity model
@@ -159,6 +157,7 @@ type OnboardedDiscordServer {
 
 # used for associating an existing entity with some other object
 input EntityArgs {
+  # refers to entityId
   id: String!
 }
 

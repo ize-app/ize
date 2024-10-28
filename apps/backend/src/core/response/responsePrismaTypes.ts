@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { identityInclude } from "../entity/identity/identityPrismaTypes";
-import { userInclude } from "../user/userPrismaTypes";
+import { entityInclude } from "../entity/entityPrismaTypes";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   Answers: {
@@ -10,11 +9,8 @@ export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
       AnswerFreeInput: true,
     },
   },
-  User: {
-    include: userInclude,
-  },
-  Identity: {
-    include: identityInclude,
+  CreatorEntity: {
+    include: entityInclude,
   },
 });
 

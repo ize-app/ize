@@ -1,13 +1,21 @@
 import { LoginButton as TelegramLoginButton } from "@telegram-auth/react";
+import { useContext } from "react";
+
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 const telegramBotName = import.meta.env.VITE_TELEGRAM_BOT_NAME as string;
 
 export const TelegramLogin = () => {
-  console.log("tg bot name", telegramBotName);
+  const { refetch } = useContext(CurrentUserContext);
   return (
     <TelegramLoginButton
       botUsername={telegramBotName}
       onAuthCallback={async (data) => {
-        console.log("inside auth callback");
+        
+        setTimeout(() => {
+          console.log("refetching #1", refetch);
+          if (refetch) refetch();
+        }, 2000);
+
         await fetch("/api/auth/telegram", {
           method: "POST",
           headers: {

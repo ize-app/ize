@@ -1,6 +1,7 @@
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationEndRequestStepArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
+import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 
@@ -22,8 +23,20 @@ export const endRequestStep = async ({
     },
   });
 
-  if (requestStep.Request.creatorId !== context.currentUser?.id) return false;
-  if (requestStep.responseFinal) return true;
+  const creatorEntityId = requestStep.Request.creatorEntityId;
+
+  if (
+    creatorEntityId !== context.currentUser?.entityId &&
+    !(context.currentUser?.Identities ?? []).some((i) => i.entityId === creatorEntityId)
+  )
+    throw new GraphQLError("User does not have permission to end this step early.", {
+      extensions: { code: CustomErrorCodes.InsufficientPermissions },
+    });
+
+  if (requestStep.responseFinal)
+    throw new GraphQLError("Response already ended", {
+      extensions: { code: CustomErrorCodes.InsufficientPermissions },
+    });
 
   await prisma.requestStep.update({
     where: {

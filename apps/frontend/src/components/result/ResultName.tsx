@@ -1,35 +1,20 @@
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 
-import { statusProps } from "@/components/status/statusProps";
-import { ResultType, Status } from "@/graphql/generated/graphql";
+import { Status } from "@/graphql/generated/graphql";
+
+import { StatusTag } from "../status/StatusTag";
 
 export const ResultHeader = ({
-  name,
-  resultType,
+  label,
   requestStatus,
 }: {
-  name: string | undefined;
-  resultType: ResultType;
+  label: string;
   requestStatus?: Status;
 }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-      <Box sx={{ display: "flex", gap: "8px" }}>
-        <Chip label={resultType} size="small" />{" "}
-        <Typography color="primary" fontSize="1rem">
-          {name}
-        </Typography>
-      </Box>
-      {requestStatus && (
-        <Chip
-          label={statusProps[requestStatus].label}
-          sx={{
-            backgroundColor: statusProps[requestStatus].backgroundColor,
-            color: statusProps[requestStatus].color,
-          }}
-          size="small"
-        />
-      )}
+      <Chip label={label} size="small" />
+      {requestStatus && <StatusTag status={requestStatus} />}
     </Box>
   );
-};
+}

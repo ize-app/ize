@@ -8,7 +8,7 @@ import {
 } from "../../components/Form/formValidation/field";
 
 export type RequestDefinedOptionSchemaType = z.infer<typeof requestDefinedOptionSchema>;
-export type RequestDefinedOptionsSchemaType = z.infer<typeof requestDefinedOptionsSchema>;
+export type RequestDefinedOptionsFieldSchemaType = z.infer<typeof requestDefinedOptionsFieldSchema>;
 export type RequestSchemaType = z.infer<typeof requestSchema>;
 
 export const requestDefinedOptionSchema = z
@@ -21,14 +21,19 @@ export const requestDefinedOptionSchema = z
     evaluateMultiTypeInput(field.name, field.dataType, ["name"], ctx);
   });
 
-export const requestDefinedOptionsSchema = z.array(requestDefinedOptionSchema).optional();
+export const requestDefinedOptionsFieldSchema = z.array(requestDefinedOptionSchema);
+
+export const requestDefinedOptionsSchema = z.record(
+  z.string().min(1),
+  requestDefinedOptionsFieldSchema,
+);
 
 export const requestSchema = z
   .object({
     // strangely, making this field required creates other errors so I made the field required via the refine method
-    name: z.string().min(5, "Please make the request name at least 5 characters").optional(),
+    name: z.string().min(5, "Please make the request name at least 5 characters"),
     requestFields: fieldAnswerRecordSchema.optional(),
-    requestDefinedOptions: requestDefinedOptionsSchema.optional(),
+    requestDefinedOptions: requestDefinedOptionsSchema,
   })
   .refine(
     (req) => {

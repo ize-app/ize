@@ -1,14 +1,16 @@
-import { DefaultEvolveGroupValues } from "@/core/flow/resolvers/flowResolver";
+import { DefaultEvolveGroupValues } from "@/core/flow/helpers/getDefaultFlowValues";
 import {
   Field,
   FieldDataType,
   FieldOptionsSelectionType,
+  FieldSet,
   FieldType,
   FreeInput,
+  LinkedResult,
   Option,
   Options,
   ResultConfig,
-  ResultType,
+  SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -27,17 +29,20 @@ export const fieldSetResolver = ({
   requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
-}): Field[] => {
-  if (!fieldSet) return [];
-  return fieldSet.FieldSetFields.map((f) => {
+}): FieldSet => {
+  // if (!fieldSet) return [];
+  const fields: Field[] = (fieldSet?.FieldSetFields ?? []).map((f) => {
     if (f.Field.type === FieldType.FreeInput) {
       const freeInput: FreeInput = {
         __typename: FieldType.FreeInput,
+        isInternal: f.Field.isInternal,
         fieldId: f.Field.id,
         name: f.Field.name,
+        systemType: f.Field.systemType as SystemFieldType,
         required: f.Field.required,
         dataType: f.Field.freeInputDataType as FieldDataType,
-        defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
+        defaultAnswer:
+          defaultValues && f.Field.systemType ? defaultValues[f.Field.systemType] : undefined,
       };
       return freeInput;
     } else if ((f.Field.type as FieldType) === FieldType.Options) {
@@ -51,7 +56,7 @@ export const fieldSetResolver = ({
       // find options defined by request for this field.
       // these options will be combined with flow defined fields
       const requestDefinedOptionSet = requestDefinedOptionSets
-        ? requestDefinedOptionSets.find((s) => s.fieldId)
+        ? requestDefinedOptionSets.find((s) => s.fieldId === f.fieldId)
         : undefined;
 
       const requestOptions = requestDefinedOptionSet
@@ -85,13 +90,7 @@ export const fieldSetResolver = ({
             },
           );
 
-        // TODO: Not sure why the type here can be undefined. Need to investigate
-        if (!resultConfig.__typename)
-          throw new GraphQLError(`Mmissing __typename for resultConfigId ${linkedResultConfigId}`, {
-            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-          });
-
-        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.fieldId);
+        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.field.fieldId);
 
         if (!field)
           throw new GraphQLError(
@@ -103,17 +102,19 @@ export const fieldSetResolver = ({
 
         return {
           resultConfigId: linkedResultConfigId,
-          resultType: resultConfig.__typename as ResultType,
+          resultName: resultConfig.name,
           fieldId: field.fieldId,
           fieldName: field.name,
-        };
+        } as LinkedResult;
       });
 
       const options: Options = {
         __typename: FieldType.Options,
         fieldId: f.Field.id,
+        isInternal: f.Field.isInternal,
         name: f.Field.name,
         required: f.Field.required,
+        systemType: f.Field.systemType as SystemFieldType,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
         linkedResultOptions,
         previousStepOptions: config.previousStepOptions,
@@ -128,4 +129,6 @@ export const fieldSetResolver = ({
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
   });
+
+  return { fields, locked: fieldSet?.locked ?? false };
 };

@@ -23,8 +23,10 @@ export const NewFlow = () => {
 
   const [mutate] = useMutation(NewFlowDocument, {
     onCompleted: (data) => {
-      const { newFlow: newFlowId } = data;
-      navigate(`/flow/${fullUUIDToShort(newFlowId)}`);
+      // if reusable flow, flow ID is returned, else request ID is returned
+      const { newFlow: id } = data;
+      if (formState.new.reusable) navigate(`/flow/${fullUUIDToShort(id)}`);
+      else navigate(`/requests/${fullUUIDToShort(id)}`);
     },
   });
 
@@ -33,7 +35,14 @@ export const NewFlow = () => {
       if (!me?.user.id) throw Error("Missing user Id");
       await mutate({
         variables: {
-          flow: createNewFlowArgs(formState.newFlow, me?.user.id),
+          new: {
+            flow: createNewFlowArgs(formState.new.flow, me?.user.id),
+            evolve:
+              formState.new.reusable && formState.new?.evolve
+                ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+                : undefined,
+            reusable: formState.new.reusable,
+          },
         },
       });
       setSnackbarData({
@@ -50,7 +59,7 @@ export const NewFlow = () => {
         navigate("/");
       }
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Process creation failed", type: "error" });
+      setSnackbarData({ message: "Flow creation failed", type: "error" });
     }
   };
 

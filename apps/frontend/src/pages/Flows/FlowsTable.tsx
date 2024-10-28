@@ -177,7 +177,7 @@ const FlowRow = ({
             <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
               <Tooltip
                 title={
-                  flow.userPermission.request
+                  flow.trigger.userPermission
                     ? "Trigger flow"
                     : "You don't have trigger permissions"
                 }
@@ -193,7 +193,7 @@ const FlowRow = ({
                       );
                     }}
                     color={"primary"}
-                    disabled={!flow.userPermission.request}
+                    disabled={!flow.trigger.userPermission}
                   >
                     <Add />
                   </IconButton>

@@ -9,7 +9,6 @@ export const newPermission = async ({
   transaction,
 }: {
   permission: PermissionArgs;
-  stepIndex: number;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   let entitySetId = undefined;
@@ -21,9 +20,8 @@ export const newPermission = async ({
   const permission = await transaction.permission.create({
     data: {
       // in case args.anyone is true  even though there are entity permissions set
-      anyone: args.anyone && !entitySetId && !args.userId,
+      anyone: args.anyone && !entitySetId,
       entitySetId,
-      userId: args.userId,
     },
   });
 

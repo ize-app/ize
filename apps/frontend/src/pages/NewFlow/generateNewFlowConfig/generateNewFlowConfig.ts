@@ -1,9 +1,10 @@
 import { ActionSchemaType } from "@/components/Form/FlowForm/formValidation/action";
+import { FieldSchemaType } from "@/components/Form/FlowForm/formValidation/fields";
 import {
-  DefaultOptionSelection,
-  FieldSchemaType,
-} from "@/components/Form/FlowForm/formValidation/fields";
-import { FlowSchemaType, StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
+  FlowSchemaType,
+  FlowWithEvolveFlowSchemaType,
+  StepSchemaType,
+} from "@/components/Form/FlowForm/formValidation/flow";
 import {
   PermissionSchemaType,
   PermissionType,
@@ -13,12 +14,16 @@ import { defaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDef
 import {
   ActionType,
   DecisionType,
+  EntityType,
   FieldOptionsSelectionType,
   FieldType,
+  FlowType,
   ResultType,
+  UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
+import { generateEvolveConfig } from "./generateEvolveConfig";
 import { generateFieldConfig } from "./generateFieldConfig";
 import { generateIdeaCreationStep } from "./generateIdeaCreationStep";
 import { generateResultConfig } from "./generateResultConfig";
@@ -28,14 +33,21 @@ import {
   ActionTriggerCondition,
   FlowGoal,
   IntitialFlowSetupSchemaType,
+  Reusable,
 } from "../formValidation";
 
 export const generateNewFlowConfig = ({
   config,
+  creator,
 }: {
   config: IntitialFlowSetupSchemaType;
-}): FlowSchemaType => {
+  creator: UserSummaryPartsFragment | null | undefined;
+}): FlowWithEvolveFlowSchemaType => {
   const permission: PermissionSchemaType = config.permission;
+  const creatorPermission: PermissionSchemaType = {
+    type: PermissionType.Entities,
+    entities: creator ? [{ ...creator, __typename: EntityType.User }] : [],
+  };
   let ideationStep: StepSchemaType | null = null;
   let ideationResult: ResultSchemaType | null = null;
 
@@ -45,17 +57,21 @@ export const generateNewFlowConfig = ({
   let step: StepSchemaType | null = null;
 
   let flowTitle: string = "New flow";
-  if (
-    config.goal !== FlowGoal.AiSummary &&
-    config.optionsConfig?.linkedOptions.hasLinkedOptions &&
-    config.optionsConfig?.linkedOptions.question
-  ) {
-    [ideationStep, ideationResult] = generateIdeaCreationStep({
-      permission,
-      question: config.optionsConfig.linkedOptions.question,
-    });
-  }
+
+  const reusable = config.reusable === Reusable.Reusable;
+
   try {
+    if (
+      config.goal !== FlowGoal.AiSummary &&
+      config.optionsConfig?.linkedOptions.hasLinkedOptions &&
+      config.optionsConfig?.linkedOptions.question
+    ) {
+      [ideationStep, ideationResult] = generateIdeaCreationStep({
+        permission,
+        question: config.optionsConfig.linkedOptions.question,
+      });
+    }
+
     switch (config.goal) {
       case FlowGoal.Decision: {
         // create options config
@@ -70,7 +86,11 @@ export const generateNewFlowConfig = ({
 
         flowTitle = config.question;
 
-        result = generateResultConfig({ type: ResultType.Decision, fieldId: field.fieldId });
+        result = generateResultConfig({
+          type: ResultType.Decision,
+          fieldId: field.fieldId,
+          decisionType: config.decisionType,
+        });
         break;
       }
       case FlowGoal.Prioritize: {
@@ -124,7 +144,11 @@ export const generateNewFlowConfig = ({
 
           flowTitle = config.webhookName;
 
-          result = generateResultConfig({ type: ResultType.Decision, fieldId: field.fieldId });
+          result = generateResultConfig({
+            type: ResultType.Decision,
+            fieldId: field.fieldId,
+            decisionType: DecisionType.NumberThreshold,
+          });
         }
 
         action = generateActionConfig({
@@ -138,39 +162,43 @@ export const generateNewFlowConfig = ({
     }
     step = generateStepConfig({
       permission,
-      requestFields: [],
       responseFields: field ? [field] : [],
       result: result ? [result] : [],
       action,
     });
 
-    const flow = {
+    const evolve = generateEvolveConfig({ permission: creatorPermission });
+
+    const flow: FlowSchemaType = {
+      type: FlowType.Custom,
       name: flowTitle,
-      evolve: {
-        requestPermission: permission,
-        responsePermission: permission, // TODO switch out for creator
-        decision: {
-          type: DecisionType.NumberThreshold,
-          threshold: 1,
-          defaultOptionId: DefaultOptionSelection.None,
-        },
+      trigger: {
+        permission,
+      },
+      fieldSet: {
+        fields: [],
+        locked: false,
       },
       steps: [ideationStep, step].filter((x) => x !== null),
     };
-    return flow;
+
+    return { flow, evolve, reusable };
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
-    return {
+    const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
+    const flow = {
       name: "",
-      evolve: {
-        requestPermission: { type: PermissionType.Anyone, entities: [] },
-        responsePermission: { type: PermissionType.Anyone, entities: [] },
-        decision: {
-          type: DecisionType.NumberThreshold,
-          threshold: 1,
-        },
+      type: FlowType.Custom,
+      fieldSet: {
+        fields: [],
+        locked: false,
+      },
+      trigger: {
+        permission: anyonePermission,
       },
       steps: [defaultStepFormValues],
     };
+    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    return { flow, evolve, reusable };
   }
 };

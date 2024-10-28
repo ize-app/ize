@@ -4,30 +4,29 @@ import {
   FlowType,
   MutationNewEvolveRequestArgs,
   NewRequestArgs,
+  SystemFieldType,
 } from "@graphql/generated/resolver-types";
 
 import { newRequest } from "./newRequest";
-import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { newCustomFlowVersion } from "../flow/customFlow/newCustomFlowVersion";
-import { EvolveFlowFields } from "../flow/evolveFlow/EvolveFlowFields";
-import { newEvolveFlowVersion } from "../flow/evolveFlow/newEvolveFlowVersion";
+import { newFlowVersion } from "../flow/newFlowVersion";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
 export const newEvolveRequest = async ({
   args,
-  context,
+  entityContext,
 }: {
   args: MutationNewEvolveRequestArgs;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
   const [requestArgs, proposedFlowVersionId] = await prisma.$transaction(async (transaction) => {
     let draftEvolveFlowVersionId: string | null = null;
 
     const {
-      request: { proposedFlow, flowId },
+      request: { new: proposedFlow, flowId },
     } = args;
 
     const flow = await transaction.flow.findUniqueOrThrow({
@@ -42,6 +41,11 @@ export const newEvolveRequest = async ({
       throw new GraphQLError(`Flow does not have an evolve flow. FlowId ${flowId}`, {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
+
+    if (!proposedFlow.evolve)
+      throw new GraphQLError("Missing proposed evolve flow", {
+        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+      });
     // currently, we're only allowing evolve requests to be created for non-evolve flow
     // in the future, we'll allow evolve flows to evolve themselves independent of whatever flow it evolves
     // but this is a simplifying assumption for v1 because allowing this could result in invalid evolve flows
@@ -53,43 +57,40 @@ export const newEvolveRequest = async ({
         },
       );
 
+    if (!flow.reusable)
+      throw new GraphQLError(
+        `Cannot create evolve request for a non-reusable flow. FlowId ${flowId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        },
+      );
+
     // find evolve flow and it's fields so they can be referenced in the evolve request
     const evolveFlow = await transaction.flow.findUniqueOrThrow({
       where: { id: flow.CurrentFlowVersion.evolveFlowId },
       include: {
         CurrentFlowVersion: {
           include: {
-            Steps: {
-              include: {
-                RequestFieldSet: {
-                  include: fieldSetInclude,
-                },
-              },
+            TriggerFieldSet: {
+              include: fieldSetInclude,
             },
           },
         },
       },
     });
-    const evolveFlowStep =
-      (evolveFlow.CurrentFlowVersion && evolveFlow.CurrentFlowVersion.Steps[0]) ?? null;
-    if (!evolveFlowStep || !evolveFlowStep.RequestFieldSet)
-      throw new GraphQLError(
-        `Invalid evolve flow configuration. Cannot find first step of flow. flowVersionId: ${evolveFlow.currentFlowVersionId}`,
-        {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        },
-      );
 
-    const proposedFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find((field) => {
-      return (field.Field.name as EvolveFlowFields) === EvolveFlowFields.ProposedFlow;
+    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? [];
+
+    const proposedFlowField = evoleFlowFields.find((field) => {
+      return field.Field.systemType === SystemFieldType.EvolveFlowProposed;
     });
 
-    const currentFlowField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
-      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.CurrentFlow,
+    const currentFlowField = evoleFlowFields.find(
+      (field) => field.Field.systemType === SystemFieldType.EvolveFlowCurrent,
     );
 
-    const descriptionField = evolveFlowStep.RequestFieldSet.FieldSetFields.find(
-      (field) => (field.Field.name as EvolveFlowFields) === EvolveFlowFields.Description,
+    const descriptionField = evoleFlowFields.find(
+      (field) => field.Field.systemType === SystemFieldType.EvolveFlowDescription,
     );
 
     if (!proposedFlowField || !currentFlowField)
@@ -100,21 +101,26 @@ export const newEvolveRequest = async ({
     // create new evolve flow version
     // TODO - don't create this if there are no changes
     if (flow.CurrentFlowVersion?.evolveFlowId) {
-      draftEvolveFlowVersionId = await newEvolveFlowVersion({
+      draftEvolveFlowVersionId = await newFlowVersion({
         transaction,
-        flowId: flow.CurrentFlowVersion?.evolveFlowId,
-        evolveArgs: proposedFlow.evolve,
+        flowId: flow.CurrentFlowVersion.evolveFlowId,
         active: false,
+        draftEvolveFlowVersionId: null,
+        // evolve flow evolves itself
+        evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId,
+        flowArgs: proposedFlow.evolve,
+        type: FlowType.Evolve,
       });
     }
     // create new custom flow version
-    const proposedFlowVersionId = await newCustomFlowVersion({
+    const proposedFlowVersionId = await newFlowVersion({
       transaction,
-      flowArgs: proposedFlow,
+      flowArgs: proposedFlow.flow,
       flowId: flow.id,
       evolveFlowId: flow.CurrentFlowVersion?.evolveFlowId ?? null,
       active: false,
       draftEvolveFlowVersionId,
+      type: flow.type as FlowType,
     });
 
     const requestFields: FieldAnswerArgs[] = [
@@ -146,7 +152,7 @@ export const newEvolveRequest = async ({
 
   return await newRequest({
     args: { request: requestArgs },
-    context,
+    entityContext,
     proposedFlowVersionId,
   });
 };

@@ -1,9 +1,6 @@
 import { TelegramUserData } from "@telegram-auth/server/utils";
 
-import { Identity } from "@/graphql/generated/resolver-types";
-
 import { IdentityPrismaType } from "../core/entity/identity/identityPrismaTypes";
-import { identityResolver } from "../core/entity/identity/identityResolver";
 import { prisma } from "../prisma/client";
 
 export const upsertTelegramIdentity = async ({
@@ -12,7 +9,7 @@ export const upsertTelegramIdentity = async ({
 }: {
   telegramUserData: TelegramUserData;
   userId?: string | undefined;
-}): Promise<Identity> => {
+}): Promise<IdentityPrismaType> => {
   let identity = await prisma.identity.findFirst({
     include: {
       IdentityTelegram: true,
@@ -79,15 +76,5 @@ export const upsertTelegramIdentity = async ({
       },
     });
   }
-
-  // associate all previous responses of identity with user
-  // TODO: replicate this same logic for Discord
-  if (userId) {
-    await prisma.response.updateMany({
-      where: { identityId: identity.id },
-      data: { userId: userId },
-    });
-  }
-
-  return identityResolver(identity as IdentityPrismaType, [], false);
+  return identity as IdentityPrismaType;
 };

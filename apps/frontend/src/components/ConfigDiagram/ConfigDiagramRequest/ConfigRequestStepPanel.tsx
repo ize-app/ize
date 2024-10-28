@@ -7,9 +7,9 @@ import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
 import {
   ActionFragment,
+  EntityFragment,
   RequestStepFragment,
   StepFragment,
-  UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
@@ -34,12 +34,17 @@ export const ConfigRequestStepPanel = ({
   triggeringAction: ActionFragment | null | undefined;
   requestStepIndex: number;
   currentStepIndex: number;
-  creator: UserSummaryPartsFragment;
+  creator: EntityFragment;
 }) => {
   const { me } = useContext(CurrentUserContext);
+
+  const userIsCreator =
+    me?.user.entityId === creator.entityId ||
+    me?.identities.some((i) => i.entityId === creator.entityId);
+
   const status = determineRequestStepStatus(
     requestStepIndex,
-    requestStep?.resultsComplete ?? false,
+    requestStep?.status.resultsFinal ?? false,
     currentStepIndex,
     requestFinal,
   );
@@ -47,7 +52,7 @@ export const ConfigRequestStepPanel = ({
   let expirationDate: Date | null = null;
 
   const showManuallyEndButton =
-    step.canBeManuallyEnded && me?.user.id === creator.id && !requestStep?.responseComplete;
+    step.response?.canBeManuallyEnded && userIsCreator && !requestStep?.status.responseFinal;
 
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);
@@ -84,12 +89,15 @@ export const ConfigRequestStepPanel = ({
               <Typography>{new Date(requestStep?.expirationDate).toLocaleString()}</Typography>
             </Box>
           )}
-          {requestStep && !requestStep.responseComplete && remainingTime && remainingTime > 0 && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography>Remaining time to respond </Typography>
-              <TimeLeft msLeft={remainingTime} />
-            </Box>
-          )}
+          {requestStep &&
+            !requestStep.status.responseFinal &&
+            remainingTime &&
+            remainingTime > 0 && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Remaining time to respond </Typography>
+                <TimeLeft msLeft={remainingTime} />
+              </Box>
+            )}
         </PanelAccordion>
         {triggeringAction && triggeringAction.filterOption && (
           <PanelAccordion title="Filter" hasError={false}>
@@ -100,8 +108,8 @@ export const ConfigRequestStepPanel = ({
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
           <RequestStepResults
+            requestStep={requestStep}
             resultConfigs={step.result}
-            responseFields={step.response.fields}
             results={requestStep?.results ?? []}
             requestStatus={status}
           />

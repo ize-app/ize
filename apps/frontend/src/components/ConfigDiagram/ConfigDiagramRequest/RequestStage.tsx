@@ -2,18 +2,14 @@ import { Box, Typography } from "@mui/material";
 
 import { AvatarGroup } from "@/components/Avatar";
 import { statusProps } from "@/components/status/statusProps";
-import {
-  EntitySummaryPartsFragment,
-  Status,
-  UserSummaryPartsFragment,
-} from "@/graphql/generated/graphql";
+import { EntityFragment, Status, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
 
 import { Stage, StageProps } from "../DiagramPanel/Stage";
 
 interface RequestStageProps extends StageProps {
   label: string;
   subtitle?: string;
-  entities?: (EntitySummaryPartsFragment | UserSummaryPartsFragment)[];
+  entities?: (EntityFragment | UserSummaryPartsFragment)[];
   status: Status;
 }
 

@@ -1,7 +1,7 @@
 import { GroupType, Prisma } from "@prisma/client";
 
-import { newEvolveGroupFlow } from "@/core/flow/evolveGroup/newEvolveGroupFlow";
-import { newGroupWatchFlowFlow } from "@/core/flow/groupWatchFlows/newGroupWatchFlowFlow";
+import { newEvolveGroupFlow } from "@/core/flow/flowTypes/evolveGroup/newEvolveGroupFlow";
+import { newGroupWatchFlowFlow } from "@/core/flow/flowTypes/groupWatchFlows/newGroupWatchFlowFlow";
 import { confirmNotificationEntity } from "@/core/notification/confirmNotificationEntity";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";

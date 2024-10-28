@@ -1,11 +1,15 @@
-import { FieldOption, Prisma, ResultType } from "@prisma/client";
+import { FieldDataType, FieldOption, Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { determineDecision } from "./determineDecision";
 import { prisma } from "../../../prisma/client";
-import { ResultConfigPrismaType, ResultPrismaType, resultInclude } from "../resultPrismaTypes";
+import {
+  ResultConfigPrismaType,
+  ResultGroupPrismaType,
+  resultGroupInclude,
+} from "../resultPrismaTypes";
 
 // returns result if there is no result
 export const newDecisionResult = async ({
@@ -16,7 +20,7 @@ export const newDecisionResult = async ({
   resultConfig: ResultConfigPrismaType;
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
-}): Promise<ResultPrismaType> => {
+}): Promise<ResultGroupPrismaType> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
   let decisionFieldOption: FieldOption | null = null;
 
@@ -29,8 +33,12 @@ export const newDecisionResult = async ({
     );
 
   // find the decision and choose default option if no decision was made
-  const decisionOptionId =
-    determineDecision({ decisionConfig, answers: fieldAnswers }) ?? decisionConfig.defaultOptionId;
+  const { optionId: decisionOptionId, explanation } =
+    (await determineDecision({
+      resultConfig,
+      answers: fieldAnswers,
+      requestStepId,
+    })) ?? decisionConfig.defaultOptionId;
 
   if (decisionOptionId) {
     decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
@@ -40,33 +48,67 @@ export const newDecisionResult = async ({
     });
   }
 
-  const resultArgs: Prisma.ResultUncheckedCreateInput = {
-    itemCount: decisionFieldOption ? 1 : 0,
+  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
+    itemCount: 2,
     requestStepId,
     resultConfigId: resultConfig.id,
     final: true,
     hasResult: !!decisionFieldOption,
-    ResultItems: decisionFieldOption
+    Result: decisionFieldOption
       ? {
           create: {
-            dataType: decisionFieldOption.dataType,
-            value: decisionFieldOption.name,
-            fieldOptionId: decisionFieldOption.id,
+            name: "Decision",
+            itemCount: explanation ? 2 : 1,
+            index: 0,
+            ResultItems: {
+              create: {
+                dataType: decisionFieldOption.dataType,
+                value: decisionFieldOption.name,
+                fieldOptionId: decisionFieldOption.id,
+              },
+            },
           },
         }
       : undefined,
   };
 
   ////// upsert results for decision
-  return await prisma.result.upsert({
+  const resultGroup = await prisma.resultGroup.upsert({
     where: {
       requestStepId_resultConfigId: {
         requestStepId,
         resultConfigId: resultConfig.id,
       },
     },
-    include: resultInclude,
+    include: resultGroupInclude,
     create: resultArgs,
     update: resultArgs,
+  });
+
+  if (decisionOptionId && explanation) {
+    await prisma.result.create({
+      data: {
+        resultGroupId: resultGroup.id,
+        itemCount: 1,
+        index: 1,
+        name: "Explanation of AI decision",
+        ResultItems: {
+          create: {
+            dataType: FieldDataType.String,
+            value: explanation,
+          },
+        },
+      },
+    });
+  }
+
+  return await prisma.resultGroup.findUniqueOrThrow({
+    where: {
+      requestStepId_resultConfigId: {
+        requestStepId,
+        resultConfigId: resultConfig.id,
+      },
+    },
+    include: resultGroupInclude,
   });
 };

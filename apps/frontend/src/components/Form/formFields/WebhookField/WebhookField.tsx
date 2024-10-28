@@ -1,21 +1,17 @@
 import { useMutation } from "@apollo/client";
 import { Box, FormHelperText } from "@mui/material";
 import { useState } from "react";
-import { Controller, FieldValues, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
-import {
-  Status,
-  TestNotificationWebhookDocument,
-  TestWebhookDocument,
-} from "@/graphql/generated/graphql";
+import { Status, TestWebhookDocument } from "@/graphql/generated/graphql";
 
 import { WebhookTestButton } from "./WebhookTestButton";
 import { createTestWebhookArgs } from "../../FlowForm/helpers/createTestWebhookArgs";
 import { TextField } from "../TextField";
 
-interface WebhookFieldProps<T extends FieldValues> extends UseControllerProps<T> {
+interface WebhookFieldProps<T extends FieldValues> {
+  name: Path<T>;
   required?: boolean;
-  formMethods: UseFormReturn<T>;
   type: "notification" | "result";
 }
 
@@ -23,14 +19,13 @@ export const WebhookField = <T extends FieldValues>({
   name,
   type,
   required = false,
-  formMethods,
 }: WebhookFieldProps<T>): JSX.Element => {
+  const { control, getValues, setValue } = useFormContext<T>();
   const [testWebhookStatus, setTestWebhookStatus] = useState<Status | null>(null);
   const [testWebhook] = useMutation(TestWebhookDocument, {});
-  const [testNotificationWebhook] = useMutation(TestNotificationWebhookDocument, {});
   const handleTestWebhook = async (_event: React.MouseEvent<HTMLElement>) => {
     // @ts-expect-error TODO: figure out how to bring in webhook schema
-    const uri = formMethods.getValues(`${name}.uri`);
+    const uri = getValues(`${name}.uri`);
     setTestWebhookStatus(Status.InProgress);
     let success = false;
     try {
@@ -38,20 +33,13 @@ export const WebhookField = <T extends FieldValues>({
         const res = await testWebhook({
           variables: {
             // @ts-expect-error TODO: figure out how to bring in webhook schema
-            inputs: createTestWebhookArgs(formMethods.getValues(), uri),
+            inputs: createTestWebhookArgs(getValues(), uri),
           },
         });
         success = res.data?.testWebhook ?? false;
-      } else {
-        const res = await testNotificationWebhook({
-          variables: {
-            uri,
-          },
-        });
-        success = res.data?.testNotificationWebhook ?? false;
       }
       // @ts-expect-error TODO: figure out how to bring in webhook schema
-      formMethods.setValue(`${name}.valid`, success);
+      setValue(`${name}.valid`, success);
 
       setTestWebhookStatus(success ? Status.Completed : Status.Failure);
     } catch (e) {
@@ -64,7 +52,7 @@ export const WebhookField = <T extends FieldValues>({
   return (
     <Controller
       name={name}
-      control={formMethods.control}
+      control={control}
       render={({ fieldState: { error } }) => {
         return (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -77,7 +65,6 @@ export const WebhookField = <T extends FieldValues>({
               }}
             >
               <TextField<T>
-                control={formMethods.control}
                 label="Url"
                 size="small"
                 required={required}
@@ -88,7 +75,6 @@ export const WebhookField = <T extends FieldValues>({
                 name={`${name}.uri`}
               />
               <TextField<T>
-                control={formMethods.control}
                 label="Webhook id"
                 diabled
                 size="small"
@@ -99,7 +85,6 @@ export const WebhookField = <T extends FieldValues>({
                 name={`${name}.webhookId`}
               />
               <TextField<T>
-                control={formMethods.control}
                 label="Original uri"
                 diabled
                 size="small"
@@ -110,7 +95,6 @@ export const WebhookField = <T extends FieldValues>({
                 name={`${name}.originalUri`}
               />
               <TextField<T>
-                control={formMethods.control}
                 label="Valid webhook"
                 size="small"
                 showLabel={false}

@@ -2,20 +2,20 @@ import { Button, Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 import { telegramBotInviteUrl } from "@/components/Auth/telegramBotInviteUrl";
-import { EntitySummaryPartsFragment } from "@/graphql/generated/graphql";
+import { EntityFragment } from "@/graphql/generated/graphql";
 
 import { NewEntitySchemaType } from "../formValidation/entity";
 import { SelectTelegramChat } from "../SelectTelegramChat";
 
 interface TelegramEntityFormProps {
-  handleEntitySelection: (entities: EntitySummaryPartsFragment[]) => void;
+  handleEntitySelection: (entities: EntityFragment[]) => void;
 }
 
 // Telegram chat entity is created when ize bot is added so this handler doesn't need to create mutation
 export const TelegramEntityForm = ({ handleEntitySelection }: TelegramEntityFormProps) => {
   const { watch } = useFormContext<NewEntitySchemaType>();
 
-  const telegramChat = watch("telegramChat") as EntitySummaryPartsFragment | undefined;
+  const telegramChat = watch("telegramChat") as EntityFragment | undefined;
   return (
     <>
       <SelectTelegramChat<NewEntitySchemaType>

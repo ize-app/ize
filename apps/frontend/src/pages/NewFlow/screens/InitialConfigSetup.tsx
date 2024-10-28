@@ -1,13 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Typography } from "@mui/material";
+import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
-import { FlowGoal, IntitialFlowSetupSchemaType, intitialFlowSetupSchema } from "../formValidation";
+import {
+  FlowGoal,
+  IntitialFlowSetupSchemaType,
+  NewFlowWizardFormSchema,
+  Reusable,
+  intitialFlowSetupSchema,
+} from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
@@ -17,6 +25,7 @@ import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const InitialConfigSetup = () => {
   const { setFormState, onNext, onPrev, nextLabel, formState } = useNewFlowWizardState();
+  const { me } = useContext(CurrentUserContext);
 
   const formMethods = useForm<IntitialFlowSetupSchemaType>({
     defaultValues: formState.initialFlowSetup ?? { permission: { entities: [] } },
@@ -25,17 +34,25 @@ export const InitialConfigSetup = () => {
   });
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
-    setFormState((prev) => ({
-      ...prev,
-      initialFlowSetup: { ...data },
-      newFlow: generateNewFlowConfig({ config: data }),
-    }));
+    const newConfig = generateNewFlowConfig({ config: data, creator: me?.user });
+    console.log("generated new config", newConfig);
+
+    setFormState(
+      (prev): NewFlowWizardFormSchema => ({
+        ...prev,
+        initialFlowSetup: { ...data },
+        new: { ...newConfig },
+        // newFlow,
+      }),
+    );
     onNext();
   };
   // console.log("errors are", formMethods.formState.errors);
 
   // console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
+
+  const reusable = formMethods.watch("reusable");
 
   const permissionType = formMethods.watch("permission.type");
 
@@ -69,6 +86,19 @@ export const InitialConfigSetup = () => {
         </FieldBlockFadeIn>
         {goal && (
           <FieldBlockFadeIn>
+            <Typography variant="description">Should this process be reusable?</Typography>
+            <ButtonGroupField<IntitialFlowSetupSchemaType>
+              label="Test"
+              name="reusable"
+              options={[
+                { name: "No", value: Reusable.NotReusable },
+                { name: "Yes", value: Reusable.Reusable },
+              ]}
+            />
+          </FieldBlockFadeIn>
+        )}
+        {reusable && (
+          <FieldBlockFadeIn>
             <Typography variant="description">Who&apos;s participating?</Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <ButtonGroupField<IntitialFlowSetupSchemaType>
@@ -82,12 +112,9 @@ export const InitialConfigSetup = () => {
               {permissionType === PermissionType.Entities && (
                 <EntitySearch<IntitialFlowSetupSchemaType>
                   ariaLabel={"Individuals and groups to add to custom group"}
-                  control={formMethods.control}
                   name={"permission.entities"}
                   hideCustomGroups={false}
                   label={"Group members *"}
-                  setFieldValue={formMethods.setValue}
-                  getFieldValues={formMethods.getValues}
                 />
               )}
             </Box>

@@ -2,6 +2,7 @@ import { EntityPrismaType, entityInclude, entitySetInclude } from "@/core/entity
 import { entityResolver } from "@/core/entity/entityResolver";
 import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
 import { groupResolver } from "@/core/entity/group/groupResolver";
+import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowType, IzeGroup } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -20,17 +21,18 @@ export const getIzeGroup = async ({
     where: { id: groupId },
   });
 
+  const entityIds = getUserEntityIds(context.currentUser);
+
   let notificationEntity: EntityPrismaType | null = null;
   let isWatched = false;
   let isMember = false;
 
   if (context?.currentUser && getWatchAndPermissionStatus) {
-    const watchRecord = await prisma.usersWatchedGroups.findUnique({
+    const watchRecord = await prisma.entityWatchedGroups.findFirst({
       where: {
-        userId_groupId: {
-          groupId,
-          userId: context.currentUser.id,
-        },
+        entityId: { in: entityIds },
+        groupId,
+        watched: true,
       },
     });
 

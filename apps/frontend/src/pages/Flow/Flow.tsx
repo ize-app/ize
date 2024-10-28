@@ -1,13 +1,14 @@
 import { useQuery } from "@apollo/client";
-import { InfoOutlined } from "@mui/icons-material";
-import { Chip, IconButton, Tooltip } from "@mui/material";
+import { Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
+import TabPanel from "@/components/Tables/TabPanel";
+import { TabProps, Tabs } from "@/components/Tables/Tabs";
 import { WatchFlowButton } from "@/components/watchButton/WatchFlowButton";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
@@ -29,13 +30,13 @@ import {
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { RequestStepsSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestStepsSearch";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
   const { flowId: flowIdShort, flowVersionId: flowVersionIdShort } = useParams();
-
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const [currentTabIndex, setTabIndex] = useState(0);
 
   const flowId: string | null = flowIdShort ? shortUUIDToFull(flowIdShort) : null;
   const flowVersionId: string | null = flowVersionIdShort
@@ -56,8 +57,20 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-
   // console.log("flow", flow);
+
+  const tabs: TabProps[] = [
+    {
+      title: "Flow",
+      content: <ConfigDiagramFlow flow={flow} />,
+    },
+  ];
+
+  if (flow && flow.evolve)
+    tabs.push({
+      title: "Evolve flow",
+      content: <ConfigDiagramFlow flow={flow.evolve} />,
+    });
 
   const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
   const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
@@ -173,29 +186,6 @@ export const Flow = () => {
                 </Typography>
               </>
             )}
-            {flow.evolve && (
-              <Box sx={{ display: "flex", alignItems: "Center" }}>
-                <Typography variant="description" lineHeight={"24px"}>
-                  <Link
-                    style={{ color: "inherit" }}
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(flow.evolve.flowId),
-                      flowVersionId: flow.evolve.currentFlowVersionId
-                        ? fullUUIDToShort(flow.evolve.currentFlowVersionId)
-                        : null,
-                      // flowVersionId: null,
-                    })}
-                  >
-                    How this flow evolves
-                  </Link>
-                </Typography>
-                <Tooltip title="Every flow has another collaborative flow responsible for evolving it.">
-                  <IconButton size="small" sx={{ padding: "4px" }}>
-                    <InfoOutlined sx={{ fontSize: "16px" }} />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            )}
           </Box>
           <Box
             sx={{
@@ -249,7 +239,7 @@ export const Flow = () => {
             {isOldVersion && (
               <Button
                 variant="contained"
-                disabled={!flow.steps[0]?.userPermission.request}
+                disabled={!flow.trigger.userPermission}
                 sx={{
                   width: "300px",
                   display: !me ? "none" : "flex",
@@ -289,9 +279,24 @@ export const Flow = () => {
             </>
           )}
         </Box>
-        <ConfigDiagramFlow flow={flow} />
+        {/* <ConfigDiagramFlow flow={flow} /> */}
+        <Box>
+          <Tabs
+            tabs={tabs}
+            currentTabIndex={currentTabIndex}
+            handleChange={(_event: React.SyntheticEvent, newValue: number) => {
+              setTabIndex(newValue);
+            }}
+          />
+
+          {tabs.map((tab: TabProps, index) => (
+            <TabPanel value={currentTabIndex} index={index} key={index}>
+              {tab.content}
+            </TabPanel>
+          ))}
+        </Box>
         {isCurrentFlowVersion && (
-          <RequestStepsSearch
+          <RequestSearch
             userOnly={false}
             flowId={flow.flowId}
             initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}

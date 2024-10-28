@@ -5,12 +5,13 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
-import { Controller, FieldValues, UseControllerProps, useWatch } from "react-hook-form";
+import { Controller, FieldValues, Path, useFormContext, useWatch } from "react-hook-form";
 
 import { OptionSelectionSchemaType, OptionSelectionsSchemaType } from "../formValidation/field";
 
-interface MultiSelectProps<T extends FieldValues> extends UseControllerProps<T> {
+interface MultiSelectProps<T extends FieldValues> {
   label?: string;
+  name: Path<T>;
   disabled?: boolean;
   options: OptionProps[];
   sx: SxProps;
@@ -22,12 +23,12 @@ export interface OptionProps {
 }
 
 export const MultiSelect = <T extends FieldValues>({
-  control,
   label,
   name,
   options,
   ...rest
 }: MultiSelectProps<T>) => {
+  const { control } = useFormContext<T>();
   const selectedOptions = useWatch({ control, name: name }) || [];
 
   return (

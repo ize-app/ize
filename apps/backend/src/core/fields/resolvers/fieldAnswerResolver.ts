@@ -2,6 +2,8 @@ import { entityInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { createFlowSummaryInclude } from "@/core/flow/flowPrismaTypes";
 import { flowSummaryResolver } from "@/core/flow/resolvers/flowSummaryResolver";
+import { getUserEntityIds } from "@/core/user/getUserEntityIds";
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   EntitiesFieldAnswer,
   FieldAnswer,
@@ -18,13 +20,12 @@ import { FieldAnswerPrismaType } from "../fieldPrismaTypes";
 
 export const fieldAnswerResolver = async ({
   fieldAnswer,
-  userIdentityIds,
-  userId,
+  context,
 }: {
   fieldAnswer: FieldAnswerPrismaType;
-  userIdentityIds?: string[];
-  userId: string | undefined;
+  context: GraphqlRequestContext;
 }): Promise<FieldAnswer> => {
+  const userIdentityIds = context.currentUser?.Identities.map((id) => id.id);
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
       if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.EntityIds) {
@@ -36,33 +37,33 @@ export const fieldAnswerResolver = async ({
 
         const entityAnswer: EntitiesFieldAnswer = {
           __typename: "EntitiesFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           entities: entities.map((entity) => entityResolver({ entity, userIdentityIds })),
         };
         return entityAnswer;
       } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.FlowIds) {
+        const userEntityIds = getUserEntityIds(context.currentUser);
         const flowIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
         const flows = await prisma.flow.findMany({
-          include: createFlowSummaryInclude(userId),
+          include: createFlowSummaryInclude(userEntityIds),
           where: { id: { in: flowIds } },
         });
         return {
           __typename: "FlowsFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
-          flows: flows.map((flow) =>
-            flowSummaryResolver({
-              flow,
-              identityIds: userIdentityIds ?? [],
-              groupIds: [], // TODO pass this in properly
-              userId: "", // TODO pass this in properly
-            }),
-          ),
+          // TODO remove inefficient query
+          flows: flows
+            .map((flow) =>
+              flowSummaryResolver({
+                flow,
+                context,
+                groupIds: [], // TODO pass this in properly
+              }),
+            )
+            .map((f) => ({ flowId: f.flowId, flowName: f.name })),
         };
       } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.Webhook) {
         if (fieldAnswer.AnswerFreeInput[0].value === "None") {
           return {
             __typename: "WebhookFieldAnswer",
-            fieldId: fieldAnswer.fieldId,
             uri: "",
           };
         }
@@ -71,13 +72,11 @@ export const fieldAnswerResolver = async ({
         });
         return {
           __typename: "WebhookFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           uri: webhook?.uriPreview ?? "",
         };
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",
-          fieldId: fieldAnswer.fieldId,
           value: fieldAnswer.AnswerFreeInput[0].value,
         };
         return freeInputAnswer;
@@ -86,7 +85,6 @@ export const fieldAnswerResolver = async ({
     case FieldType.Options: {
       const optionsAnswer: OptionFieldAnswer = {
         __typename: "OptionFieldAnswer",
-        fieldId: fieldAnswer.fieldId,
         selections: fieldAnswer.AnswerOptionSelections.map(
           (s): OptionFieldAnswerSelection => ({
             optionId: s.fieldOptionId,

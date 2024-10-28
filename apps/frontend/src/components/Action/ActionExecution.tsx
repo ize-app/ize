@@ -42,7 +42,7 @@ export const ActionExecution = ({
         },
         {
           label: "What this webhook does",
-          value: <Typography>{action.name}</Typography>,
+          value: <Typography>{action.webhookName}</Typography>,
         },
         {
           label: "Status",

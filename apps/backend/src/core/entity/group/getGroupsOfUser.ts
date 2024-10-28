@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 
+import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { QueryGroupsForCurrentUserArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -21,6 +22,7 @@ export const getGroupsOfUser = async ({
 
   // Get groups that the user is in a server, role or has created.
   const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
+  const entityIds = getUserEntityIds(context.currentUser);
 
   const groupsCustom = await transaction.groupCustom.findMany({
     take: args.limit,
@@ -39,9 +41,9 @@ export const getGroupsOfUser = async ({
         args.watchFilter !== WatchFilter.All
           ? {
               group: {
-                UsersWatchedGroups: {
+                EntityWatchedGroups: {
                   some: {
-                    userId: context.currentUser.id,
+                    entityId: { in: entityIds },
                     watched: args.watchFilter === WatchFilter.Watched,
                   },
                 },
@@ -52,9 +54,9 @@ export const getGroupsOfUser = async ({
                 in: groupIds,
               },
               group: {
-                UsersWatchedGroups: {
+                EntityWatchedGroups: {
                   none: {
-                    userId: context.currentUser.id,
+                    entityId: { in: entityIds },
                     watched: true,
                   },
                 },
@@ -71,9 +73,9 @@ export const getGroupsOfUser = async ({
     orderBy: { group: { createdAt: "desc" } },
   });
 
-  const watchRecords = await transaction.usersWatchedGroups.findMany({
+  const watchRecords = await transaction.entityWatchedGroups.findMany({
     where: {
-      userId: context.currentUser.id,
+      entityId: { in: entityIds },
     },
   });
 

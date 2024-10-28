@@ -6,12 +6,18 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { Fields } from "@/components/Field/Fields";
-import { StepFragment } from "@/graphql/generated/graphql";
+import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
+import { FieldSetFragment, PermissionFragment } from "@/graphql/generated/graphql";
 
 import { Permissions } from "../../Permissions";
 
-export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
+export const ConfigFlowTriggerPanel = ({
+  triggerPermissions,
+  triggerFieldSet,
+}: {
+  triggerPermissions: PermissionFragment;
+  triggerFieldSet: FieldSetFragment;
+}) => {
   return (
     <PanelContainer>
       <PanelHeader>
@@ -20,17 +26,17 @@ export const ConfigFlowTriggerPanel = ({ step }: { step: StepFragment }) => {
         </Typography>{" "}
       </PanelHeader>
       <ConfigurationPanel>
-        {step.request.permission && (
+        {triggerPermissions && (
           <PanelAccordion title="Trigger permission" hasError={false}>
-            <Permissions permission={step.request.permission} type="request" />
+            <Permissions permission={triggerPermissions} type="request" />
           </PanelAccordion>
         )}
-        {step.request.fields.length > 0 && (
+        {triggerFieldSet.fields.length > 0 && (
           <PanelAccordion title="Request fields" hasError={false}>
             <Typography variant="description">
               The following fields must be answered to trigger the flow:
             </Typography>
-            <Fields fields={step.request.fields} />
+            <TriggerFieldSet fieldSet={triggerFieldSet} />
           </PanelAccordion>
         )}
       </ConfigurationPanel>

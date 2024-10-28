@@ -16,9 +16,9 @@ import useRequestStepsSearch from "@/hooks/useRequestStepsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-import { RequestStepsTable } from "./RequestStepsTable";
+import { RequestSummaryTable } from "./RequestStepsTable";
 
-export const RequestStepsSearch = ({
+export const RequestSearch = ({
   userOnly,
   flowId,
   groupId,
@@ -137,7 +137,7 @@ export const RequestStepsSearch = ({
       {loading ? (
         <Loading />
       ) : requestSteps.length > 0 ? (
-        <RequestStepsTable requestSteps={requestSteps} />
+        <RequestSummaryTable requests={requestSteps} />
       ) : (
         <EmptyTablePlaceholder>
           {!flowId ? (

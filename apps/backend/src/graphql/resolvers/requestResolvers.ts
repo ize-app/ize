@@ -1,5 +1,5 @@
 import { getRequest as getRequestService } from "@/core/request/getRequest";
-import { getRequestSteps as getRequestStepsService } from "@/core/request/getRequestSteps";
+import { getRequestSummaries as getRequestSummariesService } from "@/core/request/getRequestSteps";
 import { newEvolveRequest as newEvolveRequestService } from "@/core/request/newEvolveRequest";
 import { newRequest as newRequestService } from "@/core/request/newRequest";
 import { newResponse as newResponseService } from "@/core/response/newResponse";
@@ -11,10 +11,10 @@ import {
   MutationNewResponseArgs,
   MutationResolvers,
   QueryGetRequestArgs,
-  QueryGetRequestStepsArgs,
+  QueryGetRequestsArgs,
   QueryResolvers,
   Request,
-  RequestStepSummary,
+  RequestSummary,
 } from "@graphql/generated/resolver-types";
 
 import { endRequestStep as endRequestStepService } from "@/core/request/endRequestStep";
@@ -34,7 +34,10 @@ const newRequest: MutationResolvers["newRequest"] = async (
 
   return await newRequestService({
     args,
-    context,
+    entityContext: {
+      type: "user",
+      context,
+    },
   });
 };
 
@@ -47,7 +50,10 @@ const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  const requestId = await newEvolveRequestService({ args, context });
+  const requestId = await newEvolveRequestService({
+    args,
+    entityContext: { type: "user", context },
+  });
   // update user groups created while updating flow
   await updateUserGroups({ context });
   return requestId;
@@ -62,12 +68,12 @@ const getRequest: QueryResolvers["getRequest"] = async (
 };
 
 // getRequestSteps is called on user's dashboard to get all the request steps that the user has access to
-const getRequestSteps: QueryResolvers["getRequestSteps"] = async (
+const getRequests: QueryResolvers["getRequests"] = async (
   root: unknown,
-  args: QueryGetRequestStepsArgs,
+  args: QueryGetRequestsArgs,
   context: GraphqlRequestContext,
-): Promise<RequestStepSummary[]> => {
-  return await getRequestStepsService({ args, user: context.currentUser });
+): Promise<RequestSummary[]> => {
+  return await getRequestSummariesService({ args, user: context.currentUser });
 };
 
 const newResponse: MutationResolvers["newResponse"] = async (
@@ -75,7 +81,7 @@ const newResponse: MutationResolvers["newResponse"] = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newResponseService({ type: "user", args, context });
+  return await newResponseService({ entityContext: { type: "user", context }, args });
 };
 
 const endRequestStep: MutationResolvers["endRequestStep"] = async (
@@ -88,7 +94,7 @@ const endRequestStep: MutationResolvers["endRequestStep"] = async (
 
 export const requestQueries = {
   getRequest,
-  getRequestSteps,
+  getRequests,
 };
 
 export const requestMutations = { newRequest, newEvolveRequest, newResponse, endRequestStep };

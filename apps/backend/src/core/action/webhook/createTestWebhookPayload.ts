@@ -1,32 +1,26 @@
+import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import {
-  FieldType,
+  GenericFieldAndValue,
   TestWebhookArgs,
-  WebhookPayload,
-  WebhookValue,
   WebhookValueArgs,
 } from "@/graphql/generated/resolver-types";
 
-export const createTestWebhookPayload = (args: TestWebhookArgs): WebhookPayload => {
+export const createTestWebhookPayload = (args: TestWebhookArgs): RequestPayload => {
   return {
-    createdAt: new Date().toISOString(),
     flowName: args.flowName,
     requestName: "Test request",
-    requestFields: args.requestFields.map((field) => generateFieldData(field)),
-    results: args.results.map((result) => generateFieldData(result)),
+    requestTriggerAnswers: args.requestFields.map((field) => generateFieldData(field)),
+    results: args.results.map((resultGroup) => ({
+      fieldName: resultGroup.fieldName,
+      result: resultGroup.results.map((res) => generateFieldData(res)),
+    })),
     requestUrl: "https://ize.space",
   };
 };
 
-const generateFieldData = (field: WebhookValueArgs): WebhookValue => {
-  if (field.fieldType === FieldType.FreeInput) {
-    return {
-      fieldName: field.fieldName,
-      value: "Test value",
-    };
-  } else {
-    return {
-      fieldName: field.fieldName,
-      optionSelections: ["Option 1", "Option 2"],
-    };
-  }
+const generateFieldData = (field: WebhookValueArgs): GenericFieldAndValue => {
+  return {
+    fieldName: field.fieldName,
+    value: ["Test value"],
+  };
 };

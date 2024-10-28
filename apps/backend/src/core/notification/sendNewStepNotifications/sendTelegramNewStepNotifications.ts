@@ -1,17 +1,18 @@
 import { FieldType, GroupTelegramChat } from "@prisma/client";
 
 import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
+import { getRequestTriggerFieldAnswers } from "@/core/request/createRequestPayload/getRequestTriggerFieldAnswers";
+import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTriggerFields";
 import {
   FieldDataType,
   FieldOptionsSelectionType,
+  FlowType,
   Request,
 } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createRequestFieldsPayload } from "../createNotificationPayload/createRequestFieldsPayload";
-import { createRequestUrl } from "../createNotificationPayload/createRequestUrl";
-import { createWebhookValueString } from "../createWebhookValueString";
+import { createRequestUrl } from "../../request/createRequestPayload/createRequestUrl";
 
 export const sendTelegramNewStepMessage = async ({
   telegramGroups,
@@ -27,13 +28,14 @@ export const sendTelegramNewStepMessage = async ({
     resolvedEntities: ResolvedEntities;
   };
 }) => {
-  const requestStep = request.steps.find((step) => step.requestStepId === requestStepId);
+  const requestStep = request.requestSteps.find((step) => step.requestStepId === requestStepId);
 
   if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
   const requestName = request.name;
   const flowName = request.flow.name;
-  const { responseFields } = requestStep;
+  const { fieldSet } = requestStep;
+  const responseFields = fieldSet.fields.filter((f) => !f.isInternal);
   const firstField = responseFields[0];
   const url = createRequestUrl({ requestId: request.requestId });
 
@@ -45,15 +47,15 @@ export const sendTelegramNewStepMessage = async ({
         permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
 
       if (responseFields.length === 0) return;
+      0;
+      const requestFieldsString = stringifyTriggerFields({
+        triggerFields: getRequestTriggerFieldAnswers({ request }),
+        type: "html",
+      });
 
-      const requestFieldsString = createWebhookValueString(
-        createRequestFieldsPayload({
-          requestFieldAnswers: request.steps[0].requestFieldAnswers,
-          requestFields: request.flow.steps[0].request.fields,
-        }),
-      );
+      const displayTriggerFields = request.flow.type !== FlowType.Evolve;
 
-      const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
+      const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 && displayTriggerFields ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
 
       const message = await telegramBot.telegram.sendMessage(group.chatId.toString(), messageText, {
         reply_markup: {
@@ -71,7 +73,7 @@ export const sendTelegramNewStepMessage = async ({
         },
       });
 
-      if (responseFields.length > 1 && !chatHasRespondPermission) return;
+      if (responseFields.length > 1 || !chatHasRespondPermission) return;
 
       if (
         firstField.__typename === FieldType.Options &&

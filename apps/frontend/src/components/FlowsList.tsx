@@ -2,11 +2,11 @@ import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Link, generatePath } from "react-router-dom";
 
-import { FlowSummaryFragment } from "@/graphql/generated/graphql";
+import { FlowReference } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-export const FlowsList = ({ flows }: { flows: FlowSummaryFragment[] }) => (
+export const FlowsList = ({ flows }: { flows: FlowReference[] }) => (
   <Box
     component="ul"
     sx={{
@@ -26,7 +26,7 @@ export const FlowsList = ({ flows }: { flows: FlowSummaryFragment[] }) => (
             flowVersionId: null,
           })}
         >
-          {flow.name + (flow.group ? ` (${flow.group.name})` : "")}
+          {flow.flowName}
         </Link>
       </Typography>
     ))}

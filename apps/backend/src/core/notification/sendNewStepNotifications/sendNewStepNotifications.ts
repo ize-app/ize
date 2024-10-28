@@ -31,7 +31,7 @@ export const sendNewStepNotifications = async ({
 
     const stepIndex = data.RequestSteps.findIndex((rs) => rs.id === data.currentRequestStepId);
     const step = data.FlowVersion.Steps[stepIndex];
-    const respondPermission = step.ResponsePermissions;
+    const respondPermission = step.ResponseConfig?.ResponsePermissions;
     if (!respondPermission) return;
 
     const resolvedEntities = await resolveEntitySet({ permission: respondPermission });

@@ -1,46 +1,28 @@
-import { Response } from "@prisma/client";
-
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { MutationNewResponseArgs } from "@graphql/generated/resolver-types";
 
-import { GraphqlRequestContext } from "../../graphql/context";
 import { prisma } from "../../prisma/client";
-import { IdentityPrismaType } from "../entity/identity/identityPrismaTypes";
+import { getUserEntities } from "../entity/getUserEntities";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
-import {
-  hasWriteIdentityPermission,
-  hasWriteUserPermission,
-} from "../permission/hasWritePermission";
+import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
 import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
 import { watchFlow } from "../user/watchFlow";
 
-interface NewUserResponseProps {
-  type: "user";
+interface NewResponseProps {
+  entityContext: UserOrIdentityContextInterface;
   args: MutationNewResponseArgs;
-  context: GraphqlRequestContext;
 }
-
-interface NewIdentityResponseProps {
-  type: "identity";
-  args: MutationNewResponseArgs;
-  identity: IdentityPrismaType;
-}
-
-type NewResponseProps = NewUserResponseProps | NewIdentityResponseProps;
 
 // creates a new response for a given request step
 // validates/creates field answers
-export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Promise<string> => {
+export const newResponse = async ({ entityContext, args }: NewResponseProps): Promise<string> => {
   const {
     response: { answers, requestStepId },
   } = args;
-
-  let hasRespondPermissions = false;
-  let existingUserResponse: Response | null = null;
-  let newResponse: Response;
 
   const responseId = await prisma.$transaction(async (transaction) => {
     const requestStep = await transaction.requestStep.findUniqueOrThrow({
@@ -54,15 +36,15 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         Request: {
           include: {
             FlowVersion: true,
-          },
-        },
-        RequestFieldAnswers: {
-          include: fieldAnswerInclude,
-        },
-        RequestDefinedOptionSets: {
-          include: {
-            FieldOptionSet: {
-              include: fieldOptionSetInclude,
+            TriggerFieldAnswers: {
+              include: fieldAnswerInclude,
+            },
+            RequestDefinedOptionSets: {
+              include: {
+                FieldOptionSet: {
+                  include: fieldOptionSetInclude,
+                },
+              },
             },
           },
         },
@@ -85,72 +67,34 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         },
       );
 
-    if (type === "user") {
-      const { context } = rest as NewUserResponseProps;
-      // Use args and context here
-
-      if (!context?.currentUser)
-        throw new GraphQLError("Unauthenticated", {
-          extensions: { code: CustomErrorCodes.Unauthenticated },
-        });
-
-      hasRespondPermissions = await hasWriteUserPermission({
-        permission: requestStep.Step.ResponsePermissions,
-        context,
-        transaction,
-      });
-
-      existingUserResponse = await transaction.response.findFirst({
-        where: {
-          requestStepId,
-          OR: [
-            { userId: context.currentUser.id },
-            {
-              Identity: { User: { id: context.currentUser.id } },
-            },
-          ],
+    if (
+      !requestStep.Step.FieldSet ||
+      requestStep.Step.FieldSet.FieldSetFields.every((f) => f.Field.isInternal)
+    )
+      throw new GraphQLError(
+        `Response received for request step that does not have response fields ${requestStepId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         },
-      });
+      );
 
-      newResponse = await transaction.response.create({
-        data: {
-          userId: context.currentUser.id,
-          requestStepId,
+    if (!requestStep.Step.ResponseConfig)
+      throw new GraphQLError(
+        `Response received for request step that does not accept responses ${requestStepId}`,
+        {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         },
-      });
+      );
 
-      await watchFlow({
-        flowId: requestStep.Request.FlowVersion.flowId,
-        watch: true,
-        userId: context.currentUser.id,
-        transaction,
-      });
-    } else if (type === "identity") {
-      const { identity } = rest as NewIdentityResponseProps;
+    const { allowMultipleResponses, ResponsePermissions } = requestStep.Step.ResponseConfig;
 
-      hasRespondPermissions = await hasWriteIdentityPermission({
-        permission: requestStep.Step.ResponsePermissions,
-        identity,
-        transaction,
-      });
+    const hasRespondPermissions = await getEntityPermissions({
+      entityContext,
+      permission: ResponsePermissions,
+      transaction,
+    });
 
-      existingUserResponse = await transaction.response.findFirst({
-        where: {
-          requestStepId,
-          OR: [
-            { identityId: identity.id },
-            { User: { Identities: { some: { id: { equals: identity.id } } } } },
-          ],
-        },
-      });
-
-      newResponse = await transaction.response.create({
-        data: {
-          identityId: identity.id,
-          requestStepId,
-        },
-      });
-    }
+    const { entityId, entityIds, user } = await getUserEntities({ entityContext, transaction });
 
     if (!hasRespondPermissions) {
       throw new GraphQLError("User does not have permission to respond", {
@@ -158,7 +102,14 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
       });
     }
 
-    if (!requestStep.Step.allowMultipleResponses) {
+    const existingUserResponse = await transaction.response.findFirst({
+      where: {
+        requestStepId,
+        creatorEntityId: { in: entityIds },
+      },
+    });
+
+    if (!allowMultipleResponses) {
       if (existingUserResponse)
         throw new GraphQLError(
           `Response already exists for this request step. requestStepId: ${requestStepId}`,
@@ -168,12 +119,27 @@ export const newResponse = async ({ type, args, ...rest }: NewResponseProps): Pr
         );
     }
 
+    const newResponse = await transaction.response.create({
+      data: {
+        creatorEntityId: entityId,
+        requestStepId,
+      },
+    });
+
     await newFieldAnswers({
-      fieldSet: requestStep.Step.ResponseFieldSet,
+      fieldSet: requestStep.Step.FieldSet,
       fieldAnswers: answers,
-      requestDefinedOptionSets: requestStep.RequestDefinedOptionSets,
+      requestDefinedOptionSets: requestStep.Request.RequestDefinedOptionSets,
       responseId: newResponse.id,
       transaction,
+    });
+
+    await watchFlow({
+      flowId: requestStep.Request.FlowVersion.flowId,
+      watch: true,
+      entityId,
+      transaction,
+      user,
     });
 
     return newResponse.id;

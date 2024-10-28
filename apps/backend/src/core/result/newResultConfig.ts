@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
+import { DecisionType, ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newDecisionConfig } from "./decision/newDecisionConfig";
@@ -106,10 +106,15 @@ export const newResultConfig = async ({
       break;
   }
 
+  const minAnswers: number | undefined =
+    resultArgs.decision?.type !== DecisionType.Ai
+      ? resultArgs.minimumAnswers ?? undefined
+      : undefined;
+
   const resultConfig = await transaction.resultConfig.create({
     data: {
       resultType: resultArgs.type,
-      minAnswers: resultArgs.minimumAnswers ?? undefined,
+      minAnswers,
       fieldId: responseField?.id,
       decisionId,
       rankId,

@@ -1,36 +1,39 @@
 import { FlowType } from "@prisma/client";
 
-import { GraphqlRequestContext } from "@/graphql/context";
+import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
 import { newRequest } from "./newRequest";
+import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
-import { GroupWatchFlowFields } from "../flow/groupWatchFlows/GroupWatchFlowFields";
 import { PermissionPrismaType, permissionInclude } from "../permission/permissionPrismaTypes";
 
+// creates watch flow requests for a flow
+// assumption here is that creator of a flow would want to create watch flow requests for all custom groups where
+// 1) this custom group participating on the flow (via respond / request permissions)
+// 2) this particular entity has permissions to request the "watch flow" flow
 export const createWatchFlowRequests = async ({
   flowId,
-  context,
+  entityContext,
 }: {
   flowId: string;
-  context: GraphqlRequestContext;
+  entityContext: UserOrIdentityContextInterface;
 }) => {
   try {
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
-
     // Find all entities referenced on this flow
     const data = await prisma.flow.findUniqueOrThrow({
       include: {
         CurrentFlowVersion: {
           include: {
+            TriggerPermissions: { include: permissionInclude },
             Steps: {
               include: {
-                RequestPermissions: { include: permissionInclude },
-                ResponsePermissions: { include: permissionInclude },
+                ResponseConfig: {
+                  include: {
+                    ResponsePermissions: { include: permissionInclude },
+                  },
+                },
               },
             },
           },
@@ -43,32 +46,53 @@ export const createWatchFlowRequests = async ({
 
     const flowName = data.CurrentFlowVersion?.name;
 
-    const customGroups: Map<string, boolean> = new Map();
+    const entitiesOnFlow: Set<string> = new Set();
 
-    const getCustomGroups = (permissions: PermissionPrismaType | null) => {
+    // get all entities referenced on this flow
+    const getCustomGroups = (permissions: PermissionPrismaType | null | undefined) => {
       (permissions?.EntitySet?.EntitySetEntities ?? []).forEach((entity) => {
-        const customGroup = entity.Entity.Group?.GroupCustom;
-        if (customGroup) customGroups.set(customGroup.groupId, true);
+        entitiesOnFlow.add(entity.entityId);
       });
     };
 
+    getCustomGroups(data.CurrentFlowVersion?.TriggerPermissions);
+
     data.CurrentFlowVersion?.Steps.forEach((step) => {
-      getCustomGroups(step.RequestPermissions);
-      getCustomGroups(step.ResponsePermissions);
+      getCustomGroups(step.ResponseConfig?.ResponsePermissions);
+    });
+
+    const customGroups = await prisma.groupCustom.findMany({
+      where: {
+        OR: [
+          // member of custom group is referenced on the flow
+          {
+            MemberEntitySet: {
+              EntitySetEntities: {
+                some: { entityId: { in: Array.from(entitiesOnFlow) } },
+              },
+            },
+          },
+          // custom group is itself referenced on the flow
+          {
+            group: {
+              entityId: { in: Array.from(entitiesOnFlow) },
+            },
+          },
+        ],
+      },
     });
 
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
-      where: { groupId: { in: Array.from(customGroups.keys()) }, type: FlowType.GroupWatchFlow },
+      where: {
+        groupId: { in: customGroups.map((group) => group.groupId) },
+        type: FlowType.GroupWatchFlow,
+      },
       include: {
         CurrentFlowVersion: {
           include: {
-            Steps: {
-              include: {
-                RequestFieldSet: {
-                  include: fieldSetInclude,
-                },
-              },
+            TriggerFieldSet: {
+              include: fieldSetInclude,
             },
           },
         },
@@ -79,40 +103,41 @@ export const createWatchFlowRequests = async ({
 
     // create request for each watchFlow
     // if user doesn't have permissions to create watchFlow request, fail silently
-    watchFlows.forEach((flow) => {
-      try {
-        const watchFlowField =
-          flow.CurrentFlowVersion?.Steps[0].RequestFieldSet?.FieldSetFields.find(
-            (field) => field.Field.name === (GroupWatchFlowFields.WatchFlow as string),
-          );
+    await Promise.all(
+      watchFlows.map(async (flow) => {
+        try {
+          const watchFlowField = (
+            flow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? []
+          ).find((field) => field.Field.systemType === SystemFieldType.WatchFlow);
 
-        if (!watchFlowField) return;
+          if (!watchFlowField) return;
 
-        newRequest({
-          args: {
-            request: {
-              name: flowName ? `Watch '${flowName}'` : "Watch flow",
-              requestDefinedOptions: [],
-              requestFields: [{ fieldId: watchFlowField.fieldId, value: fieldAnswerValue }],
-              flowId: flow.id,
+          await newRequest({
+            args: {
+              request: {
+                name: flowName ? `Watch '${flowName}'` : "Watch flow",
+                requestDefinedOptions: [],
+                requestFields: [{ fieldId: watchFlowField.fieldId, value: fieldAnswerValue }],
+                flowId: flow.id,
+              },
             },
-          },
-          context,
-        });
-      } catch (e) {
-        // fail silently if insufficient permissions
-        if (
-          e instanceof GraphQLError &&
-          e.extensions?.code === CustomErrorCodes.InsufficientPermissions
-        )
-          return;
+            entityContext,
+          });
+        } catch (e) {
+          // fail silently if insufficient permissions
+          if (
+            e instanceof GraphQLError &&
+            e.extensions?.code === CustomErrorCodes.InsufficientPermissions
+          )
+            return;
 
-        console.log(
-          `createWatchFlowRequests ERROR: Error watching flow Id ${flowId} via GroupWatchFlow flow Id ${flow.id}`,
-          e,
-        );
-      }
-    });
+          console.log(
+            `createWatchFlowRequests ERROR: Error watching flow Id ${flowId} via GroupWatchFlow flow Id ${flow.id}`,
+            e,
+          );
+        }
+      }),
+    );
   } catch (e) {
     console.log(`createWatchFlowRequests Error:  Error watching flow Id ${flowId}`, e);
   }

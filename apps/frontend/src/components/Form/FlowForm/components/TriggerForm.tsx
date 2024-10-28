@@ -1,44 +1,37 @@
-import { Box } from "@mui/material";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { Box, Typography } from "@mui/material";
+import { useFormContext } from "react-hook-form";
 
-import { FieldsForm } from "./FieldsForm";
 import { PermissionForm } from "./PermissionForm";
+import { TriggerFieldsForm } from "./TriggerFieldsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface TriggerFormProps {
-  formMethods: UseFormReturn<FlowSchemaType>;
-  formIndex: number; // react-hook-form name
   show: boolean;
+  isReusable: boolean;
 }
 
-export const TriggerForm = ({ formMethods, formIndex, show }: TriggerFormProps) => {
-  const error = formMethods.formState.errors.steps?.[formIndex]?.request;
-
-  const fieldsArrayMethods = useFieldArray({
-    control: formMethods.control,
-    name: `steps.${formIndex}.request.fields`,
-  });
+export const TriggerForm = ({ show, isReusable }: TriggerFormProps) => {
+  const { formState } = useFormContext<FlowSchemaType>();
+  const permissionsError = formState.errors.trigger;
+  const fieldsError = formState.errors.fieldSet;
 
   return (
-    formIndex === 0 && (
-      <Box sx={{ display: show ? "block" : "none" }}>
-        <PanelAccordion title="Permission" hasError={!!error?.permission}>
-          <PermissionForm<FlowSchemaType>
-            fieldName={`steps.${formIndex}.request.permission`}
-            branch={"request"}
-          />
-        </PanelAccordion>
-        <PanelAccordion title="Request fields" hasError={!!error?.fields}>
-          <FieldsForm
-            formIndex={formIndex}
-            branch={"request"}
-            formMethods={formMethods}
-            //@ts-expect-error TODO
-            fieldsArrayMethods={fieldsArrayMethods}
-          />
-        </PanelAccordion>
-      </Box>
-    )
+    <Box sx={{ display: show ? "block" : "none" }}>
+      {isReusable ? (
+        <>
+          <PanelAccordion title="Permission" hasError={!!permissionsError}>
+            <PermissionForm<FlowSchemaType> fieldName={`trigger.permission`} branch={"request"} />
+          </PanelAccordion>
+          <PanelAccordion title="Request fields" hasError={!!fieldsError?.fields}>
+            <TriggerFieldsForm />
+          </PanelAccordion>
+        </>
+      ) : (
+        <Typography variant="body2" sx={{ padding: "16px" }}>
+          Flow will automatically be triggered once flow is created
+        </Typography>
+      )}
+    </Box>
   );
 };

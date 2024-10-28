@@ -20,7 +20,7 @@ mutation EndRequestStep($requestStepId: String!) {
   endRequestStep(requestStepId: $requestStepId)
 }
 
-query getRequestSteps(
+query getRequests(
   $cursor: String
   $limit: Int!
   $userOnly: Boolean!
@@ -30,7 +30,7 @@ query getRequestSteps(
   $statusFilter: RequestStepStatusFilter!
   $respondPermissionFilter: RequestStepRespondPermissionFilter!
 ) {
-  getRequestSteps(
+  getRequests(
     cursor: $cursor
     limit: $limit
     userOnly: $userOnly
@@ -40,22 +40,25 @@ query getRequestSteps(
     statusFilter: $statusFilter
     respondPermissionFilter: $respondPermissionFilter
   ) {
-    ...RequestStepSummary
+    ...RequestSummary
   }
 }
 
 fragment Request on Request {
   name
   creator {
-    ...UserSummaryParts
+    ...Entity
   }
   flow {
     ...Flow
   }
+  triggerFieldAnswers {
+    ...TriggerFieldAnswer
+  }
   requestId
   currentStepIndex
   createdAt
-  steps {
+  requestSteps {
     ...RequestStep
   }
   final
@@ -65,61 +68,80 @@ fragment RequestStep on RequestStep {
   requestStepId
   createdAt
   expirationDate
-  requestFieldAnswers {
-    ...FieldAnswer
-  }
   responseFieldAnswers {
-    ...UserFieldAnswers
+    ...ResponseFieldAnswers
   }
-  responseFields {
-    ...Field
+  fieldSet {
+    ...FieldSet
   }
   userResponses {
     ...Response
   }
   results {
-    ...Result
+    ...ResultGroup
   }
   actionExecution {
     ...ActionExecution
   }
-  responseComplete
-  resultsComplete
-  final
+  status {
+    ...RequestStepStatus
+  }
 }
 
-fragment RequestStepSummary on RequestStepSummary {
-  id
-  requestStepId
+fragment RequestSummary on RequestSummary {
   requestId
   flowId
   requestName
   flowName
-  userResponded
   creator {
-    ...UserSummaryParts
+    ...Entity
   }
+  createdAt
+  status
+  currentStep {
+    ...RequestStepSummary
+  }
+}
+
+fragment RequestStepSummary on RequestStepSummary {
+  requestStepId
+  status {
+    ...RequestStepStatus
+  }
+  expirationDate
   respondPermission {
     ...Permission
   }
+  fieldName
+  result {
+    ...ResultGroup
+  }
+  action {
+    ...RequestStepActionSummary
+  }
   userRespondPermission
-  stepIndex
-  totalSteps
-  createdAt
-  expirationDate
-  responseComplete
-  resultsComplete
-  actionsComplete
-  final
+  userResponded
 }
 
 fragment Response on Response {
   responseId
   createdAt
   creator {
-    ...Respondant
+    ...Entity
   }
   answers {
     ...FieldAnswer
   }
+}
+
+fragment RequestStepStatus on RequestStepStatus {
+  responseFinal
+  resultsFinal
+  actionsFinal
+  final
+}
+
+fragment RequestStepActionSummary on RequestStepActionSummary {
+  name
+  status
 }

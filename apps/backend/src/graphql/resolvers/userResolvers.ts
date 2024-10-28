@@ -29,11 +29,6 @@ const me: QueryResolvers["me"] = async (
 ): Promise<Me | null> => {
   if (!context.currentUser) return null;
 
-  // const discordServers = await getDiscordServers({ context });
-  // await updateUserDiscordGroups({ context, discordServers });
-  // await updateUserNftGroups({ context });
-  // await updateUserCustomGroups({ context });
-
   const identities: Identity[] = context.currentUser.Identities.map((identity) => {
     return identityResolver(
       identity,
@@ -55,7 +50,6 @@ const me: QueryResolvers["me"] = async (
 
   return {
     user,
-    discordServers: [],
     groups,
     identities: [...identities],
   };
@@ -82,7 +76,11 @@ export const watchGroup: MutationResolvers["watchGroup"] = async (
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
-  return await watchGroupService({ args, context });
+  return await watchGroupService({
+    args,
+    user: context.currentUser,
+    entityId: context.currentUser.entityId,
+  });
 };
 
 export const watchFlow: MutationResolvers["watchFlow"] = async (
@@ -98,8 +96,9 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
     return await watchFlowService({
       flowId: args.flowId,
       watch: args.watch,
-      userId: context.currentUser.id,
+      entityId: context.currentUser.entityId,
       transaction,
+      user: context.currentUser,
     });
   });
 };

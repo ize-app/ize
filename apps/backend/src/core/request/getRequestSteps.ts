@@ -1,28 +1,33 @@
+import { Prisma } from "@prisma/client";
+
 import {
-  QueryGetRequestStepsArgs,
+  QueryGetRequestsArgs,
   RequestStepRespondPermissionFilter,
   RequestStepStatusFilter,
-  RequestStepSummary,
+  RequestSummary,
 } from "@/graphql/generated/resolver-types";
 
-import { createRequestStepSummaryInclude } from "./requestPrismaTypes";
-import { requestStepSummaryResolver } from "./resolvers/requestStepSummaryResolver";
+import { createRequestSummaryInclude } from "./requestPrismaTypes";
+import { requestSummaryResolver } from "./resolvers/requestSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { createGroupWatchedFlowFilter, createUserWatchedFlowFilter } from "../flow/flowPrismaTypes";
+import { getUserEntityIds } from "../user/getUserEntityIds";
 import { MePrismaType } from "../user/userPrismaTypes";
 
-export const getRequestSteps = async ({
+export const getRequestSummaries = async ({
   args,
   user,
 }: {
-  args: QueryGetRequestStepsArgs;
+  args: QueryGetRequestsArgs;
   user: MePrismaType | undefined | null;
-}): Promise<RequestStepSummary[]> => {
+}): Promise<RequestSummary[]> => {
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user?.Identities.map((id) => id.id) ?? [];
+  const entityIds = getUserEntityIds(user);
+
   return await prisma.$transaction(async (transaction) => {
-    const requestSteps = await transaction.requestStep.findMany({
+    const requestSteps = await transaction.request.findMany({
       take: args.limit,
       skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
       cursor: args.cursor ? { id: args.cursor } : undefined,
@@ -30,24 +35,22 @@ export const getRequestSteps = async ({
         AND: [
           args.searchQuery !== ""
             ? {
-                Request: {
-                  OR: [
-                    {
+                OR: [
+                  {
+                    name: {
+                      contains: args.searchQuery,
+                      mode: "insensitive",
+                    },
+                  },
+                  {
+                    FlowVersion: {
                       name: {
                         contains: args.searchQuery,
                         mode: "insensitive",
                       },
                     },
-                    {
-                      FlowVersion: {
-                        name: {
-                          contains: args.searchQuery,
-                          mode: "insensitive",
-                        },
-                      },
-                    },
-                  ],
-                },
+                  },
+                ],
               }
             : {},
           // if getting request steps for user, then get requests steps for flows (or corresponding evolve flows) they are watching
@@ -56,17 +59,13 @@ export const getRequestSteps = async ({
             ? {
                 OR: [
                   {
-                    Request: {
-                      FlowVersion: {
-                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
-                      },
+                    FlowVersion: {
+                      Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
                     },
                   },
                   {
-                    Request: {
-                      ProposedFlowVersionEvolution: {
-                        Flow: createUserWatchedFlowFilter({ userId: user.id, watched: true }),
-                      },
+                    ProposedFlowVersionEvolution: {
+                      Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
                     },
                   },
                 ],
@@ -77,18 +76,14 @@ export const getRequestSteps = async ({
             ? {
                 OR: [
                   {
-                    Request: {
-                      FlowVersion: {
-                        flowId: args.flowId,
-                      },
+                    FlowVersion: {
+                      flowId: args.flowId,
                     },
                   },
                   {
-                    Request: {
-                      ProposedFlowVersionEvolution: {
-                        Flow: {
-                          id: args.flowId,
-                        },
+                    ProposedFlowVersionEvolution: {
+                      Flow: {
+                        id: args.flowId,
                       },
                     },
                   },
@@ -99,78 +94,54 @@ export const getRequestSteps = async ({
           // for that the group watches or owns
           args.groupId
             ? {
-                Request: {
-                  OR: [
-                    {
-                      ProposedFlowVersionEvolution: {
-                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
-                      },
+                OR: [
+                  {
+                    ProposedFlowVersionEvolution: {
+                      Flow: createGroupWatchedFlowFilter({
+                        groupId: args.groupId,
+                        watched: true,
+                      }),
                     },
-                    {
-                      FlowVersion: {
-                        Flow: createGroupWatchedFlowFilter({ groupId: args.groupId }),
-                      },
+                  },
+                  {
+                    FlowVersion: {
+                      Flow: createGroupWatchedFlowFilter({
+                        groupId: args.groupId,
+                        watched: true,
+                      }),
                     },
-                  ],
-                },
+                  },
+                ],
               }
             : {},
           args.statusFilter !== RequestStepStatusFilter.All
-            ? { responseFinal: args.statusFilter === RequestStepStatusFilter.Closed }
+            ? { final: args.statusFilter === RequestStepStatusFilter.Closed }
             : {},
           args.respondPermissionFilter !== RequestStepRespondPermissionFilter.All && user
             ? {
-                Request: {
-                  [args.respondPermissionFilter ===
-                  RequestStepRespondPermissionFilter.RespondPermission
-                    ? "is"
-                    : "NOT"]: {
-                    FlowVersion: {
-                      Steps: {
-                        some: {
-                          ResponsePermissions: {
-                            OR: [
-                              { anyone: true },
-                              {
-                                EntitySet: {
-                                  EntitySetEntities: {
-                                    some: {
-                                      Entity: {
-                                        OR: [
-                                          { Group: { id: { in: groupIds } } },
-                                          { Identity: { id: { in: identityIds } } },
-                                        ],
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            ],
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
+                [args.respondPermissionFilter ===
+                RequestStepRespondPermissionFilter.RespondPermission
+                  ? "OR"
+                  : "NOT"]: [createPermissionFilter(groupIds, identityIds, user.id)], // moved where logic to its own function so typechecking would still work
               }
             : {},
         ],
       },
-      include: createRequestStepSummaryInclude(user?.id),
+      include: createRequestSummaryInclude(entityIds),
       // TODO revisit the ordering logic here
       orderBy: [
         {
           final: "asc",
         },
         {
-          expirationDate: "asc",
+          updatedAt: "desc",
         },
       ],
     });
 
     return requestSteps.map((requestStep) =>
-      requestStepSummaryResolver({
-        requestStepSummary: requestStep,
+      requestSummaryResolver({
+        requestSummary: requestStep,
         identityIds,
         groupIds,
         userId: user?.id,
@@ -178,3 +149,39 @@ export const getRequestSteps = async ({
     );
   });
 };
+
+// filter condition is met if you have permissions on any of the
+const createPermissionFilter = (
+  groupIds: string[],
+  identityIds: string[],
+  userId: string,
+): Prisma.RequestWhereInput => ({
+  FlowVersion: {
+    Steps: {
+      some: {
+        ResponseConfig: {
+          ResponsePermissions: {
+            OR: [
+              { anyone: true },
+              {
+                EntitySet: {
+                  EntitySetEntities: {
+                    some: {
+                      Entity: {
+                        OR: [
+                          { Group: { id: { in: groupIds } } },
+                          { Identity: { id: { in: identityIds } } },
+                          { User: { id: userId } },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+});

@@ -28,7 +28,6 @@ export const generateIdeaCreationStep = ({
 
   const step = generateStepConfig({
     permission,
-    requestFields: [],
     responseFields: [field],
     result: [result],
     action: generateActionConfig({ type: ActionType.TriggerStep }),

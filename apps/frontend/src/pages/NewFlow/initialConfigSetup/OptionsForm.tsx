@@ -6,7 +6,7 @@ import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/def
 import { Switch, TextField } from "@/components/Form/formFields";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
-import { IntitialFlowSetupSchemaType } from "../formValidation";
+import { IntitialFlowSetupSchemaType, Reusable } from "../formValidation";
 
 export const OptionsForm = () => {
   const { watch, control } = useFormContext<IntitialFlowSetupSchemaType>();
@@ -21,6 +21,7 @@ export const OptionsForm = () => {
   const error = optionsFormState.errors.optionsConfig?.root?.message;
 
   const hasLinkedOptions = watch("optionsConfig.linkedOptions.hasLinkedOptions");
+  const isReusable = watch("reusable") === Reusable.Reusable;
 
   return (
     <>
@@ -53,18 +54,20 @@ export const OptionsForm = () => {
               Add option
             </Button>
           </Box>
-          <Switch<IntitialFlowSetupSchemaType>
-            label={"Requestor can create additional options"}
-            name={"optionsConfig.requestCreatedOptions"}
-            sx={{ marginLeft: "8px" }}
-            defaultValue={false}
-          />
+          {isReusable && (
+            <Switch<IntitialFlowSetupSchemaType>
+              label={"Requestor can create additional options"}
+              name={"optionsConfig.requestCreatedOptions"}
+              sx={{ marginLeft: "8px" }}
+            />
+          )}
+
           <Switch<IntitialFlowSetupSchemaType>
             label={"Generate option ideas from partipants"}
             name={"optionsConfig.linkedOptions.hasLinkedOptions"}
             sx={{ marginLeft: "8px" }}
-            defaultValue={false}
           />
+
           {hasLinkedOptions && (
             <TextField<IntitialFlowSetupSchemaType>
               // assuming here that results to fields is 1:1 relationshp

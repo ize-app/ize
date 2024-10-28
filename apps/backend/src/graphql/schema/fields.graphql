@@ -1,3 +1,8 @@
+type FieldSet {
+  fields: [Field!]!
+  locked: Boolean!
+}
+
 union Field = Options | FreeInput
 
 input FieldAnswerArgs {
@@ -17,8 +22,10 @@ type Options {
   fieldId: String!
   name: String!
   required: Boolean!
+  isInternal: Boolean!
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
+  systemType: SystemFieldType
   selectionType: FieldOptionsSelectionType!
   maxSelections: Int
   linkedResultOptions: [LinkedResult!]!
@@ -27,7 +34,7 @@ type Options {
 
 type LinkedResult {
   resultConfigId: String!
-  resultType: ResultType!
+  resultName: String!
   fieldId: String!
   fieldName: String!
 }
@@ -35,7 +42,9 @@ type LinkedResult {
 type FreeInput {
   fieldId: String!
   name: String!
+  isInternal: Boolean!
   required: Boolean!
+  systemType: SystemFieldType
   dataType: FieldDataType!
   defaultAnswer: FieldAnswer
 }
@@ -59,6 +68,17 @@ enum FieldDataType {
   Webhook
 }
 
+enum SystemFieldType {
+  EvolveFlowProposed
+  EvolveFlowCurrent
+  EvolveFlowDescription
+  GroupName
+  GroupDescription
+  GroupMembers
+  WatchFlow
+  UnwatchFlow
+}
+
 enum FieldType {
   Options
   FreeInput
@@ -78,27 +98,22 @@ union FieldAnswer =
   | WebhookFieldAnswer
 
 type OptionFieldAnswer {
-  fieldId: String!
   selections: [OptionFieldAnswerSelection!]!
 }
 
 type FreeInputFieldAnswer {
-  fieldId: String!
   value: String!
 }
 
 type EntitiesFieldAnswer {
-  fieldId: String!
   entities: [Entity!]!
 }
 
 type FlowsFieldAnswer {
-  fieldId: String!
-  flows: [FlowSummary!]!
+  flows: [FlowReference!]!
 }
 
 type WebhookFieldAnswer {
-  fieldId: String!
   uri: String!
   webhookId: String
   originalUri: String
@@ -106,14 +121,19 @@ type WebhookFieldAnswer {
 }
 
 type UserFieldAnswer {
-  creator: Respondant!
+  creator: Entity!
   createdAt: String!
   answer: FieldAnswer!
 }
 
-type UserFieldAnswers {
-  fieldId: String!
+type ResponseFieldAnswers {
+  field: Field!
   answers: [UserFieldAnswer!]!
+}
+
+type TriggerFieldAnswer {
+  field: Field!
+  answer: UserFieldAnswer
 }
 
 # later will use this type to add option free inputs
@@ -121,11 +141,18 @@ type OptionFieldAnswerSelection {
   optionId: String
 }
 
+input FieldSetArgs {
+  fields: [FieldArgs!]!
+  locked: Boolean!
+}
+
 input FieldArgs {
   fieldId: String!
   type: FieldType!
   name: String!
   required: Boolean!
+  isInternal: Boolean!
+  systemType: SystemFieldType
   freeInputDataType: FieldDataType
   optionsConfig: FieldOptionsConfigArgs
 }

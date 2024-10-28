@@ -6,15 +6,17 @@ export const callWebhookResolver = (
   {
     webhook,
     filterOption,
+    name,
     locked = false,
-  }: { webhook: Webhook; filterOption: Option | undefined; locked: boolean },
+  }: { webhook: Webhook; filterOption: Option | undefined; locked: boolean; name: string },
   // obscureUri = true,
 ): CallWebhook => {
   return {
     __typename: "CallWebhook",
+    name,
     webhookId: webhook.id,
     uri: "https://" + webhook.uriPreview, // Only return the hostname for privacy
-    name: webhook.name,
+    webhookName: webhook.name,
     filterOption,
     locked,
   };

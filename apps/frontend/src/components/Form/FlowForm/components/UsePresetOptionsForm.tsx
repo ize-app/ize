@@ -47,7 +47,6 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
         >
           <ResponsiveFormRow key={item.id} sx={{ alignItem: "flex-start" }}>
             <Select<T>
-              control={control}
               disabled={locked}
               size={"small"}
               sx={{ width: "140px", flexGrow: 0 }}

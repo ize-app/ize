@@ -8,28 +8,26 @@ import {
   FieldFragment,
   FieldType,
   ResultConfigFragment,
-  ResultFragment,
-  ResultType,
+  ResultGroupFragment,
   Status,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { ResultHeader } from "../ResultName";
-import { resultTypeDisplay } from "../resultTypeDisplay";
 
 export const Result = ({
-  resultConfig,
   field,
-  result,
+  resultConfig,
+  resultGroup,
   requestStepStatus,
   displayDescripton,
   onlyShowSelections = false,
   displayFieldOptionsIfNoResult = true,
 }: {
+  field: FieldFragment;
   resultConfig: ResultConfigFragment;
-  field: FieldFragment | null;
-  result: ResultFragment | null;
+  resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
@@ -53,17 +51,16 @@ export const Result = ({
       key={resultConfig.resultConfigId}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <ResultHeader
-          name={field?.name}
-          resultType={resultTypeDisplay[resultConfig.__typename] as ResultType}
-          requestStatus={requestStepStatus}
-        />
+        <ResultHeader label={resultConfig.name} requestStatus={requestStepStatus} />
+        <Typography color="primary" fontSize="1rem">
+          {field?.name}
+        </Typography>
         {displayDescripton && (
           <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
             {createResultConfigDescription(resultConfig)}
           </Typography>
         )}
-        {result && !result?.hasResult && (
+        {resultGroup && !resultGroup?.hasResult && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
             <DoNotDisturbIcon color="warning" fontSize="small" />
             <Typography variant="description" color={(theme) => theme.palette.warning.main}>
@@ -72,21 +69,42 @@ export const Result = ({
             </Typography>
           </Box>
         )}
-        {field &&
+        {resultGroup &&
+          resultGroup.results.map((result, index) => {
+            return (
+              <Box key={"result" + index}>
+                {index > 0 && <Typography variant="description">{result.name}</Typography>}
+                {field &&
+                  field.__typename === FieldType.Options &&
+                  result.resultItems.some((item) => item.optionId) &&
+                  (resultGroup || (!resultGroup && displayFieldOptionsIfNoResult)) && (
+                    <FieldOptions
+                      // key={"options" + index}
+                      fieldOptions={field}
+                      final={!!result}
+                      optionSelections={result.resultItems}
+                      onlyShowSelections={onlyShowSelections}
+                    />
+                  )}
+                {field &&
+                  // field.__typename === FieldType.FreeInput &&
+                  result.resultItems.some((item) => !item.optionId) &&
+                  result.resultItems.map((item) => (
+                    <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
+                  ))}
+              </Box>
+            );
+          })}
+        {(!resultGroup || !resultGroup.hasResult) &&
+          field &&
           field.__typename === FieldType.Options &&
-          (result || (!result && displayFieldOptionsIfNoResult)) && (
+          displayFieldOptionsIfNoResult && (
             <FieldOptions
               fieldOptions={field}
-              final={!!result}
-              optionSelections={result?.resultItems}
+              final={!!resultGroup}
               onlyShowSelections={onlyShowSelections}
             />
           )}
-        {field &&
-          field.__typename === FieldType.FreeInput &&
-          result?.resultItems.map((item) => (
-            <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
-          ))}
       </Box>
     </LabeledGroupedInputs>
   );

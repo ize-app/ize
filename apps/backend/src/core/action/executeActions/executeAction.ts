@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
 
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
-import { resultInclude } from "@/core/result/resultPrismaTypes";
+import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { resultGroupInclude } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
 import { decrypt } from "@/prisma/encrypt";
 import { calculateBackoffMs } from "@/utils/calculateBackoffMs";
@@ -11,7 +12,6 @@ import { evolveGroup } from "./evolveGroup";
 import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
-import { createNotificationPayload } from "../../notification/createNotificationPayload/createNotificationPayload";
 import { ActionNewPrismaType } from "../actionPrismaTypes";
 import { callWebhook } from "../webhook/callWebhook";
 
@@ -38,8 +38,8 @@ export const executeAction = async ({
           Step: {
             include: stepInclude,
           },
-          Results: {
-            include: resultInclude,
+          ResultGroups: {
+            include: resultGroupInclude,
           },
           ActionExecution: true,
         },
@@ -55,8 +55,13 @@ export const executeAction = async ({
       // if the action filter isn't passed, end the request step and request
       if (action.filterOptionId) {
         let passesFilter = false;
-        for (const result of reqStep.Results) {
-          if (result.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId)) {
+        for (const result of reqStep.ResultGroups) {
+          const primaryResults = result.Result.filter((r) => r.index === 0);
+          if (
+            primaryResults.some((res) =>
+              res.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId),
+            )
+          ) {
             passesFilter = true;
             break;
           }
@@ -106,7 +111,7 @@ export const executeAction = async ({
         switch (action.type) {
           case ActionType.CallWebhook: {
             if (!action.Webhook) throw Error("");
-            const payload = await createNotificationPayload({ requestStepId, transaction });
+            const payload = await createRequestPayload({ requestStepId });
             const uri = decrypt(action.Webhook.uri);
             await callWebhook({ uri, payload });
             break;
