@@ -23,13 +23,16 @@ export const newStep = async ({
 }): Promise<StepPrismaType> => {
   let responseConfigId: string | null = null;
 
-  const responseFieldSet = args.response
-    ? await newFieldSet({
-        fieldSetArgs: args.fieldSet,
-        transaction,
-        createdSteps,
-      })
-    : null;
+  const responseFieldSet =
+    args.fieldSet.fields.length > 0 || args.fieldSet.locked
+      ? await newFieldSet({
+          fieldSetArgs: args.fieldSet,
+          transaction,
+          createdSteps,
+        })
+      : null;
+
+  // console.log("responseFieldSet", responseFieldSet?.FieldSetFields);
 
   const hasResponse = args.fieldSet.fields.filter((f) => !f.isInternal).length > 0;
 

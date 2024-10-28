@@ -66,6 +66,7 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
     field,
+    criteria: decConfig.criteria,
     minimumAnswers: resultConfig.minAnswers,
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,

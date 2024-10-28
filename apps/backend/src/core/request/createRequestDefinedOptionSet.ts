@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
-import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
@@ -16,7 +15,7 @@ export const createRequestDefinedOptionSet = async ({
   fieldId,
   newOptionArgs,
   isTriggerDefinedOptions,
-  transaction = prisma,
+  transaction,
 }: {
   flowVersion: FlowVersionPrismaType;
   requestId: string;
@@ -24,7 +23,7 @@ export const createRequestDefinedOptionSet = async ({
   isTriggerDefinedOptions: boolean;
   newOptionArgs: FieldOptionArgs[];
 
-  transaction?: Prisma.TransactionClient;
+  transaction: Prisma.TransactionClient;
 }) => {
   let field: FieldPrismaType | null = null;
   for (const step of flowVersion.Steps ?? []) {
