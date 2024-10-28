@@ -89,22 +89,32 @@ type RequestStep {
 }
 
 type RequestSummary {
-  id: String! # same as requestStepId, might delete requestStepId later
-  requestStepId: String!
   requestId: String!
   flowId: String!
-  # user who triggered the first step of this request
-  creator: Entity!
   requestName: String!
-  respondPermission: Permission
-  userRespondPermission: Boolean!
-  userResponded: Boolean!
   flowName: String!
-  stepIndex: Int!
-  totalSteps: Int!
+  creator: Entity!
   createdAt: String!
+  status: Boolean!
+  currentStep: RequestStepSummary!
+}
+
+type RequestStepSummary {
+  requestStepId: String!
   status: RequestStepStatus!
   expirationDate: String!
+  action: RequestStepActionSummary
+  respondPermission: Permission
+  # note: Field set here is what's defined on the step. doesn't include options defined within a request
+  fieldName: String!
+  resultName: String!
+  result: ResultGroup
+  userRespondPermission: Boolean!
+  userResponded: Boolean!
+}
+type RequestStepActionSummary {
+  name: String!
+  status: Status!
 }
 
 type Response {

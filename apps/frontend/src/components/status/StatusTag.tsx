@@ -9,6 +9,7 @@ export const StatusTag = ({ status }: { status: Status }) => {
     <Chip
       label={statusProps[status].label}
       sx={{
+        borderRadius: "1px",
         backgroundColor: "white",
         border: `1px solid ${statusProps[status].backgroundColor}`,
         color: statusProps[status].backgroundColor,

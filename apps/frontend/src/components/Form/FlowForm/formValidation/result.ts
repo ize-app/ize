@@ -99,12 +99,12 @@ export const resultSchema = z
     llmResultSchema,
     llmListResultSchema,
   ])
-  .refine(
-    (result) => {
-      if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
-      return true;
-    },
-    { message: "There must be at least 2 responses to create a result" },
-  );
+  // .refine(
+  //   (result) => {
+  //     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
+  //     return true;
+  //   },
+  //   { message: "There must be at least 2 responses to create a result" },
+  // );
 
 export const resultsSchema = z.array(resultSchema).default([]);

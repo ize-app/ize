@@ -8,7 +8,7 @@ import {
 } from "@/graphql/generated/resolver-types";
 
 import { createRequestSummaryInclude } from "./requestPrismaTypes";
-import { requestSummaryResolver } from "./resolvers/requestStepSummaryResolver";
+import { requestSummaryResolver } from "./resolvers/requestSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { createGroupWatchedFlowFilter, createUserWatchedFlowFilter } from "../flow/flowPrismaTypes";
@@ -25,8 +25,6 @@ export const getRequestSummaries = async ({
   const groupIds: string[] = await getGroupIdsOfUser({ user });
   const identityIds: string[] = user?.Identities.map((id) => id.id) ?? [];
   const entityIds = getUserEntityIds(user);
-
-  console.log("args.respondPermissionFilter", args.respondPermissionFilter);
 
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.request.findMany({

@@ -33,8 +33,6 @@ export const Result = ({
   displayDescripton: boolean;
   displayFieldOptionsIfNoResult?: boolean;
 }) => {
-  console.log("result group");
-  console.log("field", field);
   return (
     <LabeledGroupedInputs
       sx={{

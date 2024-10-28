@@ -1,3 +1,5 @@
+import BoltIcon from "@mui/icons-material/Bolt";
+import { Box, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -18,21 +20,11 @@ import { ResponseStatus } from "./tableComponents/ResponseStatus";
 export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFragment[] }) => {
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
-      <Table aria-label="Request Table" stickyHeader={true}>
-        <TableHead>
-          <TableRow>
-            <TableCellHideable sx={{ minWidth: "140px" }}>Request</TableCellHideable>
-            <TableCellHideable align="center" width={"100px"}>
-              Expiration
-            </TableCellHideable>
-            <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-              Response
-            </TableCellHideable>
-          </TableRow>
-        </TableHead>
+      <Table aria-label="Request Table" sx={{ tableLayout: "fixed", width: "100%" }}>
+        <TableHead></TableHead>
         <TableBody>
           {requests.map((requestStep) => (
-            <RequestSummaryRow key={requestStep.requestStepId} request={requestStep} />
+            <RequestSummaryRow key={requestStep.requestId} request={requestStep} />
           ))}
         </TableBody>
       </Table>
@@ -42,6 +34,13 @@ export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFrag
 
 const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => {
   const navigate = useNavigate();
+  const responseComplete = request.currentStep.status.responseFinal;
+  const result = request.currentStep.result?.results[0];
+  const action = request.currentStep.action;
+  const userResponded = request.currentStep.userResponded;
+  const userRespondPermission = request.currentStep.userRespondPermission;
+
+  // console.log("results ", request.currentStep.result?.results);
 
   return (
     <>
@@ -55,23 +54,92 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
           )
         }
       >
-        <TableCellHideable component="th" scope="row" align="left">
-          <RequestStepTitle
-            flowName={request.flowName}
-            requestName={request.requestName}
-            creator={request.creator}
-            totalSteps={request.totalSteps}
-            stepIndex={request.stepIndex}
-          />
+        <TableCellHideable
+          component="th"
+          scope="row"
+          align="left"
+          sx={{
+            width: "55%", // Allocate more space to the first column
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          <RequestStepTitle request={request} />
         </TableCellHideable>
-        <TableCellHideable align="center" width={"160px"}>
-          <ExpirationStatus expirationDate={new Date(request.expirationDate)} />
-        </TableCellHideable>
-        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-          <ResponseStatus
-            userResponded={request.userResponded}
-            responseComplete={request.status.responseFinal}
-          />
+        <TableCellHideable
+          align="right"
+          // width="200px"
+          sx={{ width: "45%", minWidth: "240px", maxWidth: "400px" }}
+        >
+          {!responseComplete && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "24px",
+                justifyContent: "flex-end",
+                // width: "200px",
+              }}
+            >
+              {!userResponded && (
+                <ExpirationStatus expirationDate={new Date(request.currentStep.expirationDate)} />
+              )}
+
+              <ResponseStatus
+                userResponded={userResponded}
+                responsePermission={userRespondPermission}
+              />
+            </Box>
+          )}
+
+          {responseComplete && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "flex-end",
+                flexDirection: "column",
+                gap: "4px",
+                padding: "0 4px",
+              }}
+            >
+              {result ? (
+                <Typography
+                  variant="description"
+                  color={(theme) => theme.palette.success.main}
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "2",
+                    whiteSpace: "normal",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textAlign: "right",
+                  }}
+                >
+                  {result.resultItems.map((ri) => ri.value).join(", ")}
+                </Typography>
+              ) : (
+                <Typography variant="description">No result</Typography>
+              )}
+              {action && (
+                <Box sx={{ display: "flex", gap: "4px" }}>
+                  <BoltIcon color="primary" fontSize="small" />
+                  <Typography
+                    variant="description"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: "1",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {action.name}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          )}
         </TableCellHideable>
       </TableRow>
     </>

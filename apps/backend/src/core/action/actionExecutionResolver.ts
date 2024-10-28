@@ -1,6 +1,7 @@
-import { ActionExecution, Status } from "@/graphql/generated/resolver-types";
+import { ActionExecution } from "@/graphql/generated/resolver-types";
 
 import { ActionExecutionPrismaType, ActionNewPrismaType } from "./actionPrismaTypes";
+import { getActionExecutionStatus } from "./getActionExecutionStatus";
 
 export const actionExecutionResolver = (
   actionExecutions: ActionExecutionPrismaType[],
@@ -14,16 +15,6 @@ export const actionExecutionResolver = (
   return {
     actionId: action.id,
     lastAttemptedAt: actionExecution?.lastAttemptedAt.toISOString() ?? null,
-    status: determineActionStatus(actionExecution, requestFinal),
+    status: getActionExecutionStatus(actionExecution, requestFinal),
   };
-};
-
-const determineActionStatus = (
-  actionExecution: ActionExecutionPrismaType | undefined,
-  requestFinal: boolean,
-) => {
-  if (actionExecution && actionExecution.complete) return Status.Completed;
-  else if (actionExecution && !actionExecution.complete) return Status.Failure;
-  else if (!actionExecution && requestFinal) return Status.Cancelled;
-  else return Status.NotAttempted;
 };

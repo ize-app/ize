@@ -4,6 +4,7 @@ import { Action, Field, Group, Option } from "@/graphql/generated/resolver-types
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ActionNewPrismaType } from "./actionPrismaTypes";
+import { getActionName } from "./getActionName";
 import { callWebhookResolver } from "./webhook/webhookResolver";
 
 export const actionResolver = ({
@@ -36,38 +37,45 @@ export const actionResolver = ({
       });
   }
 
+  const name = getActionName({ action, ownerGroup });
+
   switch (action.type) {
     case ActionType.CallWebhook:
       if (!action.Webhook)
         throw new GraphQLError("Missing webhook action config.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
-      return callWebhookResolver({ webhook: action.Webhook, filterOption, locked: action.locked });
+      return callWebhookResolver({
+        webhook: action.Webhook,
+        filterOption,
+        locked: action.locked,
+        name,
+      });
     case ActionType.TriggerStep:
       return {
         __typename: "TriggerStep",
-        name: "Trigger a new step",
+        name,
         filterOption,
         locked: action.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
-        name: "Evolve flow",
+        name,
         filterOption,
         locked: action.locked,
       };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
-        name: `Watch/unwatch flow${ownerGroup ? ` for ${ownerGroup.name}` : ""}`,
+        name,
         filterOption,
         locked: action.locked,
       };
     case ActionType.EvolveGroup:
       return {
         __typename: "EvolveGroup",
-        name: `Evolve group${ownerGroup ? `: ${ownerGroup.name}` : ""}`,
+        name,
         filterOption,
         locked: action.locked,
       };

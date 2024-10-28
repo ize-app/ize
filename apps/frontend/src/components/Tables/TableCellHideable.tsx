@@ -18,8 +18,6 @@ export const TableCellHideable = ({
   return hideOnSmallScreen ? (
     <HiddenCell {...props}>{props.children}</HiddenCell>
   ) : (
-    <TableCell sx={{}} {...props}>
-      {props.children}
-    </TableCell>
+    <TableCell {...props}>{props.children}</TableCell>
   );
 };

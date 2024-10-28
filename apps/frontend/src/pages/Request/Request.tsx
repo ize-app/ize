@@ -84,7 +84,7 @@ export const Request = () => {
   }
 
   // console.log("request is ", request);
-
+  //
   if (loading || !request) return <Loading />;
 
   const tabs: TabProps[] = [
@@ -109,7 +109,17 @@ export const Request = () => {
           <Typography variant={"body1"} fontWeight={600} color="primary">
             Request
           </Typography>
-          <Typography variant={"h1"} marginBottom={".75rem"}>
+          <Typography
+            variant={"h1"}
+            marginBottom={".75rem"}
+            sx={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: "4",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {request.name}
           </Typography>
           {reusable && (
@@ -192,6 +202,7 @@ export const Request = () => {
               justifyContent: "space-between",
               width: "100%",
               minWidth: "300px",
+
               // outline: "1px solid rgba(0, 0, 0, 0.1)",
               outline: `1px solid ${theme.palette.primary.main}`,
               padding: "16px 24px 16px 16px",

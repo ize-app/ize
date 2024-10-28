@@ -3,22 +3,9 @@ import Typography from "@mui/material/Typography";
 
 import { AvatarGroup } from "@/components/Avatar";
 
-import { EntityFragment, UserSummaryPartsFragment } from "../../../graphql/generated/graphql";
+import { RequestSummaryFragment } from "../../../graphql/generated/graphql";
 
-export const RequestStepTitle = ({
-  flowName,
-  requestName,
-  creator,
-  totalSteps,
-  stepIndex,
-}: {
-  flowName: string;
-  requestName: string;
-  creator: EntityFragment | UserSummaryPartsFragment;
-  totalSteps: number;
-  stepIndex: number;
-}) => {
-  const stepProgress = totalSteps > 1 ? ` (Step ${stepIndex + 1} of ${totalSteps})` : ``;
+export const RequestStepTitle = ({ request }: { request: RequestSummaryFragment }) => {
   return (
     <Box
       sx={{
@@ -38,10 +25,10 @@ export const RequestStepTitle = ({
           textOverflow: "ellipsis",
         }}
       >
-        {flowName}
+        {`${request.flowName}`}
       </Typography>
       <Box sx={{ display: "flex", gap: "8px" }}>
-        {creator && <AvatarGroup avatars={[creator]} size="16px" />}
+        <AvatarGroup avatars={[request.creator]} size="16px" />
         <Typography
           sx={{
             display: "-webkit-box",
@@ -51,7 +38,7 @@ export const RequestStepTitle = ({
             textOverflow: "ellipsis",
           }}
         >
-          {requestName + stepProgress}
+          {request.requestName}
         </Typography>
       </Box>
     </Box>

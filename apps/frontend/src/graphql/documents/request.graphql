@@ -89,27 +89,38 @@ fragment RequestStep on RequestStep {
 }
 
 fragment RequestSummary on RequestSummary {
-  id
-  requestStepId
   requestId
   flowId
   requestName
   flowName
-  userResponded
   creator {
     ...Entity
   }
-  respondPermission {
-    ...Permission
-  }
-  userRespondPermission
-  stepIndex
-  totalSteps
   createdAt
-  expirationDate
+  status
+  currentStep {
+    ...RequestStepSummary
+  }
+}
+
+fragment RequestStepSummary on RequestStepSummary {
+  requestStepId
   status {
     ...RequestStepStatus
   }
+  expirationDate
+  respondPermission {
+    ...Permission
+  }
+  fieldName
+  result {
+    ...ResultGroup
+  }
+  action {
+    ...RequestStepActionSummary
+  }
+  userRespondPermission
+  userResponded
 }
 
 fragment Response on Response {
@@ -128,4 +139,9 @@ fragment RequestStepStatus on RequestStepStatus {
   resultsFinal
   actionsFinal
   final
+}
+
+fragment RequestStepActionSummary on RequestStepActionSummary {
+  name
+  status
 }

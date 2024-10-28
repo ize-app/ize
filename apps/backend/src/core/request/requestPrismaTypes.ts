@@ -1,13 +1,17 @@
 import { Prisma } from "@prisma/client";
 
-import { actionExecutionInclude } from "../action/actionPrismaTypes";
+import { actionExecutionInclude, actionInclude } from "../action/actionPrismaTypes";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
-import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
+import {
+  fieldAnswerInclude,
+  fieldOptionSetInclude,
+  fieldSetInclude,
+} from "../fields/fieldPrismaTypes";
 import { createFlowVersionInclude } from "../flow/flowPrismaTypes";
 import { responseConfigInclude } from "../response/responseConfigPrismaTypes";
 import { responseInclude } from "../response/responsePrismaTypes";
-import { resultGroupInclude } from "../result/resultPrismaTypes";
+import { resultConfigSetInclude, resultGroupInclude } from "../result/resultPrismaTypes";
 
 export const requestDefinedOptionSetInclude =
   Prisma.validator<Prisma.RequestDefinedOptionSetInclude>()({
@@ -73,10 +77,25 @@ export const createRequestSummaryInclude = (userEntityIds: string[]) =>
             creatorEntityId: { in: userEntityIds },
           },
         },
+        ResultGroups: {
+          include: resultGroupInclude,
+        },
+        ActionExecution: {
+          include: actionExecutionInclude,
+        },
         Step: {
           include: {
             ResponseConfig: {
               include: responseConfigInclude,
+            },
+            Action: {
+              include: actionInclude,
+            },
+            ResultConfigSet: {
+              include: resultConfigSetInclude,
+            },
+            FieldSet: {
+              include: fieldSetInclude,
             },
           },
         },

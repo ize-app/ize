@@ -744,6 +744,7 @@ model Webhook {
   @@map("webhooks")
 }
 
+// Set up for multiple actions to be run in a single step even though there is currently only one action per step
 model ActionExecution {
   id              String    @id @default(uuid()) @db.Uuid
   actionId        String    @map("action_id") @db.Uuid

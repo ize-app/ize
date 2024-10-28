@@ -916,6 +916,12 @@ export type RequestStep = {
   userResponses: Array<Response>;
 };
 
+export type RequestStepActionSummary = {
+  __typename?: 'RequestStepActionSummary';
+  name: Scalars['String']['output'];
+  status: Status;
+};
+
 export enum RequestStepRespondPermissionFilter {
   All = 'All',
   NoRespondPermission = 'NoRespondPermission',
@@ -936,23 +942,30 @@ export enum RequestStepStatusFilter {
   Open = 'Open'
 }
 
+export type RequestStepSummary = {
+  __typename?: 'RequestStepSummary';
+  action?: Maybe<RequestStepActionSummary>;
+  expirationDate: Scalars['String']['output'];
+  fieldName: Scalars['String']['output'];
+  requestStepId: Scalars['String']['output'];
+  respondPermission?: Maybe<Permission>;
+  result?: Maybe<ResultGroup>;
+  resultName: Scalars['String']['output'];
+  status: RequestStepStatus;
+  userRespondPermission: Scalars['Boolean']['output'];
+  userResponded: Scalars['Boolean']['output'];
+};
+
 export type RequestSummary = {
   __typename?: 'RequestSummary';
   createdAt: Scalars['String']['output'];
   creator: Entity;
-  expirationDate: Scalars['String']['output'];
+  currentStep: RequestStepSummary;
   flowId: Scalars['String']['output'];
   flowName: Scalars['String']['output'];
-  id: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
   requestName: Scalars['String']['output'];
-  requestStepId: Scalars['String']['output'];
-  respondPermission?: Maybe<Permission>;
-  status: RequestStepStatus;
-  stepIndex: Scalars['Int']['output'];
-  totalSteps: Scalars['Int']['output'];
-  userRespondPermission: Scalars['Boolean']['output'];
-  userResponded: Scalars['Boolean']['output'];
+  status: Scalars['Boolean']['output'];
 };
 
 export type Response = {
@@ -1320,10 +1333,12 @@ export type ResolversTypes = {
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['TriggerFieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
+  RequestStepActionSummary: ResolverTypeWrapper<RequestStepActionSummary>;
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
   RequestStepStatus: ResolverTypeWrapper<RequestStepStatus>;
   RequestStepStatusFilter: RequestStepStatusFilter;
-  RequestSummary: ResolverTypeWrapper<Omit<RequestSummary, 'creator' | 'respondPermission'> & { creator: ResolversTypes['Entity'], respondPermission?: Maybe<ResolversTypes['Permission']> }>;
+  RequestStepSummary: ResolverTypeWrapper<Omit<RequestStepSummary, 'respondPermission'> & { respondPermission?: Maybe<ResolversTypes['Permission']> }>;
+  RequestSummary: ResolverTypeWrapper<Omit<RequestSummary, 'creator' | 'currentStep'> & { creator: ResolversTypes['Entity'], currentStep: ResolversTypes['RequestStepSummary'] }>;
   Response: ResolverTypeWrapper<Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversTypes['FieldAnswer']>, creator: ResolversTypes['Entity'] }>;
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   ResponseConfigArgs: ResponseConfigArgs;
@@ -1445,8 +1460,10 @@ export type ResolversParentTypes = {
   Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['TriggerFieldAnswer']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
+  RequestStepActionSummary: RequestStepActionSummary;
   RequestStepStatus: RequestStepStatus;
-  RequestSummary: Omit<RequestSummary, 'creator' | 'respondPermission'> & { creator: ResolversParentTypes['Entity'], respondPermission?: Maybe<ResolversParentTypes['Permission']> };
+  RequestStepSummary: Omit<RequestStepSummary, 'respondPermission'> & { respondPermission?: Maybe<ResolversParentTypes['Permission']> };
+  RequestSummary: Omit<RequestSummary, 'creator' | 'currentStep'> & { creator: ResolversParentTypes['Entity'], currentStep: ResolversParentTypes['RequestStepSummary'] };
   Response: Omit<Response, 'answers' | 'creator'> & { answers: Array<ResolversParentTypes['FieldAnswer']>, creator: ResolversParentTypes['Entity'] };
   ResponseConfig: Omit<ResponseConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   ResponseConfigArgs: ResponseConfigArgs;
@@ -1950,6 +1967,12 @@ export type RequestStepResolvers<ContextType = GraphqlRequestContext, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type RequestStepActionSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepActionSummary'] = ResolversParentTypes['RequestStepActionSummary']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Status'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type RequestStepStatusResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepStatus'] = ResolversParentTypes['RequestStepStatus']> = {
   actionsFinal?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1958,22 +1981,29 @@ export type RequestStepStatusResolvers<ContextType = GraphqlRequestContext, Pare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type RequestStepSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestStepSummary'] = ResolversParentTypes['RequestStepSummary']> = {
+  action?: Resolver<Maybe<ResolversTypes['RequestStepActionSummary']>, ParentType, ContextType>;
+  expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  respondPermission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
+  result?: Resolver<Maybe<ResolversTypes['ResultGroup']>, ParentType, ContextType>;
+  resultName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['RequestStepStatus'], ParentType, ContextType>;
+  userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userResponded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type RequestSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RequestSummary'] = ResolversParentTypes['RequestSummary']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
-  expirationDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  currentStep?: Resolver<ResolversTypes['RequestStepSummary'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   flowName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  requestStepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  respondPermission?: Resolver<Maybe<ResolversTypes['Permission']>, ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['RequestStepStatus'], ParentType, ContextType>;
-  stepIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalSteps?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  userRespondPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  userResponded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2137,7 +2167,9 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Ranking?: RankingResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
+  RequestStepActionSummary?: RequestStepActionSummaryResolvers<ContextType>;
   RequestStepStatus?: RequestStepStatusResolvers<ContextType>;
+  RequestStepSummary?: RequestStepSummaryResolvers<ContextType>;
   RequestSummary?: RequestSummaryResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;

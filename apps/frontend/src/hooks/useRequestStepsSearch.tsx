@@ -34,7 +34,7 @@ const useRequestStepsSearch = ({
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument);
 
   const newCursor = data?.getRequests.length
-    ? data.getRequests[data.getRequests.length - 1].requestStepId
+    ? data.getRequests[data.getRequests.length - 1].requestId // might want to change this to requestStepId depending on caching
     : "";
 
   const queryVarsRef = useRef<GetRequestsQueryVariables>({
