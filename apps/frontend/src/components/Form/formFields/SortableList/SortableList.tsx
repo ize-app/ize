@@ -76,11 +76,11 @@ export const SortableList = <T extends FieldValues>({
               })?.label ?? "";
 
             return (
-              <>
+              <Box key={field.id}>
                 <TextField<T>
                   //@ts-expect-error TODO unclear why this error is happening
                   name={`${name}.${index}.optionId`}
-                  key={"optionId" + name + index}
+                
                   control={control}
                   sx={{ display: "none" }}
                   showLabel={false}
@@ -90,8 +90,8 @@ export const SortableList = <T extends FieldValues>({
                   size="small"
                 />
 
-                <SortableItem key={field.id} id={field.id} label={label} index={index} />
-              </>
+                <SortableItem id={field.id} label={label} index={index} />
+              </Box>
             );
           })}
         </Box>
