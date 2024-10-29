@@ -1,5 +1,6 @@
 import { executeAction } from "@/core/action/executeActions/executeAction";
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
+import { sendNewStepNotifications } from "@/core/notification/sendNewStepNotifications";
 import { sendResultNotifications } from "@/core/notification/sendResultNotifications";
 import { responseInclude } from "@/core/response/responsePrismaTypes";
 import { prisma } from "@/prisma/client";
@@ -17,6 +18,11 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
         id: requestStepId,
       },
       include: {
+        Request: {
+          include: {
+            FlowVersion: true,
+          },
+        },
         Step: {
           include: stepInclude,
         },
@@ -43,9 +49,23 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
       // TODO: end poll
       endTelegramPolls({ requestStepId });
       sendResultNotifications({ requestStepId });
-      await executeAction({
+      const { nextRequestStepId, runResultsForNextStep } = await executeAction({
         requestStepId,
       });
+      if (nextRequestStepId) {
+        // simplify this function later so it can just look up the flow id itself
+        sendNewStepNotifications({
+          flowId: reqStep.Request.FlowVersion.flowId,
+          requestStepId: nextRequestStepId,
+        });
+        // run results for next step in cases where there is no response required (e.g. ai decision)
+        if (runResultsForNextStep) {
+          await runResultsAndActions({ requestStepId: nextRequestStepId });
+        }
+      }
+      // if nextRequestStepId
+      //// call runResultsAndActions with nextRequestStepId
+      //// call sendNewStepNotifications with nextRequestStepId
     }
   } catch (e) {
     console.log("Error runResultsAndActions: ", e);

@@ -34,18 +34,20 @@ export const createRequestDefinedOptionSet = async ({
     }
   }
 
-  if (!field)
+  if (!field) {
     throw new GraphQLError("Cannot find flow field corresponding to request defined options.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
+  }
 
-  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType)
+  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType) {
     throw new GraphQLError(
       "Request defined options provided but this field does not allow request defined options.",
       {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       },
     );
+  }
 
   const optionSetId = await newOptionSet({
     transaction,

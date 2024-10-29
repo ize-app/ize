@@ -15,6 +15,11 @@ import { prisma } from "../../../prisma/client";
 import { ActionNewPrismaType } from "../actionPrismaTypes";
 import { callWebhook } from "../webhook/callWebhook";
 
+export interface ExecuteActionReturn {
+  nextRequestStepId: string | null;
+  runResultsForNextStep: boolean;
+}
+
 // Executes an action if it exists
 // since the action is the last execution component of a request step,
 // this function is also responsible for determining the final request_step and request statuses
@@ -25,11 +30,16 @@ export const executeAction = async ({
   // only includes results from the current ste
 }: {
   requestStepId: string;
-}) => {
+}): Promise<ExecuteActionReturn> => {
+  const defaultReturn: ExecuteActionReturn = {
+    nextRequestStepId: null,
+    runResultsForNextStep: false,
+  };
   try {
     const maxActionRetries = 10;
+    // const nextRequestStepId: string | null = null;
 
-    await prisma.$transaction(async (transaction) => {
+    return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
       const reqStep = await transaction.requestStep.findFirstOrThrow({
         where: {
           id: requestStepId,
@@ -49,7 +59,7 @@ export const executeAction = async ({
 
       if (!action) {
         await finalizeRequestStep({ requestStepId, transaction });
-        return;
+        return defaultReturn;
       }
 
       // if the action filter isn't passed, end the request step and request
@@ -69,7 +79,7 @@ export const executeAction = async ({
         if (!passesFilter) {
           // end request step without taking an action
           await finalizeRequestStep({ requestStepId, transaction, action });
-          return;
+          return defaultReturn;
         }
       }
 
@@ -79,7 +89,7 @@ export const executeAction = async ({
         // this should never evaluate to true, but just in case
         if (actionExecution.final) {
           await finalizeRequestStep({ requestStepId, transaction, action });
-          return;
+          return defaultReturn;
         }
 
         // if the action has been attempted too many times, mark it as final
@@ -98,16 +108,18 @@ export const executeAction = async ({
           });
 
           await finalizeRequestStep({ requestStepId, transaction, action });
-          return;
+          return defaultReturn;
         }
 
         // check if action is ready to be retried again, if not return existing incomplete result
         if (actionExecution.nextRetryAt && actionExecution.nextRetryAt > new Date()) {
-          return;
+          return defaultReturn;
         }
       }
 
       try {
+        let nextRequestStepId: string | null = null;
+        let runResultsForNextStep = false;
         switch (action.type) {
           case ActionType.CallWebhook: {
             if (!action.Webhook) throw Error("");
@@ -117,7 +129,9 @@ export const executeAction = async ({
             break;
           }
           case ActionType.TriggerStep: {
-            await triggerNextStep({ requestStepId });
+            const res = await triggerNextStep({ requestStepId, transaction });
+            nextRequestStepId = res.nextRequestStepId;
+            runResultsForNextStep = res.runResultsForNextStep;
             break;
           }
           case ActionType.EvolveFlow: {
@@ -158,7 +172,8 @@ export const executeAction = async ({
 
         await finalizeRequestStep({ requestStepId, transaction, action });
 
-        return;
+
+        return { nextRequestStepId, runResultsForNextStep } as ExecuteActionReturn;
       } catch (e) {
         const retryAttempts = actionExecution?.retryAttempts ?? 1;
         const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
@@ -184,11 +199,12 @@ export const executeAction = async ({
             nextRetryAt,
           },
         });
-        return;
+        return defaultReturn;
       }
     });
   } catch (error) {
     console.error("Error in executeAction:", error);
+    return defaultReturn;
   }
 };
 
