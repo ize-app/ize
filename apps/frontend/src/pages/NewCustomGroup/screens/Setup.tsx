@@ -79,14 +79,14 @@ export const Setup = () => {
                   icon: telegramLogoUrl,
                 },
                 {
-                  value: GroupCommunicationType.Telegram,
+                  value: "",
                   name: "Coming soon",
                   disabled: true,
                   title: "Discord",
                   icon: discordLogoUrl,
                 },
                 {
-                  value: GroupCommunicationType.Telegram,
+                  value: "",
                   name: "Coming soon",
                   disabled: true,
                   title: "Slack",

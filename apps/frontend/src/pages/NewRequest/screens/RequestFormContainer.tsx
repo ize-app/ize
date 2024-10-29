@@ -2,79 +2,21 @@ import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { createFieldAnswersFormState } from "@/components/Form/createFieldAnswersFormState";
 import { FieldAnswerRecordSchemaType } from "@/components/Form/formValidation/field";
 
 import Loading from "../../../components/Loading";
-import {
-  FieldAnswer,
-  FieldDataType,
-  FieldType,
-  Flow,
-  FlowType,
-  GetFlowDocument,
-} from "../../../graphql/generated/graphql";
+import { FieldFragment, Flow, FlowType, GetFlowDocument } from "../../../graphql/generated/graphql";
 import * as Routes from "../../../routers/routes";
 import { shortUUIDToFull } from "../../../utils/inputs";
 import { RequestForm } from "../components/RequestForm";
 import { RequestSchemaType } from "../formValidation";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
-const getFreeInputDefaultValue = (
-  defaultValue: FieldAnswer | undefined | null,
-  dataType: FieldDataType,
-) => {
-  if (defaultValue)
-    switch (defaultValue.__typename) {
-      case "EntitiesFieldAnswer":
-        return defaultValue.entities;
-      case "FlowsFieldAnswer":
-        return defaultValue.flows;
-      case "FreeInputFieldAnswer":
-        return defaultValue.value;
-      case "WebhookFieldAnswer":
-        return defaultValue;
-      case "OptionFieldAnswer":
-        return defaultValue.selections;
-      default:
-        return "";
-    }
-  else
-    switch (dataType) {
-      // case FieldDataType.Date:
-      //   return new Date();
-      // case FieldDataType.DateTime:
-      //   return new Date();
-      case FieldDataType.EntityIds:
-        return [];
-      case FieldDataType.FlowIds:
-        return [];
-      case FieldDataType.Number:
-        return "";
-      case FieldDataType.String:
-        return "";
-      default:
-        return "";
-    }
-};
-
 const createRequestFormState = (flow: Flow): RequestSchemaType => {
-  const requestFields: FieldAnswerRecordSchemaType = {};
-  flow.fieldSet.fields.forEach((field) => {
-    if (field.__typename === FieldType.FreeInput) {
-      const defaultValue = getFreeInputDefaultValue(field?.defaultAnswer, field.dataType);
-      requestFields[field.fieldId] = {
-        dataType: field.dataType,
-        required: field.required,
-        value: defaultValue,
-      };
-    } else if (field.__typename === FieldType.Options) {
-      requestFields[field.fieldId] = {
-        selectionType: field.selectionType,
-        maxSelections: field.maxSelections,
-        optionSelections: [],
-      };
-    }
-  }, {});
+  const requestFields: FieldAnswerRecordSchemaType = createFieldAnswersFormState({
+    fields: flow.fieldSet.fields as FieldFragment[],
+  });
 
   const newFormState: RequestSchemaType = {
     name: "",
