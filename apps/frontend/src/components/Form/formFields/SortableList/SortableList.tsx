@@ -1,10 +1,8 @@
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Box, Typography } from "@mui/material";
-import { useEffect } from "react";
 import {
   ArrayPath,
-  FieldArray,
   FieldValues,
   Path,
   UseFormReturn,
@@ -32,6 +30,8 @@ interface SortableListProps<T extends FieldValues> {
   formMethods: UseFormReturn<T>;
 }
 
+// step one: create formState and lose useEffect
+
 // TODO: Lots of ts-ignore here. Not quite sure how to make fieldArray a generic type
 export const SortableList = <T extends FieldValues>({
   name,
@@ -39,17 +39,10 @@ export const SortableList = <T extends FieldValues>({
   label,
 }: SortableListProps<T>) => {
   const { control } = useFormContext<T>();
-  const { fields, append, move } = useFieldArray({
+  const { fields, move } = useFieldArray({
     control,
     name: name as ArrayPath<T>,
   });
-
-  useEffect(() => {
-    if (fields.length === 0)
-      options.forEach((option) => {
-        append({ optionId: option.value } as FieldArray<T, ArrayPath<T>>);
-      });
-  }, []);
 
   return (
     <DndContext
@@ -80,7 +73,6 @@ export const SortableList = <T extends FieldValues>({
                 <TextField<T>
                   //@ts-expect-error TODO unclear why this error is happening
                   name={`${name}.${index}.optionId`}
-                
                   control={control}
                   sx={{ display: "none" }}
                   showLabel={false}

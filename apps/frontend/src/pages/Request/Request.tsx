@@ -168,12 +168,13 @@ export const Request = () => {
             ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
               <Paper
                 elevation={4}
-                sx={{
+                sx={(theme) => ({
                   display: "block",
                   alignSelf: "center",
                   minWidth: "500px",
                   maxWidth: "800px",
-                  border: `solid ${colors.primary} 2px`,
+                  border: `solid ${theme.palette.primary.light} 2px`,
+                  borderRadius: "8px",
                   outline: `2px solid ${colors.primaryContainer}`,
 
                   [theme.breakpoints.down("md")]: {
@@ -182,7 +183,7 @@ export const Request = () => {
                     maxWidth: "100%",
                     minWidth: "300px",
                   },
-                }}
+                })}
               >
                 <ResponseForm
                   requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
@@ -198,14 +199,13 @@ export const Request = () => {
                 flexDirection: "column",
                 gap: "36px",
               },
+              maxWidth: request.triggerFieldAnswers.length === 0 ? "700px" : undefined,
+
               flexDirection: "row",
               justifyContent: "space-between",
               width: "100%",
               flexGrow: 1,
-              // width: "fit-content",
               minWidth: "300px",
-
-              // outline: "1px solid rgba(0, 0, 0, 0.1)",
               outline: `1px solid ${theme.palette.primary.main}`,
               padding: "16px 24px 16px 16px",
               borderRadius: "8px",

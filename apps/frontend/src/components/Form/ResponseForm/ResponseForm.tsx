@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +17,7 @@ import {
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
+import { createResponseFormState } from "./createResponseFormState";
 import { ResponseSchemaType, responseSchema } from "./formValidation";
 import { DatePicker, DateTimePicker, MultiSelect, SortableList, TextField } from "../formFields";
 import { Radio } from "../formFields/Radio";
@@ -51,28 +52,13 @@ export const ResponseForm = ({
     },
   });
 
-  useEffect(() => {
-    responseFields.forEach((field) => {
-      if (field.__typename === FieldType.FreeInput) {
-        // @ts-expect-error not sure why react hook forms isn't picking up on record type
-        formMethods.setValue(`responseFields.${field.fieldId}.dataType`, field.dataType);
-        // @ts-expect-error not sure why react hook forms isn't picking up on record type
-        formMethods.setValue(`responseFields.${field.fieldId}.required`, field.required);
-      } else {
-        // @ts-expect-error not sure why react hook forms isn't picking up on record type
-        formMethods.setValue(`responseFields.${field.fieldId}.selectionType`, field.selectionType);
-        // @ts-expect-error not sure why react hook forms isn't picking up on record type
-        formMethods.setValue(`responseFields.${field.fieldId}.maxSelections`, field.maxSelections);
-      }
-    });
-  }, [responseFields]);
-
   const formMethods = useForm({
-    defaultValues: {},
+    defaultValues: createResponseFormState({ fields: responseFields }),
     resolver: zodResolver(responseSchema),
-    shouldUnregister: true,
+    shouldUnregister: false,
   });
 
+  // console.log("form state is ", formMethods.getValues());
   // console.log("errors are", formMethods.formState.errors);
 
   const onSubmit = async (data: ResponseSchemaType) => {
