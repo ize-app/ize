@@ -5,7 +5,6 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { validateInput } from "./validation/validateInput";
 
-
 export const newOptionSet = async ({
   options,
   // dataType is only used if you want to enforce a single data type for the entire option set
@@ -18,17 +17,20 @@ export const newOptionSet = async ({
 }): Promise<string> => {
   const fieldOptions = await Promise.all(
     options.map(async (option: FieldOptionArgs, index) => {
-      if (dataType && dataType !== option.dataType)
+      if (dataType && dataType !== option.dataType) {
         throw new GraphQLError(
           `Option does not march required data type for field set: ${option.dataType}`,
           {
             extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
           },
         );
-      if (!validateInput(option.name, option.dataType))
+      }
+      if (!validateInput(option.name, option.dataType)) {
         throw new GraphQLError(`Option value does not match field type: ${option.dataType}`, {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
+      }
+
       const res = await transaction.fieldOption.create({
         data: {
           name: option.name,

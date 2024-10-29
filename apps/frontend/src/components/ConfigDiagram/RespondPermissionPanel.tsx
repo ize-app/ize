@@ -13,7 +13,7 @@ export const RespondPermissionPanel = ({
   step: StepFragment;
   initialOpenState?: boolean;
 }) => {
-  if (!step.response) return <Typography>No response required</Typography>; //|| step.fieldSet.fields.every((field) => field.isInternal) ;
+  if (!step.response) return;
 
   const { permission, expirationSeconds, allowMultipleResponses, canBeManuallyEnded } =
     step.response;

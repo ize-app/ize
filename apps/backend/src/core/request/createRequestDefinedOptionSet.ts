@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldOptionArgs } from "@/graphql/generated/resolver-types";
-import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { requestDefinedOptionSetInclude } from "./requestPrismaTypes";
@@ -16,7 +15,7 @@ export const createRequestDefinedOptionSet = async ({
   fieldId,
   newOptionArgs,
   isTriggerDefinedOptions,
-  transaction = prisma,
+  transaction,
 }: {
   flowVersion: FlowVersionPrismaType;
   requestId: string;
@@ -24,7 +23,7 @@ export const createRequestDefinedOptionSet = async ({
   isTriggerDefinedOptions: boolean;
   newOptionArgs: FieldOptionArgs[];
 
-  transaction?: Prisma.TransactionClient;
+  transaction: Prisma.TransactionClient;
 }) => {
   let field: FieldPrismaType | null = null;
   for (const step of flowVersion.Steps ?? []) {
@@ -35,18 +34,20 @@ export const createRequestDefinedOptionSet = async ({
     }
   }
 
-  if (!field)
+  if (!field) {
     throw new GraphQLError("Cannot find flow field corresponding to request defined options.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
+  }
 
-  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType)
+  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType) {
     throw new GraphQLError(
       "Request defined options provided but this field does not allow request defined options.",
       {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       },
     );
+  }
 
   const optionSetId = await newOptionSet({
     transaction,

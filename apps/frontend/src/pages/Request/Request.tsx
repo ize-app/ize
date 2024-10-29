@@ -201,6 +201,8 @@ export const Request = () => {
               flexDirection: "row",
               justifyContent: "space-between",
               width: "100%",
+              flexGrow: 1,
+              // width: "fit-content",
               minWidth: "300px",
 
               // outline: "1px solid rgba(0, 0, 0, 0.1)",
@@ -221,8 +223,9 @@ export const Request = () => {
                   display: "flex",
                   flexDirection: "column",
                   minWidth: "300px",
-                  maxWidth: "700px",
                   width: "50%",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
                 }}
               >
                 <>
@@ -250,11 +253,12 @@ export const Request = () => {
                 [theme.breakpoints.down("md")]: {
                   width: "100%",
                 },
+                flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
-                width: "50%",
                 minWidth: "300px",
-                maxWidth: "700px",
+                wordBreak: "break-word",
+                width: request.triggerFieldAnswers.length > 0 ? "50%" : "100%",
               }}
             >
               <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
