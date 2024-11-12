@@ -61,6 +61,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
             <ListItemButton
               onClick={() => {
                 navigate(Route.Requests);
+                setMenuOpen(false);
               }}
             >
               <ListItemIcon sx={{ minWidth: "36px" }}>
@@ -73,6 +74,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
             <ListItemButton
               onClick={() => {
                 navigate(Route.Flows);
+                setMenuOpen(false);
               }}
             >
               <ListItemText
@@ -88,6 +90,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 startIcon={<AddIcon fontSize="small" />}
                 onClick={() => {
                   navigate(newFlowRoute(NewFlowRoute.InitialSetup));
+                  setMenuOpen(false);
                 }}
               >
                 <Box sx={{ display: "flex" }}>
@@ -102,6 +105,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
             <ListItemButton
               onClick={() => {
                 navigate(Route.Groups);
+                setMenuOpen(false);
               }}
             >
               <ListItemText
@@ -121,6 +125,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                         groupId: fullUUIDToShort(group.id),
                       }),
                     );
+                    setMenuOpen(false);
                   }}
                 >
                   <ListItemText
@@ -136,6 +141,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 startIcon={<AddIcon />}
                 onClick={() => {
                   navigate(newCustomGroupRoute(NewCustomGroupRoute.Setup));
+                  setMenuOpen(false);
                 }}
               >
                 <Box sx={{ display: "flex" }}>
@@ -153,6 +159,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
           <ListItemButton
             onClick={() => {
               navigate(Route.Identities);
+              setMenuOpen(false);
             }}
           >
             <ListItemIcon>
