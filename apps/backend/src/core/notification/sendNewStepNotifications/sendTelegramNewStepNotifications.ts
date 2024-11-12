@@ -46,6 +46,8 @@ export const sendTelegramNewStepMessage = async ({
         permissions.anyone ||
         permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
 
+      console.log("chat has respond permission", chatHasRespondPermission);
+
       if (responseFields.length === 0) return;
       0;
       const requestFieldsString = stringifyTriggerFields({

@@ -57,7 +57,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   )}
                   subtitle={step.fieldSet.fields[0].name}
                   icon={Diversity3Outlined}
-                  label={step.result[0].name}
+                  label={step.result[0]?.name}
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
                   setSelectedId={setSelectedId}

@@ -7,9 +7,6 @@ import { CustomErrorCodes } from "@/graphql/errors";
 import {
   ActionType,
   FieldArgs,
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FieldType,
   FlowType,
   GroupFlowPolicyArgs,
   GroupFlowPolicyType,
@@ -17,32 +14,15 @@ import {
   NewStepArgs,
 } from "@/graphql/generated/resolver-types";
 
-import { createActionConfigForPolicy } from "../../helpers/createActionConfigForPolicy";
-import { createDecisionResultConfigForPolicy } from "../../helpers/createDecisionResultConfigForPolicy";
+import { createActionArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createActionArgsForPolicy";
+import { createApprovalFieldSetArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createApprovalFieldSetArgsForPolicy";
+import { createDecisionResultArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createDecisionResultArgsForPolicy";
 
 const requestFieldSetArgs: FieldArgs[] = [
   systemFieldDefaults[SystemFieldType.GroupName],
   systemFieldDefaults[SystemFieldType.GroupDescription],
   systemFieldDefaults[SystemFieldType.GroupMembers],
 ];
-
-const responseApprovalFieldArgs: FieldArgs = {
-  type: FieldType.Options,
-  fieldId: "new",
-  isInternal: false,
-  name: "Do you approve of these changes?",
-  required: true,
-  optionsConfig: {
-    previousStepOptions: false,
-    maxSelections: 1,
-    selectionType: FieldOptionsSelectionType.Select,
-    linkedResultOptions: [],
-    options: [
-      { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
-      { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
-    ],
-  },
-};
 
 export const createEvolveGroupFlowArgs = ({
   groupEntityId,
@@ -87,15 +67,18 @@ export const createEvolveGroupStepArgs = ({
     });
 
   const creatorEntityId = context.currentUser.entityId;
+  const responseApprovalFieldArgs: FieldArgs | undefined = createApprovalFieldSetArgsForPolicy({
+    policy,
+  });
 
-  const decisionResult = createDecisionResultConfigForPolicy({ policy });
+  const decisionResult = createDecisionResultArgsForPolicy({ policy });
 
   const noResponse = policy.type === GroupFlowPolicyType.GroupAutoApprove;
 
   return {
     fieldSet: {
-      fields: [responseApprovalFieldArgs],
-      locked: true,
+      fields: responseApprovalFieldArgs ? [responseApprovalFieldArgs] : [],
+      locked: false,
     },
     response: !noResponse
       ? {
@@ -116,6 +99,6 @@ export const createEvolveGroupStepArgs = ({
         }
       : undefined,
     result: decisionResult ? [decisionResult] : [],
-    action: createActionConfigForPolicy({ actionType: ActionType.EvolveGroup, policy }),
+    action: createActionArgsForPolicy({ actionType: ActionType.EvolveGroup, policy }),
   };
 };

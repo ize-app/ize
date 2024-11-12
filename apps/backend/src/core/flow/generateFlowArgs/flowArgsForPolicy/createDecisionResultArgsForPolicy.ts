@@ -6,12 +6,16 @@ import {
   ResultType,
 } from "@/graphql/generated/resolver-types";
 
-export const createDecisionResultConfigForPolicy = ({
+export const createDecisionResultArgsForPolicy = ({
   policy,
 }: {
   policy: GroupFlowPolicyArgs;
 }): ResultArgs | undefined => {
-  if (policy.type === GroupFlowPolicyType.GroupAutoApprove) return undefined;
+  if (
+    policy.type === GroupFlowPolicyType.GroupAutoApprove ||
+    policy.type === GroupFlowPolicyType.CreatorAutoApprove
+  )
+    return undefined;
 
   policy.decision?.type;
   const decisionType = policy.decision?.type ?? DecisionType.NumberThreshold;
