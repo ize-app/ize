@@ -26,10 +26,10 @@ export const GroupsTable = ({ groups }: { groups: GroupSummaryPartsFragment[] })
             <TableCellHideable width="60px" />
             {/* <TableCellHideable width="60px" /> */}
             <TableCellHideable sx={{ minWidth: "140px" }}>Group</TableCellHideable>
-            <TableCellHideable sx={{ width: "60px" }} align="center">
+            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
               Member
             </TableCellHideable>
-            <TableCellHideable sx={{ width: "60px" }} align="center">
+            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
               Created
             </TableCellHideable>
           </TableRow>
