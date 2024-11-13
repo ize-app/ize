@@ -24,7 +24,7 @@ export const newStep = async ({
   let responseConfigId: string | null = null;
 
   const responseFieldSet =
-    args.fieldSet.fields.length > 0 || args.fieldSet.locked
+    (args.fieldSet.fields.length > 0 || args.fieldSet.locked) && args.result.length > 0
       ? await newFieldSet({
           fieldSetArgs: args.fieldSet,
           transaction,

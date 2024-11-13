@@ -1,11 +1,11 @@
 import { Message, Update } from "@telegraf/types";
 import { Context } from "telegraf";
 
+import { newCustomFlow } from "@/core/flow/flowTypes/customFlow/newCustomFlow";
 import {
   FlowConfigGeneration,
   generateNonreusableFlowConfig,
-} from "@/core/flow/flowTypes/customFlow/generateNonreusableFlowConfig/generateNonreusableFlowConfig";
-import { newCustomFlow } from "@/core/flow/flowTypes/customFlow/newCustomFlow";
+} from "@/core/flow/generateFlowArgs/generateNonreusableFlowConfig/generateNonreusableFlowConfig";
 import { prisma } from "@/prisma/client";
 
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";

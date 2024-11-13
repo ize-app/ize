@@ -47,8 +47,8 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                   <StageConnectorButton key={"connector-" + index.toString()} />
                   <FlowStage
                     icon={Diversity3Outlined}
-                    label={step.result[0].name}
-                    subtitle={flow.steps[index].fieldSet.fields[0].name}
+                    label={step.result[0]?.name}
+                    subtitle={flow.steps[index].fieldSet.fields[0]?.name}
                     key={"stage-" + step?.id}
                     hasError={false}
                     id={"step" + index.toString()}

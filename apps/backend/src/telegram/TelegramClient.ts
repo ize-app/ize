@@ -1,29 +1,15 @@
-import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 
+import config from "@/config";
+
 import { ideate, letAiDecide, linkGroup, synthesize } from "./commands";
+import { createTelegramWebhook } from "./createTelegramWebhook";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 
-dotenv.config();
+export const telegramBot = new Telegraf(config.TELEGRAM_BOT_TOKEN as string);
 
-const isDev = process.env.MODE === "development";
-
-export const telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN as string);
-
-// Telegram requires url have SSL enabled so need to use port forwarding for development
-const telegramWebhookDomain = `${isDev ? process.env.PORT_FORWARDING_ADDRESS : process.env.PROD_URL}/api/telegram`;
-
-telegramBot
-  .createWebhook({
-    domain: telegramWebhookDomain, // Full URL where Telegram will send updates
-  })
-  .then(() => {
-    console.log("Telegram webhook running");
-  })
-  .catch((err) => {
-    console.error("Error setting up webhook:", err);
-  });
+createTelegramWebhook();
 
 telegramBot.telegram.setMyCommands([
   { command: "linkgroup", description: "Receive notifications in this chat from Ize" },
@@ -70,8 +56,8 @@ telegramBot.on("message", async (ctx) => {
   });
 });
 
-telegramBot.launch();
-
-// Enable graceful stop
-process.once("SIGINT", () => telegramBot.stop("SIGINT"));
-process.once("SIGTERM", () => telegramBot.stop("SIGTERM"));
+// launcing the bot sets up getUpdates polling or webhook by default
+// either of which would cause webhook in main process to fail
+if (!config.CRON) {
+  telegramBot.launch();
+}

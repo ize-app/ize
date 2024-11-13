@@ -11,6 +11,7 @@ import { resultGroupInclude } from "../resultPrismaTypes";
 
 // creates the results and then runs actions for a given request Step
 // should only be run if resultsComplete is false
+// note: all of the calls here are awaited, so that when this function is called by cron job, it doesn't exist the process prematurely
 export const runResultsAndActions = async ({ requestStepId }: { requestStepId: string }) => {
   try {
     const reqStep = await prisma.requestStep.findFirstOrThrow({
@@ -46,15 +47,14 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
 
     // this code block should only be run once per request step
     if (hasCompleteResults) {
-      // TODO: end poll
-      endTelegramPolls({ requestStepId });
-      sendResultNotifications({ requestStepId });
+      await endTelegramPolls({ requestStepId });
+      await sendResultNotifications({ requestStepId });
       const { nextRequestStepId, runResultsForNextStep } = await executeAction({
         requestStepId,
       });
       if (nextRequestStepId) {
         // simplify this function later so it can just look up the flow id itself
-        sendNewStepNotifications({
+        await sendNewStepNotifications({
           flowId: reqStep.Request.FlowVersion.flowId,
           requestStepId: nextRequestStepId,
         });
@@ -63,9 +63,6 @@ export const runResultsAndActions = async ({ requestStepId }: { requestStepId: s
           await runResultsAndActions({ requestStepId: nextRequestStepId });
         }
       }
-      // if nextRequestStepId
-      //// call runResultsAndActions with nextRequestStepId
-      //// call sendNewStepNotifications with nextRequestStepId
     }
   } catch (e) {
     console.log("Error runResultsAndActions: ", e);

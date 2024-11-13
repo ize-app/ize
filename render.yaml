@@ -48,6 +48,8 @@ envVarGroups:
         value: 0.0.0.0
       - key: PORT
         value: 10000
+      - key: CRON
+        value: "false"
       - key: DATABASE_URL
         sync: false
       - key: OPEN_AI_KEY

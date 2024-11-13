@@ -76,7 +76,7 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
   };
 
   return {
-    fieldSet: { fields: [responseFieldSetArgs], locked: true },
+    fieldSet: { fields: [responseFieldSetArgs], locked: false },
     response: {
       permission: { anyone: false, entities: [{ id: creatorEntityId }] },
       expirationSeconds: 259200,

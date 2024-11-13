@@ -1,10 +1,12 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
+import config from "@/config";
+
 Sentry.init({
   dsn: "https://1da48481b9f7b55c948c8c3eea612a96@o4507419891204096.ingest.us.sentry.io/4507420178448384",
   environment: "production",
-  enabled: process.env.NODE_ENV === "production",
+  enabled: config.MODE === "production",
   integrations: [nodeProfilingIntegration()],
   // Performance Monitoring
   tracesSampleRate: 1.0, //  Capture 100% of the transactions

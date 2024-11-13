@@ -1,6 +1,16 @@
-import { FieldAnswer, FieldDataType, FieldFragment, FieldType } from "@/graphql/generated/graphql";
+import {
+  FieldAnswer,
+  FieldDataType,
+  FieldFragment,
+  FieldOptionsSelectionType,
+  FieldType,
+} from "@/graphql/generated/graphql";
 
-import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "./formValidation/field";
+import {
+  FieldAnswerRecordSchemaType,
+  FieldAnswerSchemaType,
+  OptionSelectionsSchemaType,
+} from "./formValidation/field";
 
 // TODO revisit this
 const getFreeInputDefaultValue = (
@@ -57,11 +67,13 @@ export const createFieldAnswersFormState = ({
         value: defaultValue,
       };
     } else {
+      let optionSelections: OptionSelectionsSchemaType = [];
+      if (f.selectionType === FieldOptionsSelectionType.Rank) optionSelections = f.options;
       answer = {
         required: f.required,
         selectionType: f.selectionType,
         maxSelections: f.maxSelections,
-        optionSelections: f.options,
+        optionSelections,
       };
     }
     responseFieldAnswers[f.fieldId] = answer;

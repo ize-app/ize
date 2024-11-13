@@ -10,7 +10,7 @@
     "build": "tsc --project ./ && npm run sentry:sourcemaps",
     "start:dev": "nodemon src/express/server.ts",
     "start:prod": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/src/express/server.js",
-    "cron": "npx ts-node src/cron/cron.ts",
+    "cron": "CRON=true npx ts-node src/cron/cron.ts",
     "prisma-migrate-dev": "npx prisma migrate dev",
     "prisma-migrate-deploy": "npx prisma migrate deploy",
     "prisma-generate": "npx prisma generate",

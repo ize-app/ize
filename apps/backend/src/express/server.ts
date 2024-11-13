@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 
+import config from "@/config";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { telegramBot } from "@/telegram/TelegramClient";
 
@@ -23,8 +24,8 @@ import { GraphqlRequestContext } from "../graphql/context";
 import { resolvers } from "../graphql/resolvers/queryResolvers";
 import { authenticateSession } from "../stytch/authenticateSession";
 
-const host = process.env.HOST ?? "::1";
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const host = config.HOST;
+const port = config.PORT;
 
 const frontendPath = path.join(__dirname, "../../frontend");
 const app = express();
@@ -99,9 +100,19 @@ server.start().then(() => {
     console.log(`[ API Ready ] http://${host}:${port}`);
   });
 
-  process.on("SIGTERM", () => {
+  const gracefulShutdown = (signal: string) => {
+    console.log(`Received ${signal}, shutting down gracefully.`);
+    telegramBot.stop(signal);
     expressServer.close(() => {
-      console.log("Process terminated");
+      if (signal !== "SIGUSR2") {
+        process.exit(0);
+      } else {
+        process.kill(process.pid, signal);
+      }
     });
-  });
+  };
+
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+  process.once("SIGUSR2", () => gracefulShutdown("SIGUSR2"));
 });
