@@ -37,7 +37,8 @@ export const TelegramBotSetup = () => {
             }
           />
           <Typography variant="description">
-            Once you call the /linkgroup command, select the Telegram group below
+            Once you call the /linkgroup command, select the Telegram group below. Dropdown only
+            shows chats that have bot but don&apos;t yet have an Ize group
           </Typography>
           <SelectTelegramChat<GroupSetupAndPoliciesSchemaType>
             label="Chat"
