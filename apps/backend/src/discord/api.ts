@@ -1,6 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { APIGuild, APIGuildMember, APIRole } from "discord.js";
 
+import config from "@/config";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { decrypt } from "@/prisma/encrypt";
 
@@ -19,7 +20,7 @@ export class DiscordApi {
   }
 
   static forBotUser() {
-    return new DiscordApi(process.env.DISCORD_IZE_BOT_API_TOKEN as string, true);
+    return new DiscordApi(config.DISCORD_IZE_BOT_API_TOKEN as string, true);
   }
 
   static colorIntToHex(colorInt: number): string {

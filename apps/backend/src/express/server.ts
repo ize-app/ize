@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 
+import config from "@/config";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { telegramBot } from "@/telegram/TelegramClient";
 
@@ -23,8 +24,8 @@ import { GraphqlRequestContext } from "../graphql/context";
 import { resolvers } from "../graphql/resolvers/queryResolvers";
 import { authenticateSession } from "../stytch/authenticateSession";
 
-const host = process.env.HOST ?? "::1";
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const host = config.HOST;
+const port = config.PORT;
 
 const frontendPath = path.join(__dirname, "../../frontend");
 const app = express();

@@ -1,14 +1,13 @@
-import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
+
+import config from "@/config";
 
 import { ideate, letAiDecide, linkGroup, synthesize } from "./commands";
 import { createTelegramWebhook } from "./createTelegramWebhook";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 
-dotenv.config();
-
-export const telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN as string);
+export const telegramBot = new Telegraf(config.TELEGRAM_BOT_TOKEN as string);
 
 createTelegramWebhook();
 
@@ -59,6 +58,6 @@ telegramBot.on("message", async (ctx) => {
 
 // launcing the bot sets up getUpdates polling or webhook by default
 // either of which would cause webhook in main process to fail
-if (process.env.CRON === "false") {
+if (!config.CRON) {
   telegramBot.launch();
 }

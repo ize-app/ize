@@ -1,5 +1,6 @@
 import { Alchemy, AlchemySettings, Network } from "alchemy-sdk";
 
+import config from "@/config";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 
 import { chainMap } from "../chainMap";
@@ -61,7 +62,7 @@ export class AlchemyMultichainClient {
           : { ...this.settings, network };
       this.instances.set(
         network,
-        new Alchemy({ apiKey: process.env.ALCHEMY_API_KEY, ...alchemySettings }),
+        new Alchemy({ apiKey: config.ALCHEMY_API_KEY, ...alchemySettings }),
       );
     }
     return this.instances.get(network) as Alchemy;

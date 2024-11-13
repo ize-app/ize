@@ -1,15 +1,16 @@
+import config from "@/config";
+
 import { telegramBot } from "./TelegramClient";
 
 // webhook that Telegram will send updates to
 export const createTelegramWebhook = async () => {
-  const isDev = process.env.MODE === "development";
   // Telegram requires url have SSL enabled so need to use port forwarding for development
-  const telegramWebhookDomain = `${isDev ? process.env.PORT_FORWARDING_ADDRESS : process.env.PROD_URL}/api/telegram`;
+  const telegramWebhookDomain = `${config.isDev ? config.PORT_FORWARDING_ADDRESS : config.PROD_URL}/api/telegram`;
 
   const existingWebhook = await telegramBot.telegram.getWebhookInfo();
 
   // if webhook is already set up, don't set it up again
-  if (!existingWebhook.url && process.env.CRON === "false") {
+  if (!existingWebhook.url && config.CRON) {
     console.log("setting webhook");
     telegramBot
       .createWebhook({
