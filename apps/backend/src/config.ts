@@ -9,6 +9,7 @@ export default {
   isDev: process.env.MODE === "development",
   PORT_FORWARDING_ADDRESS: process.env.PORT_FORWARDING_ADDRESS,
   PROD_URL: process.env.PROD_URL ?? "https://ize.space",
+  // CRON is set only in cron npm command, not the env file
   CRON: process.env.CRON === "true",
   PORT: process.env.PORT ? Number(process.env.PORT) : 3000,
   HOST: process.env.HOST ?? "::1",
