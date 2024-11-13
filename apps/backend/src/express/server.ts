@@ -99,9 +99,19 @@ server.start().then(() => {
     console.log(`[ API Ready ] http://${host}:${port}`);
   });
 
-  process.on("SIGTERM", () => {
+  const gracefulShutdown = (signal: string) => {
+    console.log(`Received ${signal}, shutting down gracefully.`);
+    telegramBot.stop(signal);
     expressServer.close(() => {
-      console.log("Process terminated");
+      if (signal !== "SIGUSR2") {
+        process.exit(0);
+      } else {
+        process.kill(process.pid, signal);
+      }
     });
-  });
+  };
+
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+  process.once("SIGUSR2", () => gracefulShutdown("SIGUSR2"));
 });
