@@ -10,6 +10,7 @@ export const createTelegramWebhook = async () => {
   const existingWebhook = await telegramBot.telegram.getWebhookInfo();
 
   // if webhook is already set up, don't set it up again
+  console.log("about to create webhook. config.CRON", config.CRON);
   if (!existingWebhook.url && !config.CRON) {
     console.log("setting webhook");
     telegramBot
