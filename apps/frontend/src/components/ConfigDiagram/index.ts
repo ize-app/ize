@@ -1,4 +1,3 @@
-export { AddStageButton } from "./DiagramPanel/AddStageButton";
 export { ConfigPanelBody as ConfigurationPanel } from "./ConfigPanel/ConfigPanelBody";
 export { DiagramPanel } from "./DiagramPanel/DiagramPanel";
 export { PanelHeader } from "./PanelHeader";

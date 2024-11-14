@@ -1,7 +1,8 @@
 import AddIcon from "@mui/icons-material/Add";
+import { Menu, MenuItem } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { ActionType } from "@/graphql/generated/graphql";
@@ -19,6 +20,16 @@ export const AddStepButton = ({
   stepsArrayMethods: ReturnType<typeof useFieldArray>;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
 }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const { getValues, setValue } = useFormContext<FlowSchemaType>();
 
   // isEnd means that this add button is at end of steps array and also has no action after it
@@ -62,6 +73,16 @@ export const AddStepButton = ({
     setSelectedId(`step${positionIndex}`);
   }, [positionIndex, setSelectedId, stepsArrayMethods, setValue, getValues]);
 
+  const addWebhookHandler = () => {
+    setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
+      filterOptionId: DefaultOptionSelection.None,
+      type: ActionType.CallWebhook,
+      locked: false,
+      callWebhook: { uri: "", name: "", valid: false },
+    });
+    setSelectedId("webhook");
+  };
+
   return (
     <Box sx={{ height: "48px", position: "relative", display: "flex", alignItems: "center" }}>
       <Box
@@ -76,8 +97,9 @@ export const AddStepButton = ({
         })}
       />
       <IconButton
-        onClick={() => {
-          addStepHandler();
+        onClick={(e) => {
+          if (isEnd) handleMenuOpen(e);
+          else addStepHandler();
         }}
         size="small"
       >
@@ -91,6 +113,33 @@ export const AddStepButton = ({
           })}
         />
       </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        autoFocus={false}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem
+          onClick={() => {
+            addStepHandler();
+            handleClose();
+          }}
+        >
+          Add collaborative step
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            addWebhookHandler();
+            handleClose();
+          }}
+        >
+          Trigger a webhook
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };

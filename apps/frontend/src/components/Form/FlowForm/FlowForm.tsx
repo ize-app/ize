@@ -8,7 +8,6 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import {
-  AddStageButton,
   ConfigurationPanel,
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -25,7 +24,6 @@ import { AddStepButton } from "./components/AddStepButton";
 import { StepForm } from "./components/StepForm";
 import { TriggerForm } from "./components/TriggerForm";
 import { ActionSchemaType } from "./formValidation/action";
-import { DefaultOptionSelection } from "./formValidation/fields";
 import { FlowSchemaType, flowSchema } from "./formValidation/flow";
 import { defaultStepFormValues } from "./helpers/getDefaultFormValues";
 import { StreamlinedTextField } from "../formFields";
@@ -218,54 +216,21 @@ export const FlowForm = forwardRef(
                     )
                   );
                 })}
-                {!displayAction ? (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "16px",
-                      flexWrap: "wrap",
-                      width: "100%",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "8px",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    <AddStageButton
-                      label={"Trigger webhook"}
-                      onClick={() => {
-                        useFormMethods.setValue(
-                          `steps.${stepsArrayMethods.fields.length - 1}.action`,
-                          {
-                            filterOptionId: DefaultOptionSelection.None,
-                            type: ActionType.CallWebhook,
-                            locked: false,
-                            callWebhook: {},
-                          },
-                        );
-                        setSelectedId("webhook");
-                      }}
-                    />
-                  </Box>
-                ) : (
-                  action && (
-                    <FlowStage
-                      label={actionProperties[action.type].label}
-                      id={"webhook"}
-                      icon={actionProperties[action.type].icon}
-                      setSelectedId={setSelectedId}
-                      selectedId={selectedId}
-                      disableDelete={action.locked}
-                      deleteHandler={() => deleteFinalActionHandler()}
-                      sx={{ marginBottom: "16px" }}
-                      hasError={
-                        !!useFormMethods.formState.errors.steps?.[
-                          stepsArrayMethods.fields.length - 1
-                        ]?.action
-                      }
-                    />
-                  )
+                {displayAction && action && (
+                  <FlowStage
+                    label={actionProperties[action.type].label}
+                    id={"webhook"}
+                    icon={actionProperties[action.type].icon}
+                    setSelectedId={setSelectedId}
+                    selectedId={selectedId}
+                    disableDelete={action.locked}
+                    deleteHandler={() => deleteFinalActionHandler()}
+                    sx={{ marginBottom: "16px" }}
+                    hasError={
+                      !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
+                        ?.action
+                    }
+                  />
                 )}
               </DiagramPanel>
             </PanelContainer>
