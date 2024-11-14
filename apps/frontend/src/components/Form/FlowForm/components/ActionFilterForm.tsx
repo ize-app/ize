@@ -29,6 +29,8 @@ export const ActionFilterForm = ({
     //   filterOptionId: DefaultOptionSelection.None,
     //   // type: actionType,
     // });
+
+    // figure out way to remove this. should be handled in parent flow form component
     if (isTriggerAction) {
       setValue(`steps.${stepIndex}.action`, {
         filterOptionId: DefaultOptionSelection.None,

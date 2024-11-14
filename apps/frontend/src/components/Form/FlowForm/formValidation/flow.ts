@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { fieldSetSchema } from "./fields";
@@ -53,18 +53,31 @@ const stepSchema = z
     },
   );
 
-export const flowSchema = z.object({
-  type: z.nativeEnum(FlowType),
-  name: z.string().min(1, "Enter a name"),
-  steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
-  // evolve: evolveFlowSchema,
-  fieldSet: fieldSetSchema,
-  trigger: z.object({
-    permission: permissionSchema,
-  }),
-  requestName: z.string().optional(),
-});
-// .superRefine((flow, ctx) => {});
+export const flowSchema = z
+  .object({
+    type: z.nativeEnum(FlowType),
+    name: z.string().min(1, "Enter a name"),
+    steps: z.array(stepSchema).min(1, "There must be at least 1 step"),
+    // evolve: evolveFlowSchema,
+    fieldSet: fieldSetSchema,
+    trigger: z.object({
+      permission: permissionSchema,
+    }),
+    requestName: z.string().optional(),
+  })
+  .refine(
+    (flow) => {
+      if (
+        flow.steps.length === 1 &&
+        flow.steps[0].result.length === 0 &&
+        (!flow.steps[0].action || flow.steps[0].action.type === ActionType.None)
+      ) {
+        console.log("failed steps validation");
+        return false;
+      }
+    },
+    { message: "There must be at least one collaborative step or action", path: ["steps"] },
+  );
 
 export const reusableSchema = z.object({
   reusable: z.boolean(),
