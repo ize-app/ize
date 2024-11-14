@@ -18,7 +18,8 @@ export const StageMenu = ({ deleteHandler }: StageMenuProps): JSX.Element => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     deleteHandler && deleteHandler();
     handleClose();
   };
