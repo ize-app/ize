@@ -9,9 +9,11 @@ import {
 } from "@/components/ConfigDiagram";
 import { FlowFragment } from "@/graphql/generated/graphql";
 
+import { ConfigFlowActionFilterPanel } from "./ConfigFlowActionFilterPanel";
 import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
 import { ConfigFlowTriggerPanel } from "./ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "./ConfigStepPanel";
+import { FlowActionFilterStage } from "./FlowActionFilterStage";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 
 // Interactive diagram for understanding flow config
@@ -23,10 +25,8 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
   const finalAction = flow.steps[finalStepIndex]?.action ?? null;
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      {/* <PanelHeader>Header</PanelHeader> */}
       <FlowConfigDiagramContainer>
         <PanelContainer>
-          {/* <PanelHeader>Header</PanelHeader> */}
           <DiagramPanel>
             <FlowStage
               type="trigger"
@@ -46,6 +46,13 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                     step={step}
                     key={"stage-" + step?.id}
                     id={"step" + index.toString()}
+                    setSelectedId={setSelectedId}
+                    selectedId={selectedId}
+                  />
+                  <FlowActionFilterStage
+                    action={step.action}
+                    key={"stage-" + step?.id}
+                    id={"actionFilter" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
                   />
@@ -75,10 +82,16 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
         {flow.steps.map((step, index) => {
           return (
             selectedId === "step" + index.toString() && (
-              <ConfigStepPanel
-                key={"steppanel-" + step?.id}
-                step={step}
-                triggeringAction={index > 0 ? flow.steps[index - 1].action : null}
+              <ConfigStepPanel key={"steppanel-" + step?.id} step={step} />
+            )
+          );
+        })}
+        {flow.steps.map((step, index) => {
+          return (
+            selectedId === "actionFilter" + index.toString() && (
+              <ConfigFlowActionFilterPanel
+                key={"actionFilterpanel-" + step?.id}
+                action={step.action}
               />
             )
           );

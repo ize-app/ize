@@ -12,6 +12,7 @@ export interface StageProps {
   color?: string;
   statusIcon?: React.ComponentType<SvgIconProps>;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
+  size?: "small" | "medium";
   selectedId: string | false;
 }
 
@@ -23,6 +24,7 @@ export const Stage = ({
   statusIcon,
   icon,
   color,
+  size = "medium",
   sx = {},
 }: StageProps) => {
   const isSelected = selectedId === id;
@@ -33,6 +35,7 @@ export const Stage = ({
       sx={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         marginLeft: "36px",
         width: "310px",
       }}
@@ -62,7 +65,7 @@ export const Stage = ({
       >
         {icon && isSmallScreenSize ? (
           <Box sx={{ marginRight: "12px", display: "flex" }}>
-            <SvgIcon component={icon} style={{ color: color ?? colors.primary }} />
+            <SvgIcon component={icon} fontSize={size} style={{ color: color ?? colors.primary }} />
           </Box>
         ) : null}
         {children}
@@ -77,7 +80,11 @@ export const Stage = ({
         }}
       >
         {statusIcon && isSmallScreenSize ? (
-          <SvgIcon component={statusIcon} style={{ color: color ?? colors.primary }} />
+          <SvgIcon
+            fontSize={size}
+            component={statusIcon}
+            style={{ color: color ?? colors.primary }}
+          />
         ) : null}
       </Box>
     </Box>

@@ -89,7 +89,7 @@ export const generateEvolveConfig = ({
   };
 
   const step = {
-    fieldSet: { fields: [responseField], locked: true },
+    fieldSet: { fields: [responseField], locked: false },
     response: {
       permission,
       expirationSeconds: 259200,
