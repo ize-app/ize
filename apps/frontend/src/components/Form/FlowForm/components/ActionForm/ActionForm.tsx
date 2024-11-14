@@ -14,11 +14,14 @@ import { ActionFilterForm } from "../ActionFilterForm";
 interface ActionFormProps {
   stepIndex: number; // react-hook-form name
   show: boolean;
-  action: ActionSchemaType;
 }
 
-export const ActionForm = ({ stepIndex, show, action }: ActionFormProps) => {
-  const { formState } = useFormContext<FlowSchemaType>();
+export const ActionForm = ({ stepIndex, show }: ActionFormProps) => {
+  const { formState, getValues } = useFormContext<FlowSchemaType>();
+  const action = getValues(`steps.${stepIndex}.action`) as ActionSchemaType;
+  const displayAction =
+    action && action.type && action.type !== ActionType.TriggerStep ? true : false;
+  if (!displayAction) return null;
   const actionError = formState.errors.steps?.[stepIndex]?.action;
   return (
     <Box sx={{ display: show ? "box" : "none" }}>

@@ -11,7 +11,7 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
   if (!result) return "Collaborative step";
   switch (result.type) {
     case ResultType.Decision: {
-      const decisionType = result.decision.type;
+      const decisionType = result.decision?.type;
       switch (decisionType) {
         case DecisionType.Ai:
           return "Let AI decide";

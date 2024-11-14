@@ -1,31 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
-import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { FormHelperText, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 
-import { actionProperties } from "@/components/Action/actionProperties";
 import {
   ConfigurationPanel,
   DiagramPanel,
   FlowConfigDiagramContainer,
-  FlowStage,
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { getResultFormLabel } from "@/components/Form/FlowForm/helpers/getResultFormLabel";
-import { ActionType } from "@/graphql/generated/graphql";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { ActionForm } from "./components/ActionForm/ActionForm";
 import { AddStepButton } from "./components/AddStepButton";
+import { FlowFormStage } from "./components/FlowFormStage";
 import { StepForm } from "./components/StepForm";
 import { TriggerForm } from "./components/TriggerForm";
-import { ActionSchemaType } from "./formValidation/action";
 import { FlowSchemaType, flowSchema } from "./formValidation/flow";
-import { defaultStepFormValues } from "./helpers/getDefaultFormValues";
 import { StreamlinedTextField } from "../formFields";
 
 interface FlowFormProps {
@@ -41,9 +34,7 @@ export interface FlowFormRef {
 export const FlowForm = forwardRef(
   ({ name, isReusable, defaultFormValues }: FlowFormProps, ref) => {
     const { formState } = useNewFlowWizardState();
-    const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
-
-    console.log("selectedId is ", selectedId);
+    const [selectedId, setSelectedId] = useState<string | false>("trigger0");
 
     const fieldArrayName = "steps";
 
@@ -89,47 +80,6 @@ export const FlowForm = forwardRef(
       }),
     );
 
-    const deleteStepHandler = useCallback(
-      (index: number, isFinalStep: boolean) => {
-        // note: setSelectedId is not working right now. issue is with how deleteHandler is passed to child components
-        // Set the selected ID to the previous step before deleting
-        setSelectedId(`trigger0`);
-        if (index === 0 && stepsArrayMethods.fields.length === 1) {
-          //if only one step, then reset response/result/fieldset fields
-          const currentStepVal = useFormMethods.getValues(`steps.${0}`);
-          useFormMethods.setValue(`steps.${0}`, {
-            ...currentStepVal,
-            response: undefined,
-            result: defaultStepFormValues.result,
-            fieldSet: defaultStepFormValues.fieldSet,
-          });
-        } else if (isFinalStep) {
-          // if there are more then one steps, copy the action from the current final step to the new final step
-          useFormMethods.setValue(
-            `steps.${index - 1}.action`,
-            useFormMethods.getValues(`steps.${index}.action`),
-          );
-          //then remove the step
-          stepsArrayMethods.remove(index);
-        } else {
-          stepsArrayMethods.remove(index);
-        }
-      },
-      [setSelectedId, stepsArrayMethods, useFormMethods],
-    );
-
-    const deleteFinalActionHandler = useCallback(() => {
-      // note: setSelectedId is not working right now. issue is with how deleteHandler is passed to child components
-      setSelectedId("trigger0");
-      useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, undefined);
-    }, [setSelectedId, stepsArrayMethods, useFormMethods]);
-
-    const action = useFormMethods.getValues(
-      `steps.${stepsArrayMethods.fields.length - 1}.action`,
-    ) as ActionSchemaType;
-    const displayAction =
-      action && action.type && action.type !== ActionType.TriggerStep ? true : false;
-
     return (
       <FormProvider {...useFormMethods}>
         <form style={{ height: "100%" }}>
@@ -157,55 +107,40 @@ export const FlowForm = forwardRef(
                 />
               </PanelHeader>
               <DiagramPanel>
-                <FlowStage
-                  label="Trigger"
+                <FlowFormStage
                   key="trigger0"
+                  type="trigger"
                   id={"trigger0"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  hasError={
-                    !!useFormMethods.formState.errors.fieldSet ||
-                    !!useFormMethods.formState.errors.trigger
-                  }
-                  icon={PlayCircleOutlineOutlinedIcon}
+                  //@ts-expect-error TODO
+                  stepsArrayMethods={stepsArrayMethods}
                 />
+
                 <AddStepButton
                   positionIndex={0}
                   //@ts-expect-error TODO
                   stepsArrayMethods={stepsArrayMethods}
                   setSelectedId={setSelectedId}
                 />
-                {/* TODO: This logic is brittle as hell */}
                 {stepsArrayMethods.fields.map((item, index) => {
-                  const isFinalStep = index === stepsArrayMethods.fields.length - 1;
-                  const responseFieldLocked = useFormMethods.getValues(
-                    `steps.${index}.fieldSet.locked`,
-                  );
-                  const result = useFormMethods.getValues(`steps.${index}.result.${0}`);
-                  const fieldName = useFormMethods.getValues(
-                    `steps.${index}.fieldSet.fields.${0}.name`,
-                  );
-                  // item.result[0].type
-                  // const disableDelete =
-                  //   index === 0 && (stepsArrayMethods.fields.length > 1 || !displayAction);
                   return (
                     (index > 0 || hasStep0Response) && (
                       <Box
                         key={item.id}
                         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                       >
-                        <FlowStage
-                          icon={Diversity3OutlinedIcon}
-                          label={getResultFormLabel({ result })}
-                          subtitle={fieldName}
+                        <FlowFormStage
                           key={"stage-" + item.id.toString() + index.toString()}
-                          deleteHandler={() => deleteStepHandler(index, isFinalStep)}
-                          disableDelete={responseFieldLocked}
-                          hasError={!!useFormMethods.formState.errors.steps?.[index]}
+                          type="step"
+                          index={index}
                           id={"step" + index.toString()}
                           setSelectedId={setSelectedId}
                           selectedId={selectedId}
+                          //@ts-expect-error TODO
+                          stepsArrayMethods={stepsArrayMethods}
                         />
+
                         <AddStepButton
                           positionIndex={index + 1}
                           //@ts-expect-error TODO
@@ -216,22 +151,15 @@ export const FlowForm = forwardRef(
                     )
                   );
                 })}
-                {displayAction && action && (
-                  <FlowStage
-                    label={actionProperties[action.type].label}
-                    id={"webhook"}
-                    icon={actionProperties[action.type].icon}
-                    setSelectedId={setSelectedId}
-                    selectedId={selectedId}
-                    disableDelete={action.locked}
-                    deleteHandler={() => deleteFinalActionHandler()}
-                    sx={{ marginBottom: "16px" }}
-                    hasError={
-                      !!useFormMethods.formState.errors.steps?.[stepsArrayMethods.fields.length - 1]
-                        ?.action
-                    }
-                  />
-                )}
+                <FlowFormStage
+                  type="action"
+                  index={stepsArrayMethods.fields.length - 1}
+                  id={"webhook"}
+                  setSelectedId={setSelectedId}
+                  selectedId={selectedId}
+                  //@ts-expect-error TODO
+                  stepsArrayMethods={stepsArrayMethods}
+                />
               </DiagramPanel>
             </PanelContainer>
             {/* Configuration panel*/}
@@ -254,13 +182,11 @@ export const FlowForm = forwardRef(
                     />
                   );
                 })}
-                {action && displayAction && (
-                  <ActionForm
-                    stepIndex={stepsArrayMethods.fields.length - 1}
-                    show={selectedId === "webhook"}
-                    action={action}
-                  />
-                )}
+
+                <ActionForm
+                  stepIndex={stepsArrayMethods.fields.length - 1}
+                  show={selectedId === "webhook"}
+                />
               </ConfigurationPanel>
             </PanelContainer>
           </FlowConfigDiagramContainer>
