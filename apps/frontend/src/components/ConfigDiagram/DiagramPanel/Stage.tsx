@@ -10,7 +10,7 @@ export interface StageProps {
   sx?: SxProps;
   icon?: React.ComponentType<SvgIconProps>;
   color?: string;
-  statusIcon?: React.ReactElement;
+  statusIcon?: React.ComponentType<SvgIconProps>;
   setSelectedId: Dispatch<SetStateAction<string | false>>;
   selectedId: string | false;
 }
@@ -51,7 +51,7 @@ export const Stage = ({
           minHeight: "48px",
           border: "1px solid",
           borderWidth: isSelected ? "4px" : "1px",
-          borderColor: isSelected ? muiTheme.palette.primary.main : "rgba(0, 0, 0, 0.1)",
+          borderColor: isSelected ? color ?? muiTheme.palette.primary.main : "rgba(0, 0, 0, 0.1)",
 
           padding: "8px",
           "&&:hover": {
@@ -76,7 +76,9 @@ export const Stage = ({
           justifyContent: "center",
         }}
       >
-        {statusIcon}
+        {statusIcon && isSmallScreenSize ? (
+          <SvgIcon component={statusIcon} style={{ color: color ?? colors.primary }} />
+        ) : null}
       </Box>
     </Box>
   );

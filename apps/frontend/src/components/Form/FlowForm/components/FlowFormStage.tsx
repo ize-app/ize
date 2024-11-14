@@ -114,12 +114,8 @@ export const FlowFormStage = ({
       setSelectedId={setSelectedId}
       selectedId={selectedId}
       icon={icon}
-      color={colors.primary}
-      statusIcon={
-        hasError ? (
-          <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />
-        ) : undefined
-      }
+      color={hasError ? colors.error : colors.primary}
+      statusIcon={hasError ? WarningOutlined : undefined}
       sx={{
         borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
         ...sx,
@@ -131,34 +127,18 @@ export const FlowFormStage = ({
           justifyContent: "space-between",
           alignItems: "center",
           flexGrow: 1,
-          // whiteSpace: "nowrap",
-          // overflow: "hidden",
-          // textOverflow: "ellipsis",
         }}
       >
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            // whiteSpace: "nowrap",
-            // overflow: "hidden",
-            // textOverflow: "ellipsis",
             flexGrow: 1,
           }}
         >
           <Typography variant="label">{label}</Typography>
           {subtitle && (
-            <Typography
-              fontSize={".7rem"}
-              lineHeight={"1rem"}
-              width={"100%"}
-              // sx={{
-              //   whiteSpace: "nowrap",
-              //   overflow: "hidden",
-              //   textOverflow: "ellipsis",
-              //   flexGrow: 1,
-              // }}
-            >
+            <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"}>
               {subtitle}
             </Typography>
           )}

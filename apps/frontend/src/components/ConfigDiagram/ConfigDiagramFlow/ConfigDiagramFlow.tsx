@@ -1,9 +1,6 @@
-import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
 
-import { actionProperties } from "@/components/Action/actionProperties";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -32,13 +29,12 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
           {/* <PanelHeader>Header</PanelHeader> */}
           <DiagramPanel>
             <FlowStage
-              label="Trigger"
+              type="trigger"
+              flow={flow}
               key="trigger0"
               id={"trigger0"}
               setSelectedId={setSelectedId}
               selectedId={selectedId}
-              icon={PlayCircleOutlineOutlined}
-              entities={flow.trigger.permission?.entities}
             />
             {flow.steps.map((step, index) => {
               if (step.fieldSet.fields.length === 0) return null;
@@ -46,15 +42,12 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <Box key={index}>
                   <StageConnectorButton key={"connector-" + index.toString()} />
                   <FlowStage
-                    icon={Diversity3Outlined}
-                    label={step.result[0]?.name}
-                    subtitle={flow.steps[index].fieldSet.fields[0]?.name}
+                    type="step"
+                    step={step}
                     key={"stage-" + step?.id}
-                    hasError={false}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
-                    entities={flow.steps[index].response?.permission.entities}
                   />
                 </Box>
               );
@@ -63,12 +56,11 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <FlowStage
-                  hasError={false}
-                  label={finalAction.name}
+                  type="action"
+                  action={finalAction}
                   id={"action"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  icon={actionProperties[finalAction.__typename].icon}
                 />
               </>
             )}

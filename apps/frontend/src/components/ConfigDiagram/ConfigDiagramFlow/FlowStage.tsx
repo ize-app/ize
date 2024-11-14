@@ -1,52 +1,88 @@
-import { WarningOutlined } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
+import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
+import { Box, SvgIconProps, Typography } from "@mui/material";
 
+import { actionProperties } from "@/components/Action/actionProperties";
 import { AvatarGroup } from "@/components/Avatar";
-import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
+import {
+  Action,
+  ActionType,
+  EntityFragment,
+  FlowFragment,
+  StepFragment,
+} from "@/graphql/generated/graphql";
 import { colors } from "@/style/style";
 
 import { Stage, StageProps } from "../DiagramPanel/Stage";
-import { StageMenu } from "../DiagramPanel/StageMenu";
 
-interface FlowStageProps extends StageProps {
-  label: string;
-  subtitle?: string;
-  deleteHandler?: () => void;
-  entities?: (EntityFragment | UserSummaryPartsFragment)[];
-  hasError?: boolean;
-  disableDelete?: boolean;
+interface FlowStageTriggerProps extends StageProps {
+  type: "trigger";
+  flow: FlowFragment;
 }
 
+interface FlowStageStepProps extends StageProps {
+  type: "step";
+  step: StepFragment;
+}
+
+interface FlowStageActionProps extends StageProps {
+  type: "action";
+  action: Action;
+}
+
+type FlowStagePropsBase = FlowStageTriggerProps | FlowStageStepProps | FlowStageActionProps;
+
+export type FlowStageProps = FlowStagePropsBase & {
+  color?: string;
+  statusIcon?: React.ComponentType<SvgIconProps>;
+};
+
+
+
 export const FlowStage = ({
-  label,
-  subtitle,
   id,
   setSelectedId,
   selectedId,
-  deleteHandler,
-  entities = [],
-  hasError = false,
-  disableDelete = false,
-  sx = {},
-  icon,
+  color,
+  statusIcon,
+  ...props
 }: FlowStageProps) => {
-  const isSelected = selectedId === id;
+  let label: string = "";
+  let subtitle: string = "";
+  let entities: EntityFragment[] = [];
+  let icon: React.ComponentType<SvgIconProps> | undefined;
+  switch (props.type) {
+    case "trigger": {
+      const { flow } = props;
+      entities = flow.trigger.permission?.entities ?? [];
+      label = "Trigger";
+      icon = PlayCircleOutlineOutlined;
+      break;
+    }
+    case "step": {
+      const { step } = props;
+      label = step.result[0]?.name ?? "Collaborative step";
+      subtitle = step.fieldSet.fields[0]?.name ?? "";
+      icon = Diversity3Outlined;
+      entities = step.response?.permission?.entities ?? [];
+      break;
+    }
+    case "action": {
+      const { action } = props;
+      label = action.name;
+      icon = actionProperties[action.__typename as ActionType].icon;
+      break;
+    }
+  }
+
   return (
     <Stage
       id={id}
       setSelectedId={setSelectedId}
       selectedId={selectedId}
       icon={icon}
-      color={colors.primary}
-      statusIcon={
-        hasError ? (
-          <WarningOutlined color={"error"} fontSize="small" sx={{ marginLeft: "8px" }} />
-        ) : undefined
-      }
-      sx={{
-        borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
-        ...sx,
-      }}
+      color={color ?? colors.primary}
+      statusIcon={statusIcon}
     >
       <Box
         sx={{
@@ -54,40 +90,25 @@ export const FlowStage = ({
           justifyContent: "space-between",
           alignItems: "center",
           flexGrow: 1,
-          // whiteSpace: "nowrap",
-          // overflow: "hidden",
-          // textOverflow: "ellipsis",
         }}
       >
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            // whiteSpace: "nowrap",
-            // overflow: "hidden",
-            // textOverflow: "ellipsis",
             flexGrow: 1,
           }}
         >
-          <Typography variant="label">{label}</Typography>
+          <Typography variant="label" color={color}>
+            {label}
+          </Typography>
           {subtitle && (
-            <Typography
-              fontSize={".7rem"}
-              lineHeight={"1rem"}
-              width={"100%"}
-              // sx={{
-              //   whiteSpace: "nowrap",
-              //   overflow: "hidden",
-              //   textOverflow: "ellipsis",
-              //   flexGrow: 1,
-              // }}
-            >
+            <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"} color={color}>
               {subtitle}
             </Typography>
           )}
         </Box>
         {entities.length > 0 && <AvatarGroup avatars={entities} />}
-        {deleteHandler && !disableDelete && <StageMenu deleteHandler={deleteHandler} />}
       </Box>
     </Stage>
   );

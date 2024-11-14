@@ -1,9 +1,6 @@
-import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
-import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box } from "@mui/material";
 import { useState } from "react";
 
-import { actionProperties } from "@/components/Action/actionProperties";
 import {
   DiagramPanel,
   FlowConfigDiagramContainer,
@@ -34,14 +31,13 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
       <PanelContainer>
         <DiagramPanel>
           <RequestStage
-            label="Trigger"
             key="trigger0"
+            type="trigger"
+            flow={request.flow}
             id={"trigger0"}
             status={Status.Completed}
             setSelectedId={setSelectedId}
             selectedId={selectedId}
-            icon={PlayCircleOutlineOutlined}
-            entities={request.flow.trigger.permission.entities}
           />
           {request.flow.steps.map((step, index) => {
             if (step.fieldSet.fields.length === 0) return null;
@@ -49,20 +45,18 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <Box key={index}>
                 <StageConnectorButton key={"connector-" + index.toString()} />
                 <RequestStage
+                  type="step"
+                  step={step}
                   status={determineRequestStepStatus(
                     index,
                     request.requestSteps[index]?.status?.resultsFinal ?? false,
                     request.currentStepIndex,
                     request.final,
                   )}
-                  subtitle={step.fieldSet.fields[0].name}
-                  icon={Diversity3Outlined}
-                  label={step.result[0]?.name}
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
-                  entities={step.response?.permission.entities}
                 />
               </Box>
             );
@@ -75,11 +69,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   request.requestSteps[finalStepIndex]?.actionExecution?.status ??
                   (request.final ? Status.Cancelled : Status.NotAttempted)
                 }
-                label={finalAction.name}
+                type="action"
+                action={finalAction}
                 id={"action"}
                 setSelectedId={setSelectedId}
                 selectedId={selectedId}
-                icon={actionProperties[finalAction.__typename].icon}
               />
             </>
           )}
