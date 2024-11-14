@@ -1,10 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import AddIcon from "@mui/icons-material/Add";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { FormHelperText, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 
@@ -18,12 +16,12 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
-import { StageConnectorButton } from "@/components/ConfigDiagram/DiagramPanel/StageConnectorButton";
 import { getResultFormLabel } from "@/components/Form/FlowForm/helpers/getResultFormLabel";
 import { ActionType } from "@/graphql/generated/graphql";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { ActionForm } from "./components/ActionForm/ActionForm";
+import { AddStepButton } from "./components/AddStepButton";
 import { StepForm } from "./components/StepForm";
 import { TriggerForm } from "./components/TriggerForm";
 import { ActionSchemaType } from "./formValidation/action";
@@ -128,47 +126,6 @@ export const FlowForm = forwardRef(
       useFormMethods.setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, undefined);
     }, [setSelectedId, stepsArrayMethods, useFormMethods]);
 
-    const addStepHandler = useCallback(
-      (positionIndex: number) => {
-        console.log("inside add step handler");
-        const currentStepLength = stepsArrayMethods.fields.length;
-        const currentFinalStepIndex = Math.max(stepsArrayMethods.fields.length - 1, 0);
-
-        if (currentStepLength === 0) {
-          console.log("inside add step handler, currentStepLength is 0");
-          stepsArrayMethods.append(defaultStepFormValues);
-        }
-        // there will usually be a first step, but sometimes that step is just an action (no response) and other times it actually has a response
-        else if (currentStepLength === 1 && positionIndex === 0) {
-          // if there's a response, insert a new step
-          if (useFormMethods.getValues(`steps.${0}.response`)) {
-            stepsArrayMethods.prepend(defaultStepFormValues);
-          }
-          // if no response, overwrite step 0 to have a response config
-          // this will allow it display in the UI as a collaborative step
-          // this will also preserve any previously created actions, if there is one
-          else {
-            useFormMethods.setValue(`steps.${0}.response`, defaultStepFormValues.response);
-          }
-        } else if (positionIndex === currentFinalStepIndex + 1) {
-          const newStep = { ...defaultStepFormValues };
-          // copy over final action to new final step
-          newStep.action = useFormMethods.getValues(`steps.${currentFinalStepIndex}.action`);
-          stepsArrayMethods.append(newStep);
-          // change previous final step to have a trigger action
-          useFormMethods.setValue(`steps.${currentFinalStepIndex}.action`, {
-            filterOptionId: DefaultOptionSelection.None,
-            type: ActionType.TriggerStep,
-            locked: false,
-          });
-        } else {
-          stepsArrayMethods.insert(positionIndex, defaultStepFormValues);
-        }
-        setSelectedId(`step${positionIndex}`);
-      },
-      [setSelectedId, stepsArrayMethods, useFormMethods],
-    );
-
     const action = useFormMethods.getValues(
       `steps.${stepsArrayMethods.fields.length - 1}.action`,
     ) as ActionSchemaType;
@@ -214,10 +171,12 @@ export const FlowForm = forwardRef(
                   }
                   icon={PlayCircleOutlineOutlinedIcon}
                 />
-                <StageConnectorButton />
-                <IconButton onClick={() => addStepHandler(0)}>
-                  <AddIcon />
-                </IconButton>
+                <AddStepButton
+                  positionIndex={0}
+                  //@ts-expect-error TODO
+                  stepsArrayMethods={stepsArrayMethods}
+                  setSelectedId={setSelectedId}
+                />
                 {/* TODO: This logic is brittle as hell */}
                 {stepsArrayMethods.fields.map((item, index) => {
                   const isFinalStep = index === stepsArrayMethods.fields.length - 1;
@@ -249,12 +208,12 @@ export const FlowForm = forwardRef(
                           setSelectedId={setSelectedId}
                           selectedId={selectedId}
                         />
-                        <StageConnectorButton
-                          key={"connector-" + item.id.toString() + index.toString()}
+                        <AddStepButton
+                          positionIndex={index + 1}
+                          //@ts-expect-error TODO
+                          stepsArrayMethods={stepsArrayMethods}
+                          setSelectedId={setSelectedId}
                         />
-                        <IconButton onClick={() => addStepHandler(index + 1)}>
-                          <AddIcon />
-                        </IconButton>
                       </Box>
                     )
                   );
@@ -273,27 +232,6 @@ export const FlowForm = forwardRef(
                       marginBottom: "16px",
                     }}
                   >
-                    <AddStageButton
-                      label={"Add collaborative step"}
-                      onClick={() => {
-                        if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) {
-                          useFormMethods.setValue(
-                            `steps.${0}.response`,
-                            defaultStepFormValues.response,
-                          );
-                        } else {
-                          const secondToLastIndex = stepsArrayMethods.fields.length - 1;
-                          stepsArrayMethods.append(defaultStepFormValues);
-                          useFormMethods.setValue(`steps.${secondToLastIndex}.action`, {
-                            filterOptionId: DefaultOptionSelection.None,
-                            type: ActionType.TriggerStep,
-                            locked: false,
-                          });
-                          // navigate to newly created step
-                          setSelectedId(`step${stepsArrayMethods.fields.length}`);
-                        }
-                      }}
-                    />
                     <AddStageButton
                       label={"Trigger webhook"}
                       onClick={() => {
