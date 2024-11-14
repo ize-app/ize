@@ -38,7 +38,7 @@ export const ActionFilterForm = ({
         locked: false,
       });
     }
-    if (!action || (action.type !== ActionType.None && !action.filterOptionId)) {
+    if (!action) {
       setValue(`steps.${stepIndex}.action.filterOptionId`, DefaultOptionSelection.None);
     }
   }, [action?.type, stepIndex]);

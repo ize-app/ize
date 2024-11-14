@@ -34,8 +34,4 @@ export const actionSchema = z.discriminatedUnion("type", [
     filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
     locked: z.boolean().default(true),
   }),
-  z.object({
-    type: z.literal(ActionType.None),
-    locked: z.boolean().default(false),
-  }),
 ]);

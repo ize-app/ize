@@ -22,8 +22,6 @@ export const newActionConfig = async ({
   let filterOptionId: string | null | undefined = null;
   let webhookId;
 
-  if (actionArgs.type === ActionType.None) return null;
-
   if (
     typeof actionArgs.filterOptionIndex === "number" &&
     typeof actionArgs.filterResponseFieldIndex === "number" &&

@@ -1,4 +1,4 @@
-import { ActionType, FlowType } from "@/graphql/generated/graphql";
+import { FlowType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
 import { PermissionType } from "../formValidation/permission";
@@ -15,7 +15,7 @@ export const defaultStepFormValues: StepSchemaType = {
     allowMultipleResponses: false,
   },
   result: [],
-  action: { type: ActionType.None, locked: false },
+  action: undefined,
 };
 
 export const defaultFlowFormValues: FlowSchemaType = {

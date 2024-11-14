@@ -11,7 +11,7 @@ export const createActionArgs = (
   let filterOptionIndex: number | null = null;
   let filterResponseFieldIndex: number | null = null;
 
-  if (action.type !== ActionType.None && action.filterOptionId) {
+  if (action.filterOptionId) {
     if (action.filterOptionId !== DefaultOptionSelection.None.toString()) {
       (responseFields ?? []).forEach((f, fieldIndex) => {
         if (f.type === FieldType.Options) {

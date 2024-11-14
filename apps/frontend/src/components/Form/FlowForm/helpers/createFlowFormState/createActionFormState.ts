@@ -3,12 +3,10 @@ import { Action, ActionType } from "@/graphql/generated/graphql";
 import { ActionSchemaType } from "../../formValidation/action";
 import { DefaultOptionSelection } from "../../formValidation/fields";
 
-export const createActionFormState = (action: Action | null | undefined): ActionSchemaType => {
-  if (!action)
-    return {
-      type: ActionType.None,
-      locked: false,
-    };
+export const createActionFormState = (
+  action: Action | null | undefined,
+): ActionSchemaType | undefined => {
+  if (!action) return undefined;
 
   switch (action?.__typename) {
     case ActionType.CallWebhook:

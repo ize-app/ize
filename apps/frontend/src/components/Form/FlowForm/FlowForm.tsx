@@ -26,6 +26,7 @@ import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 import { ActionForm } from "./components/ActionForm/ActionForm";
 import { StepForm } from "./components/StepForm";
 import { TriggerForm } from "./components/TriggerForm";
+import { ActionSchemaType } from "./formValidation/action";
 import { DefaultOptionSelection } from "./formValidation/fields";
 import { FlowSchemaType, flowSchema } from "./formValidation/flow";
 import { defaultStepFormValues } from "./helpers/getDefaultFormValues";
@@ -129,10 +130,12 @@ export const FlowForm = forwardRef(
 
     const addStepHandler = useCallback(
       (positionIndex: number) => {
+        console.log("inside add step handler");
         const currentStepLength = stepsArrayMethods.fields.length;
         const currentFinalStepIndex = Math.max(stepsArrayMethods.fields.length - 1, 0);
 
         if (currentStepLength === 0) {
+          console.log("inside add step handler, currentStepLength is 0");
           stepsArrayMethods.append(defaultStepFormValues);
         }
         // there will usually be a first step, but sometimes that step is just an action (no response) and other times it actually has a response
@@ -166,14 +169,11 @@ export const FlowForm = forwardRef(
       [setSelectedId, stepsArrayMethods, useFormMethods],
     );
 
-    const action = useFormMethods.getValues(`steps.${stepsArrayMethods.fields.length - 1}.action`);
+    const action = useFormMethods.getValues(
+      `steps.${stepsArrayMethods.fields.length - 1}.action`,
+    ) as ActionSchemaType;
     const displayAction =
-      action &&
-      action.type &&
-      action.type !== ActionType.TriggerStep &&
-      action.type !== ActionType.None
-        ? true
-        : false;
+      action && action.type && action.type !== ActionType.TriggerStep ? true : false;
 
     return (
       <FormProvider {...useFormMethods}>
@@ -318,7 +318,7 @@ export const FlowForm = forwardRef(
                       icon={actionProperties[action.type].icon}
                       setSelectedId={setSelectedId}
                       selectedId={selectedId}
-                      disableDelete={action.locked || !hasStep0Response}
+                      disableDelete={action.locked}
                       deleteHandler={() => deleteFinalActionHandler()}
                       sx={{ marginBottom: "16px" }}
                       hasError={

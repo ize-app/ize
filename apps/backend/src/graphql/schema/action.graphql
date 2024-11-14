@@ -51,7 +51,6 @@ enum ActionType {
   EvolveFlow
   EvolveGroup
   GroupWatchFlow
-  None
 }
 
 input CallWebhookArgs {

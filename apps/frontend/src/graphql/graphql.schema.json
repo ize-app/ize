@@ -215,12 +215,6 @@
             "deprecationReason": null
           },
           {
-            "name": "None",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "TriggerStep",
             "description": null,
             "isDeprecated": false,

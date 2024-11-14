@@ -39,7 +39,6 @@ export enum ActionType {
   EvolveFlow = 'EvolveFlow',
   EvolveGroup = 'EvolveGroup',
   GroupWatchFlow = 'GroupWatchFlow',
-  None = 'None',
   TriggerStep = 'TriggerStep'
 }
 
@@ -1719,7 +1718,6 @@ export enum ActionType {
   EvolveFlow = 'EvolveFlow',
   EvolveGroup = 'EvolveGroup',
   GroupWatchFlow = 'GroupWatchFlow',
-  None = 'None',
   TriggerStep = 'TriggerStep'
 }
 

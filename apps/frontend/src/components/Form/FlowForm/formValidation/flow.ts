@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { ActionType, FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
+import { FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { fieldSetSchema } from "./fields";
@@ -67,14 +67,9 @@ export const flowSchema = z
   })
   .refine(
     (flow) => {
-      if (
-        flow.steps.length === 1 &&
-        flow.steps[0].result.length === 0 &&
-        (!flow.steps[0].action || flow.steps[0].action.type === ActionType.None)
-      ) {
-        console.log("failed steps validation");
+      if (flow.steps.length === 1 && flow.steps[0].result.length === 0 && !flow.steps[0].action) {
         return false;
-      }
+      } else return true;
     },
     { message: "There must be at least one collaborative step or action", path: ["steps"] },
   );
