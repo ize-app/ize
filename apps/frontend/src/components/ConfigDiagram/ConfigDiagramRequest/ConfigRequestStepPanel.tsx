@@ -5,24 +5,18 @@ import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components
 import { EndRequestStepButton } from "@/components/EndRequestStepButton";
 import { RequestStepResults } from "@/components/result/Results";
 import { StatusTag } from "@/components/status/StatusTag";
-import {
-  ActionFragment,
-  EntityFragment,
-  RequestStepFragment,
-  StepFragment,
-} from "@/graphql/generated/graphql";
+import { EntityFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { TimeLeft } from "./TimeLeft";
-import { ActionFilter } from "../../Action/ActionFilter";
 import { RespondPermissionPanel } from "../RespondPermissionPanel";
 
 export const ConfigRequestStepPanel = ({
   step,
   requestStep,
-  triggeringAction,
+
   requestStepIndex,
   currentStepIndex,
   requestFinal,
@@ -31,7 +25,7 @@ export const ConfigRequestStepPanel = ({
   step: StepFragment;
   requestFinal: boolean;
   requestStep: RequestStepFragment | null;
-  triggeringAction: ActionFragment | null | undefined;
+
   requestStepIndex: number;
   currentStepIndex: number;
   creator: EntityFragment;
@@ -63,11 +57,6 @@ export const ConfigRequestStepPanel = ({
 
   return (
     <PanelContainer>
-      {/* <PanelHeader>
-        <Typography color="primary" variant="label">
-          Step configuration
-        </Typography>{" "}
-      </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Status" hasError={false}>
           {showManuallyEndButton && requestStep && (
@@ -99,11 +88,6 @@ export const ConfigRequestStepPanel = ({
               </Box>
             )}
         </PanelAccordion>
-        {triggeringAction && triggeringAction.filterOption && (
-          <PanelAccordion title="Filter" hasError={false}>
-            <ActionFilter action={triggeringAction} />
-          </PanelAccordion>
-        )}
         <RespondPermissionPanel step={step} initialOpenState={false} />
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}

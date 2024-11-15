@@ -9,10 +9,12 @@ import {
 } from "@/components/ConfigDiagram";
 import { RequestFragment, Status } from "@/graphql/generated/graphql";
 
+import { ConfigRequestActionFilterPanel } from "./ConfigRequestActionFilterPanel";
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
+import { RequestActionFilterStage } from "./RequestActionFilterStage";
 import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
 
 // Interactive diagram for understanding a given request
@@ -41,6 +43,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
           />
           {request.flow.steps.map((step, index) => {
             if (step.fieldSet.fields.length === 0) return null;
+
             return (
               <Box key={index}>
                 <StageConnectorButton key={"connector-" + index.toString()} />
@@ -55,6 +58,13 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   )}
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
+                  setSelectedId={setSelectedId}
+                  selectedId={selectedId}
+                />
+                <RequestActionFilterStage
+                  action={step.action}
+                  key={"stage-" + step?.id}
+                  id={"actionFilter" + index.toString()}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
                 />
@@ -89,9 +99,18 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               requestStep={request.requestSteps[index]}
               requestStepIndex={index}
               currentStepIndex={request.currentStepIndex}
-              triggeringAction={index > 0 ? request.flow.steps[index - 1].action : null}
               requestFinal={request.final}
               creator={request.creator}
+            />
+          )
+        );
+      })}
+      {request.flow.steps.map((step, index) => {
+        return (
+          selectedId === "actionFilter" + index.toString() && (
+            <ConfigRequestActionFilterPanel
+              key={"actionFilterpanel-" + step?.id}
+              action={step.action}
             />
           )
         );

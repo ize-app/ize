@@ -5,7 +5,7 @@ import { ActionFragment } from "@/graphql/generated/graphql";
 
 import { Stage, StageProps } from "../DiagramPanel/Stage";
 
-interface FlowActionFilterStage extends StageProps {
+export interface FlowActionFilterStageProps extends StageProps {
   action: ActionFragment | undefined | null;
   color?: string;
   statusIcon?: React.ComponentType<SvgIconProps>;
@@ -18,7 +18,7 @@ export const FlowActionFilterStage = ({
   color,
   statusIcon,
   action,
-}: FlowActionFilterStage) => {
+}: FlowActionFilterStageProps) => {
   if (!action?.filterOption) return null;
 
   const label: string = action.filterOption.name;
