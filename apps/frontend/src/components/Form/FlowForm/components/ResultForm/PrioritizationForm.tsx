@@ -44,7 +44,6 @@ export const PrioritizationForm = ({
 }: PrioritizationFormProps) => {
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
-      <Typography variant={"label2"}>Ranking configuration</Typography>
       <Typography>
         {field.type === FieldType.Options
           ? rankingStrategyDescription(field.optionsConfig.selectionType)

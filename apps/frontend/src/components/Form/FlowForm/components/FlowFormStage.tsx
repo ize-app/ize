@@ -153,7 +153,7 @@ export const FlowFormStage = ({
         selectedId={selectedId}
         icon={icon}
         size={args.type === StageType.ActionFilter ? "small" : "medium"}
-        color={hasError ? theme.palette.error.main : theme.palette.error.main}
+        color={hasError ? theme.palette.error.main : theme.palette.primary.main}
         statusIcon={hasError ? WarningOutlined : undefined}
         sx={{
           zIndex: 1,

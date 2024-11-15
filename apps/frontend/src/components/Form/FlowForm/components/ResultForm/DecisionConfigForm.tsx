@@ -1,4 +1,4 @@
-import { InputAdornment, Typography } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -111,7 +111,6 @@ export const DecisionConfigForm = ({
 
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
-      <Typography variant={"label2"}>Decision configuration</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           label="How do we determine the final result?"

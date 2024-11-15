@@ -141,7 +141,6 @@ export const ResponseFieldOptionsForm = ({
           size={"small"}
         />
       )}
-      <Typography variant={"label2"}>Available options</Typography>
       <PresetOptions />
       {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
         <Box sx={{ width: "100%" }}>

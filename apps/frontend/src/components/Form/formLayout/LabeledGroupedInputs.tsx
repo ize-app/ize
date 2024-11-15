@@ -1,6 +1,19 @@
-import { SxProps } from "@mui/material";
+import { SxProps, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ReactNode } from "react";
+
+const LabeledWrapper = ({ label, children }: { label?: string; children: ReactNode }) => {
+  return !label ? (
+    <>{children}</>
+  ) : (
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+      <Typography variant="description" component="legend" fontWeight={400}>
+        {label}
+      </Typography>
+      {children}
+    </Box>
+  );
+};
 
 export const LabeledGroupedInputs = ({
   label,
@@ -21,34 +34,8 @@ export const LabeledGroupedInputs = ({
   };
   const styles = { ...defaultStyles, ...(sx ?? {}) } as SxProps;
   return (
-    <Box sx={styles}>
-      <fieldset
-        style={{
-          position: "absolute",
-          left: 0,
-          bottom: 0,
-          right: 0,
-          top: "-12px",
-          border: "none",
-        }}
-      >
-        <legend>
-          {label && (
-            <span
-              style={{
-                backgroundColor: "white",
-                fontWeight: "400",
-                fontFamily: "roboto",
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: ".75rem",
-              }}
-            >
-              {label}
-            </span>
-          )}
-        </legend>
-      </fieldset>
-      {children}
-    </Box>
+    <LabeledWrapper label={label}>
+      <Box sx={styles}>{children}</Box>
+    </LabeledWrapper>
   );
 };

@@ -1,4 +1,4 @@
-import { InputAdornment, Typography } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
@@ -17,8 +17,6 @@ export const LlmSummaryForm = ({ stepIndex, resultIndex, display, type }: LlmSum
   if (type !== ResultType.LlmSummary && type !== ResultType.LlmSummaryList) return null;
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
-      <Typography variant={"label2"}>AI summary configuration</Typography>
-
       <TextField<FlowSchemaType>
         sx={{ width: "100%" }}
         label="Summarization instructions"

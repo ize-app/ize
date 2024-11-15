@@ -1,24 +1,20 @@
 import Close from "@mui/icons-material/Close";
-import { Box, FormHelperText } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import { useEffect, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { ResultType } from "@/graphql/generated/graphql";
 
+import { AddResultButton } from "./AddResultButton";
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
-import { Select, TextField } from "../../../formFields";
+import { TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
-import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { ResultSchemaType } from "../../formValidation/result";
-import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
-import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
+import { getResultFormLabel } from "../../helpers/getResultFormLabel";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -78,27 +74,11 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
           />
         );
       })}
-      <Box>
-        <Button
-          sx={{ flexGrow: 0 }}
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            const field = createDefaultFieldState({
-              fieldType: FieldType.Options,
-              selectionType: FieldOptionsSelectionType.Select,
-            });
-            fieldsArrayMethods.append(field);
-            const result = createDefaultResultState({
-              resultType: ResultType.Decision,
-              fieldId: field.fieldId,
-            });
-            resultsArrayMethods.append(result);
-          }}
-        >
-          Add result
-        </Button>
-      </Box>
+      <AddResultButton
+        fieldsArrayMethods={fieldsArrayMethods}
+        //@ts-expect-error TODO
+        resultsArrayMethods={resultsArrayMethods}
+      />
     </Box>
   );
 };
@@ -112,37 +92,11 @@ const ResultForm = ({
   locked,
   reusable,
 }: ResultFormProps) => {
-  const { watch, getValues, setValue, formState } = useFormContext<FlowSchemaType>();
-  const resultType = watch(`steps.${stepIndex}.result.${resultIndex}.type`);
+  const { getValues, formState } = useFormContext<FlowSchemaType>();
 
+  const result = getValues(`steps.${stepIndex}.result.${resultIndex}`);
   const resultField = getValues(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`);
-
-  const [prevResultType, setPrevResultType] = useState<ResultType | undefined>(resultType);
-  const [displayForm, setDisplayForm] = useState<boolean>(true);
-
-  useEffect(() => {
-    // only run logic if result type has changed, but not on first render
-    if (prevResultType && resultType && resultType !== prevResultType) {
-      const field: FieldSchemaType = createDefaultFieldState({
-        fieldType:
-          resultType === ResultType.Ranking || resultType === ResultType.Decision
-            ? FieldType.Options
-            : FieldType.FreeInput,
-        selectionType:
-          resultType === ResultType.Ranking
-            ? FieldOptionsSelectionType.Rank
-            : FieldOptionsSelectionType.Select,
-      });
-      const result: ResultSchemaType = createDefaultResultState({
-        resultType,
-        fieldId: field.fieldId,
-      });
-      setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`, field);
-      setValue(`steps.${stepIndex}.result.${resultIndex}`, result);
-      setDisplayForm(true);
-    }
-    setPrevResultType(resultType);
-  }, [resultType]);
+  const resultType = result.type;
 
   const resultError = formState.errors?.steps?.[stepIndex]?.result?.[resultIndex]?.root?.message;
 
@@ -157,7 +111,7 @@ const ResultForm = ({
       }}
       key={id}
     >
-      <LabeledGroupedInputs>
+      <LabeledGroupedInputs label={getResultFormLabel({ result: result })}>
         <Box
           sx={{
             display: "flex",
@@ -168,21 +122,8 @@ const ResultForm = ({
             backgroundColor: "#fffff5",
           }}
         >
+          <Typography variant={"label2"}>Question that respondants will answer</Typography>
           <FieldBlock>
-            <Select<FlowSchemaType>
-              label="What's the final result?"
-              disabled={locked}
-              selectOptions={[
-                { name: "Decision", value: ResultType.Decision },
-                { name: "Ranked list", value: ResultType.Ranking },
-                { name: "AI generated summary", value: ResultType.LlmSummary },
-                { name: "AI generated list", value: ResultType.LlmSummaryList },
-              ]}
-              name={`steps.${stepIndex}.result.${resultIndex}.type`}
-              onChange={() => setDisplayForm(false)}
-              size="small"
-              defaultValue=""
-            />
             <TextField<FlowSchemaType>
               // assuming here that results to fields is 1:1 relationshp
               name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
@@ -194,16 +135,17 @@ const ResultForm = ({
               defaultValue=""
             />
           </FieldBlock>
-          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) &&
-            displayForm && (
-              <ResponseFieldOptionsForm
-                reusable={reusable}
-                stepIndex={stepIndex}
-                fieldIndex={resultIndex}
-                locked={locked}
-              />
-            )}
-          {resultType === ResultType.Decision && displayForm && (
+
+          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
+            <ResponseFieldOptionsForm
+              reusable={reusable}
+              stepIndex={stepIndex}
+              fieldIndex={resultIndex}
+              locked={locked}
+            />
+          )}
+          <Typography variant={"label2"}>How result is created</Typography>
+          {resultType === ResultType.Decision && (
             <DecisionConfigForm
               stepIndex={stepIndex}
               resultIndex={resultIndex}
@@ -212,19 +154,18 @@ const ResultForm = ({
             />
           )}
 
-          {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) &&
-            displayForm && (
-              <LlmSummaryForm
-                stepIndex={stepIndex}
-                resultIndex={resultIndex}
-                display={
-                  resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
-                }
-                type={resultType}
-              />
-            )}
+          {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) && (
+            <LlmSummaryForm
+              stepIndex={stepIndex}
+              resultIndex={resultIndex}
+              display={
+                resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
+              }
+              type={resultType}
+            />
+          )}
 
-          {resultType === ResultType.Ranking && displayForm && (
+          {resultType === ResultType.Ranking && (
             <PrioritizationForm
               formIndex={stepIndex}
               resultIndex={resultIndex}
