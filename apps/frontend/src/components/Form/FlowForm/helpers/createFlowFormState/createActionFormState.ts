@@ -1,7 +1,6 @@
 import { Action, ActionType } from "@/graphql/generated/graphql";
 
 import { ActionSchemaType } from "../../formValidation/action";
-import { DefaultOptionSelection } from "../../formValidation/fields";
 
 export const createActionFormState = (
   action: Action | null | undefined,
@@ -13,7 +12,7 @@ export const createActionFormState = (
       return {
         type: ActionType.CallWebhook,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filterOptionId: action.filterOption?.optionId ?? null,
         callWebhook: {
           webhookId: action.webhookId,
           name: action.webhookName,
@@ -26,25 +25,25 @@ export const createActionFormState = (
       return {
         type: ActionType.TriggerStep,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filterOptionId: action.filterOption?.optionId ?? null,
       };
     case ActionType.EvolveFlow:
       return {
         type: ActionType.EvolveFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filterOptionId: action.filterOption?.optionId ?? null,
       };
     case ActionType.EvolveGroup:
       return {
         type: ActionType.EvolveGroup,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filterOptionId: action.filterOption?.optionId ?? null,
       };
     case ActionType.GroupWatchFlow: {
       return {
         type: ActionType.GroupWatchFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filterOptionId: action.filterOption?.optionId ?? null,
       };
     }
     default:

@@ -1,7 +1,6 @@
 import { Box, FormHelperText } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { ActionFilterForm } from "./ActionFilterForm";
 import { PermissionForm } from "./PermissionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
@@ -47,13 +46,6 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
         >
           {stepError?.root.message}
         </FormHelperText>
-      )}
-      {stepIndex > 0 && (
-        <ActionFilterForm
-          stepIndex={stepIndex - 1}
-          action={getValues(`steps.${stepIndex - 1}.action`)}
-          isTriggerAction={true}
-        />
       )}
       {!allInternalFields && (
         <PanelAccordion

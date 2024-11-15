@@ -1,10 +1,7 @@
 import { ZodErrorMap, setErrorMap, z } from "zod";
 
 // import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
-import {
-  DefaultOptionSelection,
-  fieldOptionSchema,
-} from "@/components/Form/FlowForm/formValidation/fields";
+import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 import { DecisionType } from "@/graphql/generated/graphql";
@@ -84,7 +81,7 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     // webhook: actionSchema,
     webhookName: z.string(),
     optionsConfig: optionConfigSchema.optional(),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filterOptionId: z.string().nullable().default(null),
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),

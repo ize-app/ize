@@ -2,7 +2,7 @@ import { WebhookSchemaType } from "@/components/Form/formValidation/webhook";
 import { ActionArgs, ActionType, CallWebhookArgs, FieldType } from "@/graphql/generated/graphql";
 
 import { ActionSchemaType } from "../../formValidation/action";
-import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+import { FieldsSchemaType } from "../../formValidation/fields";
 
 export const createActionArgs = (
   action: ActionSchemaType,
@@ -12,21 +12,19 @@ export const createActionArgs = (
   let filterResponseFieldIndex: number | null = null;
 
   if (action.filterOptionId) {
-    if (action.filterOptionId !== DefaultOptionSelection.None.toString()) {
-      (responseFields ?? []).forEach((f, fieldIndex) => {
-        if (f.type === FieldType.Options) {
-          const optionIndex = f.optionsConfig.options.findIndex((o) => {
-            return o.optionId === action.filterOptionId;
-          });
-          if (optionIndex !== -1) {
-            filterOptionIndex = optionIndex;
-            filterResponseFieldIndex = fieldIndex;
-          }
+    (responseFields ?? []).forEach((f, fieldIndex) => {
+      if (f.type === FieldType.Options) {
+        const optionIndex = f.optionsConfig.options.findIndex((o) => {
+          return o.optionId === action.filterOptionId;
+        });
+        if (optionIndex !== -1) {
+          filterOptionIndex = optionIndex;
+          filterResponseFieldIndex = fieldIndex;
         }
-      });
-      if (typeof filterOptionIndex !== "number") {
-        throw Error("Action filter option not found ");
       }
+    });
+    if (typeof filterOptionIndex !== "number") {
+      throw Error("Action filter option not found ");
     }
   }
 

@@ -5,10 +5,10 @@ import IconButton from "@mui/material/IconButton";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { ActionType } from "@/graphql/generated/graphql";
+import { ActionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "../formValidation/fields";
 import { FlowSchemaType } from "../formValidation/flow";
+import { getActionFilterOptions } from "../helpers/getActionFilterOptions";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 // position Index is position of new step in the array
 export const AddStepButton = ({
@@ -32,10 +32,18 @@ export const AddStepButton = ({
 
   const { getValues, setValue } = useFormContext<FlowSchemaType>();
 
+  const previousStep = getValues(`steps.${positionIndex - 1}`);
+
   // isEnd means that this add button is at end of steps array and also has no action after it
-  const isEnd =
-    positionIndex > stepsArrayMethods.fields.length - 1 &&
-    !getValues(`steps.${positionIndex - 1}.action`);
+  const isEnd = positionIndex > stepsArrayMethods.fields.length - 1 && !previousStep?.action;
+
+  const hasDecisionToFilterBy: boolean = (previousStep?.result ?? []).some(
+    (result) => result.type === ResultType.Decision,
+  );
+
+  const hasAction = !!previousStep?.action;
+
+  const alreadyHasFilter = !!previousStep?.action?.filterOptionId;
 
   const addStepHandler = useCallback(() => {
     const currentStepLength = stepsArrayMethods.fields.length;
@@ -48,7 +56,11 @@ export const AddStepButton = ({
     else if (currentStepLength === 1 && positionIndex === 0) {
       // if there's a response, insert a new step
       if (getValues(`steps.${0}.response`)) {
-        stepsArrayMethods.prepend(defaultStepFormValues);
+        const newStep = {
+          ...defaultStepFormValues,
+          action: { filterOptionId: null, type: ActionType.TriggerStep, locked: false },
+        };
+        stepsArrayMethods.prepend(newStep);
       }
       // if no response, overwrite step 0 to have a response config
       // this will allow it display in the UI as a collaborative step
@@ -63,19 +75,24 @@ export const AddStepButton = ({
       stepsArrayMethods.append(newStep);
       // change previous final step to have a trigger action
       setValue(`steps.${currentFinalStepIndex}.action`, {
-        filterOptionId: DefaultOptionSelection.None,
+        filterOptionId: null,
         type: ActionType.TriggerStep,
         locked: false,
       });
     } else {
       stepsArrayMethods.insert(positionIndex, defaultStepFormValues);
+      setValue(`steps.${currentFinalStepIndex}.action`, {
+        filterOptionId: null,
+        type: ActionType.TriggerStep,
+        locked: false,
+      });
     }
     setSelectedId(`step${positionIndex}`);
   }, [positionIndex, setSelectedId, stepsArrayMethods, setValue, getValues]);
 
   const addWebhookHandler = () => {
     setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
-      filterOptionId: DefaultOptionSelection.None,
+      filterOptionId: null,
       type: ActionType.CallWebhook,
       locked: false,
       callWebhook: { uri: "", name: "", valid: false },
@@ -83,6 +100,16 @@ export const AddStepButton = ({
     setSelectedId("webhook");
   };
 
+  const addFilterHandler = () => {
+    const options = getActionFilterOptions({
+      results: previousStep.result,
+      responseFields: previousStep.fieldSet.fields,
+    });
+    const defaultOptionFilterId = options[0].value as string;
+    console.log("defaultOptionFilterId", defaultOptionFilterId);
+    setValue(`steps.${positionIndex - 1}.action.filterOptionId`, defaultOptionFilterId);
+    setSelectedId("webhook");
+  };
   return (
     <Box sx={{ height: "48px", position: "relative", display: "flex", alignItems: "center" }}>
       <Box
@@ -98,8 +125,7 @@ export const AddStepButton = ({
       />
       <IconButton
         onClick={(e) => {
-          if (isEnd) handleMenuOpen(e);
-          else addStepHandler();
+          handleMenuOpen(e);
         }}
         size="small"
       >
@@ -131,14 +157,27 @@ export const AddStepButton = ({
         >
           Add collaborative step
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            addWebhookHandler();
-            handleClose();
-          }}
-        >
-          Trigger a webhook
-        </MenuItem>
+        {isEnd && (
+          <MenuItem
+            onClick={() => {
+              addWebhookHandler();
+              handleClose();
+            }}
+          >
+            Trigger a webhook
+          </MenuItem>
+        )}
+        {positionIndex > 0 && !alreadyHasFilter && (
+          <MenuItem
+            disabled={!hasDecisionToFilterBy || !hasAction}
+            onClick={() => {
+              addFilterHandler();
+              handleClose();
+            }}
+          >
+            Filter by decision
+          </MenuItem>
+        )}
       </Menu>
     </Box>
   );

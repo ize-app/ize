@@ -26,7 +26,7 @@ export const StageMenu = ({ deleteHandler }: StageMenuProps): JSX.Element => {
 
   return (
     <>
-      <IconButton size="small" onClick={handleClick}>
+      <IconButton size="small" onClick={handleClick} sx={{ padding: "0px 5px" }}>
         <MoreHorizIcon fontSize="small" color="secondary" />
       </IconButton>
       <Menu

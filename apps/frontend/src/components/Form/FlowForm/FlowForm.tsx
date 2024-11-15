@@ -13,6 +13,7 @@ import {
 } from "@/components/ConfigDiagram";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
+import { ActionFilterForm } from "./components/ActionFilterForm";
 import { ActionForm } from "./components/ActionForm/ActionForm";
 import { AddStepButton } from "./components/AddStepButton";
 import { FlowFormStage } from "./components/FlowFormStage";
@@ -53,7 +54,6 @@ export const FlowForm = forwardRef(
     });
 
     const flowError = useFormMethods.formState.errors.steps;
-    console.log("flow steps errors are ", flowError);
 
     if (name !== "evolve") {
       console.log(name, "errors are ", useFormMethods.formState.errors);
@@ -131,7 +131,7 @@ export const FlowForm = forwardRef(
                         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                       >
                         <FlowFormStage
-                          key={"stage-" + item.id.toString() + index.toString()}
+                          key={"step-" + item.id.toString() + index.toString()}
                           type="step"
                           index={index}
                           id={"step" + index.toString()}
@@ -140,7 +140,16 @@ export const FlowForm = forwardRef(
                           //@ts-expect-error TODO
                           stepsArrayMethods={stepsArrayMethods}
                         />
-
+                        <FlowFormStage
+                          key={"actionFilter-" + item.id.toString() + index.toString()}
+                          type="actionFilter"
+                          index={index}
+                          id={"actionFilter" + index.toString()}
+                          setSelectedId={setSelectedId}
+                          selectedId={selectedId}
+                          //@ts-expect-error TODO
+                          stepsArrayMethods={stepsArrayMethods}
+                        />
                         <AddStepButton
                           positionIndex={index + 1}
                           //@ts-expect-error TODO
@@ -179,6 +188,20 @@ export const FlowForm = forwardRef(
                       stepIndex={index}
                       key={"step-" + item.id}
                       show={selectedId === "step" + index.toString()}
+                    />
+                  );
+                })}
+                {stepsArrayMethods.fields.map((item, index) => {
+                  // if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) return null;
+                  const hasAction = !!useFormMethods.getValues(
+                    `steps.${index}.action.filterOptionId`,
+                  );
+                  if (!hasAction) return null;
+                  return (
+                    <ActionFilterForm
+                      stepIndex={index}
+                      key={"actionFilter-" + item.id}
+                      show={selectedId === "actionFilter" + index.toString()}
                     />
                   );
                 })}

@@ -1,4 +1,5 @@
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box, SvgIconProps, Typography } from "@mui/material";
 
@@ -13,6 +14,7 @@ import {
 } from "@/graphql/generated/graphql";
 import { colors } from "@/style/style";
 
+import { FlowStageWrapper } from "./FlowStageWrapper";
 import { Stage, StageProps } from "../DiagramPanel/Stage";
 
 interface FlowStageTriggerProps extends StageProps {
@@ -30,14 +32,21 @@ interface FlowStageActionProps extends StageProps {
   action: Action;
 }
 
-type FlowStagePropsBase = FlowStageTriggerProps | FlowStageStepProps | FlowStageActionProps;
+interface FlowStageActionFilterProps extends StageProps {
+  type: "actionFilter";
+  action: Action;
+}
+
+type FlowStagePropsBase =
+  | FlowStageTriggerProps
+  | FlowStageStepProps
+  | FlowStageActionProps
+  | FlowStageActionFilterProps;
 
 export type FlowStageProps = FlowStagePropsBase & {
   color?: string;
   statusIcon?: React.ComponentType<SvgIconProps>;
 };
-
-
 
 export const FlowStage = ({
   id,
@@ -73,43 +82,51 @@ export const FlowStage = ({
       icon = actionProperties[action.__typename as ActionType].icon;
       break;
     }
+    case "actionFilter": {
+      const { action } = props;
+      if (!action?.filterOption) return null;
+      label = action.filterOption.name;
+      icon = FilterAltIcon;
+    }
   }
 
   return (
-    <Stage
-      id={id}
-      setSelectedId={setSelectedId}
-      selectedId={selectedId}
-      icon={icon}
-      color={color ?? colors.primary}
-      statusIcon={statusIcon}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexGrow: 1,
-        }}
+    <FlowStageWrapper type={props.type}>
+      <Stage
+        id={id}
+        setSelectedId={setSelectedId}
+        selectedId={selectedId}
+        icon={icon}
+        color={color ?? colors.primary}
+        statusIcon={statusIcon}
       >
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "space-between",
+            alignItems: "center",
             flexGrow: 1,
           }}
         >
-          <Typography variant="label" color={color}>
-            {label}
-          </Typography>
-          {subtitle && (
-            <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"} color={color}>
-              {subtitle}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+            }}
+          >
+            <Typography variant="label" color={color}>
+              {label}
             </Typography>
-          )}
+            {subtitle && (
+              <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"} color={color}>
+                {subtitle}
+              </Typography>
+            )}
+          </Box>
+          {entities.length > 0 && <AvatarGroup avatars={entities} />}
         </Box>
-        {entities.length > 0 && <AvatarGroup avatars={entities} />}
-      </Box>
-    </Stage>
+      </Stage>
+    </FlowStageWrapper>
   );
 };

@@ -1,5 +1,4 @@
 import { ActionSchemaType } from "@/components/Form/FlowForm/formValidation/action";
-import { DefaultOptionSelection } from "@/components/Form/FlowForm/formValidation/fields";
 import { ActionType } from "@/graphql/generated/graphql";
 
 // Define a union type for all possible arguments with a discriminant 'type' field
@@ -31,7 +30,7 @@ export function generateActionConfig(arg: ActionArg): ActionSchemaType {
       return {
         type: ActionType.CallWebhook,
         ...base,
-        filterOptionId: filterOptionId ?? DefaultOptionSelection.None,
+        filterOptionId: filterOptionId ?? null,
         callWebhook: {
           name: webhookName,
           uri: "",
