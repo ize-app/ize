@@ -23,7 +23,6 @@ export const generateIdeaCreationStep = ({
     type: ResultType.LlmSummaryList,
     fieldId: field.fieldId,
     prompt: "",
-    example: "",
   });
 
   const step = generateStepConfig({

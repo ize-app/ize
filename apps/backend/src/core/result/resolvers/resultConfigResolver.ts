@@ -103,7 +103,6 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
     minimumAnswers: resultConfig.minAnswers,
     field,
     prompt: llmConfig.prompt,
-    example: llmConfig.example,
   };
 };
 
@@ -123,6 +122,5 @@ const resultConfigLlmListResolver = ({
     minimumAnswers: resultConfig.minAnswers,
     field,
     prompt: llmConfig.prompt,
-    example: llmConfig.example,
   };
 };

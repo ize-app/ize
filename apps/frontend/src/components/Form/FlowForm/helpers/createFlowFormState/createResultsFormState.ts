@@ -44,7 +44,6 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
           ...resultBase,
           llmSummary: {
             prompt: result.prompt ?? undefined,
-            example: result.example ?? undefined,
           },
         } as LlmSummaryResultSchemaType;
       case ResultType.LlmSummaryList:
@@ -53,7 +52,6 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
           ...resultBase,
           llmSummary: {
             prompt: result.prompt ?? undefined,
-            example: result.example ?? undefined,
           },
         } as LlmSummaryListResultSchemaType;
       default:

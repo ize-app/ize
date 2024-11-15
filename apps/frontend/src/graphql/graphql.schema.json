@@ -4514,18 +4514,6 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "example",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "field",
             "description": null,
             "args": [],
@@ -4619,18 +4607,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "example",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "prompt",
             "description": null,
             "type": {
@@ -4657,18 +4633,6 @@
         "description": null,
         "isOneOf": null,
         "fields": [
-          {
-            "name": "example",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "field",
             "description": null,

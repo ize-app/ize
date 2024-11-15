@@ -697,7 +697,6 @@ model ResultConfigLlm {
   id        String         @id @default(uuid()) @db.Uuid
   type      LlmSummaryType
   prompt    String
-  example   String?
   createdAt DateTime       @default(now()) @map("created_at")
 
   ResultConfigs ResultConfig[]

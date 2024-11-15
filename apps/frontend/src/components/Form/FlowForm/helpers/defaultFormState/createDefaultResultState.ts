@@ -40,9 +40,7 @@ export const createDefaultResultState = ({
         fieldId,
         minimumAnswers: 2,
         llmSummary: {
-          prompt:
-            "Write a summary of all the responses that describes the overall thoughts and sentiment of the group, common points of disagreement, and next steps.",
-          example: undefined, // "Overall, the group was in agreement that it is OK to where socks and sandals. Most agree that socks and sandals optimizes for comfort, warmth and hygiene. A few noted that socks and sandals can be a daring and ironic fashion choice. Others remain convinced that socks with sandals is a fatal fashion faux pas that must be avoided at all costs, though socks with certain kinds of sandals may acceptable. Further discussion may be warranted to understand the types of sandals that are appropriate to wear with socks. "
+          prompt: "",
         },
       };
     case ResultType.LlmSummaryList:
@@ -52,8 +50,7 @@ export const createDefaultResultState = ({
         fieldId,
         minimumAnswers: 2,
         llmSummary: {
-          prompt: "Synthesize the responses into a list of conise key points.",
-          example: undefined,
+          prompt: "",
         },
       };
   }

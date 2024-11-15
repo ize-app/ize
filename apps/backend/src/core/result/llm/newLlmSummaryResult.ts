@@ -54,7 +54,6 @@ export const newLlmSummaryResult = async ({
   const res = await generateAiSummary({
     requestPayload,
     type,
-    exampleOutput: llmConfig.example,
     summaryPrompt: llmConfig.prompt,
   });
 

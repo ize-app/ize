@@ -1,5 +1,4 @@
 import { Typography } from "@mui/material";
-import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
@@ -8,21 +7,10 @@ import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlock
 import { AIOutputType, IntitialFlowSetupSchemaType } from "../formValidation";
 
 export const SummaryForm = () => {
-  const { watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const question = watch("question");
   const aiOutputType = watch("aiOutputType");
-
-  useEffect(() => {}, [
-    setValue(
-      "prompt",
-      "Summarize overall thoughts and sentiment of the group, common points of disagreement, and next steps.",
-    ),
-    setValue(
-      "example",
-      "Points of agreement: \n- Do A for reason X\n- Create B but consider Y\n\nPoints of disagreement: \n- No alignment on whether we should take path C because reason Z",
-    ),
-  ]);
 
   return (
     <>
@@ -67,14 +55,6 @@ export const SummaryForm = () => {
               name={`prompt`}
               multiline
               placeholderText={"Prompt for the AI"}
-              label={``}
-              defaultValue=""
-            />
-            <TextField<IntitialFlowSetupSchemaType>
-              // assuming here that results to fields is 1:1 relationshp
-              name={`example`}
-              multiline
-              placeholderText={"example output from the AI"}
               label={``}
               defaultValue=""
             />

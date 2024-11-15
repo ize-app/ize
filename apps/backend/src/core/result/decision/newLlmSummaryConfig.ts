@@ -21,7 +21,6 @@ export const newLlmSummaryConfig = async ({
   const llmConfig = await transaction.resultConfigLlm.create({
     data: {
       prompt: llmArgs.prompt,
-      example: llmArgs.example,
       type: LlmSummaryType.AtTheEnd,
     },
   });

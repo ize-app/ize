@@ -70,7 +70,6 @@ fragment LlmSummary on LlmSummary {
   name
   resultConfigId
   prompt
-  example
   minimumAnswers
 }
 
@@ -81,6 +80,5 @@ fragment LlmSummaryList on LlmSummaryList {
   name
   resultConfigId
   prompt
-  example
   minimumAnswers
 }

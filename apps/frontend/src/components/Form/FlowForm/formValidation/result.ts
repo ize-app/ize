@@ -57,7 +57,6 @@ const prioritizationSchema = z.object({
 
 const llmSchema = z.object({
   prompt: z.string(),
-  example: z.string().optional(),
 });
 
 const decisionResultSchema = z.object({
@@ -92,19 +91,18 @@ const rankingResultSchema = z.object({
   prioritization: prioritizationSchema,
 });
 
-export const resultSchema = z
-  .discriminatedUnion("type", [
-    decisionResultSchema,
-    rankingResultSchema,
-    llmResultSchema,
-    llmListResultSchema,
-  ])
-  // .refine(
-  //   (result) => {
-  //     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
-  //     return true;
-  //   },
-  //   { message: "There must be at least 2 responses to create a result" },
-  // );
+export const resultSchema = z.discriminatedUnion("type", [
+  decisionResultSchema,
+  rankingResultSchema,
+  llmResultSchema,
+  llmListResultSchema,
+]);
+// .refine(
+//   (result) => {
+//     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
+//     return true;
+//   },
+//   { message: "There must be at least 2 responses to create a result" },
+// );
 
 export const resultsSchema = z.array(resultSchema).default([]);

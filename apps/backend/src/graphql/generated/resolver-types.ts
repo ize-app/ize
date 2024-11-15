@@ -512,7 +512,6 @@ export type LinkedResultOptionsArgs = {
 
 export type LlmSummary = {
   __typename?: 'LlmSummary';
-  example?: Maybe<Scalars['String']['output']>;
   field: Field;
   minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
@@ -521,13 +520,11 @@ export type LlmSummary = {
 };
 
 export type LlmSummaryArgs = {
-  example?: InputMaybe<Scalars['String']['input']>;
   prompt: Scalars['String']['input'];
 };
 
 export type LlmSummaryList = {
   __typename?: 'LlmSummaryList';
-  example?: Maybe<Scalars['String']['output']>;
   field: Field;
   minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
@@ -1796,7 +1793,6 @@ export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentTyp
 };
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
-  example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1806,7 +1802,6 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 };
 
 export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummaryList'] = ResolversParentTypes['LlmSummaryList']> = {
-  example?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
   minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

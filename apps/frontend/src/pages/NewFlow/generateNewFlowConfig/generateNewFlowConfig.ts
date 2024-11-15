@@ -124,7 +124,6 @@ export const generateNewFlowConfig = ({
               : ResultType.LlmSummary,
           fieldId: field.fieldId,
           prompt: config.prompt,
-          example: config.example,
         });
         break;
       }

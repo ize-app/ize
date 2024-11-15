@@ -19,13 +19,11 @@ type ResultArgs =
       type: ResultType.LlmSummary;
       fieldId: string;
       prompt: string;
-      example: string;
     }
   | {
       type: ResultType.LlmSummaryList;
       fieldId: string;
       prompt: string;
-      example: string;
     };
 
 const generateDecisionConfig = ({
@@ -90,7 +88,6 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
         ...base,
         llmSummary: {
           prompt: arg.prompt,
-          example: arg.example,
         },
       };
     }
@@ -100,7 +97,6 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
         ...base,
         llmSummary: {
           prompt: arg.prompt,
-          example: arg.example,
         },
       };
     }

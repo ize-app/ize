@@ -45,7 +45,6 @@ type LlmSummary {
   field: Field!
   minimumAnswers: Int!
   prompt: String!
-  example: String
 }
 
 type LlmSummaryList {
@@ -54,7 +53,6 @@ type LlmSummaryList {
   name: String!
   minimumAnswers: Int!
   prompt: String!
-  example: String
 }
 
 # mirrors Prisma type
@@ -102,5 +100,4 @@ input PrioritizationArgs {
 
 input LlmSummaryArgs {
   prompt: String!
-  example: String
 }

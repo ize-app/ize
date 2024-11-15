@@ -30,22 +30,6 @@ export const LlmSummaryForm = ({ stepIndex, resultIndex, display, type }: LlmSum
         defaultValue="test"
       />
       <TextField<FlowSchemaType>
-        sx={{ width: "100%" }}
-        label="Example output"
-        variant="outlined"
-        multiline
-        required={false}
-        placeholderText={
-          type !== ResultType.LlmSummaryList
-            ? "Example output for an item in the AI generated list"
-            : "Example output of the AI summarization."
-        }
-        name={`steps.${stepIndex}.result.${resultIndex}.llmSummary.example`}
-        size="small"
-        showLabel={false}
-        defaultValue="test"
-      />
-      <TextField<FlowSchemaType>
         label="Minimum # of responses for a result"
         showLabel={false}
         size={"small"}

@@ -92,14 +92,6 @@ export const createResultConfigDescription = (
               <PromptBox prompt={resultConfig.prompt} />
             </>
           )}
-          {resultConfig.example ? (
-            <>
-              <Typography variant="description">Example output: </Typography>
-              <PromptBox prompt={resultConfig.example} />
-            </>
-          ) : (
-            ""
-          )}
           <Typography variant="description">
             {" "}
             {minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
@@ -117,14 +109,6 @@ export const createResultConfigDescription = (
               </Typography>{" "}
               <PromptBox prompt={resultConfig.prompt} />
             </>
-          )}
-          {resultConfig.example ? (
-            <>
-              <Typography variant="description">Example output: </Typography>
-              <PromptBox prompt={resultConfig.example} />
-            </>
-          ) : (
-            ""
           )}
           <Typography variant="description">
             {" "}
