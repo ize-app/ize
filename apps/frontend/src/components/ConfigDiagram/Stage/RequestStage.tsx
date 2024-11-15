@@ -1,15 +1,18 @@
+import { useTheme } from "@mui/material";
+
 import { statusProps } from "@/components/status/statusProps";
 import { Status } from "@/graphql/generated/graphql";
 
-import { FlowStage, FlowStageProps } from "../ConfigDiagramFlow/FlowStage";
+import { FlowStage, FlowStageProps } from "./FlowStage";
 
 type RequestStageProps = FlowStageProps & {
-  status: Status;
+  status: Status | undefined;
 };
 
 export const RequestStage = ({ status, ...props }: RequestStageProps) => {
-  const backgroundColor = statusProps[status].backgroundColor;
-  const statusIcon = statusProps[status].icon;
+  const theme = useTheme();
+  const backgroundColor = status ? statusProps[status].backgroundColor : theme.palette.primary.main;
+  const statusIcon = status && statusProps[status].icon;
 
   return <FlowStage {...props} statusIcon={statusIcon} color={backgroundColor} />;
 };

@@ -2,15 +2,16 @@ import { WarningOutlined } from "@mui/icons-material";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
-import { Box, SvgIconProps, Typography } from "@mui/material";
+import { Box, SvgIconProps, useTheme } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { StageMenu } from "@/components/ConfigDiagram";
-import { FlowStageWrapper } from "@/components/ConfigDiagram/ConfigDiagramFlow/FlowStageWrapper";
-import { Stage, StageProps } from "@/components/ConfigDiagram/DiagramPanel/Stage";
+import { FlowFormStageInnerContent } from "@/components/ConfigDiagram/Stage/FlowStageInnerContent";
+import { FlowStageWrapper } from "@/components/ConfigDiagram/Stage/FlowStageWrapper";
+import { Stage, StageProps } from "@/components/ConfigDiagram/Stage/Stage";
+import { StageType } from "@/components/ConfigDiagram/Stage/StageType";
 import { ActionType } from "@/graphql/generated/graphql";
-import { colors } from "@/style/style";
 
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { FlowSchemaType } from "../formValidation/flow";
@@ -19,22 +20,22 @@ import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { getResultFormLabel } from "../helpers/getResultFormLabel";
 
 interface FlowStageTriggerProps extends StageProps {
-  type: "trigger";
+  type: StageType.Trigger;
 }
 
 interface FlowStageStepProps extends StageProps {
-  type: "step";
+  type: StageType.Step;
   stepsArrayMethods: ReturnType<typeof useFieldArray>;
   index: number;
 }
 
 interface FlowStageActionProps extends StageProps {
-  type: "action";
+  type: StageType.Action;
   index: number;
 }
 
 interface FlowStageActionFilterProps extends StageProps {
-  type: "actionFilter";
+  type: StageType.ActionFilter;
   index: number;
 }
 
@@ -44,56 +45,6 @@ type FlowStageProps =
   | FlowStageActionProps
   | FlowStageActionFilterProps;
 
-const FlowFormStageInnerContent = ({
-  type,
-  label,
-  subtitle,
-}: {
-  type: "trigger" | "step" | "actionFilter" | "action";
-  label: string;
-  subtitle: string;
-}) => {
-  return type === "actionFilter" ? (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-        maxWidth: "200px",
-        overflow: "hidden",
-      }}
-    >
-      <Typography
-        variant="description"
-        lineHeight={"1rem"}
-        width={"100%"}
-        sx={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        <span style={{ fontStyle: "italic" }}>Decision filter:</span> {label}
-      </Typography>
-    </Box>
-  ) : (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-      }}
-    >
-      <Typography variant="label">{label}</Typography>
-      {subtitle && (
-        <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"}>
-          {subtitle}
-        </Typography>
-      )}
-    </Box>
-  );
-};
-
 export const FlowFormStage = ({
   id,
   setSelectedId,
@@ -102,6 +53,7 @@ export const FlowFormStage = ({
   ...args
 }: FlowStageProps) => {
   const { formState, getValues, setValue } = useFormContext<FlowSchemaType>();
+  const theme = useTheme();
   let icon: React.ComponentType<SvgIconProps> | undefined;
   let label: string = "";
   let subtitle: string = "";
@@ -110,14 +62,14 @@ export const FlowFormStage = ({
   let deleteHandler: () => void = () => {};
 
   switch (args.type) {
-    case "trigger": {
+    case StageType.Trigger: {
       label = "Trigger";
       disableDelete = true;
       hasError = !!formState.errors.fieldSet || !!formState.errors.trigger;
       icon = PlayCircleOutlineOutlinedIcon;
       break;
     }
-    case "step": {
+    case StageType.Step: {
       const { index, stepsArrayMethods } = args;
       const step = getValues(`steps.${index}`);
       label = getResultFormLabel({ result: step.result[0] });
@@ -151,7 +103,7 @@ export const FlowFormStage = ({
       };
       break;
     }
-    case "action": {
+    case StageType.Action: {
       const { index } = args;
       const action = getValues(`steps.${index}.action`);
       const displayAction =
@@ -169,7 +121,7 @@ export const FlowFormStage = ({
       };
       break;
     }
-    case "actionFilter": {
+    case StageType.ActionFilter: {
       const { index } = args;
       const action = getValues(`steps.${index}.action`);
       const results = getValues(`steps.${index}.result`);
@@ -200,13 +152,17 @@ export const FlowFormStage = ({
         setSelectedId={setSelectedId}
         selectedId={selectedId}
         icon={icon}
-        size={args.type === "actionFilter" ? "small" : "medium"}
-        color={hasError ? colors.error : colors.primary}
+        size={args.type === StageType.ActionFilter ? "small" : "medium"}
+        color={hasError ? theme.palette.error.main : theme.palette.error.main}
         statusIcon={hasError ? WarningOutlined : undefined}
         sx={{
           zIndex: 1,
-          minHeight: args.type === "actionFilter" ? "24px" : "48px",
-          borderColor: hasError ? colors.error : isSelected ? colors.primary : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
+          minHeight: args.type === StageType.ActionFilter ? "24px" : "48px",
+          borderColor: hasError
+            ? theme.palette.error.main
+            : isSelected
+              ? theme.palette.primary.main
+              : "rgba(0, 0, 0, 0.1)", // TODO check this actually makes sense
           ...sx,
         }}
       >
@@ -218,7 +174,12 @@ export const FlowFormStage = ({
             flexGrow: 1,
           }}
         >
-          <FlowFormStageInnerContent type={args.type} label={label} subtitle={subtitle} />
+          <FlowFormStageInnerContent
+            type={args.type}
+            label={label}
+            subtitle={subtitle}
+            color={theme.palette.primary.main}
+          />
           {/* {entities.length > 0 && <AvatarGroup avatars={entities} />} */}
           {deleteHandler && !disableDelete && <StageMenu deleteHandler={deleteHandler} />}
         </Box>

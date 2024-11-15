@@ -1,13 +1,15 @@
 import { Box } from "@mui/material";
 
+import { StageType } from "./StageType";
+
 export const FlowStageWrapper = ({
   type,
   children,
 }: {
-  type: "trigger" | "step" | "actionFilter" | "action";
+  type: StageType;
   children: React.ReactNode;
 }) => {
-  return type !== "actionFilter" ? (
+  return type !== StageType.ActionFilter ? (
     <>{children}</>
   ) : (
     <Box sx={{ height: "48px", position: "relative", display: "flex", alignItems: "flex-end" }}>

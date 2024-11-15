@@ -108,7 +108,7 @@ export const AddStepButton = ({
     const defaultOptionFilterId = options[0].value as string;
     console.log("defaultOptionFilterId", defaultOptionFilterId);
     setValue(`steps.${positionIndex - 1}.action.filterOptionId`, defaultOptionFilterId);
-    setSelectedId("webhook");
+    setSelectedId(`actionFilter${positionIndex - 1}`);
   };
   return (
     <Box sx={{ height: "48px", position: "relative", display: "flex", alignItems: "center" }}>

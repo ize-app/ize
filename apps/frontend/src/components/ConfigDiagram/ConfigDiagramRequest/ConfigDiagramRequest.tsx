@@ -14,8 +14,8 @@ import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
 import { determineRequestStepStatus } from "./determineRequestStepStatus";
-import { RequestActionFilterStage } from "./RequestActionFilterStage";
-import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
+import { StageConnectorButton } from "../Stage/StageConnectorButton";
+import { StageType } from "../Stage/StageType";
 
 // Interactive diagram for understanding a given request
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
@@ -34,7 +34,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
         <DiagramPanel>
           <RequestStage
             key="trigger0"
-            type="trigger"
+            type={StageType.Trigger}
             flow={request.flow}
             id={"trigger0"}
             status={Status.Completed}
@@ -48,7 +48,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <Box key={index}>
                 <StageConnectorButton key={"connector-" + index.toString()} />
                 <RequestStage
-                  type="step"
+                  type={StageType.Step}
                   step={step}
                   status={determineRequestStepStatus(
                     index,
@@ -61,9 +61,11 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
                 />
-                <RequestActionFilterStage
+                <RequestStage
+                  type={StageType.ActionFilter}
                   action={step.action}
-                  key={"stage-" + step?.id}
+                  status={undefined}
+                  key={"actionFilter-" + step?.id}
                   id={"actionFilter" + index.toString()}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
@@ -79,7 +81,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   request.requestSteps[finalStepIndex]?.actionExecution?.status ??
                   (request.final ? Status.Cancelled : Status.NotAttempted)
                 }
-                type="action"
+                type={StageType.Action}
                 action={finalAction}
                 id={"action"}
                 setSelectedId={setSelectedId}

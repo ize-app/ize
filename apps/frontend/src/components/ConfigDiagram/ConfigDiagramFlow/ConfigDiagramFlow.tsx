@@ -13,8 +13,8 @@ import { ConfigFlowActionFilterPanel } from "./ConfigFlowActionFilterPanel";
 import { ConfigFlowActionPanel } from "./ConfigFlowActionPanel";
 import { ConfigFlowTriggerPanel } from "./ConfigFlowTriggerPanel";
 import { ConfigStepPanel } from "./ConfigStepPanel";
-import { FlowActionFilterStage } from "./FlowActionFilterStage";
-import { StageConnectorButton } from "../DiagramPanel/StageConnectorButton";
+import { StageConnectorButton } from "../Stage/StageConnectorButton";
+import { StageType } from "../Stage/StageType";
 
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config
@@ -29,7 +29,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
         <PanelContainer>
           <DiagramPanel>
             <FlowStage
-              type="trigger"
+              type={StageType.Trigger}
               flow={flow}
               key="trigger0"
               id={"trigger0"}
@@ -42,16 +42,17 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
                 <Box key={index}>
                   <StageConnectorButton key={"connector-" + index.toString()} />
                   <FlowStage
-                    type="step"
+                    type={StageType.Step}
                     step={step}
-                    key={"stage-" + step?.id}
+                    key={"step-" + step?.id}
                     id={"step" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
                   />
-                  <FlowActionFilterStage
+                  <FlowStage
+                    type={StageType.ActionFilter}
                     action={step.action}
-                    key={"stage-" + step?.id}
+                    key={"actionFilter-" + step?.id}
                     id={"actionFilter" + index.toString()}
                     setSelectedId={setSelectedId}
                     selectedId={selectedId}
@@ -63,7 +64,7 @@ export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
               <>
                 <StageConnectorButton key={"connector-final"} />
                 <FlowStage
-                  type="action"
+                  type={StageType.Action}
                   action={finalAction}
                   id={"action"}
                   setSelectedId={setSelectedId}

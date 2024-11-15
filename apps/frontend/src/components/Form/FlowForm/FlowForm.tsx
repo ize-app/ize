@@ -11,6 +11,7 @@ import {
   PanelContainer,
   PanelHeader,
 } from "@/components/ConfigDiagram";
+import { StageType } from "@/components/ConfigDiagram/Stage/StageType";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
 import { ActionFilterForm } from "./components/ActionFilterForm";
@@ -109,7 +110,7 @@ export const FlowForm = forwardRef(
               <DiagramPanel>
                 <FlowFormStage
                   key="trigger0"
-                  type="trigger"
+                  type={StageType.Trigger}
                   id={"trigger0"}
                   setSelectedId={setSelectedId}
                   selectedId={selectedId}
@@ -132,7 +133,7 @@ export const FlowForm = forwardRef(
                       >
                         <FlowFormStage
                           key={"step-" + item.id.toString() + index.toString()}
-                          type="step"
+                          type={StageType.Step}
                           index={index}
                           id={"step" + index.toString()}
                           setSelectedId={setSelectedId}
@@ -142,7 +143,7 @@ export const FlowForm = forwardRef(
                         />
                         <FlowFormStage
                           key={"actionFilter-" + item.id.toString() + index.toString()}
-                          type="actionFilter"
+                          type={StageType.ActionFilter}
                           index={index}
                           id={"actionFilter" + index.toString()}
                           setSelectedId={setSelectedId}
@@ -161,7 +162,7 @@ export const FlowForm = forwardRef(
                   );
                 })}
                 <FlowFormStage
-                  type="action"
+                  type={StageType.Action}
                   index={stepsArrayMethods.fields.length - 1}
                   id={"webhook"}
                   setSelectedId={setSelectedId}

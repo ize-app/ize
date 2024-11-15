@@ -1,12 +1,12 @@
 import Diversity3Outlined from "@mui/icons-material/Diversity3Outlined";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import PlayCircleOutlineOutlined from "@mui/icons-material/PlayCircleOutlineOutlined";
-import { Box, SvgIconProps, Typography } from "@mui/material";
+import { Box, SvgIconProps, useTheme } from "@mui/material";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { AvatarGroup } from "@/components/Avatar";
 import {
-  Action,
+  ActionFragment,
   ActionType,
   EntityFragment,
   FlowFragment,
@@ -14,27 +14,29 @@ import {
 } from "@/graphql/generated/graphql";
 import { colors } from "@/style/style";
 
+import { FlowFormStageInnerContent } from "./FlowStageInnerContent";
 import { FlowStageWrapper } from "./FlowStageWrapper";
-import { Stage, StageProps } from "../DiagramPanel/Stage";
+import { Stage, StageProps } from "./Stage";
+import { StageType } from "./StageType";
 
 interface FlowStageTriggerProps extends StageProps {
-  type: "trigger";
+  type: StageType.Trigger;
   flow: FlowFragment;
 }
 
 interface FlowStageStepProps extends StageProps {
-  type: "step";
+  type: StageType.Step;
   step: StepFragment;
 }
 
 interface FlowStageActionProps extends StageProps {
-  type: "action";
-  action: Action;
+  type: StageType.Action;
+  action: ActionFragment;
 }
 
 interface FlowStageActionFilterProps extends StageProps {
-  type: "actionFilter";
-  action: Action;
+  type: StageType.ActionFilter;
+  action: ActionFragment | undefined | null;
 }
 
 type FlowStagePropsBase =
@@ -56,19 +58,20 @@ export const FlowStage = ({
   statusIcon,
   ...props
 }: FlowStageProps) => {
+  const theme = useTheme();
   let label: string = "";
   let subtitle: string = "";
   let entities: EntityFragment[] = [];
   let icon: React.ComponentType<SvgIconProps> | undefined;
   switch (props.type) {
-    case "trigger": {
+    case StageType.Trigger: {
       const { flow } = props;
       entities = flow.trigger.permission?.entities ?? [];
       label = "Trigger";
       icon = PlayCircleOutlineOutlined;
       break;
     }
-    case "step": {
+    case StageType.Step: {
       const { step } = props;
       label = step.result[0]?.name ?? "Collaborative step";
       subtitle = step.fieldSet.fields[0]?.name ?? "";
@@ -76,13 +79,13 @@ export const FlowStage = ({
       entities = step.response?.permission?.entities ?? [];
       break;
     }
-    case "action": {
+    case StageType.Action: {
       const { action } = props;
       label = action.name;
       icon = actionProperties[action.__typename as ActionType].icon;
       break;
     }
-    case "actionFilter": {
+    case StageType.ActionFilter: {
       const { action } = props;
       if (!action?.filterOption) return null;
       label = action.filterOption.name;
@@ -99,6 +102,11 @@ export const FlowStage = ({
         icon={icon}
         color={color ?? colors.primary}
         statusIcon={statusIcon}
+        size={props.type === StageType.ActionFilter ? "small" : "medium"}
+        sx={{
+          zIndex: 1,
+          minHeight: props.type === StageType.ActionFilter ? "24px" : "48px",
+        }}
       >
         <Box
           sx={{
@@ -108,22 +116,12 @@ export const FlowStage = ({
             flexGrow: 1,
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              flexGrow: 1,
-            }}
-          >
-            <Typography variant="label" color={color}>
-              {label}
-            </Typography>
-            {subtitle && (
-              <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"} color={color}>
-                {subtitle}
-              </Typography>
-            )}
-          </Box>
+          <FlowFormStageInnerContent
+            type={props.type}
+            label={label}
+            subtitle={subtitle}
+            color={color ?? theme.palette.primary.main}
+          />
           {entities.length > 0 && <AvatarGroup avatars={entities} />}
         </Box>
       </Stage>
