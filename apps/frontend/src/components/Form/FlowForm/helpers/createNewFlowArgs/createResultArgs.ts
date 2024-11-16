@@ -1,7 +1,7 @@
 import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
 
 import { ResultConfigCache } from "./createNewFlowArgs";
-import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+import { FieldsSchemaType } from "../../formValidation/fields";
 import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
 
 export const createResultArgs = (
@@ -17,21 +17,19 @@ export const createResultArgs = (
   if (responseFieldIndex === null || responseFieldIndex === -1)
     throw Error("Cannot find response field for result");
 
-  if (result.type === ResultType.Decision && result.decision.defaultOptionId) {
+  if (result.type === ResultType.Decision && !!result.decision.defaultDecision?.optionId) {
     let defaultOptionIndex: number | null = null;
 
-    if (result.decision.defaultOptionId !== DefaultOptionSelection.None.toString()) {
-      const responseField = responseFields[responseFieldIndex];
-      if (!responseField || responseField.type !== FieldType.Options)
-        throw Error("Missing option set for default result");
-      const options = responseField.optionsConfig.options;
-      defaultOptionIndex = options.findIndex(
-        (option) => option.optionId === result.decision.defaultOptionId,
-      );
-      if (defaultOptionIndex === -1) throw Error("Default option not found ");
-    }
+    const responseField = responseFields[responseFieldIndex];
+    if (!responseField || responseField.type !== FieldType.Options)
+      throw Error("Missing option set for default result");
+    const options = responseField.optionsConfig.options;
+    defaultOptionIndex = options.findIndex(
+      (option) => option.optionId === result.decision.defaultDecision?.optionId,
+    );
+    if (defaultOptionIndex === -1) throw Error("Default option not found ");
 
-    delete result.decision.defaultOptionId;
+    delete result.decision.defaultDecision;
     return {
       ...result,
       responseFieldIndex,

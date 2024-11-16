@@ -1,17 +1,17 @@
 import { InputAdornment } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { DecisionType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { DecisionType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
+import { DefaultDecisionForm } from "./DefaultDecisionForm";
 import { Select, TextField } from "../../../formFields";
-import { SelectOption } from "../../../formFields/Select";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
-import { DefaultOptionSelection, FieldSchemaType } from "../../formValidation/fields";
+import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
-interface DecisionConfigFormProps {
+export interface DecisionConfigFormProps {
   stepIndex: number; // react-hook-form name
   resultIndex: number;
   field: FieldSchemaType;
@@ -60,10 +60,15 @@ export const DecisionConfigForm = ({
   display = true,
 }: DecisionConfigFormProps) => {
   const { watch, setValue } = useFormContext<FlowSchemaType>();
+
   const decisionType = watch(`steps.${stepIndex}.result.${resultIndex}.decision.type`);
 
+  const [prevDecisionType, setPrevDecisionType] = useState<DecisionType>(decisionType);
+
+  // handle default states when decision type changes
+  // but don't reset state, on first render of flow form's default state
   useEffect(() => {
-    if (decisionType) {
+    if (prevDecisionType && decisionType && decisionType !== prevDecisionType) {
       if (decisionType === DecisionType.WeightedAverage) {
         setValue(
           `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
@@ -81,33 +86,14 @@ export const DecisionConfigForm = ({
       }
 
       if (decisionType === DecisionType.Ai) {
-        setValue(
-          `steps.${stepIndex}.result.${resultIndex}.decision.defaultOptionId`,
-          DefaultOptionSelection.None,
-        );
+        setValue(`steps.${stepIndex}.result.${resultIndex}.decision.defaultDecision`, undefined);
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
       } else {
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
       }
     }
+    setPrevDecisionType(decisionType);
   }, [decisionType]);
-
-  const defaultDecisionOptions: SelectOption[] = [
-    {
-      name: "No default option",
-      value: DefaultOptionSelection.None,
-    },
-  ];
-
-  if (field.type === FieldType.Options) {
-    (field.optionsConfig.options ?? []).forEach((o) => {
-      defaultDecisionOptions.push({
-        // TODO: revisit this - will probably cause errors
-        name: o.name as string,
-        value: o.optionId,
-      });
-    });
-  }
 
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
@@ -166,32 +152,18 @@ export const DecisionConfigForm = ({
             label="What criteria should the AI use to make a decision?"
             placeholderText="What criteria should the AI use to make a decision?"
             showLabel={false}
+            sx={{ width: "100%" }}
             size={"small"}
             defaultValue=""
             name={`steps.${stepIndex}.result.${resultIndex}.decision.criteria`}
           />
         )}
       </ResponsiveFormRow>
-      {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
-      <Select<FlowSchemaType>
-        label="Default option"
-        sx={{
-          "& > input": {
-            fontWeight: "800",
-            color: "red",
-          },
-        }}
-        defaultValue=""
+      <DefaultDecisionForm
+        stepIndex={stepIndex}
+        resultIndex={resultIndex}
+        field={field}
         display={decisionType !== DecisionType.Ai}
-        renderValue={(val) => {
-          if (val === DefaultOptionSelection.None) return "If no decision, no default result";
-          const option = defaultDecisionOptions.find((option) => option.value === val);
-          if (option) {
-            return "Default result if no decision: " + option.name;
-          } else return "No default result";
-        }}
-        selectOptions={defaultDecisionOptions}
-        name={`steps.${stepIndex}.result.${resultIndex}.decision.defaultOptionId`}
       />
     </FieldBlock>
   );

@@ -1,6 +1,5 @@
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "../../formValidation/fields";
 import { ResultSchemaType } from "../../formValidation/result";
 
 interface DefaultResultStateProps {
@@ -22,7 +21,10 @@ export const createDefaultResultState = ({
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,
-          defaultOptionId: DefaultOptionSelection.None,
+          defaultDecision: {
+            hasDefault: false,
+            optionId: null,
+          },
         },
       };
     case ResultType.Ranking:

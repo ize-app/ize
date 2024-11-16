@@ -1,4 +1,3 @@
-import { DefaultOptionSelection } from "@/components/Form/FlowForm/formValidation/fields";
 import {
   DecisionSchemaType,
   ResultSchemaType,
@@ -31,29 +30,33 @@ const generateDecisionConfig = ({
 }: {
   decisionType: DecisionType;
 }): DecisionSchemaType => {
+  const defaultDecision = { hasDefault: false, optionId: null };
   switch (decisionType) {
     case DecisionType.NumberThreshold:
       return {
         type: DecisionType.NumberThreshold,
         threshold: 2,
-        defaultOptionId: DefaultOptionSelection.None,
+        defaultDecision,
       };
     case DecisionType.PercentageThreshold:
       return {
         type: DecisionType.PercentageThreshold,
         threshold: 51,
-        defaultOptionId: DefaultOptionSelection.None,
+        defaultDecision,
       };
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
         criteria: "",
-        defaultOptionId: DefaultOptionSelection.None,
+        defaultDecision,
       };
     case DecisionType.WeightedAverage:
       return {
         type: DecisionType.WeightedAverage,
-        defaultOptionId: DefaultOptionSelection.None,
+        defaultDecision: {
+          hasDefault: false,
+          optionId: null,
+        },
       };
     default:
       throw new Error("Invalid DecisionType");

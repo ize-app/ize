@@ -1,4 +1,4 @@
-import { Box, FormHelperText } from "@mui/material";
+import { Box, FormHelperText, SxProps, TextFieldVariants } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
@@ -8,11 +8,13 @@ import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 interface AsyncSelectProps<T extends FieldValues, OptionType> extends UseControllerProps<T> {
   label: string;
   loading: boolean;
-  fetchOptions: () => Promise<void>;
+  fetchOptions: () => Promise<void> | void;
   options: OptionType[];
   isOptionEqualToValue: (option: OptionType, value: OptionType) => boolean;
   getOptionLabel: (option: OptionType) => string;
+  variant?: TextFieldVariants;
   showLabel?: boolean;
+  sx?: SxProps;
 }
 
 export default function AsyncSelect<T extends FieldValues, OptionType>({
@@ -24,7 +26,9 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
   options,
   isOptionEqualToValue,
   getOptionLabel,
+  variant = "outlined",
   control,
+  sx = {},
   ...props
 }: AsyncSelectProps<T, OptionType>) {
   const [open, setOpen] = React.useState(false);
@@ -44,10 +48,11 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
+        console.log("async select error", error);
         return (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Autocomplete
-              sx={{ width: 300 }}
+              sx={{ width: 300, ...sx }}
               size="small"
               {...field}
               {...props}
@@ -66,6 +71,7 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
                   placeholder={label}
                   label={showLabel ? label : ""}
                   aria-label={label}
+                  variant={variant}
                   autoComplete="off"
                   InputProps={{
                     ...params.InputProps,
@@ -84,7 +90,7 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
                 color: error?.message ? "error.main" : undefined,
               }}
             >
-              {error?.message ?? ""}
+              {error?.message}
             </FormHelperText>
           </Box>
         );

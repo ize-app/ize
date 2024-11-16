@@ -7,10 +7,11 @@ import { WizardBody, WizardNav } from "@/components/Wizard";
 import { useEvolveFlowWizardState } from "../evolveFlowWizard";
 
 export const Confirm = () => {
-  const { onNext, onPrev, nextLabel } = useEvolveFlowWizardState();
+  const { onNext, onPrev, nextLabel, formState } = useEvolveFlowWizardState();
 
   // const diffFlow = diff(formState, formState.currentFlow);
 
+  console.log("flow in formstate is ", formState.new.flow);
   return (
     <>
       <WizardBody>

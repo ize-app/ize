@@ -2,8 +2,6 @@ import * as z from "zod";
 
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "./fields";
-
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
@@ -21,25 +19,42 @@ export enum ResultListCountLimit {
   None = "None",
 }
 
+const defaultDecisionSchema = z
+  .object({
+    hasDefault: z.boolean().default(false),
+    optionId: z.string().nullable().default(null),
+  })
+  .refine(
+    (defaultDecision) => {
+      if (defaultDecision.hasDefault && !defaultDecision.optionId) return false;
+      else return true;
+    },
+    {
+      message: "Select a default option",
+      path: ["optionId"],
+    },
+  )
+  .optional();
+
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
-    defaultOptionId: z.string().optional(),
+    defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().positive(),
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
-    defaultOptionId: z.string().optional(),
+    defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().min(51).max(100),
   }),
   z.object({
     type: z.literal(DecisionType.WeightedAverage),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultDecision: defaultDecisionSchema,
   }),
   z.object({
     type: z.literal(DecisionType.Ai),
+    defaultDecision: defaultDecisionSchema,
     criteria: z.string().optional(),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
   }),
 ]);
 

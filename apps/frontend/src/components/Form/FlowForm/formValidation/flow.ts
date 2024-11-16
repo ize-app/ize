@@ -44,6 +44,26 @@ const stepSchema = z
       });
     }
   })
+  .superRefine((step, ctx) => {
+    step.result.forEach((res, index) => {
+      if (res.type === ResultType.Decision && res.decision.defaultDecision?.optionId) {
+        const defaultOptionId = res.decision.defaultDecision?.optionId;
+        const field = step.fieldSet.fields.find((f) => f.fieldId === res.fieldId);
+        console.log("field for default option is", field);
+        const option =
+          field &&
+          field.type === FieldType.Options &&
+          field.optionsConfig.options.find((o) => o.optionId === defaultOptionId);
+        if (!option) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Default option must be a valid option",
+            path: ["result", index, "decision", "defaultDecision", "optionId"],
+          });
+        }
+      }
+    });
+  })
   .refine(
     (step) => {
       if (step.response && step.fieldSet.fields.length === 0) return false;

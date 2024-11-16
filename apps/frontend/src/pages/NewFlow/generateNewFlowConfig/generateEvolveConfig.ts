@@ -1,8 +1,5 @@
 import { ActionSchemaType } from "@/components/Form/FlowForm/formValidation/action";
-import {
-  DefaultOptionSelection,
-  FieldSchemaType,
-} from "@/components/Form/FlowForm/formValidation/fields";
+import { FieldSchemaType } from "@/components/Form/FlowForm/formValidation/fields";
 import { FlowSchemaType, StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
 import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
@@ -76,7 +73,10 @@ export const generateEvolveConfig = ({
     decision: {
       type: DecisionType.NumberThreshold,
       threshold: 1,
-      defaultOptionId: DefaultOptionSelection.None,
+      defaultDecision: {
+        hasDefault: false,
+        optionId: null,
+      },
     },
     fieldId: responseField.fieldId,
   };

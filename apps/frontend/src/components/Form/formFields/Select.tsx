@@ -33,6 +33,7 @@ export const Select = <T extends FieldValues>({
   required = false,
   loading = false,
   onChange,
+
   disabled = false,
   variant = "outlined",
   size = "small",
@@ -51,7 +52,6 @@ export const Select = <T extends FieldValues>({
             error={Boolean(error)}
             required={required}
           >
-            {/* {<InputLabel id={`select-${name}`}>{label}</InputLabel>} */}
             <MuiSelect
               // {...props}
 

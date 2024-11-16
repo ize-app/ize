@@ -86,6 +86,7 @@ export const FullConfig = ({
     const isReusable = formMethods.getValues("reusable");
     if (flowFormRef.current && (isReusable ? evolveFormRef.current : true)) {
       const { isValid: flowIsValid, values: flow } = await flowFormRef.current.validate();
+      console.log("validated flow is ", flow);
       const { isValid: evolveIsValid, values: evolve } =
         isReusable && evolveFormRef.current
           ? await evolveFormRef.current.validate()

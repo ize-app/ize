@@ -5,7 +5,6 @@ import {
   ResultType,
 } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "../../formValidation/fields";
 import {
   DecisionResultSchemaType,
   DecisionSchemaType,
@@ -60,7 +59,11 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
 };
 
 const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType => {
-  const defaultOptionId = decision.defaultOption?.optionId ?? DefaultOptionSelection.None;
+  const defaultOptionId = decision.defaultOption?.optionId ?? null;
+  const defaultDecision = {
+    hasDefault: !!defaultOptionId,
+    optionId: defaultOptionId,
+  };
   const type = decision.decisionType;
   const threshold = decision.threshold;
   switch (decision.decisionType) {
@@ -69,25 +72,25 @@ const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType
       return {
         type,
         threshold,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.PercentageThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
       return {
         type,
         threshold,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.WeightedAverage:
       return {
         type: DecisionType.WeightedAverage,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
         criteria: decision.criteria ?? undefined,
-        defaultOptionId,
+        defaultDecision,
       };
   }
 };

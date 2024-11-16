@@ -15,14 +15,6 @@ export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 export type FieldSetSchemaType = z.infer<typeof fieldSetSchema>;
 
-export enum DefaultOptionSelection {
-  None = "None",
-}
-
-export enum DefaultFieldSelection {
-  None = "None",
-}
-
 export enum OptionSelectionCountLimit {
   None = "None",
 }
