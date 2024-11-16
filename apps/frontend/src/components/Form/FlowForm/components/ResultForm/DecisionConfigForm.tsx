@@ -118,7 +118,7 @@ export const DecisionConfigForm = ({
             { name: "Threshold vote", value: DecisionType.NumberThreshold },
             { name: "Percentage vote", value: DecisionType.PercentageThreshold },
             {
-              name: "Weighted average of multiple selections",
+              name: "Weighted average of votes",
               value: DecisionType.WeightedAverage,
             },
             { name: "AI decides", value: DecisionType.Ai },
@@ -127,30 +127,20 @@ export const DecisionConfigForm = ({
           name={`steps.${stepIndex}.result.${resultIndex}.decision.type`}
           size="small"
         />
-        <Select<FlowSchemaType>
-          name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
-          size="small"
-          defaultValue=""
-          display={decisionType !== DecisionType.Ai}
-          selectOptions={selectTypeOptions(decisionType)}
-          label="How do participants select options?"
-        />
-      </ResponsiveFormRow>
-      <ResponsiveFormRow>
-        {
+        {decisionType === DecisionType.NumberThreshold && (
           <TextField<FlowSchemaType>
-            display={decisionType === DecisionType.NumberThreshold}
             label="Threshold votes"
             name={`steps.${stepIndex}.result.${resultIndex}.decision.threshold`}
             size="small"
+            sx={{ width: "200px" }}
             showLabel={false}
             defaultValue=""
             endAdornment={<InputAdornment position="end">votes to decide</InputAdornment>}
           />
-        }
-        {
+        )}
+
+        {decisionType === DecisionType.PercentageThreshold && (
           <TextField<FlowSchemaType>
-            display={decisionType === DecisionType.PercentageThreshold}
             sx={{ width: "200px" }}
             label="Percentage votes"
             size="small"
@@ -159,16 +149,28 @@ export const DecisionConfigForm = ({
             name={`steps.${stepIndex}.result.${resultIndex}.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
           />
-        }
-        <TextField<FlowSchemaType>
-          label="What criteria should the AI use to make a decision?"
-          placeholderText="What criteria should the AI use to make a decision?"
-          showLabel={false}
-          size={"small"}
-          display={decisionType === DecisionType.Ai}
-          defaultValue=""
-          name={`steps.${stepIndex}.result.${resultIndex}.decision.criteria`}
-        />
+        )}
+
+        {decisionType === DecisionType.WeightedAverage && (
+          <Select<FlowSchemaType>
+            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
+            size="small"
+            sx={{ width: "200px" }}
+            defaultValue=""
+            selectOptions={selectTypeOptions(decisionType)}
+            label="How do participants select options?"
+          />
+        )}
+        {decisionType === DecisionType.Ai && (
+          <TextField<FlowSchemaType>
+            label="What criteria should the AI use to make a decision?"
+            placeholderText="What criteria should the AI use to make a decision?"
+            showLabel={false}
+            size={"small"}
+            defaultValue=""
+            name={`steps.${stepIndex}.result.${resultIndex}.decision.criteria`}
+          />
+        )}
       </ResponsiveFormRow>
       {/* <Typography>{weightedAverageDescription(field.optionsConfig.selectionType)}</Typography> */}
       <Select<FlowSchemaType>
