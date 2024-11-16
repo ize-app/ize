@@ -371,6 +371,8 @@ model ResponseConfig {
   // can be ended manually be the creator of the request
   canBeManuallyEnded     Boolean  @default(false) @map("can_be_manually_ended")
   allowMultipleResponses Boolean  @default(false) @map("allow_multiple_responses")
+  // Minimum answers for a result to be created
+  minResponses           Int      @default(1) @map("min_responses")
 
   ResponsePermissions Permission @relation("ResponsePermissions", fields: [permissionsId], references: [id], onDelete: Cascade)
   Step                Step[]
@@ -636,8 +638,6 @@ enum ResultType {
 model ResultConfig {
   id         String     @id @default(uuid()) @db.Uuid
   resultType ResultType @map("result_type")
-  // Minimum answers for a result to be created
-  minAnswers Int        @default(0) @map("min_answers")
   // whether output will be a single item or a list of items
   createdAt  DateTime   @default(now()) @map("created_at")
 

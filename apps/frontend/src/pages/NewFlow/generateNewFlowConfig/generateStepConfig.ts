@@ -30,6 +30,7 @@ export const generateStepConfig = ({
             canBeManuallyEnded: true,
             expirationSeconds: 259200,
             allowMultipleResponses: true,
+            minResponses: 1,
           },
     result,
     action,

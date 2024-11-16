@@ -25,11 +25,9 @@ const decisionTypeDescription = (
   }
 };
 
-const minAnswersDescription = (minAnswers: number, resultType: ResultType) => {
-  if (minAnswers === 0) return "";
-  return `There must be at least ${minAnswers} ${
-    resultType === ResultType.Decision ? "vote" : "answer"
-  }${minAnswers > 1 ? "s" : ""} to ${
+const minAnswersDescription = (minResponses: number | undefined | null, resultType: ResultType) => {
+  if (!minResponses) return "";
+  return `There must be at least ${minResponses} responses to ${
     resultType === ResultType.Decision ? "make a decision" : "create a result"
   }. `;
 };
@@ -52,9 +50,13 @@ const PromptBox = ({ prompt }: { prompt: string }) => {
   );
 };
 
-export const createResultConfigDescription = (
-  resultConfig: ResultConfigFragment,
-): React.ReactElement => {
+export const createResultConfigDescription = ({
+  resultConfig,
+  minResponses,
+}: {
+  resultConfig: ResultConfigFragment;
+  minResponses: number | undefined | null;
+}): React.ReactElement => {
   switch (resultConfig.__typename) {
     case ResultType.Decision: {
       return (
@@ -64,7 +66,7 @@ export const createResultConfigDescription = (
             resultConfig.threshold,
             resultConfig.criteria,
           )}
-          {minAnswersDescription(resultConfig.minimumAnswers, ResultType.Decision)}
+          {minAnswersDescription(minResponses, ResultType.Decision)}
           {resultConfig.defaultOption
             ? `If decision isn't made, default result is "${resultConfig.defaultOption.name}. `
             : ""}
@@ -94,7 +96,7 @@ export const createResultConfigDescription = (
           )}
           <Typography variant="description">
             {" "}
-            {minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
+            {minAnswersDescription(minResponses, ResultType.LlmSummary)}
           </Typography>
         </Box>
       );
@@ -112,7 +114,7 @@ export const createResultConfigDescription = (
           )}
           <Typography variant="description">
             {" "}
-            {minAnswersDescription(resultConfig.minimumAnswers, ResultType.LlmSummary)}
+            {minAnswersDescription(minResponses, ResultType.LlmSummary)}
           </Typography>
         </Box>
       );

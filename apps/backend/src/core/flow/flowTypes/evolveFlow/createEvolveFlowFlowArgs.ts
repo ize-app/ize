@@ -65,7 +65,6 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
     type: ResultType.Decision,
     decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionIndex: null },
     responseFieldIndex: 0,
-    minimumAnswers: 1,
   };
 
   const actionArgs: ActionArgs = {
@@ -82,6 +81,7 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
       expirationSeconds: 259200,
       allowMultipleResponses: false,
       canBeManuallyEnded: false,
+      minResponses: 1,
     },
     result: [resultArgs],
     action: actionArgs,

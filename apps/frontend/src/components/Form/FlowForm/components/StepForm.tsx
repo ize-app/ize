@@ -1,10 +1,10 @@
-import { Box, FormHelperText } from "@mui/material";
+import { Box, FormHelperText, InputAdornment } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { PermissionForm } from "./PermissionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { Select, Switch } from "../../formFields";
+import { Select, Switch, TextField } from "../../formFields";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface StepFormProps {
@@ -65,6 +65,14 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
             selectOptions={requestExpirationOptions}
             name={`steps.${stepIndex}.response.expirationSeconds`}
             size={"small"}
+          />
+          <TextField<FlowSchemaType>
+            label="Minimum # of responses for a result"
+            showLabel={false}
+            size={"small"}
+            defaultValue=""
+            endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+            name={`steps.${stepIndex}.response.minResponses`}
           />
           <Switch<FlowSchemaType>
             name={`steps.${stepIndex}.response.allowMultipleResponses`}

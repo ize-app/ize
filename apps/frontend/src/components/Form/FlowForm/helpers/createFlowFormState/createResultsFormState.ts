@@ -20,7 +20,6 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
     const resultBase = {
       resultId: result.resultConfigId,
       fieldId: result.field.fieldId,
-      minimumAnswers: result.minimumAnswers,
     };
 
     switch (result.__typename) {

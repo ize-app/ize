@@ -16,6 +16,7 @@ interface HydratedResultData {
   resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
   field: FieldFragment;
+  minResponses: number | undefined | null;
 }
 
 // lists all results from a given request
@@ -41,7 +42,13 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
           (field) => field.fieldId === resultConfig.field.fieldId,
         ) ?? resultConfig.field;
       if (!field) throw Error("Missing field for resultConfig");
-      hydratedResults.push({ resultConfig, resultGroup, requestStepStatus, field });
+      hydratedResults.push({
+        resultConfig,
+        resultGroup,
+        requestStepStatus,
+        field,
+        minResponses: step.response?.minResponses,
+      });
     });
   });
 

@@ -63,7 +63,6 @@ const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().default(1),
   decision: decisionSchema,
 });
 
@@ -71,7 +70,6 @@ const llmResultSchema = z.object({
   type: z.literal(ResultType.LlmSummary),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(2),
   llmSummary: llmSchema,
 });
 
@@ -79,7 +77,6 @@ const llmListResultSchema = z.object({
   type: z.literal(ResultType.LlmSummaryList),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(2),
   llmSummary: llmSchema,
 });
 
@@ -87,7 +84,6 @@ const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
   resultId: z.string(),
   fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().default(2),
   prioritization: prioritizationSchema,
 });
 

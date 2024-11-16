@@ -18,7 +18,7 @@ export const createDefaultResultState = ({
         resultId: crypto.randomUUID(),
         type: ResultType.Decision,
         fieldId,
-        minimumAnswers: 1,
+
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,
@@ -30,7 +30,7 @@ export const createDefaultResultState = ({
         resultId: crypto.randomUUID(),
         type: ResultType.Ranking,
         fieldId,
-        minimumAnswers: 2,
+
         prioritization: { numPrioritizedItems: 3 },
       };
     case ResultType.LlmSummary:
@@ -38,7 +38,6 @@ export const createDefaultResultState = ({
         resultId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         fieldId,
-        minimumAnswers: 2,
         llmSummary: {
           prompt: "",
         },
@@ -48,7 +47,6 @@ export const createDefaultResultState = ({
         resultId: crypto.randomUUID(),
         type: ResultType.LlmSummaryList,
         fieldId,
-        minimumAnswers: 2,
         llmSummary: {
           prompt: "",
         },

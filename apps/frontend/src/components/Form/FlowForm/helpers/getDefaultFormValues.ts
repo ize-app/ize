@@ -13,6 +13,7 @@ export const defaultStepFormValues: StepSchemaType = {
     expirationSeconds: 259200,
     canBeManuallyEnded: true,
     allowMultipleResponses: false,
+    minResponses: 1,
   },
   result: [],
   action: undefined,

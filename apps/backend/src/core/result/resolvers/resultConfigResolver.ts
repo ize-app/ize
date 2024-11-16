@@ -67,7 +67,6 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
     resultConfigId: resultConfig.id,
     field,
     criteria: decConfig.criteria,
-    minimumAnswers: resultConfig.minAnswers,
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
     defaultOption,
@@ -85,7 +84,6 @@ const resultConfigRankResolver = ({ resultConfig, field }: ResultConfigResolver)
     name: getResultConfigName({ resultConfig }),
     field,
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     numOptionsToInclude: rankConfig.numOptionsToInclude,
   };
 };
@@ -100,7 +98,6 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
     __typename: "LlmSummary",
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     field,
     prompt: llmConfig.prompt,
   };
@@ -119,7 +116,6 @@ const resultConfigLlmListResolver = ({
     __typename: "LlmSummaryList",
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     field,
     prompt: llmConfig.prompt,
   };

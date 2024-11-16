@@ -84,6 +84,7 @@ export const createGroupWatchStepArgs = ({
           canBeManuallyEnded: false,
           expirationSeconds: 259200,
           allowMultipleResponses: false,
+          minResponses: 1,
           permission: {
             anyone: false,
             entities: [

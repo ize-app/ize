@@ -112,7 +112,6 @@ export type Decision = {
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
   field: Field;
-  minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
   threshold?: Maybe<Scalars['Int']['output']>;
@@ -513,7 +512,6 @@ export type LinkedResultOptionsArgs = {
 export type LlmSummary = {
   __typename?: 'LlmSummary';
   field: Field;
-  minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
@@ -526,7 +524,6 @@ export type LlmSummaryArgs = {
 export type LlmSummaryList = {
   __typename?: 'LlmSummaryList';
   field: Field;
-  minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
@@ -869,7 +866,6 @@ export type QueryTelegramChatsArgs = {
 export type Ranking = {
   __typename?: 'Ranking';
   field: Field;
-  minimumAnswers: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   numOptionsToInclude?: Maybe<Scalars['Int']['output']>;
   resultConfigId: Scalars['String']['output'];
@@ -971,6 +967,7 @@ export type ResponseConfig = {
   allowMultipleResponses: Scalars['Boolean']['output'];
   canBeManuallyEnded: Scalars['Boolean']['output'];
   expirationSeconds: Scalars['Int']['output'];
+  minResponses: Scalars['Int']['output'];
   permission: Permission;
   userPermission: Scalars['Boolean']['output'];
 };
@@ -979,6 +976,7 @@ export type ResponseConfigArgs = {
   allowMultipleResponses: Scalars['Boolean']['input'];
   canBeManuallyEnded: Scalars['Boolean']['input'];
   expirationSeconds: Scalars['Int']['input'];
+  minResponses: Scalars['Int']['input'];
   permission: PermissionArgs;
 };
 
@@ -998,7 +996,6 @@ export type ResultArgs = {
   decision?: InputMaybe<DecisionArgs>;
   fieldId?: InputMaybe<Scalars['String']['input']>;
   llmSummary?: InputMaybe<LlmSummaryArgs>;
-  minimumAnswers?: InputMaybe<Scalars['Int']['input']>;
   prioritization?: InputMaybe<PrioritizationArgs>;
   responseFieldIndex: Scalars['Int']['input'];
   resultId?: InputMaybe<Scalars['String']['input']>;
@@ -1533,7 +1530,6 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   threshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1794,7 +1790,6 @@ export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentTyp
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1803,7 +1798,6 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummaryList'] = ResolversParentTypes['LlmSummaryList']> = {
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1914,7 +1908,6 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
 
 export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Ranking'] = ResolversParentTypes['Ranking']> = {
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
-  minimumAnswers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   numOptionsToInclude?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1999,6 +1992,7 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
   allowMultipleResponses?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   canBeManuallyEnded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   expirationSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  minResponses?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   permission?: Resolver<ResolversTypes['Permission'], ParentType, ContextType>;
   userPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

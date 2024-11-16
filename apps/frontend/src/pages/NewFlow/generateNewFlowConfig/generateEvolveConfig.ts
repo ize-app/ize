@@ -3,7 +3,7 @@ import {
   DefaultOptionSelection,
   FieldSchemaType,
 } from "@/components/Form/FlowForm/formValidation/fields";
-import { FlowSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
+import { FlowSchemaType, StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
 import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
 import {
@@ -79,7 +79,6 @@ export const generateEvolveConfig = ({
       defaultOptionId: DefaultOptionSelection.None,
     },
     fieldId: responseField.fieldId,
-    minimumAnswers: 1,
   };
 
   const actionArgs: ActionSchemaType = {
@@ -88,13 +87,14 @@ export const generateEvolveConfig = ({
     locked: true,
   };
 
-  const step = {
+  const step: StepSchemaType = {
     fieldSet: { fields: [responseField], locked: false },
     response: {
       permission,
       expirationSeconds: 259200,
       allowMultipleResponses: false,
       canBeManuallyEnded: false,
+      minResponses: 1,
     },
     result: [resultArgs],
     action: actionArgs,

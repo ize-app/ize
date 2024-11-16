@@ -21,6 +21,7 @@ const stepSchema = z
         allowMultipleResponses: z.boolean().default(false),
         canBeManuallyEnded: z.boolean().default(false),
         expirationSeconds: z.coerce.number().int().positive(),
+        minResponses: z.coerce.number().int().positive().default(1),
       })
       .optional(),
     result: resultsSchema,

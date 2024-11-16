@@ -161,15 +161,6 @@ export const DecisionConfigForm = ({
           />
         }
         <TextField<FlowSchemaType>
-          label="Minimum # of responses for a result"
-          showLabel={false}
-          size={"small"}
-          display={decisionType !== DecisionType.Ai}
-          defaultValue=""
-          endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-          name={`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`}
-        />
-        <TextField<FlowSchemaType>
           label="What criteria should the AI use to make a decision?"
           placeholderText="What criteria should the AI use to make a decision?"
           showLabel={false}

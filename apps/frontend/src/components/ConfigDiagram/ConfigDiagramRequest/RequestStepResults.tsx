@@ -2,32 +2,32 @@ import Box from "@mui/material/Box";
 
 import {
   RequestStepFragment,
-  ResultConfigFragment,
   ResultGroupFragment,
   Status,
+  StepFragment,
 } from "@/graphql/generated/graphql";
 
 import { Result } from "../../result/Results/Result";
 
 export const RequestStepResults = ({
-  resultConfigs,
-  results,
+  step,
   requestStatus,
   requestStep,
 }: {
-  resultConfigs: ResultConfigFragment[];
-  results: ResultGroupFragment[];
+  step: StepFragment;
   requestStatus: Status;
   requestStep: RequestStepFragment | null;
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {resultConfigs.map((resultConfig) => {
+      {step.result.map((resultConfig) => {
         const field = requestStep
           ? requestStep.fieldSet.fields.find((f) => f.fieldId === resultConfig.field.fieldId)
           : null;
         const result: ResultGroupFragment | null =
-          results.find((r) => r.resultConfigId === resultConfig.resultConfigId) ?? null;
+          (requestStep?.results ?? []).find(
+            (r) => r.resultConfigId === resultConfig.resultConfigId,
+          ) ?? null;
 
         return (
           <Result
@@ -35,6 +35,7 @@ export const RequestStepResults = ({
             key={resultConfig.resultConfigId}
             resultConfig={resultConfig}
             resultGroup={result}
+            minResponses={step.response?.minResponses}
             requestStepStatus={requestStatus}
             displayDescripton={true}
           />

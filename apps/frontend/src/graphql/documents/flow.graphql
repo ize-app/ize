@@ -119,4 +119,5 @@ fragment ResponseConfig on ResponseConfig {
   canBeManuallyEnded
   allowMultipleResponses
   userPermission
+  minResponses
 }

@@ -1,7 +1,6 @@
-import { InputAdornment } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
-import { Select, TextField } from "@/components/Form/formFields";
+import { Select } from "@/components/Form/formFields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 
@@ -61,14 +60,6 @@ export const PrioritizationForm = ({
         name={`steps.${formIndex}.result.${resultIndex}.prioritization.numPrioritizedItems`}
         size={"small"}
         defaultValue=""
-      />
-      <TextField<FlowSchemaType>
-        label="Minimum # of responses for a result"
-        showLabel={false}
-        size={"small"}
-        defaultValue=""
-        endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-        name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
       />
     </FieldBlock>
   );

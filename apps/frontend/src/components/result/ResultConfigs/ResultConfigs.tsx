@@ -1,17 +1,17 @@
 import Box from "@mui/material/Box";
 
-import { ResultConfigFragment } from "@/graphql/generated/graphql";
+import { StepFragment } from "@/graphql/generated/graphql";
 
 import { ResultConfig } from "./ResultConfig";
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 
-export const ResultConfigs = ({ resultConfigs }: { resultConfigs: ResultConfigFragment[] }) => {
+export const ResultConfigs = ({ step }: { step: StepFragment }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      {resultConfigs.map((resultConfig) => {
+      {step.result.map((resultConfig) => {
         return (
           <LabeledGroupedInputs sx={{ padding: "16px" }} key={resultConfig.resultConfigId}>
-            <ResultConfig resultConfig={resultConfig} />
+            <ResultConfig resultConfig={resultConfig} minResponses={step.response?.minResponses} />
           </LabeledGroupedInputs>
         );
       })}

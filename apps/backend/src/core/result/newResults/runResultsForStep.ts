@@ -54,6 +54,21 @@ export const runResultsForStep = async ({
           });
         }
 
+        // if there aren't enough anwers to create result, mark result as complete
+        // remember that this function is only run once the response period has been clsoed
+        if (step.ResponseConfig && responses.length < step.ResponseConfig.minResponses) {
+          return await prisma.resultGroup.create({
+            include: resultGroupInclude,
+            data: {
+              itemCount: 0,
+              requestStepId,
+              resultConfigId: resultConfig.id,
+              final: true,
+              hasResult: false,
+            },
+          });
+        }
+
         // check if result is ready to be retried again, if not return existing incomplete result
         if (existingResult?.nextRetryAt && existingResult.nextRetryAt > new Date()) {
           return existingResult;
@@ -72,20 +87,6 @@ export const runResultsForStep = async ({
           responses,
         });
 
-        // if there aren't enough anwers to create result, mark result as complete
-        // remember that this function is only run once the response period has been clsoed
-        if (fieldAnswers.length < resultConfig.minAnswers) {
-          return await prisma.resultGroup.create({
-            include: resultGroupInclude,
-            data: {
-              itemCount: 0,
-              requestStepId,
-              resultConfigId: resultConfig.id,
-              final: true,
-              hasResult: false,
-            },
-          });
-        }
         try {
           // TODO set result status to complete on success
           switch (resultConfig.resultType) {

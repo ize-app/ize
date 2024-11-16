@@ -91,12 +91,7 @@ export const ConfigRequestStepPanel = ({
         <RespondPermissionPanel step={step} initialOpenState={false} />
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
-          <RequestStepResults
-            requestStep={requestStep}
-            resultConfigs={step.result}
-            results={requestStep?.results ?? []}
-            requestStatus={status}
-          />
+          <RequestStepResults requestStep={requestStep} step={step} requestStatus={status} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

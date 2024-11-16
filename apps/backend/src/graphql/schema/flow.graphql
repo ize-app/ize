@@ -80,6 +80,7 @@ type ResponseConfig {
   allowMultipleResponses: Boolean!
   # whether or not that particular user has permission to respond
   userPermission: Boolean!
+  minResponses: Int!
 }
 
 input NewFlowWithEvolveArgs {
@@ -114,6 +115,7 @@ input ResponseConfigArgs {
   expirationSeconds: Int!
   allowMultipleResponses: Boolean!
   canBeManuallyEnded: Boolean!
+  minResponses: Int!
 }
 
 enum FlowTriggerPermissionFilter {

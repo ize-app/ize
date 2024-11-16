@@ -22,6 +22,7 @@ export const Result = ({
   resultGroup,
   requestStepStatus,
   displayDescripton,
+  minResponses,
   onlyShowSelections = false,
   displayFieldOptionsIfNoResult = true,
 }: {
@@ -29,6 +30,7 @@ export const Result = ({
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
   requestStepStatus: Status;
+  minResponses: number | undefined | null;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
   displayFieldOptionsIfNoResult?: boolean;
@@ -57,7 +59,7 @@ export const Result = ({
         </Typography>
         {displayDescripton && (
           <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
-            {createResultConfigDescription(resultConfig)}
+            {createResultConfigDescription({ resultConfig, minResponses })}
           </Typography>
         )}
         {resultGroup && !resultGroup?.hasResult && (

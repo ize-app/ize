@@ -12,7 +12,13 @@ export const newResponseConfig = async ({
 }): Promise<string | null> => {
   if (!args) return null;
 
-  const { canBeManuallyEnded, allowMultipleResponses, expirationSeconds, permission } = args;
+  const {
+    canBeManuallyEnded,
+    allowMultipleResponses,
+    expirationSeconds,
+    permission,
+    minResponses,
+  } = args;
 
   const responsePermissionsId = await newPermission({
     permission,
@@ -25,6 +31,7 @@ export const newResponseConfig = async ({
       allowMultipleResponses,
       canBeManuallyEnded,
       expirationSeconds,
+      minResponses,
     },
   });
 

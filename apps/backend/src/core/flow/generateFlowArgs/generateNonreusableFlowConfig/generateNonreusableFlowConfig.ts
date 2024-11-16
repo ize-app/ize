@@ -66,12 +66,12 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
                 type: ResultType.LlmSummary,
                 responseFieldIndex: 0,
-                minimumAnswers: 2,
                 llmSummary: { prompt: "" },
               },
             ],
@@ -113,12 +113,12 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
                 type: ResultType.LlmSummaryList,
                 responseFieldIndex: 0,
-                minimumAnswers: 2,
                 llmSummary: { prompt: "" },
               },
             ],
@@ -167,12 +167,12 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
                 type: ResultType.LlmSummaryList,
                 responseFieldIndex: 0,
-                minimumAnswers: 2,
                 llmSummary: { prompt: "" },
               },
             ],
@@ -203,12 +203,12 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: false,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
                 type: ResultType.Decision,
                 responseFieldIndex: 0,
-                minimumAnswers: 0,
 
                 decision: { type: DecisionType.Ai },
               },

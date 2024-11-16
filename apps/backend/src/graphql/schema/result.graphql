@@ -24,7 +24,6 @@ type Decision {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   criteria: String
   decisionType: DecisionType!
   defaultOption: Option
@@ -35,7 +34,6 @@ type Ranking {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   numOptionsToInclude: Int
 }
 
@@ -43,7 +41,6 @@ type LlmSummary {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   prompt: String!
 }
 
@@ -51,7 +48,6 @@ type LlmSummaryList {
   resultConfigId: String!
   field: Field!
   name: String!
-  minimumAnswers: Int!
   prompt: String!
 }
 
@@ -80,7 +76,6 @@ input ResultArgs {
   type: ResultType!
   resultId: String
   fieldId: String
-  minimumAnswers: Int
   responseFieldIndex: Int!
   decision: DecisionArgs
   prioritization: PrioritizationArgs

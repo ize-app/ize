@@ -36,6 +36,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
           allowMultipleResponses: step.response.allowMultipleResponses,
           canBeManuallyEnded: step.response.canBeManuallyEnded,
           permission: createPermissionArgs(step.response.permission),
+          minResponses: step.response.minResponses,
         },
         result: createResultsArgs(step.result, step.fieldSet.fields, index, resultConfigCache),
         action: step.action ? createActionArgs(step.action, step.fieldSet.fields) : null,

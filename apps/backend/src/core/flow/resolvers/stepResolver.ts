@@ -54,6 +54,7 @@ export const stepResolver = ({
           canBeManuallyEnded: step.ResponseConfig.canBeManuallyEnded,
           expirationSeconds: step.ResponseConfig.expirationSeconds,
           allowMultipleResponses: step.ResponseConfig.allowMultipleResponses,
+          minResponses: step.ResponseConfig.minResponses,
         }
       : undefined,
     action: actionResolver({

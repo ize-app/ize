@@ -1,5 +1,3 @@
-import { InputAdornment } from "@mui/material";
-
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
 
@@ -28,14 +26,6 @@ export const LlmSummaryForm = ({ stepIndex, resultIndex, display, type }: LlmSum
         // startAdornment={<InputAdornment position="start">AI prompt</InputAdornment>}
         showLabel={false}
         defaultValue="test"
-      />
-      <TextField<FlowSchemaType>
-        label="Minimum # of responses for a result"
-        showLabel={false}
-        size={"small"}
-        defaultValue=""
-        endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-        name={`steps.${stepIndex}.result.${resultIndex}.minimumAnswers`}
       />
     </FieldBlock>
   );

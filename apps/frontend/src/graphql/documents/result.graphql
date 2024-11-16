@@ -44,7 +44,6 @@ fragment Decision on Decision {
   }
   name
   resultConfigId
-  minimumAnswers
   decisionType
   criteria
   defaultOption {
@@ -60,7 +59,6 @@ fragment Ranking on Ranking {
   name
   resultConfigId
   numOptionsToInclude
-  minimumAnswers
 }
 
 fragment LlmSummary on LlmSummary {
@@ -70,7 +68,6 @@ fragment LlmSummary on LlmSummary {
   name
   resultConfigId
   prompt
-  minimumAnswers
 }
 
 fragment LlmSummaryList on LlmSummaryList {
@@ -80,5 +77,4 @@ fragment LlmSummaryList on LlmSummaryList {
   name
   resultConfigId
   prompt
-  minimumAnswers
 }

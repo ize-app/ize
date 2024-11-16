@@ -34,8 +34,12 @@ export const checkIfEarlyResult = async ({
     const resultConfigs =
       reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
+    const notEnoughResponses =
+      reqStep.Step.ResponseConfig?.minResponses ?? 0 < reqStep.Responses.length;
+
     const earlyResults = await Promise.all(
       resultConfigs.map(async (r) => {
+        if (notEnoughResponses) return false;
         if (r.resultType === ResultType.Decision) {
           const decisionConfig = r.ResultConfigDecision;
           if (!decisionConfig)
@@ -59,7 +63,6 @@ export const checkIfEarlyResult = async ({
             responses: reqStep.Responses,
           });
 
-          if (r.minAnswers > fieldAnswers.length) return false;
           if (r.ResultConfigDecision?.type === DecisionType.Ai) return true;
 
           const { optionId } = await determineDecision({

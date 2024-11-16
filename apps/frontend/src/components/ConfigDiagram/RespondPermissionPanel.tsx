@@ -15,8 +15,13 @@ export const RespondPermissionPanel = ({
 }) => {
   if (!step.response) return;
 
-  const { permission, expirationSeconds, allowMultipleResponses, canBeManuallyEnded } =
-    step.response;
+  const {
+    permission,
+    expirationSeconds,
+    allowMultipleResponses,
+    canBeManuallyEnded,
+    minResponses,
+  } = step.response;
 
   return (
     <PanelAccordion title="Respond permission" hasError={false} initialState={initialOpenState}>
@@ -28,6 +33,7 @@ export const RespondPermissionPanel = ({
       </Typography>
 
       {canBeManuallyEnded && <Typography>Triggerer can end the response period early</Typography>}
+      {<Typography>There must be at least {minResponses} responses to create a result</Typography>}
     </PanelAccordion>
   );
 };
