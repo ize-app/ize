@@ -4,22 +4,18 @@ import { entityFormSchema } from "../../formValidation/entity";
 
 export type PermissionSchemaType = z.infer<typeof permissionSchema>;
 
-export enum PermissionType {
-  Entities = "Entities",
-  Anyone = "Anyone",
-}
-
 export const permissionSchema = z
   .object({
-    type: z.nativeEnum(PermissionType),
+    // some components (Initial flow wizard) use a select field that can only pass a string value
+    anyone: z
+      .union([z.boolean(), z.string()])
+      .transform((val) => (val === "true" ? true : val === "false" ? false : (val as boolean)))
+      .default(true),
     entities: z.array(entityFormSchema).default([]),
   })
   .refine(
     (permission) => {
-      if (
-        permission.type === PermissionType.Entities &&
-        (!permission.entities || permission.entities.length === 0)
-      )
+      if (!permission.anyone && (!permission.entities || permission.entities.length === 0))
         return false;
       return true;
     },

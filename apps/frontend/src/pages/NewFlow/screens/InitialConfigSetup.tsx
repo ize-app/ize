@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -54,7 +53,7 @@ export const InitialConfigSetup = () => {
 
   const reusable = formMethods.watch("reusable");
 
-  const permissionType = formMethods.watch("permission.type");
+  const isAnyonePermission = (formMethods.watch("permission.anyone") ?? true).toString();
 
   return (
     <FormProvider {...formMethods}>
@@ -103,13 +102,13 @@ export const InitialConfigSetup = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <ButtonGroupField<IntitialFlowSetupSchemaType>
                 label="Test"
-                name="permission.type"
+                name="permission.anyone"
                 options={[
-                  { name: "Anyone with the link", value: PermissionType.Anyone },
-                  { name: "Only certain people", value: PermissionType.Entities },
+                  { name: "Anyone with the link", value: "true" },
+                  { name: "Only certain people", value: "false" },
                 ]}
               />
-              {permissionType === PermissionType.Entities && (
+              {isAnyonePermission === "false" && (
                 <EntitySearch<IntitialFlowSetupSchemaType>
                   ariaLabel={"Individuals and groups to add to custom group"}
                   name={"permission.entities"}
@@ -120,10 +119,10 @@ export const InitialConfigSetup = () => {
             </Box>
           </FieldBlockFadeIn>
         )}
-        {goal === FlowGoal.TriggerWebhook && permissionType && <WebhookForm />}
-        {goal === FlowGoal.Decision && permissionType && <DecisionForm />}
-        {goal === FlowGoal.Prioritize && permissionType && <PrioritizationForm />}
-        {goal === FlowGoal.AiSummary && permissionType && <SummaryForm />}
+        {goal === FlowGoal.TriggerWebhook && isAnyonePermission && <WebhookForm />}
+        {goal === FlowGoal.Decision && isAnyonePermission && <DecisionForm />}
+        {goal === FlowGoal.Prioritize && isAnyonePermission && <PrioritizationForm />}
+        {goal === FlowGoal.AiSummary && isAnyonePermission && <SummaryForm />}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}

@@ -1,7 +1,6 @@
 import { FlowType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
 
 export const defaultStepFormValues: StepSchemaType = {
   fieldSet: {
@@ -9,7 +8,7 @@ export const defaultStepFormValues: StepSchemaType = {
     locked: false,
   },
   response: {
-    permission: { type: PermissionType.Anyone, entities: [] },
+    permission: { anyone: true, entities: [] },
     expirationSeconds: 259200,
     canBeManuallyEnded: true,
     allowMultipleResponses: false,
@@ -28,7 +27,7 @@ export const defaultFlowFormValues: FlowSchemaType = {
   },
   trigger: {
     permission: {
-      type: PermissionType.Anyone,
+      anyone: true,
       entities: [],
     },
   },

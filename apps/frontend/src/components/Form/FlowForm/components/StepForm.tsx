@@ -5,6 +5,7 @@ import { PermissionForm } from "./PermissionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { Select, Switch, TextField } from "../../formFields";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface StepFormProps {
@@ -56,24 +57,27 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
             fieldName={`steps.${stepIndex}.response.permission`}
             branch={"response"}
           />
-          <Select<FlowSchemaType>
-            label="How long do people have to respond?"
-            renderValue={(val) => {
-              const option = requestExpirationOptions.find((option) => option.value === val);
-              return option?.name + " to respond";
-            }}
-            selectOptions={requestExpirationOptions}
-            name={`steps.${stepIndex}.response.expirationSeconds`}
-            size={"small"}
-          />
-          <TextField<FlowSchemaType>
-            label="Minimum # of responses for a result"
-            showLabel={false}
-            size={"small"}
-            defaultValue=""
-            endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-            name={`steps.${stepIndex}.response.minResponses`}
-          />
+          <ResponsiveFormRow>
+            <Select<FlowSchemaType>
+              label="How long do people have to respond?"
+              renderValue={(val) => {
+                const option = requestExpirationOptions.find((option) => option.value === val);
+                return option?.name + " to respond";
+              }}
+              selectOptions={requestExpirationOptions}
+              name={`steps.${stepIndex}.response.expirationSeconds`}
+              size={"small"}
+            />
+            <TextField<FlowSchemaType>
+              label="Minimum # of responses for a result"
+              showLabel={false}
+              size={"small"}
+              defaultValue=""
+              sx={{ width: "200px" }}
+              endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+              name={`steps.${stepIndex}.response.minResponses`}
+            />
+          </ResponsiveFormRow>
           <Switch<FlowSchemaType>
             name={`steps.${stepIndex}.response.allowMultipleResponses`}
             label="Allow multiple responses"

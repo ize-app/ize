@@ -13,7 +13,6 @@ import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 import { Switch } from "../../formFields";
 import { FlowForm, FlowFormRef } from "../FlowForm";
 import { ReusableSchema, reusableSchema } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
 import { defaultFlowFormValues } from "../helpers/getDefaultFormValues";
 
 export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
@@ -41,7 +40,7 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
           name="evolve"
           isReusable={true}
           defaultFormValues={generateEvolveConfig({
-            permission: { type: PermissionType.Entities, entities: [] },
+            permission: { anyone: false, entities: [] },
           })}
         />
       }

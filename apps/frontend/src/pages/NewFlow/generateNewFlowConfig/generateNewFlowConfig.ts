@@ -5,10 +5,7 @@ import {
   FlowWithEvolveFlowSchemaType,
   StepSchemaType,
 } from "@/components/Form/FlowForm/formValidation/flow";
-import {
-  PermissionSchemaType,
-  PermissionType,
-} from "@/components/Form/FlowForm/formValidation/permission";
+import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
 import { defaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDefaultFormValues";
 import {
@@ -45,7 +42,7 @@ export const generateNewFlowConfig = ({
 }): FlowWithEvolveFlowSchemaType => {
   const permission: PermissionSchemaType = config.permission;
   const creatorPermission: PermissionSchemaType = {
-    type: PermissionType.Entities,
+    anyone: false,
     entities: creator ? [{ ...creator, __typename: EntityType.User }] : [],
   };
   let ideationStep: StepSchemaType | null = null;
@@ -184,7 +181,7 @@ export const generateNewFlowConfig = ({
     return { flow, evolve, reusable };
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
-    const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
+    const anyonePermission: PermissionSchemaType = { anyone: true, entities: [] };
     const flow = {
       name: "",
       type: FlowType.Custom,
