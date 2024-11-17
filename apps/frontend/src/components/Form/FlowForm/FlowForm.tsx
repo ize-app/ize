@@ -175,9 +175,7 @@ export const FlowForm = forwardRef(
             {/* Configuration panel*/}
             <PanelContainer>
               <PanelHeader>
-                <Typography color="primary" variant="label">
-                  Configuration
-                </Typography>
+                <Typography color="secondary" variant="label"></Typography>
               </PanelHeader>
               <ConfigurationPanel>
                 <TriggerForm show={selectedId === "trigger0"} isReusable={isReusable} />

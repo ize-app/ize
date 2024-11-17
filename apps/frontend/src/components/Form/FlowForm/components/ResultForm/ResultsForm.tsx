@@ -1,20 +1,18 @@
-import Close from "@mui/icons-material/Close";
 import { Box, FormHelperText } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+import { useState } from "react";
 import { UseFieldArrayReturn, useFieldArray, useFormContext } from "react-hook-form";
 
+import { PanelAccordion } from "@/components/ConfigDiagram";
 import { ResultType } from "@/graphql/generated/graphql";
 
-import { AddResultButton } from "./AddResultButton";
 import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
-import { ResultFormSection } from "./ResultFormSection";
+import ResultsToggle from "./ResultsToggle";
 import { TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { getResultFormLabel } from "../../helpers/getResultFormLabel";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -41,14 +39,15 @@ interface ResultFormProps {
   stepIndex: number; // react-hook-form name
   resultIndex: number;
   id: string;
-  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
-  resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   locked: boolean;
   reusable: boolean;
+  display: boolean;
 }
 
 export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: ResultsFormProps) => {
-  const { control, getValues } = useFormContext<FlowSchemaType>();
+  const { control, getValues, formState } = useFormContext<FlowSchemaType>();
+  const [resultIndex, setResultIndex] = useState(0);
+
   const resultsArrayMethods = useFieldArray<FlowSchemaType>({
     control,
     name: `steps.${stepIndex}.result`,
@@ -57,39 +56,43 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
   const locked = getValues(`steps.${stepIndex}.fieldSet.locked`);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    // <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <PanelAccordion
+      title={"Results"}
+      hasError={
+        !!formState.errors.steps?.[stepIndex]?.fieldSet ||
+        !!formState.errors.steps?.[stepIndex]?.result
+      }
+    >
+      <ResultsToggle
+        stepIndex={stepIndex}
+        resultIndex={resultIndex}
+        setResultIndex={setResultIndex}
+        locked={locked}
+        fieldsArrayMethods={fieldsArrayMethods}
+        resultsArrayMethods={resultsArrayMethods}
+      />
+      <hr style={{ width: "100%", borderTop: "1px solid rgba(0, 0, 0, 0.1)" }} />
       {/* This hidden form is here so that the fields can be added to the response fields array */}
-      {resultsArrayMethods.fields.map((item, resultIndex) => {
+      {resultsArrayMethods.fields.map((item, resIndex) => {
         return (
           <ResultForm
             key={item.id}
             stepIndex={stepIndex}
-            resultIndex={resultIndex}
-            fieldsArrayMethods={fieldsArrayMethods}
+            resultIndex={resIndex}
             id={item.id}
             locked={locked}
             reusable={reusable}
-            resultsArrayMethods={resultsArrayMethods}
+            display={resultIndex === resIndex}
           />
         );
       })}
-      <AddResultButton
-        fieldsArrayMethods={fieldsArrayMethods}
-        resultsArrayMethods={resultsArrayMethods}
-      />
-    </Box>
+    </PanelAccordion>
+    // </Box>
   );
 };
 
-const ResultForm = ({
-  stepIndex,
-  fieldsArrayMethods,
-  id,
-  resultsArrayMethods,
-  resultIndex,
-  locked,
-  reusable,
-}: ResultFormProps) => {
+const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: ResultFormProps) => {
   const { getValues, formState } = useFormContext<FlowSchemaType>();
 
   const result = getValues(`steps.${stepIndex}.result.${resultIndex}`);
@@ -101,105 +104,93 @@ const ResultForm = ({
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
+        display: display ? "flex" : "none",
+        flexDirection: "column",
+        gap: "16px",
         width: "100%",
-        justifyContent: "space-between",
-        alignItems: "space-between",
+        paddingBottom: "40px",
       }}
       key={id}
     >
       <LabeledGroupedInputs
-        label={getResultFormLabel({ result: result })}
+        label="Question"
         sx={{
-          backgroundColor: "#fffff5",
           display: "flex",
           flexDirection: "column",
-          padding: "12px",
+          gap: "12px",
+          padding: "16px",
           width: "100%",
         }}
       >
-        <ResultFormSection label="Question that respondants will answer">
-          <TextField<FlowSchemaType>
-            // assuming here that results to fields is 1:1 relationshp
-            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
-            key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
-            disabled={locked}
-            multiline
-            placeholderText={resultFieldNamePlaceholderText(resultType)}
-            label={``}
-            defaultValue=""
+        <TextField<FlowSchemaType>
+          // assuming here that results to fields is 1:1 relationshp
+          name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
+          key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
+          disabled={locked}
+          multiline
+          placeholderText={resultFieldNamePlaceholderText(resultType)}
+          label={``}
+          defaultValue=""
+        />
+
+        {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
+          <ResponseFieldOptionsForm
+            reusable={reusable}
+            stepIndex={stepIndex}
+            fieldIndex={resultIndex}
+            locked={locked}
           />
+        )}
+      </LabeledGroupedInputs>
+      <LabeledGroupedInputs
+        label="Result"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+          padding: "16px",
+          width: "100%",
+        }}
+      >
+        {resultType === ResultType.Decision && (
+          <DecisionConfigForm
+            stepIndex={stepIndex}
+            resultIndex={resultIndex}
+            field={resultField}
+            display={resultType === ResultType.Decision}
+          />
+        )}
 
-          {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
-            <ResponseFieldOptionsForm
-              reusable={reusable}
-              stepIndex={stepIndex}
-              fieldIndex={resultIndex}
-              locked={locked}
-            />
-          )}
-        </ResultFormSection>
-        <ResultFormSection label="How result is created">
-          {resultType === ResultType.Decision && (
-            <DecisionConfigForm
-              stepIndex={stepIndex}
-              resultIndex={resultIndex}
-              field={resultField}
-              display={resultType === ResultType.Decision}
-            />
-          )}
+        {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) && (
+          <LlmSummaryForm
+            stepIndex={stepIndex}
+            resultIndex={resultIndex}
+            display={
+              resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
+            }
+            type={resultType}
+          />
+        )}
 
-          {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) && (
-            <LlmSummaryForm
-              stepIndex={stepIndex}
-              resultIndex={resultIndex}
-              display={
-                resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
-              }
-              type={resultType}
-            />
-          )}
-
-          {resultType === ResultType.Ranking && (
-            <PrioritizationForm
-              formIndex={stepIndex}
-              resultIndex={resultIndex}
-              field={resultField}
-              display={resultType === ResultType.Ranking}
-            />
-          )}
-        </ResultFormSection>
-
-        {resultError && (
-          <FormHelperText
-            sx={{
-              color: "error.main",
-              marginLeft: "16px",
-            }}
-          >
-            {resultError}
-          </FormHelperText>
+        {resultType === ResultType.Ranking && (
+          <PrioritizationForm
+            formIndex={stepIndex}
+            resultIndex={resultIndex}
+            field={resultField}
+            display={resultType === ResultType.Ranking}
+          />
         )}
       </LabeledGroupedInputs>
 
-      {!locked && (
-        <IconButton
-          color="primary"
-          size="small"
-          aria-label="Remove result"
-          onClick={() => {
-            resultsArrayMethods.remove(resultIndex);
-            fieldsArrayMethods.remove(resultIndex);
-          }}
+      {resultError && (
+        <FormHelperText
           sx={{
-            display: "flex",
-            alignSelf: "right",
-            flexShrink: 0, // Prevents the button from shrinking
+            color: "error.main",
+            marginLeft: "16px",
           }}
         >
-          <Close fontSize="small" />
-        </IconButton>
+          {resultError}
+        </FormHelperText>
       )}
     </Box>
   );

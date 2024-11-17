@@ -82,7 +82,9 @@ export const ResponseFieldOptionsForm = ({
     ) ?? [];
 
   const optionsError =
-    formState.errors?.steps?.[stepIndex]?.fieldSet?.fields?.[fieldIndex]?.message ?? "";
+    formState.errors?.steps?.[stepIndex]?.fieldSet?.fields?.[fieldIndex]?.root?.message ?? "";
+
+  console.log("optionsError", optionsError);
 
   const optionSelectionType = watch(
     `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.selectionType`,
@@ -195,7 +197,6 @@ export const ResponseFieldOptionsForm = ({
           <FormHelperText
             sx={{
               color: "error.main",
-              marginLeft: "16px",
             }}
           >
             {optionsError}

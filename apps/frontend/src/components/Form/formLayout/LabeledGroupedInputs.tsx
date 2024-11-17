@@ -7,7 +7,11 @@ const LabeledWrapper = ({ label, children }: { label?: string; children: ReactNo
     <>{children}</>
   ) : (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", flex: 1, minWidth: 0 }}>
-      <Typography variant="description" component="legend" fontWeight={400}>
+      <Typography
+        component="legend"
+        variant={"label"}
+        sx={(theme) => ({ color: theme.palette.secondary.main })}
+      >
         {label}
       </Typography>
       {children}

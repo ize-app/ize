@@ -88,20 +88,11 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
           />
         </PanelAccordion>
       )}
-      <PanelAccordion
-        title="Collaborations"
-        sx={{ paddingBottom: "40px" }}
-        hasError={
-          !!formState.errors.steps?.[stepIndex]?.fieldSet ||
-          !!formState.errors.steps?.[stepIndex]?.result
-        }
-      >
-        <ResultsForm
-          reusable={reusable}
-          stepIndex={stepIndex}
-          fieldsArrayMethods={fieldsArrayMethods}
-        />
-      </PanelAccordion>
+      <ResultsForm
+        reusable={reusable}
+        stepIndex={stepIndex}
+        fieldsArrayMethods={fieldsArrayMethods}
+      />
     </Box>
   );
 };

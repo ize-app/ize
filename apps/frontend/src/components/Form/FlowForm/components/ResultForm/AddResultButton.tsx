@@ -1,5 +1,5 @@
-import { Box, Button, Menu, MenuItem } from "@mui/material";
-import { useState } from "react";
+import { Button, Menu, MenuItem } from "@mui/material";
+import { Dispatch, SetStateAction, useState } from "react";
 import { UseFieldArrayReturn } from "react-hook-form";
 
 import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/generated/graphql";
@@ -13,9 +13,11 @@ import { createDefaultResultState } from "../../helpers/defaultFormState/createD
 export const AddResultButton = ({
   fieldsArrayMethods,
   resultsArrayMethods,
+  setResultIndex,
 }: {
   fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
+  setResultIndex: Dispatch<SetStateAction<number>>;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -45,12 +47,20 @@ export const AddResultButton = ({
     });
     fieldsArrayMethods.append(field);
     resultsArrayMethods.append(result);
+    // not setting to length - 1 because of state update delay
+    setResultIndex(resultsArrayMethods.fields.length);
     handleClose();
   };
 
   return (
-    <Box>
-      <Button sx={{ flexGrow: 0 }} variant="outlined" size="small" onClick={handleClick}>
+    <>
+      <Button
+        sx={{ flexGrow: 0, borderRadius: ".5rem", marginTop: ".5rem", marginRight: "30px" }}
+        variant="outlined"
+        color="primary"
+        size="small"
+        onClick={handleClick}
+      >
         Add result
       </Button>
       <Menu
@@ -74,6 +84,6 @@ export const AddResultButton = ({
           AI generated list
         </MenuItem>
       </Menu>
-    </Box>
+    </>
   );
 };

@@ -121,7 +121,10 @@ export const fieldSchema = z
         return false;
       return true;
     },
-    { path: [""], message: "Add options or allow requestor to create their own options." },
+    {
+      // path: ["optionsConfig", "options"],
+      message: "Add options or allow triggerer to create their own options.",
+    },
   );
 
 export const fieldsSchema = z.array(fieldSchema).default([]);
