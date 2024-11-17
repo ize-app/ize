@@ -44,6 +44,7 @@ const stepSchema = z
       });
     }
   })
+  // check if default option is valid
   .superRefine((step, ctx) => {
     step.result.forEach((res, index) => {
       if (res.type === ResultType.Decision && res.decision.defaultDecision?.optionId) {
@@ -61,6 +62,30 @@ const stepSchema = z
             path: ["result", index, "decision", "defaultDecision", "optionId"],
           });
         }
+      }
+    });
+  })
+  // check if linked result options are valid
+  .superRefine((step, ctx) => {
+    step.fieldSet.fields.forEach((field, fieldIndex) => {
+      if (field.type === FieldType.Options && field.optionsConfig.linkedResultOptions.length > 0) {
+        field.optionsConfig.linkedResultOptions.forEach((linkedResultOption, linkedResultIndex) => {
+          if (!step.result.find((r) => r.resultId === linkedResultOption.id)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Linked result not found",
+              path: [
+                "fieldSet",
+                "fields",
+                fieldIndex,
+                "optionsConfig",
+                "linkedResultOptions",
+                linkedResultIndex,
+                "id",
+              ],
+            });
+          }
+        });
       }
     });
   })

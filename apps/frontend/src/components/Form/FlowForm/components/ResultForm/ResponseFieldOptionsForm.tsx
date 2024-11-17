@@ -2,7 +2,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
@@ -77,19 +76,6 @@ export const ResponseFieldOptionsForm = ({
 
   const possibleLinkOptions = createLinkOptions(steps, stepIndex);
 
-  // remove linked option if that result is removed
-  useEffect(() => {
-    const linkedOptions = getValues(
-      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
-    );
-
-    linkedOptions.forEach((result, index) => {
-      if (!possibleLinkOptions.find((option) => option.value === result.id)) {
-        linksRemove(index);
-      }
-    });
-  }, [possibleLinkOptions]);
-
   const linkedOptions =
     getValues(
       `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
@@ -105,24 +91,13 @@ export const ResponseFieldOptionsForm = ({
   return (
     <Box sx={{ margin: "0px 0px" }}>
       <LabeledGroupedInputs
-        // label={"Options"}
         sx={{
           padding: "16px",
           gap: "8px",
           display: "flex",
           flexDirection: "column",
           borderColor: "rgba(0, 0, 0, 0.1)",
-          // margin: "4px 8px",
         }}
-        // sx={{
-        //   display: "flex",
-        //   flexDirection: "column",
-        //   gap: "8px",
-        //   flexGrow: 1,
-        //   outline: "1px solid #e0e0e0",
-        //   padding: "16px",
-        //   margin: "4px 8px",
-        // }}
       >
         {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
           <Select<FlowSchemaType>
@@ -146,7 +121,7 @@ export const ResponseFieldOptionsForm = ({
           </Box>
         )}
         <PresetOptions />
-        {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
+        {linkedOptions.length > 0 && (
           <Box sx={{ width: "100%" }}>
             {linksFields.map((item, inputIndex) => {
               return (
@@ -155,6 +130,7 @@ export const ResponseFieldOptionsForm = ({
                   sx={{
                     display: "flex",
                     flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
                   <Select<FlowSchemaType>
@@ -162,6 +138,7 @@ export const ResponseFieldOptionsForm = ({
                     name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
                     key={"links" + inputIndex.toString() + stepIndex.toString()}
                     selectOptions={possibleLinkOptions}
+                    placeholder="Select a previous result"
                     renderValue={(val) => {
                       return (
                         <div
@@ -172,18 +149,21 @@ export const ResponseFieldOptionsForm = ({
                           }}
                         >
                           {val
-                            ? getSelectOptionName(possibleLinkOptions, val as string)
+                            ? getSelectOptionName(possibleLinkOptions, val as string) ??
+                              "Select a previous result"
                             : "Select a previous result"}
                         </div>
                       );
                     }}
-                    label="Type"
+                    label="Linked result"
                     displayEmpty={true}
                     defaultValue=""
                   />
                   <IconButton
                     color="primary"
                     aria-label="Remove linked options"
+                    size="small"
+                    sx={{ flexShrink: 1 }}
                     onClick={() => linksRemove(inputIndex)}
                   >
                     <CloseIcon fontSize="small" />
@@ -193,44 +173,6 @@ export const ResponseFieldOptionsForm = ({
             })}
           </Box>
         )}
-        {/* {hasRequestDefinedOptions && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexGrow: 1,
-            }}
-          >
-            <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
-              {" "}
-              <Typography>Options created at trigger</Typography>
-              <Box>
-                <Select<FlowSchemaType>
-                  name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-                  defaultValue=""
-                  selectOptions={[
-                    { name: "Text", value: FieldDataType.String },
-                    { name: "Number", value: FieldDataType.Number },
-                    { name: "Uri", value: FieldDataType.Uri },
-                    { name: "Date", value: FieldDataType.Date },
-                    { name: "DateTime", value: FieldDataType.DateTime },
-                  ]}
-                  label="Option type"
-                  size="small"
-                  sx={{ width: "100px", flexGrow: 0 }}
-                  variant="standard"
-                />
-              </Box>
-            </ResponsiveFormRow>
-            <IconButton
-              color="primary"
-              aria-label="Remove request created options"
-              onClick={disableRequestCreatedOptions}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        )} */}
         {!locked && (
           <ResponsiveFormRow sx={{ justifyContent: "space-between", paddingRight: "30px" }}>
             <AddOptionButton optionsArrayMethods={optionsArrayMethods} />
