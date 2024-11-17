@@ -40,7 +40,8 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
           name="evolve"
           isReusable={true}
           defaultFormValues={generateEvolveConfig({
-            permission: { anyone: false, entities: [] },
+            triggerPermission: { anyone: false, entities: [] },
+            respondPermission: { anyone: false, entities: [] },
           })}
         />
       }

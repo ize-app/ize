@@ -165,7 +165,10 @@ export const generateNewFlowConfig = ({
       action,
     });
 
-    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    const evolve = generateEvolveConfig({
+      triggerPermission: creatorPermission,
+      respondPermission: permission,
+    });
 
     const flow: FlowSchemaType = {
       type: FlowType.Custom,
@@ -196,7 +199,10 @@ export const generateNewFlowConfig = ({
       },
       steps: [defaultStepFormValues],
     };
-    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    const evolve = generateEvolveConfig({
+      triggerPermission: creatorPermission,
+      respondPermission: creatorPermission,
+    });
     return { flow, evolve, reusable };
   }
 };

@@ -45,9 +45,11 @@ const requestFieldSetArgs: FieldSchemaType[] = [
 ];
 
 export const generateEvolveConfig = ({
-  permission,
+  triggerPermission,
+  respondPermission,
 }: {
-  permission: PermissionSchemaType;
+  triggerPermission: PermissionSchemaType;
+  respondPermission: PermissionSchemaType;
 }): FlowSchemaType => {
   const responseField: FieldSchemaType = {
     type: FieldType.Options,
@@ -90,7 +92,7 @@ export const generateEvolveConfig = ({
   const step: StepSchemaType = {
     fieldSet: { fields: [responseField], locked: false },
     response: {
-      permission,
+      permission: respondPermission,
       expirationSeconds: 259200,
       allowMultipleResponses: false,
       canBeManuallyEnded: false,
@@ -108,7 +110,7 @@ export const generateEvolveConfig = ({
       fields: requestFieldSetArgs,
     },
     trigger: {
-      permission,
+      permission: triggerPermission,
     },
     steps: [step],
   };
