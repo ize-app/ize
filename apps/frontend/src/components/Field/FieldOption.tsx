@@ -2,7 +2,7 @@ import { SxProps, Typography } from "@mui/material";
 
 import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
-import { renderFreeInputValue } from "./renderFreeInputValue";
+import { FreeInputValue } from "./FreeInputValue";
 
 // amdmittedly, this component is kind of convulted. due for a refactor
 export const FieldOption = ({
@@ -41,7 +41,7 @@ export const FieldOption = ({
           {index + 1}.
         </Typography>
       )}
-      {renderFreeInputValue(value, dataType)}
+      <FreeInputValue value={value} type={dataType} />
     </Typography>
   );
 };

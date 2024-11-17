@@ -17,19 +17,21 @@ export const createResultArgs = (
   if (responseFieldIndex === null || responseFieldIndex === -1)
     throw Error("Cannot find response field for result");
 
-  if (result.type === ResultType.Decision && !!result.decision.defaultDecision?.optionId) {
+  if (result.type === ResultType.Decision) {
     let defaultOptionIndex: number | null = null;
-
-    const responseField = responseFields[responseFieldIndex];
-    if (!responseField || responseField.type !== FieldType.Options)
-      throw Error("Missing option set for default result");
-    const options = responseField.optionsConfig.options;
-    defaultOptionIndex = options.findIndex(
-      (option) => option.optionId === result.decision.defaultDecision?.optionId,
-    );
-    if (defaultOptionIndex === -1) throw Error("Default option not found ");
-
-    delete result.decision.defaultDecision;
+    if (result.decision.defaultDecision) {
+      if (result.decision.defaultDecision.optionId) {
+        const responseField = responseFields[responseFieldIndex];
+        if (!responseField || responseField.type !== FieldType.Options)
+          throw Error("Missing option set for default result");
+        const options = responseField.optionsConfig.options;
+        defaultOptionIndex = options.findIndex(
+          (option) => option.optionId === result.decision.defaultDecision?.optionId,
+        );
+        if (defaultOptionIndex === -1) throw Error("Default option not found ");
+      }
+      delete result.decision.defaultDecision;
+    }
     return {
       ...result,
       responseFieldIndex,
@@ -39,6 +41,7 @@ export const createResultArgs = (
       },
     };
   }
+
   return { ...result, responseFieldIndex };
 };
 

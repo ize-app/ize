@@ -10,7 +10,7 @@ import {
   Status,
 } from "@/graphql/generated/graphql";
 
-import { renderFreeInputValue } from "../Field/renderFreeInputValue";
+import { FreeInputValue } from "../Field/FreeInputValue";
 import { StatusTag } from "../status/StatusTag";
 
 export const ActionExecution = ({
@@ -38,7 +38,7 @@ export const ActionExecution = ({
       data.unshift(
         {
           label: "Webhook integration",
-          value: renderFreeInputValue(action.uri, FieldDataType.Uri, "1rem"),
+          value: <FreeInputValue value={action.uri} type={FieldDataType.Uri} />,
         },
         {
           label: "What this webhook does",

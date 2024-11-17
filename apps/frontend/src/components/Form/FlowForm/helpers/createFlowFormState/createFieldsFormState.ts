@@ -39,7 +39,9 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
             id: lr.resultConfigId,
           })),
           previousStepOptions: field.previousStepOptions,
-          requestOptionsDataType: field.requestOptionsDataType ?? undefined,
+          triggerDefinedOptions: field.requestOptionsDataType
+            ? { hasTriggerDefinedOptions: true, dataType: field.requestOptionsDataType }
+            : { hasTriggerDefinedOptions: false, dataType: null },
           maxSelections: field.maxSelections,
           selectionType: field.selectionType,
           options: field.options.map(

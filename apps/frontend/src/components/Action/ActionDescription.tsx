@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import { ActionFragment, ActionType, FieldDataType } from "@/graphql/generated/graphql";
 
-import { renderFreeInputValue } from "../Field/renderFreeInputValue";
+import { FreeInputValue } from "../Field/FreeInputValue";
 
 export const ActionDescription = ({
   actionType,
@@ -26,7 +26,7 @@ export const ActionDescription = ({
               data={[
                 {
                   label: "Webhook integration",
-                  value: renderFreeInputValue(action.uri, FieldDataType.Uri, "1rem"),
+                  value: <FreeInputValue value={action.uri} type={FieldDataType.Uri} />,
                 },
                 {
                   label: "What this webhook does",

@@ -1,7 +1,7 @@
 import Close from "@mui/icons-material/Close";
 import { Box, FormHelperText, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { UseFieldArrayReturn, useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
@@ -33,7 +33,7 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
 
 interface ResultsFormProps {
   stepIndex: number; // react-hook-form name
-  fieldsArrayMethods: ReturnType<typeof useFieldArray>;
+  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   reusable: boolean;
 }
 
@@ -41,15 +41,15 @@ interface ResultFormProps {
   stepIndex: number; // react-hook-form name
   resultIndex: number;
   id: string;
-  fieldsArrayMethods: ReturnType<typeof useFieldArray>;
-  resultsArrayMethods: ReturnType<typeof useFieldArray>;
+  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
+  resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
   locked: boolean;
   reusable: boolean;
 }
 
 export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: ResultsFormProps) => {
   const { control, getValues } = useFormContext<FlowSchemaType>();
-  const resultsArrayMethods = useFieldArray({
+  const resultsArrayMethods = useFieldArray<FlowSchemaType>({
     control,
     name: `steps.${stepIndex}.result`,
   });
@@ -69,14 +69,12 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
             id={item.id}
             locked={locked}
             reusable={reusable}
-            //@ts-expect-error TODO
             resultsArrayMethods={resultsArrayMethods}
           />
         );
       })}
       <AddResultButton
         fieldsArrayMethods={fieldsArrayMethods}
-        //@ts-expect-error TODO
         resultsArrayMethods={resultsArrayMethods}
       />
     </Box>
@@ -122,7 +120,9 @@ const ResultForm = ({
             backgroundColor: "#fffff5",
           }}
         >
-          <Typography variant={"label2"}>Question that respondants will answer</Typography>
+          <Typography variant={"label"} color="primary">
+            Question that respondants will answer
+          </Typography>
           <FieldBlock>
             <TextField<FlowSchemaType>
               // assuming here that results to fields is 1:1 relationshp
@@ -144,7 +144,9 @@ const ResultForm = ({
               locked={locked}
             />
           )}
-          <Typography variant={"label2"}>How result is created</Typography>
+          <Typography variant={"label"} color="primary">
+            How result is created
+          </Typography>
           {resultType === ResultType.Decision && (
             <DecisionConfigForm
               stepIndex={stepIndex}

@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
@@ -6,11 +6,11 @@ import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
 import { Select } from "../../../formFields";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
+import { AddOptionButton } from "../ResultForm/AddOptionButton";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
-  const { PresetOptions, append } = UsePresetOptionsForm<FlowSchemaType>({
+  const { PresetOptions, optionsArrayMethods } = UsePresetOptionsForm<FlowSchemaType>({
     locked,
     fieldsArrayName: `${triggerFieldsPath}.${fieldIndex}.optionsConfig.options`,
   });
@@ -48,18 +48,7 @@ export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
         sx={{ width: "100%", display: "flex", flexDirection: "column", gap: "8px", flexGrow: 1 }}
       >
         <PresetOptions />
-        <ResponsiveFormRow>
-          <Button
-            sx={{ position: "relative" }}
-            variant="outlined"
-            size="small"
-            onClick={() => {
-              append(createDefaultOptionState());
-            }}
-          >
-            Add option
-          </Button>
-        </ResponsiveFormRow>
+        <AddOptionButton<FlowSchemaType> optionsArrayMethods={optionsArrayMethods} />
       </Box>
     </>
   );

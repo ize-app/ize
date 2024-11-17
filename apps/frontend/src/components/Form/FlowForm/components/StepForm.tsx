@@ -99,7 +99,6 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
         <ResultsForm
           reusable={reusable}
           stepIndex={stepIndex}
-          //@ts-expect-error TODO
           fieldsArrayMethods={fieldsArrayMethods}
         />
       </PanelAccordion>

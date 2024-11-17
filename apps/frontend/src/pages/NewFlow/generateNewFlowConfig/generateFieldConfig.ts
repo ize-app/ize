@@ -1,6 +1,7 @@
 import {
   FieldOptionSchemaType,
   FieldSchemaType,
+  TriggerDefinedOptionsSchemaType,
 } from "@/components/Form/FlowForm/formValidation/fields";
 import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
 
@@ -11,7 +12,7 @@ type FieldArg =
       question: string;
       options: FieldOptionSchemaType[];
       linkedResultId: string | undefined | null;
-      requestCreatedOptions: boolean;
+      triggerDefinedOptions: TriggerDefinedOptionsSchemaType;
       selectionType: FieldOptionsSelectionType;
     }
   | { type: FieldType.FreeInput; question: string };
@@ -32,7 +33,7 @@ export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
         ...base,
         optionsConfig: {
           previousStepOptions: !!arg.linkedResultId,
-          requestOptionsDataType: arg.requestCreatedOptions ? FieldDataType.String : null,
+          triggerDefinedOptions: arg.triggerDefinedOptions,
           selectionType: arg.selectionType,
           maxSelections: null,
           options: arg.options,

@@ -34,7 +34,7 @@ export const DatePicker = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => {
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
-          <FormControl error={Boolean(error)} required={required}>
+          <FormControl error={Boolean(error)} required={required} sx={{ flexGrow: 1 }}>
             {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
             <MuiDatePicker
               {...field}

@@ -35,7 +35,7 @@ export const checkIfEarlyResult = async ({
       reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
     const notEnoughResponses =
-      reqStep.Step.ResponseConfig?.minResponses ?? 0 < reqStep.Responses.length;
+      (reqStep.Step.ResponseConfig?.minResponses ?? 0) < reqStep.Responses.length;
 
     const earlyResults = await Promise.all(
       resultConfigs.map(async (r) => {

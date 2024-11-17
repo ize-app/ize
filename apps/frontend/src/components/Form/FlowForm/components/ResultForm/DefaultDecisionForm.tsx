@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
 import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
 import { FieldType } from "@/graphql/generated/graphql";
 
@@ -16,8 +17,9 @@ const createDefaultDecisionOptions = (field: FieldSchemaType): SelectOption[] =>
 
   if (field.type === FieldType.Options) {
     (field.optionsConfig.options ?? []).forEach((o) => {
+      if (typeof o.name === "string" && o.name.length === 0) return;
       defaultDecisionOptions.push({
-        name: o.name as string,
+        name: stringifyFreeInputValue({ value: o.name as string, dataType: o.dataType }),
         value: o.optionId,
       });
     });

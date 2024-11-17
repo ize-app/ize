@@ -2,8 +2,8 @@ import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { createFieldAnswersFormState } from "@/components/Form/createFieldAnswersFormState";
 import { FieldAnswerRecordSchemaType } from "@/components/Form/formValidation/field";
+import { createFieldAnswersFormState } from "@/components/Form/utils/createFieldAnswersFormState";
 
 import Loading from "../../../components/Loading";
 import { FieldFragment, Flow, FlowType, GetFlowDocument } from "../../../graphql/generated/graphql";

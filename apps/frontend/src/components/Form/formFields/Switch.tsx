@@ -18,7 +18,7 @@ export const Switch = <T extends FieldValues>({ label, name, sx = {} }: SwitchPr
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl error={Boolean(error)} sx={sx}>
+        <FormControl error={Boolean(error)} sx={{ marginLeft: "6px", ...sx }}>
           <FormControlLabel
             label={label}
             slotProps={{ typography: { fontSize: ".875rem" } }}

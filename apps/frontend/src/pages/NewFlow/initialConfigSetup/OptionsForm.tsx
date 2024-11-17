@@ -1,8 +1,9 @@
-import { Box, Button, FormHelperText, Typography } from "@mui/material";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import { useFormContext, useFormState } from "react-hook-form";
 
+import { AddOptionButton } from "@/components/Form/FlowForm/components/ResultForm/AddOptionButton";
+import { TriggerDefinedOptionsForm } from "@/components/Form/FlowForm/components/ResultForm/TriggerDefinedOptionsForm";
 import { UsePresetOptionsForm } from "@/components/Form/FlowForm/components/UsePresetOptionsForm";
-import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/defaultFormState/createDefaultOptionState";
 import { Switch, TextField } from "@/components/Form/formFields";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 
@@ -11,7 +12,7 @@ import { IntitialFlowSetupSchemaType, Reusable } from "../formValidation";
 export const OptionsForm = () => {
   const { watch, control } = useFormContext<IntitialFlowSetupSchemaType>();
   const optionsFormState = useFormState({ control, name: "optionsConfig" });
-  const { PresetOptions, append } = UsePresetOptionsForm<IntitialFlowSetupSchemaType>({
+  const { PresetOptions, optionsArrayMethods } = UsePresetOptionsForm<IntitialFlowSetupSchemaType>({
     locked: false,
     fieldsArrayName: `optionsConfig.options`,
   });
@@ -38,35 +39,23 @@ export const OptionsForm = () => {
             {error}
           </FormHelperText>
         )}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <Box sx={{ margin: "8px 40px 8px 0px" }}>
+            {isReusable && (
+              <TriggerDefinedOptionsForm<IntitialFlowSetupSchemaType>
+                fieldName={"optionsConfig.triggerDefinedOptions"}
+              />
+            )}
+            <Switch<IntitialFlowSetupSchemaType>
+              label={"Generate option ideas from partipants"}
+              name={"optionsConfig.linkedOptions.hasLinkedOptions"}
+              sx={{ marginLeft: "8px" }}
+            />
+          </Box>
           <PresetOptions />
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <Box sx={{ marginBottom: "8px" }}>
-            <Button
-              sx={{ position: "relative" }}
-              variant="text"
-              size="small"
-              onClick={() => {
-                append(createDefaultOptionState());
-              }}
-            >
-              Add option
-            </Button>
-          </Box>
-          {isReusable && (
-            <Switch<IntitialFlowSetupSchemaType>
-              label={"Requestor can create additional options"}
-              name={"optionsConfig.requestCreatedOptions"}
-              sx={{ marginLeft: "8px" }}
-            />
-          )}
-
-          <Switch<IntitialFlowSetupSchemaType>
-            label={"Generate option ideas from partipants"}
-            name={"optionsConfig.linkedOptions.hasLinkedOptions"}
-            sx={{ marginLeft: "8px" }}
-          />
+          <AddOptionButton<IntitialFlowSetupSchemaType> optionsArrayMethods={optionsArrayMethods} />
 
           {hasLinkedOptions && (
             <TextField<IntitialFlowSetupSchemaType>

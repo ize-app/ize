@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
-import { renderFreeInputValue } from "./renderFreeInputValue";
+import { FreeInputValue } from "./FreeInputValue";
 
 export const AnswerFreeInput = ({
   answer,
@@ -23,7 +23,7 @@ export const AnswerFreeInput = ({
         background: "white",
       }}
     >
-      {renderFreeInputValue(answer, dataType)}
+      <FreeInputValue value={answer} type={dataType} />
     </Box>
   );
 };

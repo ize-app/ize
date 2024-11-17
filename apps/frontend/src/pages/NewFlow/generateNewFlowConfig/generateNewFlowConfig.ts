@@ -78,7 +78,7 @@ export const generateNewFlowConfig = ({
           selectionType: FieldOptionsSelectionType.Select,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-          requestCreatedOptions: config.optionsConfig.requestCreatedOptions,
+          triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
         });
 
         flowTitle = config.question;
@@ -98,7 +98,7 @@ export const generateNewFlowConfig = ({
           selectionType: FieldOptionsSelectionType.Rank,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-          requestCreatedOptions: config.optionsConfig.requestCreatedOptions,
+          triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
         });
 
         flowTitle = config.question;
@@ -135,7 +135,7 @@ export const generateNewFlowConfig = ({
             selectionType: FieldOptionsSelectionType.Select,
             options: config.optionsConfig?.options,
             linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-            requestCreatedOptions: config.optionsConfig?.requestCreatedOptions,
+            triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
           });
 
           flowTitle = config.webhookName;

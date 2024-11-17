@@ -106,7 +106,6 @@ export const AddStepButton = ({
       responseFields: previousStep.fieldSet.fields,
     });
     const defaultOptionFilterId = options[0].value as string;
-    console.log("defaultOptionFilterId", defaultOptionFilterId);
     setValue(`steps.${positionIndex - 1}.action.filterOptionId`, defaultOptionFilterId);
     setSelectedId(`actionFilter${positionIndex - 1}`);
   };

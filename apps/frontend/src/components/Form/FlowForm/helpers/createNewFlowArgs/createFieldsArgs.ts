@@ -1,4 +1,4 @@
-import { FieldArgs, FieldType } from "@/graphql/generated/graphql";
+import { FieldArgs, FieldOptionsConfigArgs, FieldType } from "@/graphql/generated/graphql";
 
 import { ResultConfigCache } from "./createNewFlowArgs";
 import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
@@ -28,7 +28,41 @@ export const createFieldArgs = (
       name,
     };
   } else if (field.type === FieldType.Options) {
-    const { fieldId, isInternal, required, name, type, systemType, optionsConfig } = field;
+    const {
+      fieldId,
+      isInternal,
+      required,
+      name,
+      type,
+      systemType,
+      optionsConfig: rawOptionsConfig,
+    } = field;
+
+    const { selectionType, maxSelections, previousStepOptions } = rawOptionsConfig;
+
+    const optionsConfig: FieldOptionsConfigArgs = {
+      selectionType,
+      maxSelections,
+      previousStepOptions,
+      requestOptionsDataType: rawOptionsConfig.triggerDefinedOptions?.dataType ?? null,
+      options: rawOptionsConfig.options.map((option) => {
+        return {
+          ...option,
+          //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          name: option.name,
+        };
+      }),
+      linkedResultOptions: rawOptionsConfig.linkedResultOptions.map((linkedResult) => {
+        const resultConfigLocation = resultConfigCache.find((r) => r.id === linkedResult.id);
+        if (!resultConfigLocation)
+          throw Error("Cannot find correspond result config for linked option config");
+        return {
+          stepIndex: resultConfigLocation.stepIndex,
+          resultIndex: resultConfigLocation.resultIndex,
+        };
+      }),
+    };
+
     return {
       type,
       fieldId,
@@ -36,25 +70,7 @@ export const createFieldArgs = (
       systemType,
       required,
       name,
-      optionsConfig: {
-        ...optionsConfig,
-        options: optionsConfig.options.map((option) => {
-          return {
-            ...option,
-            //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            name: option.name,
-          };
-        }),
-        linkedResultOptions: optionsConfig.linkedResultOptions.map((linkedResult) => {
-          const resultConfigLocation = resultConfigCache.find((r) => r.id === linkedResult.id);
-          if (!resultConfigLocation)
-            throw Error("Cannot find correspond result config for linked option config");
-          return {
-            stepIndex: resultConfigLocation.stepIndex,
-            resultIndex: resultConfigLocation.resultIndex,
-          };
-        }),
-      },
+      optionsConfig,
     };
   } else {
     throw Error("Unknown option type");

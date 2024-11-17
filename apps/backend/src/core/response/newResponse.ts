@@ -145,7 +145,10 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     return newResponse.id;
   });
 
-  if (await checkIfEarlyResult({ requestStepId })) {
+  const hasEarlyResult = await checkIfEarlyResult({ requestStepId });
+  console.log("hasEarlyResult", hasEarlyResult);
+
+  if (hasEarlyResult) {
     // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
     // there is cron job to rerun stalled actions / results
     await runResultsAndActions({

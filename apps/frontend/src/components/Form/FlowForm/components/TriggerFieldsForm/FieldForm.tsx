@@ -25,9 +25,6 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
 
   // register values that are in zod schema but not displayed to user
   useEffect(() => {
-    register(`${triggerFieldsPath}.${fieldIndex}.type`);
-    setValue(`${triggerFieldsPath}.${fieldIndex}.type`, fieldType);
-
     if (prevFieldType && fieldType && fieldType !== prevFieldType) {
       const newFieldState: FieldSchemaType = createDefaultFieldState({ fieldType });
       setValue(`${triggerFieldsPath}.${fieldIndex}`, newFieldState);

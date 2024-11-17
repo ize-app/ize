@@ -1,7 +1,10 @@
 import { ZodErrorMap, setErrorMap, z } from "zod";
 
 // import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
-import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
+import {
+  fieldOptionSchema,
+  triggerDefinedOptionsSchema,
+} from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 import { DecisionType } from "@/graphql/generated/graphql";
@@ -52,7 +55,7 @@ export enum AIOutputType {
 const optionConfigSchema = z
   .object({
     options: z.array(fieldOptionSchema).default([]),
-    requestCreatedOptions: z.boolean().optional().default(false),
+    triggerDefinedOptions: triggerDefinedOptionsSchema,
     linkedOptions: z.object({
       hasLinkedOptions: z.boolean().optional().default(false),
       question: z.string().optional(),
@@ -62,7 +65,7 @@ const optionConfigSchema = z
     (data) => {
       if (
         data.options.length === 0 &&
-        !data.requestCreatedOptions &&
+        !data.triggerDefinedOptions?.dataType &&
         !data.linkedOptions.hasLinkedOptions
       ) {
         return false;

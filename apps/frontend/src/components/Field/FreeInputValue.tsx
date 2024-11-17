@@ -4,20 +4,26 @@ import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import { Typography, TypographyProps } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { ReactElement } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
+import { stringifyFreeInputValue } from "./stringifyFreeInputValue";
+
 dayjs.extend(utc);
 
-export const renderFreeInputValue = (
-  value: string,
-  type: FieldDataType,
+export const FreeInputValue = ({
+  value,
+  type,
   fontSize = "1rem",
-): ReactElement => {
+}: {
+  value: string;
+  type: FieldDataType;
+  fontSize?: string;
+}) => {
+  const stringVal = stringifyFreeInputValue({ value, dataType: type });
   const defaultProps: TypographyProps = {
     fontSize,
     color: "primary",
@@ -25,23 +31,21 @@ export const renderFreeInputValue = (
   };
   switch (type) {
     case FieldDataType.String:
-      return <Typography {...defaultProps}>{value}</Typography>;
+      return <Typography {...defaultProps}>{stringVal}</Typography>;
     case FieldDataType.Number:
-      return <Typography {...defaultProps}>{value}</Typography>;
+      return <Typography {...defaultProps}>{stringVal}</Typography>;
     case FieldDataType.Date:
       return (
         <>
           <InsertInvitationOutlinedIcon fontSize="small" color="primary" />
-          <Typography {...defaultProps}>{dayjs.utc(value).format("MMMM D YYYY")}</Typography>
+          <Typography {...defaultProps}>{stringVal}</Typography>
         </>
       );
     case FieldDataType.DateTime:
       return (
         <>
           <AccessTimeOutlinedIcon fontSize="small" color="primary" />
-          <Typography {...defaultProps}>
-            {dayjs.utc(value).format("MMMM D YYYY, H:mm a").toString()}
-          </Typography>
+          <Typography {...defaultProps}>{stringVal}</Typography>
         </>
       );
     case FieldDataType.Uri:
@@ -55,7 +59,7 @@ export const renderFreeInputValue = (
             rel="noopener noreferrer"
             {...defaultProps}
           >
-            {value}
+            {stringVal}
           </Typography>
         </>
       );

@@ -1,10 +1,11 @@
 import { Box, Button, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import { UseFieldArrayReturn } from "react-hook-form";
 
 import { FieldOptionsSelectionType, FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
+import { FlowSchemaType } from "../../formValidation/flow";
 import { ResultSchemaType } from "../../formValidation/result";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 import { createDefaultResultState } from "../../helpers/defaultFormState/createDefaultResultState";
@@ -13,8 +14,8 @@ export const AddResultButton = ({
   fieldsArrayMethods,
   resultsArrayMethods,
 }: {
-  fieldsArrayMethods: ReturnType<typeof useFieldArray>;
-  resultsArrayMethods: ReturnType<typeof useFieldArray>;
+  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
+  resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

@@ -49,7 +49,7 @@ const stepSchema = z
       if (res.type === ResultType.Decision && res.decision.defaultDecision?.optionId) {
         const defaultOptionId = res.decision.defaultDecision?.optionId;
         const field = step.fieldSet.fields.find((f) => f.fieldId === res.fieldId);
-        console.log("field for default option is", field);
+
         const option =
           field &&
           field.type === FieldType.Options &&

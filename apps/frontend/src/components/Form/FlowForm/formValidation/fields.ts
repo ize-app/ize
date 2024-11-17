@@ -14,6 +14,7 @@ export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
 export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 export type FieldSetSchemaType = z.infer<typeof fieldSetSchema>;
+export type TriggerDefinedOptionsSchemaType = z.infer<typeof triggerDefinedOptionsSchema>;
 
 export enum OptionSelectionCountLimit {
   None = "None",
@@ -23,6 +24,13 @@ export enum FieldContextType {
   Trigger = "Trigger",
   Response = "Response",
 }
+
+export const triggerDefinedOptionsSchema = z
+  .object({
+    hasTriggerDefinedOptions: z.boolean().default(false),
+    dataType: z.nativeEnum(FieldDataType).nullable(),
+  })
+  .optional();
 
 export const fieldOptionSchema = z
   .object({
@@ -41,7 +49,7 @@ export const fieldOptionSchema = z
 const fieldOptionsSchema = z
   .object({
     previousStepOptions: z.boolean().default(false),
-    requestOptionsDataType: z.nativeEnum(FieldDataType).optional().nullable(), // refers only to request created options
+    triggerDefinedOptions: triggerDefinedOptionsSchema,
     selectionType: z
       .nativeEnum(FieldOptionsSelectionType)
       .default(FieldOptionsSelectionType.Select),
@@ -97,7 +105,7 @@ export const fieldSchema = z
       if (
         field.type === FieldType.Options &&
         (field.optionsConfig.options ?? []).length === 0 &&
-        !field.optionsConfig.requestOptionsDataType &&
+        !field.optionsConfig.triggerDefinedOptions?.hasTriggerDefinedOptions &&
         field.optionsConfig.linkedResultOptions.length === 0
       )
         return false;

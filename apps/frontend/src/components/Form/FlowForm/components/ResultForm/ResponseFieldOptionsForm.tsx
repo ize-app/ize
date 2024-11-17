@@ -1,19 +1,21 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, FormHelperText, Typography } from "@mui/material";
+import { Box, FormHelperText } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { FieldDataType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
+import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
 
+import { AddOptionButton } from "./AddOptionButton";
+import { TriggerDefinedOptionsForm } from "./TriggerDefinedOptionsForm";
 import { Select } from "../../../formFields";
 import { SelectOption } from "../../../formFields/Select";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { getSelectOptionName } from "../../../utils/getSelectOptionName";
 import { OptionSelectionCountLimit } from "../../formValidation/fields";
 import { FlowSchemaType, StepSchemaType } from "../../formValidation/flow";
-import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
 import { getResultFormLabel } from "../../helpers/getResultFormLabel";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
@@ -55,9 +57,9 @@ export const ResponseFieldOptionsForm = ({
   locked,
   reusable,
 }: ResponseFieldOptionsFormProps) => {
-  const { control, getValues, setValue, watch, formState } = useFormContext<FlowSchemaType>();
+  const { control, getValues, watch, formState } = useFormContext<FlowSchemaType>();
 
-  const { PresetOptions, append } = UsePresetOptionsForm<FlowSchemaType>({
+  const { PresetOptions, optionsArrayMethods } = UsePresetOptionsForm<FlowSchemaType>({
     locked,
     fieldsArrayName: `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.options`,
   });
@@ -88,24 +90,6 @@ export const ResponseFieldOptionsForm = ({
     });
   }, [possibleLinkOptions]);
 
-  const enableRequestCreatedOptions = () => {
-    setValue(
-      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
-      FieldDataType.String,
-    );
-  };
-
-  const disableRequestCreatedOptions = () => {
-    setValue(
-      `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
-      null,
-    );
-  };
-
-  const hasRequestDefinedOptions = watch(
-    `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`,
-  );
-
   const linkedOptions =
     getValues(
       `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions`,
@@ -119,159 +103,163 @@ export const ResponseFieldOptionsForm = ({
   );
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-        flexGrow: 1,
-      }}
-    >
-      {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
-        <Select<FlowSchemaType>
-          defaultValue=""
-          display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
-          label="How many options can be selected?"
-          renderValue={(val) => {
-            const option = multiSelectOptions.find((option) => option.value === val);
-            return "User can select " + option?.name + " maximum";
-          }}
-          selectOptions={multiSelectOptions}
-          name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
-          size={"small"}
-        />
-      )}
-      <PresetOptions />
-      {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
-        <Box sx={{ width: "100%" }}>
-          {linksFields.map((item, inputIndex) => {
-            return (
-              <Box
-                key={item.id}
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <Select<FlowSchemaType>
-                  size={"small"}
-                  name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
-                  key={"links" + inputIndex.toString() + stepIndex.toString()}
-                  selectOptions={possibleLinkOptions}
-                  renderValue={(val) => {
-                    return (
-                      <div
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {val
-                          ? getSelectOptionName(possibleLinkOptions, val as string)
-                          : "Select a previous result"}
-                      </div>
-                    );
+    <Box sx={{ margin: "0px 0px" }}>
+      <LabeledGroupedInputs
+        // label={"Options"}
+        sx={{
+          padding: "16px",
+          gap: "8px",
+          display: "flex",
+          flexDirection: "column",
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          // margin: "4px 8px",
+        }}
+        // sx={{
+        //   display: "flex",
+        //   flexDirection: "column",
+        //   gap: "8px",
+        //   flexGrow: 1,
+        //   outline: "1px solid #e0e0e0",
+        //   padding: "16px",
+        //   margin: "4px 8px",
+        // }}
+      >
+        {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
+          <Select<FlowSchemaType>
+            defaultValue=""
+            display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
+            label="How many options can be selected?"
+            renderValue={(val) => {
+              const option = multiSelectOptions.find((option) => option.value === val);
+              return "User can select " + option?.name + " maximum";
+            }}
+            selectOptions={multiSelectOptions}
+            name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
+            size={"small"}
+          />
+        )}
+        {reusable && (
+          <Box sx={{ marginRight: "40px" }}>
+            <TriggerDefinedOptionsForm<FlowSchemaType>
+              fieldName={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.triggerDefinedOptions`}
+            />
+          </Box>
+        )}
+        <PresetOptions />
+        {linkedOptions.length > 0 && possibleLinkOptions.length > 0 && (
+          <Box sx={{ width: "100%" }}>
+            {linksFields.map((item, inputIndex) => {
+              return (
+                <Box
+                  key={item.id}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
                   }}
-                  label="Type"
-                  displayEmpty={true}
-                  defaultValue=""
-                />
-                <IconButton
-                  color="primary"
-                  aria-label="Remove linked options"
-                  onClick={() => linksRemove(inputIndex)}
                 >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            );
-          })}
-        </Box>
-      )}
-      {hasRequestDefinedOptions && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexGrow: 1,
-          }}
-        >
-          <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
-            {" "}
-            <Typography>Options created at trigger</Typography>
-            <Box>
-              <Select<FlowSchemaType>
-                name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
-                defaultValue=""
-                selectOptions={[
-                  { name: "Text", value: FieldDataType.String },
-                  { name: "Number", value: FieldDataType.Number },
-                  { name: "Uri", value: FieldDataType.Uri },
-                  { name: "Date", value: FieldDataType.Date },
-                  { name: "DateTime", value: FieldDataType.DateTime },
-                ]}
-                label="Option type"
-                size="small"
-                sx={{ width: "100px", flexGrow: 0 }}
-                variant="standard"
-              />
-            </Box>
-          </ResponsiveFormRow>
-          <IconButton
-            color="primary"
-            aria-label="Remove request created options"
-            onClick={disableRequestCreatedOptions}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      )}
-      {!locked && (
-        <ResponsiveFormRow>
-          <Button
-            sx={{ position: "relative" }}
-            variant="outlined"
-            size="small"
-            onClick={() => {
-              append(createDefaultOptionState());
+                  <Select<FlowSchemaType>
+                    size={"small"}
+                    name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.linkedResultOptions.${inputIndex}.id`}
+                    key={"links" + inputIndex.toString() + stepIndex.toString()}
+                    selectOptions={possibleLinkOptions}
+                    renderValue={(val) => {
+                      return (
+                        <div
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {val
+                            ? getSelectOptionName(possibleLinkOptions, val as string)
+                            : "Select a previous result"}
+                        </div>
+                      );
+                    }}
+                    label="Type"
+                    displayEmpty={true}
+                    defaultValue=""
+                  />
+                  <IconButton
+                    color="primary"
+                    aria-label="Remove linked options"
+                    onClick={() => linksRemove(inputIndex)}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
+        {/* {hasRequestDefinedOptions && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexGrow: 1,
             }}
           >
-            Add option
-          </Button>
-          {possibleLinkOptions.length > 0 && (
-            <Button
-              sx={{ position: "relative" }}
-              variant="text"
-              size="small"
-              onClick={() => {
-                linksAppend({ id: (possibleLinkOptions[0]?.value as string) ?? "" });
-              }}
+            <ResponsiveFormRow sx={{ justifyContent: "space-between" }}>
+              {" "}
+              <Typography>Options created at trigger</Typography>
+              <Box>
+                <Select<FlowSchemaType>
+                  name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.requestOptionsDataType`}
+                  defaultValue=""
+                  selectOptions={[
+                    { name: "Text", value: FieldDataType.String },
+                    { name: "Number", value: FieldDataType.Number },
+                    { name: "Uri", value: FieldDataType.Uri },
+                    { name: "Date", value: FieldDataType.Date },
+                    { name: "DateTime", value: FieldDataType.DateTime },
+                  ]}
+                  label="Option type"
+                  size="small"
+                  sx={{ width: "100px", flexGrow: 0 }}
+                  variant="standard"
+                />
+              </Box>
+            </ResponsiveFormRow>
+            <IconButton
+              color="primary"
+              aria-label="Remove request created options"
+              onClick={disableRequestCreatedOptions}
             >
-              Use previous result as option(s)
-            </Button>
-          )}
-          {!hasRequestDefinedOptions && reusable && stepIndex === 0 && (
-            <Button
-              sx={{ position: "relative" }}
-              variant="text"
-              size="small"
-              onClick={enableRequestCreatedOptions}
-            >
-              Allow options to be created at trigger
-            </Button>
-          )}
-        </ResponsiveFormRow>
-      )}
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        )} */}
+        {!locked && (
+          <ResponsiveFormRow sx={{ justifyContent: "space-between", paddingRight: "30px" }}>
+            <AddOptionButton optionsArrayMethods={optionsArrayMethods} />
+            {possibleLinkOptions.length > 0 && (
+              <Button
+                sx={{ position: "relative" }}
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  linksAppend({ id: (possibleLinkOptions[0]?.value as string) ?? "" });
+                }}
+              >
+                Use previous result as option(s)
+              </Button>
+            )}
+          </ResponsiveFormRow>
+        )}
 
-      <FormHelperText
-        sx={{
-          color: "error.main",
-          marginLeft: "16px",
-        }}
-      >
-        {optionsError}
-      </FormHelperText>
+        {optionsError && (
+          <FormHelperText
+            sx={{
+              color: "error.main",
+              marginLeft: "16px",
+            }}
+          >
+            {optionsError}
+          </FormHelperText>
+        )}
+      </LabeledGroupedInputs>
     </Box>
   );
 };
