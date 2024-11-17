@@ -9,6 +9,7 @@ type ResultArgs =
       type: ResultType.Decision;
       decisionType: DecisionType;
       fieldId: string;
+      criteria: string | undefined;
     }
   | {
       type: ResultType.Ranking;
@@ -27,8 +28,10 @@ type ResultArgs =
 
 const generateDecisionConfig = ({
   decisionType,
+  criteria,
 }: {
   decisionType: DecisionType;
+  criteria?: string;
 }): DecisionSchemaType => {
   const defaultDecision = { hasDefault: false, optionId: null };
   switch (decisionType) {
@@ -47,7 +50,7 @@ const generateDecisionConfig = ({
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
-        criteria: "",
+        criteria: criteria ?? "",
         defaultDecision,
       };
     case DecisionType.WeightedAverage:
@@ -74,7 +77,10 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
       return {
         type: ResultType.Decision,
         ...base,
-        decision: generateDecisionConfig({ decisionType: arg.decisionType }),
+        decision: generateDecisionConfig({
+          decisionType: arg.decisionType,
+          criteria: arg.criteria,
+        }),
       };
     }
     case ResultType.Ranking:

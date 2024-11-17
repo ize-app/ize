@@ -95,7 +95,7 @@ const stepSchema = z
       else return true;
     },
     {
-      message: "Add a field to this collaboration step",
+      message: "Add a result to this step",
     },
   );
 

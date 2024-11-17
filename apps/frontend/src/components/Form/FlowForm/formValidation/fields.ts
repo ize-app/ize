@@ -28,8 +28,18 @@ export enum FieldContextType {
 export const triggerDefinedOptionsSchema = z
   .object({
     hasTriggerDefinedOptions: z.boolean().default(false),
-    dataType: z.nativeEnum(FieldDataType).nullable(),
+    dataType: z.nativeEnum(FieldDataType).nullable().optional(),
   })
+  .refine(
+    (options) => {
+      if (options.hasTriggerDefinedOptions && !options.dataType) return false;
+      return true;
+    },
+    {
+      message: "Select a data type for the trigger defined options.",
+      path: ["hasTriggerDefinedOptions"],
+    },
+  )
   .optional();
 
 export const fieldOptionSchema = z

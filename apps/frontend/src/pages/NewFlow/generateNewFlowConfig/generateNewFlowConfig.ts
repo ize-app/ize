@@ -87,6 +87,7 @@ export const generateNewFlowConfig = ({
           type: ResultType.Decision,
           fieldId: field.fieldId,
           decisionType: config.decisionType,
+          criteria: config.criteria,
         });
         break;
       }
@@ -144,6 +145,7 @@ export const generateNewFlowConfig = ({
             type: ResultType.Decision,
             fieldId: field.fieldId,
             decisionType: DecisionType.NumberThreshold,
+            criteria: undefined,
           });
         }
 

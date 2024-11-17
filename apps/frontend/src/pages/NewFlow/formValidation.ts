@@ -93,6 +93,7 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     permission: permissionSchema,
     optionsConfig: optionConfigSchema,
     question: z.string(),
+    criteria: z.string().optional(),
   }),
   z.object({
     goal: z.literal(FlowGoal.Prioritize),

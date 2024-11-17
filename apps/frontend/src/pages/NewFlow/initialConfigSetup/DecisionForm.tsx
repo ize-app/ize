@@ -54,6 +54,23 @@ export const DecisionForm = () => {
         </FieldBlockFadeIn>
       )}
       {decisionType && <OptionsForm />}
+      {decisionType === DecisionType.Ai && (
+        <>
+          <FieldBlockFadeIn>
+            <Typography variant="description">
+              What criteria should the AI use to make a decision?
+            </Typography>
+            <TextField<IntitialFlowSetupSchemaType>
+              // assuming here that results to fields is 1:1 relationshp
+              name={`criteria`}
+              multiline
+              placeholderText={"AI's decision criteria"}
+              label={``}
+              defaultValue=""
+            />
+          </FieldBlockFadeIn>
+        </>
+      )}
     </>
   );
 };

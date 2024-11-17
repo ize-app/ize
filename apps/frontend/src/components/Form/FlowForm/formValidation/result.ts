@@ -54,7 +54,7 @@ export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.Ai),
     defaultDecision: defaultDecisionSchema,
-    criteria: z.string().optional(),
+    criteria: z.string(),
   }),
 ]);
 

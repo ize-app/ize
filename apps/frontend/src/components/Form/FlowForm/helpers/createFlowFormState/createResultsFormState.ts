@@ -64,20 +64,19 @@ const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType
     hasDefault: !!defaultOptionId,
     optionId: defaultOptionId,
   };
-  const type = decision.decisionType;
   const threshold = decision.threshold;
   switch (decision.decisionType) {
     case DecisionType.NumberThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
       return {
-        type,
+        type: DecisionType.NumberThreshold,
         threshold,
         defaultDecision,
       };
     case DecisionType.PercentageThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
       return {
-        type,
+        type: DecisionType.PercentageThreshold,
         threshold,
         defaultDecision,
       };
@@ -89,7 +88,7 @@ const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
-        criteria: decision.criteria ?? undefined,
+        criteria: decision.criteria ?? "",
         defaultDecision,
       };
   }

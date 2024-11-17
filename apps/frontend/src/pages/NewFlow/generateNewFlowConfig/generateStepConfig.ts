@@ -3,6 +3,7 @@ import { FieldSchemaType } from "@/components/Form/FlowForm/formValidation/field
 import { StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
 import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
+import { ResultType } from "@/graphql/generated/graphql";
 
 interface GenerateStepConfigProps {
   permission: PermissionSchemaType;
@@ -17,6 +18,9 @@ export const generateStepConfig = ({
   result,
   action,
 }: GenerateStepConfigProps): StepSchemaType => {
+  const allowMultipleResponses = [ResultType.LlmSummary, ResultType.LlmSummaryList].includes(
+    result[0]?.type,
+  );
   return {
     fieldSet: {
       fields: responseFields,
@@ -29,7 +33,7 @@ export const generateStepConfig = ({
             permission,
             canBeManuallyEnded: true,
             expirationSeconds: 259200,
-            allowMultipleResponses: true,
+            allowMultipleResponses,
             minResponses: 1,
           },
     result,
