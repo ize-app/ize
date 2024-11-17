@@ -39,7 +39,6 @@ export const InputField = <T extends FieldValues>({
           placeholderText={label}
           showLabel={false}
           multiline
-          // sx={{ flexGrow: 1 }}
           label={label}
           disabled={disabled}
           size="small"

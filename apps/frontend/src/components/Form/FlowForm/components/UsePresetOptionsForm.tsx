@@ -1,11 +1,10 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { ArrayPath, FieldValues, Path, useFieldArray, useFormContext } from "react-hook-form";
 
 import { formatDataTypeName } from "@/components/Field/formatDataTypeName";
 
 import { InputField } from "./InputField";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 
 interface UsePresetOptionsFormProps<T extends FieldValues> {
   fieldsArrayName: ArrayPath<T>;
@@ -28,7 +27,7 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
       const valueField = `${fieldsArrayName}.${inputIndex}.name` as Path<T>;
       const dataType = getValues(dataTypeField);
       return (
-        <ResponsiveFormRow key={item.id} sx={{ alignItems: "center" }}>
+        <Box key={item.id} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
           <InputField
             disabled={locked}
             fieldName={valueField}
@@ -40,13 +39,13 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
               color="primary"
               aria-label="Remove option"
               size="small"
-              // sx={{ alignItems: "flex-start" }}
+              sx={{ flexShrink: 0 }}
               onClick={() => optionsArrayMethods.remove(inputIndex)}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
           )}
-        </ResponsiveFormRow>
+        </Box>
       );
     });
   };
