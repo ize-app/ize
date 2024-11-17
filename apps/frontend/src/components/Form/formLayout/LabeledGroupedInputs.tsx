@@ -6,7 +6,7 @@ const LabeledWrapper = ({ label, children }: { label?: string; children: ReactNo
   return !label ? (
     <>{children}</>
   ) : (
-    <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", flex: 1, minWidth: 0 }}>
       <Typography variant="description" component="legend" fontWeight={400}>
         {label}
       </Typography>
@@ -25,7 +25,8 @@ export const LabeledGroupedInputs = ({
   sx?: SxProps;
 }) => {
   const defaultStyles: SxProps = {
-    width: "100%",
+    flex: 1,
+    minWidth: 0,
     border: "solid 1px",
     borderColor: "rgba(0, 0, 0, 0.23)",
     borderRadius: "4px",

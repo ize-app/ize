@@ -1,9 +1,8 @@
 import Close from "@mui/icons-material/Close";
-import { Box, FormHelperText, Typography } from "@mui/material";
+import { Box, FormHelperText } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { UseFieldArrayReturn, useFieldArray, useFormContext } from "react-hook-form";
 
-import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
 
 import { AddResultButton } from "./AddResultButton";
@@ -11,6 +10,7 @@ import { DecisionConfigForm } from "./DecisionConfigForm";
 import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
+import { ResultFormSection } from "./ResultFormSection";
 import { TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -109,32 +109,27 @@ const ResultForm = ({
       }}
       key={id}
     >
-      <LabeledGroupedInputs label={getResultFormLabel({ result: result })}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            padding: "12px",
-            width: "100%",
-            backgroundColor: "#fffff5",
-          }}
-        >
-          <Typography variant={"label"} color="primary">
-            Question that respondants will answer
-          </Typography>
-          <FieldBlock>
-            <TextField<FlowSchemaType>
-              // assuming here that results to fields is 1:1 relationshp
-              name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
-              key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
-              disabled={locked}
-              multiline
-              placeholderText={resultFieldNamePlaceholderText(resultType)}
-              label={``}
-              defaultValue=""
-            />
-          </FieldBlock>
+      <LabeledGroupedInputs
+        label={getResultFormLabel({ result: result })}
+        sx={{
+          backgroundColor: "#fffff5",
+          display: "flex",
+          flexDirection: "column",
+          padding: "12px",
+          width: "100%",
+        }}
+      >
+        <ResultFormSection label="Question that respondants will answer">
+          <TextField<FlowSchemaType>
+            // assuming here that results to fields is 1:1 relationshp
+            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
+            key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
+            disabled={locked}
+            multiline
+            placeholderText={resultFieldNamePlaceholderText(resultType)}
+            label={``}
+            defaultValue=""
+          />
 
           {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
             <ResponseFieldOptionsForm
@@ -144,9 +139,8 @@ const ResultForm = ({
               locked={locked}
             />
           )}
-          <Typography variant={"label"} color="primary">
-            How result is created
-          </Typography>
+        </ResultFormSection>
+        <ResultFormSection label="How result is created">
           {resultType === ResultType.Decision && (
             <DecisionConfigForm
               stepIndex={stepIndex}
@@ -175,16 +169,20 @@ const ResultForm = ({
               display={resultType === ResultType.Ranking}
             />
           )}
-        </Box>
-        <FormHelperText
-          sx={{
-            color: "error.main",
-            marginLeft: "16px",
-          }}
-        >
-          {resultError}
-        </FormHelperText>
+        </ResultFormSection>
+
+        {resultError && (
+          <FormHelperText
+            sx={{
+              color: "error.main",
+              marginLeft: "16px",
+            }}
+          >
+            {resultError}
+          </FormHelperText>
+        )}
       </LabeledGroupedInputs>
+
       {!locked && (
         <IconButton
           color="primary"
@@ -193,6 +191,11 @@ const ResultForm = ({
           onClick={() => {
             resultsArrayMethods.remove(resultIndex);
             fieldsArrayMethods.remove(resultIndex);
+          }}
+          sx={{
+            display: "flex",
+            alignSelf: "right",
+            flexShrink: 0, // Prevents the button from shrinking
           }}
         >
           <Close fontSize="small" />
