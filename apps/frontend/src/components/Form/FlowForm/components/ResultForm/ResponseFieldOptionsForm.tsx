@@ -1,5 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, FormHelperText } from "@mui/material";
+import LinkIcon from "@mui/icons-material/Link";
+import { Box, FormHelperText, InputAdornment } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -141,6 +142,11 @@ export const ResponseFieldOptionsForm = ({
                     key={"links" + inputIndex.toString() + stepIndex.toString()}
                     selectOptions={possibleLinkOptions}
                     placeholder="Select a previous result"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <LinkIcon />
+                      </InputAdornment>
+                    }
                     renderValue={(val) => {
                       return (
                         <div

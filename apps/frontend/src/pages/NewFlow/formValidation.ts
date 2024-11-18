@@ -109,7 +109,6 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     aiOutputType: z.nativeEnum(AIOutputType),
     question: z.string(),
     prompt: z.string(),
-    example: z.string(),
   }),
 ]);
 
