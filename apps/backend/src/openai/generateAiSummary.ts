@@ -1,5 +1,4 @@
 import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { ResultType } from "@/graphql/generated/resolver-types";
 
 import { openAiClient } from "./openAiClient";
 import { createIzeSystemPrompt } from "./prompt/createIzeSystemPrompt";
@@ -11,12 +10,12 @@ export const generateAiSummary = async ({
   requestPayload,
   summaryPrompt,
   exampleOutput,
-  type,
+  isList,
 }: {
   requestPayload: RequestPayload;
   summaryPrompt: string;
   exampleOutput?: string | null;
-  type: ResultType.LlmSummary | ResultType.LlmSummaryList;
+  isList: boolean;
 }): Promise<string[]> => {
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
@@ -30,12 +29,12 @@ export const generateAiSummary = async ({
         role: "user",
         content: createResponsesPrompt({ fieldAnswers: requestPayload.fieldAnswers ?? [] }),
       },
-      { role: "user", content: createLlmSummaryPrompt({ type, summaryPrompt, exampleOutput }) },
+      { role: "user", content: createLlmSummaryPrompt({ isList, summaryPrompt, exampleOutput }) },
     ],
-    response_format: { type: type === ResultType.LlmSummaryList ? "json_object" : "text" },
+    response_format: { type: isList ? "json_object" : "text" },
   });
   const message = completion.choices[0].message.content ?? "";
-  const value = type === ResultType.LlmSummaryList ? extractJsonArray(message) : [message];
+  const value = isList ? extractJsonArray(message) : [message];
   if (value.length === 0) throw new Error("Empty response from AI");
   return value;
 };

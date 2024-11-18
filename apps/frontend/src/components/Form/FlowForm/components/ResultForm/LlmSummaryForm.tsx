@@ -1,7 +1,7 @@
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { ResultType } from "@/graphql/generated/graphql";
 
-import { TextField } from "../../../formFields";
+import { Switch, TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 interface LlmSummaryProps {
@@ -12,9 +12,13 @@ interface LlmSummaryProps {
 }
 
 export const LlmSummaryForm = ({ stepIndex, resultIndex, display, type }: LlmSummaryProps) => {
-  if (type !== ResultType.LlmSummary && type !== ResultType.LlmSummaryList) return null;
+  if (type !== ResultType.LlmSummary) return null;
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
+      <Switch<FlowSchemaType>
+        name={`steps.${stepIndex}.result.${resultIndex}.llmSummary.isList`}
+        label="Create list of options"
+      />
       <TextField<FlowSchemaType>
         sx={{ width: "100%" }}
         label="Summarization instructions"

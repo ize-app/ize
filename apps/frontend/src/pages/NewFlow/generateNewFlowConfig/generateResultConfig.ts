@@ -19,11 +19,7 @@ type ResultArgs =
       type: ResultType.LlmSummary;
       fieldId: string;
       prompt: string;
-    }
-  | {
-      type: ResultType.LlmSummaryList;
-      fieldId: string;
-      prompt: string;
+      isList: boolean;
     };
 
 const generateDecisionConfig = ({
@@ -97,15 +93,7 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
         ...base,
         llmSummary: {
           prompt: arg.prompt,
-        },
-      };
-    }
-    case ResultType.LlmSummaryList: {
-      return {
-        type: ResultType.LlmSummaryList,
-        ...base,
-        llmSummary: {
-          prompt: arg.prompt,
+          isList: arg.isList,
         },
       };
     }

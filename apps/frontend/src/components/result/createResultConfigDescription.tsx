@@ -89,25 +89,9 @@ export const createResultConfigDescription = ({
           {resultConfig.prompt && (
             <>
               <Typography variant="description">
-                All responses will be summarized with AI using the following prompt:
-              </Typography>{" "}
-              <PromptBox prompt={resultConfig.prompt} />
-            </>
-          )}
-          <Typography variant="description">
-            {" "}
-            {minAnswersDescription(minResponses, ResultType.LlmSummary)}
-          </Typography>
-        </Box>
-      );
-    }
-    case ResultType.LlmSummaryList: {
-      return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          {resultConfig.prompt && (
-            <>
-              <Typography variant="description">
-                All responses will be summarized with AI using the following prompt:
+                {resultConfig.isList
+                  ? "Responses will be summarized into a list of options using AI and the following prompt:"
+                  : "All responses will be summarized using AI and the following prompt:"}
               </Typography>{" "}
               <PromptBox prompt={resultConfig.prompt} />
             </>

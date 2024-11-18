@@ -3,7 +3,6 @@ import {
   DecisionType,
   Field,
   LlmSummary,
-  LlmSummaryList,
   Option,
   Ranking,
   ResultConfig,
@@ -30,8 +29,6 @@ export const resultConfigResolver = ({
       return resultConfigRankResolver({ resultConfig, field });
     case ResultType.LlmSummary:
       return resultConfigLlmResolver({ resultConfig, field });
-    case ResultType.LlmSummaryList:
-      return resultConfigLlmListResolver({ resultConfig, field });
     default:
       throw new GraphQLError("Invalid result type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -62,7 +59,7 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
   }
 
   return {
-    __typename: "Decision",
+    __typename: ResultType.Decision,
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
     field,
@@ -80,7 +77,7 @@ const resultConfigRankResolver = ({ resultConfig, field }: ResultConfigResolver)
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   return {
-    __typename: "Ranking",
+    __typename: ResultType.Ranking,
     name: getResultConfigName({ resultConfig }),
     field,
     resultConfigId: resultConfig.id,
@@ -95,28 +92,11 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   return {
-    __typename: "LlmSummary",
+    __typename: ResultType.LlmSummary,
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
     field,
     prompt: llmConfig.prompt,
-  };
-};
-
-const resultConfigLlmListResolver = ({
-  resultConfig,
-  field,
-}: ResultConfigResolver): LlmSummaryList => {
-  const llmConfig = resultConfig.ResultConfigLlm;
-  if (!llmConfig)
-    throw new GraphQLError("Missing llm config.", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-    });
-  return {
-    __typename: "LlmSummaryList",
-    name: getResultConfigName({ resultConfig }),
-    resultConfigId: resultConfig.id,
-    field,
-    prompt: llmConfig.prompt,
+    isList: llmConfig.isList,
   };
 };

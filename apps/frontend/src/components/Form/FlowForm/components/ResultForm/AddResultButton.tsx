@@ -80,9 +80,6 @@ export const AddResultButton = ({
         <MenuItem onClick={() => addResult({ resultType: ResultType.LlmSummary })}>
           AI generated summary
         </MenuItem>
-        <MenuItem onClick={() => addResult({ resultType: ResultType.LlmSummaryList })}>
-          AI generated list
-        </MenuItem>
       </Menu>
     </>
   );

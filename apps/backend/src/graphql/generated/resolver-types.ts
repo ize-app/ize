@@ -512,21 +512,15 @@ export type LinkedResultOptionsArgs = {
 export type LlmSummary = {
   __typename?: 'LlmSummary';
   field: Field;
+  isList: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
 };
 
 export type LlmSummaryArgs = {
+  isList: Scalars['Boolean']['input'];
   prompt: Scalars['String']['input'];
-};
-
-export type LlmSummaryList = {
-  __typename?: 'LlmSummaryList';
-  field: Field;
-  name: Scalars['String']['output'];
-  prompt: Scalars['String']['output'];
-  resultConfigId: Scalars['String']['output'];
 };
 
 export enum LlmSummaryType {
@@ -1002,7 +996,7 @@ export type ResultArgs = {
   type: ResultType;
 };
 
-export type ResultConfig = Decision | LlmSummary | LlmSummaryList | Ranking;
+export type ResultConfig = Decision | LlmSummary | Ranking;
 
 export type ResultGroup = {
   __typename?: 'ResultGroup';
@@ -1029,7 +1023,6 @@ export type ResultItem = {
 export enum ResultType {
   Decision = 'Decision',
   LlmSummary = 'LlmSummary',
-  LlmSummaryList = 'LlmSummaryList',
   Ranking = 'Ranking'
 }
 
@@ -1211,7 +1204,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
-  ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummaryList, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } );
+  ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } );
 };
 
 
@@ -1290,7 +1283,6 @@ export type ResolversTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
-  LlmSummaryList: ResolverTypeWrapper<Omit<LlmSummaryList, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']>, user: ResolversTypes['User'] }>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -1419,7 +1411,6 @@ export type ResolversParentTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: Omit<LlmSummary, 'field'> & { field: ResolversParentTypes['Field'] };
   LlmSummaryArgs: LlmSummaryArgs;
-  LlmSummaryList: Omit<LlmSummaryList, 'field'> & { field: ResolversParentTypes['Field'] };
   Me: Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']>, user: ResolversParentTypes['User'] };
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
@@ -1790,14 +1781,7 @@ export type LinkedResultResolvers<ContextType = GraphqlRequestContext, ParentTyp
 
 export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummary'] = ResolversParentTypes['LlmSummary']> = {
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type LlmSummaryListResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['LlmSummaryList'] = ResolversParentTypes['LlmSummaryList']> = {
-  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
+  isList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prompt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2011,7 +1995,7 @@ export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
-  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'LlmSummaryList' | 'Ranking', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
 };
 
 export type ResultGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultGroup'] = ResolversParentTypes['ResultGroup']> = {
@@ -2125,7 +2109,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   IzeGroup?: IzeGroupResolvers<ContextType>;
   LinkedResult?: LinkedResultResolvers<ContextType>;
   LlmSummary?: LlmSummaryResolvers<ContextType>;
-  LlmSummaryList?: LlmSummaryListResolvers<ContextType>;
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NftCollection?: NftCollectionResolvers<ContextType>;

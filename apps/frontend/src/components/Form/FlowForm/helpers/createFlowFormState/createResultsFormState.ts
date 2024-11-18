@@ -6,28 +6,26 @@ import {
 } from "@/graphql/generated/graphql";
 
 import {
-  DecisionResultSchemaType,
   DecisionSchemaType,
-  LlmSummaryListResultSchemaType,
-  LlmSummaryResultSchemaType,
   RankingResultSchemaType,
   ResultSchemaType,
 } from "../../formValidation/result";
 
 export const createResultFormState = (results: ResultConfigFragment[]): ResultSchemaType[] => {
-  return results.map((result) => {
+  return results.map((result): ResultSchemaType => {
     const resultBase = {
       resultId: result.resultConfigId,
       fieldId: result.field.fieldId,
     };
 
+    // TODO typechecking isn't working here for some reason
     switch (result.__typename) {
       case ResultType.Decision:
         return {
           type: ResultType.Decision,
           ...resultBase,
           decision: createDecisionFormState(result),
-        } as DecisionResultSchemaType;
+        };
       case ResultType.Ranking:
         return {
           type: ResultType.Ranking,
@@ -41,17 +39,10 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
           type: ResultType.LlmSummary,
           ...resultBase,
           llmSummary: {
-            prompt: result.prompt ?? undefined,
+            prompt: result.prompt ?? "",
+            isList: result.isList,
           },
-        } as LlmSummaryResultSchemaType;
-      case ResultType.LlmSummaryList:
-        return {
-          type: ResultType.LlmSummaryList,
-          ...resultBase,
-          llmSummary: {
-            prompt: result.prompt ?? undefined,
-          },
-        } as LlmSummaryListResultSchemaType;
+        };
       default:
         throw Error(`Unknown result type`);
     }

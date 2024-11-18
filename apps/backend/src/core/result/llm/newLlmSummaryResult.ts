@@ -15,22 +15,13 @@ import {
 export const newLlmSummaryResult = async ({
   resultConfig,
   requestStepId,
-  type,
 }: {
   resultConfig: ResultConfigPrismaType;
-
   requestStepId: string;
-  type: ResultType.LlmSummary | ResultType.LlmSummaryList;
 }): Promise<ResultGroupPrismaType> => {
   const llmConfig = resultConfig.ResultConfigLlm;
 
-  if (
-    !(
-      resultConfig.resultType === ResultType.LlmSummary ||
-      resultConfig.resultType === ResultType.LlmSummaryList
-    ) ||
-    !llmConfig
-  )
+  if (!(resultConfig.resultType === ResultType.LlmSummary) || !llmConfig)
     throw new GraphQLError(
       `Cannot create llm result without a llm config. resultConfigId: ${resultConfig.id}`,
       {
@@ -53,7 +44,7 @@ export const newLlmSummaryResult = async ({
 
   const res = await generateAiSummary({
     requestPayload,
-    type,
+    isList: llmConfig.isList,
     summaryPrompt: llmConfig.prompt,
   });
 

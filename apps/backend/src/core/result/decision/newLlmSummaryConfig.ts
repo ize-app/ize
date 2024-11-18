@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { FieldType, LlmSummaryArgs, LlmSummaryType } from "@/graphql/generated/resolver-types";
+import { FieldType, LlmSummaryArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newLlmSummaryConfig = async ({
@@ -21,7 +21,7 @@ export const newLlmSummaryConfig = async ({
   const llmConfig = await transaction.resultConfigLlm.create({
     data: {
       prompt: llmArgs.prompt,
-      type: LlmSummaryType.AtTheEnd,
+      isList: llmArgs.isList,
     },
   });
 

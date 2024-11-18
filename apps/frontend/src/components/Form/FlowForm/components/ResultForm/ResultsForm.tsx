@@ -22,8 +22,6 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
       return "Describe what you're trying to rank";
     case ResultType.LlmSummary:
       return "Add a question on instructions for how to respond";
-    case ResultType.LlmSummaryList:
-      return "Add a question on instructions for how to respond";
     default:
       return "What's your question?";
   }
@@ -161,13 +159,11 @@ const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: R
           />
         )}
 
-        {(resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList) && (
+        {resultType === ResultType.LlmSummary && (
           <LlmSummaryForm
             stepIndex={stepIndex}
             resultIndex={resultIndex}
-            display={
-              resultType === ResultType.LlmSummary || resultType === ResultType.LlmSummaryList
-            }
+            display={resultType === ResultType.LlmSummary}
             type={resultType}
           />
         )}

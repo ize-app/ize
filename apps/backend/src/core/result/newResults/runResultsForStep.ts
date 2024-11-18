@@ -101,14 +101,6 @@ export const runResultsForStep = async ({
               return await newLlmSummaryResult({
                 resultConfig,
                 requestStepId,
-                type: ResultType.LlmSummary,
-              });
-            }
-            case ResultType.LlmSummaryList: {
-              return await newLlmSummaryResult({
-                resultConfig,
-                requestStepId,
-                type: ResultType.LlmSummaryList,
               });
             }
             case ResultType.Ranking: {

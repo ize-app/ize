@@ -27,10 +27,11 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
     }
     case ResultType.Ranking:
       return "Prioritize into ranked list";
-    case ResultType.LlmSummary:
-      return "Summarize w/ AI";
-    case ResultType.LlmSummaryList:
-      return "Summarize options w/ AI";
+    case ResultType.LlmSummary: {
+      if (result.llmSummary && result.llmSummary.isList) return "Summarize options w/ AI";
+      else return "Summarize w/ AI";
+    }
+
     default:
       return "Collaborative step";
   }

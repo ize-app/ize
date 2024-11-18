@@ -631,7 +631,6 @@ enum ResultType {
   Decision
   Ranking
   LlmSummary
-  LlmSummaryList
 }
 
 // Describes how and when a final result is created
@@ -688,14 +687,10 @@ model ResultConfigRank {
   @@map("result_config_rankings")
 }
 
-enum LlmSummaryType {
-  AfterEveryResponse
-  AtTheEnd
-}
 
 model ResultConfigLlm {
   id        String         @id @default(uuid()) @db.Uuid
-  type      LlmSummaryType
+  isList    Boolean        @default(false) @map("is_list")
   prompt    String
   createdAt DateTime       @default(now()) @map("created_at")
 

@@ -42,15 +42,7 @@ export const createDefaultResultState = ({
         fieldId,
         llmSummary: {
           prompt: "",
-        },
-      };
-    case ResultType.LlmSummaryList:
-      return {
-        resultId: crypto.randomUUID(),
-        type: ResultType.LlmSummaryList,
-        fieldId,
-        llmSummary: {
-          prompt: "",
+          isList: false,
         },
       };
   }

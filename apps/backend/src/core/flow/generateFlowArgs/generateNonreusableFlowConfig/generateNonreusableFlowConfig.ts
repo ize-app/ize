@@ -72,7 +72,7 @@ export const generateNonreusableFlowConfig = ({
               {
                 type: ResultType.LlmSummary,
                 responseFieldIndex: 0,
-                llmSummary: { prompt: "" },
+                llmSummary: { prompt: "", isList: false },
               },
             ],
             action: undefined,
@@ -117,9 +117,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
-                type: ResultType.LlmSummaryList,
+                type: ResultType.LlmSummary,
                 responseFieldIndex: 0,
-                llmSummary: { prompt: "" },
+                llmSummary: { prompt: "", isList: true },
               },
             ],
             action: undefined,
@@ -171,9 +171,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
-                type: ResultType.LlmSummaryList,
+                type: ResultType.LlmSummary,
                 responseFieldIndex: 0,
-                llmSummary: { prompt: "" },
+                llmSummary: { prompt: "", isList: true },
               },
             ],
             action: { type: ActionType.TriggerStep, locked: false },

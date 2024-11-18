@@ -116,10 +116,8 @@ export const generateNewFlowConfig = ({
         flowTitle = config.question;
 
         result = generateResultConfig({
-          type:
-            config.aiOutputType === AIOutputType.List
-              ? ResultType.LlmSummaryList
-              : ResultType.LlmSummary,
+          type: ResultType.LlmSummary,
+          isList: config.aiOutputType === AIOutputType.List ? true : false,
           fieldId: field.fieldId,
           prompt: config.prompt,
         });

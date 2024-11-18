@@ -9,9 +9,6 @@ fragment ResultConfig on ResultConfig {
   ... on LlmSummary {
     ...LlmSummary
   }
-  ... on LlmSummaryList {
-    ...LlmSummaryList
-  }
 }
 
 fragment ResultGroup on ResultGroup {
@@ -68,13 +65,5 @@ fragment LlmSummary on LlmSummary {
   name
   resultConfigId
   prompt
-}
-
-fragment LlmSummaryList on LlmSummaryList {
-  field {
-    ...Field
-  }
-  name
-  resultConfigId
-  prompt
+  isList
 }

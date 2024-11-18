@@ -5,9 +5,9 @@ import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
+
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
-export type LlmSummaryListResultSchemaType = z.infer<typeof llmListResultSchema>;
 export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 
 export enum LlmSummaryType {
@@ -72,6 +72,7 @@ const prioritizationSchema = z.object({
 
 const llmSchema = z.object({
   prompt: z.string(),
+  isList: z.boolean(),
 });
 
 const decisionResultSchema = z.object({
@@ -88,13 +89,6 @@ const llmResultSchema = z.object({
   llmSummary: llmSchema,
 });
 
-const llmListResultSchema = z.object({
-  type: z.literal(ResultType.LlmSummaryList),
-  resultId: z.string(),
-  fieldId: z.string().nullable(),
-  llmSummary: llmSchema,
-});
-
 const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
   resultId: z.string(),
@@ -106,7 +100,6 @@ export const resultSchema = z.discriminatedUnion("type", [
   decisionResultSchema,
   rankingResultSchema,
   llmResultSchema,
-  llmListResultSchema,
 ]);
 // .refine(
 //   (result) => {

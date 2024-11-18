@@ -20,9 +20,10 @@ export const generateIdeaCreationStep = ({
     question,
   });
   const result = generateResultConfig({
-    type: ResultType.LlmSummaryList,
+    type: ResultType.LlmSummary,
     fieldId: field.fieldId,
     prompt: "",
+    isList: true,
   });
 
   const step = generateStepConfig({
