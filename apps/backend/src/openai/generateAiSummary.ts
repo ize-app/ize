@@ -43,17 +43,17 @@ export const generateAiSummary = async ({
 // this parsing function handles both the desired output and situations where the AI doesn't return the desired format
 /* eslint-disable */
 const extractJsonArray = (json: string): string[] => {
-  try {
-    const parsed = JSON.parse(json);
-    if (Array.isArray(parsed)) return parsed;
-    else if (parsed.items) {
-      if (Array.isArray(parsed.items)) return parsed.items;
-      else return [parsed.items];
-    } else {
-      return [Object.keys(parsed)[0]];
-    }
-  } catch (e) {
-    return [json];
+  // try {
+  const parsed = JSON.parse(json);
+  if (Array.isArray(parsed)) return parsed;
+  else if (parsed.items) {
+    if (Array.isArray(parsed.items)) return parsed.items;
+    else return [parsed.items];
+  } else {
+    return [Object.keys(parsed)[0]];
   }
+  // } catch (e) {
+  //   return [json];
+  // }
 };
 /* eslint-enable */

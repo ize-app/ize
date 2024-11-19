@@ -5,6 +5,7 @@ import { Box, SvgIconProps, useTheme } from "@mui/material";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { AvatarGroup } from "@/components/Avatar";
+import { StatusProps } from "@/components/status/statusProps";
 import {
   ActionFragment,
   ActionType,
@@ -16,46 +17,44 @@ import { colors } from "@/style/style";
 
 import { FlowFormStageInnerContent } from "./FlowStageInnerContent";
 import { FlowStageWrapper } from "./FlowStageWrapper";
-import { Stage, StageProps } from "./Stage";
+import { Stage, StagePropsBase } from "./Stage";
 import { StageType } from "./StageType";
 
-interface FlowStageTriggerProps extends StageProps {
+interface FlowStageTriggerProps extends StagePropsBase {
   type: StageType.Trigger;
   flow: FlowFragment;
 }
 
-interface FlowStageStepProps extends StageProps {
+interface FlowStageStepProps extends StagePropsBase {
   type: StageType.Step;
   step: StepFragment;
 }
 
-interface FlowStageActionProps extends StageProps {
+interface FlowStageActionProps extends StagePropsBase {
   type: StageType.Action;
   action: ActionFragment;
 }
 
-interface FlowStageActionFilterProps extends StageProps {
+interface FlowStageActionFilterProps extends StagePropsBase {
   type: StageType.ActionFilter;
   action: ActionFragment | undefined | null;
 }
 
-type FlowStagePropsBase =
+export type FlowStagePropsBase =
   | FlowStageTriggerProps
   | FlowStageStepProps
   | FlowStageActionProps
   | FlowStageActionFilterProps;
 
 export type FlowStageProps = FlowStagePropsBase & {
-  color?: string;
-  statusIcon?: React.ComponentType<SvgIconProps>;
+  statusProps?: StatusProps;
 };
 
 export const FlowStage = ({
   id,
   setSelectedId,
   selectedId,
-  color,
-  statusIcon,
+  statusProps,
   ...props
 }: FlowStageProps) => {
   const theme = useTheme();
@@ -63,6 +62,10 @@ export const FlowStage = ({
   let subtitle: string = "";
   let entities: EntityFragment[] = [];
   let icon: React.ComponentType<SvgIconProps> | undefined;
+
+  const color = statusProps?.color ?? theme.palette.primary.main;
+  const statusIcon = statusProps?.icon;
+
   switch (props.type) {
     case StageType.Trigger: {
       const { flow } = props;

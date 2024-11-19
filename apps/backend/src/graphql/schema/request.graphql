@@ -51,6 +51,15 @@ enum Status {
   Cancelled
 }
 
+enum RequestStepStatus {
+  NotStarted
+  CollectingResponses
+  CreatingResult
+  ExecutingAction
+  Complete
+  Error
+}
+
 enum RequestStepStatusFilter {
   All
   Open
@@ -85,7 +94,7 @@ type RequestStep {
   userResponses: [Response!]!
   results: [ResultGroup!]!
   actionExecution: ActionExecution
-  status: RequestStepStatus!
+  status: RequestStepStatuses!
 }
 
 type RequestSummary {
@@ -101,7 +110,7 @@ type RequestSummary {
 
 type RequestStepSummary {
   requestStepId: String!
-  status: RequestStepStatus!
+  status: RequestStepStatuses!
   expirationDate: String!
   action: RequestStepActionSummary
   respondPermission: Permission
@@ -114,7 +123,7 @@ type RequestStepSummary {
 }
 type RequestStepActionSummary {
   name: String!
-  status: Status!
+  status: ActionStatus!
 }
 
 type Response {
@@ -143,9 +152,10 @@ type FieldValue {
   optionSelections: [String!]
 }
 
-type RequestStepStatus {
+type RequestStepStatuses {
   responseFinal: Boolean!
   resultsFinal: Boolean!
   actionsFinal: Boolean!
   final: Boolean!
+  status: RequestStepStatus!
 }

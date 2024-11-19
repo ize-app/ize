@@ -15,7 +15,8 @@ fragment ResultGroup on ResultGroup {
   id
   createdAt
   resultConfigId
-  hasResult
+  complete
+  status
   results {
     ...Result
   }

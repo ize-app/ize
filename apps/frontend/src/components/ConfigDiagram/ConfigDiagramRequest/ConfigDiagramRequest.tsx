@@ -7,13 +7,12 @@ import {
   PanelContainer,
   RequestStage,
 } from "@/components/ConfigDiagram";
-import { RequestFragment, Status } from "@/graphql/generated/graphql";
+import { ActionStatus, RequestFragment, RequestStepStatus } from "@/graphql/generated/graphql";
 
 import { ConfigRequestActionFilterPanel } from "./ConfigRequestActionFilterPanel";
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
 import { ConfigRequestStepPanel } from "./ConfigRequestStepPanel";
 import { ConfigRequestTriggerPanel } from "./ConfigRequestTriggerPanel";
-import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { StageConnectorButton } from "../Stage/StageConnectorButton";
 import { StageType } from "../Stage/StageType";
 
@@ -37,7 +36,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             type={StageType.Trigger}
             flow={request.flow}
             id={"trigger0"}
-            status={Status.Completed}
+            status={undefined}
             setSelectedId={setSelectedId}
             selectedId={selectedId}
           />
@@ -50,12 +49,9 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <RequestStage
                   type={StageType.Step}
                   step={step}
-                  status={determineRequestStepStatus(
-                    index,
-                    request.requestSteps[index]?.status?.resultsFinal ?? false,
-                    request.currentStepIndex,
-                    request.final,
-                  )}
+                  status={
+                    request.requestSteps[index]?.status.status ?? RequestStepStatus.NotStarted
+                  }
                   key={"stage-" + step?.id}
                   id={"step" + index.toString()}
                   setSelectedId={setSelectedId}
@@ -64,7 +60,9 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                 <RequestStage
                   type={StageType.ActionFilter}
                   action={step.action}
-                  status={undefined}
+                  status={
+                    request.requestSteps[index].actionExecution?.status ?? ActionStatus.NotStarted
+                  }
                   key={"actionFilter-" + step?.id}
                   id={"actionFilter" + index.toString()}
                   setSelectedId={setSelectedId}
@@ -78,8 +76,8 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <StageConnectorButton key={"connector-final"} />
               <RequestStage
                 status={
-                  request.requestSteps[finalStepIndex]?.actionExecution?.status ??
-                  (request.final ? Status.Cancelled : Status.NotAttempted)
+                  request.requestSteps[finalStepIndex].actionExecution?.status ??
+                  ActionStatus.NotStarted
                 }
                 type={StageType.Action}
                 action={finalAction}
@@ -99,9 +97,6 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               key={"steppanel-" + step?.id}
               step={step}
               requestStep={request.requestSteps[index]}
-              requestStepIndex={index}
-              currentStepIndex={request.currentStepIndex}
-              requestFinal={request.final}
               creator={request.creator}
             />
           )

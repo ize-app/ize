@@ -51,13 +51,13 @@ export const triggerNextStep = async ({
   }
 
   const responseComplete = canEndRequestStepWithResponse({ step: nextStep });
-  // trigger the next step if it exists
+
   const nextRequestStep = await transaction.requestStep.create({
     data: {
       expirationDate: new Date(
         new Date().getTime() + (nextStep.ResponseConfig?.expirationSeconds ?? 0) * 1000,
       ),
-      responseFinal: responseComplete,
+      responseFinal: false,
       Request: {
         connect: {
           id: reqData.requestId,
@@ -132,8 +132,10 @@ export const triggerNextStep = async ({
     },
   });
 
+  // note: not running results or finalizing responses on request step in this function
+  // because we don't want to create nested transactions
   return {
-    runResultsForNextStep: responseComplete,
+    responseComplete: responseComplete,
     nextRequestStepId: nextRequestStep.id,
   };
 };

@@ -1,18 +1,16 @@
 import { Chip } from "@mui/material";
 
-import { Status } from "@/graphql/generated/graphql";
+import { StatusProps } from "./statusProps";
 
-import { statusProps } from "./statusProps";
-
-export const StatusTag = ({ status }: { status: Status }) => {
+export const StatusTag = ({ statusProps }: { statusProps: StatusProps }) => {
   return (
     <Chip
-      label={statusProps[status].label}
+      label={statusProps.label}
       sx={{
         borderRadius: "1px",
         backgroundColor: "white",
-        border: `1px solid ${statusProps[status].backgroundColor}`,
-        color: statusProps[status].backgroundColor,
+        border: `1px solid ${statusProps.color}`,
+        color: statusProps.color,
       }}
       size="small"
     />

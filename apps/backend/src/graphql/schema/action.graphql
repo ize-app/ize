@@ -5,10 +5,18 @@ type Mutation {
 
 union Action = CallWebhook | EvolveFlow | EvolveGroup | TriggerStep | GroupWatchFlow
 
+enum ActionStatus {
+  NotStarted
+  Attempting
+  Error
+  DidNotPassFilter
+  Complete
+}
+
 type ActionExecution {
   actionId: String!
   lastAttemptedAt: String
-  status: Status!
+  status: ActionStatus!
 }
 
 type CallWebhook {

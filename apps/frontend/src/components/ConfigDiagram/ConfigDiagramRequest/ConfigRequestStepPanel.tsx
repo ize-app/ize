@@ -4,11 +4,16 @@ import { useContext } from "react";
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
 import { EndRequestStepButton } from "@/components/EndRequestStepButton";
 import { RequestStepResults } from "@/components/result/Results";
+import { requestStepStatusProps } from "@/components/status/requestStepStatusProps";
 import { StatusTag } from "@/components/status/StatusTag";
-import { EntityFragment, RequestStepFragment, StepFragment } from "@/graphql/generated/graphql";
+import {
+  EntityFragment,
+  RequestStepFragment,
+  RequestStepStatus,
+  StepFragment,
+} from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
-import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { TimeLeft } from "./TimeLeft";
 import { RespondPermissionPanel } from "../RespondPermissionPanel";
@@ -16,18 +21,10 @@ import { RespondPermissionPanel } from "../RespondPermissionPanel";
 export const ConfigRequestStepPanel = ({
   step,
   requestStep,
-
-  requestStepIndex,
-  currentStepIndex,
-  requestFinal,
   creator,
 }: {
   step: StepFragment;
-  requestFinal: boolean;
   requestStep: RequestStepFragment | null;
-
-  requestStepIndex: number;
-  currentStepIndex: number;
   creator: EntityFragment;
 }) => {
   const { me } = useContext(CurrentUserContext);
@@ -36,12 +33,6 @@ export const ConfigRequestStepPanel = ({
     me?.user.entityId === creator.entityId ||
     me?.identities.some((i) => i.entityId === creator.entityId);
 
-  const status = determineRequestStepStatus(
-    requestStepIndex,
-    requestStep?.status.resultsFinal ?? false,
-    currentStepIndex,
-    requestFinal,
-  );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
 
@@ -64,7 +55,11 @@ export const ConfigRequestStepPanel = ({
           )}
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
-            <StatusTag status={status} />
+            <StatusTag
+              statusProps={
+                requestStepStatusProps[requestStep?.status.status ?? RequestStepStatus.NotStarted]
+              }
+            />
           </Box>
           {requestStep && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -91,7 +86,7 @@ export const ConfigRequestStepPanel = ({
         <RespondPermissionPanel step={step} initialOpenState={false} />
         <PanelAccordion title="Collaborations 👀" hasError={false}>
           {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
-          <RequestStepResults requestStep={requestStep} step={step} requestStatus={status} />
+          <RequestStepResults requestStep={requestStep} step={step} />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

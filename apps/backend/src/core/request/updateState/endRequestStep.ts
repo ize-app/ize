@@ -1,9 +1,9 @@
 import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationEndRequestStepArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
-import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
+import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 
-import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { finalizeStepResponses } from "./finalizeStepResponses";
 
 export const endRequestStep = async ({
   args,
@@ -20,6 +20,12 @@ export const endRequestStep = async ({
     },
     include: {
       Request: true,
+      Responses: true,
+      Step: {
+        include: {
+          ResponseConfig: true,
+        },
+      },
     },
   });
 
@@ -38,6 +44,11 @@ export const endRequestStep = async ({
       extensions: { code: CustomErrorCodes.InsufficientPermissions },
     });
 
+  if ((requestStep.Step.ResponseConfig?.minResponses ?? 0) > requestStep.Responses.length)
+    throw new GraphQLError("Not enough responses have been received to end early", {
+      extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+    });
+
   await prisma.requestStep.update({
     where: {
       id: requestStepId,
@@ -47,9 +58,9 @@ export const endRequestStep = async ({
     },
   });
 
-  await runResultsAndActions({
-    requestStepId: requestStepId,
-  });
+  // since results are already computed, we don't need to create the results again
+  // instead, we finalize them here and move on to the rest of the request step execution
+  await finalizeStepResponses({ requestStepId });
 
   return true;
 };

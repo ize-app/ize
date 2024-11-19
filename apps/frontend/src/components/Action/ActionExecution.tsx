@@ -5,12 +5,13 @@ import { DataTable } from "@/components/Tables/DataTable/DataTable";
 import {
   ActionExecutionFragment,
   ActionFragment,
+  ActionStatus,
   ActionType,
   FieldDataType,
-  Status,
 } from "@/graphql/generated/graphql";
 
 import { FreeInputValue } from "../Field/FreeInputValue";
+import { actionStatusProps } from "../status/actionStatusProps";
 import { StatusTag } from "../status/StatusTag";
 
 export const ActionExecution = ({
@@ -20,16 +21,18 @@ export const ActionExecution = ({
   action: ActionFragment;
   actionExecution: ActionExecutionFragment | null;
 }) => {
+  const statusProps = actionStatusProps[actionExecution?.status ?? ActionStatus.NotStarted];
+
   const data = [
     {
       label: "Status",
-      value: <StatusTag status={actionExecution ? actionExecution.status : Status.NotAttempted} />,
+      value: <StatusTag statusProps={statusProps} />,
     },
   ];
 
   if (actionExecution?.lastAttemptedAt)
     data.push({
-      label: actionExecution.status === Status.Completed ? "Completed at" : "Last attempted at",
+      label: statusProps.label,
       value: <Typography>{new Date(actionExecution.lastAttemptedAt).toLocaleString()}</Typography>,
     });
 
@@ -46,9 +49,7 @@ export const ActionExecution = ({
         },
         {
           label: "Status",
-          value: (
-            <StatusTag status={actionExecution ? actionExecution.status : Status.NotAttempted} />
-          ),
+          value: <StatusTag statusProps={statusProps} />,
         },
       );
       break;

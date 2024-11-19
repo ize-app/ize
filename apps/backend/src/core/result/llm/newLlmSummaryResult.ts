@@ -1,16 +1,10 @@
-import { Prisma } from "@prisma/client";
-
 import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
-import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import {
-  ResultConfigPrismaType,
-  ResultGroupPrismaType,
-  resultGroupInclude,
-} from "../resultPrismaTypes";
+import { NewResultArgs } from "../newResults/newResult";
+import { ResultConfigPrismaType } from "../resultPrismaTypes";
 
 export const newLlmSummaryResult = async ({
   resultConfig,
@@ -18,68 +12,56 @@ export const newLlmSummaryResult = async ({
 }: {
   resultConfig: ResultConfigPrismaType;
   requestStepId: string;
-}): Promise<ResultGroupPrismaType> => {
+}): Promise<NewResultArgs[] | null> => {
   const llmConfig = resultConfig.ResultConfigLlm;
+  let llmResultArgs: NewResultArgs | undefined;
 
-  if (!(resultConfig.resultType === ResultType.LlmSummary) || !llmConfig)
-    throw new GraphQLError(
-      `Cannot create llm result without a llm config. resultConfigId: ${resultConfig.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
+  try {
+    if (!(resultConfig.resultType === ResultType.LlmSummary) || !llmConfig)
+      throw new GraphQLError(
+        `Cannot create llm result without a llm config. resultConfigId: ${resultConfig.id}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
 
-  if (!resultConfig.fieldId)
-    throw new GraphQLError(
-      `Result config for llm summary is missing a fieldId: resultConfigId: ${resultConfig.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
+    if (!resultConfig.fieldId)
+      throw new GraphQLError(
+        `Result config for llm summary is missing a fieldId: resultConfigId: ${resultConfig.id}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
 
-  const requestPayload = await createRequestPayload({
-    requestStepId,
-    fieldId: resultConfig.fieldId,
-  });
+    const requestPayload = await createRequestPayload({
+      requestStepId,
+      fieldId: resultConfig.fieldId,
+    });
 
-  const res = await generateAiSummary({
-    requestPayload,
-    isList: llmConfig.isList,
-    summaryPrompt: llmConfig.prompt,
-  });
+    const res = await generateAiSummary({
+      requestPayload,
+      isList: llmConfig.isList,
+      summaryPrompt: llmConfig.prompt,
+    });
 
-  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
-    itemCount: 1,
-    requestStepId,
-    resultConfigId: resultConfig.id,
-    final: true,
-    hasResult: true,
-    Result: {
-      create: {
-        name: "LLM Summary",
-        itemCount: res.length,
-        index: 0,
-        ResultItems: {
-          createMany: {
-            data: res.map((value) => ({
-              dataType: FieldDataType.String,
-              value,
-            })),
-          },
+    llmResultArgs = {
+      name: "LLM Summary",
+      ResultItems: {
+        createMany: {
+          data: res.map((value) => ({
+            dataType: FieldDataType.String,
+            value,
+          })),
         },
       },
-    },
-  };
+    };
 
-  return await prisma.resultGroup.upsert({
-    where: {
-      requestStepId_resultConfigId: {
-        requestStepId,
-        resultConfigId: resultConfig.id,
-      },
-    },
-    include: resultGroupInclude,
-    create: resultArgs,
-    update: resultArgs,
-  });
+    return [llmResultArgs];
+  } catch (e) {
+    console.error(
+      `ERROR determining decision result for resultConfigId ${resultConfig.id} requestStepId ${requestStepId}`,
+      e,
+    );
+    return null;
+  }
 };

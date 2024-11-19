@@ -2,20 +2,18 @@ import { DecisionType } from "@prisma/client";
 
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
-import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { determineDecision } from "./decision/determineDecision";
-import { getFieldAnswersFromResponses } from "./utils/getFieldAnswersFromResponses";
+import { resultGroupInclude } from "./resultPrismaTypes";
 import { stepInclude } from "../flow/flowPrismaTypes";
-import { responseInclude } from "../response/responsePrismaTypes";
 
 // see if there are any results yet which would end the request early
 // so far, this only applies to decisions
-export const checkIfEarlyResult = async ({
+export const checkToEndResponseEarly = async ({
   requestStepId,
 }: {
   requestStepId: string;
 }): Promise<boolean> => {
+  let hasEarlyResult = false;
   try {
     const reqStep = await prisma.requestStep.findFirstOrThrow({
       where: {
@@ -25,62 +23,28 @@ export const checkIfEarlyResult = async ({
         Step: {
           include: stepInclude,
         },
-        Responses: {
-          include: responseInclude,
+        ResultGroups: {
+          include: resultGroupInclude,
         },
       },
     });
 
-    const resultConfigs =
-      reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
-
-    const notEnoughResponses =
-      (reqStep.Step.ResponseConfig?.minResponses ?? 0) < reqStep.Responses.length;
-
-    const earlyResults = await Promise.all(
-      resultConfigs.map(async (r) => {
-        if (notEnoughResponses) return false;
-        if (r.resultType === ResultType.Decision) {
-          const decisionConfig = r.ResultConfigDecision;
-          if (!decisionConfig)
-            throw new GraphQLError(
-              `Missing decision config for resutl config. resultConfigId: ${r.id}`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-
-          if (!r.fieldId)
-            throw new GraphQLError(
-              `Result config for decision is missing a fieldId: resultConfigId: ${r.id}`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-
-          const fieldAnswers = getFieldAnswersFromResponses({
-            fieldId: r.fieldId,
-            responses: reqStep.Responses,
-          });
-
-          if (r.ResultConfigDecision?.type === DecisionType.Ai) return true;
-
-          const { optionId } = await determineDecision({
-            resultConfig: r,
-            answers: fieldAnswers,
-            requestStepId,
-          });
-
-          return !!optionId;
-        }
-        return false;
-      }),
-    );
-
-    // if there is an early result, return true
-    const earlyResult = earlyResults.find((r) => r);
-
-    return !!earlyResult;
+    for (const resultGroup of reqStep.ResultGroups) {
+      if (!resultGroup.complete || resultGroup.Result[0].ResultItems.length === 0) continue;
+      const resultConfig = (reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs ?? []).find(
+        (r) => r.resultConfigId === resultGroup.resultConfigId,
+      )?.ResultConfig;
+      if (!resultConfig) continue;
+      if (
+        resultConfig.resultType === ResultType.Decision &&
+        resultConfig.ResultConfigDecision &&
+        resultConfig.ResultConfigDecision.type === DecisionType.NumberThreshold
+      ) {
+        hasEarlyResult = true;
+        break;
+      }
+    }
+    return hasEarlyResult;
   } catch (e) {
     console.log("Error checkIfEarlyResults: ", e);
     return false;

@@ -84,7 +84,7 @@ fragment RequestStep on RequestStep {
     ...ActionExecution
   }
   status {
-    ...RequestStepStatus
+    ...RequestStepStatuses
   }
 }
 
@@ -106,7 +106,7 @@ fragment RequestSummary on RequestSummary {
 fragment RequestStepSummary on RequestStepSummary {
   requestStepId
   status {
-    ...RequestStepStatus
+    ...RequestStepStatuses
   }
   expirationDate
   respondPermission {
@@ -134,11 +134,12 @@ fragment Response on Response {
   }
 }
 
-fragment RequestStepStatus on RequestStepStatus {
+fragment RequestStepStatuses on RequestStepStatuses {
   responseFinal
   resultsFinal
   actionsFinal
   final
+  status
 }
 
 fragment RequestStepActionSummary on RequestStepActionSummary {

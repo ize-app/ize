@@ -27,6 +27,8 @@ export const determineDecision = async ({
 
   const decisionConfig = resultConfig.ResultConfigDecision;
 
+  const defaultOptionId = decisionConfig?.defaultOptionId ?? null;
+
   if (resultConfig.resultType !== ResultType.Decision || !decisionConfig)
     throw new GraphQLError(
       `Cannot create decision result without a decision config. resultConfigId: ${resultConfig.id}`,
@@ -85,5 +87,5 @@ export const determineDecision = async ({
       break;
     }
   }
-  return { optionId: decisionOptionId, explanation: explanation };
+  return { optionId: decisionOptionId ?? defaultOptionId, explanation: explanation };
 };

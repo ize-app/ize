@@ -7,25 +7,25 @@ import { sendTelegramNewStepMessage } from "./sendTelegramNewStepNotifications";
 import { getGroupsToNotify } from "../getGroupsToNotifiy";
 
 export const sendNewStepNotifications = async ({
-  flowId,
   requestStepId,
 }: {
-  flowId: string;
   requestStepId: string;
 }): Promise<void> => {
   try {
     // get groups that watch or own flow AND have notifications set up
+
+    const data = await prisma.request.findFirstOrThrow({
+      where: { RequestSteps: { some: { id: requestStepId } } },
+      include: requestInclude,
+    });
+
+    const flowId = data.FlowVersion.flowId;
 
     const groups = await getGroupsToNotify(flowId);
 
     if (groups.length === 0) {
       return;
     }
-
-    const data = await prisma.request.findFirstOrThrow({
-      where: { RequestSteps: { some: { id: requestStepId } } },
-      include: requestInclude,
-    });
 
     const request = await requestResolver({ req: data, context: {}, userGroupIds: [] });
 

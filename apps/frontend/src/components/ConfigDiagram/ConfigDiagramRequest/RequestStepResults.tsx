@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import {
   RequestStepFragment,
   ResultGroupFragment,
-  Status,
   StepFragment,
 } from "@/graphql/generated/graphql";
 
@@ -11,11 +10,9 @@ import { Result } from "../../result/Results/Result";
 
 export const RequestStepResults = ({
   step,
-  requestStatus,
   requestStep,
 }: {
   step: StepFragment;
-  requestStatus: Status;
   requestStep: RequestStepFragment | null;
 }) => {
   return (
@@ -36,7 +33,6 @@ export const RequestStepResults = ({
             resultConfig={resultConfig}
             resultGroup={result}
             minResponses={step.response?.minResponses}
-            requestStepStatus={requestStatus}
             displayDescripton={true}
           />
         );

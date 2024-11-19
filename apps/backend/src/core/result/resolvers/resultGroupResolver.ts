@@ -1,15 +1,25 @@
 import { FieldDataType, Result, ResultGroup, ResultItem } from "@/graphql/generated/resolver-types";
 
+import { resultGroupStatusResolver } from "./resultGroupStatusResolver";
 import { ResultGroupPrismaType } from "../resultPrismaTypes";
 
-export const resultGroupResolver = (result: ResultGroupPrismaType): ResultGroup => {
+export const resultGroupResolver = ({
+  resultGroup,
+  responseFinal,
+  resultsFinal,
+}: {
+  resultGroup: ResultGroupPrismaType;
+  responseFinal: boolean;
+  resultsFinal: boolean;
+}): ResultGroup => {
   return {
     __typename: "ResultGroup",
-    id: result.id,
-    createdAt: result.createdAt.toISOString(),
-    resultConfigId: result.resultConfigId,
-    hasResult: result.hasResult,
-    results: result.Result.map(
+    id: resultGroup.id,
+    createdAt: resultGroup.createdAt.toISOString(),
+    resultConfigId: resultGroup.resultConfigId,
+    complete: resultGroup.complete,
+    status: resultGroupStatusResolver({ resultGroup, responseFinal, resultsFinal }),
+    results: resultGroup.Result.map(
       (result): Result => ({
         name: result.name,
         resultItems: result.ResultItems.map(

@@ -1,18 +1,60 @@
-import { useTheme } from "@mui/material";
+import { actionStatusProps } from "@/components/status/actionStatusProps";
+import { requestStepStatusProps } from "@/components/status/requestStepStatusProps";
+import { StatusProps, genericStatusProps } from "@/components/status/statusProps";
+import { ActionStatus, RequestStepStatus, Status } from "@/graphql/generated/graphql";
 
-import { statusProps } from "@/components/status/statusProps";
-import { Status } from "@/graphql/generated/graphql";
+import { FlowStage, FlowStagePropsBase } from "./FlowStage";
+import { StageType } from "./StageType";
 
-import { FlowStage, FlowStageProps } from "./FlowStage";
-
-type RequestStageProps = FlowStageProps & {
-  status: Status | undefined;
+type TriggerRequestStageProps = FlowStagePropsBase & {
+  type: StageType.Trigger;
+  status: undefined;
 };
 
-export const RequestStage = ({ status, ...props }: RequestStageProps) => {
-  const theme = useTheme();
-  const backgroundColor = status ? statusProps[status].backgroundColor : theme.palette.primary.main;
-  const statusIcon = status && statusProps[status].icon;
+type StepRequestStageProps = FlowStagePropsBase & {
+  type: StageType.Step;
+  status: RequestStepStatus;
+};
 
-  return <FlowStage {...props} statusIcon={statusIcon} color={backgroundColor} />;
+type ActionRequestStageProps = FlowStagePropsBase & {
+  type: StageType.Action;
+  status: ActionStatus;
+};
+
+type ActionFilterRequestStageProps = FlowStagePropsBase & {
+  type: StageType.ActionFilter;
+  status: ActionStatus;
+};
+
+type RequestStageProps =
+  | TriggerRequestStageProps
+  | StepRequestStageProps
+  | ActionRequestStageProps
+  | ActionFilterRequestStageProps;
+
+export const RequestStage = ({ ...props }: RequestStageProps) => {
+  let statusProps: StatusProps;
+  switch (props.type) {
+    case StageType.Trigger: {
+      statusProps = genericStatusProps[Status.Completed];
+      break;
+    }
+    case StageType.Step: {
+      statusProps = requestStepStatusProps[props.status];
+      break;
+    }
+    case StageType.Action: {
+      statusProps =
+        actionStatusProps[
+          props.status === ActionStatus.DidNotPassFilter ? ActionStatus.NotStarted : props.status
+        ];
+      break;
+    }
+    case StageType.ActionFilter: {
+      statusProps = actionStatusProps[props.status];
+      break;
+    }
+  }
+
+  return <FlowStage {...props} statusProps={statusProps} />;
 };

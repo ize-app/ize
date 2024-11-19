@@ -4,8 +4,8 @@ import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newDecisionConfig } from "./decision/newDecisionConfig";
-import { newLlmSummaryConfig } from "./decision/newLlmSummaryConfig";
 import { newRankConfig } from "./decision/newRankConfig";
+import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newResultConfigSet = async ({

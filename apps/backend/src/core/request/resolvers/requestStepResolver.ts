@@ -3,8 +3,16 @@ import { responsesResolver } from "@/core/response/responseResolver";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
 import { ResultGroupPrismaType } from "@/core/result/resultPrismaTypes";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { Field, FieldSet, RequestStep, ResultConfig } from "@/graphql/generated/resolver-types";
+import {
+  ActionStatus,
+  Field,
+  FieldSet,
+  RequestStep,
+  ResultConfig,
+  ResultGroupStatus,
+} from "@/graphql/generated/resolver-types";
 
+import { requestStepStatusResolver } from "./requestStepStatusResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { StepPrismaType } from "../../flow/flowPrismaTypes";
 import { RequestDefinedOptionSetPrismaType, RequestStepPrismaType } from "../requestPrismaTypes";
@@ -17,7 +25,6 @@ export const requestStepResolver = async ({
   resultConfigsCache = [],
   requestDefinedOptionSets,
   // refers to whether request as a whole, rather than just the request step is final
-  requestFinal,
 }: {
   reqStep: RequestStepPrismaType;
   step: StepPrismaType;
@@ -26,7 +33,6 @@ export const requestStepResolver = async ({
   resultConfigsCache?: ResultConfig[];
   requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   context: GraphqlRequestContext;
-  requestFinal: boolean;
 }): Promise<RequestStep> => {
   const fieldSet: FieldSet = fieldSetResolver({
     fieldSet: step.FieldSet,
@@ -41,23 +47,40 @@ export const requestStepResolver = async ({
     context,
   });
 
+  const actionExecution = actionExecutionResolver({
+    actionExecutions: reqStep.ActionExecution,
+    action: step.Action,
+    actionsFinal: reqStep.actionsFinal,
+    resultsFinal: reqStep.resultsFinal,
+  });
+
+  const results = reqStep.ResultGroups.map((resultGroup: ResultGroupPrismaType) =>
+    resultGroupResolver({
+      resultGroup,
+      responseFinal: reqStep.responseFinal,
+      resultsFinal: reqStep.resultsFinal,
+    }),
+  );
+
+  const hasActionError = actionExecution?.status === ActionStatus.Error;
+  const hasResultsError = results.some((result) => result.status === ResultGroupStatus.Error);
+
+  const status = requestStepStatusResolver({
+    requestStep: reqStep,
+    hasActionError,
+    hasResultsError,
+  });
+
   const res: RequestStep = {
     requestStepId: reqStep.id,
     createdAt: reqStep.createdAt.toISOString(),
     expirationDate: reqStep.expirationDate.toISOString(),
     fieldSet,
-    actionExecution: actionExecutionResolver(reqStep.ActionExecution, step.Action, requestFinal),
+    actionExecution,
     responseFieldAnswers,
     userResponses,
-    results: reqStep.ResultGroups.map((result: ResultGroupPrismaType) =>
-      resultGroupResolver(result),
-    ),
-    status: {
-      responseFinal: reqStep.responseFinal,
-      resultsFinal: reqStep.resultsFinal,
-      actionsFinal: reqStep.actionsFinal,
-      final: reqStep.final,
-    },
+    results,
+    status,
   };
   return res;
 };

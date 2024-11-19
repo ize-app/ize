@@ -1,4 +1,6 @@
-import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
+import { newResultsForStep } from "@/core/result/newResults/newResultsForStep";
+
+import { finalizeStepResults } from "../core/request/updateState/finalizeStepResults";
 import { prisma } from "../prisma/client";
 export const retryNewResults = async () => {
   try {
@@ -12,9 +14,10 @@ export const retryNewResults = async () => {
     });
 
     // retry getting results for each result
-    await Promise.all(
+    await Promise.allSettled(
       stepsWithoutResults.map(async (reqStep) => {
-        await runResultsAndActions({
+        await newResultsForStep({ requestStepId: reqStep.id, isRetry: true });
+        await finalizeStepResults({
           requestStepId: reqStep.id,
         });
       }),

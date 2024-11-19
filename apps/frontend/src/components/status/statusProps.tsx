@@ -7,43 +7,39 @@ import { SvgIconProps } from "@mui/material";
 import { Status } from "@/graphql/generated/graphql";
 import muiTheme from "@/style/muiTheme";
 
-type RequestStatusProps = {
-  [key in Status]: {
-    color: string;
-    backgroundColor: string;
-    label: string;
-    icon: React.ComponentType<SvgIconProps>;
-  };
+export interface StatusProps {
+  color: string;
+  label: string;
+  icon: React.ComponentType<SvgIconProps> | null;
+}
+
+type GenericStatusProps = {
+  [key in Status]: StatusProps;
 };
 
-export const statusProps: RequestStatusProps = {
+export const genericStatusProps: GenericStatusProps = {
   [Status.Completed]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.success.main,
+    color: muiTheme.palette.success.main,
     label: "Completed",
     icon: CheckCircleOutlineOutlinedIcon,
   },
   [Status.InProgress]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.info.main,
+    color: muiTheme.palette.info.main,
     label: "In progress",
     icon: HourglassTopOutlinedIcon,
   },
   [Status.NotAttempted]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.grey[700],
+    color: muiTheme.palette.grey[700],
     label: "Pending",
     icon: RadioButtonUncheckedOutlinedIcon,
   },
   [Status.Failure]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.error.main,
+    color: muiTheme.palette.error.main,
     label: "Error",
     icon: CloseIcon,
   },
   [Status.Cancelled]: {
-    color: "white",
-    backgroundColor: muiTheme.palette.grey[400],
+    color: muiTheme.palette.grey[400],
     label: "Cancelled",
     icon: CloseIcon,
   },

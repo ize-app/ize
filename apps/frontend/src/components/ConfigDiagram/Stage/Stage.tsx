@@ -4,16 +4,19 @@ import { Dispatch, SetStateAction } from "react";
 import muiTheme from "@/style/muiTheme";
 import { colors } from "@/style/style";
 
-export interface StageProps {
+export interface StagePropsBase {
   id: string;
+  setSelectedId: Dispatch<SetStateAction<string | false>>;
+  selectedId: string | false;
   children?: React.ReactNode;
+}
+
+export interface StageProps extends StagePropsBase {
   sx?: SxProps;
   icon?: React.ComponentType<SvgIconProps>;
   color?: string;
-  statusIcon?: React.ComponentType<SvgIconProps>;
-  setSelectedId: Dispatch<SetStateAction<string | false>>;
+  statusIcon?: React.ComponentType<SvgIconProps> | null | undefined;
   size?: "small" | "medium";
-  selectedId: string | false;
 }
 
 export const Stage = ({

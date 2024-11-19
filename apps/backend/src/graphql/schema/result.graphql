@@ -1,8 +1,17 @@
+enum ResultGroupStatus {
+  NotStarted
+  Attempting
+  Error
+  FinalResult
+  FinalNoResult
+}
+
 type ResultGroup {
   id: String!
   createdAt: String!
   resultConfigId: String!
-  hasResult: Boolean!
+  complete: Boolean!
+  status: ResultGroupStatus!
   results: [Result!]!
 }
 

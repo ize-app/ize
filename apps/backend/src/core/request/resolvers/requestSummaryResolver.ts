@@ -6,8 +6,13 @@ import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { getResultConfigName } from "@/core/result/resolvers/getResultConfigName";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
-import { RequestSummary, Status } from "@/graphql/generated/resolver-types";
+import {
+  ActionStatus,
+  RequestSummary,
+  ResultGroupStatus,
+} from "@/graphql/generated/resolver-types";
 
+import { requestStepStatusResolver } from "./requestStepStatusResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestSummaryPrismaType } from "../requestPrismaTypes";
 
@@ -26,7 +31,7 @@ export const requestSummaryResolver = ({
   const currStep = r.CurrentRequestStep;
   if (!currStep) throw Error("Request does not have current request step");
 
-  const resultGroup = currStep.ResultGroups.find((rg) => rg.hasResult);
+  const resultGroup = currStep.ResultGroups.find((rg) => rg.complete);
   const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
     (r) => r.ResultConfig.id === resultGroup?.resultConfigId,
   )?.ResultConfig;
@@ -41,6 +46,32 @@ export const requestSummaryResolver = ({
     currStep.ActionExecution.find((ae) => {
       ae.actionId === action.id;
     });
+
+  const actionSummary = action
+    ? {
+        name: getActionName({ action, ownerGroup: null }),
+        status: getActionExecutionStatus({
+          action,
+          actionExecution,
+          resultsFinal: currStep.resultsFinal,
+          actionsFinal: currStep.actionsFinal,
+        }),
+      }
+    : null;
+
+  const result = resultGroup
+    ? resultGroupResolver({
+        resultGroup,
+        responseFinal: currStep.responseFinal,
+        resultsFinal: currStep.resultsFinal,
+      })
+    : null;
+
+  const status = requestStepStatusResolver({
+    requestStep: currStep,
+    hasActionError: actionSummary?.status === ActionStatus.Error,
+    hasResultsError: result?.status === ResultGroupStatus.Error,
+  });
 
   const res: RequestSummary = {
     requestId: r.id,
@@ -60,12 +91,7 @@ export const requestSummaryResolver = ({
     status: r.final,
     currentStep: {
       requestStepId: currStep.id,
-      status: {
-        responseFinal: currStep.responseFinal,
-        resultsFinal: currStep.resultsFinal,
-        actionsFinal: currStep.actionsFinal,
-        final: currStep.final,
-      },
+      status,
       fieldName: field?.name ?? "",
       resultName: resultConfig ? getResultConfigName({ resultConfig }) : "",
       expirationDate: currStep.expirationDate?.toISOString(),
@@ -81,15 +107,8 @@ export const requestSummaryResolver = ({
             userId,
           })
         : false,
-      result: resultGroup ? resultGroupResolver(resultGroup) : null,
-      action: action
-        ? {
-            name: getActionName({ action, ownerGroup: null }),
-            status: actionExecution
-              ? getActionExecutionStatus(actionExecution, r.final)
-              : Status.NotAttempted,
-          }
-        : null,
+      result,
+      action: actionSummary,
     },
   };
 

@@ -8,8 +8,9 @@ import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext"
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { getEntityPermissions } from "../permission/getEntityPermissions";
-import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
-import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { finalizeStepResponses } from "../request/updateState/finalizeStepResponses";
+import { checkToEndResponseEarly } from "../result/checkIfEarlyResult";
+import { newResultsForStep } from "../result/newResults/newResultsForStep";
 import { watchFlow } from "../user/watchFlow";
 
 interface NewResponseProps {
@@ -145,15 +146,15 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     return newResponse.id;
   });
 
-  const hasEarlyResult = await checkIfEarlyResult({ requestStepId });
-  console.log("hasEarlyResult", hasEarlyResult);
+  // perliminary results are determined after every response
+  // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
+  // there is cron job to rerun stalled actions / results
+  await newResultsForStep({ requestStepId });
+
+  const hasEarlyResult = await checkToEndResponseEarly({ requestStepId });
 
   if (hasEarlyResult) {
-    // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
-    // there is cron job to rerun stalled actions / results
-    await runResultsAndActions({
-      requestStepId,
-    });
+    await finalizeStepResponses({ requestStepId });
   }
 
   return responseId;

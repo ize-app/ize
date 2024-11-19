@@ -69,7 +69,6 @@ export const requestResolver = async ({
         responseFieldsCache,
         resultConfigsCache,
         requestDefinedOptionSets,
-        requestFinal: req.final,
         context,
       });
     }),

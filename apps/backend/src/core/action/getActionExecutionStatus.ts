@@ -1,13 +1,29 @@
-import { Status } from "@/graphql/generated/resolver-types";
+import { ActionStatus } from "@/graphql/generated/resolver-types";
 
-import { ActionExecutionPrismaType } from "./actionPrismaTypes";
+import { ActionExecutionPrismaType, ActionNewPrismaType } from "./actionPrismaTypes";
 
-export const getActionExecutionStatus = (
-  actionExecution: ActionExecutionPrismaType | undefined,
-  requestFinal: boolean,
-) => {
-  if (actionExecution && actionExecution.complete) return Status.Completed;
-  else if (actionExecution && !actionExecution.complete) return Status.Failure;
-  else if (!actionExecution && requestFinal) return Status.Cancelled;
-  else return Status.NotAttempted;
+export const getActionExecutionStatus = ({
+  actionExecution,
+  action,
+  resultsFinal,
+  actionsFinal,
+}: {
+  actionExecution: ActionExecutionPrismaType | undefined | null;
+  action: ActionNewPrismaType;
+  resultsFinal: boolean;
+  actionsFinal: boolean;
+}): ActionStatus => {
+  if (!resultsFinal) return ActionStatus.NotStarted;
+
+  if (actionsFinal) {
+    if (!actionExecution) {
+      if (action.filterOptionId) return ActionStatus.DidNotPassFilter;
+      else return ActionStatus.NotStarted;
+    } else {
+      if (actionExecution.complete) return ActionStatus.Complete;
+      else return ActionStatus.Error;
+    }
+  } else {
+    return ActionStatus.Attempting;
+  }
 };

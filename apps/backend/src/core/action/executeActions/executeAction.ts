@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
-
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { finalizeActionAndRequest } from "@/core/request/updateState/finalizeActionAndRequest";
 import { resultGroupInclude } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
 import { decrypt } from "@/prisma/encrypt";
@@ -12,12 +11,11 @@ import { evolveGroup } from "./evolveGroup";
 import { groupWatchFlow } from "./groupWatchFlow";
 import { triggerNextStep } from "./triggerNextStep";
 import { prisma } from "../../../prisma/client";
-import { ActionNewPrismaType } from "../actionPrismaTypes";
 import { callWebhook } from "../webhook/callWebhook";
 
 export interface ExecuteActionReturn {
   nextRequestStepId: string | null;
-  runResultsForNextStep: boolean;
+  responseComplete: boolean;
 }
 
 // Executes an action if it exists
@@ -33,7 +31,7 @@ export const executeAction = async ({
 }): Promise<ExecuteActionReturn> => {
   const defaultReturn: ExecuteActionReturn = {
     nextRequestStepId: null,
-    runResultsForNextStep: false,
+    responseComplete: false,
   };
   try {
     const maxActionRetries = 10;
@@ -58,7 +56,7 @@ export const executeAction = async ({
       const action = reqStep.Step.Action;
 
       if (!action) {
-        await finalizeRequestStep({ requestStepId, transaction });
+        await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
         return defaultReturn;
       }
 
@@ -78,7 +76,7 @@ export const executeAction = async ({
         }
         if (!passesFilter) {
           // end request step without taking an action
-          await finalizeRequestStep({ requestStepId, transaction, action });
+          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
           return defaultReturn;
         }
       }
@@ -86,9 +84,9 @@ export const executeAction = async ({
       const actionExecution = reqStep.ActionExecution.find((a) => a.actionId === action.id);
 
       if (actionExecution) {
-        // this should never evaluate to true, but just in case
-        if (actionExecution.final) {
-          await finalizeRequestStep({ requestStepId, transaction, action });
+        // this should never evaluate to true, but just in case so action doesn't run again
+        if (actionExecution.complete) {
+          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: false });
           return defaultReturn;
         }
 
@@ -103,11 +101,10 @@ export const executeAction = async ({
             },
             data: {
               complete: false,
-              final: true,
             },
           });
 
-          await finalizeRequestStep({ requestStepId, transaction, action });
+          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
           return defaultReturn;
         }
 
@@ -131,7 +128,7 @@ export const executeAction = async ({
           case ActionType.TriggerStep: {
             const res = await triggerNextStep({ requestStepId, transaction });
             nextRequestStepId = res.nextRequestStepId;
-            runResultsForNextStep = res.runResultsForNextStep;
+            runResultsForNextStep = res.responseComplete;
             break;
           }
           case ActionType.EvolveFlow: {
@@ -158,22 +155,28 @@ export const executeAction = async ({
           },
           update: {
             complete: true,
-            final: true,
+
             lastAttemptedAt: new Date(),
           },
           create: {
             actionId: action.id,
             requestStepId,
             complete: true,
-            final: true,
             lastAttemptedAt: new Date(),
           },
         });
 
-        await finalizeRequestStep({ requestStepId, transaction, action });
+        await finalizeActionAndRequest({
+          requestStepId,
+          transaction,
+          // Don't finalize request if there's another step to trigger
+          finalizeRequest: !!nextRequestStepId,
+        });
 
-
-        return { nextRequestStepId, runResultsForNextStep } as ExecuteActionReturn;
+        return {
+          nextRequestStepId,
+          responseComplete: runResultsForNextStep,
+        } as ExecuteActionReturn;
       } catch (e) {
         const retryAttempts = actionExecution?.retryAttempts ?? 1;
         const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
@@ -188,7 +191,6 @@ export const executeAction = async ({
             actionId: action.id,
             requestStepId,
             complete: false,
-            final: false,
             lastAttemptedAt: new Date(),
             nextRetryAt,
             retryAttempts,
@@ -206,36 +208,4 @@ export const executeAction = async ({
     console.error("Error in executeAction:", error);
     return defaultReturn;
   }
-};
-
-const finalizeRequestStep = async ({
-  requestStepId,
-  transaction,
-  action,
-}: {
-  requestStepId: string;
-  action?: ActionNewPrismaType;
-  transaction: Prisma.TransactionClient;
-}) => {
-  const isTriggerAction = action?.type === ActionType.TriggerStep;
-  await transaction.requestStep.update({
-    where: {
-      id: requestStepId,
-    },
-    data: {
-      actionsFinal: true,
-      final: true,
-      // since there is currently only one action per request step
-      Request:
-        // we can assume the request is complete if the action is complete
-        // unless the action is to trigger another step
-        isTriggerAction
-          ? {}
-          : {
-              update: {
-                final: true,
-              },
-            },
-    },
-  });
 };

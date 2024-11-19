@@ -1,15 +1,14 @@
-import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-import { Box, Typography } from "@mui/material";
+import { Box, SvgIcon, Typography } from "@mui/material";
 
 import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
-import { statusProps } from "@/components/status/statusProps";
+import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
 import {
   FieldFragment,
   FieldType,
   ResultConfigFragment,
   ResultGroupFragment,
-  Status,
+  ResultGroupStatus,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
@@ -20,7 +19,6 @@ export const Result = ({
   field,
   resultConfig,
   resultGroup,
-  requestStepStatus,
   displayDescripton,
   minResponses,
   onlyShowSelections = false,
@@ -29,12 +27,17 @@ export const Result = ({
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
-  requestStepStatus: Status;
   minResponses: number | undefined | null;
   onlyShowSelections?: boolean;
   displayDescripton: boolean;
   displayFieldOptionsIfNoResult?: boolean;
 }) => {
+  const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
+  const icon = statusProps.icon ? (
+    <Box sx={{ marginRight: "12px", display: "flex" }}>
+      <SvgIcon component={statusProps.icon} style={{ color: statusProps.color }} />
+    </Box>
+  ) : null;
   return (
     <LabeledGroupedInputs
       sx={{
@@ -42,18 +45,16 @@ export const Result = ({
         display: "flex",
         flexDirection: "column",
         gap: "12px",
-        borderColor: statusProps[requestStepStatus].backgroundColor,
-        backgroundColor:
-          requestStepStatus === Status.Completed
-            ? "#f5faf5"
-            : requestStepStatus === Status.InProgress
-              ? "#f3f8fb"
-              : "white",
+        borderColor: statusProps.color,
+        backgroundColor: "white",
       }}
       key={resultConfig.resultConfigId}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <ResultHeader label={resultConfig.name} requestStatus={requestStepStatus} />
+        <ResultHeader
+          label={resultConfig.name}
+          resultGroupStatus={resultGroup?.status ?? ResultGroupStatus.NotStarted}
+        />
         <Typography color="primary" fontSize="1rem">
           {field?.name}
         </Typography>
@@ -62,16 +63,33 @@ export const Result = ({
             {createResultConfigDescription({ resultConfig, minResponses })}
           </Typography>
         )}
-        {resultGroup && !resultGroup?.hasResult && (
+        {resultGroup?.status === ResultGroupStatus.Error && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
-            <DoNotDisturbIcon color="warning" fontSize="small" />
+            {icon}
+            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
+              Error creating final {resultConfig.__typename === "Decision" ? "decision" : "result"}.
+            </Typography>
+          </Box>
+        )}
+        {resultGroup?.status === ResultGroupStatus.Attempting && (
+          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
+            {icon}
+            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
+              Creating results
+              {resultConfig.__typename === "Decision" ? "decision" : "result"}.
+            </Typography>
+          </Box>
+        )}
+        {resultGroup?.status === ResultGroupStatus.FinalNoResult && (
+          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
+            {icon}
             <Typography variant="description" color={(theme) => theme.palette.warning.main}>
               This collaborative step finished without a final{" "}
               {resultConfig.__typename === "Decision" ? "decision" : "result"}.
             </Typography>
           </Box>
         )}
-        {resultGroup &&
+        {resultGroup?.status === ResultGroupStatus.FinalResult &&
           resultGroup.results.map((result, index) => {
             return (
               <Box key={"result" + index}>
@@ -97,7 +115,7 @@ export const Result = ({
               </Box>
             );
           })}
-        {(!resultGroup || !resultGroup.hasResult) &&
+        {(!resultGroup || resultGroup.status === ResultGroupStatus.NotStarted) &&
           field &&
           field.__typename === FieldType.Options &&
           displayFieldOptionsIfNoResult && (

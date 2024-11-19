@@ -1,12 +1,10 @@
 import { Box } from "@mui/material";
 
-import { determineRequestStepStatus } from "@/components/ConfigDiagram/ConfigDiagramRequest/determineRequestStepStatus";
 import {
   FieldFragment,
   RequestFragment,
   ResultConfigFragment,
   ResultGroupFragment,
-  Status,
 } from "@/graphql/generated/graphql";
 
 import { Result } from "./Result";
@@ -14,7 +12,6 @@ import { Result } from "./Result";
 interface HydratedResultData {
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
-  requestStepStatus: Status;
   field: FieldFragment;
   minResponses: number | undefined | null;
 }
@@ -24,13 +21,6 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
   const hydratedResults: HydratedResultData[] = [];
 
   request.flow.steps.forEach((step, stepIndex) => {
-    const requestStepStatus = determineRequestStepStatus(
-      stepIndex,
-      request.requestSteps[stepIndex]?.status.resultsFinal ?? false,
-      request.currentStepIndex,
-      request.final,
-    );
-
     step.result.forEach((resultConfig) => {
       const resultGroup =
         request.requestSteps[stepIndex]?.results.find(
@@ -45,7 +35,6 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
       hydratedResults.push({
         resultConfig,
         resultGroup,
-        requestStepStatus,
         field,
         minResponses: step.response?.minResponses,
       });
