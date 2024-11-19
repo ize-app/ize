@@ -56,6 +56,9 @@ export const newLlmSummaryResult = async ({
       },
     };
 
+    // console.log("llmResultArgs", llmResultArgs);
+    // throw Error("test error");
+
     return [llmResultArgs];
   } catch (e) {
     console.error(

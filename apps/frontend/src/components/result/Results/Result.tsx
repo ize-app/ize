@@ -33,6 +33,8 @@ export const Result = ({
   displayFieldOptionsIfNoResult?: boolean;
 }) => {
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
+
+  const backgroundColor = statusProps.lightColor ?? "white";
   const icon = statusProps.icon ? (
     <Box sx={{ marginRight: "12px", display: "flex" }}>
       <SvgIcon component={statusProps.icon} style={{ color: statusProps.color }} />
@@ -46,7 +48,7 @@ export const Result = ({
         flexDirection: "column",
         gap: "12px",
         borderColor: statusProps.color,
-        backgroundColor: "white",
+        backgroundColor,
       }}
       key={resultConfig.resultConfigId}
     >

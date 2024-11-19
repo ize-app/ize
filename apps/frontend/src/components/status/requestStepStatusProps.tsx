@@ -24,12 +24,12 @@ export const requestStepStatusProps: RequestStepStatusProps = {
     icon: CheckCircleOutlineOutlinedIcon,
   },
   [RequestStepStatus.CreatingResult]: {
-    color: muiTheme.palette.warning.main,
-    label: "Creating Results",
+    color: muiTheme.palette.warning.light,
+    label: "Creating results",
     icon: ConstructionIcon,
   },
   [RequestStepStatus.ExecutingAction]: {
-    color: muiTheme.palette.warning.main,
+    color: muiTheme.palette.warning.light,
     label: "Executing action",
     icon: ConstructionIcon,
   },

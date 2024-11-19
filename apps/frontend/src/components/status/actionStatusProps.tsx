@@ -13,7 +13,7 @@ type ActionStatusProps = {
 
 export const actionStatusProps: ActionStatusProps = {
   [ActionStatus.Attempting]: {
-    color: muiTheme.palette.warning.main,
+    color: muiTheme.palette.warning.light,
     label: "Executing action",
     icon: ConstructionIcon,
   },

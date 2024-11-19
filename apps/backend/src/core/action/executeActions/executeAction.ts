@@ -86,7 +86,7 @@ export const executeAction = async ({
       if (actionExecution) {
         // this should never evaluate to true, but just in case so action doesn't run again
         if (actionExecution.complete) {
-          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: false });
+          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
           return defaultReturn;
         }
 
@@ -170,7 +170,7 @@ export const executeAction = async ({
           requestStepId,
           transaction,
           // Don't finalize request if there's another step to trigger
-          finalizeRequest: !!nextRequestStepId,
+          finalizeRequest: !nextRequestStepId,
         });
 
         return {

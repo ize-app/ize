@@ -9,6 +9,7 @@ import muiTheme from "@/style/muiTheme";
 
 export interface StatusProps {
   color: string;
+  lightColor?: string;
   label: string;
   icon: React.ComponentType<SvgIconProps> | null;
 }

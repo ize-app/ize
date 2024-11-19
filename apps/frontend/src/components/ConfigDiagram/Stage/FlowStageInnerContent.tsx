@@ -27,6 +27,7 @@ export const FlowFormStageInnerContent = ({
         variant="description"
         lineHeight={"1rem"}
         width={"100%"}
+        color={color}
         sx={{
           whiteSpace: "nowrap",
           overflow: "hidden",

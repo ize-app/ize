@@ -20,7 +20,8 @@ import { StageType } from "../Stage/StageType";
 export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) => {
   // if the current step has an action, select the action, otherwise select the step
   const [selectedId, setSelectedId] = useState<string | false>(
-    request.requestSteps[request.currentStepIndex].status.resultsFinal
+    request.requestSteps[request.currentStepIndex]?.status.resultsFinal &&
+      !!request.flow.steps[request.currentStepIndex + 1]?.action
       ? "action"
       : "step" + request.currentStepIndex.toString(),
   );
@@ -108,6 +109,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
             <ConfigRequestActionFilterPanel
               key={"actionFilterpanel-" + step?.id}
               action={step.action}
+              actionExecution={request.requestSteps[index]?.actionExecution}
             />
           )
         );
