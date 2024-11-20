@@ -3,6 +3,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export interface RequestResultGroup {
   fieldName: string;
+  resultConfigId: string;
   result: GenericFieldAndValue[];
 }
 
@@ -30,9 +31,11 @@ export const getRequestResultGroups = ({
 
       const requestResult: RequestResultGroup = {
         fieldName: resultConfig.field.name,
+        resultConfigId: resultGroup.resultConfigId,
         result: resultGroup.results.map((result) => {
           return {
             fieldName: `${resultConfig.field.name} (${resultConfig.name})`,
+
             value: result.resultItems.map((item) => item.value),
           };
         }),

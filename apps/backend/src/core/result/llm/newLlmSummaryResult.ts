@@ -42,6 +42,7 @@ export const newLlmSummaryResult = async ({
       requestPayload,
       isList: llmConfig.isList,
       summaryPrompt: llmConfig.prompt,
+      resultConfigId: resultConfig.id,
     });
 
     llmResultArgs = {

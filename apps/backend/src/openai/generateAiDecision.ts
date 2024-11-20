@@ -46,6 +46,7 @@ export const generateAiDecision = async ({
         role: "user",
         content: createRequestContextPrompt({
           requestPayload,
+          resultConfigId: resultConfig.id,
         }),
       },
       {

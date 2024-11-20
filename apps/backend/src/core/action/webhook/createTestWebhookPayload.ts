@@ -12,6 +12,7 @@ export const createTestWebhookPayload = (args: TestWebhookArgs): RequestPayload 
     requestTriggerAnswers: args.requestFields.map((field) => generateFieldData(field)),
     results: args.results.map((resultGroup) => ({
       fieldName: resultGroup.fieldName,
+      resultConfigId: "",
       result: resultGroup.results.map((res) => generateFieldData(res)),
     })),
     requestUrl: "https://ize.space",

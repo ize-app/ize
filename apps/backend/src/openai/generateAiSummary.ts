@@ -11,10 +11,12 @@ export const generateAiSummary = async ({
   summaryPrompt,
   exampleOutput,
   isList,
+  resultConfigId,
 }: {
   requestPayload: RequestPayload;
   summaryPrompt: string;
   exampleOutput?: string | null;
+  resultConfigId: string;
   isList: boolean;
 }): Promise<string[]> => {
   const completion = await openAiClient.chat.completions.create({
@@ -24,7 +26,7 @@ export const generateAiSummary = async ({
         role: "system",
         content: createIzeSystemPrompt(),
       },
-      { role: "user", content: createRequestContextPrompt({ requestPayload }) },
+      { role: "user", content: createRequestContextPrompt({ requestPayload, resultConfigId }) },
       {
         role: "user",
         content: createResponsesPrompt({ fieldAnswers: requestPayload.fieldAnswers ?? [] }),
