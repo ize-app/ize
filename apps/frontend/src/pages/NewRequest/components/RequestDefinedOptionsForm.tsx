@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldOption } from "@/components/Field/FieldOption";
-import { FieldOptionsContainer } from "@/components/Field/FieldOptionsContainer";
 import { InputField } from "@/components/Form/FlowForm/components/InputField";
 import { FieldDataType, FieldType, Flow, OptionsFragment } from "@/graphql/generated/graphql";
 
@@ -65,7 +64,14 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
       </Typography>
 
       {/* Existing options defined on the workflow */}
-      <FieldOptionsContainer>
+      <Box
+        sx={{
+          borderRadius: "4px",
+          border: "1px solid rgba(0, 0, 0, 0.1)",
+          backgroundColor: "white",
+          padding: "6px",
+        }}
+      >
         {field.options.map((option, index) => {
           return (
             <FieldOption
@@ -120,7 +126,7 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
             Add option
           </Button>
         )}
-      </FieldOptionsContainer>
+      </Box>
     </Box>
   );
 };

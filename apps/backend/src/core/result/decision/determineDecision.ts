@@ -39,7 +39,7 @@ export const determineDecision = async ({
 
   const totalAnswerCount = answers.length;
 
-  const optionCount = calculateAggregateOptionWeights({ answers });
+  const optionCount = calculateAggregateOptionWeights({ type: "fieldAnswer", answers });
 
   switch (decisionConfig.type) {
     case DecisionType.NumberThreshold: {

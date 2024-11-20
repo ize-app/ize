@@ -75,6 +75,22 @@ fragment ResponseFieldAnswers on ResponseFieldAnswers {
   answers {
     ...UserFieldAnswer
   }
+  summary {
+    ...ResponseFieldAnswersSummary
+  }
+}
+
+fragment ResponseFieldAnswersSummary on ResponseFieldAnswersSummary {
+  count
+  options {
+    ...ResponseFieldAnswersOptionsSummary
+  }
+}
+
+fragment ResponseFieldAnswersOptionsSummary on ResponseFieldAnswersOptionsSummary {
+  optionId
+  count
+  rank
 }
 
 fragment TriggerFieldAnswer on TriggerFieldAnswer {
@@ -129,6 +145,7 @@ fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
 
 fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
   optionId
+  weight
 }
 
 fragment WebhookFieldAnswer on WebhookFieldAnswer {

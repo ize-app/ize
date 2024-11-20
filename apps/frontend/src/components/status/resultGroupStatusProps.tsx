@@ -42,4 +42,10 @@ export const resultGroupStatusProps: ResultGroupStatusProps = {
     label: "Pending",
     icon: null,
   },
+  [ResultGroupStatus.Preliminary]: {
+    color: muiTheme.palette.grey[700],
+    lightColor: muiTheme.palette.grey[100],
+    label: "Pending",
+    icon: null,
+  },
 };

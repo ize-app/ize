@@ -26,12 +26,18 @@ export const RequestStepResults = ({
             (r) => r.resultConfigId === resultConfig.resultConfigId,
           ) ?? null;
 
+        const responseSummary =
+          (requestStep?.responseFieldAnswers ?? []).find(
+            (r) => r.field.fieldId === resultConfig.field.fieldId,
+          )?.summary ?? null;
+
         return (
           <Result
             field={field ?? resultConfig.field}
             key={resultConfig.resultConfigId}
             resultConfig={resultConfig}
             resultGroup={result}
+            responseSummary={responseSummary}
             minResponses={step.response?.minResponses}
             displayDescripton={true}
           />

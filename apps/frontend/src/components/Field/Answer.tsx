@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
 import { AnswerFreeInput } from "./AnswerFreeInput";
-import { FieldOptions } from "./FieldOptions";
+import { FieldOptions, FieldOptionsDisplayType } from "./FieldOptions";
 import { EntityList } from "../EntityList";
 import { FlowsList } from "../FlowsList";
 
@@ -37,6 +37,7 @@ export const Answer = ({
 
       return (
         <FieldOptions
+          type={FieldOptionsDisplayType.Answer}
           fieldOptions={field}
           optionSelections={fieldAnswer.selections}
           final={true}

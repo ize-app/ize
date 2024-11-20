@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
 import { Answer } from "./Answer";
-import { FieldOptions } from "./FieldOptions";
+import { FieldOptions, FieldOptionsDisplayType } from "./FieldOptions";
 
 // renders name of the field and answer, if it exists.
 // option fields show all options
@@ -48,6 +48,7 @@ export const Field = ({
             </span> */}
           </Typography>
           <FieldOptions
+            type={FieldOptionsDisplayType.Options}
             onlyShowSelections={onlyShowSelections}
             fieldOptions={field}
             optionSelections={optionSelections}

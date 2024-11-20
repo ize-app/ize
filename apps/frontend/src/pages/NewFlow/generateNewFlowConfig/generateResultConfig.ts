@@ -34,7 +34,7 @@ const generateDecisionConfig = ({
     case DecisionType.NumberThreshold:
       return {
         type: DecisionType.NumberThreshold,
-        threshold: 2,
+        threshold: 1,
         defaultDecision,
       };
     case DecisionType.PercentageThreshold:

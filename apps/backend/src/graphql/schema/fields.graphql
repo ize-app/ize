@@ -129,6 +129,18 @@ type UserFieldAnswer {
 type ResponseFieldAnswers {
   field: Field!
   answers: [UserFieldAnswer!]!
+  summary: ResponseFieldAnswersSummary!
+}
+
+type ResponseFieldAnswersSummary {
+  count: Int!
+  options: [ResponseFieldAnswersOptionsSummary!]
+}
+
+type ResponseFieldAnswersOptionsSummary {
+  optionId: String!
+  count: Int!
+  rank: Float
 }
 
 type TriggerFieldAnswer {
@@ -138,7 +150,8 @@ type TriggerFieldAnswer {
 
 # later will use this type to add option free inputs
 type OptionFieldAnswerSelection {
-  optionId: String
+  optionId: String!
+  weight: Int!
 }
 
 input FieldSetArgs {

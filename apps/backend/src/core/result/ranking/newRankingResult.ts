@@ -32,6 +32,7 @@ export const newRankingResult = async ({
       );
 
     const optionCount: { [key: string]: number } = calculateAggregateOptionWeights({
+      type: "fieldAnswer",
       answers: fieldAnswers,
     });
     rankFieldOptions = await prisma.fieldOption.findMany({

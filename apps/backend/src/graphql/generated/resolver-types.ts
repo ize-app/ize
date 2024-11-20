@@ -720,7 +720,8 @@ export type OptionFieldAnswer = {
 
 export type OptionFieldAnswerSelection = {
   __typename?: 'OptionFieldAnswerSelection';
-  optionId?: Maybe<Scalars['String']['output']>;
+  optionId: Scalars['String']['output'];
+  weight: Scalars['Int']['output'];
 };
 
 export type OptionSelectionArgs = {
@@ -996,6 +997,20 @@ export type ResponseFieldAnswers = {
   __typename?: 'ResponseFieldAnswers';
   answers: Array<UserFieldAnswer>;
   field: Field;
+  summary: ResponseFieldAnswersSummary;
+};
+
+export type ResponseFieldAnswersOptionsSummary = {
+  __typename?: 'ResponseFieldAnswersOptionsSummary';
+  count: Scalars['Int']['output'];
+  optionId: Scalars['String']['output'];
+  rank?: Maybe<Scalars['Float']['output']>;
+};
+
+export type ResponseFieldAnswersSummary = {
+  __typename?: 'ResponseFieldAnswersSummary';
+  count: Scalars['Int']['output'];
+  options?: Maybe<Array<ResponseFieldAnswersOptionsSummary>>;
 };
 
 export type Result = {
@@ -1031,7 +1046,8 @@ export enum ResultGroupStatus {
   Error = 'Error',
   FinalNoResult = 'FinalNoResult',
   FinalResult = 'FinalResult',
-  NotStarted = 'NotStarted'
+  NotStarted = 'NotStarted',
+  Preliminary = 'Preliminary'
 }
 
 export type ResultGroupTestWebhookArgs = {
@@ -1274,6 +1290,7 @@ export type ResolversTypes = {
   FieldSetArgs: FieldSetArgs;
   FieldType: FieldType;
   FieldValue: ResolverTypeWrapper<FieldValue>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger'> & { evolve?: Maybe<ResolversTypes['Flow']>, fieldSet: ResolversTypes['FieldSet'], group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']>, trigger: ResolversTypes['TriggerConfig'] }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'trigger'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, trigger: ResolversTypes['TriggerConfig'] }>;
@@ -1350,6 +1367,8 @@ export type ResolversTypes = {
   ResponseConfig: ResolverTypeWrapper<Omit<ResponseConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   ResponseConfigArgs: ResponseConfigArgs;
   ResponseFieldAnswers: ResolverTypeWrapper<Omit<ResponseFieldAnswers, 'answers' | 'field'> & { answers: Array<ResolversTypes['UserFieldAnswer']>, field: ResolversTypes['Field'] }>;
+  ResponseFieldAnswersOptionsSummary: ResolverTypeWrapper<ResponseFieldAnswersOptionsSummary>;
+  ResponseFieldAnswersSummary: ResolverTypeWrapper<ResponseFieldAnswersSummary>;
   Result: ResolverTypeWrapper<Result>;
   ResultArgs: ResultArgs;
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
@@ -1407,6 +1426,7 @@ export type ResolversParentTypes = {
   FieldSet: Omit<FieldSet, 'fields'> & { fields: Array<ResolversParentTypes['Field']> };
   FieldSetArgs: FieldSetArgs;
   FieldValue: FieldValue;
+  Float: Scalars['Float']['output'];
   Flow: Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, fieldSet: ResolversParentTypes['FieldSet'], group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']>, trigger: ResolversParentTypes['TriggerConfig'] };
   FlowReference: FlowReference;
   FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'trigger'> & { creator: ResolversParentTypes['Entity'], group?: Maybe<ResolversParentTypes['Group']>, trigger: ResolversParentTypes['TriggerConfig'] };
@@ -1474,6 +1494,8 @@ export type ResolversParentTypes = {
   ResponseConfig: Omit<ResponseConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   ResponseConfigArgs: ResponseConfigArgs;
   ResponseFieldAnswers: Omit<ResponseFieldAnswers, 'answers' | 'field'> & { answers: Array<ResolversParentTypes['UserFieldAnswer']>, field: ResolversParentTypes['Field'] };
+  ResponseFieldAnswersOptionsSummary: ResponseFieldAnswersOptionsSummary;
+  ResponseFieldAnswersSummary: ResponseFieldAnswersSummary;
   Result: Result;
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
@@ -1872,7 +1894,8 @@ export type OptionFieldAnswerResolvers<ContextType = GraphqlRequestContext, Pare
 };
 
 export type OptionFieldAnswerSelectionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['OptionFieldAnswerSelection'] = ResolversParentTypes['OptionFieldAnswerSelection']> = {
-  optionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  optionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  weight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2016,6 +2039,20 @@ export type ResponseConfigResolvers<ContextType = GraphqlRequestContext, ParentT
 export type ResponseFieldAnswersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseFieldAnswers'] = ResolversParentTypes['ResponseFieldAnswers']> = {
   answers?: Resolver<Array<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['ResponseFieldAnswersSummary'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResponseFieldAnswersOptionsSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseFieldAnswersOptionsSummary'] = ResolversParentTypes['ResponseFieldAnswersOptionsSummary']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  optionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  rank?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResponseFieldAnswersSummaryResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResponseFieldAnswersSummary'] = ResolversParentTypes['ResponseFieldAnswersSummary']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  options?: Resolver<Maybe<Array<ResolversTypes['ResponseFieldAnswersOptionsSummary']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2162,6 +2199,8 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Response?: ResponseResolvers<ContextType>;
   ResponseConfig?: ResponseConfigResolvers<ContextType>;
   ResponseFieldAnswers?: ResponseFieldAnswersResolvers<ContextType>;
+  ResponseFieldAnswersOptionsSummary?: ResponseFieldAnswersOptionsSummaryResolvers<ContextType>;
+  ResponseFieldAnswersSummary?: ResponseFieldAnswersSummaryResolvers<ContextType>;
   Result?: ResultResolvers<ContextType>;
   ResultConfig?: ResultConfigResolvers<ContextType>;
   ResultGroup?: ResultGroupResolvers<ContextType>;

@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-import { FieldOptions } from "@/components/Field/FieldOptions";
+import { FieldOptions, FieldOptionsDisplayType } from "@/components/Field/FieldOptions";
 import { FieldType, ResultConfigFragment } from "@/graphql/generated/graphql";
 
 import { createResultConfigDescription } from "../createResultConfigDescription";
@@ -20,7 +20,7 @@ export const ResultConfig = ({
       <Typography color="primary">{field?.name}</Typography>
       {createResultConfigDescription({ resultConfig, minResponses })}
       {field && field.__typename === FieldType.Options && (
-        <FieldOptions fieldOptions={field} final={false} />
+        <FieldOptions type={FieldOptionsDisplayType.Options} fieldOptions={field} final={false} />
       )}
     </Box>
   );

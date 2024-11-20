@@ -1,4 +1,6 @@
-import { SxProps } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import { SxProps, Typography } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -72,6 +74,8 @@ export const MultiSelect = <T extends FieldValues>({
                       checked={value?.some(
                         (checked: OptionSelectionSchemaType) => checked.optionId === option.value,
                       )}
+                      checkedIcon={<CheckCircleIcon />}
+                      icon={<RadioButtonUncheckedIcon />}
                       {...inputProps}
                       inputRef={ref}
                       key={"checkbox-" + option.value}
@@ -79,7 +83,7 @@ export const MultiSelect = <T extends FieldValues>({
                       disabled={rest?.disabled}
                     />
                   }
-                  label={<p className="body2">{option.label}</p>}
+                  label={<Typography>{option.label}</Typography>}
                   key={option.value}
                 />
               ))}

@@ -1,5 +1,6 @@
 enum ResultGroupStatus {
   NotStarted
+  Preliminary
   Attempting
   Error
   FinalResult

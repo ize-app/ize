@@ -18,7 +18,12 @@ export const resultGroupResolver = ({
     createdAt: resultGroup.createdAt.toISOString(),
     resultConfigId: resultGroup.resultConfigId,
     complete: resultGroup.complete,
-    status: resultGroupStatusResolver({ resultGroup, responseFinal, resultsFinal }),
+    status: resultGroupStatusResolver({
+      resultGroup,
+      responseFinal,
+      resultsFinal,
+      results: resultGroup.Result,
+    }),
     results: resultGroup.Result.map(
       (result): Result => ({
         name: result.name,

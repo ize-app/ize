@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import {
   FieldFragment,
   RequestFragment,
+  ResponseFieldAnswersSummary,
   ResultConfigFragment,
   ResultGroupFragment,
 } from "@/graphql/generated/graphql";
@@ -14,6 +15,7 @@ interface HydratedResultData {
   resultGroup: ResultGroupFragment | null;
   field: FieldFragment;
   minResponses: number | undefined | null;
+  responseSummary: ResponseFieldAnswersSummary | null;
 }
 
 // lists all results from a given request
@@ -22,20 +24,25 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
 
   request.flow.steps.forEach((step, stepIndex) => {
     step.result.forEach((resultConfig) => {
+      const reqStep = request.requestSteps[stepIndex];
       const resultGroup =
-        request.requestSteps[stepIndex]?.results.find(
-          (result) => result.resultConfigId === resultConfig.resultConfigId,
-        ) ?? null;
+        reqStep?.results.find((result) => result.resultConfigId === resultConfig.resultConfigId) ??
+        null;
 
       const field =
-        request.requestSteps[stepIndex]?.fieldSet.fields.find(
-          (field) => field.fieldId === resultConfig.field.fieldId,
-        ) ?? resultConfig.field;
+        reqStep?.fieldSet.fields.find((field) => field.fieldId === resultConfig.field.fieldId) ??
+        resultConfig.field;
+
+      const responseSummary =
+        reqStep.responseFieldAnswers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
+          ?.summary ?? null;
+
       if (!field) throw Error("Missing field for resultConfig");
       hydratedResults.push({
         resultConfig,
         resultGroup,
         field,
+        responseSummary,
         minResponses: step.response?.minResponses,
       });
     });
@@ -48,8 +55,6 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
           key={resultData.resultConfig.resultConfigId}
           {...resultData}
           displayDescripton={false}
-          onlyShowSelections={true}
-          displayFieldOptionsIfNoResult={false}
         />
       ))}
     </Box>

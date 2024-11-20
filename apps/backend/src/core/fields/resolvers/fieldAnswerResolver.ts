@@ -88,6 +88,7 @@ export const fieldAnswerResolver = async ({
         selections: fieldAnswer.AnswerOptionSelections.map(
           (s): OptionFieldAnswerSelection => ({
             optionId: s.fieldOptionId,
+            weight: s.weight,
           }),
         ),
       };

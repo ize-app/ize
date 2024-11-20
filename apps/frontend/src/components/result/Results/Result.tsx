@@ -1,11 +1,12 @@
 import { Box, SvgIcon, Typography } from "@mui/material";
 
 import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
-import { FieldOptions } from "@/components/Field/FieldOptions";
+import { FieldOptions, FieldOptionsDisplayType } from "@/components/Field/FieldOptions";
 import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
 import {
   FieldFragment,
   FieldType,
+  ResponseFieldAnswersSummaryFragment,
   ResultConfigFragment,
   ResultGroupFragment,
   ResultGroupStatus,
@@ -21,19 +22,16 @@ export const Result = ({
   resultGroup,
   displayDescripton,
   minResponses,
-  onlyShowSelections = false,
-  displayFieldOptionsIfNoResult = true,
+  responseSummary,
 }: {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
+  responseSummary: ResponseFieldAnswersSummaryFragment | null;
   minResponses: number | undefined | null;
-  onlyShowSelections?: boolean;
   displayDescripton: boolean;
-  displayFieldOptionsIfNoResult?: boolean;
 }) => {
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
-
   const backgroundColor = statusProps.lightColor ?? "white";
   const icon = statusProps.icon ? (
     <Box sx={{ marginRight: "12px", display: "flex" }}>
@@ -91,42 +89,39 @@ export const Result = ({
             </Typography>
           </Box>
         )}
-        {resultGroup?.status === ResultGroupStatus.FinalResult &&
-          resultGroup.results.map((result, index) => {
-            return (
-              <Box key={"result" + index}>
-                {index > 0 && <Typography variant="description">{result.name}</Typography>}
-                {field &&
-                  field.__typename === FieldType.Options &&
-                  result.resultItems.some((item) => item.optionId) &&
-                  (resultGroup || (!resultGroup && displayFieldOptionsIfNoResult)) && (
-                    <FieldOptions
-                      // key={"options" + index}
-                      fieldOptions={field}
-                      final={!!result}
-                      optionSelections={result.resultItems}
-                      onlyShowSelections={onlyShowSelections}
-                    />
-                  )}
-                {field &&
-                  // field.__typename === FieldType.FreeInput &&
-                  result.resultItems.some((item) => !item.optionId) &&
-                  result.resultItems.map((item) => (
-                    <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
-                  ))}
-              </Box>
+
+        {resultGroup &&
+          resultGroup.results.map((result) => {
+            return field.__typename === FieldType.Options ? (
+              <FieldOptions
+                type={
+                  [ResultGroupStatus.FinalResult, ResultGroupStatus.FinalNoResult].includes(
+                    resultGroup.status,
+                  )
+                    ? FieldOptionsDisplayType.FinalResult
+                    : FieldOptionsDisplayType.PendingResult
+                }
+                fieldOptions={field}
+                final={!!resultGroup}
+                responseSummary={responseSummary}
+                optionSelections={result.resultItems}
+                onlyShowSelections={false}
+              />
+            ) : (
+              result.resultItems.map((item) => (
+                <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
+              ))
             );
           })}
-        {(!resultGroup || resultGroup.status === ResultGroupStatus.NotStarted) &&
-          field &&
-          field.__typename === FieldType.Options &&
-          displayFieldOptionsIfNoResult && (
-            <FieldOptions
-              fieldOptions={field}
-              final={!!resultGroup}
-              onlyShowSelections={onlyShowSelections}
-            />
-          )}
+        {!resultGroup && field.__typename === FieldType.Options && (
+          <FieldOptions
+            type={FieldOptionsDisplayType.Options}
+            fieldOptions={field}
+            final={!!resultGroup}
+            responseSummary={responseSummary}
+            onlyShowSelections={false}
+          />
+        )}
       </Box>
     </LabeledGroupedInputs>
   );

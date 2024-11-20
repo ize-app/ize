@@ -20,7 +20,7 @@ export const getResultConfigName = ({
         case DecisionType.PercentageThreshold:
           return "Majority vote";
         case DecisionType.WeightedAverage:
-          return "Prioritize options";
+          return "Rank vote";
         default:
           return "Decision";
       }
