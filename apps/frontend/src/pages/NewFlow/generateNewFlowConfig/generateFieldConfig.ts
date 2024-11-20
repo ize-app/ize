@@ -3,7 +3,12 @@ import {
   FieldSchemaType,
   TriggerDefinedOptionsSchemaType,
 } from "@/components/Form/FlowForm/formValidation/fields";
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import {
+  DecisionType,
+  FieldDataType,
+  FieldOptionsSelectionType,
+  FieldType,
+} from "@/graphql/generated/graphql";
 
 // Define a union type for all possible arguments with a discriminant 'type' field
 type FieldArg =
@@ -14,6 +19,7 @@ type FieldArg =
       linkedResultId: string | undefined | null;
       triggerDefinedOptions: TriggerDefinedOptionsSchemaType;
       selectionType: FieldOptionsSelectionType;
+      decisionType?: DecisionType;
     }
   | { type: FieldType.FreeInput; question: string };
 
@@ -31,11 +37,13 @@ export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
       return {
         type: FieldType.Options,
         ...base,
+        isInternal: arg.decisionType === DecisionType.Ai,
         optionsConfig: {
           previousStepOptions: !!arg.linkedResultId,
           triggerDefinedOptions: arg.triggerDefinedOptions,
           selectionType: arg.selectionType,
           maxSelections: null,
+
           options: arg.options,
           linkedResultOptions: arg.linkedResultId ? [{ id: arg.linkedResultId }] : [],
         },

@@ -1,7 +1,7 @@
 import { Box, SvgIcon, Typography } from "@mui/material";
 
 import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
-import { FieldOptions, FieldOptionsDisplayType } from "@/components/Field/FieldOptions";
+import { FieldOptions } from "@/components/Field/FieldOptions";
 import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
 import {
   FieldFragment,
@@ -10,11 +10,27 @@ import {
   ResultConfigFragment,
   ResultGroupFragment,
   ResultGroupStatus,
+  ResultType,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { ResultHeader } from "../ResultName";
+
+const getResultGroupLabel = ({ name, status }: { name: string; status: ResultGroupStatus }) => {
+  if ([ResultGroupStatus.FinalResult].includes(status)) return name;
+  else if ([ResultGroupStatus.FinalNoResult, ResultGroupStatus.Error].includes(status))
+    return `No result: ${name}`;
+  else if (
+    [
+      ResultGroupStatus.Attempting,
+      ResultGroupStatus.NotStarted,
+      ResultGroupStatus.Preliminary,
+    ].includes(status)
+  )
+    return `Pending: ${name}`;
+  else return name;
+};
 
 export const Result = ({
   field,
@@ -92,30 +108,34 @@ export const Result = ({
 
         {resultGroup &&
           resultGroup.results.map((result) => {
-            return field.__typename === FieldType.Options ? (
-              <FieldOptions
-                type={
-                  [ResultGroupStatus.FinalResult, ResultGroupStatus.FinalNoResult].includes(
-                    resultGroup.status,
-                  )
-                    ? FieldOptionsDisplayType.FinalResult
-                    : FieldOptionsDisplayType.PendingResult
-                }
-                fieldOptions={field}
-                final={!!resultGroup}
-                responseSummary={responseSummary}
-                optionSelections={result.resultItems}
-                onlyShowSelections={false}
-              />
+            return result.type !== ResultType.LlmSummary &&
+              field.__typename === FieldType.Options ? (
+              <LabeledGroupedInputs
+                sx={{ backgroundColor: "white" }}
+                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+              >
+                <FieldOptions
+                  fieldOptions={field}
+                  final={!!resultGroup}
+                  responseSummary={responseSummary}
+                  optionSelections={result.resultItems}
+                  onlyShowSelections={false}
+                />
+              </LabeledGroupedInputs>
             ) : (
               result.resultItems.map((item) => (
-                <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
+                <LabeledGroupedInputs
+                  key={item.id}
+                  sx={{ backgroundColor: "white" }}
+                  label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+                >
+                  <AnswerFreeInput answer={item.value} dataType={item.dataType} />
+                </LabeledGroupedInputs>
               ))
             );
           })}
         {!resultGroup && field.__typename === FieldType.Options && (
           <FieldOptions
-            type={FieldOptionsDisplayType.Options}
             fieldOptions={field}
             final={!!resultGroup}
             responseSummary={responseSummary}

@@ -16,7 +16,6 @@ import muiTheme from "@/style/muiTheme";
 
 import { FieldOption } from "./FieldOption";
 import { formatDataTypeName } from "./formatDataTypeName";
-import { LabeledGroupedInputs } from "../Form/formLayout/LabeledGroupedInputs";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
   return `Options created via previous result: "${linkedResult.resultName} (${linkedResult.fieldName})"`;
@@ -25,29 +24,13 @@ const linkedResultDescription = (linkedResult: LinkedResult) => {
 // renders only the full list of options for a field and option selections, if they are provided
 // if final, displays the final list of options. if not final, displays how additional options are created during a request
 
-export enum FieldOptionsDisplayType {
-  FinalResult = "FinalResult",
-  PendingResult = "PendingResult",
-  Options = "Options",
-  Answer = "Answer",
-}
-
-const optionsLabel: { [key in FieldOptionsDisplayType]: string } = {
-  [FieldOptionsDisplayType.FinalResult]: "Final result",
-  [FieldOptionsDisplayType.PendingResult]: "Pending result: Still collecting responses",
-  [FieldOptionsDisplayType.Options]: "Options",
-  [FieldOptionsDisplayType.Answer]: "",
-};
-
 export const FieldOptions = ({
-  type,
   fieldOptions,
   optionSelections,
   onlyShowSelections = false,
   final,
   responseSummary,
 }: {
-  type: FieldOptionsDisplayType;
   fieldOptions: Options;
   optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
   onlyShowSelections?: boolean;
@@ -96,8 +79,7 @@ export const FieldOptions = ({
       else return 0;
     });
   return (
-    <LabeledGroupedInputs label={optionsLabel[type]} sx={{ backgroundColor: "white" }}>
-      {/* <FieldOptionsContainer> */}
+    <>
       {hydratedOptions.map((o, index) => {
         return (
           <FieldOption
@@ -132,7 +114,6 @@ export const FieldOptions = ({
             </Box>
           );
         })}
-      {/* </FieldOptionsContainer> */}
-    </LabeledGroupedInputs>
+    </>
   );
 };

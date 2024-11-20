@@ -4,7 +4,8 @@ import Typography from "@mui/material/Typography";
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
 import { Answer } from "./Answer";
-import { FieldOptions, FieldOptionsDisplayType } from "./FieldOptions";
+import { FieldOptions } from "./FieldOptions";
+import { LabeledGroupedInputs } from "../Form/formLayout/LabeledGroupedInputs";
 
 // renders name of the field and answer, if it exists.
 // option fields show all options
@@ -47,13 +48,14 @@ export const Field = ({
               )
             </span> */}
           </Typography>
-          <FieldOptions
-            type={FieldOptionsDisplayType.Options}
-            onlyShowSelections={onlyShowSelections}
-            fieldOptions={field}
-            optionSelections={optionSelections}
-            final={!!optionSelections} // TODO: revisit this
-          />
+          <LabeledGroupedInputs label="Options" sx={{ backgroundColor: "white" }}>
+            <FieldOptions
+              onlyShowSelections={onlyShowSelections}
+              fieldOptions={field}
+              optionSelections={optionSelections}
+              final={!!optionSelections} // TODO: revisit this
+            />
+          </LabeledGroupedInputs>
         </Box>
       );
     }

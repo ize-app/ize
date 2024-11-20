@@ -1,4 +1,10 @@
-import { FieldDataType, Result, ResultGroup, ResultItem } from "@/graphql/generated/resolver-types";
+import {
+  FieldDataType,
+  Result,
+  ResultGroup,
+  ResultItem,
+  ResultType,
+} from "@/graphql/generated/resolver-types";
 
 import { resultGroupStatusResolver } from "./resultGroupStatusResolver";
 import { ResultGroupPrismaType } from "../resultPrismaTypes";
@@ -27,6 +33,7 @@ export const resultGroupResolver = ({
     results: resultGroup.Result.map(
       (result): Result => ({
         name: result.name,
+        type: result.type as ResultType,
         resultItems: result.ResultItems.map(
           (resultItem): ResultItem => ({
             id: resultItem.id,

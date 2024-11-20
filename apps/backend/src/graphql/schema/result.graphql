@@ -18,6 +18,7 @@ type ResultGroup {
 
 type Result {
   name: String!
+  type: ResultType!
   resultItems: [ResultItem!]!
 }
 

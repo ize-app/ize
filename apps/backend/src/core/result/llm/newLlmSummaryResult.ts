@@ -46,6 +46,7 @@ export const newLlmSummaryResult = async ({
 
     llmResultArgs = {
       name: "LLM Summary",
+      type: ResultType.LlmSummary,
       ResultItems: {
         createMany: {
           data: res.map((value) => ({

@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
-import { FieldOptions, FieldOptionsDisplayType } from "@/components/Field/FieldOptions";
+import { FieldOptions } from "@/components/Field/FieldOptions";
+import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
 import { FieldType, ResultConfigFragment } from "@/graphql/generated/graphql";
 
 import { createResultConfigDescription } from "../createResultConfigDescription";
@@ -20,7 +21,9 @@ export const ResultConfig = ({
       <Typography color="primary">{field?.name}</Typography>
       {createResultConfigDescription({ resultConfig, minResponses })}
       {field && field.__typename === FieldType.Options && (
-        <FieldOptions type={FieldOptionsDisplayType.Options} fieldOptions={field} final={false} />
+        <LabeledGroupedInputs label="Options" sx={{ backgroundColor: "white" }}>
+          <FieldOptions fieldOptions={field} final={false} />
+        </LabeledGroupedInputs>
       )}
     </Box>
   );

@@ -882,8 +882,9 @@ model ResultGroup {
 }
 
 model Result {
-  id            String @id @default(uuid()) @db.Uuid
-  resultGroupId String @map("result_group_id") @db.Uuid
+  id            String     @id @default(uuid()) @db.Uuid
+  resultGroupId String     @map("result_group_id") @db.Uuid
+  type          ResultType @map("result_type")
   name          String
 
   // 0 index is primary result

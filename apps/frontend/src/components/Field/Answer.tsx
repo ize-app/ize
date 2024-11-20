@@ -3,9 +3,10 @@ import { Typography } from "@mui/material";
 import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
 
 import { AnswerFreeInput } from "./AnswerFreeInput";
-import { FieldOptions, FieldOptionsDisplayType } from "./FieldOptions";
+import { FieldOptions } from "./FieldOptions";
 import { EntityList } from "../EntityList";
 import { FlowsList } from "../FlowsList";
+import { LabeledGroupedInputs } from "../Form/formLayout/LabeledGroupedInputs";
 
 export const Answer = ({
   field,
@@ -36,13 +37,14 @@ export const Answer = ({
       if (fieldAnswer.__typename !== "OptionFieldAnswer") return null;
 
       return (
-        <FieldOptions
-          type={FieldOptionsDisplayType.Answer}
-          fieldOptions={field}
-          optionSelections={fieldAnswer.selections}
-          final={true}
-          onlyShowSelections={true}
-        />
+        <LabeledGroupedInputs sx={{ backgroundColor: "white" }}>
+          <FieldOptions
+            fieldOptions={field}
+            optionSelections={fieldAnswer.selections}
+            final={true}
+            onlyShowSelections={true}
+          />
+        </LabeledGroupedInputs>
       );
     }
   }

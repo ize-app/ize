@@ -44,7 +44,7 @@ export const newRankingResult = async ({
     });
     rankResultArgs = {
       name: "Ranking",
-
+      type: ResultType.Ranking,
       ResultItems: {
         createMany: {
           data: rankFieldOptions

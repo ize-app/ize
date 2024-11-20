@@ -79,6 +79,7 @@ export const generateNewFlowConfig = ({
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
+          decisionType: config.decisionType,
         });
 
         flowTitle = config.question;

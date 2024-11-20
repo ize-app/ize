@@ -52,6 +52,7 @@ export const newDecisionResult = async ({
       name: "Decision",
       // if decisionFieldOption is null, the decision was not made but we still
       // need to make a result record of no decision
+      type: ResultType.Decision,
       ResultItems: decisionFieldOption
         ? {
             create: {
@@ -66,6 +67,7 @@ export const newDecisionResult = async ({
     decisionExplainationResultArgs = decisionExplanation
       ? {
           name: "Explanation of AI decision",
+          type: ResultType.LlmSummary,
           ResultItems: {
             create: {
               dataType: FieldDataType.String,

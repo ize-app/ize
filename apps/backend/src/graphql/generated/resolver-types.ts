@@ -1017,6 +1017,7 @@ export type Result = {
   __typename?: 'Result';
   name: Scalars['String']['output'];
   resultItems: Array<ResultItem>;
+  type: ResultType;
 };
 
 export type ResultArgs = {
@@ -2059,6 +2060,7 @@ export type ResponseFieldAnswersSummaryResolvers<ContextType = GraphqlRequestCon
 export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ResultType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
