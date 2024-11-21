@@ -59,8 +59,8 @@ export const groupWatchFlow = async ({
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  if (flowsToWatch && flowsToWatch.AnswerFreeInput[0].value) {
-    const flowIds: string[] = JSON.parse(flowsToWatch?.AnswerFreeInput[0].value) as string[];
+  if (flowsToWatch && flowsToWatch.AnswerFreeInput?.value) {
+    const flowIds: string[] = JSON.parse(flowsToWatch.AnswerFreeInput.value) as string[];
     await transaction.groupsWatchedFlows.createMany({
       data: flowIds.map((flowId) => ({
         groupId,
@@ -70,8 +70,8 @@ export const groupWatchFlow = async ({
     });
   }
 
-  if (flowsToStopWatching && flowsToStopWatching.AnswerFreeInput[0].value) {
-    const flowIds: string[] = JSON.parse(flowsToStopWatching?.AnswerFreeInput[0].value) as string[];
+  if (flowsToStopWatching && flowsToStopWatching.AnswerFreeInput?.value) {
+    const flowIds: string[] = JSON.parse(flowsToStopWatching.AnswerFreeInput.value) as string[];
     await transaction.groupsWatchedFlows.deleteMany({
       where: {
         groupId,

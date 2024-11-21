@@ -1,3 +1,5 @@
+import { FieldDataType } from "@prisma/client";
+
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
 import { ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -34,7 +36,7 @@ export const newRawAnswersResult = ({
       );
 
     // only free input answers can be part of a raw result
-    const answers = fieldAnswers.filter((value) => value.AnswerFreeInput.length > 0);
+    const answers = fieldAnswers.filter((value) => value.AnswerFreeInput);
 
     rawAnswersArgs = {
       name: "Raw answers",
@@ -42,9 +44,8 @@ export const newRawAnswersResult = ({
       ResultItems: {
         createMany: {
           data: answers.map((answer) => ({
-            /// TODO will fix this once I rationalize answer type
-            dataType: answer.AnswerFreeInput[0].dataType,
-            value: answer.AnswerFreeInput[0].value,
+            dataType: answer.AnswerFreeInput?.dataType as FieldDataType,
+            value: answer.AnswerFreeInput?.value as string,
           })),
         },
       },

@@ -67,7 +67,7 @@ export const evolveGroup = async ({
 
   /// validate members and create entity set for members ///
 
-  if (!members) {
+  if (!members || !members.AnswerFreeInput) {
     throw new GraphQLError(
       `Cannot find members field for evolveGroup, request step ${requestStepId}`,
       {
@@ -76,7 +76,7 @@ export const evolveGroup = async ({
     );
   }
 
-  const entityIds = JSON.parse(members.AnswerFreeInput[0].value) as string[];
+  const entityIds = JSON.parse(members.AnswerFreeInput.value) as string[];
 
   await checkEntitiesForCustomGroups({
     entityIds: entityIds,
@@ -95,8 +95,8 @@ export const evolveGroup = async ({
       id: customGroupId,
     },
     data: {
-      name: name?.AnswerFreeInput[0].value ?? "",
-      description: description?.AnswerFreeInput[0].value ?? "",
+      name: name?.AnswerFreeInput?.value ?? "",
+      description: description?.AnswerFreeInput?.value ?? "",
       entitySetId: entitySetId,
     },
   });

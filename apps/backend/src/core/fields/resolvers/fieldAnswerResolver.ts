@@ -28,8 +28,16 @@ export const fieldAnswerResolver = async ({
   const userIdentityIds = context.currentUser?.Identities.map((id) => id.id);
   switch (fieldAnswer.type) {
     case FieldType.FreeInput: {
-      if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.EntityIds) {
-        const entityIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
+      const freeInputAnswer = fieldAnswer.AnswerFreeInput;
+      if (!freeInputAnswer)
+        throw new GraphQLError("Missing field answer", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
+
+      const { value, dataType } = freeInputAnswer;
+
+      if (dataType === FieldDataType.EntityIds) {
+        const entityIds = JSON.parse(value) as string[];
         const entities = await prisma.entity.findMany({
           include: entityInclude,
           where: { id: { in: entityIds } },
@@ -40,9 +48,9 @@ export const fieldAnswerResolver = async ({
           entities: entities.map((entity) => entityResolver({ entity, userIdentityIds })),
         };
         return entityAnswer;
-      } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.FlowIds) {
+      } else if (dataType === FieldDataType.FlowIds) {
         const userEntityIds = getUserEntityIds(context.currentUser);
-        const flowIds = JSON.parse(fieldAnswer.AnswerFreeInput[0].value) as string[];
+        const flowIds = JSON.parse(value) as string[];
         const flows = await prisma.flow.findMany({
           include: createFlowSummaryInclude(userEntityIds),
           where: { id: { in: flowIds } },
@@ -60,15 +68,15 @@ export const fieldAnswerResolver = async ({
             )
             .map((f) => ({ flowId: f.flowId, flowName: f.name })),
         };
-      } else if (fieldAnswer.AnswerFreeInput[0].dataType === FieldDataType.Webhook) {
-        if (fieldAnswer.AnswerFreeInput[0].value === "None") {
+      } else if (dataType === FieldDataType.Webhook) {
+        if (value === "None") {
           return {
             __typename: "WebhookFieldAnswer",
             uri: "",
           };
         }
         const webhook = await prisma.webhook.findFirst({
-          where: { id: fieldAnswer.AnswerFreeInput[0].value },
+          where: { id: value },
         });
         return {
           __typename: "WebhookFieldAnswer",
@@ -77,7 +85,7 @@ export const fieldAnswerResolver = async ({
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",
-          value: fieldAnswer.AnswerFreeInput[0].value,
+          value,
         };
         return freeInputAnswer;
       }

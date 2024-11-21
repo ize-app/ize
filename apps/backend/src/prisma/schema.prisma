@@ -593,7 +593,7 @@ model FieldAnswer {
   Response               Response?               @relation(fields: [responseId], references: [id], onDelete: Cascade)
   Request                Request?                @relation(fields: [requestId], references: [id], onDelete: Cascade)
   AnswerOptionSelections AnswerOptionSelection[]
-  AnswerFreeInput        AnswerFreeInput[]
+  AnswerFreeInput        AnswerFreeInput?
 
   @@map("answers")
 }
@@ -617,7 +617,7 @@ model AnswerOptionSelection {
 model AnswerFreeInput {
   id            String        @id @default(uuid()) @db.Uuid
   dataType      FieldDataType @map("data_type")
-  fieldAnswerId String        @map("field_answer_id") @db.Uuid
+  fieldAnswerId String        @unique @map("field_answer_id") @db.Uuid
   value         String
   createdAt     DateTime      @default(now()) @map("created_at")
 

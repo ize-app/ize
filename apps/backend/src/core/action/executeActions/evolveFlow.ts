@@ -30,7 +30,7 @@ export const evolveFlow = async ({
     return fieldAnswer.Field.systemType === SystemFieldType.EvolveFlowProposed;
   });
 
-  if (!proposedFlowField)
+  if (!proposedFlowField || !proposedFlowField.AnswerFreeInput)
     throw new GraphQLError(`Cannot find proposed flow version for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
@@ -49,7 +49,7 @@ export const evolveFlow = async ({
   // make proposed the current_flow_version_id and switch it's status to draft = false
 
   const proposedFlowVersion = await transaction.flowVersion.findFirstOrThrow({
-    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    where: { id: proposedFlowField.AnswerFreeInput.value },
     include: {
       Flow: {
         include: {
@@ -69,7 +69,7 @@ export const evolveFlow = async ({
     );
 
   await transaction.flowVersion.update({
-    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    where: { id: proposedFlowField.AnswerFreeInput.value },
     data: {
       active: true,
       publishedAt: new Date(),
