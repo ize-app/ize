@@ -279,8 +279,7 @@ export const Flow = () => {
             </>
           )}
         </Box>
-        {/* <ConfigDiagramFlow flow={flow} /> */}
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}
@@ -288,7 +287,6 @@ export const Flow = () => {
               setTabIndex(newValue);
             }}
           />
-
           {tabs.map((tab: TabProps, index) => (
             <TabPanel value={currentTabIndex} index={index} key={index}>
               {tab.content}

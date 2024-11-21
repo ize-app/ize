@@ -234,7 +234,7 @@ export const Request = () => {
           </Box>
         </Box>
 
-        <Box sx={{ marginTop: "24px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", marginTop: "24px" }}>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}
