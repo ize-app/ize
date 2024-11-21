@@ -36,62 +36,61 @@ export const executeAction = async ({
   try {
     const maxActionRetries = 10;
     // const nextRequestStepId: string | null = null;
-
-    return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
-      const reqStep = await transaction.requestStep.findFirstOrThrow({
-        where: {
-          id: requestStepId,
+    const reqStep = await prisma.requestStep.findFirstOrThrow({
+      where: {
+        id: requestStepId,
+      },
+      include: {
+        Step: {
+          include: stepInclude,
         },
-        include: {
-          Step: {
-            include: stepInclude,
-          },
-          ResultGroups: {
-            include: resultGroupInclude,
-          },
-          ActionExecution: true,
+        ResultGroups: {
+          include: resultGroupInclude,
         },
-      });
+        ActionExecution: true,
+      },
+    });
 
-      const action = reqStep.Step.Action;
+    const action = reqStep.Step.Action;
 
-      if (!action) {
-        await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
+    if (!action) {
+      await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });
+      return defaultReturn;
+    }
+
+    // if the action filter isn't passed, end the request step and request
+    if (action.filterOptionId) {
+      let passesFilter = false;
+      for (const result of reqStep.ResultGroups) {
+        const primaryResults = result.Result.filter((r) => r.index === 0);
+        if (
+          primaryResults.some((res) =>
+            res.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId),
+          )
+        ) {
+          passesFilter = true;
+          break;
+        }
+      }
+      if (!passesFilter) {
+        // end request step without taking an action
+        await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });
+        return defaultReturn;
+      }
+    }
+
+    const actionExecution = reqStep.ActionExecution.find((a) => a.actionId === action.id);
+
+    if (actionExecution) {
+      // this should never evaluate to true, but just in case so action doesn't run again
+      if (actionExecution.complete) {
+        await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });
         return defaultReturn;
       }
 
-      // if the action filter isn't passed, end the request step and request
-      if (action.filterOptionId) {
-        let passesFilter = false;
-        for (const result of reqStep.ResultGroups) {
-          const primaryResults = result.Result.filter((r) => r.index === 0);
-          if (
-            primaryResults.some((res) =>
-              res.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId),
-            )
-          ) {
-            passesFilter = true;
-            break;
-          }
-        }
-        if (!passesFilter) {
-          // end request step without taking an action
-          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
-          return defaultReturn;
-        }
-      }
-
-      const actionExecution = reqStep.ActionExecution.find((a) => a.actionId === action.id);
-
-      if (actionExecution) {
-        // this should never evaluate to true, but just in case so action doesn't run again
-        if (actionExecution.complete) {
-          await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
-          return defaultReturn;
-        }
-
-        // if the action has been attempted too many times, mark it as final
-        if ((actionExecution?.retryAttempts ?? 0) > maxActionRetries) {
+      // if the action has been attempted too many times, mark it as final
+      if ((actionExecution?.retryAttempts ?? 0) > maxActionRetries) {
+        return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
           await prisma.actionExecution.update({
             where: {
               actionId_requestStepId: {
@@ -106,15 +105,17 @@ export const executeAction = async ({
 
           await finalizeActionAndRequest({ requestStepId, transaction, finalizeRequest: true });
           return defaultReturn;
-        }
-
-        // check if action is ready to be retried again, if not return existing incomplete result
-        if (actionExecution.nextRetryAt && actionExecution.nextRetryAt > new Date()) {
-          return defaultReturn;
-        }
+        });
       }
 
-      try {
+      // check if action is ready to be retried again, if not return existing incomplete result
+      if (actionExecution.nextRetryAt && actionExecution.nextRetryAt > new Date()) {
+        return defaultReturn;
+      }
+    }
+
+    try {
+      return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
         let nextRequestStepId: string | null = null;
         let runResultsForNextStep = false;
         switch (action.type) {
@@ -177,33 +178,33 @@ export const executeAction = async ({
           nextRequestStepId,
           responseComplete: runResultsForNextStep,
         } as ExecuteActionReturn;
-      } catch (e) {
-        const retryAttempts = actionExecution?.retryAttempts ?? 1;
-        const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
-        await transaction.actionExecution.upsert({
-          where: {
-            actionId_requestStepId: {
-              actionId: action.id,
-              requestStepId: requestStepId,
-            },
-          },
-          create: {
+      });
+    } catch (e) {
+      const retryAttempts = actionExecution?.retryAttempts ?? 1;
+      const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
+      await prisma.actionExecution.upsert({
+        where: {
+          actionId_requestStepId: {
             actionId: action.id,
-            requestStepId,
-            complete: false,
-            lastAttemptedAt: new Date(),
-            nextRetryAt,
-            retryAttempts,
+            requestStepId: requestStepId,
           },
-          update: {
-            lastAttemptedAt: new Date(),
-            retryAttempts,
-            nextRetryAt,
-          },
-        });
-        return defaultReturn;
-      }
-    });
+        },
+        create: {
+          actionId: action.id,
+          requestStepId,
+          complete: false,
+          lastAttemptedAt: new Date(),
+          nextRetryAt,
+          retryAttempts,
+        },
+        update: {
+          lastAttemptedAt: new Date(),
+          retryAttempts,
+          nextRetryAt,
+        },
+      });
+      return defaultReturn;
+    }
   } catch (error) {
     console.error("Error in executeAction:", error);
     return defaultReturn;

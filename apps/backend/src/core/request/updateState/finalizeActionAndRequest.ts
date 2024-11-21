@@ -1,13 +1,15 @@
 import { Prisma } from "@prisma/client";
 
+import { prisma } from "@/prisma/client";
+
 export const finalizeActionAndRequest = async ({
   requestStepId,
-  transaction,
+  transaction = prisma,
   finalizeRequest,
 }: {
   requestStepId: string;
 
-  transaction: Prisma.TransactionClient;
+  transaction?: Prisma.TransactionClient;
   finalizeRequest: boolean;
 }) => {
   await transaction.requestStep.update({

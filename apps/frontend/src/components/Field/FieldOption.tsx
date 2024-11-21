@@ -1,4 +1,4 @@
-import { Box, SxProps, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import {
   FieldDataType,
@@ -19,7 +19,6 @@ export const FieldOption = ({
   final,
   optionResponseSummary,
   totalResponses,
-  sx = {},
 }: {
   isSelected?: boolean;
   value: string;
@@ -29,7 +28,6 @@ export const FieldOption = ({
   final: boolean;
   optionResponseSummary?: ResponseFieldAnswersOptionsSummaryFragment | null | undefined;
   totalResponses?: number;
-  sx?: SxProps;
 }) => {
   const votes = optionResponseSummary?.count || 0;
   const percentage =
@@ -39,15 +37,16 @@ export const FieldOption = ({
   const avgRank = optionResponseSummary?.rank || 0;
   return (
     <Box
-      sx={{
+      component={"li"}
+      sx={(theme) => ({
         display: "flex",
         flexDirection: "column",
         backgroundColor: isSelected ? "#ffffe6" : "inherit",
-        ...sx,
         border:
-          isSelected && selectionType !== FieldOptionsSelectionType.Rank ? "1px solid" : "none",
-      }}
-      component={"li"}
+          isSelected && selectionType !== FieldOptionsSelectionType.Rank
+            ? `1px solid ${theme.palette.primary.main}`
+            : "none",
+      })}
     >
       <Box sx={{ padding: "6px 6px 2px", display: "flex", justifyContent: "space-between" }}>
         <Box
