@@ -21,7 +21,7 @@ export const ConfigStepPanel = ({ step }: { step: StepFragment }) => {
       </PanelHeader>
       <ConfigurationPanel>
         <RespondPermissionPanel step={step} />
-        <PanelAccordion title="Collaborations 👀" hasError={false}>
+        <PanelAccordion title="Results" hasError={false}>
           <ResultConfigs step={step} />
         </PanelAccordion>
       </ConfigurationPanel>
