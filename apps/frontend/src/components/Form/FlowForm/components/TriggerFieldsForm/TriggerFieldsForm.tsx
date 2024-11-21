@@ -7,6 +7,7 @@ import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
 import { FieldForm } from "./FieldForm";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
+import { defaultFreeInputDefaultOptions } from "../../helpers/defaultFreeInputDataTypeOptions";
 
 export const triggerFieldSetPath = `fieldSet`;
 export const triggerFieldsPath = `${triggerFieldSetPath}.fields`;
@@ -27,13 +28,7 @@ export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType)
   } else if (freeInputDataType === FieldDataType.Webhook) {
     return [{ name: "Webhook", value: FieldDataType.Webhook }];
   } else
-    return [
-      { name: "Text", value: FieldDataType.String },
-      { name: "Number", value: FieldDataType.Number },
-      { name: "Url", value: FieldDataType.Uri },
-      { name: "Date Time", value: FieldDataType.DateTime },
-      { name: "Date", value: FieldDataType.Date },
-    ];
+    return defaultFreeInputDefaultOptions;
 };
 
 export const TriggerFieldsForm = () => {

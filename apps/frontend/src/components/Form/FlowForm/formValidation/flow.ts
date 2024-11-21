@@ -65,30 +65,6 @@ const stepSchema = z
       }
     });
   })
-  // check if linked result options are valid
-  .superRefine((step, ctx) => {
-    step.fieldSet.fields.forEach((field, fieldIndex) => {
-      if (field.type === FieldType.Options && field.optionsConfig.linkedResultOptions.length > 0) {
-        field.optionsConfig.linkedResultOptions.forEach((linkedResultOption, linkedResultIndex) => {
-          if (!step.result.find((r) => r.resultId === linkedResultOption.id)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: "Linked result not found",
-              path: [
-                "fieldSet",
-                "fields",
-                fieldIndex,
-                "optionsConfig",
-                "linkedResultOptions",
-                linkedResultIndex,
-                "id",
-              ],
-            });
-          }
-        });
-      }
-    });
-  })
   .refine(
     (step) => {
       if (step.response && step.fieldSet.fields.length === 0) return false;
@@ -118,7 +94,47 @@ export const flowSchema = z
       } else return true;
     },
     { message: "There must be at least one collaborative step or action", path: ["steps"] },
-  );
+  ) // check if linked result options are valid
+  .superRefine((flow, ctx) => {
+    flow.steps.forEach((step, stepIndex) => {
+      step.fieldSet.fields.forEach((field, fieldIndex) => {
+        if (
+          field.type === FieldType.Options &&
+          field.optionsConfig.linkedResultOptions.length > 0
+        ) {
+          console.log("evaluating linked result options", field.optionsConfig.linkedResultOptions);
+          field.optionsConfig.linkedResultOptions.forEach(
+            (linkedResultOption, linkedResultIndex) => {
+              let hasMatch = false;
+              for (const s of flow.steps) {
+                if (s.result.find((r) => r.resultId === linkedResultOption.id)) {
+                  hasMatch = true;
+                  break;
+                }
+              }
+              if (!hasMatch) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: "Linked result not found",
+                  path: [
+                    "steps",
+                    stepIndex,
+                    "fieldSet",
+                    "fields",
+                    fieldIndex,
+                    "optionsConfig",
+                    "linkedResultOptions",
+                    linkedResultIndex,
+                    "id",
+                  ],
+                });
+              }
+            },
+          );
+        }
+      });
+    });
+  });
 
 export const reusableSchema = z.object({
   reusable: z.boolean(),

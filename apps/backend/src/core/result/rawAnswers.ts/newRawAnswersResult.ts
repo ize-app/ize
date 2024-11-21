@@ -1,23 +1,23 @@
-import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
-import { generateAiSummary } from "@/openai/generateAiSummary";
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
+import { ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { NewResultArgs } from "../newResults/newResult";
 import { ResultConfigPrismaType } from "../resultPrismaTypes";
 
-export const newLlmSummaryResult = async ({
+export const newRawAnswersResult = ({
   resultConfig,
   requestStepId,
+  fieldAnswers,
 }: {
   resultConfig: ResultConfigPrismaType;
   requestStepId: string;
-}): Promise<NewResultArgs[] | null> => {
-  const llmConfig = resultConfig.ResultConfigLlm;
-  let llmResultArgs: NewResultArgs | undefined;
+  fieldAnswers: FieldAnswerPrismaType[];
+}): NewResultArgs[] | null => {
+  let rawAnswersArgs: NewResultArgs | undefined;
 
   try {
-    if (!(resultConfig.resultType === ResultType.LlmSummary) || !llmConfig)
+    if (!(resultConfig.resultType === ResultType.RawAnswers))
       throw new GraphQLError(
         `Cannot create llm result without a llm config. resultConfigId: ${resultConfig.id}`,
         {
@@ -33,32 +33,24 @@ export const newLlmSummaryResult = async ({
         },
       );
 
-    const requestPayload = await createRequestPayload({
-      requestStepId,
-      fieldId: resultConfig.fieldId,
-    });
+    // only free input answers can be part of a raw result
+    const answers = fieldAnswers.filter((value) => value.AnswerFreeInput.length > 0);
 
-    const res = await generateAiSummary({
-      requestPayload,
-      isList: llmConfig.isList,
-      summaryPrompt: llmConfig.prompt,
-      resultConfigId: resultConfig.id,
-    });
-
-    llmResultArgs = {
-      name: "LLM Summary",
-      type: ResultType.LlmSummary,
+    rawAnswersArgs = {
+      name: "Raw answers",
+      type: ResultType.RawAnswers,
       ResultItems: {
         createMany: {
-          data: res.map((value) => ({
-            dataType: FieldDataType.String,
-            value,
+          data: answers.map((answer) => ({
+            /// TODO will fix this once I rationalize answer type
+            dataType: answer.AnswerFreeInput[0].dataType,
+            value: answer.AnswerFreeInput[0].value,
           })),
         },
       },
     };
 
-    return [llmResultArgs];
+    return [rawAnswersArgs];
   } catch (e) {
     console.error(
       `ERROR determining decision result for resultConfigId ${resultConfig.id} requestStepId ${requestStepId}`,

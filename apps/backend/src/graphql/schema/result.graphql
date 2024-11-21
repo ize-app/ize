@@ -29,7 +29,7 @@ type ResultItem {
   optionId: String
 }
 
-union ResultConfig = Decision | Ranking | LlmSummary
+union ResultConfig = Decision | Ranking | LlmSummary | RawAnswers
 
 type Decision {
   resultConfigId: String!
@@ -56,11 +56,18 @@ type LlmSummary {
   isList: Boolean!
 }
 
+type RawAnswers {
+  resultConfigId: String!
+  name: String!
+  field: Field!
+}
+
 # mirrors Prisma type
 enum ResultType {
   Decision
   Ranking
   LlmSummary
+  RawAnswers
 }
 
 # mirrors Prisma type
@@ -71,10 +78,6 @@ enum DecisionType {
   Ai
 }
 
-enum LlmSummaryType {
-  AfterEveryResponse
-  AtTheEnd
-}
 
 input ResultArgs {
   type: ResultType!

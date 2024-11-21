@@ -5,6 +5,7 @@ import {
   LlmSummary,
   Option,
   Ranking,
+  RawAnswers,
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/resolver-types";
@@ -29,6 +30,9 @@ export const resultConfigResolver = ({
       return resultConfigRankResolver({ resultConfig, field });
     case ResultType.LlmSummary:
       return resultConfigLlmResolver({ resultConfig, field });
+    case ResultType.RawAnswers: {
+      return resultRawAnswersResolver({ resultConfig, field });
+    }
     default:
       throw new GraphQLError("Invalid result type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -98,5 +102,13 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
     field,
     prompt: llmConfig.prompt,
     isList: llmConfig.isList,
+  };
+};
+const resultRawAnswersResolver = ({ resultConfig, field }: ResultConfigResolver): RawAnswers => {
+  return {
+    __typename: ResultType.RawAnswers,
+    name: getResultConfigName({ resultConfig }),
+    resultConfigId: resultConfig.id,
+    field,
   };
 };

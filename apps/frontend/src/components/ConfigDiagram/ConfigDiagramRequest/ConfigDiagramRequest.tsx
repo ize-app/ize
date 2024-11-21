@@ -62,7 +62,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
                   type={StageType.ActionFilter}
                   action={step.action}
                   status={
-                    request.requestSteps[index].actionExecution?.status ?? ActionStatus.NotStarted
+                    request.requestSteps[index]?.actionExecution?.status ?? ActionStatus.NotStarted
                   }
                   key={"actionFilter-" + step?.id}
                   id={"actionFilter" + index.toString()}

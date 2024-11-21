@@ -9,6 +9,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { newDecisionResult } from "../decision/newDecisionResult";
 import { newLlmSummaryResult } from "../llm/newLlmSummaryResult";
 import { newRankingResult } from "../ranking/newRankingResult";
+import { newRawAnswersResult } from "../rawAnswers.ts/newRawAnswersResult";
 import {
   ResultConfigPrismaType,
   ResultGroupPrismaType,
@@ -79,9 +80,15 @@ export const newResult = async ({
         newResultArgs = await newRankingResult({ resultConfig, fieldAnswers, requestStepId });
         break;
       }
-      default: {
-        throw Error("Unknown result type");
+
+      case ResultType.RawAnswers: {
+        newResultArgs = newRawAnswersResult({ resultConfig, fieldAnswers, requestStepId });
+        break;
       }
+
+      // default: {
+      //   throw Error("Unknown result type");
+      // }
     }
 
     if (!newResultArgs) throw Error("Result config did not generate a result");

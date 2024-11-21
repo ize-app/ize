@@ -29,7 +29,7 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
                 : null,
           linkedResultOptions: [],
         },
-      };
+      } as FieldSchemaType;
     }
     case FieldType.FreeInput: {
       return {
@@ -39,7 +39,7 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
         name: "",
         required: true,
         freeInputDataType: FieldDataType.String,
-      };
+      } as FieldSchemaType;
     }
   }
 };

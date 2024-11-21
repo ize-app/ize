@@ -1,4 +1,4 @@
-import { Box, FormHelperText } from "@mui/material";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import { useState } from "react";
 import { UseFieldArrayReturn, useFieldArray, useFormContext } from "react-hook-form";
 
@@ -10,9 +10,10 @@ import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
 import ResultsToggle from "./ResultsToggle";
-import { TextField } from "../../../formFields";
+import { Select, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FlowSchemaType } from "../../formValidation/flow";
+import { defaultFreeInputDefaultOptions } from "../../helpers/defaultFreeInputDataTypeOptions";
 
 const resultFieldNamePlaceholderText = (resultType: ResultType) => {
   switch (resultType) {
@@ -123,13 +124,22 @@ const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: R
         <TextField<FlowSchemaType>
           // assuming here that results to fields is 1:1 relationshp
           name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`}
-          key={"fieldName" + resultIndex.toString() + stepIndex.toString()}
           disabled={locked}
           multiline
           placeholderText={resultFieldNamePlaceholderText(resultType)}
           label={``}
           defaultValue=""
         />
+        {resultType === ResultType.RawAnswers && (
+          <Select<FlowSchemaType>
+            size={"small"}
+            disabled={locked}
+            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.freeInputDataType`}
+            selectOptions={defaultFreeInputDefaultOptions}
+            label="Free input data type"
+            defaultValue=""
+          />
+        )}
 
         {(resultType === ResultType.Decision || resultType === ResultType.Ranking) && (
           <ResponseFieldOptionsForm
@@ -175,6 +185,11 @@ const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: R
             field={resultField}
             display={resultType === ResultType.Ranking}
           />
+        )}
+        {resultType === ResultType.RawAnswers && (
+          <Typography variant="description">
+            This result is simply the list of answers from respondants
+          </Typography>
         )}
       </LabeledGroupedInputs>
 

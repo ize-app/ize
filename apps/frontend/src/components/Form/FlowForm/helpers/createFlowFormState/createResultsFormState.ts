@@ -43,6 +43,11 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
             isList: result.isList,
           },
         };
+      case ResultType.RawAnswers:
+        return {
+          type: ResultType.RawAnswers,
+          ...resultBase,
+        };
       default:
         throw Error(`Unknown result type`);
     }

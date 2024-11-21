@@ -8,12 +8,8 @@ export type DecisionSchemaType = z.infer<typeof decisionSchema>;
 
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
-export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
-
-export enum LlmSummaryType {
-  AfterEveryResponse = "AfterEveryResponse",
-  AtTheEnd = "AtTheEnd",
-}
+export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>
+export type RawAnswersResultSchemaType = z.infer<typeof rawAnswersResultSchema>;
 
 export enum ResultListCountLimit {
   None = "None",
@@ -78,28 +74,35 @@ const llmSchema = z.object({
 const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
   resultId: z.string(),
-  fieldId: z.string().nullable(),
+  fieldId: z.string(),
   decision: decisionSchema,
 });
 
 const llmResultSchema = z.object({
   type: z.literal(ResultType.LlmSummary),
   resultId: z.string(),
-  fieldId: z.string().nullable(),
+  fieldId: z.string(),
   llmSummary: llmSchema,
 });
 
 const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
   resultId: z.string(),
-  fieldId: z.string().nullable(),
+  fieldId: z.string(),
   prioritization: prioritizationSchema,
+});
+
+const rawAnswersResultSchema = z.object({
+  type: z.literal(ResultType.RawAnswers),
+  resultId: z.string(),
+  fieldId: z.string(),
 });
 
 export const resultSchema = z.discriminatedUnion("type", [
   decisionResultSchema,
   rankingResultSchema,
   llmResultSchema,
+  rawAnswersResultSchema,
 ]);
 // .refine(
 //   (result) => {

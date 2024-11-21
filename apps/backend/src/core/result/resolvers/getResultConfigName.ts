@@ -31,6 +31,8 @@ export const getResultConfigName = ({
       if (resultConfig.ResultConfigLlm?.isList) return "Summarize options w/ AI";
       else return "Summarize w/ AI";
     }
+    case ResultType.RawAnswers:
+      return "Collect raw answers";
     default:
       return "Collaborative step";
   }

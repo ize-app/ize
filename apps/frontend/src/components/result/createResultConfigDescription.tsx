@@ -103,6 +103,14 @@ export const createResultConfigDescription = ({
         </Box>
       );
     }
+    case ResultType.RawAnswers: {
+      return (
+        <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
+          Result is simply the answers to this question.{" "}
+          {minAnswersDescription(minResponses, ResultType.Decision)}
+        </Typography>
+      );
+    }
     default: {
       throw Error("Unknown result type");
     }

@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import {
   FieldFragment,
   RequestFragment,
+  RequestStepFragment,
   ResponseFieldAnswersSummary,
   ResultConfigFragment,
   ResultGroupFragment,
@@ -24,7 +25,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
 
   request.flow.steps.forEach((step, stepIndex) => {
     step.result.forEach((resultConfig) => {
-      const reqStep = request.requestSteps[stepIndex];
+      const reqStep: RequestStepFragment | null = request.requestSteps[stepIndex];
       const resultGroup =
         reqStep?.results.find((result) => result.resultConfigId === resultConfig.resultConfigId) ??
         null;
@@ -34,7 +35,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         resultConfig.field;
 
       const responseSummary =
-        reqStep.responseFieldAnswers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
+        reqStep?.responseFieldAnswers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
           ?.summary ?? null;
 
       if (!field) throw Error("Missing field for resultConfig");

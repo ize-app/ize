@@ -89,6 +89,7 @@ export const FieldOptions = ({
             dataType={o.option.dataType}
             selectionType={fieldOptions.selectionType}
             totalResponses={totalResponses}
+            
             optionResponseSummary={o.optionSummary}
             index={index}
             isSelected={o.isSelected && !onlyShowSelections}

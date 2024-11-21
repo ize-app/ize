@@ -123,24 +123,25 @@ export const Result = ({
                 />
               </LabeledGroupedInputs>
             ) : (
-              result.resultItems.map((item) => (
-                <LabeledGroupedInputs
-                  key={item.id}
-                  sx={{ backgroundColor: "white" }}
-                  label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
-                >
-                  <AnswerFreeInput answer={item.value} dataType={item.dataType} />
-                </LabeledGroupedInputs>
-              ))
+              <LabeledGroupedInputs
+                sx={{ backgroundColor: "white" }}
+                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+              >
+                {result.resultItems.map((item) => (
+                  <AnswerFreeInput key={item.id} answer={item.value} dataType={item.dataType} />
+                ))}
+              </LabeledGroupedInputs>
             );
           })}
         {!resultGroup && field.__typename === FieldType.Options && (
-          <FieldOptions
-            fieldOptions={field}
-            final={!!resultGroup}
-            responseSummary={responseSummary}
-            onlyShowSelections={false}
-          />
+          <LabeledGroupedInputs sx={{ backgroundColor: "white" }} label={"Options"}>
+            <FieldOptions
+              fieldOptions={field}
+              final={!!resultGroup}
+              responseSummary={responseSummary}
+              onlyShowSelections={false}
+            />
+          </LabeledGroupedInputs>
         )}
       </Box>
     </LabeledGroupedInputs>

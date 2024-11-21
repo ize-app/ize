@@ -76,7 +76,9 @@ export const FieldOption = ({
           </Typography>
         )}
       </Box>
-      {!!percentage && <OptionResponseSummary percentage={percentage} />}
+      {!!percentage && (totalResponses ?? 0) > 1 && (
+        <OptionResponseSummary percentage={percentage} />
+      )}
     </Box>
   );
 };

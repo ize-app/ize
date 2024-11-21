@@ -1,6 +1,12 @@
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
-import { ResultSchemaType } from "../../formValidation/result";
+import {
+  DecisionResultSchemaType,
+  LlmSummaryResultSchemaType,
+  RankingResultSchemaType,
+  RawAnswersResultSchemaType,
+  ResultSchemaType,
+} from "../../formValidation/result";
 
 interface DefaultResultStateProps {
   resultType: ResultType;
@@ -26,7 +32,7 @@ export const createDefaultResultState = ({
             optionId: null,
           },
         },
-      };
+      } as DecisionResultSchemaType;
     case ResultType.Ranking:
       return {
         resultId: crypto.randomUUID(),
@@ -34,7 +40,7 @@ export const createDefaultResultState = ({
         fieldId,
 
         prioritization: { numPrioritizedItems: 3 },
-      };
+      } as RankingResultSchemaType;
     case ResultType.LlmSummary:
       return {
         resultId: crypto.randomUUID(),
@@ -44,6 +50,12 @@ export const createDefaultResultState = ({
           prompt: "",
           isList: false,
         },
-      };
+      } as LlmSummaryResultSchemaType;
+    case ResultType.RawAnswers:
+      return {
+        resultId: crypto.randomUUID(),
+        type: ResultType.RawAnswers,
+        fieldId,
+      } as RawAnswersResultSchemaType;
   }
 };

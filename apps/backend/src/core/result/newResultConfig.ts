@@ -6,6 +6,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { newDecisionConfig } from "./decision/newDecisionConfig";
 import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
+import { checkRawAnswersConfig } from "./rawAnswers.ts/newRawAnswersConfig";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newResultConfigSet = async ({
@@ -24,6 +25,11 @@ export const newResultConfigSet = async ({
       let responseField = null;
       if (typeof res.responseFieldIndex === "number")
         responseField = responseFieldSet?.FieldSetFields[res.responseFieldIndex].Field;
+
+      if (!responseField)
+        throw new GraphQLError("Missing response field", {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        });
 
       return await newResultConfig({
         resultArgs: res,
@@ -52,7 +58,7 @@ export const newResultConfig = async ({
   transaction,
 }: {
   resultArgs: ResultArgs;
-  responseField: FieldPrismaType | undefined | null;
+  responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
   let decisionId;
@@ -68,7 +74,7 @@ export const newResultConfig = async ({
       decisionId = await newDecisionConfig({
         decisionArgs: resultArgs.decision,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
       break;
     case ResultType.Ranking:
@@ -79,7 +85,7 @@ export const newResultConfig = async ({
       rankId = await newRankConfig({
         rankArgs: resultArgs.prioritization,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
       break;
     case ResultType.LlmSummary:
@@ -90,8 +96,11 @@ export const newResultConfig = async ({
       llmId = await newLlmSummaryConfig({
         llmArgs: resultArgs.llmSummary,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
+      break;
+    case ResultType.RawAnswers:
+      checkRawAnswersConfig({ responseField });
       break;
   }
 

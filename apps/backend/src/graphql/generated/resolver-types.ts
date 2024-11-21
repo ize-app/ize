@@ -531,11 +531,6 @@ export type LlmSummaryArgs = {
   prompt: Scalars['String']['input'];
 };
 
-export enum LlmSummaryType {
-  AfterEveryResponse = 'AfterEveryResponse',
-  AtTheEnd = 'AtTheEnd'
-}
-
 export type Me = {
   __typename?: 'Me';
   groups: Array<Group>;
@@ -874,6 +869,13 @@ export type Ranking = {
   resultConfigId: Scalars['String']['output'];
 };
 
+export type RawAnswers = {
+  __typename?: 'RawAnswers';
+  field: Field;
+  name: Scalars['String']['output'];
+  resultConfigId: Scalars['String']['output'];
+};
+
 export type Request = {
   __typename?: 'Request';
   createdAt: Scalars['String']['output'];
@@ -1030,7 +1032,7 @@ export type ResultArgs = {
   type: ResultType;
 };
 
-export type ResultConfig = Decision | LlmSummary | Ranking;
+export type ResultConfig = Decision | LlmSummary | Ranking | RawAnswers;
 
 export type ResultGroup = {
   __typename?: 'ResultGroup';
@@ -1067,7 +1069,8 @@ export type ResultItem = {
 export enum ResultType {
   Decision = 'Decision',
   LlmSummary = 'LlmSummary',
-  Ranking = 'Ranking'
+  Ranking = 'Ranking',
+  RawAnswers = 'RawAnswers'
 }
 
 export enum Status {
@@ -1248,7 +1251,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
-  ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } );
+  ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } ) | ( Omit<RawAnswers, 'field'> & { field: _RefType['Field'] } );
 };
 
 
@@ -1329,7 +1332,6 @@ export type ResolversTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
-  LlmSummaryType: LlmSummaryType;
   Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']>, user: ResolversTypes['User'] }>;
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
@@ -1354,6 +1356,7 @@ export type ResolversTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: ResolverTypeWrapper<{}>;
   Ranking: ResolverTypeWrapper<Omit<Ranking, 'field'> & { field: ResolversTypes['Field'] }>;
+  RawAnswers: ResolverTypeWrapper<Omit<RawAnswers, 'field'> & { field: ResolversTypes['Field'] }>;
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversTypes['TriggerFieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, fieldSet: ResolversTypes['FieldSet'], responseFieldAnswers: Array<ResolversTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversTypes['Response']> }>;
@@ -1484,6 +1487,7 @@ export type ResolversParentTypes = {
   PrioritizationArgs: PrioritizationArgs;
   Query: {};
   Ranking: Omit<Ranking, 'field'> & { field: ResolversParentTypes['Field'] };
+  RawAnswers: Omit<RawAnswers, 'field'> & { field: ResolversParentTypes['Field'] };
   Request: Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerFieldAnswers'> & { creator: ResolversParentTypes['Entity'], flow: ResolversParentTypes['Flow'], requestSteps: Array<ResolversParentTypes['RequestStep']>, triggerFieldAnswers: Array<ResolversParentTypes['TriggerFieldAnswer']> };
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
   RequestStep: Omit<RequestStep, 'actionExecution' | 'fieldSet' | 'responseFieldAnswers' | 'userResponses'> & { actionExecution?: Maybe<ResolversParentTypes['ActionExecution']>, fieldSet: ResolversParentTypes['FieldSet'], responseFieldAnswers: Array<ResolversParentTypes['ResponseFieldAnswers']>, userResponses: Array<ResolversParentTypes['Response']> };
@@ -1952,6 +1956,13 @@ export type RankingResolvers<ContextType = GraphqlRequestContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type RawAnswersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['RawAnswers'] = ResolversParentTypes['RawAnswers']> = {
+  field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
@@ -2065,7 +2076,7 @@ export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type ResultConfigResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultConfig'] = ResolversParentTypes['ResultConfig']> = {
-  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Decision' | 'LlmSummary' | 'Ranking' | 'RawAnswers', ParentType, ContextType>;
 };
 
 export type ResultGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ResultGroup'] = ResolversParentTypes['ResultGroup']> = {
@@ -2192,6 +2203,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Permission?: PermissionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ranking?: RankingResolvers<ContextType>;
+  RawAnswers?: RawAnswersResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
   RequestStep?: RequestStepResolvers<ContextType>;
   RequestStepActionSummary?: RequestStepActionSummaryResolvers<ContextType>;

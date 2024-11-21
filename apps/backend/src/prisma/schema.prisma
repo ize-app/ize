@@ -628,6 +628,7 @@ model AnswerFreeInput {
 }
 
 enum ResultType {
+  RawAnswers
   Decision
   Ranking
   LlmSummary
