@@ -26,7 +26,6 @@ export const FreeInputValue = ({
   const stringVal = stringifyFreeInputValue({ value, dataType: type });
   const defaultProps: TypographyProps = {
     fontSize,
-    color: "primary",
     sx: { whiteSpace: "pre-line" },
   };
   switch (type) {
@@ -59,7 +58,7 @@ export const FreeInputValue = ({
             rel="noopener noreferrer"
             {...defaultProps}
           >
-            {stringVal}
+            {value}
           </Typography>
         </>
       );

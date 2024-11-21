@@ -26,24 +26,18 @@ export const EndRequestStepButton = ({ requestStepId }: { requestStepId: string 
   });
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        width: "100%",
-      }}
-    >
+    <Box>
       <Button
         color="warning"
         variant="outlined"
         endIcon={<AlarmIcon />}
-        sx={{ width: "300px", boxShadow: "4px solid" }}
+        size="small"
+        sx={{ boxShadow: "4px solid" }}
         onClick={async () => {
           await mutate();
         }}
       >
-        End this collaborative step early
+        End this step early
       </Button>
     </Box>
   );

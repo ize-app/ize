@@ -98,7 +98,6 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               key={"steppanel-" + step?.id}
               step={step}
               requestStep={request.requestSteps[index]}
-              creator={request.creator}
             />
           )
         );

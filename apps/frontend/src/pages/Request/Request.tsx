@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { Paper } from "@mui/material";
+import { Breadcrumbs, Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
@@ -8,6 +8,7 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { AvatarWithName } from "@/components/Avatar";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { EndRequestStepButton } from "@/components/EndRequestStepButton";
 import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
@@ -56,8 +57,10 @@ export const Request = () => {
 
   let reusable = false;
   let acceptingNewResponses = false;
+  let currRequestStepId: string = "";
   let userResponses: ResponseFragment[] | undefined = undefined;
   let allowMultipleResponses: boolean = false;
+  let showManuallyEndStepButton: boolean = false;
 
   const { data, loading, error } = useQuery(GetRequestDocument, {
     variables: {
@@ -76,11 +79,23 @@ export const Request = () => {
   const request = data?.getRequest;
 
   if (request) {
+    const currentStep = request.flow.steps[request?.currentStepIndex];
+    const currentReqStep = request.requestSteps[request?.currentStepIndex];
+
     reusable = request.flow.reusable;
-    acceptingNewResponses = !request.requestSteps[request.currentStepIndex].status.responseFinal;
-    userResponses = request.requestSteps[request.currentStepIndex].userResponses;
-    allowMultipleResponses =
-      !!request.flow.steps[request.currentStepIndex].response?.allowMultipleResponses;
+    acceptingNewResponses = !currentReqStep.status.responseFinal;
+    userResponses = currentReqStep.userResponses;
+    allowMultipleResponses = !!currentStep.response?.allowMultipleResponses;
+    const userIsCreator =
+      (me?.user.entityId === request?.creator.entityId ||
+        me?.identities.some((i) => i.entityId === request?.creator.entityId)) ??
+      false;
+    showManuallyEndStepButton =
+      (currentStep.response?.canBeManuallyEnded &&
+        userIsCreator &&
+        !currentReqStep?.status.responseFinal) ??
+      false;
+    currRequestStepId = currentReqStep.requestStepId;
   }
 
   console.log("request is ", request);
@@ -91,6 +106,10 @@ export const Request = () => {
     {
       title: "Status",
       content: <ConfigDiagramRequest request={request} />,
+    },
+    {
+      title: "Results",
+      content: <RequestResults request={request} />,
     },
     {
       title: "Responses",
@@ -106,169 +125,116 @@ export const Request = () => {
       />
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant={"body1"} fontWeight={600} color="primary">
-            Request
-          </Typography>
-          <Typography
-            variant={"h1"}
-            marginBottom={".75rem"}
-            sx={{
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: "4",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {request.name}
-          </Typography>
-          {reusable && (
-            <Typography variant={"description"} lineHeight={"24px"}>
-              <Link
-                to={generatePath(Route.Flow, {
-                  flowId: fullUUIDToShort(request.flow.flowId),
-                  // Link to old version of flow if request is made from an older version
-                  flowVersionId:
-                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                      ? fullUUIDToShort(request.flow.flowVersionId)
-                      : null,
-                })}
-              >
-                {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
-              </Link>
-            </Typography>
-          )}
-          <Box sx={{ display: "flex", gap: "6px" }}>
-            <Typography variant="description" lineHeight={"24px"}>
-              Created by{"  "}
-            </Typography>
-            <AvatarWithName
-              avatar={request.creator}
-              typography="description"
-              size="14px"
-              fontSize="14px"
-            />
-            <Typography variant="description" lineHeight={"24px"}>
-              on {new Date(request.createdAt).toLocaleDateString()}
-            </Typography>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            marginTop: "36px",
-            marginBottom: "36px",
-            gap: "60px",
-          }}
-        >
-          {!!me &&
-            acceptingNewResponses &&
-            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
-              <Paper
-                elevation={4}
-                sx={(theme) => ({
-                  display: "block",
-                  alignSelf: "center",
-                  minWidth: "500px",
-                  maxWidth: "800px",
-                  border: `solid ${theme.palette.primary.light} 2px`,
-                  borderRadius: "8px",
-                  outline: `2px solid ${colors.primaryContainer}`,
+          <Breadcrumbs separator="›" aria-label="breadcrumb" sx={{ margin: "8px 0px" }}>
+            <Typography sx={{ color: "text.primary" }}>Flows</Typography>
 
-                  [theme.breakpoints.down("md")]: {
-                    width: "100%",
-                    marginLeft: 0,
-                    maxWidth: "100%",
-                    minWidth: "300px",
-                  },
-                })}
-              >
-                <ResponseForm
-                  requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
-                  responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
-                  permission={request.flow.steps[request.currentStepIndex].response?.permission}
-                />
-              </Paper>
+            {reusable && (
+              <>
+                <Link
+                  to={generatePath(Route.Flow, {
+                    flowId: fullUUIDToShort(request.flow.flowId),
+                    // Link to old version of flow if request is made from an older version
+                    flowVersionId:
+                      request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+                        ? fullUUIDToShort(request.flow.flowVersionId)
+                        : null,
+                  })}
+                >
+                  {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
+                </Link>
+              </>
             )}
+            <Typography sx={{ color: "text.primary" }}>Request</Typography>
+          </Breadcrumbs>
           <Box
-            sx={(theme) => ({
+            sx={{
               display: "flex",
+              marginTop: "12px",
+              justifyContent: "space-between",
+              gap: "36px",
               [theme.breakpoints.down("md")]: {
                 flexDirection: "column",
-                gap: "36px",
+                marginLeft: 0,
               },
-              maxWidth: request.triggerFieldAnswers.length === 0 ? "700px" : undefined,
-
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-              flexGrow: 1,
-              minWidth: "300px",
-              outline: `1px solid ${theme.palette.primary.main}`,
-              padding: "16px 24px 16px 16px",
-              borderRadius: "8px",
-
-              gap: "60px",
-              backgroundColor: theme.palette.background.paper,
-            })}
+            }}
           >
-            {request.triggerFieldAnswers.length > 0 && (
-              <Box
-                sx={{
-                  [theme.breakpoints.down("md")]: {
-                    width: "100%",
-                  },
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: "300px",
-                  width: "50%",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                }}
-              >
-                <>
-                  <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                    Request context
-                  </Typography>
-                  <Box
-                    sx={{
-                      borderRadius: "8px",
-                      outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                      padding: "12px 16px 12px",
-                    }}
-                  >
-                    <TriggerFieldSet
-                      fieldSet={request.flow.fieldSet}
-                      fieldAnswers={request.triggerFieldAnswers}
-                      onlyShowSelections={true}
-                    />
-                  </Box>
-                </>
-              </Box>
-            )}
             <Box
               sx={{
-                [theme.breakpoints.down("md")]: {
-                  width: "100%",
-                },
-                flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
+                outline: "1px solid rgba(0, 0, 0, 0.1)",
+                backgroundColor: "white",
+                flexGrow: 3,
                 minWidth: "300px",
-                wordBreak: "break-word",
-                width: request.triggerFieldAnswers.length > 0 ? "50%" : "100%",
+                maxWidth: "800px",
+                padding: "12px",
+                gap: "12px",
               }}
             >
-              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                Results
-              </Typography>
-              <RequestResults request={request} />
+              <Box>
+                <Typography
+                  variant={"h1"}
+                  sx={{
+                    margin: "0px",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "4",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {request.name}
+                </Typography>
+                <Box sx={{ display: "flex", gap: "6px" }}>
+                  <Typography variant="description" lineHeight={"24px"}>
+                    Created by{"  "}
+                  </Typography>
+                  <AvatarWithName
+                    avatar={request.creator}
+                    typography="description"
+                    size="14px"
+                    fontSize="14px"
+                  />
+                  <Typography variant="description" lineHeight={"24px"}>
+                    on {new Date(request.createdAt).toLocaleDateString()}
+                  </Typography>
+                </Box>
+              </Box>
+              {showManuallyEndStepButton && (
+                <Box sx={{}}>
+                  <EndRequestStepButton requestStepId={currRequestStepId} />
+                </Box>
+              )}
+              <TriggerFieldSet
+                fieldSet={request.flow.fieldSet}
+                fieldAnswers={request.triggerFieldAnswers}
+                onlyShowSelections={true}
+              />
             </Box>
+            {!!me &&
+              acceptingNewResponses &&
+              ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+                <Paper
+                  elevation={4}
+                  sx={(theme) => ({
+                    flexGrow: 2,
+                    minWidth: "300px",
+                    maxWidth: "800px",
+                    border: `solid ${theme.palette.primary.light} 2px`,
+                    outline: `2px solid ${colors.primaryContainer}`,
+                  })}
+                >
+                  <ResponseForm
+                    requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
+                    responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
+                    permission={request.flow.steps[request.currentStepIndex].response?.permission}
+                  />
+                </Paper>
+              )}
           </Box>
         </Box>
-        <Box>
+
+        <Box sx={{ marginTop: "24px" }}>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}

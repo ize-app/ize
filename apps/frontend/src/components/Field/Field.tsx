@@ -22,7 +22,7 @@ export const Field = ({
     case FieldType.FreeInput: {
       return (
         <Box>
-          <Typography color="primary" fontSize="1rem">
+          <Typography variant="description">
             {field.name}
             {/* <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span> */}
           </Typography>

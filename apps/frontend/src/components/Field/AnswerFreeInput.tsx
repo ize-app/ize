@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
@@ -7,9 +7,11 @@ import { FreeInputValue } from "./FreeInputValue";
 export const AnswerFreeInput = ({
   answer,
   dataType,
+  sx = {},
 }: {
   answer: string;
   dataType: FieldDataType;
+  sx?: SxProps;
 }) => {
   return (
     <Box
@@ -19,8 +21,8 @@ export const AnswerFreeInput = ({
         alignItems: "center",
         gap: "4px",
         borderRadius: "4px",
-        padding: "6px 12px",
         background: "white",
+        ...sx,
       }}
     >
       <FreeInputValue value={answer} type={dataType} />

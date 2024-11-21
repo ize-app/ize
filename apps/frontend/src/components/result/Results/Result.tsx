@@ -128,7 +128,12 @@ export const Result = ({
                 label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
               >
                 {result.resultItems.map((item) => (
-                  <AnswerFreeInput key={item.id} answer={item.value} dataType={item.dataType} />
+                  <AnswerFreeInput
+                    sx={{ padding: "6px 12px" }}
+                    key={item.id}
+                    answer={item.value}
+                    dataType={item.dataType}
+                  />
                 ))}
               </LabeledGroupedInputs>
             );

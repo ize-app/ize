@@ -191,7 +191,7 @@ export const ResponseForm = ({
           <Button
             variant={"contained"}
             size="small"
-            sx={{ width: "200px", alignSelf: "center" }}
+            sx={{ width: "200px", alignSelf: "flex-start" }}
             onClick={formMethods.handleSubmit(onSubmit)}
           >
             Submit

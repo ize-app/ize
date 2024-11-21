@@ -10,6 +10,7 @@ export const PanelContainer = ({ children }: { children: React.ReactNode }) => (
       width: "50%",
       display: "flex",
       flexDirection: "column",
+      backgroundColor: "#fffbff",
     })}
   >
     {children}

@@ -50,7 +50,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
   });
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "600px" }}>
       {hydratedResults.map((resultData) => (
         <Result
           key={resultData.resultConfig.resultConfigId}
