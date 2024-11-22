@@ -60,7 +60,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
           <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
-                navigate(Route.Requests);
+                navigate(Route.Home);
                 setMenuOpen(false);
               }}
             >

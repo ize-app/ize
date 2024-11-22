@@ -1,13 +1,13 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useContext, useLayoutEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import izeLogoUrl from "@/assets/ize-logo-circle.svg";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
-import { Route } from "@/routers/routes";
 
+import { Requests } from "./Requests/Requests";
 import { CurrentUserContext } from "../hooks/contexts/current_user_context";
 
 const UnauthenticatedHome = () => {
@@ -56,13 +56,9 @@ const UnauthenticatedHome = () => {
 
 export const Home = () => {
   const { me } = useContext(CurrentUserContext);
-  const navigate = useNavigate();
 
-  useLayoutEffect(() => {
-    if (me?.user) {
-      navigate(Route.Requests);
-    }
-  }, [me, navigate]);
-
-  return <UnauthenticatedHome />;
+  if (!me?.user) return <UnauthenticatedHome />;
+  else {
+    return <Requests />;
+  }
 };

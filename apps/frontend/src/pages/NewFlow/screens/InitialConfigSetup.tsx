@@ -6,6 +6,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { Route } from "@/routers/routes";
 
 import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
 import {
@@ -64,10 +65,15 @@ export const InitialConfigSetup = () => {
           gap: "30px",
         }}
       >
+        <Typography variant="description">
+          Flows are language for defining and automating collaborative processes that span tools,
+          teams, and time.{" "}
+          <a href={Route.About} target="_blank" rel="noopener noreferrer">
+            Learn more
+          </a>
+        </Typography>
         <FieldBlockFadeIn>
-          <Typography variant="description">
-            What&apos;s the goal of this collaborative process?
-          </Typography>
+          <Typography variant="description">What&apos;s the goal of this flow?</Typography>
           <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="Test"
             name="goal"

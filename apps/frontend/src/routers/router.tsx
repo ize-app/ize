@@ -16,7 +16,6 @@ import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as NewFlow from "@/pages/NewFlow";
 import * as NewRequest from "@/pages/NewRequest";
 import { Request } from "@/pages/Request/Request";
-import { Requests } from "@/pages/Requests/Requests";
 import { UserSettings } from "@/pages/Settings/UserSettings";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
@@ -34,15 +33,6 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.About,
         element: <About />,
-        errorElement: <ErrorBoundary />,
-      },
-      {
-        path: Routes.Route.Requests,
-        element: (
-          <AuthRoute>
-            <Requests />
-          </AuthRoute>
-        ),
         errorElement: <ErrorBoundary />,
       },
       {

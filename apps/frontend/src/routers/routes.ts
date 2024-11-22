@@ -1,7 +1,6 @@
 export enum Route {
   Home = "/",
   About = "/about",
-  Requests = "/requests",
   Flows = "/flows",
   // settings and identities routes are used in Stytch redirects
   // take caution with modifying these routes
