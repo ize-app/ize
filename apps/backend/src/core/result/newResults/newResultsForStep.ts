@@ -16,51 +16,63 @@ export const newResultsForStep = async ({
   requestStepId: string;
   isRetry?: boolean;
 }): Promise<void> => {
-  const reqStep = await prisma.requestStep.findFirstOrThrow({
-    where: {
-      id: requestStepId,
-    },
-    include: {
-      Request: {
-        include: {
-          FlowVersion: true,
+  try {
+    const reqStep = await prisma.requestStep.findFirstOrThrow({
+      where: {
+        id: requestStepId,
+      },
+      include: {
+        Request: {
+          include: {
+            FlowVersion: true,
+          },
+        },
+        Step: {
+          include: stepInclude,
+        },
+        ResultGroups: {
+          include: resultGroupInclude,
+        },
+        Responses: {
+          include: responseInclude,
         },
       },
-      Step: {
-        include: stepInclude,
-      },
-      ResultGroups: {
-        include: resultGroupInclude,
-      },
-      Responses: {
-        include: responseInclude,
-      },
-    },
-  });
+    });
 
-  const { Step: step, Responses: responses, ResultGroups: existingResults } = reqStep;
+    const { Step: step, Responses: responses, ResultGroups: existingResults } = reqStep;
 
-  // don't create results if step doesn't have enough responses
-  if (step.ResponseConfig && responses.length < step.ResponseConfig.minResponses) return;
+    // don't create results if step doesn't have enough responses
+    if (step.ResponseConfig && responses.length < step.ResponseConfig.minResponses) return;
 
-  const resultConfigs =
-    step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
+    const resultConfigs =
+      step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
 
-  await Promise.allSettled(
-    resultConfigs.map(async (resultConfig): Promise<void> => {
-      const existingResultGroup = existingResults.find((r) => r.resultConfigId === resultConfig.id);
-      if (isRetry) {
-        if (existingResultGroup?.complete) return;
-        else
-          return await retryResult({ requestStepId, resultConfig, existingResultGroup, responses });
-      }
-      return await newResult({
-        requestStepId,
-        resultConfig,
-        existingResultGroup,
-        responses,
-      });
-    }),
-  );
-  return;
+    await Promise.allSettled(
+      resultConfigs.map(async (resultConfig): Promise<void> => {
+        const existingResultGroup = existingResults.find(
+          (r) => r.resultConfigId === resultConfig.id,
+        );
+        if (isRetry) {
+          if (existingResultGroup?.complete) return;
+          else
+            return await retryResult({
+              requestStepId,
+              resultConfig,
+              existingResultGroup,
+              responses,
+            });
+        }
+        return await newResult({
+          requestStepId,
+          resultConfig,
+          existingResultGroup,
+          responses,
+        });
+      }),
+    );
+    return;
+  } catch (error) {
+    console.error("Error in newResultsForStep:", error);
+    return;
+  }
 };

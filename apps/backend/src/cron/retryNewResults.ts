@@ -22,7 +22,9 @@ export const retryNewResults = async () => {
         });
       }),
     );
+    return;
   } catch (error) {
     console.error("Error in retryNewResults:", error);
+    return;
   }
 };
