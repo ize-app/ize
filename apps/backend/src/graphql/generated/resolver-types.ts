@@ -355,7 +355,6 @@ export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
-  creator?: Maybe<User>;
   entityId: Scalars['String']['output'];
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
@@ -1250,7 +1249,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( CallWebhook ) | ( EvolveFlow ) | ( EvolveGroup ) | ( GroupWatchFlow ) | ( TriggerStep );
-  Entity: ( Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<_RefType['User']>, groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
+  Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
   Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
   GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
@@ -1307,7 +1306,7 @@ export type ResolversTypes = {
   FreeInput: ResolverTypeWrapper<Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversTypes['FieldAnswer']> }>;
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
-  Group: ResolverTypeWrapper<Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<ResolversTypes['User']>, groupType: ResolversTypes['GroupType'] }>;
+  Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1335,7 +1334,7 @@ export type ResolversTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
-  Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']>, user: ResolversTypes['User'] }>;
+  Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']> }>;
   Mutation: ResolverTypeWrapper<{}>;
   NewEntityArgs: NewEntityArgs;
   NewEntityTypes: NewEntityTypes;
@@ -1442,7 +1441,7 @@ export type ResolversParentTypes = {
   FreeInput: Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<ResolversParentTypes['FieldAnswer']> };
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
-  Group: Omit<Group, 'creator' | 'groupType'> & { creator?: Maybe<ResolversParentTypes['User']>, groupType: ResolversParentTypes['GroupType'] };
+  Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1469,7 +1468,7 @@ export type ResolversParentTypes = {
   LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: Omit<LlmSummary, 'field'> & { field: ResolversParentTypes['Field'] };
   LlmSummaryArgs: LlmSummaryArgs;
-  Me: Omit<Me, 'groups' | 'identities' | 'user'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']>, user: ResolversParentTypes['User'] };
+  Me: Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']> };
   Mutation: {};
   NewEntityArgs: NewEntityArgs;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
@@ -1731,7 +1730,6 @@ export type GenericFieldAndValueResolvers<ContextType = GraphqlRequestContext, P
 export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Group'] = ResolversParentTypes['Group']> = {
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   entityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   groupType?: Resolver<ResolversTypes['GroupType'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

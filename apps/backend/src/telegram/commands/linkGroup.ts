@@ -32,15 +32,17 @@ export const linkGroup = async ({
       return;
     }
 
-    const tgGroupId = await upsertTelegramChatGroup({
-      chatId,
-      messageThreadId,
-      title: chat.title,
-      adminTelegramUserId: fromUserId,
-    });
-
     try {
       const tgIdentity = await upsertTelegramIdentity({ telegramUserData: chatMember.user });
+
+      const tgGroupId = await upsertTelegramChatGroup({
+        chatId,
+        messageThreadId,
+        title: chat.title,
+        adminTelegramUserId: fromUserId,
+        creatorEntityId: tgIdentity.entityId,
+      });
+
       await upsertIdentityGroup({
         identityId: tgIdentity.id,
         groupId: tgGroupId,

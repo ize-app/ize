@@ -3104,18 +3104,6 @@
             "deprecationReason": null
           },
           {
-            "name": "creator",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "entityId",
             "description": null,
             "args": [],

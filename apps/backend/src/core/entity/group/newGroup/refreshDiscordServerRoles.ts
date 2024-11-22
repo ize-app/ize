@@ -94,9 +94,9 @@ export const refreshDiscordServerRoles = async ({
             create: {
               type: GroupType.DiscordRoleGroup,
               Entity: { create: {} },
-              creator: {
+              Creator: {
                 connect: {
-                  id: context.currentUser?.id as string,
+                  id: context.currentUser?.entityId as string,
                 },
               },
             },

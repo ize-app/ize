@@ -354,7 +354,6 @@ export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
-  creator?: Maybe<User>;
   entityId: Scalars['String']['output'];
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
@@ -2077,7 +2076,6 @@ export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
-  creator?: Maybe<User>;
   entityId: Scalars['String']['output'];
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;

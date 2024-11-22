@@ -7,11 +7,13 @@ export const upsertTelegramChatGroup = async ({
   title,
   messageThreadId,
   adminTelegramUserId,
+  creatorEntityId,
 }: {
   chatId: number;
   title: string;
   messageThreadId: number | undefined;
   adminTelegramUserId: number;
+  creatorEntityId: string;
 }) => {
   const existingGroup = await prisma.groupTelegramChat.findFirst({
     where: {
@@ -42,6 +44,7 @@ export const upsertTelegramChatGroup = async ({
         Group: {
           create: {
             type: GroupType.GroupTelegram,
+            creatorEntityId,
             GroupTelegramChat: {
               create: {
                 chatId,

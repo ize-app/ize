@@ -16,7 +16,6 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Group      Group[]
   Identities Identity[]
   Oauths     Oauths[]
   Entity     Entity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
@@ -143,23 +142,23 @@ enum GroupType {
 
 model Group {
   id                  String                @id @default(uuid()) @db.Uuid
-  creator             User?                 @relation(fields: [creatorId], references: [id])
-  creatorId           String?               @map("creator_id") @db.Uuid
+  creatorEntityId     String                @map("creator_entity_id") @db.Uuid
   entityId            String                @unique @map("entity_id") @db.Uuid
   createdAt           DateTime              @default(now()) @map("created_at")
   updatedAt           DateTime              @default(now()) @updatedAt @map("updated_at")
   activeAt            DateTime?
-  deactivatedat       DateTime?
+  deactivatedAt       DateTime?
   type                GroupType
   Entity              Entity                @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Creator             Entity                @relation("Creator", fields: [creatorEntityId], references: [id])
   GroupDiscordRole    GroupDiscordRole?
   GroupNft            GroupNft?
+  GroupTelegramChat   GroupTelegramChat?
   IdentitiesGroups    IdentityGroup[]
   GroupCustom         GroupCustom?
   EntityWatchedGroups EntityWatchedGroups[]
   OwnedFlows          Flow[]
   GroupsWatchedFlows  GroupsWatchedFlows[]
-  GroupTelegramChat   GroupTelegramChat?
 
   @@map("groups")
 }
@@ -431,6 +430,7 @@ model Entity {
   EntityWatchedGroups     EntityWatchedGroups[]
   Flow                    Flow[]
   Request                 Request[]
+  CreatedGroups           Group[]               @relation("Creator")
 
   @@map("entities")
 }

@@ -39,7 +39,7 @@ export const newCustomGroup = async ({
       id: args.inputs.entityId,
       Group: {
         create: {
-          creatorId: context.currentUser?.id,
+          creatorEntityId: context.currentUser?.entityId,
           type: GroupType.GroupCustom,
           GroupCustom: {
             create: {

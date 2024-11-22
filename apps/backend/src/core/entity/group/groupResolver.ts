@@ -3,7 +3,6 @@ import { Group, GroupType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { GroupPrismaType } from "./groupPrismaTypes";
-import { userResolver } from "../../user/userResolver";
 
 export const groupResolver = (
   group: GroupPrismaType,
@@ -38,7 +37,6 @@ const resolveDiscordGroup = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     // discord only includes the @sign for @everyone
     name: `${
       group.GroupDiscordRole.name !== "@everyone"
@@ -89,7 +87,6 @@ const resolveGroupNft = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     name: nft.name,
     icon: nft.icon,
     color: null,
@@ -120,7 +117,7 @@ const resolveGroupCustom = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
+
     name: custom.name,
     createdAt: group.createdAt.toString(),
     groupType: { __typename: "GroupCustom", ...custom } as GroupType,
@@ -143,7 +140,6 @@ const resolveGroupTelegram = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     name: telegram.name,
     createdAt: group.createdAt.toString(),
     groupType: {
