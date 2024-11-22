@@ -103,6 +103,7 @@ export const generateEvolveConfig = ({
   };
 
   return {
+    flowVersionId: crypto.randomUUID(),
     type: FlowType.Evolve,
     name: "Evolve flow",
     fieldSet: {

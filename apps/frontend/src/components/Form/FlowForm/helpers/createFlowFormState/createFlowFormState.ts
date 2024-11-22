@@ -9,6 +9,8 @@ import { FlowSchemaType } from "../../formValidation/flow";
 export const createFlowFormState = (flow: FlowFragment): FlowSchemaType => {
   const { name, fieldSet, trigger, steps } = flow;
   return {
+    // new flow version ID
+    flowVersionId: crypto.randomUUID(),
     type: flow.type,
     name,
     fieldSet: {

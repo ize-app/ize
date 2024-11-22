@@ -42,6 +42,7 @@ export const FlowForm = forwardRef(
 
     const useFormMethods = useForm<FlowSchemaType>({
       defaultValues: {
+        flowVersionId: formState.new[name]?.flowVersionId ?? defaultFormValues.flowVersionId,
         name: formState.new[name]?.name ?? defaultFormValues.name,
         type: formState.new[name]?.type ?? defaultFormValues.type,
         fieldSet: formState.new[name]?.fieldSet ?? defaultFormValues.fieldSet,

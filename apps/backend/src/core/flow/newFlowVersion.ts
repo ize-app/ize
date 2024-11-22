@@ -44,6 +44,7 @@ export const newFlowVersion = async ({
   });
   const flowVersion = await transaction.flowVersion.create({
     data: {
+      id: flowArgs.flowVersionId,
       name: flowArgs.name,
       active,
       totalSteps: flowArgs.steps.length,

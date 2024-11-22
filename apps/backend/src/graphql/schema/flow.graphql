@@ -90,6 +90,7 @@ input NewFlowWithEvolveArgs {
 }
 
 input NewFlowArgs {
+  flowVersionId: String!
   type: FlowType!
   name: String!
   steps: [NewStepArgs!]!

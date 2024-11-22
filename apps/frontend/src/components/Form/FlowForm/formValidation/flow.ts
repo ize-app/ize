@@ -77,6 +77,7 @@ const stepSchema = z
 
 export const flowSchema = z
   .object({
+    flowVersionId: z.string().uuid(),
     type: z.nativeEnum(FlowType),
     name: z.string().min(1, "Enter a name"),
     steps: z.array(stepSchema).min(1, "There must be at least 1 step"),

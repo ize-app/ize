@@ -35,6 +35,7 @@ export const generateNonreusableFlowConfig = ({
   switch (type) {
     case FlowConfigGeneration.Synthesize: {
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Synthesize group perspectives",
 
@@ -82,6 +83,7 @@ export const generateNonreusableFlowConfig = ({
     }
     case FlowConfigGeneration.Ideate: {
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
 
@@ -129,6 +131,7 @@ export const generateNonreusableFlowConfig = ({
     }
     case FlowConfigGeneration.LetAiDecide: {
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
 

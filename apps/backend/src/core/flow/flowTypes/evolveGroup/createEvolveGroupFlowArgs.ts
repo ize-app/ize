@@ -39,6 +39,7 @@ export const createEvolveGroupFlowArgs = ({
     });
 
   return {
+    flowVersionId: crypto.randomUUID(),
     type: FlowType.EvolveGroup,
     name: "Evolve group",
     fieldSet: {

@@ -170,6 +170,7 @@ export const generateNewFlowConfig = ({
     });
 
     const flow: FlowSchemaType = {
+      flowVersionId: crypto.randomUUID(),
       type: FlowType.Custom,
       name: flowTitle,
       trigger: {
@@ -187,6 +188,7 @@ export const generateNewFlowConfig = ({
     console.log("Error: generateNewFlowConfig", e);
     const anyonePermission: PermissionSchemaType = { anyone: true, entities: [] };
     const flow = {
+      flowVersionId: crypto.randomUUID(),
       name: "",
       type: FlowType.Custom,
       fieldSet: {

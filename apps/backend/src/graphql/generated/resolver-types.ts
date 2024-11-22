@@ -645,6 +645,7 @@ export type NewEvolveRequestArgs = {
 
 export type NewFlowArgs = {
   fieldSet: FieldSetArgs;
+  flowVersionId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   requestName?: InputMaybe<Scalars['String']['input']>;
   steps: Array<NewStepArgs>;

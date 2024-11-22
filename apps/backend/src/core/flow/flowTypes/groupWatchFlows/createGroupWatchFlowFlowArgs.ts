@@ -38,6 +38,7 @@ export const createGroupWatchFlowFlowArgs = ({
     });
 
   return {
+    flowVersionId: crypto.randomUUID(),
     type: FlowType.GroupWatchFlow,
     name: "Watch/unwatch flow",
     fieldSet: {

@@ -19,6 +19,7 @@ export const defaultStepFormValues: StepSchemaType = {
 };
 
 export const defaultFlowFormValues: FlowSchemaType = {
+  flowVersionId: crypto.randomUUID(),
   name: "",
   type: FlowType.Custom,
   fieldSet: {

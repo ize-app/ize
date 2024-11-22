@@ -145,7 +145,7 @@ export const Request = () => {
                 backgroundColor: "white",
                 flexGrow: 3,
                 minWidth: "300px",
-                maxWidth: "800px",
+
                 padding: "12px",
                 gap: "12px",
               }}

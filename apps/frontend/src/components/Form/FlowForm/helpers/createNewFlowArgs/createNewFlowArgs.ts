@@ -15,6 +15,7 @@ export interface ResultConfigCache {
 export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): NewFlowArgs => {
   const resultConfigCache: ResultConfigCache[] = [];
   const args: NewFlowArgs = {
+    flowVersionId: formState.flowVersionId,
     name: formState.name,
     type: formState.type,
     fieldSet: {
