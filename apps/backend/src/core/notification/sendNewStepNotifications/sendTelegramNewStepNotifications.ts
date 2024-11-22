@@ -5,8 +5,8 @@ import { getRequestTriggerFieldAnswers } from "@/core/request/createRequestPaylo
 import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTriggerFields";
 import {
   FieldDataType,
-  FieldOptionsSelectionType,
   FlowType,
+  OptionSelectionType,
   Request,
 } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -85,7 +85,7 @@ export const sendTelegramNewStepMessage = async ({
 
           if (
             firstField.__typename === FieldType.Options &&
-            firstField.selectionType === FieldOptionsSelectionType.Select
+            firstField.selectionType === OptionSelectionType.Select
           ) {
             const options = firstField.options;
             const question = `${firstField.name}`;

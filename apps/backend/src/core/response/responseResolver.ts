@@ -3,7 +3,7 @@ import { FieldType } from "@prisma/client";
 import { GraphqlRequestContext } from "@/graphql/context";
 import {
   Field,
-  FieldOptionsSelectionType,
+  OptionSelectionType,
   Response,
   ResponseFieldAnswers,
   ResponseFieldAnswersOptionsSummary,
@@ -89,7 +89,7 @@ export const responsesResolver = async ({
         type: "userFieldAnswer",
         answers: r.answers,
       });
-      if (r.field.selectionType === FieldOptionsSelectionType.Rank) {
+      if (r.field.selectionType === OptionSelectionType.Rank) {
         const optionCount = Object.entries(rawWeights).length;
         Object.entries(rawWeights).map(([optionId, weight]) => {
           const avgWeight = weight / answerCount;

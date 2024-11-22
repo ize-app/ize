@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { DecisionType, FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { DecisionType, OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { DefaultDecisionForm } from "./DefaultDecisionForm";
 import { Select, TextField } from "../../../formFields";
@@ -21,15 +21,15 @@ export interface DecisionConfigFormProps {
 const selectTypeOptions = (decisionType: DecisionType) => {
   const selectOne = {
     name: "Vote for 1 option",
-    value: FieldOptionsSelectionType.Select,
+    value: OptionSelectionType.Select,
   };
   const multiSelect = {
     name: "Vote for multiple options",
-    value: FieldOptionsSelectionType.MultiSelect,
+    value: OptionSelectionType.MultiSelect,
   };
   const rank = {
     name: "Rank options",
-    value: FieldOptionsSelectionType.Rank,
+    value: OptionSelectionType.Rank,
   };
 
   switch (decisionType) {
@@ -44,11 +44,11 @@ const selectTypeOptions = (decisionType: DecisionType) => {
   }
 };
 
-// const weightedAverageDescription = (selectionType: FieldOptionsSelectionType) => {
+// const weightedAverageDescription = (selectionType: OptionSelectionType) => {
 //   switch (selectionType) {
-//     case FieldOptionsSelectionType.MultiSelect:
+//     case OptionSelectionType.MultiSelect:
 //       return "Decision will be whichever option is selected the most.";
-//     case FieldOptionsSelectionType.Rank:
+//     case OptionSelectionType.Rank:
 //       return "Decision is the option with the highest weighted average rank";
 //   }
 // };
@@ -72,7 +72,7 @@ export const DecisionConfigForm = ({
       if (decisionType === DecisionType.WeightedAverage) {
         setValue(
           `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-          FieldOptionsSelectionType.Rank,
+          OptionSelectionType.Rank,
         );
         setValue(
           `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
@@ -81,7 +81,7 @@ export const DecisionConfigForm = ({
       } else {
         setValue(
           `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-          FieldOptionsSelectionType.Select,
+          OptionSelectionType.Select,
         );
       }
 

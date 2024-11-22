@@ -12,9 +12,9 @@ import {
   ActionType,
   DecisionType,
   EntityType,
-  FieldOptionsSelectionType,
   FieldType,
   FlowType,
+  OptionSelectionType,
   ResultType,
   UserSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
@@ -75,7 +75,7 @@ export const generateNewFlowConfig = ({
         field = generateFieldConfig({
           type: FieldType.Options,
           question: config.question,
-          selectionType: FieldOptionsSelectionType.Select,
+          selectionType: OptionSelectionType.Select,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
@@ -97,7 +97,7 @@ export const generateNewFlowConfig = ({
         field = generateFieldConfig({
           type: FieldType.Options,
           question: config.question,
-          selectionType: FieldOptionsSelectionType.Rank,
+          selectionType: OptionSelectionType.Rank,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
@@ -132,7 +132,7 @@ export const generateNewFlowConfig = ({
           field = generateFieldConfig({
             type: FieldType.Options,
             question: "Select one of the following options:", //todo: this should be a question
-            selectionType: FieldOptionsSelectionType.Select,
+            selectionType: OptionSelectionType.Select,
             options: config.optionsConfig?.options,
             linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
             triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,

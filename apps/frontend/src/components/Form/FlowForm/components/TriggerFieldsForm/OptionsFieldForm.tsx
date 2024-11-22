@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
 import { Select } from "../../../formFields";
@@ -28,18 +28,18 @@ export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
           selectOptions={[
             {
               name: "Select one option",
-              value: FieldOptionsSelectionType.Select,
+              value: OptionSelectionType.Select,
             },
             {
               name: "Select multiple options",
-              value: FieldOptionsSelectionType.MultiSelect,
+              value: OptionSelectionType.MultiSelect,
             },
             {
               name: "Rank options",
-              value: FieldOptionsSelectionType.Rank,
+              value: OptionSelectionType.Rank,
             },
           ]}
-          // defaultValue={FieldOptionsSelectionType.Select}
+          // defaultValue={OptionSelectionType.Select}
           label="How do participants select options?"
         />
       </ResponsiveFormRow>

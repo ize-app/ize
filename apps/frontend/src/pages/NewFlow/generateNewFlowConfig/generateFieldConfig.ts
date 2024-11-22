@@ -6,8 +6,8 @@ import {
 import {
   DecisionType,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
+  OptionSelectionType,
 } from "@/graphql/generated/graphql";
 
 // Define a union type for all possible arguments with a discriminant 'type' field
@@ -18,7 +18,7 @@ type FieldArg =
       options: FieldOptionSchemaType[];
       linkedResultId: string | undefined | null;
       triggerDefinedOptions: TriggerDefinedOptionsSchemaType;
-      selectionType: FieldOptionsSelectionType;
+      selectionType: OptionSelectionType;
       decisionType?: DecisionType;
     }
   | { type: FieldType.FreeInput; question: string };

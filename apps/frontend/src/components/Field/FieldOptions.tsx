@@ -3,10 +3,10 @@ import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { Box, Typography } from "@mui/material";
 
 import {
-  FieldOptionsSelectionType,
   LinkedResult,
   OptionFieldAnswerSelection,
   OptionFragment,
+  OptionSelectionType,
   Options,
   ResponseFieldAnswersOptionsSummaryFragment,
   ResponseFieldAnswersSummaryFragment,
@@ -40,7 +40,7 @@ export const FieldOptions = ({
   const { requestOptionsDataType, linkedResultOptions } = fieldOptions;
 
   const totalResponses =
-    fieldOptions.selectionType === FieldOptionsSelectionType.Rank
+    fieldOptions.selectionType === OptionSelectionType.Rank
       ? (responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0
       : responseSummary?.count ?? 0;
 
@@ -89,7 +89,6 @@ export const FieldOptions = ({
             dataType={o.option.dataType}
             selectionType={fieldOptions.selectionType}
             totalResponses={totalResponses}
-            
             optionResponseSummary={o.optionSummary}
             index={index}
             isSelected={o.isSelected && !onlyShowSelections}

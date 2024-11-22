@@ -1,18 +1,18 @@
-import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType } from "@/graphql/generated/graphql";
 
 export const formatOptionSelectionType = ({
   type,
   maxSelections,
 }: {
-  type: FieldOptionsSelectionType;
+  type: OptionSelectionType;
   maxSelections?: number | null | undefined;
 }): string => {
   switch (type) {
-    case FieldOptionsSelectionType.Select:
+    case OptionSelectionType.Select:
       return `Select one option`;
-    case FieldOptionsSelectionType.MultiSelect:
+    case OptionSelectionType.MultiSelect:
       return `Select up to ${maxSelections ?? 1} options`;
-    case FieldOptionsSelectionType.Rank:
+    case OptionSelectionType.Rank:
       return `Rank options`;
   }
 };

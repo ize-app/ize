@@ -26,7 +26,7 @@ type Options {
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
   systemType: SystemFieldType
-  selectionType: FieldOptionsSelectionType!
+  selectionType: OptionSelectionType!
   maxSelections: Int
   linkedResultOptions: [LinkedResult!]!
   options: [Option!]!
@@ -84,7 +84,7 @@ enum FieldType {
   FreeInput
 }
 
-enum FieldOptionsSelectionType {
+enum OptionSelectionType {
   Rank
   MultiSelect
   Select
@@ -174,7 +174,7 @@ input FieldOptionsConfigArgs {
   previousStepOptions: Boolean!
   requestOptionsDataType: FieldDataType
   maxSelections: Int
-  selectionType: FieldOptionsSelectionType!
+  selectionType: OptionSelectionType!
   linkedResultOptions: [LinkedResultOptionsArgs!]!
   options: [FieldOptionArgs!]!
 }

@@ -1,10 +1,10 @@
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { FieldDataType, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 
 interface DefaultFieldProps {
   fieldType: FieldType;
-  selectionType?: FieldOptionsSelectionType;
+  selectionType?: OptionSelectionType;
 }
 
 export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaType => {
@@ -19,12 +19,12 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
         required: true,
         optionsConfig: {
           options: [],
-          selectionType: selectionType ?? FieldOptionsSelectionType.Select,
+          selectionType: selectionType ?? OptionSelectionType.Select,
           previousStepOptions: false,
           maxSelections:
-            selectionType === FieldOptionsSelectionType.MultiSelect
+            selectionType === OptionSelectionType.MultiSelect
               ? 3
-              : selectionType === FieldOptionsSelectionType.Select
+              : selectionType === OptionSelectionType.Select
                 ? 1
                 : null,
           linkedResultOptions: [],

@@ -1,4 +1,4 @@
-import { FieldFragment, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { FieldFragment, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { createFreeInputDefaultValue } from "./createFreeInputDefaultState";
 import {
@@ -27,7 +27,7 @@ export const createFieldAnswersFormState = ({
       };
     } else {
       let optionSelections: OptionSelectionsSchemaType = [];
-      if (f.selectionType === FieldOptionsSelectionType.Rank) optionSelections = f.options;
+      if (f.selectionType === OptionSelectionType.Rank) optionSelections = f.options;
       answer = {
         required: f.required,
         selectionType: f.selectionType,

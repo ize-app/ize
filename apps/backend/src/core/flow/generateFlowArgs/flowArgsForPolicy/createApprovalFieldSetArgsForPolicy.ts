@@ -1,10 +1,10 @@
 import {
   FieldArgs,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
   GroupFlowPolicyArgs,
   GroupFlowPolicyType,
+  OptionSelectionType,
 } from "@/graphql/generated/resolver-types";
 
 export const createApprovalFieldSetArgsForPolicy = ({
@@ -27,7 +27,7 @@ export const createApprovalFieldSetArgsForPolicy = ({
     optionsConfig: {
       previousStepOptions: false,
       maxSelections: 1,
-      selectionType: FieldOptionsSelectionType.Select,
+      selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
         { optionId: "approve", dataType: FieldDataType.String, name: "✅" },

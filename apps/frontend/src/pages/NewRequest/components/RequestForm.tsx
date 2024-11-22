@@ -18,11 +18,7 @@ import {
 } from "../../../components/Form/formFields";
 import { Radio } from "../../../components/Form/formFields/Radio";
 import { WizardNav } from "../../../components/Wizard";
-import {
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FieldType,
-} from "../../../graphql/generated/graphql";
+import { FieldDataType, FieldType, OptionSelectionType } from "../../../graphql/generated/graphql";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { NewRequestFormSchema, useNewRequestWizardState } from "../newRequestWizard";
 
@@ -182,7 +178,7 @@ export const RequestForm = () => {
                         const { options, name, selectionType, fieldId } = field;
 
                         switch (selectionType) {
-                          case FieldOptionsSelectionType.Select: {
+                          case OptionSelectionType.Select: {
                             return (
                               <Radio<RequestSchemaType>
                                 name={`requestFields.${field.fieldId}.optionSelections[0].optionId`}
@@ -196,7 +192,7 @@ export const RequestForm = () => {
                               />
                             );
                           }
-                          case FieldOptionsSelectionType.MultiSelect: {
+                          case OptionSelectionType.MultiSelect: {
                             return (
                               <MultiSelect<RequestSchemaType>
                                 name={`requestFields.${field.fieldId}.optionSelections`}
@@ -210,7 +206,7 @@ export const RequestForm = () => {
                               />
                             );
                           }
-                          case FieldOptionsSelectionType.Rank: {
+                          case OptionSelectionType.Rank: {
                             return (
                               <SortableList<RequestSchemaType>
                                 label={name}

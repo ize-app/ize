@@ -2,8 +2,8 @@ import * as z from "zod";
 
 import {
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
+  OptionSelectionType,
   SystemFieldType,
 } from "@/graphql/generated/graphql";
 
@@ -60,9 +60,7 @@ const fieldOptionsSchema = z
   .object({
     previousStepOptions: z.boolean().default(false),
     triggerDefinedOptions: triggerDefinedOptionsSchema,
-    selectionType: z
-      .nativeEnum(FieldOptionsSelectionType)
-      .default(FieldOptionsSelectionType.Select),
+    selectionType: z.nativeEnum(OptionSelectionType).default(OptionSelectionType.Select),
     maxSelections: z
       .number()
       .or(z.nativeEnum(OptionSelectionCountLimit))
@@ -80,7 +78,7 @@ const fieldOptionsSchema = z
   .refine(
     (options) => {
       if (
-        options.selectionType === FieldOptionsSelectionType.MultiSelect &&
+        options.selectionType === OptionSelectionType.MultiSelect &&
         options.maxSelections === undefined
       )
         return false;

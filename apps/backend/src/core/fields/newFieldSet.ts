@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 
 import {
   FieldOptionsConfigArgs,
-  FieldOptionsSelectionType,
   FieldSetArgs,
+  OptionSelectionType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -78,9 +78,9 @@ const createFieldOptionsConfig = async ({
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
     data: {
       maxSelections:
-        selectionType === FieldOptionsSelectionType.MultiSelect
+        selectionType === OptionSelectionType.MultiSelect
           ? maxSelections
-          : selectionType === FieldOptionsSelectionType.Select
+          : selectionType === OptionSelectionType.Select
             ? 1
             : null,
       requestOptionsDataType,

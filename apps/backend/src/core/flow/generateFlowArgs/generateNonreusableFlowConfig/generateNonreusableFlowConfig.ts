@@ -2,10 +2,10 @@ import {
   ActionType,
   DecisionType,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
   FlowType,
   NewFlowArgs,
+  OptionSelectionType,
   PermissionArgs,
   ResultType,
 } from "@/graphql/generated/resolver-types";
@@ -194,7 +194,7 @@ export const generateNonreusableFlowConfig = ({
                   optionsConfig: {
                     options: [],
                     previousStepOptions: true,
-                    selectionType: FieldOptionsSelectionType.Select,
+                    selectionType: OptionSelectionType.Select,
                     linkedResultOptions: [{ stepIndex: 0, resultIndex: 0 }],
                   },
                 },

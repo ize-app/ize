@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 import {
   FieldDataType,
   FieldFragment,
-  FieldOptionsSelectionType,
   FieldType,
   NewResponseDocument,
+  OptionSelectionType,
   PermissionFragment,
 } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
@@ -142,7 +142,7 @@ export const ResponseForm = ({
                   const { options, name, selectionType, fieldId } = field;
 
                   switch (selectionType) {
-                    case FieldOptionsSelectionType.Select: {
+                    case OptionSelectionType.Select: {
                       return (
                         <Radio<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
@@ -156,7 +156,7 @@ export const ResponseForm = ({
                         />
                       );
                     }
-                    case FieldOptionsSelectionType.MultiSelect: {
+                    case OptionSelectionType.MultiSelect: {
                       return (
                         <MultiSelect<ResponseSchemaType>
                           name={`responseFields.${field.fieldId}.optionSelections`}
@@ -170,7 +170,7 @@ export const ResponseForm = ({
                         />
                       );
                     }
-                    case FieldOptionsSelectionType.Rank: {
+                    case OptionSelectionType.Rank: {
                       return (
                         <SortableList<ResponseSchemaType>
                           label={name}

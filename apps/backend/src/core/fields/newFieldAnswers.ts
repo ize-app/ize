@@ -1,6 +1,6 @@
 import { FieldDataType, FieldType, Prisma } from "@prisma/client";
 
-import { FieldAnswerArgs, FieldOptionsSelectionType } from "@/graphql/generated/resolver-types";
+import { FieldAnswerArgs, OptionSelectionType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { constructFieldOptions } from "./constructFieldOptions";
@@ -169,7 +169,7 @@ export const newFieldAnswers = async ({
                     return {
                       fieldOptionId,
                       weight:
-                        field.FieldOptionsConfigs?.selectionType === FieldOptionsSelectionType.Rank
+                        field.FieldOptionsConfigs?.selectionType === OptionSelectionType.Rank
                           ? totalOptionCount - index
                           : 1,
                     };

@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 
 import { Select } from "@/components/Form/formFields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -24,13 +24,13 @@ const maxListItemsOptions = [
   { name: "No limit", value: ResultListCountLimit.None },
 ];
 
-const rankingStrategyDescription = (selectionType: FieldOptionsSelectionType) => {
+const rankingStrategyDescription = (selectionType: OptionSelectionType) => {
   switch (selectionType) {
-    case FieldOptionsSelectionType.Select:
+    case OptionSelectionType.Select:
       return "Ranking determined by number of times option is selected";
-    case FieldOptionsSelectionType.MultiSelect:
+    case OptionSelectionType.MultiSelect:
       return "Ranking determined by number of times option is selected";
-    case FieldOptionsSelectionType.Rank:
+    case OptionSelectionType.Rank:
       return "Ranking determined by weighted average of individual rankings";
   }
 };

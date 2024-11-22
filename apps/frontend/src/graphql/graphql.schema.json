@@ -2095,7 +2095,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "FieldOptionsSelectionType",
+                "name": "OptionSelectionType",
                 "ofType": null
               }
             },
@@ -2106,36 +2106,6 @@
         ],
         "interfaces": null,
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "FieldOptionsSelectionType",
-        "description": null,
-        "isOneOf": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "MultiSelect",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Rank",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Select",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {
@@ -6271,6 +6241,36 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "OptionSelectionType",
+        "description": null,
+        "isOneOf": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "MultiSelect",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Rank",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Select",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Options",
         "description": null,
@@ -6437,7 +6437,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "FieldOptionsSelectionType",
+                "name": "OptionSelectionType",
                 "ofType": null
               }
             },

@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 
 import {
   FieldDataType,
-  FieldOptionsSelectionType,
+  OptionSelectionType,
   ResponseFieldAnswersOptionsSummaryFragment,
 } from "@/graphql/generated/graphql";
 
@@ -23,7 +23,7 @@ export const FieldOption = ({
   isSelected?: boolean;
   value: string;
   dataType: FieldDataType;
-  selectionType: FieldOptionsSelectionType;
+  selectionType: OptionSelectionType;
   index: number | null;
   final: boolean;
   optionResponseSummary?: ResponseFieldAnswersOptionsSummaryFragment | null | undefined;
@@ -31,7 +31,7 @@ export const FieldOption = ({
 }) => {
   const votes = optionResponseSummary?.count || 0;
   const percentage =
-    totalResponses && totalResponses > 0 && selectionType !== FieldOptionsSelectionType.Rank
+    totalResponses && totalResponses > 0 && selectionType !== OptionSelectionType.Rank
       ? parseFloat(((votes / totalResponses) * 100).toFixed(0))
       : 0;
   const avgRank = optionResponseSummary?.rank || 0;
@@ -43,7 +43,7 @@ export const FieldOption = ({
         flexDirection: "column",
         backgroundColor: isSelected ? "#ffffe6" : "inherit",
         border:
-          isSelected && selectionType !== FieldOptionsSelectionType.Rank
+          isSelected && selectionType !== OptionSelectionType.Rank
             ? `1px solid ${theme.palette.primary.main}`
             : "none",
       })}
@@ -55,13 +55,11 @@ export const FieldOption = ({
           color={isSelected ? "primary" : "secondary"}
           fontSize={"1rem"}
         >
-          {selectionType === FieldOptionsSelectionType.Rank &&
-            typeof index === "number" &&
-            final && (
-              <Typography fontSize={"1rem"} fontWeight={700} marginRight="4px" color="primary">
-                {index + 1}.
-              </Typography>
-            )}
+          {selectionType === OptionSelectionType.Rank && typeof index === "number" && final && (
+            <Typography fontSize={"1rem"} fontWeight={700} marginRight="4px" color="primary">
+              {index + 1}.
+            </Typography>
+          )}
           <FreeInputValue value={value} type={dataType} />
         </Box>
         {!!percentage && (

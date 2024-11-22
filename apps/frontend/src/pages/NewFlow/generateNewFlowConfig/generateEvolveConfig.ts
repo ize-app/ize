@@ -7,9 +7,9 @@ import {
   ActionType,
   DecisionType,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
   FlowType,
+  OptionSelectionType,
   ResultType,
   SystemFieldType,
 } from "@/graphql/generated/graphql";
@@ -60,7 +60,7 @@ export const generateEvolveConfig = ({
     optionsConfig: {
       previousStepOptions: false,
       maxSelections: 1,
-      selectionType: FieldOptionsSelectionType.Select,
+      selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
         { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "✅" },

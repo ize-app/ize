@@ -5,11 +5,11 @@ import {
   DecisionType,
   FieldArgs,
   FieldDataType,
-  FieldOptionsSelectionType,
   FieldType,
   FlowType,
   NewFlowArgs,
   NewStepArgs,
+  OptionSelectionType,
   ResultArgs,
   ResultType,
   SystemFieldType,
@@ -53,7 +53,7 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
     optionsConfig: {
       previousStepOptions: false,
       maxSelections: 1,
-      selectionType: FieldOptionsSelectionType.Select,
+      selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
         { optionId: "approve", dataType: FieldDataType.String, name: "✅" },

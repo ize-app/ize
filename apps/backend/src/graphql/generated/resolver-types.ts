@@ -246,14 +246,8 @@ export type FieldOptionsConfigArgs = {
   options: Array<FieldOptionArgs>;
   previousStepOptions: Scalars['Boolean']['input'];
   requestOptionsDataType?: InputMaybe<FieldDataType>;
-  selectionType: FieldOptionsSelectionType;
+  selectionType: OptionSelectionType;
 };
-
-export enum FieldOptionsSelectionType {
-  MultiSelect = 'MultiSelect',
-  Rank = 'Rank',
-  Select = 'Select'
-}
 
 export type FieldSet = {
   __typename?: 'FieldSet';
@@ -728,6 +722,12 @@ export type OptionSelectionArgs = {
   optionIndex?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export enum OptionSelectionType {
+  MultiSelect = 'MultiSelect',
+  Rank = 'Rank',
+  Select = 'Select'
+}
+
 export type Options = {
   __typename?: 'Options';
   fieldId: Scalars['String']['output'];
@@ -739,7 +739,7 @@ export type Options = {
   previousStepOptions: Scalars['Boolean']['output'];
   requestOptionsDataType?: Maybe<FieldDataType>;
   required: Scalars['Boolean']['output'];
-  selectionType: FieldOptionsSelectionType;
+  selectionType: OptionSelectionType;
   systemType?: Maybe<SystemFieldType>;
 };
 
@@ -1293,7 +1293,6 @@ export type ResolversTypes = {
   FieldDataType: FieldDataType;
   FieldOptionArgs: FieldOptionArgs;
   FieldOptionsConfigArgs: FieldOptionsConfigArgs;
-  FieldOptionsSelectionType: FieldOptionsSelectionType;
   FieldSet: ResolverTypeWrapper<Omit<FieldSet, 'fields'> & { fields: Array<ResolversTypes['Field']> }>;
   FieldSetArgs: FieldSetArgs;
   FieldType: FieldType;
@@ -1353,6 +1352,7 @@ export type ResolversTypes = {
   OptionFieldAnswer: ResolverTypeWrapper<OptionFieldAnswer>;
   OptionFieldAnswerSelection: ResolverTypeWrapper<OptionFieldAnswerSelection>;
   OptionSelectionArgs: OptionSelectionArgs;
+  OptionSelectionType: OptionSelectionType;
   Options: ResolverTypeWrapper<Options>;
   Organization: ResolverTypeWrapper<Organization>;
   Permission: ResolverTypeWrapper<Omit<Permission, 'entities'> & { entities: Array<ResolversTypes['Entity']> }>;
@@ -1918,7 +1918,7 @@ export type OptionsResolvers<ContextType = GraphqlRequestContext, ParentType ext
   previousStepOptions?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   requestOptionsDataType?: Resolver<Maybe<ResolversTypes['FieldDataType']>, ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  selectionType?: Resolver<ResolversTypes['FieldOptionsSelectionType'], ParentType, ContextType>;
+  selectionType?: Resolver<ResolversTypes['OptionSelectionType'], ParentType, ContextType>;
   systemType?: Resolver<Maybe<ResolversTypes['SystemFieldType']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
-import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { AddOptionButton } from "./AddOptionButton";
 import { TriggerDefinedOptionsForm } from "./TriggerDefinedOptionsForm";
@@ -102,10 +102,10 @@ export const ResponseFieldOptionsForm = ({
           borderColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
-        {optionSelectionType === FieldOptionsSelectionType.MultiSelect && (
+        {optionSelectionType === OptionSelectionType.MultiSelect && (
           <Select<FlowSchemaType>
             defaultValue=""
-            display={optionSelectionType === FieldOptionsSelectionType.MultiSelect}
+            display={optionSelectionType === OptionSelectionType.MultiSelect}
             label="How many options can be selected?"
             renderValue={(val) => {
               const option = multiSelectOptions.find((option) => option.value === val);
