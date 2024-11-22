@@ -5,6 +5,7 @@ import { GroupSetupAndPoliciesSchemaType } from "./formValidation";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "../../routers/routes";
 
 export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = {
+  entityId: crypto.randomUUID(),
   members: [],
   name: "",
   flows: {

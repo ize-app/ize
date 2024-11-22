@@ -20,6 +20,7 @@ export const Setup = () => {
 
   const formMethods = useForm<GroupInitialSetupSchemaType>({
     defaultValues: {
+      entityId: formState.entityId ?? crypto.randomUUID(),
       name: formState.name ?? "",
       description: formState.description ?? "",
       members: formState.members ?? [],

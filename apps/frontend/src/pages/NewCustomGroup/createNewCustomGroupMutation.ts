@@ -8,6 +8,7 @@ export const createNewCustomGroupMutation = (
 ): MutationNewCustomGroupArgs => {
   const args = {
     inputs: {
+      entityId: formState.entityId,
       name: formState.name,
       description: formState.description,
       members: formState.members.map((member) => ({

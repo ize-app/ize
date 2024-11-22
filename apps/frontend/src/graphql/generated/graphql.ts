@@ -107,6 +107,7 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
+  entityId: Scalars['String']['input'];
   flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];
@@ -1829,6 +1830,7 @@ export type CallWebhookArgs = {
 
 export type CustomGroupArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
+  entityId: Scalars['String']['input'];
   flows: GroupFlowArgs;
   members: Array<EntityArgs>;
   name: Scalars['String']['input'];

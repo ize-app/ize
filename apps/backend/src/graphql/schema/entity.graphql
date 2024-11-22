@@ -190,6 +190,7 @@ input GroupFlowArgs {
 }
 
 input CustomGroupArgs {
+  entityId: String!
   name: String!
   description: String
   members: [EntityArgs!]!

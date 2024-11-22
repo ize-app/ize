@@ -10,6 +10,7 @@ export type GroupInitialSetupSchemaType = z.infer<typeof groupInitialSetupFormSc
 export type GroupSetupAndPoliciesSchemaType = z.infer<typeof groupSetupAndPoliciesFormSchema>;
 
 export const groupInitialSetupFormSchema = z.object({
+  entityId: z.string().uuid(),
   groupCommunicationChannel: z.nativeEnum(GroupCommunicationType).optional(),
   name: z.string().min(1, "Please enter a name for the group"),
   description: z.string().optional(),
