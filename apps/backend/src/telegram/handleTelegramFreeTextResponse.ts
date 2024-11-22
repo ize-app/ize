@@ -53,6 +53,7 @@ export const handleTelegramFreeTextResponse = async ({
     entityContext: { type: "identity", identity },
     args: {
       response: {
+        responseId: crypto.randomUUID(),
         answers: [
           {
             fieldId: fieldId,

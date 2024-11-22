@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -33,6 +33,7 @@ export const ResponseForm = ({
   permission: PermissionFragment | undefined | null;
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
+  const [disableSubmit, setDisableSubmit] = useState(false);
   const navigate = useNavigate();
   const { setIdentityModalState } = useContext(CurrentUserContext);
   const [mutate] = useMutation(NewResponseDocument, {
@@ -62,14 +63,17 @@ export const ResponseForm = ({
   // console.log("errors are", formMethods.formState.errors);
 
   const onSubmit = async (data: ResponseSchemaType) => {
+    setDisableSubmit(true);
     await mutate({
       variables: {
         response: {
+          responseId: data.responseId,
           requestStepId,
           answers: await createFieldAnswersArgs(data.responseFields),
         },
       },
     });
+    setDisableSubmit(false);
   };
 
   return (
@@ -191,6 +195,7 @@ export const ResponseForm = ({
           <Button
             variant={"contained"}
             size="small"
+            disabled={disableSubmit}
             sx={{ width: "200px", alignSelf: "flex-start" }}
             onClick={formMethods.handleSubmit(onSubmit)}
           >

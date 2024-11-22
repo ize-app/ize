@@ -11,5 +11,5 @@ export const createResponseFormState = ({
 }): ResponseSchemaType => {
   const responseFieldAnswers: FieldAnswerRecordSchemaType = createFieldAnswersFormState({ fields });
 
-  return { responseFields: responseFieldAnswers };
+  return { responseId: crypto.randomUUID(), responseFields: responseFieldAnswers };
 };

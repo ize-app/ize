@@ -26,6 +26,7 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
     entityContext: { type: "identity", identity },
     args: {
       response: {
+        responseId: crypto.randomUUID(),
         answers: [
           {
             fieldId: poll.fieldId,

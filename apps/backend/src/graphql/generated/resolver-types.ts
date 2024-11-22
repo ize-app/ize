@@ -670,6 +670,7 @@ export type NewRequestArgs = {
 export type NewResponseArgs = {
   answers: Array<FieldAnswerArgs>;
   requestStepId: Scalars['String']['input'];
+  responseId: Scalars['String']['input'];
 };
 
 export type NewStepArgs = {

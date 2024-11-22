@@ -122,6 +122,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
 
     const newResponse = await transaction.response.create({
       data: {
+        id: args.response.responseId,
         creatorEntityId: entityId,
         requestStepId,
       },
