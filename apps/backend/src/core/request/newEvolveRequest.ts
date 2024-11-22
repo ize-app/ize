@@ -139,8 +139,9 @@ export const newEvolveRequest = async ({
         optionSelections: [],
       });
     }
-
+    
     const requestArgs: NewRequestArgs = {
+      requestId: crypto.randomUUID(),
       flowId: flow.CurrentFlowVersion.evolveFlowId,
       name: args.request.name,
       requestFields,

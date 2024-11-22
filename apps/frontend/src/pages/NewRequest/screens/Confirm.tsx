@@ -4,7 +4,7 @@ import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
 export const Confirm = () => {
-  const { onNext, onPrev, nextLabel } = useNewRequestWizardState();
+  const { onNext, onPrev, nextLabel, disableNext } = useNewRequestWizardState();
 
   return (
     <>
@@ -12,7 +12,7 @@ export const Confirm = () => {
         <Box sx={{ maxWidth: "800px" }}>Submit to finalize your request.</Box>
       </WizardBody>
 
-      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />
+      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} disableNext={disableNext} />
     </>
   );
 };

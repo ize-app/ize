@@ -115,6 +115,7 @@ export const createWatchFlowRequests = async ({
           await newRequest({
             args: {
               request: {
+                requestId: crypto.randomUUID(),
                 name: flowName ? `Watch '${flowName}'` : "Watch flow",
                 requestDefinedOptions: [],
                 requestFields: [{ fieldId: watchFlowField.fieldId, value: fieldAnswerValue }],

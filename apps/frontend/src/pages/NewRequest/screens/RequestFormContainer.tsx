@@ -19,6 +19,7 @@ const createRequestFormState = (flow: Flow): RequestSchemaType => {
   });
 
   const newFormState: RequestSchemaType = {
+    requestId: crypto.randomUUID(),
     name: "",
     requestFields,
     requestDefinedOptions: {},

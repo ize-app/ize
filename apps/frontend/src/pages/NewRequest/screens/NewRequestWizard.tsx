@@ -69,6 +69,7 @@ export const NewRequestWizard = () => {
     nextLabel,
     params,
     setParams,
+    disableNext,
   } = useWizard(newRequestWizard);
 
   formState;
@@ -94,6 +95,7 @@ export const NewRequestWizard = () => {
             nextLabel,
             params,
             setParams,
+            disableNext,
           }}
         />
       </WizardContainer>

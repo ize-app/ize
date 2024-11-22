@@ -35,5 +35,5 @@ export const createNewRequestMutationArgs = async (
 
   console.log("requestDefinedOptions", requestDefinedOptions);
 
-  return { flowId, requestFields, requestDefinedOptions, name };
+  return { requestId: request.requestId, flowId, requestFields, requestDefinedOptions, name };
 };

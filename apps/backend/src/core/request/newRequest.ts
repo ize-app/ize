@@ -28,7 +28,7 @@ export const newRequest = async ({
   proposedFlowVersionId?: string;
 }): Promise<string> => {
   const {
-    request: { requestDefinedOptions, requestFields, flowId },
+    request: { requestDefinedOptions, requestFields, flowId, requestId },
   } = args;
 
   const { entityId, entityIds, user } = await getUserEntities({ entityContext });
@@ -66,81 +66,80 @@ export const newRequest = async ({
       extensions: { code: CustomErrorCodes.InsufficientPermissions },
     });
 
-  const { requestId, requestStepId, responseComplete } = await prisma.$transaction(
-    async (transaction) => {
-      const request = await transaction.request.create({
-        include: {
-          CreatorEntity: {
-            include: entityInclude,
+  const { requestStepId, responseComplete } = await prisma.$transaction(async (transaction) => {
+    const request = await transaction.request.create({
+      include: {
+        CreatorEntity: {
+          include: entityInclude,
+        },
+      },
+      data: {
+        id: requestId,
+        name: args.request.name,
+        flowVersionId: flowVersionId,
+        creatorEntityId: entityId,
+        proposedFlowVersionId,
+        final: false,
+      },
+    });
+
+    const responseComplete = canEndRequestStepWithResponse({ step });
+
+    const requestStep = await transaction.requestStep.create({
+      data: {
+        expirationDate: new Date(
+          new Date().getTime() + (step.ResponseConfig?.expirationSeconds ?? 0) * 1000,
+        ),
+        responseFinal: responseComplete,
+        Request: {
+          connect: {
+            id: request.id,
           },
         },
-        data: {
-          name: args.request.name,
-          flowVersionId: flowVersionId,
-          creatorEntityId: entityId,
-          proposedFlowVersionId,
-          final: false,
-        },
-      });
-
-      const responseComplete = canEndRequestStepWithResponse({ step });
-
-      const requestStep = await transaction.requestStep.create({
-        data: {
-          expirationDate: new Date(
-            new Date().getTime() + (step.ResponseConfig?.expirationSeconds ?? 0) * 1000,
-          ),
-          responseFinal: responseComplete,
-          Request: {
-            connect: {
-              id: request.id,
-            },
-          },
-          Step: {
-            connect: {
-              id: step.id,
-            },
-          },
-          CurrentStepParent: {
-            connect: {
-              id: request.id,
-            },
+        Step: {
+          connect: {
+            id: step.id,
           },
         },
-      });
+        CurrentStepParent: {
+          connect: {
+            id: request.id,
+          },
+        },
+      },
+    });
 
-      const requestDefinedOptionSets = await Promise.all(
-        requestDefinedOptions.map(async (r) => {
-          return await createRequestDefinedOptionSet({
-            flowVersion: flow.CurrentFlowVersion as FlowVersionPrismaType,
-            requestId: request.id,
-            newOptionArgs: r.options,
-            fieldId: r.fieldId,
-            isTriggerDefinedOptions: true,
-            transaction,
-          });
-        }),
-      );
-
-      // TODO: if auto approve, just create the result
-
-      if (flow.CurrentFlowVersion?.TriggerFieldSet) {
-        await newFieldAnswers({
-          fieldSet: flow.CurrentFlowVersion?.TriggerFieldSet,
-          fieldAnswers: requestFields,
-          requestDefinedOptionSets: requestDefinedOptionSets,
+    const requestDefinedOptionSets = await Promise.all(
+      requestDefinedOptions.map(async (r) => {
+        return await createRequestDefinedOptionSet({
+          flowVersion: flow.CurrentFlowVersion as FlowVersionPrismaType,
           requestId: request.id,
+          newOptionArgs: r.options,
+          fieldId: r.fieldId,
+          isTriggerDefinedOptions: true,
           transaction,
         });
-      }
+      }),
+    );
 
-      return {
+    // TODO: if auto approve, just create the result
+
+    if (flow.CurrentFlowVersion?.TriggerFieldSet) {
+      await newFieldAnswers({
+        fieldSet: flow.CurrentFlowVersion?.TriggerFieldSet,
+        fieldAnswers: requestFields,
+        requestDefinedOptionSets: requestDefinedOptionSets,
         requestId: request.id,
-        requestStepId: requestStep.id,
-        responseComplete,
-      };
-    },
-  );
+        transaction,
+      });
+    }
+
+    return {
+      requestId: request.id,
+      requestStepId: requestStep.id,
+      responseComplete,
+    };
+  });
 
   if (responseComplete) {
     await newResultsForStep({ requestStepId });

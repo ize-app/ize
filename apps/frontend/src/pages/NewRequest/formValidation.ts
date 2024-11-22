@@ -30,7 +30,7 @@ export const requestDefinedOptionsSchema = z.record(
 
 export const requestSchema = z
   .object({
-    // strangely, making this field required creates other errors so I made the field required via the refine method
+    requestId: z.string().uuid(),
     name: z.string().min(5, "Please make the request name at least 5 characters"),
     requestFields: fieldAnswerRecordSchema.optional(),
     requestDefinedOptions: requestDefinedOptionsSchema,

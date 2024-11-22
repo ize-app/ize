@@ -664,6 +664,7 @@ export type NewRequestArgs = {
   name: Scalars['String']['input'];
   requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
   requestFields: Array<FieldAnswerArgs>;
+  requestId: Scalars['String']['input'];
 };
 
 export type NewResponseArgs = {

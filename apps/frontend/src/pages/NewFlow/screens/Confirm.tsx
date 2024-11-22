@@ -5,7 +5,7 @@ import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
 export const Confirm = () => {
-  const { onNext, onPrev, nextLabel } = useNewFlowWizardState();
+  const { onNext, onPrev, nextLabel, disableNext } = useNewFlowWizardState();
 
   return (
     <>
@@ -18,7 +18,7 @@ export const Confirm = () => {
         </Box>
       </WizardBody>
 
-      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />
+      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} disableNext={disableNext} />
     </>
   );
 };
