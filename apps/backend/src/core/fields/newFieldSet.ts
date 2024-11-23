@@ -12,6 +12,8 @@ import { newOptionSet } from "./newOptionSet";
 import { prisma } from "../../prisma/client";
 import { StepPrismaType } from "../flow/flowPrismaTypes";
 
+type PrismaFieldArgs = Omit<Prisma.FieldUncheckedCreateInput, "fieldSetId">;
+
 export const newFieldSet = async ({
   fieldSetArgs,
   createdSteps,
@@ -23,8 +25,8 @@ export const newFieldSet = async ({
 }): Promise<FieldSetPrismaType | null> => {
   const { fields, locked } = fieldSetArgs;
   if (fields.length === 0) return null;
-  const dbFields = await Promise.all(
-    fields.map(async (field) => {
+  const dbFieldsArgs: PrismaFieldArgs[] = await Promise.all(
+    fields.map(async (field, fieldIndex) => {
       let fieldOptionsConfigId: string | null = null;
       if (field.optionsConfig) {
         fieldOptionsConfigId = await createFieldOptionsConfig({
@@ -34,20 +36,19 @@ export const newFieldSet = async ({
         });
       }
 
-      const dbField = await transaction.field.create({
-        data: {
-          id: field.fieldId,
-          name: field.name,
-          type: field.type,
-          systemType: field.systemType,
-          freeInputDataType: field.freeInputDataType,
-          isInternal: field.isInternal,
-          fieldOptionsConfigId,
-          required: field.required,
-        },
-      });
+      const fieldArgs: PrismaFieldArgs = {
+        id: field.fieldId,
+        index: fieldIndex,
+        name: field.name,
+        type: field.type,
+        systemType: field.systemType,
+        freeInputDataType: field.freeInputDataType,
+        isInternal: field.isInternal,
+        fieldOptionsConfigId,
+        required: field.required,
+      };
 
-      return dbField.id;
+      return fieldArgs;
     }),
   );
 
@@ -55,7 +56,11 @@ export const newFieldSet = async ({
     include: fieldSetInclude,
     data: {
       locked,
-      FieldSetFields: { createMany: { data: dbFields.map((fieldId) => ({ fieldId: fieldId })) } },
+      Fields: {
+        createMany: {
+          data: dbFieldsArgs,
+        },
+      },
     },
   });
 
@@ -76,7 +81,7 @@ const createFieldOptionsConfig = async ({
     fieldOptionsConfigArgs;
 
   const optionSetId = await newOptionSet({ optionsArgs: options, transaction });
-  const dbOptionSet = await transaction.fieldOptionsConfig.create({
+  const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
       maxSelections:
         selectionType === OptionSelectionType.MultiSelect
@@ -114,5 +119,5 @@ const createFieldOptionsConfig = async ({
     },
   });
 
-  return dbOptionSet.id;
+  return optionsConfig.id;
 };

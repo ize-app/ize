@@ -31,49 +31,49 @@ export const fieldSetResolver = ({
   resultConfigsCache?: ResultConfig[];
 }): FieldSet => {
   // if (!fieldSet) return [];
-  const fields: Field[] = (fieldSet?.FieldSetFields ?? []).map((f) => {
-    if (f.Field.type === FieldType.FreeInput) {
+  const fields: Field[] = (fieldSet?.Fields ?? []).map((field) => {
+    if (field.type === FieldType.FreeInput) {
       const freeInput: FreeInput = {
         __typename: FieldType.FreeInput,
-        isInternal: f.Field.isInternal,
-        fieldId: f.Field.id,
-        name: f.Field.name,
-        systemType: f.Field.systemType as SystemFieldType,
-        required: f.Field.required,
-        dataType: f.Field.freeInputDataType as FieldDataType,
+        isInternal: field.isInternal,
+        fieldId: field.id,
+        name: field.name,
+        systemType: field.systemType as SystemFieldType,
+        required: field.required,
+        dataType: field.freeInputDataType as FieldDataType,
         defaultAnswer:
-          defaultValues && f.Field.systemType ? defaultValues[f.Field.systemType] : undefined,
+          defaultValues && field.systemType ? defaultValues[field.systemType] : undefined,
       };
       return freeInput;
-    } else if ((f.Field.type as FieldType) === FieldType.Options) {
-      if (!f.Field.FieldOptionsConfigs)
+    } else if ((field.type as FieldType) === FieldType.Options) {
+      if (!field.FieldOptionsConfigs)
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      const config = f.Field.FieldOptionsConfigs;
+      const config = field.FieldOptionsConfigs;
 
       // find options defined by request for this field.
       // these options will be combined with flow defined fields
       const requestDefinedOptionSet = requestDefinedOptionSets
-        ? requestDefinedOptionSets.find((s) => s.fieldId === f.fieldId)
+        ? requestDefinedOptionSets.find((s) => s.fieldId === field.id)
         : undefined;
 
       const requestOptions = requestDefinedOptionSet
-        ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map(
-            (o): Option => ({
-              optionId: o.FieldOption.id,
-              name: o.FieldOption.name,
-              dataType: o.FieldOption.dataType as FieldDataType,
+        ? requestDefinedOptionSet.FieldOptionSet.FieldOptions.map(
+            (option): Option => ({
+              optionId: option.id,
+              name: option.name,
+              dataType: option.dataType as FieldDataType,
             }),
           )
         : [];
 
-      const flowOptions = config.FieldOptionSet.FieldOptionSetFieldOptions.map(
-        (o): Option => ({
-          optionId: o.FieldOption.id,
-          name: o.FieldOption.name,
-          dataType: o.FieldOption.dataType as FieldDataType,
+      const flowOptions = config.FieldOptionSet.FieldOptions.map(
+        (option): Option => ({
+          optionId: option.id,
+          name: option.name,
+          dataType: option.dataType as FieldDataType,
         }),
       );
 
@@ -84,7 +84,7 @@ export const fieldSetResolver = ({
 
         if (!resultConfig)
           throw new GraphQLError(
-            `Linked result config not found for fieldId ${f.fieldId} and resultConfigId ${linkedResultConfigId} `,
+            `Linked result config not found for resultConfigId ${linkedResultConfigId} `,
             {
               extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
             },
@@ -110,11 +110,11 @@ export const fieldSetResolver = ({
 
       const options: Options = {
         __typename: FieldType.Options,
-        fieldId: f.Field.id,
-        isInternal: f.Field.isInternal,
-        name: f.Field.name,
-        required: f.Field.required,
-        systemType: f.Field.systemType as SystemFieldType,
+        fieldId: field.id,
+        isInternal: field.isInternal,
+        name: field.name,
+        required: field.required,
+        systemType: field.systemType as SystemFieldType,
         requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
         linkedResultOptions,
         previousStepOptions: config.previousStepOptions,

@@ -437,28 +437,15 @@ model Entity {
 
 // List of fields for use in request or response
 model FieldSet {
-  id                                   String            @id @default(uuid()) @db.Uuid
-  createdAt                            DateTime          @default(now()) @map("created_at")
+  id                                   String        @id @default(uuid()) @db.Uuid
+  createdAt                            DateTime      @default(now()) @map("created_at")
   // this means that all fields in the field set cannot be changed via flow evolution
-  locked                               Boolean           @default(false)
-  FlowVersionTriggersUsingThisFieldSet FlowVersion[]     @relation("TriggerFieldSet")
-  StepsUsingThisFieldSet               Step[]            @relation("StepFieldSet")
-  FieldSetFields                       FieldSetsFields[]
+  locked                               Boolean       @default(false)
+  FlowVersionTriggersUsingThisFieldSet FlowVersion[] @relation("TriggerFieldSet")
+  StepsUsingThisFieldSet               Step[]        @relation("StepFieldSet")
+  Fields                               Field[]
 
   @@map("field_sets")
-}
-
-// Purpose of this association table is so that there can be new sets of options without 
-// needing to create new fields everytime there's a change to the group (since data is immutable in Ize)
-model FieldSetsFields {
-  fieldSetId String @map("field_set_id") @db.Uuid
-  fieldId    String @map("field_id") @db.Uuid
-
-  FieldSet FieldSet @relation(fields: [fieldSetId], references: [id], onDelete: Cascade)
-  Field    Field    @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-
-  @@unique([fieldId, fieldSetId])
-  @@map("field_sets_fields")
 }
 
 enum FieldDataType {
@@ -492,6 +479,8 @@ enum SystemFieldType {
 // Describes a single ask for a users input (e.g. select an option)
 model Field {
   id                   String           @id @default(uuid()) @db.Uuid
+  fieldSetId           String           @map("field_set_id") @db.Uuid
+  index                Int
   type                 FieldType
   name                 String
   required             Boolean          @default(true)
@@ -504,7 +493,7 @@ model Field {
   FieldOptionsConfigs     FieldOptionsConfig?       @relation(fields: [fieldOptionsConfigId], references: [id], onDelete: Cascade)
   Answers                 FieldAnswer[]
   ResultConfig            ResultConfig[]
-  FieldSetFields          FieldSetsFields[]
+  FieldSet                FieldSet                  @relation(fields: [fieldSetId], references: [id], onDelete: Cascade)
   RequestDefinedOptionSet RequestDefinedOptionSet[]
   TelegramMessages        TelegramMessages[]
 
@@ -541,42 +530,28 @@ model FieldOptionSet {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  FieldOptionsConfigs        FieldOptionsConfig[]
-  FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
-  RequestDefinedOptionSet    RequestDefinedOptionSet[]
+  FieldOptionsConfigs     FieldOptionsConfig[]
+  FieldOptions            FieldOption[]
+  RequestDefinedOptionSet RequestDefinedOptionSet[]
 
   @@map("field_option_sets")
 }
 
-// Purpose of this association table is so that there can be new sets of options without 
-// needing to create new options everytime there's a change to the group (since data is immutable in Ize)
-// This makes showing diffs between flow versions much eaiser
-model FieldOptionSetsFieldOptions {
-  fieldOptionSetId String @map("field_option_set_id") @db.Uuid
-  fieldOptionId    String @map("field_option_id") @db.Uuid
-  // The order that the option should be displayed
-  index            Int
-
-  FieldOptionSet FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
-  FieldOption    FieldOption    @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
-
-  @@unique([fieldOptionId, fieldOptionSetId])
-  @@unique([index, fieldOptionSetId])
-  @@map("field_option_set_field_options")
-}
-
 model FieldOption {
-  id        String        @id @default(uuid()) @db.Uuid
-  dataType  FieldDataType @map("data_type")
-  name      String
-  createdAt DateTime      @default(now()) @map("created_at")
+  id               String        @id @default(uuid()) @db.Uuid
+  index            Int
+  fieldOptionSetId String        @map("field_option_set_id") @db.Uuid
+  dataType         FieldDataType @map("data_type")
+  name             String
+  createdAt        DateTime      @default(now()) @map("created_at")
 
-  AnswerOptionSelections     AnswerOptionSelection[]
-  FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
-  DefaultOptionForDecisions  ResultConfigDecision[]
-  ActionFilter               ActionFilter[]
-  ResultItems                ResultItems[]
+  FieldOptionSet            FieldOptionSet          @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
+  AnswerOptionSelections    AnswerOptionSelection[]
+  DefaultOptionForDecisions ResultConfigDecision[]
+  ActionFilter              ActionFilter[]
+  ResultItems               ResultItems[]
 
+  @@unique([index, fieldOptionSetId])
   @@map("field_options")
 }
 

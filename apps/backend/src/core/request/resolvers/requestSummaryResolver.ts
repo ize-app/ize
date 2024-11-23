@@ -35,9 +35,7 @@ export const requestSummaryResolver = ({
   const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
     (r) => r.ResultConfig.id === resultGroup?.resultConfigId,
   )?.ResultConfig;
-  const field = currStep.Step.FieldSet?.FieldSetFields.find(
-    (f) => f.fieldId === resultConfig?.fieldId,
-  )?.Field;
+  const field = (currStep.Step.FieldSet?.Fields ?? []).find((f) => f.id === resultConfig?.fieldId);
 
   const action = currStep.Step.Action;
 

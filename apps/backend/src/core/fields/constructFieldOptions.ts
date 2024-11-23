@@ -15,24 +15,17 @@ export const constructFieldOptions = ({
   const fieldOptionsConfig = field.FieldOptionsConfigs;
 
   if (!fieldOptionsConfig)
-    throw new GraphQLError(
-      `Options field answer is missing options config. fieldId: ${field.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
+    throw new GraphQLError(`Options field answer is missing options config. fieldId: ${field.id}`, {
+      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+    });
 
-  const stepDefinedOptions = fieldOptionsConfig.FieldOptionSet.FieldOptionSetFieldOptions.map(
-    (o) => o.FieldOption,
-  );
+  const stepDefinedOptions = fieldOptionsConfig.FieldOptionSet.FieldOptions;
 
   const requestDefinedOptionSet = requestDefinedOptionSets.find(
     (rdos) => rdos.fieldId === field.id,
   );
 
-  const requestDefinedOptions = requestDefinedOptionSet
-    ? requestDefinedOptionSet.FieldOptionSet.FieldOptionSetFieldOptions.map((o) => o.FieldOption)
-    : [];
+  const requestDefinedOptions = requestDefinedOptionSet?.FieldOptionSet.FieldOptions ?? [];
 
   const options = [...stepDefinedOptions, ...requestDefinedOptions];
 

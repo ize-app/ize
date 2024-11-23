@@ -79,18 +79,18 @@ export const newEvolveRequest = async ({
       },
     });
 
-    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? [];
+    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.Fields ?? [];
 
     const proposedFlowField = evoleFlowFields.find((field) => {
-      return field.Field.systemType === SystemFieldType.EvolveFlowProposed;
+      return field.systemType === SystemFieldType.EvolveFlowProposed;
     });
 
     const currentFlowField = evoleFlowFields.find(
-      (field) => field.Field.systemType === SystemFieldType.EvolveFlowCurrent,
+      (field) => field.systemType === SystemFieldType.EvolveFlowCurrent,
     );
 
     const descriptionField = evoleFlowFields.find(
-      (field) => field.Field.systemType === SystemFieldType.EvolveFlowDescription,
+      (field) => field.systemType === SystemFieldType.EvolveFlowDescription,
     );
 
     if (!proposedFlowField || !currentFlowField)
@@ -125,21 +125,21 @@ export const newEvolveRequest = async ({
 
     const requestFields: FieldAnswerArgs[] = [
       {
-        fieldId: currentFlowField.fieldId,
+        fieldId: currentFlowField.id,
         value: flow.CurrentFlowVersion.id,
         optionSelections: [],
       },
-      { fieldId: proposedFlowField.fieldId, value: proposedFlowVersionId, optionSelections: [] },
+      { fieldId: proposedFlowField.id, value: proposedFlowVersionId, optionSelections: [] },
     ];
 
     if (descriptionField) {
       requestFields.push({
-        fieldId: descriptionField.fieldId,
+        fieldId: descriptionField.id,
         value: args.request.description ?? null,
         optionSelections: [],
       });
     }
-    
+
     const requestArgs: NewRequestArgs = {
       requestId: crypto.randomUUID(),
       flowId: flow.CurrentFlowVersion.evolveFlowId,

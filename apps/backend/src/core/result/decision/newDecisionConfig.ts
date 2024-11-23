@@ -35,8 +35,8 @@ export const newDecisionConfig = async ({
 
   if (defaultOptionId) {
     const validDefaultOptionId = (
-      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions ?? []
-    ).some((fo) => fo.FieldOption.id === defaultOptionId);
+      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptions ?? []
+    ).some((fo) => fo.id === defaultOptionId);
 
     if (!validDefaultOptionId)
       throw new GraphQLError("Cannot find default option.", {

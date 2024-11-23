@@ -27,9 +27,9 @@ export const createRequestDefinedOptionSet = async ({
 }) => {
   let field: FieldPrismaType | null = null;
   for (const step of flowVersion.Steps ?? []) {
-    const f = (step.FieldSet?.FieldSetFields ?? []).find((f) => f.fieldId === fieldId);
+    const f = (step.FieldSet?.Fields ?? []).find((f) => f.id === fieldId);
     if (f) {
-      field = f.Field;
+      field = f;
       break;
     }
   }

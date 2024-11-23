@@ -27,15 +27,13 @@ export const newActionFilter = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  const responseField = responseFieldSet?.FieldSetFields.find(
-    (f) => f.fieldId === resultConfig.fieldId,
-  );
+  const responseField = (responseFieldSet?.Fields ?? []).find((f) => f.id === resultConfig.fieldId);
 
-  const hasOptionId = (
-    responseField?.Field.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions ?? []
-  ).some((option) => {
-    return option.fieldOptionId === optionId;
-  });
+  const hasOptionId = (responseField?.FieldOptionsConfigs?.FieldOptionSet.FieldOptions ?? []).some(
+    (option) => {
+      return option.id === optionId;
+    },
+  );
 
   if (!hasOptionId)
     throw new GraphQLError("Action filter option does not exist on field", {

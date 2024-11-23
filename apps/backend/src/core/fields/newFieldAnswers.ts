@@ -38,7 +38,7 @@ export const newFieldAnswers = async ({
   );
   const answerFieldIds = fieldAnswersFiltered.map((a) => a.fieldId);
 
-  const fields = fieldSet.FieldSetFields.map((f) => f.Field).filter((f) => !f.isInternal);
+  const fields = fieldSet.Fields.filter((f) => !f.isInternal);
 
   if (fields.some((f) => f.required && !answerFieldIds.includes(f.id)))
     throw new GraphQLError("Missing required fields", {

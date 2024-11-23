@@ -5,6 +5,8 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { validateInput } from "./validation/validateInput";
 
+type PrismaOptionArgs = Omit<Prisma.FieldOptionUncheckedCreateInput, "fieldOptionSetId">;
+
 export const newOptionSet = async ({
   optionsArgs,
   // dataType is only used if you want to enforce a single data type for the entire option set
@@ -15,8 +17,8 @@ export const newOptionSet = async ({
   dataType?: FieldDataType;
   transaction: Prisma.TransactionClient;
 }): Promise<string> => {
-  const fieldOptions = await Promise.all(
-    optionsArgs.map(async (optionArgs: FieldOptionArgs, index) => {
+  const dbOptionsArgs: PrismaOptionArgs[] = optionsArgs.map(
+    (optionArgs: FieldOptionArgs, index) => {
       if (dataType && dataType !== optionArgs.dataType) {
         throw new GraphQLError(
           `Option does not march required data type for field set: ${optionArgs.dataType}`,
@@ -31,22 +33,20 @@ export const newOptionSet = async ({
         });
       }
 
-      const res = await transaction.fieldOption.create({
-        data: {
-          id: optionArgs.optionId,
-          name: optionArgs.name,
-          dataType: optionArgs.dataType,
-        },
-      });
-      return { fieldOptionId: res.id, index };
-    }),
+      const dbOptionArgs: PrismaOptionArgs = {
+        id: optionArgs.optionId,
+        index,
+        name: optionArgs.name,
+        dataType: optionArgs.dataType,
+      };
+
+      return dbOptionArgs;
+    },
   );
 
   const optionSet = await transaction.fieldOptionSet.create({
     data: {
-      FieldOptionSetFieldOptions: {
-        createMany: { data: fieldOptions },
-      },
+      FieldOptions: { createMany: { data: dbOptionsArgs } },
     },
   });
 

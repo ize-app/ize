@@ -23,10 +23,10 @@ export const newResultConfigSet = async ({
     resultsArgs.map(async (res) => {
       // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
       let responseField = null;
-      
-      responseField = (responseFieldSet?.FieldSetFields ?? []).find((f) => {
-        return f.fieldId === res.fieldId;
-      })?.Field;
+
+      responseField = (responseFieldSet?.Fields ?? []).find((f) => {
+        return f.id === res.fieldId;
+      });
 
       if (!responseField)
         throw new GraphQLError(`Missing response field for ${res.fieldId}`, {

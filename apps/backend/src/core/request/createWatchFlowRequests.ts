@@ -106,9 +106,9 @@ export const createWatchFlowRequests = async ({
     await Promise.all(
       watchFlows.map(async (flow) => {
         try {
-          const watchFlowField = (
-            flow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? []
-          ).find((field) => field.Field.systemType === SystemFieldType.WatchFlow);
+          const watchFlowField = (flow.CurrentFlowVersion?.TriggerFieldSet?.Fields ?? []).find(
+            (field) => field.systemType === SystemFieldType.WatchFlow,
+          );
 
           if (!watchFlowField) return;
 
@@ -118,7 +118,7 @@ export const createWatchFlowRequests = async ({
                 requestId: crypto.randomUUID(),
                 name: flowName ? `Watch '${flowName}'` : "Watch flow",
                 requestDefinedOptions: [],
-                requestFields: [{ fieldId: watchFlowField.fieldId, value: fieldAnswerValue }],
+                requestFields: [{ fieldId: watchFlowField.id, value: fieldAnswerValue }],
                 flowId: flow.id,
               },
             },
