@@ -32,9 +32,9 @@ export const NewRequestWizard = () => {
       setSnackbarData({ message: "Request created!", type: "success" });
     },
     onError: (data) => {
-      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+      if (data.graphQLErrors[0]?.extensions?.code === "InsufficientPermissions") {
         setIdentityModalState({ type: "request", permission: undefined });
-      } else if (data.graphQLErrors[0].extensions.code === "Unauthenticated") {
+      } else if (data.graphQLErrors[0]?.extensions?.code === "Unauthenticated") {
         setAuthModalOpen(true);
       }
       setSnackbarOpen(true);

@@ -14,6 +14,7 @@ import {
 import { StageType } from "@/components/ConfigDiagram/Stage/StageType";
 import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 
+import { StreamlinedTextField } from "../formFields";
 import { ActionFilterForm } from "./components/ActionFilterForm";
 import { ActionForm } from "./components/ActionForm/ActionForm";
 import { AddStepButton } from "./components/AddStepButton";
@@ -21,7 +22,6 @@ import { FlowFormStage } from "./components/FlowFormStage";
 import { StepForm } from "./components/StepForm";
 import { TriggerForm } from "./components/TriggerForm";
 import { FlowSchemaType, flowSchema } from "./formValidation/flow";
-import { StreamlinedTextField } from "../formFields";
 
 interface FlowFormProps {
   name: "flow" | "evolve";

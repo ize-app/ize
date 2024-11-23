@@ -67,9 +67,9 @@ export const EvolveFlow = () => {
     },
     onError: (data) => {
       // navigate("/");
-      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+      if (data.graphQLErrors[0]?.extensions?.code === "InsufficientPermissions") {
         setIdentityModalState({ type: "request", permission: undefined });
-      } else if (data.graphQLErrors[0].extensions.code === "Unauthenticated") {
+      } else if (data.graphQLErrors[0]?.extensions?.code === "Unauthenticated") {
         setAuthModalOpen(true);
       }
       setSnackbarOpen(true);

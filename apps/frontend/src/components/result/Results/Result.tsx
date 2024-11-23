@@ -1,4 +1,4 @@
-import { Box, SvgIcon, Typography } from "@mui/material";
+import { Box, SvgIcon, Typography, useTheme } from "@mui/material";
 
 import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
@@ -47,6 +47,7 @@ export const Result = ({
   minResponses: number | undefined | null;
   displayDescripton: boolean;
 }) => {
+  const theme = useTheme();
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
   const backgroundColor = statusProps.lightColor ?? "white";
   const icon = statusProps.icon ? (
@@ -82,7 +83,7 @@ export const Result = ({
         {resultGroup?.status === ResultGroupStatus.Error && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
             {icon}
-            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
+            <Typography variant="description" color={theme.palette.warning.main}>
               Error creating final {resultConfig.__typename === "Decision" ? "decision" : "result"}.
             </Typography>
           </Box>
@@ -90,7 +91,7 @@ export const Result = ({
         {resultGroup?.status === ResultGroupStatus.Attempting && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
             {icon}
-            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
+            <Typography variant="description" color={theme.palette.warning.main}>
               Creating results
               {resultConfig.__typename === "Decision" ? "decision" : "result"}.
             </Typography>
@@ -99,7 +100,7 @@ export const Result = ({
         {resultGroup?.status === ResultGroupStatus.FinalNoResult && (
           <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
             {icon}
-            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
+            <Typography variant="description" color={theme.palette.warning.main}>
               This collaborative step finished without a final{" "}
               {resultConfig.__typename === "Decision" ? "decision" : "result"}.
             </Typography>

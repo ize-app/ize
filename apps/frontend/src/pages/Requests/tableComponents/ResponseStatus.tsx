@@ -23,11 +23,7 @@ export const ResponseStatus = ({
         }}
       >
         <CheckCircleIcon color={"success"} fontSize="small" />
-        <Typography
-          variant="description"
-          fontSize={".75rem"}
-          color={(theme) => theme.palette.success.main}
-        >
+        <Typography variant="description" fontSize={".75rem"} color={theme.palette.success.main}>
           Responded
         </Typography>
       </Box>

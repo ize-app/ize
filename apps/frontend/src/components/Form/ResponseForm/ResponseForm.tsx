@@ -44,7 +44,7 @@ export const ResponseForm = ({
       setSnackbarData({ message: "Response submitted!", type: "success" });
     },
     onError: (data) => {
-      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+      if (data.graphQLErrors[0]?.extensions?.code === "InsufficientPermissions") {
         setIdentityModalState({ type: "response", permission });
       }
 

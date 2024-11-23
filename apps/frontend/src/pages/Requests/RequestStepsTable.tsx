@@ -1,5 +1,5 @@
 import BoltIcon from "@mui/icons-material/Bolt";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -34,6 +34,7 @@ export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFrag
 
 const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const responseComplete = request.currentStep.status.responseFinal;
   const result = request.currentStep.result?.results[0];
   const action = request.currentStep.action;
@@ -105,7 +106,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
               {result ? (
                 <Typography
                   variant="description"
-                  color={(theme) => theme.palette.success.main}
+                  color={theme.palette.success.main}
                   sx={{
                     display: "-webkit-box",
                     WebkitBoxOrient: "vertical",
