@@ -10,7 +10,7 @@ import {
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ActionNewPrismaType } from "./actionPrismaTypes";
+import { ActionConfigPrismaType } from "./actionPrismaTypes";
 import { getActionName } from "./getActionName";
 import { callWebhookResolver } from "./webhook/webhookResolver";
 
@@ -20,7 +20,7 @@ export const actionResolver = ({
   ownerGroup,
   resultConfigs,
 }: {
-  action: ActionNewPrismaType | null | undefined;
+  action: ActionConfigPrismaType | null | undefined;
   responseFields: Field[] | undefined;
   resultConfigs: ResultConfig[];
   ownerGroup: Group | null;
@@ -28,7 +28,7 @@ export const actionResolver = ({
   if (!action) return null;
   let filter: ActionFilter | undefined = undefined;
 
-  const actionFilter = action.ActionFilter;
+  const actionFilter = action.ActionConfigFilter;
   if (actionFilter) {
     const resultConfig = resultConfigs.find(
       (rc) => rc.resultConfigId === actionFilter.resultConfigId,
@@ -61,12 +61,12 @@ export const actionResolver = ({
 
   switch (action.type) {
     case ActionType.CallWebhook:
-      if (!action.Webhook)
+      if (!action.ActionConfigWebhook)
         throw new GraphQLError("Missing webhook action config.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
       return callWebhookResolver({
-        webhook: action.Webhook,
+        webhook: action.ActionConfigWebhook,
         filter,
         locked: action.locked,
         name,

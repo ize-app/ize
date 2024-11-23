@@ -1,19 +1,19 @@
 import { Prisma } from "@prisma/client";
 
-export const webhookInclude = Prisma.validator<Prisma.WebhookInclude>()({});
+export const webhookInclude = Prisma.validator<Prisma.ActionConfigWebhookInclude>()({});
 
-export type WebhookPrismaType = Prisma.WebhookGetPayload<{
+export type WebhookPrismaType = Prisma.ActionConfigWebhookGetPayload<{
   include: typeof webhookInclude;
 }>;
 
-export const actionInclude = Prisma.validator<Prisma.ActionInclude>()({
-  Webhook: {
+export const actionInclude = Prisma.validator<Prisma.ActionConfigInclude>()({
+  ActionConfigWebhook: {
     include: webhookInclude,
   },
-  ActionFilter: true,
+  ActionConfigFilter: true,
 });
 
-export type ActionNewPrismaType = Prisma.ActionGetPayload<{
+export type ActionConfigPrismaType = Prisma.ActionConfigGetPayload<{
   include: typeof actionInclude;
 }>;
 

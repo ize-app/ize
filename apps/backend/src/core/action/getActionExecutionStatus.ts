@@ -1,6 +1,6 @@
 import { ActionStatus } from "@/graphql/generated/resolver-types";
 
-import { ActionExecutionPrismaType, ActionNewPrismaType } from "./actionPrismaTypes";
+import { ActionConfigPrismaType, ActionExecutionPrismaType } from "./actionPrismaTypes";
 
 export const getActionExecutionStatus = ({
   actionExecution,
@@ -9,7 +9,7 @@ export const getActionExecutionStatus = ({
   actionsFinal,
 }: {
   actionExecution: ActionExecutionPrismaType | undefined | null;
-  action: ActionNewPrismaType;
+  action: ActionConfigPrismaType;
   resultsFinal: boolean;
   actionsFinal: boolean;
 }): ActionStatus => {
@@ -17,7 +17,7 @@ export const getActionExecutionStatus = ({
 
   if (actionsFinal) {
     if (!actionExecution) {
-      if (action.actionFilterId) return ActionStatus.DidNotPassFilter;
+      if (action.ActionConfigFilter) return ActionStatus.DidNotPassFilter;
       else return ActionStatus.NotStarted;
     } else {
       if (actionExecution.complete) return ActionStatus.Complete;

@@ -342,20 +342,19 @@ model Step {
   flowVersionId String @map("flow_version_id") @db.Uuid
   index         Int
 
-  fieldSetId        String? @map("field_set_id") @db.Uuid
-  responseConfigId  String? @map("response_config_id") @db.Uuid
-  resultConfigSetId String? @map("result_config_set_id") @db.Uuid
-
-  actionId  String?  @map("action_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
+  fieldSetId        String?  @map("field_set_id") @db.Uuid
+  responseConfigId  String?  @map("response_config_id") @db.Uuid
+  resultConfigSetId String?  @map("result_config_set_id") @db.Uuid
+  actionConfigSetId String?  @map("action_config_set_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at")
 
   FlowVersion    FlowVersion     @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
   FieldSet       FieldSet?       @relation("StepFieldSet", fields: [fieldSetId], references: [id], onDelete: Cascade)
   ResponseConfig ResponseConfig? @relation(fields: [responseConfigId], references: [id], onDelete: Cascade)
 
   ResultConfigSet ResultConfigSet? @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
+  ActionConfigSet ActionConfigSet? @relation(fields: [actionConfigSetId], references: [id], onDelete: Cascade)
 
-  Action      Action?       @relation("StepsWithAction", fields: [actionId], references: [id], onDelete: Cascade)
   RequestStep RequestStep[]
 
   @@map("steps")
@@ -457,7 +456,6 @@ enum FieldDataType {
   FlowVersionId
   EntityIds
   FlowIds
-  Webhook
 }
 
 enum FieldType {
@@ -549,7 +547,7 @@ model FieldOption {
   FieldOptionSet            FieldOptionSet          @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
   AnswerOptionSelections    AnswerOptionSelection[]
   DefaultOptionForDecisions ResultConfigDecision[]
-  ActionFilter              ActionFilter[]
+  ActionFilter              ActionConfigFilter[]
   ResultItems               ResultItems[]
 
   @@unique([index, fieldOptionSetId])
@@ -605,9 +603,9 @@ model AnswerFreeInput {
 
 // List of fields for use in request or response
 model ResultConfigSet {
-  id           String         @id @default(uuid()) @db.Uuid
-  createdAt    DateTime       @default(now()) @map("created_at")
-  Step         Step[]
+  id            String         @id @default(uuid()) @db.Uuid
+  createdAt     DateTime       @default(now()) @map("created_at")
+  Step          Step[]
   ResultConfigs ResultConfig[]
 
   @@map("result_config_sets")
@@ -640,7 +638,7 @@ model ResultConfig {
   ResultConfigRank     ResultConfigRank?     @relation(fields: [rankId], references: [id], onDelete: Cascade)
   ResultConfigLlm      ResultConfigLlm?      @relation(fields: [llmId], references: [id], onDelete: Cascade)
   ResultGroups         ResultGroup[]
-  ActionFilter         ActionFilter[]
+  ActionConfigFilter   ActionConfigFilter[]
 
   @@unique([index, resultConfigSetId])
   @@map("result_configs")
@@ -689,6 +687,16 @@ model ResultConfigLlm {
   @@map("result_config_llms")
 }
 
+model ActionConfigSet {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ActionConfigs ActionConfig[]
+  Step          Step[]
+
+  @@map("action_config_sets")
+}
+
 enum ActionType {
   CallWebhook
   TriggerStep
@@ -699,45 +707,47 @@ enum ActionType {
   @@map("ActionType")
 }
 
-model Action {
-  id             String     @id @default(uuid()) @db.Uuid
-  type           ActionType
-  webhookId      String?    @map("webhook_id") @db.Uuid
-  actionFilterId String?    @map("action_filter_id") @db.Uuid
-  createdAt      DateTime   @default(now()) @map("created_at")
+model ActionConfig {
+  id                String     @id @default(uuid()) @db.Uuid
+  actionConfigSetId String     @map("action_config_set_id") @db.Uuid
+  index             Int
+  type              ActionType
   // locked here means that the ActionType is locked. Other parts of the action can still be changed
-  locked         Boolean    @default(false)
+  locked            Boolean    @default(false)
+  createdAt         DateTime   @default(now()) @map("created_at")
 
-  ActionFilter ActionFilter? @relation(fields: [actionFilterId], references: [id], onDelete: Cascade)
-  Steps        Step[]        @relation("StepsWithAction")
-  Webhook      Webhook?      @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  ActionConfigSet     ActionConfigSet      @relation(fields: [actionConfigSetId], references: [id], onDelete: Cascade)
+  ActionConfigWebhook ActionConfigWebhook?
+  ActionConfigFilter  ActionConfigFilter?
+  ActionExecution     ActionExecution[]
 
-  ActionExecution ActionExecution[]
-
-  @@map("actions")
+  @@unique([index, actionConfigSetId])
+  @@map("action_configs")
 }
 
-model ActionFilter {
+model ActionConfigFilter {
   id             String   @id @default(uuid()) @db.Uuid
+  actionConfigId String   @unique @map("action_config_id") @db.Uuid
   resultConfigId String   @map("result_config_id") @db.Uuid
   optionId       String   @map("filter_option_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
-  Action       Action[]
+  ActionConfig ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
   ResultConfig ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
   FieldOption  FieldOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@map("action_filters")
 }
 
-model Webhook {
-  id         String   @id @default(uuid()) @db.Uuid
-  name       String
-  uri        String
-  uriPreview String   @map("uri_preview")
-  createdAt  DateTime @default(now()) @map("created_at")
+model ActionConfigWebhook {
+  id             String   @id @default(uuid()) @db.Uuid
+  actionConfigId String   @unique @map("action_config_id") @db.Uuid
+  name           String
+  uri            String
+  uriPreview     String   @map("uri_preview")
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  Actions Action[]
+  ActionConfig ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
 
   @@map("webhooks")
 }
@@ -745,7 +755,7 @@ model Webhook {
 // Set up for multiple actions to be run in a single step even though there is currently only one action per step
 model ActionExecution {
   id              String    @id @default(uuid()) @db.Uuid
-  actionId        String    @map("action_id") @db.Uuid
+  actionConfigId  String    @map("action_config_id") @db.Uuid
   requestStepId   String    @map("request_step_id") @db.Uuid
   complete        Boolean   @default(false)
   lastAttemptedAt DateTime  @default(now()) @map("last_attempted_at")
@@ -754,10 +764,10 @@ model ActionExecution {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  Action      Action      @relation(fields: [actionId], references: [id], onDelete: Cascade)
-  RequestStep RequestStep @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
+  Action      ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
+  RequestStep RequestStep  @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
 
-  @@unique([actionId, requestStepId])
+  @@unique([actionConfigId, requestStepId])
   @@map("action_executions")
 }
 

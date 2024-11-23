@@ -5,7 +5,6 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { EntitiesSearchField } from "@/components/Form/formFields/EntitiesSearchField";
 import { FlowsSearchField } from "@/components/Form/formFields/FlowsSearchField";
-import { WebhookField } from "@/components/Form/formFields/WebhookField/WebhookField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import { RequestDefinedOptionsForm } from "./RequestDefinedOptionsForm";
@@ -148,15 +147,6 @@ export const RequestForm = () => {
                                 seperateLabel={true}
                                 groupId={flow.group?.id}
                                 systemFieldType={field.systemType}
-                              />
-                            );
-                          case FieldDataType.Webhook:
-                            return (
-                              <WebhookField
-                                type="notification"
-                                name={`requestFields.${field.fieldId}.value`}
-                                key={fieldId}
-                                required={required}
                               />
                             );
                           default:

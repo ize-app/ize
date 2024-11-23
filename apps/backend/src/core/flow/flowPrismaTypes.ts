@@ -18,8 +18,12 @@ export const stepInclude = Prisma.validator<Prisma.StepInclude>()({
   ResultConfigSet: {
     include: resultConfigSetInclude,
   },
-  Action: {
-    include: actionInclude,
+  ActionConfigSet: {
+    include: {
+      ActionConfigs: {
+        include: actionInclude,
+      },
+    },
   },
 });
 

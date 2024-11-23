@@ -7,9 +7,7 @@ import {
   FlowSummaryFragment,
 } from "@/graphql/generated/graphql";
 
-import { createWebhook } from "./createWebhook";
 import { FieldAnswerRecordSchemaType, FieldAnswerSchemaType } from "../formValidation/field";
-import { WebhookSchemaType } from "../formValidation/webhook";
 
 export const createFieldAnswersArgs = async (
   fieldAnswers: FieldAnswerRecordSchemaType | undefined,
@@ -28,7 +26,7 @@ export const createFieldAnswersArgs = async (
   return res.filter((f) => f.value || (f.optionSelections ?? []).length > 0);
 };
 
-const formatAnswerValue = async (fieldAnswer: FieldAnswerSchemaType) => {
+const formatAnswerValue = (fieldAnswer: FieldAnswerSchemaType) => {
   if (fieldAnswer.value) {
     switch (fieldAnswer.dataType) {
       case FieldDataType.Date:
@@ -39,15 +37,6 @@ const formatAnswerValue = async (fieldAnswer: FieldAnswerSchemaType) => {
         return JSON.stringify((fieldAnswer.value as Entity[]).map((e) => e.entityId));
       case FieldDataType.FlowIds:
         return JSON.stringify((fieldAnswer.value as FlowSummaryFragment[]).map((f) => f.flowId));
-      case FieldDataType.Webhook: {
-        const webhookArgs = fieldAnswer.value as WebhookSchemaType;
-        // TODO: This is hacky
-        if (!webhookArgs.uri) return "None";
-        const webhookId = await createWebhook({
-          webhookArgs: fieldAnswer.value as WebhookSchemaType,
-        });
-        return webhookId;
-      }
       default:
         //eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return fieldAnswer.value;

@@ -51,14 +51,14 @@ export const executeAction = async ({
       },
     });
 
-    const action = reqStep.Step.Action;
+    const action = reqStep.Step.ActionConfigSet?.ActionConfigs[0];
 
     if (!action) {
       await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });
       return defaultReturn;
     }
 
-    const actionFilter = action.ActionFilter;
+    const actionFilter = action.ActionConfigFilter;
     // if the action filter isn't passed, end the request step and request
     if (actionFilter) {
       const result = reqStep.ResultGroups.find(
@@ -75,7 +75,7 @@ export const executeAction = async ({
       }
     }
 
-    const actionExecution = reqStep.ActionExecution.find((a) => a.actionId === action.id);
+    const actionExecution = reqStep.ActionExecution.find((a) => a.actionConfigId === action.id);
 
     if (actionExecution) {
       // this should never evaluate to true, but just in case so action doesn't run again
@@ -89,8 +89,8 @@ export const executeAction = async ({
         return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
           await prisma.actionExecution.update({
             where: {
-              actionId_requestStepId: {
-                actionId: action.id,
+              actionConfigId_requestStepId: {
+                actionConfigId: action.id,
                 requestStepId: requestStepId,
               },
             },
@@ -116,9 +116,9 @@ export const executeAction = async ({
         let runResultsForNextStep = false;
         switch (action.type) {
           case ActionType.CallWebhook: {
-            if (!action.Webhook) throw Error("");
+            if (!action.ActionConfigWebhook) throw Error("");
             const payload = await createRequestPayload({ requestStepId });
-            const uri = decrypt(action.Webhook.uri);
+            const uri = decrypt(action.ActionConfigWebhook.uri);
             await callWebhook({ uri, payload });
             break;
           }
@@ -145,8 +145,8 @@ export const executeAction = async ({
 
         await transaction.actionExecution.upsert({
           where: {
-            actionId_requestStepId: {
-              actionId: action.id,
+            actionConfigId_requestStepId: {
+              actionConfigId: action.id,
               requestStepId: requestStepId,
             },
           },
@@ -156,7 +156,7 @@ export const executeAction = async ({
             lastAttemptedAt: new Date(),
           },
           create: {
-            actionId: action.id,
+            actionConfigId: action.id,
             requestStepId,
             complete: true,
             lastAttemptedAt: new Date(),
@@ -180,13 +180,13 @@ export const executeAction = async ({
       const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
       await prisma.actionExecution.upsert({
         where: {
-          actionId_requestStepId: {
-            actionId: action.id,
+          actionConfigId_requestStepId: {
+            actionConfigId: action.id,
             requestStepId: requestStepId,
           },
         },
         create: {
-          actionId: action.id,
+          actionConfigId: action.id,
           requestStepId,
           complete: false,
           lastAttemptedAt: new Date(),

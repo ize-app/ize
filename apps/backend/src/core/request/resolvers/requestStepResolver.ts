@@ -49,7 +49,7 @@ export const requestStepResolver = async ({
 
   const actionExecution = actionExecutionResolver({
     actionExecutions: reqStep.ActionExecution,
-    action: step.Action,
+    action: step.ActionConfigSet?.ActionConfigs[0],
     actionsFinal: reqStep.actionsFinal,
     resultsFinal: reqStep.resultsFinal,
   });
@@ -65,11 +65,7 @@ export const requestStepResolver = async ({
   const hasActionError = actionExecution?.status === ActionStatus.Error;
   const hasResultsError = results.some((result) => result.status === ResultGroupStatus.Error);
 
-  const status = requestStepStatusResolver({
-    requestStep: reqStep,
-    hasActionError,
-    hasResultsError,
-  });
+  const status = requestStepStatusResolver({ requestStep: reqStep, hasActionError, hasResultsError });
 
   const res: RequestStep = {
     requestStepId: reqStep.id,

@@ -68,20 +68,6 @@ export const fieldAnswerResolver = async ({
             )
             .map((f) => ({ flowId: f.flowId, flowName: f.name })),
         };
-      } else if (dataType === FieldDataType.Webhook) {
-        if (value === "None") {
-          return {
-            __typename: "WebhookFieldAnswer",
-            uri: "",
-          };
-        }
-        const webhook = await prisma.webhook.findFirst({
-          where: { id: value },
-        });
-        return {
-          __typename: "WebhookFieldAnswer",
-          uri: webhook?.uriPreview ?? "",
-        };
       } else {
         const freeInputAnswer: FreeInputFieldAnswer = {
           __typename: "FreeInputFieldAnswer",

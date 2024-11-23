@@ -88,8 +88,12 @@ export const createRequestSummaryInclude = (userEntityIds: string[]) =>
             ResponseConfig: {
               include: responseConfigInclude,
             },
-            Action: {
-              include: actionInclude,
+            ActionConfigSet: {
+              include: {
+                ActionConfigs: {
+                  include: actionInclude,
+                },
+              },
             },
             ResultConfigSet: {
               include: resultConfigSetInclude,

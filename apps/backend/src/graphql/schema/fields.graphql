@@ -65,7 +65,6 @@ enum FieldDataType {
   FlowVersionId
   EntityIds
   FlowIds
-  Webhook
 }
 
 enum SystemFieldType {

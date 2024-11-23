@@ -1,19 +1,19 @@
 import { ActionType, Group } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { ActionNewPrismaType } from "./actionPrismaTypes";
+import { ActionConfigPrismaType } from "./actionPrismaTypes";
 
 export const getActionName = ({
   action,
   ownerGroup,
 }: {
-  action: ActionNewPrismaType;
+  action: ActionConfigPrismaType;
   ownerGroup: Group | null;
 }): string => {
   switch (action.type) {
     case ActionType.CallWebhook:
-      if (!action.Webhook) return "Call webhook";
-      else return action.Webhook.name;
+      if (!action.ActionConfigWebhook) return "Call webhook";
+      else return action.ActionConfigWebhook.name;
     case ActionType.TriggerStep:
       return "Trigger a new step";
     case ActionType.EvolveFlow:

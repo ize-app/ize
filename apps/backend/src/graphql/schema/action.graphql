@@ -1,6 +1,5 @@
 type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
-  createWebhook(inputs: CallWebhookArgs!): String!
 }
 
 union Action = CallWebhook | EvolveFlow | EvolveGroup | TriggerStep | GroupWatchFlow

@@ -241,8 +241,7 @@ export enum FieldDataType {
   FlowVersionId = 'FlowVersionId',
   Number = 'Number',
   String = 'String',
-  Uri = 'Uri',
-  Webhook = 'Webhook'
+  Uri = 'Uri'
 }
 
 export type FieldOptionArgs = {
@@ -540,7 +539,6 @@ export type Me = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createWebhook: Scalars['String']['output'];
   endRequestStep: Scalars['Boolean']['output'];
   newCustomGroup: Scalars['String']['output'];
   newEntities: Array<Entity>;
@@ -552,11 +550,6 @@ export type Mutation = {
   updateProfile: Scalars['Boolean']['output'];
   watchFlow: Scalars['Boolean']['output'];
   watchGroup: Scalars['Boolean']['output'];
-};
-
-
-export type MutationCreateWebhookArgs = {
-  inputs: CallWebhookArgs;
 };
 
 
@@ -1870,7 +1863,6 @@ export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createWebhook?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateWebhookArgs, 'inputs'>>;
   endRequestStep?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationEndRequestStepArgs, 'requestStepId'>>;
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;

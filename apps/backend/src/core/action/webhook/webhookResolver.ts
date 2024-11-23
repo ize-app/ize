@@ -1,4 +1,4 @@
-import { Webhook } from "@prisma/client";
+import { ActionConfigWebhook } from "@prisma/client";
 
 import { ActionFilter, CallWebhook } from "@/graphql/generated/resolver-types";
 
@@ -8,7 +8,12 @@ export const callWebhookResolver = (
     filter,
     name,
     locked = false,
-  }: { webhook: Webhook; filter: ActionFilter | undefined; locked: boolean; name: string },
+  }: {
+    webhook: ActionConfigWebhook;
+    filter: ActionFilter | undefined;
+    locked: boolean;
+    name: string;
+  },
   // obscureUri = true,
 ): CallWebhook => {
   return {

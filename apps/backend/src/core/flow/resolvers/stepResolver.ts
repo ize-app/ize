@@ -58,7 +58,7 @@ export const stepResolver = ({
         }
       : undefined,
     action: actionResolver({
-      action: step.Action,
+      action: step.ActionConfigSet?.ActionConfigs[0],
       resultConfigs: result,
       responseFields: responseFieldsCache,
       ownerGroup,

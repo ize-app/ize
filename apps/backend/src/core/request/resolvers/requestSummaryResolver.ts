@@ -37,12 +37,12 @@ export const requestSummaryResolver = ({
   );
   const field = (currStep.Step.FieldSet?.Fields ?? []).find((f) => f.id === resultConfig?.fieldId);
 
-  const action = currStep.Step.Action;
+  const action = currStep.Step.ActionConfigSet?.ActionConfigs[0];
 
   const actionExecution =
     action &&
     currStep.ActionExecution.find((ae) => {
-      ae.actionId === action.id;
+      ae.actionConfigId === action.id;
     });
 
   const actionSummary = action

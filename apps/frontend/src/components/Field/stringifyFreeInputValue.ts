@@ -30,8 +30,6 @@ export const stringifyFreeInputValue = ({
       return "";
     case FieldDataType.FlowIds:
       return "";
-    case FieldDataType.Webhook:
-      return "";
     case FieldDataType.FlowVersionId:
       return "";
   }

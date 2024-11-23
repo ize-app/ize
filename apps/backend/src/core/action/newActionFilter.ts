@@ -5,17 +5,17 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
-export const newActionFilter = async ({
+type PrismaActionFilterArgs = Omit<Prisma.ActionConfigFilterUncheckedCreateInput, "actionConfigId">;
+
+export const newActionFilter = ({
   actionFilterArgs,
   responseFieldSet,
   resultConfigs,
-  transaction,
 }: {
   actionFilterArgs: ActionFilterArgs | undefined | null;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   resultConfigs: ResultConfig[];
-  transaction: Prisma.TransactionClient;
-}): Promise<string | null> => {
+}): PrismaActionFilterArgs | null => {
   if (!actionFilterArgs) return null;
 
   const { resultConfigId, optionId } = actionFilterArgs;
@@ -40,12 +40,7 @@ export const newActionFilter = async ({
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  const action = await transaction.actionFilter.create({
-    data: {
-      optionId,
-      resultConfigId,
-    },
-  });
+  const dbActionFilterArgs: PrismaActionFilterArgs = { optionId, resultConfigId };
 
-  return action.id;
+  return dbActionFilterArgs;
 };
