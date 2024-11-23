@@ -44,8 +44,7 @@ export const newResultsForStep = async ({
     // don't create results if step doesn't have enough responses
     if (step.ResponseConfig && responses.length < step.ResponseConfig.minResponses) return;
 
-    const resultConfigs =
-      step.ResultConfigSet?.ResultConfigSetResultConfigs.map((r) => r.ResultConfig) ?? [];
+    const resultConfigs = step.ResultConfigSet?.ResultConfigs ?? [];
 
     await Promise.allSettled(
       resultConfigs.map(async (resultConfig): Promise<void> => {

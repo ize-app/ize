@@ -1,7 +1,11 @@
 import { Prisma } from "@prisma/client";
 
 export const fieldOptionSetInclude = Prisma.validator<Prisma.FieldOptionSetInclude>()({
-  FieldOptions: true,
+  FieldOptions: {
+    orderBy: {
+      index: "asc",
+    },
+  },
 });
 
 export type FieldOptionSetPrismaType = Prisma.FieldOptionSetGetPayload<{
@@ -25,6 +29,9 @@ export type FieldPrismaType = Prisma.FieldGetPayload<{
 export const fieldSetInclude = Prisma.validator<Prisma.FieldSetInclude>()({
   Fields: {
     include: fieldInclude,
+    orderBy: {
+      index: "asc",
+    },
   },
 });
 

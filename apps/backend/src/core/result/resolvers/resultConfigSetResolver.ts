@@ -10,15 +10,15 @@ export const resultsConfigSetResolver = (
 ): ResultConfig[] => {
   if (!resultConfigSet) return [];
 
-  return resultConfigSet.ResultConfigSetResultConfigs.map((r): ResultConfig => {
+  return resultConfigSet.ResultConfigs.map((r): ResultConfig => {
     let responseField: Field | undefined | null = null;
-    responseField = (responseFields ?? []).find((f) => f.fieldId === r.ResultConfig.fieldId);
+    responseField = (responseFields ?? []).find((f) => f.fieldId === r.fieldId);
 
     if (!responseField)
-      throw new GraphQLError(`No field found for resultConfig ${r.resultConfigId}.`, {
+      throw new GraphQLError(`No field found for resultConfig ${r.id}.`, {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    return resultConfigResolver({ resultConfig: r.ResultConfig, field: responseField });
+    return resultConfigResolver({ resultConfig: r, field: responseField });
   });
 };

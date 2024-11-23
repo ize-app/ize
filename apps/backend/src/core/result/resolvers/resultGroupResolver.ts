@@ -32,6 +32,7 @@ export const resultGroupResolver = ({
     }),
     results: resultGroup.Result.map(
       (result): Result => ({
+        id: result.id,
         name: result.name,
         type: result.type as ResultType,
         resultItems: result.ResultItems.map(

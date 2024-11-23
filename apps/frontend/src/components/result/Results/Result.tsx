@@ -112,6 +112,7 @@ export const Result = ({
             return result.type !== ResultType.LlmSummary &&
               field.__typename === FieldType.Options ? (
               <LabeledGroupedInputs
+                key={result.id}
                 sx={{ backgroundColor: "white" }}
                 label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
               >
@@ -125,6 +126,7 @@ export const Result = ({
               </LabeledGroupedInputs>
             ) : (
               <LabeledGroupedInputs
+                key={result.id}
                 sx={{ backgroundColor: "white" }}
                 label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
               >

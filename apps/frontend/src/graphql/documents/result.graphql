@@ -26,6 +26,7 @@ fragment ResultGroup on ResultGroup {
 }
 
 fragment Result on Result {
+  id
   name
   type
   resultItems {

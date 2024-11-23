@@ -9,6 +9,11 @@ import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
 import { checkRawAnswersConfig } from "./rawAnswers.ts/newRawAnswersConfig";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
+type PrismaResultConfigAgs = Omit<
+  Prisma.ResultConfigUncheckedCreateInput,
+  "resultConfigSetId" | "index"
+>;
+
 export const newResultConfigSet = async ({
   resultsArgs,
   responseFieldSet,
@@ -19,7 +24,7 @@ export const newResultConfigSet = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<[string, ResultConfig[]] | undefined> => {
   if (resultsArgs.length === 0) return undefined;
-  const resultConfigs = await Promise.all(
+  const resultConfigs: PrismaResultConfigAgs[] = await Promise.all(
     resultsArgs.map(async (res) => {
       // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
       let responseField = null;
@@ -43,15 +48,16 @@ export const newResultConfigSet = async ({
 
   const fieldSet = await transaction.resultConfigSet.create({
     data: {
-      ResultConfigSetResultConfigs: {
+      ResultConfigs: {
         createMany: {
-          data: resultConfigs.map((resultConfig) => ({ resultConfigId: resultConfig.id })),
+          data: resultConfigs.map((rc, index) => ({ ...rc, index })),
         },
       },
     },
+    include: { ResultConfigs: true },
   });
 
-  return [fieldSet.id, resultConfigs];
+  return [fieldSet.id, fieldSet.ResultConfigs];
 };
 
 export const newResultConfig = async ({
@@ -62,7 +68,7 @@ export const newResultConfig = async ({
   resultArgs: ResultArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
-}): Promise<ResultConfig> => {
+}): Promise<PrismaResultConfigAgs> => {
   let decisionId;
   let rankId;
   let llmId;
@@ -106,14 +112,14 @@ export const newResultConfig = async ({
       break;
   }
 
-  return await transaction.resultConfig.create({
-    data: {
-      id: resultArgs.resultConfigId,
-      resultType: resultArgs.type,
-      fieldId: responseField.id,
-      decisionId,
-      rankId,
-      llmId,
-    },
-  });
+  const resultConfigArgs: PrismaResultConfigAgs = {
+    id: resultArgs.resultConfigId,
+    resultType: resultArgs.type,
+    fieldId: responseField.id,
+    decisionId,
+    rankId,
+    llmId,
+  };
+
+  return resultConfigArgs;
 };

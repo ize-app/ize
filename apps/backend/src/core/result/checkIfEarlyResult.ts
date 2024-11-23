@@ -31,9 +31,9 @@ export const checkToEndResponseEarly = async ({
 
     for (const resultGroup of reqStep.ResultGroups) {
       if (!resultGroup.complete || resultGroup.Result[0].ResultItems.length === 0) continue;
-      const resultConfig = (reqStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs ?? []).find(
-        (r) => r.resultConfigId === resultGroup.resultConfigId,
-      )?.ResultConfig;
+      const resultConfig = (reqStep.Step.ResultConfigSet?.ResultConfigs ?? []).find(
+        (r) => r.id === resultGroup.resultConfigId,
+      );
       if (!resultConfig) continue;
       if (
         resultConfig.resultType === ResultType.Decision &&

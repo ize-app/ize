@@ -1026,6 +1026,7 @@ export type ResponseFieldAnswersSummary = {
 
 export type Result = {
   __typename?: 'Result';
+  id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   resultItems: Array<ResultItem>;
   type: ResultType;
@@ -2085,6 +2086,7 @@ export type ResponseFieldAnswersSummaryResolvers<ContextType = GraphqlRequestCon
 };
 
 export type ResultResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultItems?: Resolver<Array<ResolversTypes['ResultItem']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ResultType'], ParentType, ContextType>;

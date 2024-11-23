@@ -95,8 +95,8 @@ const createFieldOptionsConfig = async ({
         let hasLinkedResult = false;
 
         for (const step of createdSteps) {
-          const foundMatch = step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
-            (rc) => rc.resultConfigId === linkedResultConfigId,
+          const foundMatch = step.ResultConfigSet?.ResultConfigs.find(
+            (rc) => rc.id === linkedResultConfigId,
           );
           if (foundMatch) {
             hasLinkedResult = true;

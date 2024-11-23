@@ -32,9 +32,9 @@ export const requestSummaryResolver = ({
   if (!currStep) throw Error("Request does not have current request step");
 
   const resultGroup = currStep.ResultGroups.find((rg) => rg.complete);
-  const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
-    (r) => r.ResultConfig.id === resultGroup?.resultConfigId,
-  )?.ResultConfig;
+  const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigs.find(
+    (r) => r.id === resultGroup?.resultConfigId,
+  );
   const field = (currStep.Step.FieldSet?.Fields ?? []).find((f) => f.id === resultConfig?.fieldId);
 
   const action = currStep.Step.Action;

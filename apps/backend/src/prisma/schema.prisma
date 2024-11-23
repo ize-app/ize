@@ -497,6 +497,7 @@ model Field {
   RequestDefinedOptionSet RequestDefinedOptionSet[]
   TelegramMessages        TelegramMessages[]
 
+  @@unique([index, fieldSetId])
   @@map("fields")
 }
 
@@ -602,6 +603,16 @@ model AnswerFreeInput {
   @@map("answer_free_inputs")
 }
 
+// List of fields for use in request or response
+model ResultConfigSet {
+  id           String         @id @default(uuid()) @db.Uuid
+  createdAt    DateTime       @default(now()) @map("created_at")
+  Step         Step[]
+  ResultConfigs ResultConfig[]
+
+  @@map("result_config_sets")
+}
+
 enum ResultType {
   RawAnswers
   Decision
@@ -611,24 +622,27 @@ enum ResultType {
 
 // Describes how and when a final result is created
 model ResultConfig {
-  id         String     @id @default(uuid()) @db.Uuid
-  resultType ResultType @map("result_type")
+  id                String     @id @default(uuid()) @db.Uuid
+  resultConfigSetId String     @map("result_config_set_id") @db.Uuid
+  index             Int
+  resultType        ResultType @map("result_type")
   // whether output will be a single item or a list of items
-  createdAt  DateTime   @default(now()) @map("created_at")
-  fieldId    String     @map("field_id") @db.Uuid
+  createdAt         DateTime   @default(now()) @map("created_at")
+  fieldId           String     @map("field_id") @db.Uuid
 
   decisionId String? @map("decision_id") @db.Uuid
   rankId     String? @map("rank_id") @db.Uuid
   llmId      String? @map("llm_id") @db.Uuid
 
-  Field                        Field                          @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
-  ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
-  ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
-  ResultGroups                 ResultGroup[]
-  ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
-  ActionFilter                 ActionFilter[]
+  ResultConfigSet      ResultConfigSet       @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
+  Field                Field                 @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  ResultConfigDecision ResultConfigDecision? @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  ResultConfigRank     ResultConfigRank?     @relation(fields: [rankId], references: [id], onDelete: Cascade)
+  ResultConfigLlm      ResultConfigLlm?      @relation(fields: [llmId], references: [id], onDelete: Cascade)
+  ResultGroups         ResultGroup[]
+  ActionFilter         ActionFilter[]
 
+  @@unique([index, resultConfigSetId])
   @@map("result_configs")
 }
 
@@ -823,30 +837,6 @@ model Response {
   CreatorEntity Entity        @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
 
   @@map("responses")
-}
-
-// List of fields for use in request or response
-model ResultConfigSet {
-  id                           String                         @id @default(uuid()) @db.Uuid
-  createdAt                    DateTime                       @default(now()) @map("created_at")
-  // FieldSetFields                  FieldSetsFields[]
-  Step                         Step[]
-  ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
-
-  @@map("result_config_sets")
-}
-
-// Purpose of this association table is so that there can be new sets of options without 
-// needing to create new fields everytime there's a change to the group (since data is immutable in Ize)
-model ResultConfigSetResultConfigs {
-  resultConfigSetId String @map("result_config_set_id") @db.Uuid
-  resultConfigId    String @map("result_config_id") @db.Uuid
-
-  ResultConfigSet ResultConfigSet @relation(fields: [resultConfigSetId], references: [id], onDelete: Cascade)
-  ResultConfig    ResultConfig    @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
-
-  @@unique([resultConfigId, resultConfigSetId])
-  @@map("result_config_set_result_configs")
 }
 
 // there is a single results record for a given request step + results Config 
