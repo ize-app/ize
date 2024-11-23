@@ -27,14 +27,15 @@ export const FlowFormStageInnerContent = ({
         variant="description"
         lineHeight={"1rem"}
         width={"100%"}
-        color={color}
-        sx={{
+        // color={color}
+        sx={(theme) => ({
+          color: theme.palette.common.black,
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
-        }}
+        })}
       >
-        <span style={{ fontStyle: "italic" }}>Decision filter:</span> {label}
+        <span style={{ fontStyle: "italic", color: color }}>Decision filter:</span> {label}
       </Typography>
     </Box>
   ) : (
@@ -49,7 +50,7 @@ export const FlowFormStageInnerContent = ({
         {label}
       </Typography>
       {subtitle && (
-        <Typography fontSize={".7rem"} lineHeight={"1rem"} width={"100%"}>
+        <Typography fontSize={".75rem"} lineHeight={"1rem"} width={"100%"}>
           {subtitle}
         </Typography>
       )}

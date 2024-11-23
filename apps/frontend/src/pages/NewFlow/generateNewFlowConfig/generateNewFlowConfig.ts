@@ -77,7 +77,7 @@ export const generateNewFlowConfig = ({
           question: config.question,
           selectionType: OptionSelectionType.Select,
           options: config.optionsConfig.options,
-          linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
+          linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
           decisionType: config.decisionType,
         });
@@ -99,7 +99,7 @@ export const generateNewFlowConfig = ({
           question: config.question,
           selectionType: OptionSelectionType.Rank,
           options: config.optionsConfig.options,
-          linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
+          linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
         });
 
@@ -125,6 +125,7 @@ export const generateNewFlowConfig = ({
         break;
       }
       case FlowGoal.TriggerWebhook: {
+        let filterResultConfigId: null | string = null;
         if (
           config.webhookTriggerCondition === ActionTriggerCondition.Decision &&
           config.optionsConfig
@@ -134,7 +135,7 @@ export const generateNewFlowConfig = ({
             question: "Select one of the following options:", //todo: this should be a question
             selectionType: OptionSelectionType.Select,
             options: config.optionsConfig?.options,
-            linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
+            linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
             triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
           });
 
@@ -146,12 +147,15 @@ export const generateNewFlowConfig = ({
             decisionType: DecisionType.NumberThreshold,
             criteria: undefined,
           });
+
+          filterResultConfigId = result.resultConfigId;
         }
 
         action = generateActionConfig({
           type: ActionType.CallWebhook,
           webhookName: config.webhookName,
           filterOptionId: config.filterOptionId,
+          filterResultConfigId,
         });
 
         break;

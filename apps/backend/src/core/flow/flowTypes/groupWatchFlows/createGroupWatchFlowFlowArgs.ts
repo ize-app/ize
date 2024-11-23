@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
+import { createSystemFieldDefaults } from "@/core/fields/createSystemFieldDefaults";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
@@ -19,8 +19,8 @@ import { createApprovalFieldSetArgsForPolicy } from "../../generateFlowArgs/flow
 import { createDecisionResultArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createDecisionResultArgsForPolicy";
 
 const requestFieldSetArgs: FieldArgs[] = [
-  systemFieldDefaults[SystemFieldType.WatchFlow],
-  systemFieldDefaults[SystemFieldType.UnwatchFlow],
+  createSystemFieldDefaults(SystemFieldType.WatchFlow),
+  createSystemFieldDefaults(SystemFieldType.UnwatchFlow),
 ];
 
 export const createGroupWatchFlowFlowArgs = ({
@@ -67,11 +67,22 @@ export const createGroupWatchStepArgs = ({
     });
 
   const creatorEntityId = context.currentUser.entityId;
-
-  const decisionResult = createDecisionResultArgsForPolicy({ policy });
-  const responseApprovalFieldArgs: FieldArgs | undefined = createApprovalFieldSetArgsForPolicy({
+  let responseApprovalFieldArgs: FieldArgs | undefined = undefined;
+  let approveOptionId: string | undefined = undefined;
+  const approvalField = createApprovalFieldSetArgsForPolicy({
     policy,
   });
+
+  if (approvalField) {
+    [responseApprovalFieldArgs, approveOptionId] = approvalField;
+  }
+
+  const decisionResult = responseApprovalFieldArgs
+    ? createDecisionResultArgsForPolicy({
+        policy,
+        fieldId: responseApprovalFieldArgs?.fieldId,
+      })
+    : null;
 
   const noResponse = policy.type === GroupFlowPolicyType.GroupAutoApprove;
 
@@ -100,6 +111,10 @@ export const createGroupWatchStepArgs = ({
         }
       : undefined,
     result: decisionResult ? [decisionResult] : [],
-    action: createActionArgsForPolicy({ actionType: ActionType.GroupWatchFlow, policy }),
+    action: createActionArgsForPolicy({
+      actionType: ActionType.EvolveGroup,
+      resultConfigId: decisionResult?.resultConfigId,
+      optionId: approveOptionId,
+    }),
   };
 };

@@ -175,17 +175,12 @@ input FieldOptionsConfigArgs {
   requestOptionsDataType: FieldDataType
   maxSelections: Int
   selectionType: OptionSelectionType!
-  linkedResultOptions: [LinkedResultOptionsArgs!]!
+  linkedResultOptions: [String!]! # resultConfigIds
   options: [FieldOptionArgs!]!
 }
 
 input FieldOptionArgs {
-  optionId: String
+  optionId: String! # UUID created on fontend used in backend
   dataType: FieldDataType!
   name: String!
-}
-
-input LinkedResultOptionsArgs {
-  resultIndex: Int!
-  stepIndex: Int!
 }

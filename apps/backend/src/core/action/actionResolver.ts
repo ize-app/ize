@@ -1,6 +1,13 @@
 import { ActionType, FieldType } from "@prisma/client";
 
-import { Action, Field, Group, Option } from "@/graphql/generated/resolver-types";
+import {
+  Action,
+  ActionFilter,
+  Field,
+  Group,
+  Option,
+  ResultConfig,
+} from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ActionNewPrismaType } from "./actionPrismaTypes";
@@ -11,30 +18,43 @@ export const actionResolver = ({
   action,
   responseFields,
   ownerGroup,
+  resultConfigs,
 }: {
   action: ActionNewPrismaType | null | undefined;
   responseFields: Field[] | undefined;
+  resultConfigs: ResultConfig[];
   ownerGroup: Group | null;
 }): Action | null => {
   if (!action) return null;
-  let filterOption: Option | undefined = undefined;
+  let filter: ActionFilter | undefined = undefined;
 
-  if (action.filterOptionId && responseFields) {
-    for (let i = 0; i < responseFields.length; i++) {
-      const field = responseFields[i];
-      if (field.__typename === FieldType.Options) {
-        const option = field.options.find((option) => option.optionId === action.filterOptionId);
-        if (option) {
-          filterOption = option;
-          break;
-        }
-      }
-    }
-
-    if (!filterOption)
-      throw new GraphQLError("Cannot find option filter for action", {
+  const actionFilter = action.ActionFilter;
+  if (actionFilter) {
+    const resultConfig = resultConfigs.find(
+      (rc) => rc.resultConfigId === actionFilter.resultConfigId,
+    );
+    if (!resultConfig)
+      throw new GraphQLError(`Cannot find resultConfig for action filter id ${actionFilter.id}`, {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
+
+    const resultName = resultConfig.name;
+    const resultConfigId = resultConfig.resultConfigId;
+    const responseField = (responseFields ?? []).find(
+      (field) => field.fieldId === resultConfig.field.fieldId,
+    );
+    let option: Option | undefined;
+
+    if (responseField && responseField.__typename === FieldType.Options) {
+      option = responseField.options.find((option) => option.optionId === actionFilter.optionId);
+    }
+
+    if (!option)
+      throw new GraphQLError(`Cannot find option for action filter id ${actionFilter.id}`, {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
+
+    filter = { resultConfigId, resultName, option };
   }
 
   const name = getActionName({ action, ownerGroup });
@@ -47,7 +67,7 @@ export const actionResolver = ({
         });
       return callWebhookResolver({
         webhook: action.Webhook,
-        filterOption,
+        filter,
         locked: action.locked,
         name,
       });
@@ -55,28 +75,28 @@ export const actionResolver = ({
       return {
         __typename: "TriggerStep",
         name,
-        filterOption,
+        filter,
         locked: action.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
         name,
-        filterOption,
+        filter,
         locked: action.locked,
       };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
         name,
-        filterOption,
+        filter,
         locked: action.locked,
       };
     case ActionType.EvolveGroup:
       return {
         __typename: "EvolveGroup",
         name,
-        filterOption,
+        filter,
         locked: action.locked,
       };
     default:

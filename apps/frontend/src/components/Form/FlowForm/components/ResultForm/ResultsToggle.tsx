@@ -47,7 +47,7 @@ export default function ResultsToggle({
           !!formState.errors.steps?.[stepIndex]?.fieldSet?.fields?.[index] ||
           !!formState.errors.steps?.[stepIndex]?.result?.[index];
         return (
-          <Box sx={{ display: "flex" }} key={"resultToggle" + result.resultId}>
+          <Box sx={{ display: "flex" }} key={"resultToggle" + result.resultConfigId}>
             <ToggleButton
               // sx={{ width: "240px", padding: "7px" }}
               value={index}

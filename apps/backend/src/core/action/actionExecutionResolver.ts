@@ -16,8 +16,6 @@ export const actionExecutionResolver = ({
 }): ActionExecution | null => {
   if (!action) return null;
 
-  action.filterOptionId;
-
   const actionExecution = actionExecutions.find((ae) => action.id === ae.actionId);
 
   return {

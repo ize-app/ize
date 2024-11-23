@@ -10,6 +10,7 @@ type ActionArg =
       type: ActionType.CallWebhook;
       webhookName: string;
       filterOptionId: string | null;
+      filterResultConfigId: string | null;
     };
 
 // A single function that uses discriminated unions
@@ -23,14 +24,20 @@ export function generateActionConfig(arg: ActionArg): ActionSchemaType {
       return {
         type: ActionType.TriggerStep,
         ...base,
-        filterOptionId: null,
+        filter: undefined,
       };
     case ActionType.CallWebhook: {
-      const { webhookName, filterOptionId } = arg;
+      const { webhookName, filterOptionId, filterResultConfigId } = arg;
       return {
         type: ActionType.CallWebhook,
         ...base,
-        filterOptionId: filterOptionId ?? null,
+        filter:
+          filterOptionId && filterResultConfigId
+            ? {
+                optionId: filterOptionId,
+                resultConfigId: filterResultConfigId,
+              }
+            : undefined,
         callWebhook: {
           name: webhookName,
           uri: "",

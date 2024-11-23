@@ -36,6 +36,7 @@ export const newFieldSet = async ({
 
       const dbField = await transaction.field.create({
         data: {
+          id: field.fieldId,
           name: field.name,
           type: field.type,
           systemType: field.systemType,
@@ -74,7 +75,7 @@ const createFieldOptionsConfig = async ({
   const { selectionType, options, maxSelections, requestOptionsDataType, linkedResultOptions } =
     fieldOptionsConfigArgs;
 
-  const optionSetId = await newOptionSet({ options, transaction });
+  const optionSetId = await newOptionSet({ optionsArgs: options, transaction });
   const dbOptionSet = await transaction.fieldOptionsConfig.create({
     data: {
       maxSelections:
@@ -85,15 +86,23 @@ const createFieldOptionsConfig = async ({
             : null,
       requestOptionsDataType,
       selectionType,
-      linkedResultOptions: linkedResultOptions.map((l) => {
-        const resultConfigId =
-          createdSteps[l.stepIndex].ResultConfigSet?.ResultConfigSetResultConfigs[l.resultIndex]
-            .resultConfigId;
-        if (!resultConfigId)
+      linkedResultOptions: linkedResultOptions.map((linkedResultConfigId) => {
+        let hasLinkedResult = false;
+
+        for (const step of createdSteps) {
+          const foundMatch = step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
+            (rc) => rc.resultConfigId === linkedResultConfigId,
+          );
+          if (foundMatch) {
+            hasLinkedResult = true;
+            break;
+          }
+        }
+        if (!hasLinkedResult)
           throw new GraphQLError(`Cannot find result config`, {
             extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
           });
-        return resultConfigId;
+        return linkedResultConfigId;
       }),
       FieldOptionSet: optionSetId
         ? {

@@ -15,9 +15,9 @@ import { ActionType } from "@/graphql/generated/graphql";
 
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { FlowSchemaType } from "../formValidation/flow";
-import { getActionFilterOptions } from "../helpers/getActionFilterOptions";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { getResultFormLabel } from "../helpers/getResultFormLabel";
+import { getActionFilterOptionOptions } from "../helpers/useActionFilterOptions";
 
 interface FlowStageTriggerProps extends StageProps {
   type: StageType.Trigger;
@@ -124,20 +124,23 @@ export const FlowFormStage = ({
     case StageType.ActionFilter: {
       const { index } = args;
       const action = getValues(`steps.${index}.action`);
-      const results = getValues(`steps.${index}.result`);
+
+      const actionFilter = action?.filter;
+      if (!action || !actionFilter) return null;
+      const resultConfigs = getValues(`steps.${index}.result`);
       const responseFields = getValues(`steps.${index}.fieldSet.fields`);
-      if (!action || !action.filterOptionId) return null;
-      const filterOptions = getActionFilterOptions({
-        results,
+      const options = getActionFilterOptionOptions({
+        results: resultConfigs,
+        resultConfigId: actionFilter.resultConfigId,
         responseFields,
-        optionNameOnly: true,
       });
       icon = FilterAltIcon;
-      label = getSelectOptionName(filterOptions, action.filterOptionId) as string;
+      label = getSelectOptionName(options, actionFilter.optionId) as string;
+
       deleteHandler = () => {
         // note: setSelectedId is not working right now. issue is with how deleteHandler is passed to child components
         setSelectedId("trigger0");
-        setValue(`steps.${index}.action.filterOptionId`, null);
+        setValue(`steps.${index}.action.filter`, undefined);
       };
       break;
     }

@@ -28,7 +28,7 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
       const field = (s.fieldSet?.fields ?? []).find((f) => f.fieldId === r.fieldId);
       results.push({
         name: `${getResultFormLabel({ result: r })} from step ${stepIndex + 1}${field?.name ? `: "${field.name}"` : ""}`,
-        value: r.resultId,
+        value: r.resultConfigId,
       });
     });
   });
@@ -84,8 +84,6 @@ export const ResponseFieldOptionsForm = ({
 
   const optionsError =
     formState.errors?.steps?.[stepIndex]?.fieldSet?.fields?.[fieldIndex]?.root?.message ?? "";
-
-  console.log("optionsError", optionsError);
 
   const optionSelectionType = watch(
     `steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.selectionType`,

@@ -4,10 +4,9 @@ import { useFormContext } from "react-hook-form";
 
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
 import { Select } from "../../formFields";
-import { SelectOption } from "../../formFields/Select";
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { FlowSchemaType } from "../formValidation/flow";
-import { getActionFilterOptions } from "../helpers/getActionFilterOptions";
+import { useActionFilterOptions } from "../helpers/useActionFilterOptions";
 
 interface ActionFilterFormProps {
   stepIndex: number; // react-hook-form name
@@ -15,28 +14,37 @@ interface ActionFilterFormProps {
 }
 
 export const ActionFilterForm = ({ stepIndex, show }: ActionFilterFormProps) => {
-  const { formState, getValues, setValue } = useFormContext<FlowSchemaType>();
+  const { formState, setValue, watch } = useFormContext<FlowSchemaType>();
 
-  const error = formState.errors.steps?.[stepIndex]?.action;
+  const error = formState.errors.steps?.[stepIndex]?.action?.filter;
 
   // get field options asssociated with decisions to use as action filters
-  const step = getValues(`steps.${stepIndex}`);
-  const actionFilterId = step?.action?.filterOptionId;
+  const { results, options } = useActionFilterOptions({ stepIndex });
+  const actionFilter = watch(`steps.${stepIndex}.action.filter`);
 
   // if no action, don't render so that this action form stays null
-  if (!actionFilterId) return null;
-
-  const filterOptions: SelectOption[] = getActionFilterOptions({
-    results: step?.result,
-    responseFields: step?.fieldSet.fields,
-  });
+  if (!actionFilter) return null;
 
   // remove linked option if that result is removed
   useEffect(() => {
-    if (!filterOptions.find((option) => option.value === actionFilterId)) {
-      setValue(`steps.${stepIndex}.action.filterOptionId`, null);
+    if (
+      !!actionFilter.resultConfigId &&
+      !results.find((resultOption) => resultOption.value === actionFilter.resultConfigId)
+    ) {
+      // TODO check if this actually works
+      setValue(`steps.${stepIndex}.action.filter`, { resultConfigId: "", optionId: "" });
     }
-  }, [filterOptions, actionFilterId]);
+  }, [results, actionFilter]);
+
+  useEffect(() => {
+    if (
+      !!actionFilter.optionId &&
+      !options.find((option) => option.value === actionFilter.optionId)
+    ) {
+      // TODO check if this actually works
+      setValue(`steps.${stepIndex}.action.filter`, { resultConfigId: "", optionId: "" });
+    }
+  }, [options, actionFilter]);
 
   return (
     <PanelAccordion title="Filter" hasError={!!error} sx={{ display: show ? "block" : "none" }}>
@@ -50,16 +58,25 @@ export const ActionFilterForm = ({ stepIndex, show }: ActionFilterFormProps) => 
         </FormHelperText>
       )}
       <Select<FlowSchemaType>
-        label="When to run action"
+        label="Result filter"
         renderValue={(val) => {
-          const optionName = getSelectOptionName(filterOptions, val as string) ?? "";
-          return "Only run action on: " + optionName;
+          const optionName = getSelectOptionName(results, val as string) ?? "";
+          return optionName;
         }}
-        selectOptions={[...filterOptions]}
+        selectOptions={[...results]}
         // defaultValue=""
-        name={`steps.${stepIndex}.action.filterOptionId`}
+        name={`steps.${stepIndex}.action.filter.resultConfigId`}
+      />
+      <Select<FlowSchemaType>
+        label="Option filter"
+        display={!!actionFilter.resultConfigId}
+        renderValue={(val) => {
+          const optionName = getSelectOptionName(options, val as string) ?? "";
+          return optionName;
+        }}
+        selectOptions={[...options]}
+        name={`steps.${stepIndex}.action.filter.optionId`}
       />
     </PanelAccordion>
-    // )
   );
 };

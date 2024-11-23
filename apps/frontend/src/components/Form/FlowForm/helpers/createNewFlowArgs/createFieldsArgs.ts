@@ -1,21 +1,14 @@
 import { FieldArgs, FieldOptionsConfigArgs, FieldType } from "@/graphql/generated/graphql";
 
-import { ResultConfigCache } from "./createNewFlowArgs";
 import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
 
-export const createFieldsArgs = (
-  fields: FieldsSchemaType,
-  resultConfigCache: ResultConfigCache[],
-): FieldArgs[] => {
+export const createFieldsArgs = (fields: FieldsSchemaType): FieldArgs[] => {
   return (fields ?? []).map((field): FieldArgs => {
-    return createFieldArgs(field, resultConfigCache);
+    return createFieldArgs(field);
   });
 };
 
-export const createFieldArgs = (
-  field: FieldSchemaType,
-  resultConfigCache: ResultConfigCache[],
-): FieldArgs => {
+export const createFieldArgs = (field: FieldSchemaType): FieldArgs => {
   if (field.type === FieldType.FreeInput) {
     const { fieldId, required, name, type, freeInputDataType, systemType, isInternal } = field;
     return {
@@ -52,15 +45,9 @@ export const createFieldArgs = (
           name: option.name,
         };
       }),
-      linkedResultOptions: rawOptionsConfig.linkedResultOptions.map((linkedResult) => {
-        const resultConfigLocation = resultConfigCache.find((r) => r.id === linkedResult.id);
-        if (!resultConfigLocation)
-          throw Error("Cannot find correspond result config for linked option config");
-        return {
-          stepIndex: resultConfigLocation.stepIndex,
-          resultIndex: resultConfigLocation.resultIndex,
-        };
-      }),
+      linkedResultOptions: rawOptionsConfig.linkedResultOptions.map(
+        (linkedResult) => linkedResult.id,
+      ),
     };
 
     return {

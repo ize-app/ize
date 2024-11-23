@@ -13,6 +13,12 @@ enum ActionStatus {
   Complete
 }
 
+type ActionFilter {
+  resultConfigId: String!
+  resultName: String!
+  option: Option!
+}
+
 type ActionExecution {
   actionId: String!
   lastAttemptedAt: String
@@ -23,7 +29,7 @@ type CallWebhook {
   name: String!
   locked: Boolean!
   webhookId: String!
-  filterOption: Option
+  filter: ActionFilter
   uri: String!
   webhookName: String!
 }
@@ -31,25 +37,25 @@ type CallWebhook {
 type EvolveFlow {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 type TriggerStep {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 type GroupWatchFlow {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 type EvolveGroup {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 # mirrors Prisma type + "None" type
@@ -70,10 +76,14 @@ input CallWebhookArgs {
 
 input ActionArgs {
   type: ActionType!
-  filterResponseFieldIndex: Int
-  filterOptionIndex: Int
+  filter: ActionFilterArgs
   callWebhook: CallWebhookArgs
   locked: Boolean!
+}
+
+input ActionFilterArgs {
+  resultConfigId: String!
+  optionId: String!
 }
 
 input TestWebhookArgs {

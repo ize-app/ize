@@ -57,7 +57,7 @@ export const FlowForm = forwardRef(
 
     const flowError = useFormMethods.formState.errors.steps;
 
-    if (name !== "evolve") {
+    if (name !== "flow") {
       console.log(name, "errors are ", useFormMethods.formState.errors);
       console.log(name, "values are ", useFormMethods.getValues());
     }
@@ -193,10 +193,10 @@ export const FlowForm = forwardRef(
                 })}
                 {stepsArrayMethods.fields.map((item, index) => {
                   // if (stepsArrayMethods.fields.length === 1 && !hasStep0Response) return null;
-                  const hasAction = !!useFormMethods.getValues(
-                    `steps.${index}.action.filterOptionId`,
+                  const hasActionFilter = !!useFormMethods.getValues(
+                    `steps.${index}.action.filter`,
                   );
-                  if (!hasAction) return null;
+                  if (!hasActionFilter) return null;
                   return (
                     <ActionFilterForm
                       stepIndex={index}

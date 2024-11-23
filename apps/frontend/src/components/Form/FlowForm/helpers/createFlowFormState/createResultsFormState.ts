@@ -1,3 +1,4 @@
+import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
 import {
   DecisionFragment,
   DecisionType,
@@ -11,11 +12,14 @@ import {
   ResultSchemaType,
 } from "../../formValidation/result";
 
-export const createResultFormState = (results: ResultConfigFragment[]): ResultSchemaType[] => {
+export const createResultFormState = (
+  results: ResultConfigFragment[],
+  uuidRemapper: UUIDRemapper,
+): ResultSchemaType[] => {
   return results.map((result): ResultSchemaType => {
     const resultBase = {
-      resultId: result.resultConfigId,
-      fieldId: result.field.fieldId,
+      resultConfigId: uuidRemapper.remapId(result.resultConfigId),
+      fieldId: uuidRemapper.getRemappedUUID(result.field.fieldId),
     };
 
     // TODO typechecking isn't working here for some reason
@@ -24,7 +28,7 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
         return {
           type: ResultType.Decision,
           ...resultBase,
-          decision: createDecisionFormState(result),
+          decision: createDecisionFormState(result, uuidRemapper),
         };
       case ResultType.Ranking:
         return {
@@ -54,8 +58,14 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
   });
 };
 
-const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType => {
-  const defaultOptionId = decision.defaultOption?.optionId ?? null;
+const createDecisionFormState = (
+  decision: DecisionFragment,
+  uuidRemapper: UUIDRemapper,
+): DecisionSchemaType => {
+  const defaultOptionId = decision.defaultOption?.optionId
+    ? uuidRemapper.getRemappedUUID(decision.defaultOption?.optionId)
+    : null;
+
   const defaultDecision = {
     hasDefault: !!defaultOptionId,
     optionId: defaultOptionId,

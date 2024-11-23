@@ -48,7 +48,6 @@ export default function AsyncSelect<T extends FieldValues, OptionType>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        console.log("async select error", error);
         return (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Autocomplete

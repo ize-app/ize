@@ -65,23 +65,11 @@
             "deprecationReason": null
           },
           {
-            "name": "filterOptionIndex",
+            "name": "filter",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "filterResponseFieldIndex",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
+              "kind": "INPUT_OBJECT",
+              "name": "ActionFilterArgs",
               "ofType": null
             },
             "defaultValue": null,
@@ -178,6 +166,110 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ActionFilter",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "option",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Option",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultConfigId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "ActionFilterArgs",
+        "description": null,
+        "isOneOf": false,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "optionId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resultConfigId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -613,12 +705,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "filterOption",
+            "name": "filter",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Option",
+              "name": "ActionFilter",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1018,11 +1110,11 @@
             "deprecationReason": null
           },
           {
-            "name": "defaultOptionIndex",
+            "name": "defaultOptionId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -1518,12 +1610,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "filterOption",
+            "name": "filter",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Option",
+              "name": "ActionFilter",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1574,12 +1666,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "filterOption",
+            "name": "filter",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Option",
+              "name": "ActionFilter",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1979,9 +2071,13 @@
             "name": "optionId",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2012,8 +2108,8 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "LinkedResultOptionsArgs",
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -3778,12 +3874,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "filterOption",
+            "name": "filter",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Option",
+              "name": "ActionFilter",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4471,50 +4567,6 @@
         ],
         "inputFields": null,
         "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "LinkedResultOptionsArgs",
-        "description": null,
-        "isOneOf": false,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "resultIndex",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "stepIndex",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -9049,9 +9101,13 @@
             "name": "fieldId",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -9082,28 +9138,16 @@
             "deprecationReason": null
           },
           {
-            "name": "responseFieldIndex",
+            "name": "resultConfigId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "resultId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -9918,12 +9962,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "filterOption",
+            "name": "filter",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Option",
+              "name": "ActionFilter",
               "ofType": null
             },
             "isDeprecated": false,

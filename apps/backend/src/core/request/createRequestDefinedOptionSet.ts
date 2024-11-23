@@ -51,7 +51,7 @@ export const createRequestDefinedOptionSet = async ({
 
   const optionSetId = await newOptionSet({
     transaction,
-    options: newOptionArgs,
+    optionsArgs: newOptionArgs,
     dataType: isTriggerDefinedOptions
       ? field.FieldOptionsConfigs?.requestOptionsDataType ?? undefined
       : undefined,

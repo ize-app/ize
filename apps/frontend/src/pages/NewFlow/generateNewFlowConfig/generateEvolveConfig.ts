@@ -14,35 +14,37 @@ import {
   SystemFieldType,
 } from "@/graphql/generated/graphql";
 
-const requestFieldSetArgs: FieldSchemaType[] = [
-  {
-    type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
-    isInternal: false,
-    systemType: SystemFieldType.EvolveFlowProposed,
-    freeInputDataType: FieldDataType.FlowVersionId,
-    name: "Proposed flow",
-    required: true,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
-    isInternal: false,
-    freeInputDataType: FieldDataType.FlowVersionId,
-    systemType: SystemFieldType.EvolveFlowCurrent,
-    name: "Current flow",
-    required: true,
-  },
-  {
-    type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
-    isInternal: false,
-    freeInputDataType: FieldDataType.String,
-    systemType: SystemFieldType.EvolveFlowDescription,
-    name: "Description of changes",
-    required: false,
-  },
-];
+const getRequestFieldSetArgs = (): FieldSchemaType[] => {
+  return [
+    {
+      type: FieldType.FreeInput,
+      fieldId: crypto.randomUUID(),
+      isInternal: false,
+      systemType: SystemFieldType.EvolveFlowProposed,
+      freeInputDataType: FieldDataType.FlowVersionId,
+      name: "Proposed flow",
+      required: true,
+    },
+    {
+      type: FieldType.FreeInput,
+      fieldId: crypto.randomUUID(),
+      isInternal: false,
+      freeInputDataType: FieldDataType.FlowVersionId,
+      systemType: SystemFieldType.EvolveFlowCurrent,
+      name: "Current flow",
+      required: true,
+    },
+    {
+      type: FieldType.FreeInput,
+      fieldId: crypto.randomUUID(),
+      isInternal: false,
+      freeInputDataType: FieldDataType.String,
+      systemType: SystemFieldType.EvolveFlowDescription,
+      name: "Description of changes",
+      required: false,
+    },
+  ];
+};
 
 export const generateEvolveConfig = ({
   triggerPermission,
@@ -51,6 +53,7 @@ export const generateEvolveConfig = ({
   triggerPermission: PermissionSchemaType;
   respondPermission: PermissionSchemaType;
 }): FlowSchemaType => {
+  const approvalOptionId = crypto.randomUUID();
   const responseField: FieldSchemaType = {
     type: FieldType.Options,
     fieldId: crypto.randomUUID(),
@@ -63,14 +66,14 @@ export const generateEvolveConfig = ({
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "✅" },
+        { optionId: approvalOptionId, dataType: FieldDataType.String, name: "✅" },
         { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "❌" },
       ],
     },
   };
 
   const resultArgs: ResultSchemaType = {
-    resultId: crypto.randomUUID(),
+    resultConfigId: crypto.randomUUID(),
     type: ResultType.Decision,
     decision: {
       type: DecisionType.NumberThreshold,
@@ -85,7 +88,10 @@ export const generateEvolveConfig = ({
 
   const actionArgs: ActionSchemaType = {
     type: ActionType.EvolveFlow,
-    filterOptionId: responseField.optionsConfig.options[0].optionId,
+    filter: {
+      resultConfigId: resultArgs.resultConfigId,
+      optionId: approvalOptionId,
+    },
     locked: true,
   };
 
@@ -108,7 +114,7 @@ export const generateEvolveConfig = ({
     name: "Evolve flow",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: getRequestFieldSetArgs(),
     },
     trigger: {
       permission: triggerPermission,

@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
 import { Field, FieldDataType, FieldType } from "@/graphql/generated/graphql";
 
 import {
@@ -8,12 +9,18 @@ import {
   FieldsSchemaType,
 } from "../../formValidation/fields";
 
-export const createFieldsFormState = (fields: Field[]): FieldsSchemaType => {
-  return fields.map((field) => createFieldFormState(field));
+export const createFieldsFormState = (
+  fields: Field[],
+  uuidRemapper: UUIDRemapper,
+): FieldsSchemaType => {
+  return fields.map((field) => createFieldFormState(field, uuidRemapper));
 };
 
-const createFieldFormState = (field: Field): FieldSchemaType => {
-  const { fieldId, name, required, isInternal, systemType } = field;
+const createFieldFormState = (field: Field, uuidRemapper: UUIDRemapper): FieldSchemaType => {
+  const { fieldId: oldFieldId, name, required, isInternal, systemType } = field;
+
+  const fieldId = uuidRemapper.remapId(oldFieldId);
+
   switch (field.__typename) {
     case FieldType.FreeInput:
       return {
@@ -46,7 +53,7 @@ const createFieldFormState = (field: Field): FieldSchemaType => {
           selectionType: field.selectionType,
           options: field.options.map(
             (o): FieldOptionSchemaType => ({
-              optionId: o.optionId,
+              optionId: uuidRemapper.remapId(o.optionId),
               name: createDataType(o.name, o.dataType),
               dataType: o.dataType,
             }),

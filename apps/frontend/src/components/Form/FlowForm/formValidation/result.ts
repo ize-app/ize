@@ -8,7 +8,7 @@ export type DecisionSchemaType = z.infer<typeof decisionSchema>;
 
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
-export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>
+export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 export type RawAnswersResultSchemaType = z.infer<typeof rawAnswersResultSchema>;
 
 export enum ResultListCountLimit {
@@ -73,29 +73,29 @@ const llmSchema = z.object({
 
 const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
-  resultId: z.string(),
-  fieldId: z.string(),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   decision: decisionSchema,
 });
 
 const llmResultSchema = z.object({
   type: z.literal(ResultType.LlmSummary),
-  resultId: z.string(),
-  fieldId: z.string(),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   llmSummary: llmSchema,
 });
 
 const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
-  resultId: z.string(),
-  fieldId: z.string(),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   prioritization: prioritizationSchema,
 });
 
 const rawAnswersResultSchema = z.object({
   type: z.literal(ResultType.RawAnswers),
-  resultId: z.string(),
-  fieldId: z.string(),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
 });
 
 export const resultSchema = z.discriminatedUnion("type", [

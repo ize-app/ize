@@ -20,7 +20,7 @@ export const createDefaultResultState = ({
   switch (resultType) {
     case ResultType.Decision:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Decision,
         fieldId,
 
@@ -35,7 +35,7 @@ export const createDefaultResultState = ({
       } as DecisionResultSchemaType;
     case ResultType.Ranking:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Ranking,
         fieldId,
 
@@ -43,7 +43,7 @@ export const createDefaultResultState = ({
       } as RankingResultSchemaType;
     case ResultType.LlmSummary:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         fieldId,
         llmSummary: {
@@ -53,7 +53,7 @@ export const createDefaultResultState = ({
       } as LlmSummaryResultSchemaType;
     case ResultType.RawAnswers:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.RawAnswers,
         fieldId,
       } as RawAnswersResultSchemaType;

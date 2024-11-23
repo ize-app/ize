@@ -65,6 +65,34 @@ const stepSchema = z
       }
     });
   })
+  // check that action filter is valid
+  .superRefine((step, ctx) => {
+    if (step.action?.filter) {
+      const { resultConfigId, optionId: defaultOptionId } = step.action.filter;
+      const resultConfigFieldId = step.result.find(
+        (r) => r.resultConfigId === resultConfigId,
+      )?.fieldId;
+      if (!resultConfigFieldId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Default option must be a valid option",
+          path: ["action", "filter", "resultConfigId"],
+        });
+        return;
+      }
+      const field = step.fieldSet.fields.find((f) => f.fieldId === resultConfigFieldId);
+      const foundOption =
+        field?.type === FieldType.Options &&
+        field.optionsConfig.options.some((option) => option.optionId === defaultOptionId);
+      if (!foundOption) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Default option must be a valid option",
+          path: ["action", "filter", "optionId"],
+        });
+      }
+    }
+  })
   .refine(
     (step) => {
       if (step.response && step.fieldSet.fields.length === 0) return false;
@@ -103,12 +131,12 @@ export const flowSchema = z
           field.type === FieldType.Options &&
           field.optionsConfig.linkedResultOptions.length > 0
         ) {
-          console.log("evaluating linked result options", field.optionsConfig.linkedResultOptions);
           field.optionsConfig.linkedResultOptions.forEach(
             (linkedResultOption, linkedResultIndex) => {
               let hasMatch = false;
-              for (const s of flow.steps) {
-                if (s.result.find((r) => r.resultId === linkedResultOption.id)) {
+              const precedingSteps = flow.steps.slice(0, stepIndex);
+              for (const s of precedingSteps) {
+                if (s.result.find((r) => r.resultConfigId === linkedResultOption.id)) {
                   hasMatch = true;
                   break;
                 }

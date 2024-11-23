@@ -22,8 +22,7 @@ export type Action = CallWebhook | EvolveFlow | EvolveGroup | GroupWatchFlow | T
 
 export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
-  filterOptionIndex?: InputMaybe<Scalars['Int']['input']>;
-  filterResponseFieldIndex?: InputMaybe<Scalars['Int']['input']>;
+  filter?: InputMaybe<ActionFilterArgs>;
   locked: Scalars['Boolean']['input'];
   type: ActionType;
 };
@@ -33,6 +32,18 @@ export type ActionExecution = {
   actionId: Scalars['String']['output'];
   lastAttemptedAt?: Maybe<Scalars['String']['output']>;
   status: ActionStatus;
+};
+
+export type ActionFilter = {
+  __typename?: 'ActionFilter';
+  option: Option;
+  resultConfigId: Scalars['String']['output'];
+  resultName: Scalars['String']['output'];
+};
+
+export type ActionFilterArgs = {
+  optionId: Scalars['String']['input'];
+  resultConfigId: Scalars['String']['input'];
 };
 
 export enum ActionStatus {
@@ -91,7 +102,7 @@ export enum Blockchain {
 
 export type CallWebhook = {
   __typename?: 'CallWebhook';
-  filterOption?: Maybe<Option>;
+  filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   uri: Scalars['String']['output'];
@@ -128,7 +139,7 @@ export type Decision = {
 
 export type DecisionArgs = {
   criteria?: InputMaybe<Scalars['String']['input']>;
-  defaultOptionIndex?: InputMaybe<Scalars['Int']['input']>;
+  defaultOptionId?: InputMaybe<Scalars['String']['input']>;
   threshold?: InputMaybe<Scalars['Int']['input']>;
   type: DecisionType;
 };
@@ -189,14 +200,14 @@ export enum EntityType {
 
 export type EvolveFlow = {
   __typename?: 'EvolveFlow';
-  filterOption?: Maybe<Option>;
+  filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
 };
 
 export type EvolveGroup = {
   __typename?: 'EvolveGroup';
-  filterOption?: Maybe<Option>;
+  filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
 };
@@ -237,11 +248,11 @@ export enum FieldDataType {
 export type FieldOptionArgs = {
   dataType: FieldDataType;
   name: Scalars['String']['input'];
-  optionId?: InputMaybe<Scalars['String']['input']>;
+  optionId: Scalars['String']['input'];
 };
 
 export type FieldOptionsConfigArgs = {
-  linkedResultOptions: Array<LinkedResultOptionsArgs>;
+  linkedResultOptions: Array<Scalars['String']['input']>;
   maxSelections?: InputMaybe<Scalars['Int']['input']>;
   options: Array<FieldOptionArgs>;
   previousStepOptions: Scalars['Boolean']['input'];
@@ -430,7 +441,7 @@ export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft | GroupTelegra
 
 export type GroupWatchFlow = {
   __typename?: 'GroupWatchFlow';
-  filterOption?: Maybe<Option>;
+  filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
 };
@@ -504,11 +515,6 @@ export type LinkedResult = {
   fieldName: Scalars['String']['output'];
   resultConfigId: Scalars['String']['output'];
   resultName: Scalars['String']['output'];
-};
-
-export type LinkedResultOptionsArgs = {
-  resultIndex: Scalars['Int']['input'];
-  stepIndex: Scalars['Int']['input'];
 };
 
 export type LlmSummary = {
@@ -1027,11 +1033,10 @@ export type Result = {
 
 export type ResultArgs = {
   decision?: InputMaybe<DecisionArgs>;
-  fieldId?: InputMaybe<Scalars['String']['input']>;
+  fieldId: Scalars['String']['input'];
   llmSummary?: InputMaybe<LlmSummaryArgs>;
   prioritization?: InputMaybe<PrioritizationArgs>;
-  responseFieldIndex: Scalars['Int']['input'];
-  resultId?: InputMaybe<Scalars['String']['input']>;
+  resultConfigId: Scalars['String']['input'];
   type: ResultType;
 };
 
@@ -1130,7 +1135,7 @@ export type TriggerFieldAnswer = {
 
 export type TriggerStep = {
   __typename?: 'TriggerStep';
-  filterOption?: Maybe<Option>;
+  filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
 };
@@ -1263,6 +1268,8 @@ export type ResolversTypes = {
   Action: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Action']>;
   ActionArgs: ActionArgs;
   ActionExecution: ResolverTypeWrapper<ActionExecution>;
+  ActionFilter: ResolverTypeWrapper<ActionFilter>;
+  ActionFilterArgs: ActionFilterArgs;
   ActionStatus: ActionStatus;
   ActionType: ActionType;
   AlchemyApiNftContract: ResolverTypeWrapper<AlchemyApiNftContract>;
@@ -1331,7 +1338,6 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
   LinkedResult: ResolverTypeWrapper<LinkedResult>;
-  LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
   Me: ResolverTypeWrapper<Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversTypes['Group']>, identities: Array<ResolversTypes['Identity']> }>;
@@ -1407,6 +1413,8 @@ export type ResolversParentTypes = {
   Action: ResolversUnionTypes<ResolversParentTypes>['Action'];
   ActionArgs: ActionArgs;
   ActionExecution: ActionExecution;
+  ActionFilter: ActionFilter;
+  ActionFilterArgs: ActionFilterArgs;
   AlchemyApiNftContract: AlchemyApiNftContract;
   AlchemyApiNftToken: AlchemyApiNftToken;
   ApiHatToken: ApiHatToken;
@@ -1465,7 +1473,6 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']['output'];
   IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
   LinkedResult: LinkedResult;
-  LinkedResultOptionsArgs: LinkedResultOptionsArgs;
   LlmSummary: Omit<LlmSummary, 'field'> & { field: ResolversParentTypes['Field'] };
   LlmSummaryArgs: LlmSummaryArgs;
   Me: Omit<Me, 'groups' | 'identities'> & { groups: Array<ResolversParentTypes['Group']>, identities: Array<ResolversParentTypes['Identity']> };
@@ -1536,6 +1543,13 @@ export type ActionExecutionResolvers<ContextType = GraphqlRequestContext, Parent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ActionFilterResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['ActionFilter'] = ResolversParentTypes['ActionFilter']> = {
+  option?: Resolver<ResolversTypes['Option'], ParentType, ContextType>;
+  resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resultName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type AlchemyApiNftContractResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['AlchemyApiNftContract'] = ResolversParentTypes['AlchemyApiNftContract']> = {
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   chain?: Resolver<ResolversTypes['Blockchain'], ParentType, ContextType>;
@@ -1567,7 +1581,7 @@ export type ApiHatTokenResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type CallWebhookResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['CallWebhook'] = ResolversParentTypes['CallWebhook']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1627,14 +1641,14 @@ export type EntityResolvers<ContextType = GraphqlRequestContext, ParentType exte
 };
 
 export type EvolveFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveFlow'] = ResolversParentTypes['EvolveFlow']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EvolveGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['EvolveGroup'] = ResolversParentTypes['EvolveGroup']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1771,7 +1785,7 @@ export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType e
 };
 
 export type GroupWatchFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupWatchFlow'] = ResolversParentTypes['GroupWatchFlow']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2122,7 +2136,7 @@ export type TriggerFieldAnswerResolvers<ContextType = GraphqlRequestContext, Par
 };
 
 export type TriggerStepResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerStep'] = ResolversParentTypes['TriggerStep']> = {
-  filterOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
+  filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2155,6 +2169,7 @@ export type WebhookFieldAnswerResolvers<ContextType = GraphqlRequestContext, Par
 export type Resolvers<ContextType = GraphqlRequestContext> = {
   Action?: ActionResolvers<ContextType>;
   ActionExecution?: ActionExecutionResolvers<ContextType>;
+  ActionFilter?: ActionFilterResolvers<ContextType>;
   AlchemyApiNftContract?: AlchemyApiNftContractResolvers<ContextType>;
   AlchemyApiNftToken?: AlchemyApiNftTokenResolvers<ContextType>;
   ApiHatToken?: ApiHatTokenResolvers<ContextType>;

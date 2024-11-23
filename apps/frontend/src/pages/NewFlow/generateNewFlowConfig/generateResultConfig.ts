@@ -71,6 +71,7 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
   switch (arg.type) {
     case ResultType.Decision: {
       return {
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Decision,
         ...base,
         decision: generateDecisionConfig({
@@ -81,6 +82,7 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
     }
     case ResultType.Ranking:
       return {
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Ranking,
         ...base,
         prioritization: {
@@ -89,6 +91,7 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
       };
     case ResultType.LlmSummary: {
       return {
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         ...base,
         llmSummary: {

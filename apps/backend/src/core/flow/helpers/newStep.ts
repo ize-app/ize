@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ResultConfig } from "@prisma/client";
 
 import { newActionConfig } from "@/core/action/newAction";
 import { newFieldSet } from "@/core/fields/newFieldSet";
@@ -22,6 +22,8 @@ export const newStep = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
   let responseConfigId: string | null = null;
+  let resultConfigSetId: string | undefined = undefined;
+  let resultConfigs: ResultConfig[] = [];
 
   const responseFieldSet =
     (args.fieldSet.fields.length > 0 || args.fieldSet.locked) && args.result.length > 0
@@ -32,23 +34,25 @@ export const newStep = async ({
         })
       : null;
 
-  // console.log("responseFieldSet", responseFieldSet?.FieldSetFields);
-
   const hasResponse = args.fieldSet.fields.filter((f) => !f.isInternal).length > 0;
 
   if (hasResponse) responseConfigId = await newResponseConfig({ args: args.response, transaction });
 
-  const resultConfigSetId = await newResultConfigSet({
+  const resultConfig = await newResultConfigSet({
     resultsArgs: args.result,
     transaction,
     responseFieldSet,
   });
+  if (resultConfig) {
+    [resultConfigSetId, resultConfigs] = resultConfig;
+  }
 
   const actionId = args.action
     ? await newActionConfig({
         actionArgs: args.action,
         locked: args.action.locked ?? false,
         responseFieldSet,
+        resultConfigs,
         flowVersionId,
         transaction,
       })
@@ -60,7 +64,7 @@ export const newStep = async ({
       fieldSetId: responseFieldSet?.id,
       responseConfigId,
       actionId: actionId,
-      resultConfigSetId: resultConfigSetId,
+      resultConfigSetId,
       index,
       flowVersionId,
     },

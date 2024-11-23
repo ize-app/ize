@@ -13,7 +13,8 @@ export const newDecisionConfig = async ({
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
-  let defaultOptionId: null | string = null;
+  const defaultOptionId: null | string =
+    decisionArgs.type !== DecisionType.Ai ? decisionArgs.defaultOptionId ?? null : null;
   let threshold: null | number = null;
   let criteria: null | string = null;
 
@@ -32,16 +33,12 @@ export const newDecisionConfig = async ({
     threshold = decisionArgs.threshold ?? null;
   }
 
-  if (
-    typeof decisionArgs.defaultOptionIndex === "number" &&
-    decisionArgs.type !== DecisionType.Ai
-  ) {
-    defaultOptionId =
-      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
-        (fo) => fo.index === decisionArgs.defaultOptionIndex,
-      )?.fieldOptionId ?? null;
+  if (defaultOptionId) {
+    const validDefaultOptionId = (
+      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions ?? []
+    ).some((fo) => fo.FieldOption.id === defaultOptionId);
 
-    if (defaultOptionId === null)
+    if (!validDefaultOptionId)
       throw new GraphQLError("Cannot find default option.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });

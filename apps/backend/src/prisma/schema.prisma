@@ -574,7 +574,7 @@ model FieldOption {
   AnswerOptionSelections     AnswerOptionSelection[]
   FieldOptionSetFieldOptions FieldOptionSetsFieldOptions[]
   DefaultOptionForDecisions  ResultConfigDecision[]
-  Action                     Action[]
+  ActionFilter               ActionFilter[]
   ResultItems                ResultItems[]
 
   @@map("field_options")
@@ -640,18 +640,19 @@ model ResultConfig {
   resultType ResultType @map("result_type")
   // whether output will be a single item or a list of items
   createdAt  DateTime   @default(now()) @map("created_at")
+  fieldId    String     @map("field_id") @db.Uuid
 
-  fieldId    String? @map("field_id") @db.Uuid
   decisionId String? @map("decision_id") @db.Uuid
   rankId     String? @map("rank_id") @db.Uuid
   llmId      String? @map("llm_id") @db.Uuid
 
-  Field                        Field?                         @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  Field                        Field                          @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   ResultConfigDecision         ResultConfigDecision?          @relation(fields: [decisionId], references: [id], onDelete: Cascade)
   ResultConfigRank             ResultConfigRank?              @relation(fields: [rankId], references: [id], onDelete: Cascade)
   ResultConfigLlm              ResultConfigLlm?               @relation(fields: [llmId], references: [id], onDelete: Cascade)
   ResultGroups                 ResultGroup[]
   ResultConfigSetResultConfigs ResultConfigSetResultConfigs[]
+  ActionFilter                 ActionFilter[]
 
   @@map("result_configs")
 }
@@ -672,8 +673,8 @@ model ResultConfigDecision {
   criteria        String?
   createdAt       DateTime     @default(now()) @map("created_at")
 
-  FieldOption   FieldOption?   @relation(fields: [defaultOptionId], references: [id], onDelete: Cascade)
-  ResultConfigs ResultConfig[]
+  DefaultFieldOption FieldOption?   @relation(fields: [defaultOptionId], references: [id], onDelete: Cascade)
+  ResultConfigs      ResultConfig[]
 
   @@map("result_config_decisions")
 }
@@ -710,20 +711,34 @@ enum ActionType {
 }
 
 model Action {
-  id                String       @id @default(uuid()) @db.Uuid
-  type              ActionType
-  webhookId         String?      @map("webhook_id") @db.Uuid
-  filterOptionId    String?      @map("filter_option_id") @db.Uuid
-  createdAt         DateTime     @default(now()) @map("created_at")
+  id             String     @id @default(uuid()) @db.Uuid
+  type           ActionType
+  webhookId      String?    @map("webhook_id") @db.Uuid
+  actionFilterId String?    @map("action_filter_id") @db.Uuid
+  createdAt      DateTime   @default(now()) @map("created_at")
   // locked here means that the ActionType is locked. Other parts of the action can still be changed
-  locked            Boolean      @default(false)
-  Steps             Step[]       @relation("StepsWithAction")
-  FilterFieldOption FieldOption? @relation(fields: [filterOptionId], references: [id], onDelete: Cascade)
-  Webhook           Webhook?     @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  locked         Boolean    @default(false)
+
+  ActionFilter ActionFilter? @relation(fields: [actionFilterId], references: [id], onDelete: Cascade)
+  Steps        Step[]        @relation("StepsWithAction")
+  Webhook      Webhook?      @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   ActionExecution ActionExecution[]
 
   @@map("actions")
+}
+
+model ActionFilter {
+  id             String   @id @default(uuid()) @db.Uuid
+  resultConfigId String   @map("result_config_id") @db.Uuid
+  optionId       String   @map("filter_option_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  Action       Action[]
+  ResultConfig ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
+  FieldOption  FieldOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("action_filters")
 }
 
 model Webhook {

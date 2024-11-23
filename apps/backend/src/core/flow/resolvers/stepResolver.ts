@@ -59,6 +59,7 @@ export const stepResolver = ({
       : undefined,
     action: actionResolver({
       action: step.Action,
+      resultConfigs: result,
       responseFields: responseFieldsCache,
       ownerGroup,
     }),

@@ -11,16 +11,18 @@ export const createApprovalFieldSetArgsForPolicy = ({
   policy,
 }: {
   policy: GroupFlowPolicyArgs;
-}): FieldArgs | undefined => {
+}): [FieldArgs, string] | undefined => {
   if (
     policy.type === GroupFlowPolicyType.CreatorAutoApprove ||
     policy.type === GroupFlowPolicyType.GroupAutoApprove
   )
     return undefined;
 
+  const approveOptionId = crypto.randomUUID();
+
   const responseApprovalFieldArgs: FieldArgs = {
     type: FieldType.Options,
-    fieldId: "new",
+    fieldId: crypto.randomUUID(),
     isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
@@ -30,11 +32,11 @@ export const createApprovalFieldSetArgsForPolicy = ({
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
-        { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
+        { optionId: approveOptionId, dataType: FieldDataType.String, name: "✅" },
+        { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "❌" },
       ],
     },
   };
 
-  return responseApprovalFieldArgs;
+  return [responseApprovalFieldArgs, approveOptionId];
 };

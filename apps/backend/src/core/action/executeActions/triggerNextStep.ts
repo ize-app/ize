@@ -100,6 +100,7 @@ export const triggerNextStep = async ({
 
         const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
           return {
+            optionId: crypto.randomUUID(),
             dataType: ri.dataType as unknown as FieldDataType,
             name: ri.value,
           };

@@ -27,7 +27,7 @@ export const ConfigRequestActionFilterPanel = ({
   action: ActionFragment | null | undefined;
   actionExecution: ActionExecutionFragment | null | undefined;
 }) => {
-  if (!action || !action.filterOption) return null;
+  if (!action || !action.filter) return null;
 
   const data = [
     {

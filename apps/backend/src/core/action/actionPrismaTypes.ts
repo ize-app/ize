@@ -10,6 +10,7 @@ export const actionInclude = Prisma.validator<Prisma.ActionInclude>()({
   Webhook: {
     include: webhookInclude,
   },
+  ActionFilter: true,
 });
 
 export type ActionNewPrismaType = Prisma.ActionGetPayload<{

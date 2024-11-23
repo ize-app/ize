@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ResultConfig } from "@prisma/client";
 
 import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -17,17 +17,19 @@ export const newResultConfigSet = async ({
   resultsArgs: ResultArgs[];
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
-}): Promise<string | undefined> => {
+}): Promise<[string, ResultConfig[]] | undefined> => {
   if (resultsArgs.length === 0) return undefined;
-  const dbResults = await Promise.all(
+  const resultConfigs = await Promise.all(
     resultsArgs.map(async (res) => {
       // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
       let responseField = null;
-      if (typeof res.responseFieldIndex === "number")
-        responseField = responseFieldSet?.FieldSetFields[res.responseFieldIndex].Field;
+      
+      responseField = (responseFieldSet?.FieldSetFields ?? []).find((f) => {
+        return f.fieldId === res.fieldId;
+      })?.Field;
 
       if (!responseField)
-        throw new GraphQLError("Missing response field", {
+        throw new GraphQLError(`Missing response field for ${res.fieldId}`, {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
 
@@ -43,13 +45,13 @@ export const newResultConfigSet = async ({
     data: {
       ResultConfigSetResultConfigs: {
         createMany: {
-          data: dbResults.map((resultConfigId) => ({ resultConfigId: resultConfigId })),
+          data: resultConfigs.map((resultConfig) => ({ resultConfigId: resultConfig.id })),
         },
       },
     },
   });
 
-  return fieldSet.id;
+  return [fieldSet.id, resultConfigs];
 };
 
 export const newResultConfig = async ({
@@ -60,7 +62,7 @@ export const newResultConfig = async ({
   resultArgs: ResultArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
-}): Promise<string> => {
+}): Promise<ResultConfig> => {
   let decisionId;
   let rankId;
   let llmId;
@@ -104,14 +106,14 @@ export const newResultConfig = async ({
       break;
   }
 
-  const resultConfig = await transaction.resultConfig.create({
+  return await transaction.resultConfig.create({
     data: {
+      id: resultArgs.resultConfigId,
       resultType: resultArgs.type,
-      fieldId: responseField?.id,
+      fieldId: responseField.id,
       decisionId,
       rankId,
       llmId,
     },
   });
-  return resultConfig.id;
 };

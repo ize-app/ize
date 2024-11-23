@@ -7,10 +7,17 @@ import {
 
 // TODO: have backend/frontend share same default file
 
-export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
+export const createSystemFieldDefaults = (type: SystemFieldType): FieldArgs => {
+  const defaults = systemFieldDefaults[type];
+  return {
+    ...defaults,
+    fieldId: crypto.randomUUID(),
+  };
+};
+
+const systemFieldDefaults: Record<SystemFieldType, Omit<FieldArgs, "fieldId">> = {
   [SystemFieldType.EvolveFlowProposed]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     isInternal: false,
     systemType: SystemFieldType.EvolveFlowProposed,
     freeInputDataType: FieldDataType.FlowVersionId,
@@ -20,7 +27,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.EvolveFlowCurrent]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     systemType: SystemFieldType.EvolveFlowCurrent,
     isInternal: false,
     freeInputDataType: FieldDataType.FlowVersionId,
@@ -30,7 +36,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.EvolveFlowDescription]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     systemType: SystemFieldType.EvolveFlowDescription,
     isInternal: false,
     freeInputDataType: FieldDataType.FlowVersionId,
@@ -42,7 +47,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
     type: FieldType.FreeInput,
     systemType: SystemFieldType.GroupName,
     isInternal: false,
-    fieldId: "name",
     freeInputDataType: FieldDataType.String,
     name: "Group name",
     required: true,
@@ -50,7 +54,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.GroupDescription]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     systemType: SystemFieldType.GroupDescription,
     isInternal: false,
     freeInputDataType: FieldDataType.String,
@@ -60,7 +63,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.GroupMembers]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     systemType: SystemFieldType.GroupMembers,
     isInternal: false,
     freeInputDataType: FieldDataType.EntityIds,
@@ -70,7 +72,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.WatchFlow]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     systemType: SystemFieldType.WatchFlow,
     isInternal: false,
     freeInputDataType: FieldDataType.FlowIds,
@@ -80,7 +81,6 @@ export const systemFieldDefaults: Record<SystemFieldType, FieldArgs> = {
 
   [SystemFieldType.UnwatchFlow]: {
     type: FieldType.FreeInput,
-    fieldId: crypto.randomUUID(),
     isInternal: false,
     systemType: SystemFieldType.UnwatchFlow,
     freeInputDataType: FieldDataType.FlowIds,

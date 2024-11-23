@@ -8,7 +8,6 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { ActionType, ResultType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { getActionFilterOptions } from "../helpers/getActionFilterOptions";
 import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
 // position Index is position of new step in the array
 export const AddStepButton = ({
@@ -43,7 +42,7 @@ export const AddStepButton = ({
 
   const hasAction = !!previousStep?.action;
 
-  const alreadyHasFilter = !!previousStep?.action?.filterOptionId;
+  const alreadyHasFilter = !!previousStep?.action?.filter;
 
   const addStepHandler = useCallback(() => {
     const currentStepLength = stepsArrayMethods.fields.length;
@@ -75,14 +74,14 @@ export const AddStepButton = ({
       stepsArrayMethods.append(newStep);
       // change previous final step to have a trigger action
       setValue(`steps.${currentFinalStepIndex}.action`, {
-        filterOptionId: null,
+        filter: undefined,
         type: ActionType.TriggerStep,
         locked: false,
       });
     } else {
       stepsArrayMethods.insert(positionIndex, defaultStepFormValues);
       setValue(`steps.${currentFinalStepIndex}.action`, {
-        filterOptionId: null,
+        filter: undefined,
         type: ActionType.TriggerStep,
         locked: false,
       });
@@ -92,7 +91,7 @@ export const AddStepButton = ({
 
   const addWebhookHandler = () => {
     setValue(`steps.${stepsArrayMethods.fields.length - 1}.action`, {
-      filterOptionId: null,
+      filter: undefined,
       type: ActionType.CallWebhook,
       locked: false,
       callWebhook: { uri: "", name: "", valid: false },
@@ -101,12 +100,12 @@ export const AddStepButton = ({
   };
 
   const addFilterHandler = () => {
-    const options = getActionFilterOptions({
-      results: previousStep.result,
-      responseFields: previousStep.fieldSet.fields,
-    });
-    const defaultOptionFilterId = options[0].value as string;
-    setValue(`steps.${positionIndex - 1}.action.filterOptionId`, defaultOptionFilterId);
+    // const options = getActionFilterResultOptions({
+    //   results: previousStep.result,
+    //   responseFields: previousStep.fieldSet.fields,
+    // });
+    // const defaultOptionFilterId = options[0].value as string;
+    setValue(`steps.${positionIndex - 1}.action.filter`, { optionId: "", resultConfigId: "" });
     setSelectedId(`actionFilter${positionIndex - 1}`);
   };
   return (

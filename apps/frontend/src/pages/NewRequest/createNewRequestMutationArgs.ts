@@ -28,7 +28,11 @@ export const createNewRequestMutationArgs = async (
       fieldId,
       options: options.map(
         //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        (option): FieldOptionArgs => ({ name: option.name, dataType: option.dataType }),
+        (option): FieldOptionArgs => ({
+          optionId: crypto.randomUUID(),
+          name: option.name as string,
+          dataType: option.dataType,
+        }),
       ),
     };
   });

@@ -1,4 +1,4 @@
-import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
+import { createSystemFieldDefaults } from "@/core/fields/createSystemFieldDefaults";
 import {
   ActionArgs,
   ActionType,
@@ -16,9 +16,9 @@ import {
 } from "@/graphql/generated/resolver-types";
 
 const requestFieldSetArgs: FieldArgs[] = [
-  systemFieldDefaults[SystemFieldType.EvolveFlowProposed],
-  systemFieldDefaults[SystemFieldType.EvolveFlowCurrent],
-  systemFieldDefaults[SystemFieldType.EvolveFlowDescription],
+  createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
+  createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
+  createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
 ];
 
 export const createEvolveFlowFlowArgs = ({
@@ -44,9 +44,10 @@ export const createEvolveFlowFlowArgs = ({
 };
 
 const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
+  const approveOptionId = crypto.randomUUID();
   const responseFieldSetArgs: FieldArgs = {
     type: FieldType.Options,
-    fieldId: "new",
+    fieldId: crypto.randomUUID(),
     isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
@@ -56,22 +57,25 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
-        { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
+        { optionId: approveOptionId, dataType: FieldDataType.String, name: "✅" },
+        { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "❌" },
       ],
     },
   };
 
   const resultArgs: ResultArgs = {
+    resultConfigId: crypto.randomUUID(),
+    fieldId: responseFieldSetArgs.fieldId,
     type: ResultType.Decision,
-    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionIndex: null },
-    responseFieldIndex: 0,
+    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionId: null },
   };
 
   const actionArgs: ActionArgs = {
     type: ActionType.EvolveFlow,
-    filterResponseFieldIndex: 0,
-    filterOptionIndex: 0,
+    filter: {
+      resultConfigId: resultArgs.resultConfigId,
+      optionId: approveOptionId,
+    },
     locked: true,
   };
 

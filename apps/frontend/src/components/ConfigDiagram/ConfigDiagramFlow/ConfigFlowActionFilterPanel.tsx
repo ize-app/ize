@@ -14,7 +14,7 @@ export const ConfigFlowActionFilterPanel = ({
 }: {
   action: ActionFragment | null | undefined;
 }) => {
-  if (!action || !action.filterOption) return null;
+  if (!action || !action.filter) return null;
   return (
     <PanelContainer>
       <PanelHeader>

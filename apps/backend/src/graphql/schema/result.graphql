@@ -78,12 +78,10 @@ enum DecisionType {
   Ai
 }
 
-
 input ResultArgs {
   type: ResultType!
-  resultId: String
-  fieldId: String
-  responseFieldIndex: Int!
+  resultConfigId: String!
+  fieldId: String!
   decision: DecisionArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs
@@ -91,7 +89,7 @@ input ResultArgs {
 
 input DecisionArgs {
   type: DecisionType!
-  defaultOptionIndex: Int
+  defaultOptionId: String
   criteria: String
   threshold: Int
 }

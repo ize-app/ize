@@ -17,7 +17,7 @@ export const getActionExecutionStatus = ({
 
   if (actionsFinal) {
     if (!actionExecution) {
-      if (action.filterOptionId) return ActionStatus.DidNotPassFilter;
+      if (action.actionFilterId) return ActionStatus.DidNotPassFilter;
       else return ActionStatus.NotStarted;
     } else {
       if (actionExecution.complete) return ActionStatus.Complete;

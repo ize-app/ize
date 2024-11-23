@@ -1,18 +1,27 @@
+import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
 import { Action, ActionType } from "@/graphql/generated/graphql";
 
-import { ActionSchemaType } from "../../formValidation/action";
+import { ActionFilterSchemaType, ActionSchemaType } from "../../formValidation/action";
 
 export const createActionFormState = (
   action: Action | null | undefined,
+  uuidRemapper: UUIDRemapper,
 ): ActionSchemaType | undefined => {
   if (!action) return undefined;
+
+  const filter: ActionFilterSchemaType | undefined = action.filter
+    ? {
+        resultConfigId: uuidRemapper.getRemappedUUID(action.filter.resultConfigId),
+        optionId: uuidRemapper.getRemappedUUID(action.filter.option.optionId),
+      }
+    : undefined;
 
   switch (action?.__typename) {
     case ActionType.CallWebhook:
       return {
         type: ActionType.CallWebhook,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? null,
+        filter,
         callWebhook: {
           webhookId: action.webhookId,
           name: action.webhookName,
@@ -25,25 +34,25 @@ export const createActionFormState = (
       return {
         type: ActionType.TriggerStep,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? null,
+        filter,
       };
     case ActionType.EvolveFlow:
       return {
         type: ActionType.EvolveFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? null,
+        filter,
       };
     case ActionType.EvolveGroup:
       return {
         type: ActionType.EvolveGroup,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? null,
+        filter,
       };
     case ActionType.GroupWatchFlow: {
       return {
         type: ActionType.GroupWatchFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? null,
+        filter,
       };
     }
     default:

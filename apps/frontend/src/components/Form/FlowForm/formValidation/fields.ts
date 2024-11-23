@@ -44,7 +44,7 @@ export const triggerDefinedOptionsSchema = z
 
 export const fieldOptionSchema = z
   .object({
-    optionId: z.string(),
+    optionId: z.string().uuid(),
     name: z.any(),
     dataType: z.nativeEnum(FieldDataType),
   })
@@ -91,7 +91,7 @@ export const fieldSchema = z
   .discriminatedUnion("type", [
     z.object({
       type: z.literal(FieldType.FreeInput),
-      fieldId: z.string(),
+      fieldId: z.string().uuid(),
       name: z.string().min(1),
       systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),
@@ -100,7 +100,7 @@ export const fieldSchema = z
     }),
     z.object({
       type: z.literal(FieldType.Options),
-      fieldId: z.string(),
+      fieldId: z.string().uuid(),
       name: z.string().min(1),
       systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
       required: z.boolean().optional().default(true),

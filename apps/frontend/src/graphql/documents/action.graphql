@@ -12,6 +12,14 @@ fragment ActionExecution on ActionExecution {
   status
 }
 
+fragment ActionFilter on ActionFilter {
+  resultConfigId
+  resultName
+  option {
+    ...Option
+  }
+}
+
 fragment Action on Action {
   __typename
   ... on CallWebhook {
@@ -34,8 +42,8 @@ fragment Action on Action {
 fragment CallWebhook on CallWebhook {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
   webhookId
   uri
@@ -45,31 +53,31 @@ fragment CallWebhook on CallWebhook {
 fragment EvolveFlow on EvolveFlow {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }
 
 fragment TriggerStep on TriggerStep {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }
 
 fragment GroupWatchFlow on GroupWatchFlow {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }
 
 fragment EvolveGroup on EvolveGroup {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }

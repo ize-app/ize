@@ -34,6 +34,7 @@ export const generateNonreusableFlowConfig = ({
 
   switch (type) {
     case FlowConfigGeneration.Synthesize: {
+      const responseFieldId = crypto.randomUUID();
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
@@ -52,7 +53,7 @@ export const generateNonreusableFlowConfig = ({
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
+                  fieldId: crypto.randomUUID(),
                   type: FieldType.FreeInput,
                   name: prompt,
                   isInternal: false,
@@ -71,8 +72,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
+                resultConfigId: crypto.randomUUID(),
                 type: ResultType.LlmSummary,
-                responseFieldIndex: 0,
+                fieldId: responseFieldId,
                 llmSummary: { prompt: "", isList: false },
               },
             ],
@@ -82,6 +84,7 @@ export const generateNonreusableFlowConfig = ({
       };
     }
     case FlowConfigGeneration.Ideate: {
+      const responseFieldId = crypto.randomUUID();
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
@@ -100,7 +103,7 @@ export const generateNonreusableFlowConfig = ({
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
+                  fieldId: responseFieldId,
                   type: FieldType.FreeInput,
                   name: prompt,
                   isInternal: false,
@@ -119,8 +122,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
+                resultConfigId: crypto.randomUUID(),
                 type: ResultType.LlmSummary,
-                responseFieldIndex: 0,
+                fieldId: responseFieldId,
                 llmSummary: { prompt: "", isList: true },
               },
             ],
@@ -130,6 +134,9 @@ export const generateNonreusableFlowConfig = ({
       };
     }
     case FlowConfigGeneration.LetAiDecide: {
+      const step1ResponseFieldId = crypto.randomUUID();
+      const step2ResponseFieldId = crypto.randomUUID();
+      const step1ResultId = crypto.randomUUID();
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
@@ -140,7 +147,7 @@ export const generateNonreusableFlowConfig = ({
         fieldSet: {
           fields: [
             {
-              fieldId: "",
+              fieldId: crypto.randomUUID(),
               type: FieldType.FreeInput,
               name: prompt,
               isInternal: false,
@@ -155,7 +162,7 @@ export const generateNonreusableFlowConfig = ({
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
+                  fieldId: step1ResponseFieldId,
                   type: FieldType.FreeInput,
                   name: prompt,
                   isInternal: false,
@@ -174,8 +181,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
+                resultConfigId: step1ResultId,
                 type: ResultType.LlmSummary,
-                responseFieldIndex: 0,
+                fieldId: step1ResponseFieldId,
                 llmSummary: { prompt: "", isList: true },
               },
             ],
@@ -185,7 +193,7 @@ export const generateNonreusableFlowConfig = ({
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
+                  fieldId: step2ResponseFieldId,
                   type: FieldType.Options,
                   name: prompt,
                   isInternal: true,
@@ -195,7 +203,7 @@ export const generateNonreusableFlowConfig = ({
                     options: [],
                     previousStepOptions: true,
                     selectionType: OptionSelectionType.Select,
-                    linkedResultOptions: [{ stepIndex: 0, resultIndex: 0 }],
+                    linkedResultOptions: [step1ResultId],
                   },
                 },
               ],
@@ -210,9 +218,9 @@ export const generateNonreusableFlowConfig = ({
             },
             result: [
               {
+                resultConfigId: crypto.randomUUID(),
                 type: ResultType.Decision,
-                responseFieldIndex: 0,
-
+                fieldId: step2ResponseFieldId,
                 decision: { type: DecisionType.Ai },
               },
             ],

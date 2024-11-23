@@ -58,20 +58,16 @@ export const executeAction = async ({
       return defaultReturn;
     }
 
+    const actionFilter = action.ActionFilter;
     // if the action filter isn't passed, end the request step and request
-    if (action.filterOptionId) {
-      let passesFilter = false;
-      for (const result of reqStep.ResultGroups) {
-        const primaryResults = result.Result.filter((r) => r.index === 0);
-        if (
-          primaryResults.some((res) =>
-            res.ResultItems.some((val) => val.fieldOptionId === action.filterOptionId),
-          )
-        ) {
-          passesFilter = true;
-          break;
-        }
-      }
+    if (actionFilter) {
+      const result = reqStep.ResultGroups.find(
+        (r) => r.resultConfigId === actionFilter.resultConfigId,
+      );
+      const passesFilter = result?.Result[0].ResultItems.some(
+        (val) => val.fieldOptionId === actionFilter.optionId,
+      );
+
       if (!passesFilter) {
         // end request step without taking an action
         await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });

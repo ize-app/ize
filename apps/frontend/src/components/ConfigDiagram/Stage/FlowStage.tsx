@@ -90,8 +90,8 @@ export const FlowStage = ({
     }
     case StageType.ActionFilter: {
       const { action } = props;
-      if (!action?.filterOption) return null;
-      label = action.filterOption.name;
+      if (!action?.filter) return null;
+      label = action.filter.option.name;
       icon = FilterAltIcon;
     }
   }

@@ -1,21 +1,23 @@
-import {
-  ActionArgs,
-  ActionType,
-  GroupFlowPolicyArgs,
-  GroupFlowPolicyType,
-} from "@/graphql/generated/resolver-types";
+import { ActionArgs, ActionType } from "@/graphql/generated/resolver-types";
 
 export const createActionArgsForPolicy = ({
   actionType,
-  policy,
+  resultConfigId,
+  optionId,
 }: {
   actionType: ActionType;
-  policy: GroupFlowPolicyArgs;
+  resultConfigId?: string;
+  optionId?: string;
 }): ActionArgs | undefined => {
   const actionArgs: ActionArgs = {
     type: actionType,
-    filterResponseFieldIndex: policy.type === GroupFlowPolicyType.GroupDecision ? 0 : undefined,
-    filterOptionIndex: policy.type === GroupFlowPolicyType.GroupDecision ? 0 : undefined,
+    filter:
+      resultConfigId && optionId
+        ? {
+            resultConfigId,
+            optionId,
+          }
+        : null,
     locked: true,
   };
 
