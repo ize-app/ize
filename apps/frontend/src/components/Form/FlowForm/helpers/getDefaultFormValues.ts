@@ -2,7 +2,8 @@ import { FlowType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
 
-export const defaultStepFormValues: StepSchemaType = {
+export const getDefaultStepFormValues = (): StepSchemaType => ({
+  stepId: crypto.randomUUID(),
   fieldSet: {
     fields: [],
     locked: false,
@@ -16,9 +17,9 @@ export const defaultStepFormValues: StepSchemaType = {
   },
   result: [],
   action: undefined,
-};
+});
 
-export const defaultFlowFormValues: FlowSchemaType = {
+export const getDefaultFlowFormValues = (): FlowSchemaType => ({
   flowVersionId: crypto.randomUUID(),
   name: "",
   type: FlowType.Custom,
@@ -32,5 +33,5 @@ export const defaultFlowFormValues: FlowSchemaType = {
       entities: [],
     },
   },
-  steps: [defaultStepFormValues],
-};
+  steps: [getDefaultStepFormValues()],
+});

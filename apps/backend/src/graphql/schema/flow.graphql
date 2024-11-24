@@ -101,6 +101,7 @@ input NewFlowArgs {
 }
 
 input NewStepArgs {
+  stepId: String!
   fieldSet: FieldSetArgs!
   response: ResponseConfigArgs
   result: [ResultArgs!]!

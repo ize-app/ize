@@ -13,7 +13,7 @@ import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 import { Switch } from "../../formFields";
 import { FlowForm, FlowFormRef } from "../FlowForm";
 import { ReusableSchema, reusableSchema } from "../formValidation/flow";
-import { defaultFlowFormValues } from "../helpers/getDefaultFormValues";
+import { getDefaultFlowFormValues } from "../helpers/getDefaultFormValues";
 
 export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
   // refs expose methods of child forms
@@ -31,7 +31,7 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
           ref={flowFormRef}
           name="flow"
           isReusable={true}
-          defaultFormValues={{ ...defaultFlowFormValues }}
+          defaultFormValues={{ ...getDefaultFlowFormValues() }}
         />
       }
       evolveForm={

@@ -13,6 +13,7 @@ export const createStepFormState = (
 ): StepSchemaType => {
   const { fieldSet, response, result, action } = step;
   return {
+    stepId: uuidRemapper.remapId(step.id),
     response: response
       ? {
           ...response,

@@ -7,7 +7,7 @@ import {
 } from "@/components/Form/FlowForm/formValidation/flow";
 import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
-import { defaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDefaultFormValues";
+import { getDefaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDefaultFormValues";
 import {
   ActionType,
   DecisionType,
@@ -202,7 +202,7 @@ export const generateNewFlowConfig = ({
       trigger: {
         permission: anyonePermission,
       },
-      steps: [defaultStepFormValues],
+      steps: [getDefaultStepFormValues()],
     };
     const evolve = generateEvolveConfig({
       triggerPermission: creatorPermission,

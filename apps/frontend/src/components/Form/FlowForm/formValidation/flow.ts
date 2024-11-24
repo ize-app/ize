@@ -14,6 +14,7 @@ export type FlowWithEvolveFlowSchemaType = z.infer<typeof flowWithEvolveFlowSche
 
 const stepSchema = z
   .object({
+    stepId: z.string().uuid(),
     fieldSet: fieldSetSchema,
     response: z
       .object({

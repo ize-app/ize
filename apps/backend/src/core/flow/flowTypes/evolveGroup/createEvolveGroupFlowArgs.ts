@@ -88,6 +88,7 @@ export const createEvolveGroupStepArgs = ({
   const noResponse = policy.type === GroupFlowPolicyType.GroupAutoApprove;
 
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: {
       fields: responseApprovalFieldArgs ? [responseApprovalFieldArgs] : [],
       locked: false,

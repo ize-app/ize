@@ -80,6 +80,7 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
   };
 
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: { fields: [responseFieldSetArgs], locked: false },
     response: {
       permission: { anyone: false, entities: [{ id: creatorEntityId }] },

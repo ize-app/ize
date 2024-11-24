@@ -87,6 +87,7 @@ export const createGroupWatchStepArgs = ({
   const noResponse = policy.type === GroupFlowPolicyType.GroupAutoApprove;
 
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: {
       fields: responseApprovalFieldArgs ? [responseApprovalFieldArgs] : [],
       locked: false,

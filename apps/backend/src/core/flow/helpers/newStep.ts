@@ -23,6 +23,7 @@ export const newStep = async ({
 }): Promise<StepPrismaType> => {
   const step = await transaction.step.create({
     data: {
+      id: args.stepId,
       index,
       flowVersionId,
     },

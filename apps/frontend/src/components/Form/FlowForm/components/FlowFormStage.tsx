@@ -15,7 +15,7 @@ import { ActionType } from "@/graphql/generated/graphql";
 
 import { getSelectOptionName } from "../../utils/getSelectOptionName";
 import { FlowSchemaType } from "../formValidation/flow";
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
+import { getDefaultStepFormValues } from "../helpers/getDefaultFormValues";
 import { getResultFormLabel } from "../helpers/getResultFormLabel";
 import { getActionFilterOptionOptions } from "../helpers/useActionFilterOptions";
 
@@ -88,8 +88,8 @@ export const FlowFormStage = ({
           setValue(`steps.${0}`, {
             ...currentStepVal,
             response: undefined,
-            result: defaultStepFormValues.result,
-            fieldSet: defaultStepFormValues.fieldSet,
+            result: getDefaultStepFormValues().result,
+            fieldSet: getDefaultStepFormValues().fieldSet,
           });
         } else if (isFinalStep) {
           // if there are more then one steps, copy the action from the current final step to the new final step

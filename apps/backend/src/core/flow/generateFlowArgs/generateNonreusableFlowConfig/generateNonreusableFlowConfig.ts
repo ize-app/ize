@@ -50,6 +50,7 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
@@ -100,6 +101,7 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
@@ -159,6 +161,7 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
@@ -190,6 +193,7 @@ export const generateNonreusableFlowConfig = ({
             action: { type: ActionType.TriggerStep, locked: false },
           },
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {

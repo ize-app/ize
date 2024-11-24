@@ -671,6 +671,7 @@ export type NewStepArgs = {
   fieldSet: FieldSetArgs;
   response?: InputMaybe<ResponseConfigArgs>;
   result: Array<ResultArgs>;
+  stepId: Scalars['String']['input'];
 };
 
 export type NftCollection = {

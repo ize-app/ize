@@ -8,7 +8,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { ActionType, ResultType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType } from "../formValidation/flow";
-import { defaultStepFormValues } from "../helpers/getDefaultFormValues";
+import { getDefaultStepFormValues } from "../helpers/getDefaultFormValues";
 // position Index is position of new step in the array
 export const AddStepButton = ({
   positionIndex,
@@ -49,14 +49,14 @@ export const AddStepButton = ({
     const currentFinalStepIndex = Math.max(stepsArrayMethods.fields.length - 1, 0);
 
     if (currentStepLength === 0) {
-      stepsArrayMethods.append(defaultStepFormValues);
+      stepsArrayMethods.append(getDefaultStepFormValues());
     }
     // there will usually be a first step, but sometimes that step is just an action (no response) and other times it actually has a response
     else if (currentStepLength === 1 && positionIndex === 0) {
       // if there's a response, insert a new step
       if (getValues(`steps.${0}.response`)) {
         const newStep = {
-          ...defaultStepFormValues,
+          ...getDefaultStepFormValues(),
           action: { filterOptionId: null, type: ActionType.TriggerStep, locked: false },
         };
         stepsArrayMethods.prepend(newStep);
@@ -65,10 +65,12 @@ export const AddStepButton = ({
       // this will allow it display in the UI as a collaborative step
       // this will also preserve any previously created actions, if there is one
       else {
-        setValue(`steps.${0}.response`, defaultStepFormValues.response);
+        setValue(`steps.${0}.response`, getDefaultStepFormValues().response);
       }
-    } else if (positionIndex === currentFinalStepIndex + 1) {
-      const newStep = { ...defaultStepFormValues };
+    }
+    // if adding the final step in the array
+    else if (positionIndex === currentFinalStepIndex + 1) {
+      const newStep = getDefaultStepFormValues();
       // copy over final action to new final step
       newStep.action = getValues(`steps.${currentFinalStepIndex}.action`);
       stepsArrayMethods.append(newStep);
@@ -78,8 +80,10 @@ export const AddStepButton = ({
         type: ActionType.TriggerStep,
         locked: false,
       });
-    } else {
-      stepsArrayMethods.insert(positionIndex, defaultStepFormValues);
+    }
+    // if inserting step anywhere els
+    else {
+      stepsArrayMethods.insert(positionIndex, getDefaultStepFormValues());
       setValue(`steps.${currentFinalStepIndex}.action`, {
         filter: undefined,
         type: ActionType.TriggerStep,

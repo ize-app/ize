@@ -96,6 +96,7 @@ export const generateEvolveConfig = ({
   };
 
   const step: StepSchemaType = {
+    stepId: crypto.randomUUID(),
     fieldSet: { fields: [responseField], locked: false },
     response: {
       permission: respondPermission,

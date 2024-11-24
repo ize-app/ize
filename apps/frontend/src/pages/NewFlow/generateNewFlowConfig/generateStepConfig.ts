@@ -18,8 +18,9 @@ export const generateStepConfig = ({
   result,
   action,
 }: GenerateStepConfigProps): StepSchemaType => {
-  const allowMultipleResponses = result[0]?.type === ResultType.LlmSummary
+  const allowMultipleResponses = result[0]?.type === ResultType.LlmSummary;
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: {
       fields: responseFields,
       locked: false,
