@@ -6,6 +6,7 @@ import { resultGroupStatusProps } from "@/components/status/resultGroupStatusPro
 import {
   FieldFragment,
   FieldType,
+  OptionFragment,
   ResponseFieldAnswersSummaryFragment,
   ResultConfigFragment,
   ResultGroupFragment,
@@ -39,6 +40,7 @@ export const Result = ({
   displayDescripton,
   minResponses,
   responseSummary,
+  triggerDefinedOptions,
 }: {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
@@ -46,6 +48,7 @@ export const Result = ({
   responseSummary: ResponseFieldAnswersSummaryFragment | null;
   minResponses: number | undefined | null;
   displayDescripton: boolean;
+  triggerDefinedOptions?: OptionFragment[];
 }) => {
   const theme = useTheme();
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
@@ -148,6 +151,7 @@ export const Result = ({
               final={!!resultGroup}
               responseSummary={responseSummary}
               onlyShowSelections={false}
+              triggerDefinedOptions={triggerDefinedOptions}
             />
           </LabeledGroupedInputs>
         )}

@@ -55,6 +55,9 @@ fragment Request on Request {
   triggerFieldAnswers {
     ...TriggerFieldAnswer
   }
+  triggerDefinedOptions {
+    ...TriggerDefinedOptions
+  }
   requestId
   currentStepIndex
   createdAt
@@ -62,6 +65,14 @@ fragment Request on Request {
     ...RequestStep
   }
   final
+}
+
+fragment TriggerDefinedOptions on TriggerDefinedOptions {
+  fieldId
+  fieldName
+  options {
+    ...Option
+  }
 }
 
 fragment RequestStep on RequestStep {

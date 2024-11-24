@@ -6,7 +6,6 @@ import {
   FieldType,
   FreeInput,
   LinkedResult,
-  Option,
   OptionSelectionType,
   Options,
   ResultConfig,
@@ -16,6 +15,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTypes";
 import { FieldSetPrismaType } from "../fieldPrismaTypes";
+import { fieldOptionSetResolver } from "./fieldOptionSetResolver";
 
 export const fieldSetResolver = ({
   fieldSet,
@@ -59,23 +59,22 @@ export const fieldSetResolver = ({
         ? requestDefinedOptionSets.find((s) => s.fieldId === field.id)
         : undefined;
 
-      const requestOptions = requestDefinedOptionSet
-        ? requestDefinedOptionSet.FieldOptionSet.FieldOptions.map(
-            (option): Option => ({
-              optionId: option.id,
-              name: option.name,
-              dataType: option.dataType as FieldDataType,
-            }),
-          )
-        : [];
+      // const requestOptions = requestDefinedOptionSet
+      //   ? requestDefinedOptionSet.FieldOptionSet.FieldOptions.map(
+      //       (option): Option => ({
+      //         optionId: option.id,
+      //         name: option.name,
+      //         dataType: option.dataType as FieldDataType,
+      //       }),
+      //     )
+      //   : [];
+      const requestOptions = fieldOptionSetResolver({
+        fieldOptionSet: requestDefinedOptionSet?.FieldOptionSet,
+      });
 
-      const flowOptions = (config.PredefinedOptionSet?.FieldOptions ?? []).map(
-        (option): Option => ({
-          optionId: option.id,
-          name: option.name,
-          dataType: option.dataType as FieldDataType,
-        }),
-      );
+      const flowOptions = fieldOptionSetResolver({
+        fieldOptionSet: config.PredefinedOptionSet,
+      });
 
       const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
         const resultConfig = resultConfigsCache.find((r) => {

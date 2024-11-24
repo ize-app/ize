@@ -30,12 +30,14 @@ export const FieldOptions = ({
   onlyShowSelections = false,
   final,
   responseSummary,
+  triggerDefinedOptions,
 }: {
   fieldOptions: Options;
   optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
   onlyShowSelections?: boolean;
   final: boolean;
   responseSummary?: ResponseFieldAnswersSummaryFragment | null | undefined;
+  triggerDefinedOptions?: OptionFragment[];
 }) => {
   const { requestOptionsDataType, linkedResultOptions } = fieldOptions;
 
@@ -44,12 +46,14 @@ export const FieldOptions = ({
       ? (responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0
       : responseSummary?.count ?? 0;
 
+  const allOptions = [...fieldOptions.options, ...(triggerDefinedOptions ?? [])];
+
   const hydratedOptions: {
     option: OptionFragment;
     optionSummary: ResponseFieldAnswersOptionsSummaryFragment | undefined;
     isSelected: boolean;
     selectionIndex: number;
-  }[] = fieldOptions.options
+  }[] = allOptions
     .map((option) => {
       const selectionIndex =
         (optionSelections ?? []).findIndex((os) => os.optionId === option.optionId) ?? false;
@@ -95,7 +99,7 @@ export const FieldOptions = ({
           />
         );
       })}
-      {!final && requestOptionsDataType && (
+      {!final && requestOptionsDataType && !triggerDefinedOptions && (
         <Box sx={{ display: "flex", padding: "6px 12px" }}>
           <PlayCircleOutlineIcon
             sx={{ color: muiTheme.palette.secondary.main, marginRight: "8px" }}

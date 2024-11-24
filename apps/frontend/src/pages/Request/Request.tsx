@@ -10,6 +10,7 @@ import { AvatarWithName } from "@/components/Avatar";
 import { BreadCrumbItem, Breadcrumbs } from "@/components/BreadCrumbs";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
 import { EndRequestStepButton } from "@/components/EndRequestStepButton";
+import { TriggerDefinedOptionSets } from "@/components/Field/TriggerDefinedOptions";
 import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
@@ -54,7 +55,6 @@ export const Request = () => {
   const request = data?.getRequest;
 
   if (loading || !request) return <Loading />;
-
   const currentStep = request.flow.steps[request.currentStepIndex];
   const currentReqStep = request.requestSteps[request.currentStepIndex];
 
@@ -189,6 +189,7 @@ export const Request = () => {
                 fieldAnswers={request.triggerFieldAnswers}
                 onlyShowSelections={true}
               />
+              <TriggerDefinedOptionSets triggerDefinedOptionSets={request.triggerDefinedOptions} />
             </Box>
             {!!me &&
               acceptingNewResponses &&

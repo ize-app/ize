@@ -8,6 +8,7 @@ import { triggerFieldAnswersResolver } from "./triggerFieldAnswersResolver";
 import { flowResolver } from "../../flow/resolvers/flowResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestPrismaType } from "../requestPrismaTypes";
+import { triggerDefinedOptionSetsResolver } from "./triggerDefinedOptionSetsResolver";
 import { getRequestStepIndex } from "../utils/getRequestStepIndex";
 
 export const requestResolver = async ({
@@ -87,6 +88,10 @@ export const requestResolver = async ({
       answers: req.TriggerFieldAnswers,
       creator,
       context,
+    }),
+    triggerDefinedOptions: triggerDefinedOptionSetsResolver({
+      triggerDefinedOptionSets: req.RequestDefinedOptionSets,
+      flow,
     }),
     requestSteps: requestSteps,
   };

@@ -4,7 +4,12 @@ import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components
 import { RequestStepResults } from "@/components/result/Results";
 import { requestStepStatusProps } from "@/components/status/requestStepStatusProps";
 import { StatusTag } from "@/components/status/StatusTag";
-import { RequestStepFragment, RequestStepStatus, StepFragment } from "@/graphql/generated/graphql";
+import {
+  RequestStepFragment,
+  RequestStepStatus,
+  StepFragment,
+  TriggerDefinedOptions,
+} from "@/graphql/generated/graphql";
 
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { TimeLeft } from "./TimeLeft";
@@ -13,9 +18,11 @@ import { RespondPermissionPanel } from "../RespondPermissionPanel";
 export const ConfigRequestStepPanel = ({
   step,
   requestStep,
+  triggerDefinedOptionSets,
 }: {
   step: StepFragment;
   requestStep: RequestStepFragment | null;
+  triggerDefinedOptionSets: TriggerDefinedOptions[];
 }) => {
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
@@ -63,7 +70,11 @@ export const ConfigRequestStepPanel = ({
         </PanelAccordion>
         <RespondPermissionPanel step={step} initialOpenState={false} />
         <PanelAccordion title="Results" hasError={false} initialState={true}>
-          <RequestStepResults requestStep={requestStep} step={step} />
+          <RequestStepResults
+            requestStep={requestStep}
+            step={step}
+            triggerDefinedOptionSets={triggerDefinedOptionSets}
+          />
         </PanelAccordion>
       </ConfigurationPanel>
     </PanelContainer>

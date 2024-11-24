@@ -22,7 +22,6 @@ export const newStep = async ({
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
   const step = await transaction.step.create({
-    include: stepInclude,
     data: {
       index,
       flowVersionId,
@@ -66,10 +65,12 @@ export const newStep = async ({
     transaction,
   });
 
-  createdSteps.push(step);
-
-  return await transaction.step.findUniqueOrThrow({
+  const fullStep = await transaction.step.findUniqueOrThrow({
     include: stepInclude,
     where: { id: step.id },
   });
+
+  createdSteps.push(fullStep);
+
+  return fullStep;
 };

@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 
 import {
   FieldFragment,
+  OptionFragment,
   RequestFragment,
   RequestStepFragment,
   ResponseFieldAnswersSummary,
@@ -17,6 +18,7 @@ interface HydratedResultData {
   field: FieldFragment;
   minResponses: number | undefined | null;
   responseSummary: ResponseFieldAnswersSummary | null;
+  triggerDefinedOptions?: OptionFragment[];
 }
 
 // lists all results from a given request
@@ -38,6 +40,10 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         reqStep?.responseFieldAnswers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
           ?.summary ?? null;
 
+      const triggerDefinedOptions = request.triggerDefinedOptions.find(
+        (t) => t.fieldId === resultConfig.field.fieldId,
+      )?.options;
+
       if (!field) throw Error("Missing field for resultConfig");
       hydratedResults.push({
         resultConfig,
@@ -45,6 +51,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         field,
         responseSummary,
         minResponses: step.response?.minResponses,
+        triggerDefinedOptions,
       });
     });
   });

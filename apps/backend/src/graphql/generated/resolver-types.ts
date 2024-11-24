@@ -888,6 +888,7 @@ export type Request = {
   name: Scalars['String']['output'];
   requestId: Scalars['String']['output'];
   requestSteps: Array<RequestStep>;
+  triggerDefinedOptions: Array<TriggerDefinedOptions>;
   triggerFieldAnswers: Array<TriggerFieldAnswer>;
 };
 
@@ -1119,6 +1120,13 @@ export type TriggerConfig = {
 
 export type TriggerConfigArgs = {
   permission: PermissionArgs;
+};
+
+export type TriggerDefinedOptions = {
+  __typename?: 'TriggerDefinedOptions';
+  fieldId: Scalars['String']['output'];
+  fieldName: Scalars['String']['output'];
+  options: Array<Option>;
 };
 
 export type TriggerFieldAnswer = {
@@ -1391,6 +1399,7 @@ export type ResolversTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerDefinedOptions: ResolverTypeWrapper<TriggerDefinedOptions>;
   TriggerFieldAnswer: ResolverTypeWrapper<Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer?: Maybe<ResolversTypes['UserFieldAnswer']>, field: ResolversTypes['Field'] }>;
   TriggerStep: ResolverTypeWrapper<TriggerStep>;
   UpdateProfileArgs: UpdateProfileArgs;
@@ -1516,6 +1525,7 @@ export type ResolversParentTypes = {
   TestWebhookArgs: TestWebhookArgs;
   TriggerConfig: Omit<TriggerConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerDefinedOptions: TriggerDefinedOptions;
   TriggerFieldAnswer: Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer?: Maybe<ResolversParentTypes['UserFieldAnswer']>, field: ResolversParentTypes['Field'] };
   TriggerStep: TriggerStep;
   UpdateProfileArgs: UpdateProfileArgs;
@@ -1981,6 +1991,7 @@ export type RequestResolvers<ContextType = GraphqlRequestContext, ParentType ext
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   requestSteps?: Resolver<Array<ResolversTypes['RequestStep']>, ParentType, ContextType>;
+  triggerDefinedOptions?: Resolver<Array<ResolversTypes['TriggerDefinedOptions']>, ParentType, ContextType>;
   triggerFieldAnswers?: Resolver<Array<ResolversTypes['TriggerFieldAnswer']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -2123,6 +2134,13 @@ export type TriggerConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TriggerDefinedOptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerDefinedOptions'] = ResolversParentTypes['TriggerDefinedOptions']> = {
+  fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  options?: Resolver<Array<ResolversTypes['Option']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TriggerFieldAnswerResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerFieldAnswer'] = ResolversParentTypes['TriggerFieldAnswer']> = {
   answer?: Resolver<Maybe<ResolversTypes['UserFieldAnswer']>, ParentType, ContextType>;
   field?: Resolver<ResolversTypes['Field'], ParentType, ContextType>;
@@ -2232,6 +2250,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   ResultItem?: ResultItemResolvers<ContextType>;
   Step?: StepResolvers<ContextType>;
   TriggerConfig?: TriggerConfigResolvers<ContextType>;
+  TriggerDefinedOptions?: TriggerDefinedOptionsResolvers<ContextType>;
   TriggerFieldAnswer?: TriggerFieldAnswerResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

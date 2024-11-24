@@ -286,7 +286,7 @@ model Flow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  CreatorEntity               Entity               @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
+  CreatorEntity               Entity               @relation(fields: [creatorEntityId], references: [id])
   OwnerGroup                  Group?               @relation(fields: [groupId], references: [id], onDelete: Cascade)
   CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id])
   FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
@@ -768,7 +768,7 @@ model Request {
   creatorEntityId              String       @map("creator_entity_id") @db.Uuid
   name                         String
   final                        Boolean      @default(false)
-  CreatorEntity                Entity       @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
+  CreatorEntity                Entity       @relation(fields: [creatorEntityId], references: [id])
   flowVersionId                String       @map("flow_version_id") @db.Uuid
   FlowVersion                  FlowVersion  @relation("FlowVersion", fields: [flowVersionId], references: [id], onDelete: Cascade)
   currentRequestStepId         String?      @unique @map("current_request_step_id") @db.Uuid
@@ -835,7 +835,7 @@ model Response {
 
   RequestStep   RequestStep   @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
   Answers       FieldAnswer[]
-  CreatorEntity Entity        @relation(fields: [creatorEntityId], references: [id], onDelete: Cascade)
+  CreatorEntity Entity        @relation(fields: [creatorEntityId], references: [id])
 
   @@map("responses")
 }

@@ -116,12 +116,12 @@ const createFieldOptionsConfig = async ({
       requestOptionsDataType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((linkedResultConfigId) => {
+        // validating that resultConfigId exists in the flow
         let hasLinkedResult = false;
-
         for (const step of createdSteps) {
-          const foundMatch = step.ResultConfigSet?.ResultConfigs.find(
-            (rc) => rc.id === linkedResultConfigId,
-          );
+          const foundMatch = (step.ResultConfigSet?.ResultConfigs ?? []).find((rc) => {
+            return rc.id === linkedResultConfigId;
+          });
           if (foundMatch) {
             hasLinkedResult = true;
             break;
