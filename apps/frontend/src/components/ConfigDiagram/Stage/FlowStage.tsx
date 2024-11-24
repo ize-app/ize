@@ -5,6 +5,7 @@ import { Box, SvgIconProps, useTheme } from "@mui/material";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { AvatarGroup } from "@/components/Avatar";
+import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
 import { StatusProps } from "@/components/status/statusProps";
 import {
   ActionFragment,
@@ -91,7 +92,10 @@ export const FlowStage = ({
     case StageType.ActionFilter: {
       const { action } = props;
       if (!action?.filter) return null;
-      label = action.filter.option.name;
+      label = stringifyFreeInputValue({
+        value: action.filter.option.name,
+        dataType: action.filter.option.dataType,
+      });
       icon = FilterAltIcon;
     }
   }

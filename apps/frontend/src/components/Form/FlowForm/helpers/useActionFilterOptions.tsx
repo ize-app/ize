@@ -1,5 +1,6 @@
 import { useFormContext } from "react-hook-form";
 
+import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
 import { FieldType, ResultType } from "@/graphql/generated/graphql";
 
 import { getResultFormLabel } from "./getResultFormLabel";
@@ -42,7 +43,8 @@ export const getActionFilterOptionOptions = ({
   if (!field || field.type !== FieldType.Options) return [];
   return field.optionsConfig.options.map((option) => ({
     value: option.optionId,
-    name: (option.name as string) ?? "",
+    name:
+      stringifyFreeInputValue({ value: option.name as string, dataType: option.dataType }),
   }));
 };
 
