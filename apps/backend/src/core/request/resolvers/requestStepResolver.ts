@@ -1,4 +1,4 @@
-import { actionExecutionResolver } from "@/core/action/actionExecutionResolver";
+import { actionResolver } from "@/core/action/actionExecutionResolver";
 import { responsesResolver } from "@/core/response/responseResolver";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
 import { ResultGroupPrismaType } from "@/core/result/resultPrismaTypes";
@@ -35,7 +35,7 @@ export const requestStepResolver = async ({
   context: GraphqlRequestContext;
 }): Promise<RequestStep> => {
   const fieldSet: FieldSet = fieldSetResolver({
-    fieldSet: step.FieldSet,
+    fieldSet: step.ResponseFieldSet,
     requestDefinedOptionSets,
     responseFieldsCache,
     resultConfigsCache,
@@ -47,9 +47,9 @@ export const requestStepResolver = async ({
     context,
   });
 
-  const actionExecution = actionExecutionResolver({
-    actionExecutions: reqStep.ActionExecution,
-    action: step.ActionConfigSet?.ActionConfigs[0],
+  const actionExecution = actionResolver({
+    action: reqStep.Actions,
+    actionConfig: step.ActionConfigSet?.ActionConfigs[0],
     actionsFinal: reqStep.actionsFinal,
     resultsFinal: reqStep.resultsFinal,
   });
@@ -65,7 +65,11 @@ export const requestStepResolver = async ({
   const hasActionError = actionExecution?.status === ActionStatus.Error;
   const hasResultsError = results.some((result) => result.status === ResultGroupStatus.Error);
 
-  const status = requestStepStatusResolver({ requestStep: reqStep, hasActionError, hasResultsError });
+  const status = requestStepStatusResolver({
+    requestStep: reqStep,
+    hasActionError,
+    hasResultsError,
+  });
 
   const res: RequestStep = {
     requestStepId: reqStep.id,

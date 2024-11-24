@@ -47,7 +47,7 @@ export const executeAction = async ({
         ResultGroups: {
           include: resultGroupInclude,
         },
-        ActionExecution: true,
+        Actions: true,
       },
     });
 
@@ -75,7 +75,7 @@ export const executeAction = async ({
       }
     }
 
-    const actionExecution = reqStep.ActionExecution.find((a) => a.actionConfigId === action.id);
+    const actionExecution = reqStep.Actions.find((a) => a.actionConfigId === action.id);
 
     if (actionExecution) {
       // this should never evaluate to true, but just in case so action doesn't run again
@@ -87,7 +87,7 @@ export const executeAction = async ({
       // if the action has been attempted too many times, mark it as final
       if ((actionExecution?.retryAttempts ?? 0) > maxActionRetries) {
         return await prisma.$transaction(async (transaction): Promise<ExecuteActionReturn> => {
-          await prisma.actionExecution.update({
+          await prisma.action.update({
             where: {
               actionConfigId_requestStepId: {
                 actionConfigId: action.id,
@@ -143,7 +143,7 @@ export const executeAction = async ({
             break;
         }
 
-        await transaction.actionExecution.upsert({
+        await transaction.action.upsert({
           where: {
             actionConfigId_requestStepId: {
               actionConfigId: action.id,
@@ -178,7 +178,7 @@ export const executeAction = async ({
     } catch (e) {
       const retryAttempts = actionExecution?.retryAttempts ?? 1;
       const nextRetryAt = new Date(Date.now() + calculateBackoffMs(retryAttempts));
-      await prisma.actionExecution.upsert({
+      await prisma.action.upsert({
         where: {
           actionConfigId_requestStepId: {
             actionConfigId: action.id,

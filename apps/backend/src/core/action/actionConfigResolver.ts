@@ -14,21 +14,21 @@ import { ActionConfigPrismaType } from "./actionPrismaTypes";
 import { getActionName } from "./getActionName";
 import { callWebhookResolver } from "./webhook/webhookResolver";
 
-export const actionResolver = ({
-  action,
+export const actionConfigResolver = ({
+  actionConfig,
   responseFields,
   ownerGroup,
   resultConfigs,
 }: {
-  action: ActionConfigPrismaType | null | undefined;
+  actionConfig: ActionConfigPrismaType | null | undefined;
   responseFields: Field[] | undefined;
   resultConfigs: ResultConfig[];
   ownerGroup: Group | null;
 }): Action | null => {
-  if (!action) return null;
+  if (!actionConfig) return null;
   let filter: ActionFilter | undefined = undefined;
 
-  const actionFilter = action.ActionConfigFilter;
+  const actionFilter = actionConfig.ActionConfigFilter;
   if (actionFilter) {
     const resultConfig = resultConfigs.find(
       (rc) => rc.resultConfigId === actionFilter.resultConfigId,
@@ -57,18 +57,18 @@ export const actionResolver = ({
     filter = { resultConfigId, resultName, option };
   }
 
-  const name = getActionName({ action, ownerGroup });
+  const name = getActionName({ action: actionConfig, ownerGroup });
 
-  switch (action.type) {
+  switch (actionConfig.type) {
     case ActionType.CallWebhook:
-      if (!action.ActionConfigWebhook)
+      if (!actionConfig.ActionConfigWebhook)
         throw new GraphQLError("Missing webhook action config.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
       return callWebhookResolver({
-        webhook: action.ActionConfigWebhook,
+        webhook: actionConfig.ActionConfigWebhook,
         filter,
-        locked: action.locked,
+        locked: actionConfig.locked,
         name,
       });
     case ActionType.TriggerStep:
@@ -76,28 +76,28 @@ export const actionResolver = ({
         __typename: "TriggerStep",
         name,
         filter,
-        locked: action.locked,
+        locked: actionConfig.locked,
       };
     case ActionType.EvolveFlow:
       return {
         __typename: "EvolveFlow",
         name,
         filter,
-        locked: action.locked,
+        locked: actionConfig.locked,
       };
     case ActionType.GroupWatchFlow:
       return {
         __typename: "GroupWatchFlow",
         name,
         filter,
-        locked: action.locked,
+        locked: actionConfig.locked,
       };
     case ActionType.EvolveGroup:
       return {
         __typename: "EvolveGroup",
         name,
         filter,
-        locked: action.locked,
+        locked: actionConfig.locked,
       };
     default:
       throw new GraphQLError("Invalid action type", {

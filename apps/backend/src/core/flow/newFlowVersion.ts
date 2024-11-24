@@ -1,4 +1,3 @@
-
 import { Prisma } from "@prisma/client";
 
 import { newFieldSet } from "@/core/fields/newFieldSet";
@@ -38,23 +37,12 @@ export const newFlowVersion = async ({
 
   validateFlowTypeArgs({ args: flowArgs });
 
-  const triggerFieldsSet = await newFieldSet({
-    fieldSetArgs: flowArgs.fieldSet,
-    createdSteps: [],
-    transaction,
-  });
   const flowVersion = await transaction.flowVersion.create({
     data: {
       id: flowArgs.flowVersionId,
       name: flowArgs.name,
       active,
-      totalSteps: flowArgs.steps.length,
       publishedAt: !active ? null : new Date(),
-      triggerPermissionsId: await newPermission({
-        permission: flowArgs.trigger.permission,
-        transaction,
-      }),
-      triggerFieldSetId: triggerFieldsSet?.id,
       draftEvolveFlowVersionId,
       evolveFlowId,
       // sets parent flow as using this newly created flow version
@@ -67,6 +55,21 @@ export const newFlowVersion = async ({
           },
       flowId: flowId,
     },
+  });
+
+  await newPermission({
+    permission: flowArgs.trigger.permission,
+    transaction,
+    type: "trigger",
+    flowVersionId: flowVersion.id,
+  });
+
+  await newFieldSet({
+    type: "trigger",
+    flowVersionId: flowVersion.id,
+    fieldSetArgs: flowArgs.fieldSet,
+    createdSteps: [],
+    transaction,
   });
 
   const createdSteps: StepPrismaType[] = [];

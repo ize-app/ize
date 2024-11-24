@@ -12,66 +12,89 @@ import { newOptionSet } from "./newOptionSet";
 import { prisma } from "../../prisma/client";
 import { StepPrismaType } from "../flow/flowPrismaTypes";
 
-type PrismaFieldArgs = Omit<Prisma.FieldUncheckedCreateInput, "fieldSetId">;
+interface FieldSetArgsBase {
+  fieldSetArgs: FieldSetArgs;
+  createdSteps: StepPrismaType[];
+  transaction: Prisma.TransactionClient;
+}
+
+interface TriggerFieldSetArgs extends FieldSetArgsBase {
+  type: "trigger";
+  flowVersionId: string;
+}
+
+interface ResponseFieldSetArgs extends FieldSetArgsBase {
+  type: "response";
+  stepId: string;
+}
+
+type NewFieldSet = TriggerFieldSetArgs | ResponseFieldSetArgs;
 
 export const newFieldSet = async ({
   fieldSetArgs,
   createdSteps,
   transaction,
-}: {
-  fieldSetArgs: FieldSetArgs;
-  createdSteps: StepPrismaType[];
-  transaction: Prisma.TransactionClient;
-}): Promise<FieldSetPrismaType | null> => {
+  ...props
+}: NewFieldSet): Promise<FieldSetPrismaType | null> => {
   const { fields, locked } = fieldSetArgs;
+  let flowVersionId: string | undefined = undefined;
+  let stepId: string | undefined = undefined;
+
+  if (props.type === "trigger") flowVersionId = props.flowVersionId;
+  else if (props.type === "response") stepId = props.stepId;
+
   if (fields.length === 0) return null;
-  const dbFieldsArgs: PrismaFieldArgs[] = await Promise.all(
-    fields.map(async (field, fieldIndex) => {
-      let fieldOptionsConfigId: string | null = null;
-      if (field.optionsConfig) {
-        fieldOptionsConfigId = await createFieldOptionsConfig({
-          fieldOptionsConfigArgs: field.optionsConfig,
+
+  const fieldSet = await transaction.fieldSet.create({
+    data: {
+      flowVersionId,
+      stepId,
+      locked,
+    },
+  });
+
+  await Promise.all(
+    fields.map(async (f, fieldIndex) => {
+      const field = await transaction.field.create({
+        data: {
+          fieldSetId: fieldSet.id,
+          id: f.fieldId,
+          index: fieldIndex,
+          name: f.name,
+          type: f.type,
+          systemType: f.systemType,
+          freeInputDataType: f.freeInputDataType,
+          isInternal: f.isInternal,
+          required: f.required,
+        },
+      });
+
+      if (f.optionsConfig) {
+        await createFieldOptionsConfig({
+          fieldId: field.id,
+          fieldOptionsConfigArgs: f.optionsConfig,
           createdSteps,
           transaction,
         });
       }
 
-      const fieldArgs: PrismaFieldArgs = {
-        id: field.fieldId,
-        index: fieldIndex,
-        name: field.name,
-        type: field.type,
-        systemType: field.systemType,
-        freeInputDataType: field.freeInputDataType,
-        isInternal: field.isInternal,
-        fieldOptionsConfigId,
-        required: field.required,
-      };
-
-      return fieldArgs;
+      return;
     }),
   );
 
-  const fieldSet = await transaction.fieldSet.create({
+  return await transaction.fieldSet.findUniqueOrThrow({
+    where: { id: fieldSet.id },
     include: fieldSetInclude,
-    data: {
-      locked,
-      Fields: {
-        createMany: {
-          data: dbFieldsArgs,
-        },
-      },
-    },
   });
-
-  return fieldSet;
 };
 
 const createFieldOptionsConfig = async ({
+  fieldId,
   fieldOptionsConfigArgs,
   createdSteps,
   transaction = prisma,
 }: {
+  fieldId: string;
   fieldOptionsConfigArgs: FieldOptionsConfigArgs;
   createdSteps: StepPrismaType[];
   transaction?: Prisma.TransactionClient;
@@ -83,6 +106,7 @@ const createFieldOptionsConfig = async ({
   const optionSetId = await newOptionSet({ optionsArgs: options, transaction });
   const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
+      fieldId,
       maxSelections:
         selectionType === OptionSelectionType.MultiSelect
           ? maxSelections
@@ -109,7 +133,7 @@ const createFieldOptionsConfig = async ({
           });
         return linkedResultConfigId;
       }),
-      FieldOptionSet: optionSetId
+      PredefinedOptionSet: optionSetId
         ? {
             connect: {
               id: optionSetId,

@@ -5,10 +5,12 @@ import { DecisionArgs, DecisionType, FieldType } from "@/graphql/generated/resol
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newDecisionConfig = async ({
+  resultConfigId,
   decisionArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   decisionArgs: DecisionArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
@@ -33,9 +35,10 @@ export const newDecisionConfig = async ({
     threshold = decisionArgs.threshold ?? null;
   }
 
+  responseField.FieldOptionsConfig;
   if (defaultOptionId) {
     const validDefaultOptionId = (
-      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptions ?? []
+      responseField.FieldOptionsConfig?.PredefinedOptionSet?.FieldOptions ?? []
     ).some((fo) => fo.id === defaultOptionId);
 
     if (!validDefaultOptionId)
@@ -60,6 +63,7 @@ export const newDecisionConfig = async ({
 
   const decisionConfig = await transaction.resultConfigDecision.create({
     data: {
+      resultConfigId,
       type: decisionArgs.type,
       defaultOptionId,
       threshold,

@@ -12,14 +12,14 @@ export const constructFieldOptions = ({
   field: FieldPrismaType;
   requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
 }): FieldOption[] => {
-  const fieldOptionsConfig = field.FieldOptionsConfigs;
+  const fieldOptionsConfig = field.FieldOptionsConfig;
 
   if (!fieldOptionsConfig)
     throw new GraphQLError(`Options field answer is missing options config. fieldId: ${field.id}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  const stepDefinedOptions = fieldOptionsConfig.FieldOptionSet.FieldOptions;
+  const stepDefinedOptions = fieldOptionsConfig.PredefinedOptionSet?.FieldOptions ?? [];
 
   const requestDefinedOptionSet = requestDefinedOptionSets.find(
     (rdos) => rdos.fieldId === field.id,

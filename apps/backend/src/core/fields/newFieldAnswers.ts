@@ -105,7 +105,7 @@ export const newFieldAnswers = async ({
               },
             );
 
-          const fieldOptionsConfig = field.FieldOptionsConfigs;
+          const fieldOptionsConfig = field.FieldOptionsConfig;
 
           if (!fieldOptionsConfig)
             throw new GraphQLError(
@@ -169,7 +169,7 @@ export const newFieldAnswers = async ({
                     return {
                       fieldOptionId,
                       weight:
-                        field.FieldOptionsConfigs?.selectionType === OptionSelectionType.Rank
+                        field.FieldOptionsConfig?.selectionType === OptionSelectionType.Rank
                           ? totalOptionCount - index
                           : 1,
                     };

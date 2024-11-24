@@ -5,10 +5,12 @@ import { FieldType, LlmSummaryArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newLlmSummaryConfig = async ({
+  resultConfigId,
   llmArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   llmArgs: LlmSummaryArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
@@ -20,6 +22,7 @@ export const newLlmSummaryConfig = async ({
 
   const llmConfig = await transaction.resultConfigLlm.create({
     data: {
+      resultConfigId,
       prompt: llmArgs.prompt,
       isList: llmArgs.isList,
     },

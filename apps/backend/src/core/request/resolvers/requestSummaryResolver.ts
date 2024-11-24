@@ -1,5 +1,5 @@
-import { getActionExecutionStatus } from "@/core/action/getActionExecutionStatus";
 import { getActionName } from "@/core/action/getActionName";
+import { getActionStatus } from "@/core/action/getActionStatus";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { getFlowName } from "@/core/flow/helpers/getFlowName";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
@@ -35,22 +35,24 @@ export const requestSummaryResolver = ({
   const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigs.find(
     (r) => r.id === resultGroup?.resultConfigId,
   );
-  const field = (currStep.Step.FieldSet?.Fields ?? []).find((f) => f.id === resultConfig?.fieldId);
+  const field = (currStep.Step.ResponseFieldSet?.Fields ?? []).find(
+    (f) => f.id === resultConfig?.fieldId,
+  );
 
-  const action = currStep.Step.ActionConfigSet?.ActionConfigs[0];
+  const actionConfig = currStep.Step.ActionConfigSet?.ActionConfigs[0];
 
   const actionExecution =
-    action &&
-    currStep.ActionExecution.find((ae) => {
-      ae.actionConfigId === action.id;
+    actionConfig &&
+    currStep.Actions.find((ae) => {
+      ae.actionConfigId === actionConfig.id;
     });
 
-  const actionSummary = action
+  const actionSummary = actionConfig
     ? {
-        name: getActionName({ action, ownerGroup: null }),
-        status: getActionExecutionStatus({
-          action,
-          actionExecution,
+        name: getActionName({ action: actionConfig, ownerGroup: null }),
+        status: getActionStatus({
+          actionConfig: actionConfig,
+          action: actionExecution,
           resultsFinal: currStep.resultsFinal,
           actionsFinal: currStep.actionsFinal,
         }),

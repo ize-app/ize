@@ -27,7 +27,7 @@ export const createRequestDefinedOptionSet = async ({
 }) => {
   let field: FieldPrismaType | null = null;
   for (const step of flowVersion.Steps ?? []) {
-    const f = (step.FieldSet?.Fields ?? []).find((f) => f.id === fieldId);
+    const f = (step.ResponseFieldSet?.Fields ?? []).find((f) => f.id === fieldId);
     if (f) {
       field = f;
       break;
@@ -40,7 +40,7 @@ export const createRequestDefinedOptionSet = async ({
     });
   }
 
-  if (isTriggerDefinedOptions && !field.FieldOptionsConfigs?.requestOptionsDataType) {
+  if (isTriggerDefinedOptions && !field.FieldOptionsConfig?.requestOptionsDataType) {
     throw new GraphQLError(
       "Request defined options provided but this field does not allow request defined options.",
       {
@@ -53,7 +53,7 @@ export const createRequestDefinedOptionSet = async ({
     transaction,
     optionsArgs: newOptionArgs,
     dataType: isTriggerDefinedOptions
-      ? field.FieldOptionsConfigs?.requestOptionsDataType ?? undefined
+      ? field.FieldOptionsConfig?.requestOptionsDataType ?? undefined
       : undefined,
   });
 

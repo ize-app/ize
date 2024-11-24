@@ -13,9 +13,9 @@ export type FieldOptionSetPrismaType = Prisma.FieldOptionSetGetPayload<{
 }>;
 
 export const fieldInclude = Prisma.validator<Prisma.FieldInclude>()({
-  FieldOptionsConfigs: {
+  FieldOptionsConfig: {
     include: {
-      FieldOptionSet: {
+      PredefinedOptionSet: {
         include: fieldOptionSetInclude,
       },
     },

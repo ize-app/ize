@@ -5,9 +5,11 @@ import { ResponseConfigArgs } from "@/graphql/generated/resolver-types";
 
 export const newResponseConfig = async ({
   args,
+  stepId,
   transaction,
 }: {
   args: ResponseConfigArgs | undefined | null;
+  stepId: string;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
   if (!args) return null;
@@ -20,19 +22,21 @@ export const newResponseConfig = async ({
     minResponses,
   } = args;
 
-  const responsePermissionsId = await newPermission({
-    permission,
-    transaction,
-  });
-
   const responseConfig = await transaction.responseConfig.create({
     data: {
-      permissionsId: responsePermissionsId,
+      stepId,
       allowMultipleResponses,
       canBeManuallyEnded,
       expirationSeconds,
       minResponses,
     },
+  });
+
+  await newPermission({
+    permission,
+    transaction,
+    type: "response",
+    responseConfigId: responseConfig.id,
   });
 
   return responseConfig.id;

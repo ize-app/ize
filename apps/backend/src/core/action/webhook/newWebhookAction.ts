@@ -43,13 +43,11 @@ export const newWebhookAction = async ({
           ActionConfig: {
             ActionConfigSet: {
               Step: {
-                some: {
-                  FlowVersion: {
-                    Flow: {
-                      FlowVersions: {
-                        some: {
-                          id: flowVersionId,
-                        },
+                FlowVersion: {
+                  Flow: {
+                    FlowVersions: {
+                      some: {
+                        id: flowVersionId,
                       },
                     },
                   },

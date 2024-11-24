@@ -29,11 +29,11 @@ export const newActionFilter = ({
 
   const responseField = (responseFieldSet?.Fields ?? []).find((f) => f.id === resultConfig.fieldId);
 
-  const hasOptionId = (responseField?.FieldOptionsConfigs?.FieldOptionSet.FieldOptions ?? []).some(
-    (option) => {
-      return option.id === optionId;
-    },
-  );
+  const hasOptionId = (
+    responseField?.FieldOptionsConfig?.PredefinedOptionSet?.FieldOptions ?? []
+  ).some((option) => {
+    return option.id === optionId;
+  });
 
   if (!hasOptionId)
     throw new GraphQLError("Action filter option does not exist on field", {

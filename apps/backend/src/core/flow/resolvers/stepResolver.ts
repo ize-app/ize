@@ -1,7 +1,7 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
 import { Field, Group, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
-import { actionResolver } from "../../action/actionResolver";
+import { actionConfigResolver } from "../../action/actionConfigResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { permissionResolver } from "../../permission/permissionResolver";
@@ -28,7 +28,7 @@ export const stepResolver = ({
   defaultValues?: DefaultEvolveGroupValues | undefined;
 }): Step => {
   const responseFields = fieldSetResolver({
-    fieldSet: step.FieldSet,
+    fieldSet: step.ResponseFieldSet,
     responseFieldsCache,
     resultConfigsCache,
   });
@@ -57,8 +57,8 @@ export const stepResolver = ({
           minResponses: step.ResponseConfig.minResponses,
         }
       : undefined,
-    action: actionResolver({
-      action: step.ActionConfigSet?.ActionConfigs[0],
+    action: actionConfigResolver({
+      actionConfig: step.ActionConfigSet?.ActionConfigs[0],
       resultConfigs: result,
       responseFields: responseFieldsCache,
       ownerGroup,

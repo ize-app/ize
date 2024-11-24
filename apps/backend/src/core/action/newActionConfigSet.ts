@@ -11,12 +11,14 @@ import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 // so you basically need to create everything at once OR you need to create the parent first and then the children
 
 export const newActionConfigSet = async ({
+  stepId,
   actionArgs,
   responseFieldSet,
   resultConfigs,
   flowVersionId,
   transaction,
 }: {
+  stepId: string;
   actionArgs: ActionArgs | undefined | null;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   resultConfigs: ResultConfig[];
@@ -25,6 +27,7 @@ export const newActionConfigSet = async ({
 }): Promise<string | null> => {
   if (!actionArgs) return null;
 
+  // currently only supporting one action on the frontend
   const dbActionArgs = await newActionConfig({
     actionArgs,
     responseFieldSet,
@@ -35,6 +38,7 @@ export const newActionConfigSet = async ({
 
   const actionConfigSet = await transaction.actionConfigSet.create({
     data: {
+      stepId,
       ActionConfigs: {
         create: { index: 0, ...dbActionArgs },
       },

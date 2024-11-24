@@ -1,26 +1,31 @@
 import { ActionExecution } from "@/graphql/generated/resolver-types";
 
-import { ActionConfigPrismaType, ActionExecutionPrismaType } from "./actionPrismaTypes";
-import { getActionExecutionStatus } from "./getActionExecutionStatus";
+import { ActionConfigPrismaType, ActionPrismaType } from "./actionPrismaTypes";
+import { getActionStatus } from "./getActionStatus";
 
-export const actionExecutionResolver = ({
-  actionExecutions,
+export const actionResolver = ({
   action,
+  actionConfig: actionConfig,
   resultsFinal,
   actionsFinal,
 }: {
-  actionExecutions: ActionExecutionPrismaType[];
-  action: ActionConfigPrismaType | null | undefined;
+  action: ActionPrismaType[];
+  actionConfig: ActionConfigPrismaType | null | undefined;
   resultsFinal: boolean;
   actionsFinal: boolean;
 }): ActionExecution | null => {
-  if (!action) return null;
+  if (!actionConfig) return null;
 
-  const actionExecution = actionExecutions.find((ae) => action.id === ae.actionConfigId);
+  const actionExecution = action.find((ae) => actionConfig.id === ae.actionConfigId);
 
   return {
-    actionId: action.id,
+    actionId: actionConfig.id,
     lastAttemptedAt: actionExecution?.lastAttemptedAt.toISOString() ?? null,
-    status: getActionExecutionStatus({ actionExecution, action, resultsFinal, actionsFinal }),
+    status: getActionStatus({
+      action: actionExecution,
+      actionConfig: actionConfig,
+      resultsFinal,
+      actionsFinal,
+    }),
   };
 };

@@ -7,25 +7,30 @@ import { newDecisionConfig } from "./decision/newDecisionConfig";
 import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
 import { checkRawAnswersConfig } from "./rawAnswers.ts/newRawAnswersConfig";
+import { resultConfigInclude } from "./resultPrismaTypes";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
-
-type PrismaResultConfigAgs = Omit<
-  Prisma.ResultConfigUncheckedCreateInput,
-  "resultConfigSetId" | "index"
->;
 
 export const newResultConfigSet = async ({
   resultsArgs,
+  stepId,
   responseFieldSet,
   transaction,
 }: {
   resultsArgs: ResultArgs[];
+  stepId: string;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
-}): Promise<[string, ResultConfig[]] | undefined> => {
+}): Promise<ResultConfig[] | undefined> => {
   if (resultsArgs.length === 0) return undefined;
-  const resultConfigs: PrismaResultConfigAgs[] = await Promise.all(
-    resultsArgs.map(async (res) => {
+
+  const resultConfigSet = await transaction.resultConfigSet.create({
+    data: {
+      stepId,
+    },
+  });
+
+  await Promise.all(
+    resultsArgs.map(async (res, index) => {
       // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
       let responseField = null;
 
@@ -38,7 +43,18 @@ export const newResultConfigSet = async ({
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
 
+      const resultConfig = await transaction.resultConfig.create({
+        data: {
+          id: res.resultConfigId,
+          resultConfigSetId: resultConfigSet.id,
+          index,
+          resultType: res.type,
+          fieldId: responseField.id,
+        },
+      });
+
       return await newResultConfig({
+        resultConfigId: resultConfig.id,
         resultArgs: res,
         responseField,
         transaction,
@@ -46,40 +62,31 @@ export const newResultConfigSet = async ({
     }),
   );
 
-  const fieldSet = await transaction.resultConfigSet.create({
-    data: {
-      ResultConfigs: {
-        createMany: {
-          data: resultConfigs.map((rc, index) => ({ ...rc, index })),
-        },
-      },
-    },
-    include: { ResultConfigs: true },
+  return await transaction.resultConfig.findMany({
+    where: { resultConfigSetId: resultConfigSet.id },
+    include: resultConfigInclude,
   });
-
-  return [fieldSet.id, fieldSet.ResultConfigs];
 };
 
 export const newResultConfig = async ({
+  resultConfigId,
   resultArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   resultArgs: ResultArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
-}): Promise<PrismaResultConfigAgs> => {
-  let decisionId;
-  let rankId;
-  let llmId;
-
+}): Promise<void> => {
   switch (resultArgs.type) {
     case ResultType.Decision:
       if (!resultArgs.decision)
         throw new GraphQLError("Missing decision config.", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      decisionId = await newDecisionConfig({
+      await newDecisionConfig({
+        resultConfigId,
         decisionArgs: resultArgs.decision,
         transaction,
         responseField,
@@ -90,7 +97,8 @@ export const newResultConfig = async ({
         throw new GraphQLError("Missing prioritization config.", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      rankId = await newRankConfig({
+      await newRankConfig({
+        resultConfigId,
         rankArgs: resultArgs.prioritization,
         transaction,
         responseField,
@@ -101,7 +109,8 @@ export const newResultConfig = async ({
         throw new GraphQLError("Missing LLM Summary config", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      llmId = await newLlmSummaryConfig({
+      await newLlmSummaryConfig({
+        resultConfigId,
         llmArgs: resultArgs.llmSummary,
         transaction,
         responseField,
@@ -112,14 +121,5 @@ export const newResultConfig = async ({
       break;
   }
 
-  const resultConfigArgs: PrismaResultConfigAgs = {
-    id: resultArgs.resultConfigId,
-    resultType: resultArgs.type,
-    fieldId: responseField.id,
-    decisionId,
-    rankId,
-    llmId,
-  };
-
-  return resultConfigArgs;
+  return;
 };

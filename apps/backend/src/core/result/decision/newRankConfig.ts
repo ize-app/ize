@@ -5,10 +5,12 @@ import { FieldType, PrioritizationArgs } from "@/graphql/generated/resolver-type
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newRankConfig = async ({
+  resultConfigId,
   rankArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   rankArgs: PrioritizationArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
@@ -20,6 +22,7 @@ export const newRankConfig = async ({
 
   const rankConfig = await transaction.resultConfigRank.create({
     data: {
+      resultConfigId,
       numOptionsToInclude: rankArgs.numPrioritizedItems,
     },
   });

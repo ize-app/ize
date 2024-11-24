@@ -6,7 +6,7 @@ export type WebhookPrismaType = Prisma.ActionConfigWebhookGetPayload<{
   include: typeof webhookInclude;
 }>;
 
-export const actionInclude = Prisma.validator<Prisma.ActionConfigInclude>()({
+export const actionConfigInclude = Prisma.validator<Prisma.ActionConfigInclude>()({
   ActionConfigWebhook: {
     include: webhookInclude,
   },
@@ -14,11 +14,11 @@ export const actionInclude = Prisma.validator<Prisma.ActionConfigInclude>()({
 });
 
 export type ActionConfigPrismaType = Prisma.ActionConfigGetPayload<{
-  include: typeof actionInclude;
+  include: typeof actionConfigInclude;
 }>;
 
-export const actionExecutionInclude = Prisma.validator<Prisma.ActionExecutionInclude>()({});
+export const actionInclude = Prisma.validator<Prisma.ActionInclude>()({});
 
-export type ActionExecutionPrismaType = Prisma.ActionExecutionGetPayload<{
-  include: typeof actionExecutionInclude;
+export type ActionPrismaType = Prisma.ActionGetPayload<{
+  include: typeof actionInclude;
 }>;

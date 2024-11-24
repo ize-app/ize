@@ -1,4 +1,4 @@
-import { Prisma, ResultConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { newActionConfigSet } from "@/core/action/newActionConfigSet";
 import { newFieldSet } from "@/core/fields/newFieldSet";
@@ -21,13 +21,19 @@ export const newStep = async ({
   createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
-  let responseConfigId: string | null = null;
-  let resultConfigSetId: string | undefined = undefined;
-  let resultConfigs: ResultConfig[] = [];
+  const step = await transaction.step.create({
+    include: stepInclude,
+    data: {
+      index,
+      flowVersionId,
+    },
+  });
 
   const responseFieldSet =
     (args.fieldSet.fields.length > 0 || args.fieldSet.locked) && args.result.length > 0
       ? await newFieldSet({
+          type: "response",
+          stepId: step.id,
           fieldSetArgs: args.fieldSet,
           transaction,
           createdSteps,
@@ -36,18 +42,23 @@ export const newStep = async ({
 
   const hasResponse = args.fieldSet.fields.filter((f) => !f.isInternal).length > 0;
 
-  if (hasResponse) responseConfigId = await newResponseConfig({ args: args.response, transaction });
+  if (hasResponse)
+    await newResponseConfig({
+      args: args.response,
+      transaction,
+      stepId: step.id,
+    });
 
-  const resultConfig = await newResultConfigSet({
-    resultsArgs: args.result,
-    transaction,
-    responseFieldSet,
-  });
-  if (resultConfig) {
-    [resultConfigSetId, resultConfigs] = resultConfig;
-  }
+  const resultConfigs =
+    (await newResultConfigSet({
+      stepId: step.id,
+      resultsArgs: args.result,
+      transaction,
+      responseFieldSet,
+    })) ?? [];
 
-  const actionConfigSetId = await newActionConfigSet({
+  await newActionConfigSet({
+    stepId: step.id,
     actionArgs: args.action,
     responseFieldSet,
     resultConfigs,
@@ -55,19 +66,10 @@ export const newStep = async ({
     transaction,
   });
 
-  const step = await transaction.step.create({
-    include: stepInclude,
-    data: {
-      fieldSetId: responseFieldSet?.id,
-      responseConfigId,
-      actionConfigSetId,
-      resultConfigSetId,
-      index,
-      flowVersionId,
-    },
-  });
-
   createdSteps.push(step);
 
-  return step;
+  return await transaction.step.findUniqueOrThrow({
+    include: stepInclude,
+    where: { id: step.id },
+  });
 };

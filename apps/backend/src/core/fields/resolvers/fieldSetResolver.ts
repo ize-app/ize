@@ -46,12 +46,12 @@ export const fieldSetResolver = ({
       };
       return freeInput;
     } else if ((field.type as FieldType) === FieldType.Options) {
-      if (!field.FieldOptionsConfigs)
+      if (!field.FieldOptionsConfig)
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
 
-      const config = field.FieldOptionsConfigs;
+      const config = field.FieldOptionsConfig;
 
       // find options defined by request for this field.
       // these options will be combined with flow defined fields
@@ -69,7 +69,7 @@ export const fieldSetResolver = ({
           )
         : [];
 
-      const flowOptions = config.FieldOptionSet.FieldOptions.map(
+      const flowOptions = (config.PredefinedOptionSet?.FieldOptions ?? []).map(
         (option): Option => ({
           optionId: option.id,
           name: option.name,
