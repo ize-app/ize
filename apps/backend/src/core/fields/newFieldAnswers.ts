@@ -115,7 +115,10 @@ export const newFieldAnswers = async ({
               },
             );
 
-          const options = constructFieldOptions({ field, requestDefinedOptionSets });
+          const options = constructFieldOptions({
+            optionsConfig: fieldOptionsConfig,
+            requestDefinedOptionSets,
+          });
 
           const totalOptionCount = options.length;
 
@@ -134,9 +137,10 @@ export const newFieldAnswers = async ({
           fieldAnswer.optionSelections.map((optionSelectionArgs) => {
             if (
               !options.some((option) => {
-                if (optionSelectionArgs.optionId) return option.id === optionSelectionArgs.optionId;
+                if (optionSelectionArgs.optionId)
+                  return option.optionId === optionSelectionArgs.optionId;
                 else if (typeof optionSelectionArgs.optionIndex === "number")
-                  return option.id === options[optionSelectionArgs.optionIndex].id;
+                  return option.optionId === options[optionSelectionArgs.optionIndex].optionId;
                 return false;
               })
             )
@@ -160,7 +164,7 @@ export const newFieldAnswers = async ({
                     if (optionSelectionArgs.optionId) {
                       fieldOptionId = optionSelectionArgs.optionId;
                     } else if (typeof optionSelectionArgs.optionIndex === "number") {
-                      fieldOptionId = options[optionSelectionArgs.optionIndex].id;
+                      fieldOptionId = options[optionSelectionArgs.optionIndex].optionId;
                     } else {
                       throw new GraphQLError(`Missing  option selection for field: ${field.id}`, {
                         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },

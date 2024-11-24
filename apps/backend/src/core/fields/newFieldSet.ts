@@ -133,13 +133,7 @@ const createFieldOptionsConfig = async ({
           });
         return linkedResultConfigId;
       }),
-      PredefinedOptionSet: optionSetId
-        ? {
-            connect: {
-              id: optionSetId,
-            },
-          }
-        : {},
+      fieldOptionSetId: optionSetId,
     },
   });
 

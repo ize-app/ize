@@ -53,7 +53,7 @@ export const Field = ({
               onlyShowSelections={onlyShowSelections}
               fieldOptions={field}
               optionSelections={optionSelections}
-              final={!!optionSelections} // TODO: revisit this
+              finalOptions={!!optionSelections} // TODO: revisit this
             />
           </LabeledGroupedInputs>
         </Box>

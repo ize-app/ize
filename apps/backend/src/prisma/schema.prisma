@@ -822,7 +822,10 @@ model RequestDefinedOptionSet {
   Field            Field          @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   fieldOptionSetId String         @map("field_option_set_id") @db.Uuid
   FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id])
+  // whether these options were defined by triggerer or a result from the previous step
+  isTriggerDefined Boolean        @map("is_trigger_defined")
 
+  @@unique([fieldId, requestId, fieldOptionSetId])
   @@map("request_defined_option_sets")
 }
 

@@ -67,7 +67,7 @@ const prioritizationSchema = z.object({
 });
 
 const llmSchema = z.object({
-  prompt: z.string(),
+  prompt: z.string().min(5),
   isList: z.boolean(),
 });
 

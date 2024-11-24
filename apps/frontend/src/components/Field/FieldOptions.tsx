@@ -28,14 +28,14 @@ export const FieldOptions = ({
   fieldOptions,
   optionSelections,
   onlyShowSelections = false,
-  final,
+  finalOptions,
   responseSummary,
   triggerDefinedOptions,
 }: {
   fieldOptions: Options;
   optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
   onlyShowSelections?: boolean;
-  final: boolean;
+  finalOptions: boolean;
   responseSummary?: ResponseFieldAnswersSummaryFragment | null | undefined;
   triggerDefinedOptions?: OptionFragment[];
 }) => {
@@ -46,7 +46,9 @@ export const FieldOptions = ({
       ? (responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0
       : responseSummary?.count ?? 0;
 
-  const allOptions = [...fieldOptions.options, ...(triggerDefinedOptions ?? [])];
+  const allOptions = [...fieldOptions.options];
+
+  if (!finalOptions && !!triggerDefinedOptions) allOptions.push(...triggerDefinedOptions);
 
   const hydratedOptions: {
     option: OptionFragment;
@@ -89,7 +91,7 @@ export const FieldOptions = ({
           <FieldOption
             key={o.option.optionId}
             value={o.option.name}
-            final={final}
+            final={finalOptions}
             dataType={o.option.dataType}
             selectionType={fieldOptions.selectionType}
             totalResponses={totalResponses}
@@ -99,7 +101,7 @@ export const FieldOptions = ({
           />
         );
       })}
-      {!final && requestOptionsDataType && !triggerDefinedOptions && (
+      {!finalOptions && requestOptionsDataType && !triggerDefinedOptions && (
         <Box sx={{ display: "flex", padding: "6px 12px" }}>
           <PlayCircleOutlineIcon
             sx={{ color: muiTheme.palette.secondary.main, marginRight: "8px" }}
@@ -109,7 +111,7 @@ export const FieldOptions = ({
           </Typography>
         </Box>
       )}
-      {!final &&
+      {!finalOptions &&
         linkedResultOptions.map((lr) => {
           return (
             <Box sx={{ display: "flex", padding: "6px 12px" }} key={lr.resultConfigId + lr.fieldId}>

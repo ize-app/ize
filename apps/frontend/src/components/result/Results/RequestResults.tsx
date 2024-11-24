@@ -19,6 +19,7 @@ interface HydratedResultData {
   minResponses: number | undefined | null;
   responseSummary: ResponseFieldAnswersSummary | null;
   triggerDefinedOptions?: OptionFragment[];
+  finalField: boolean;
 }
 
 // lists all results from a given request
@@ -44,6 +45,8 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         (t) => t.fieldId === resultConfig.field.fieldId,
       )?.options;
 
+      const finalField = !!reqStep;
+
       if (!field) throw Error("Missing field for resultConfig");
       hydratedResults.push({
         resultConfig,
@@ -52,6 +55,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         responseSummary,
         minResponses: step.response?.minResponses,
         triggerDefinedOptions,
+        finalField,
       });
     });
   });

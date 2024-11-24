@@ -14,8 +14,8 @@ import {
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTypes";
+import { constructFieldOptions } from "../constructFieldOptions";
 import { FieldSetPrismaType } from "../fieldPrismaTypes";
-import { fieldOptionSetResolver } from "./fieldOptionSetResolver";
 
 export const fieldSetResolver = ({
   fieldSet,
@@ -53,28 +53,7 @@ export const fieldSetResolver = ({
 
       const config = field.FieldOptionsConfig;
 
-      // find options defined by request for this field.
-      // these options will be combined with flow defined fields
-      const requestDefinedOptionSet = requestDefinedOptionSets
-        ? requestDefinedOptionSets.find((s) => s.fieldId === field.id)
-        : undefined;
-
-      // const requestOptions = requestDefinedOptionSet
-      //   ? requestDefinedOptionSet.FieldOptionSet.FieldOptions.map(
-      //       (option): Option => ({
-      //         optionId: option.id,
-      //         name: option.name,
-      //         dataType: option.dataType as FieldDataType,
-      //       }),
-      //     )
-      //   : [];
-      const requestOptions = fieldOptionSetResolver({
-        fieldOptionSet: requestDefinedOptionSet?.FieldOptionSet,
-      });
-
-      const flowOptions = fieldOptionSetResolver({
-        fieldOptionSet: config.PredefinedOptionSet,
-      });
+      const allOptions = constructFieldOptions({ optionsConfig: config, requestDefinedOptionSets });
 
       const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
         const resultConfig = resultConfigsCache.find((r) => {
@@ -119,7 +98,7 @@ export const fieldSetResolver = ({
         previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as OptionSelectionType,
         maxSelections: config.maxSelections,
-        options: [...flowOptions, ...requestOptions],
+        options: allOptions,
         // defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
       };
       return options;

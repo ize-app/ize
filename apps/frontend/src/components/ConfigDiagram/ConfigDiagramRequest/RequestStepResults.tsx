@@ -41,6 +41,7 @@ export const RequestStepResults = ({
         return (
           <Result
             field={field ?? resultConfig.field}
+            finalField={!!requestStep}
             key={resultConfig.resultConfigId}
             resultConfig={resultConfig}
             resultGroup={result}

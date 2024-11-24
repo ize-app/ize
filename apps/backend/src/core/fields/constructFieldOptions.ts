@@ -1,33 +1,30 @@
-import { FieldOption } from "@prisma/client";
+import { Option } from "@/graphql/generated/resolver-types";
 
-import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
-
-import { FieldPrismaType } from "./fieldPrismaTypes";
+import { FieldOptionsConfigPrismaType } from "./fieldPrismaTypes";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
+import { fieldOptionSetResolver } from "./resolvers/fieldOptionSetResolver";
 
 export const constructFieldOptions = ({
-  field,
+  optionsConfig,
   requestDefinedOptionSets,
 }: {
-  field: FieldPrismaType;
-  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
-}): FieldOption[] => {
-  const fieldOptionsConfig = field.FieldOptionsConfig;
+  optionsConfig: FieldOptionsConfigPrismaType;
+  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[] | undefined;
+}): Option[] => {
+  const requestOptions: Option[] = [];
 
-  if (!fieldOptionsConfig)
-    throw new GraphQLError(`Options field answer is missing options config. fieldId: ${field.id}`, {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+  (requestDefinedOptionSets ?? [])
+    .filter((s) => s.fieldId === optionsConfig.fieldId)
+    .forEach((s) => {
+      const options = fieldOptionSetResolver({
+        fieldOptionSet: s.FieldOptionSet,
+      });
+      requestOptions.push(...options);
     });
 
-  const stepDefinedOptions = fieldOptionsConfig.PredefinedOptionSet?.FieldOptions ?? [];
+  const flowOptions = fieldOptionSetResolver({
+    fieldOptionSet: optionsConfig.PredefinedOptionSet,
+  });
 
-  const requestDefinedOptionSet = requestDefinedOptionSets.find(
-    (rdos) => rdos.fieldId === field.id,
-  );
-
-  const requestDefinedOptions = requestDefinedOptionSet?.FieldOptionSet.FieldOptions ?? [];
-
-  const options = [...stepDefinedOptions, ...requestDefinedOptions];
-
-  return options;
+  return [...flowOptions, ...requestOptions];
 };

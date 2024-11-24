@@ -22,7 +22,7 @@ export const ResultConfig = ({
       {createResultConfigDescription({ resultConfig, minResponses })}
       {field && field.__typename === FieldType.Options && (
         <LabeledGroupedInputs label="Options" sx={{ backgroundColor: "white" }}>
-          <FieldOptions fieldOptions={field} final={false} />
+          <FieldOptions fieldOptions={field} finalOptions={false} />
         </LabeledGroupedInputs>
       )}
     </Box>

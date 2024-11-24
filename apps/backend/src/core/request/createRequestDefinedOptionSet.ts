@@ -22,7 +22,6 @@ export const createRequestDefinedOptionSet = async ({
   fieldId: string;
   isTriggerDefinedOptions: boolean;
   newOptionArgs: FieldOptionArgs[];
-
   transaction: Prisma.TransactionClient;
 }) => {
   let field: FieldPrismaType | null = null;
@@ -60,6 +59,7 @@ export const createRequestDefinedOptionSet = async ({
   return await transaction.requestDefinedOptionSet.create({
     include: requestDefinedOptionSetInclude,
     data: {
+      isTriggerDefined: isTriggerDefinedOptions,
       Request: {
         connect: {
           id: requestId,

@@ -41,6 +41,7 @@ export const Result = ({
   minResponses,
   responseSummary,
   triggerDefinedOptions,
+  finalField,
 }: {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
@@ -49,6 +50,7 @@ export const Result = ({
   minResponses: number | undefined | null;
   displayDescripton: boolean;
   triggerDefinedOptions?: OptionFragment[];
+  finalField: boolean;
 }) => {
   const theme = useTheme();
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
@@ -121,7 +123,7 @@ export const Result = ({
               >
                 <FieldOptions
                   fieldOptions={field}
-                  final={!!resultGroup}
+                  finalOptions={true}
                   responseSummary={responseSummary}
                   optionSelections={result.resultItems}
                   onlyShowSelections={false}
@@ -148,7 +150,7 @@ export const Result = ({
           <LabeledGroupedInputs sx={{ backgroundColor: "white" }} label={"Options"}>
             <FieldOptions
               fieldOptions={field}
-              final={!!resultGroup}
+              finalOptions={finalField}
               responseSummary={responseSummary}
               onlyShowSelections={false}
               triggerDefinedOptions={triggerDefinedOptions}

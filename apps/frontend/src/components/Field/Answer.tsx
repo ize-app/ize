@@ -41,7 +41,7 @@ export const Answer = ({
           <FieldOptions
             fieldOptions={field}
             optionSelections={fieldAnswer.selections}
-            final={true}
+            finalOptions={true}
             onlyShowSelections={true}
           />
         </LabeledGroupedInputs>
