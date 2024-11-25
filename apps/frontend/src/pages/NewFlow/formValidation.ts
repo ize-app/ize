@@ -122,7 +122,6 @@ export const perspectiveResultSchema = z
     { message: "Write a prompt for the AI", path: ["prompt"] },
   );
 
-
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   z.object({
     goal: z.literal(FlowGoal.TriggerWebhook),
@@ -131,7 +130,9 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     webhookTriggerCondition: z.nativeEnum(ActionTriggerCondition),
     // webhook: actionSchema,
     webhookName: z.string(),
+    question: z.string().min(5).optional(),
     optionsConfig: optionConfigSchema.optional(),
+    decision: decisionSchema.optional(),
     filterOptionId: z.string().nullable().default(null),
   }),
   z.object({

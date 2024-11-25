@@ -149,8 +149,11 @@ export const generateNewFlowConfig = ({
         ) {
           field = generateFieldConfig({
             type: FieldType.Options,
-            question: "Select one of the following options:", //todo: this should be a question
-            selectionType: OptionSelectionType.Select,
+            question: config.question ?? "Select one of the following options:", //todo: this should be a question
+            selectionType:
+              config.decision?.type === DecisionType.WeightedAverage
+                ? OptionSelectionType.Rank
+                : OptionSelectionType.Select,
             options: config.optionsConfig?.options,
             linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
             triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
@@ -161,7 +164,7 @@ export const generateNewFlowConfig = ({
           result = generateResultConfig({
             type: ResultType.Decision,
             fieldId: field.fieldId,
-            decision: {
+            decision: config.decision ?? {
               type: DecisionType.NumberThreshold,
               threshold: 1,
             },

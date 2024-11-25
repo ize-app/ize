@@ -1,17 +1,37 @@
 import { Typography } from "@mui/material";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
+import { FieldDataType } from "@/graphql/generated/graphql";
 
-import { OptionsForm } from "./OptionsForm";
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
+import { DecisionForm } from "./DecisionForm";
 
 export const WebhookForm = () => {
-  const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const webhookName = watch("webhookName");
   const webhookTriggerCondition = watch("webhookTriggerCondition");
+
+  useEffect(() => {
+    if (webhookTriggerCondition === ActionTriggerCondition.Decision) {
+      console.log("setting options");
+      setValue("optionsConfig", {
+        options: [
+          { optionId: crypto.randomUUID(), name: "✅", dataType: FieldDataType.String },
+          { optionId: crypto.randomUUID(), name: "❌", dataType: FieldDataType.String },
+        ],
+        triggerDefinedOptions: undefined,
+        linkedOptions: { hasLinkedOptions: false },
+      });
+    } else {
+      setValue("optionsConfig", undefined);
+      setValue("decision", undefined);
+      setValue("question", undefined);
+    }
+  }, [webhookTriggerCondition]);
   // const options = watch("optionsConfig.options") ?? [];
 
   // const defaultOption: SelectOption = {
@@ -61,7 +81,7 @@ export const WebhookForm = () => {
           />
         </FieldBlockFadeIn>
       )}
-      {webhookTriggerCondition === ActionTriggerCondition.Decision && <OptionsForm />}
+      {webhookTriggerCondition === ActionTriggerCondition.Decision && <DecisionForm />}
       {/* {options.length > 0 && (
         <FieldBlock>
           <Typography variant="description">
