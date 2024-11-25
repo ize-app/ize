@@ -83,11 +83,13 @@ export const generateNewFlowConfig = ({
         field = generateFieldConfig({
           type: FieldType.Options,
           question: config.question,
-          selectionType: OptionSelectionType.Select,
+          selectionType: DecisionType.WeightedAverage
+            ? OptionSelectionType.Rank
+            : OptionSelectionType.Select,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
-          decisionType: config.decisionType,
+          decisionType: config.decision.type,
         });
 
         flowTitle = config.question;
@@ -95,8 +97,7 @@ export const generateNewFlowConfig = ({
         result = generateResultConfig({
           type: ResultType.Decision,
           fieldId: field.fieldId,
-          decisionType: config.decisionType,
-          criteria: config.criteria,
+          decision: config.decision,
         });
         break;
       }
@@ -160,8 +161,10 @@ export const generateNewFlowConfig = ({
           result = generateResultConfig({
             type: ResultType.Decision,
             fieldId: field.fieldId,
-            decisionType: DecisionType.NumberThreshold,
-            criteria: undefined,
+            decision: {
+              type: DecisionType.NumberThreshold,
+              threshold: 1,
+            },
           });
 
           filterResultConfigId = result.resultConfigId;

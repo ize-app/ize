@@ -2,14 +2,13 @@ import {
   DecisionSchemaType,
   ResultSchemaType,
 } from "@/components/Form/FlowForm/formValidation/result";
-import { DecisionType, ResultType } from "@/graphql/generated/graphql";
+import { ResultType } from "@/graphql/generated/graphql";
 
 type ResultArgs =
   | {
       type: ResultType.Decision;
-      decisionType: DecisionType;
       fieldId: string;
-      criteria: string | undefined;
+      decision: DecisionSchemaType;
     }
   | {
       type: ResultType.Ranking;
@@ -26,46 +25,6 @@ type ResultArgs =
       fieldId: string;
     };
 
-const generateDecisionConfig = ({
-  decisionType,
-  criteria,
-}: {
-  decisionType: DecisionType;
-  criteria?: string;
-}): DecisionSchemaType => {
-  const defaultDecision = { hasDefault: false, optionId: null };
-  switch (decisionType) {
-    case DecisionType.NumberThreshold:
-      return {
-        type: DecisionType.NumberThreshold,
-        threshold: 1,
-        defaultDecision,
-      };
-    case DecisionType.PercentageThreshold:
-      return {
-        type: DecisionType.PercentageThreshold,
-        threshold: 51,
-        defaultDecision,
-      };
-    case DecisionType.Ai:
-      return {
-        type: DecisionType.Ai,
-        criteria: criteria ?? "",
-        defaultDecision,
-      };
-    case DecisionType.WeightedAverage:
-      return {
-        type: DecisionType.WeightedAverage,
-        defaultDecision: {
-          hasDefault: false,
-          optionId: null,
-        },
-      };
-    default:
-      throw new Error("Invalid DecisionType");
-  }
-};
-
 export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
   const base = {
     resultConfigId: crypto.randomUUID(),
@@ -77,10 +36,13 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
       return {
         type: ResultType.Decision,
         ...base,
-        decision: generateDecisionConfig({
-          decisionType: arg.decisionType,
-          criteria: arg.criteria,
-        }),
+        decision: {
+          ...arg.decision,
+          defaultDecision: {
+            hasDefault: false,
+            optionId: null,
+          },
+        },
       };
     }
     case ResultType.Ranking:

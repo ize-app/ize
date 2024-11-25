@@ -7,7 +7,7 @@ import {
 } from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
-import { DecisionType } from "@/graphql/generated/graphql";
+import { decisionSchema } from "@/components/Form/FlowForm/formValidation/result";
 
 export type NewFlowWizardFormSchema = z.infer<typeof newFlowWizardFormSchema>;
 
@@ -122,6 +122,7 @@ export const perspectiveResultSchema = z
     { message: "Write a prompt for the AI", path: ["prompt"] },
   );
 
+
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   z.object({
     goal: z.literal(FlowGoal.TriggerWebhook),
@@ -135,12 +136,11 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
-    decisionType: z.nativeEnum(DecisionType),
     reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
     optionsConfig: optionConfigSchema,
     question: z.string(),
-    criteria: z.string().optional(),
+    decision: decisionSchema,
   }),
   z.object({
     goal: z.literal(FlowGoal.Prioritize),

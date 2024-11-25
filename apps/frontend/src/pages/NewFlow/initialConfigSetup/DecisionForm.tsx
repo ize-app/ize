@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { InputAdornment, Typography } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
@@ -12,7 +12,7 @@ export const DecisionForm = () => {
   const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
 
   const question = watch("question");
-  const decisionType = watch("decisionType");
+  const decisionType = watch("decision.type");
 
   return (
     <>
@@ -33,21 +33,26 @@ export const DecisionForm = () => {
           <Typography variant="description">How will you decide?</Typography>
           <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="Decision type"
-            name={`decisionType`}
+            name={`decision.type`}
             options={[
               {
-                name: "First option to reach threshold is chosen",
-                title: "Threshold",
+                // name: "First option to reach threshold is chosen",
+                name: "Threshold",
                 value: DecisionType.NumberThreshold,
               },
               {
-                name: ">50% vote to decide",
-                title: "Majority vote",
+                // name: ">50% vote to decide",
+                name: "Majority vote",
                 value: DecisionType.PercentageThreshold,
               },
               {
+                // name: "Choose highest weighed avg option",
+                name: "Ranked vote",
+                value: DecisionType.WeightedAverage,
+              },
+              {
+                // name: "Let AI decide",
                 name: "Let AI decide",
-                title: "AI",
                 value: DecisionType.Ai,
               },
             ]}
@@ -62,11 +67,50 @@ export const DecisionForm = () => {
             </Typography>
             <TextField<IntitialFlowSetupSchemaType>
               // assuming here that results to fields is 1:1 relationshp
-              name={`criteria`}
+              name={`decision.criteria`}
               multiline
               placeholderText={"AI's decision criteria"}
-              label={``}
+              label={`AI Decision critieria`}
               defaultValue=""
+            />
+          </FieldBlockFadeIn>
+        </>
+      )}
+      {decisionType === DecisionType.NumberThreshold && (
+        <>
+          <FieldBlockFadeIn>
+            <Typography variant="description">
+              How many votes are needed to approve a given option? Decision is made once this
+              threshold is met.
+            </Typography>
+            <TextField<IntitialFlowSetupSchemaType>
+              // assuming here that results to fields is 1:1 relationshp
+              name={`decision.threshold`}
+              sx={{ maxWidth: "300px" }}
+              multiline
+              placeholderText={""}
+              label={`Number threshold`}
+              defaultValue=""
+              endAdornment={<InputAdornment position="end"># of votes to decide</InputAdornment>}
+            />
+          </FieldBlockFadeIn>
+        </>
+      )}
+      {decisionType === DecisionType.PercentageThreshold && (
+        <>
+          <FieldBlockFadeIn>
+            <Typography variant="description">
+              Percentage of votes needed to choose an option
+            </Typography>
+            <TextField<IntitialFlowSetupSchemaType>
+              // assuming here that results to fields is 1:1 relationshp
+              name={`decision.threshold`}
+              multiline
+              sx={{ maxWidth: "300px" }}
+              placeholderText={""}
+              label={`Percentage vote threshold`}
+              defaultValue=""
+              endAdornment={<InputAdornment position="end">% of votes to decide</InputAdornment>}
             />
           </FieldBlockFadeIn>
         </>

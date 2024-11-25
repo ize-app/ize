@@ -20,7 +20,7 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
         case DecisionType.PercentageThreshold:
           return "Majority vote";
         case DecisionType.WeightedAverage:
-          return "Prioritize options";
+          return "Ranked vote";
         default:
           return "Decision";
       }

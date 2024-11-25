@@ -43,7 +43,6 @@ export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
           triggerDefinedOptions: arg.triggerDefinedOptions,
           selectionType: arg.selectionType,
           maxSelections: null,
-
           options: arg.options,
           linkedResultOptions: arg.linkedResultId ? [{ id: arg.linkedResultId }] : [],
         },
