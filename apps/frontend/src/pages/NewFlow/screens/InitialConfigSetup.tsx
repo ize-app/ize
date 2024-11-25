@@ -64,6 +64,7 @@ export const InitialConfigSetup = () => {
           flexDirection: "column",
           maxWidth: "800px",
           gap: "30px",
+          marginBottom: "48px",
         }}
       >
         <Typography variant="description">

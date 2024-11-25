@@ -1,8 +1,11 @@
 import { Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
+import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
+import { SelectOption } from "@/components/Form/formFields/Select";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
@@ -10,10 +13,12 @@ import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formVali
 import { DecisionForm } from "./DecisionForm";
 
 export const WebhookForm = () => {
-  const { watch, setValue } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, setValue, getValues } = useFormContext<IntitialFlowSetupSchemaType>();
+  const [filterOptions, setFilterOptions] = useState<SelectOption[]>([]);
 
   const webhookName = watch("webhookName");
   const webhookTriggerCondition = watch("webhookTriggerCondition");
+  const question = watch("question");
 
   useEffect(() => {
     if (webhookTriggerCondition === ActionTriggerCondition.Decision) {
@@ -32,7 +37,21 @@ export const WebhookForm = () => {
       setValue("question", undefined);
     }
   }, [webhookTriggerCondition]);
-  // const options = watch("optionsConfig.options") ?? [];
+
+  useEffect(() => {
+    refreshOptions();
+  }, []);
+
+  const refreshOptions = () => {
+    const options = (getValues("optionsConfig.options") ?? []).map((option) => ({
+      name:
+        stringifyFreeInputValue({ value: option.name as string, dataType: option.dataType }) ?? "",
+      value: option.optionId,
+    }));
+    setFilterOptions(options);
+  };
+
+  // refreshOptions();
 
   // const defaultOption: SelectOption = {
   //   name: "Action runs for every result",
@@ -81,28 +100,36 @@ export const WebhookForm = () => {
           />
         </FieldBlockFadeIn>
       )}
-      {webhookTriggerCondition === ActionTriggerCondition.Decision && <DecisionForm />}
-      {/* {options.length > 0 && (
-        <FieldBlock>
-          <Typography variant="description">
-            On which decision should the webhook trigger?
-          </Typography>
-          <Select<IntitialFlowSetupSchemaType>
-            label="When to run action"
-            renderValue={(val) => {
-              if (val === DefaultOptionSelection.None)
-                return "Webhook is triggered on every decision";
-              const optionName = getSelectOptionName(filterOptions, val);
-              if (optionName) {
-                return "Only trigger webhook on: " + optionName;
-              } else "Webhook is triggered on every decision";
-            }}
-            selectOptions={filterOptions}
-            defaultValue=""
-            name={`filterOptionId`}
-          />
-        </FieldBlock>
-      )} */}
+      {webhookTriggerCondition === ActionTriggerCondition.Decision && (
+        <>
+          <DecisionForm />
+
+          {!!question && (
+            <>
+              <FieldBlockFadeIn>
+                <Typography variant="description">
+                  Which option will this webhook be triggered for?
+                </Typography>
+                <AsyncSelect<IntitialFlowSetupSchemaType, string>
+                  label="Default option"
+                  variant="standard"
+                  name={`filterOptionId`}
+                  getOptionLabel={(option) => {
+                    return filterOptions.find((o) => o.value === option)?.name ?? "";
+                  }}
+                  sx={{ maxWidth: "300px", width: "200px" }}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  loading={false}
+                  options={filterOptions.map((option) => option.value as string)}
+                  fetchOptions={() => {
+                    refreshOptions();
+                  }}
+                />
+              </FieldBlockFadeIn>
+            </>
+          )}
+        </>
+      )}
     </>
   );
 };

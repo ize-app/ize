@@ -3,7 +3,7 @@ import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import { Box, SvgIconProps, useTheme } from "@mui/material";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { FieldError, useFieldArray, useFormContext } from "react-hook-form";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { StageMenu } from "@/components/ConfigDiagram";
@@ -75,7 +75,10 @@ export const FlowFormStage = ({
       label = getResultFormLabel({ result: step.result[0] });
       subtitle = step.fieldSet.fields[0]?.name;
       disableDelete = step.fieldSet.locked;
-      hasError = !!formState.errors.steps?.[index];
+      hasError =
+        !!formState.errors.steps?.[index]?.fieldSet ||
+        !!formState.errors.steps?.[index]?.result ||
+        !!formState.errors.steps?.[index]?.response;
       icon = Diversity3OutlinedIcon;
       deleteHandler = () => {
         const isFinalStep = index === stepsArrayMethods.fields.length - 1;
@@ -105,7 +108,7 @@ export const FlowFormStage = ({
             type: ActionType.TriggerStep,
             locked: false,
           });
-          
+
           stepsArrayMethods.remove(index);
         }
       };
@@ -121,7 +124,9 @@ export const FlowFormStage = ({
       icon = actionProperties[action.type].icon;
       disableDelete = action.locked;
       label = actionProperties[action.type].label;
-      hasError = !!formState.errors.steps?.[index]?.action;
+      // @ts-expect-error Type inference isn't working here because formstate errors has it's own "type"
+      // field so action type union discrimination isn't working
+      hasError = !!formState.errors.steps?.[index]?.action?.callWebhook as FieldError;
       deleteHandler = () => {
         // note: setSelectedId is not working right now. issue is with how deleteHandler is passed to child components
         setSelectedId("trigger0");
@@ -144,6 +149,7 @@ export const FlowFormStage = ({
       });
       icon = FilterAltIcon;
       label = getSelectOptionName(options, actionFilter.optionId) as string;
+      hasError = !!formState.errors.steps?.[index]?.action?.filter;
 
       deleteHandler = () => {
         // note: setSelectedId is not working right now. issue is with how deleteHandler is passed to child components

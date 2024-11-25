@@ -176,7 +176,7 @@ export const generateNewFlowConfig = ({
         action = generateActionConfig({
           type: ActionType.CallWebhook,
           webhookName: config.webhookName,
-          filterOptionId: config.filterOptionId,
+          filterOptionId: config.filterOptionId ?? null,
           filterResultConfigId,
         });
 

@@ -58,6 +58,11 @@ export enum AIOutputType {
   List = "List",
 }
 
+export enum WebhookFilterType {
+  None = "None",
+  Filter = "Filter",
+}
+
 const optionConfigSchema = z
   .object({
     options: z.array(fieldOptionSchema).default([]),
@@ -133,7 +138,7 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     question: z.string().min(5).optional(),
     optionsConfig: optionConfigSchema.optional(),
     decision: decisionSchema.optional(),
-    filterOptionId: z.string().nullable().default(null),
+    filterOptionId: z.string().uuid().optional(),
   }),
   z.object({
     goal: z.literal(FlowGoal.Decision),
