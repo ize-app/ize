@@ -1,4 +1,4 @@
-import { Prisma, ResultConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -7,7 +7,6 @@ import { newDecisionConfig } from "./decision/newDecisionConfig";
 import { newRankConfig } from "./decision/newRankConfig";
 import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
 import { checkRawAnswersConfig } from "./rawAnswers.ts/newRawAnswersConfig";
-import { resultConfigInclude } from "./resultPrismaTypes";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newResultConfigSet = async ({
@@ -20,7 +19,7 @@ export const newResultConfigSet = async ({
   stepId: string;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
-}): Promise<ResultConfig[] | undefined> => {
+}): Promise<string | undefined> => {
   if (resultsArgs.length === 0) return undefined;
 
   const resultConfigSet = await transaction.resultConfigSet.create({
@@ -62,10 +61,7 @@ export const newResultConfigSet = async ({
     }),
   );
 
-  return await transaction.resultConfig.findMany({
-    where: { resultConfigSetId: resultConfigSet.id },
-    include: resultConfigInclude,
-  });
+  return resultConfigSet.id;
 };
 
 export const newResultConfig = async ({

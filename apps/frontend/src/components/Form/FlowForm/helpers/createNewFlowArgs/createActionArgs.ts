@@ -6,12 +6,15 @@ import { ActionSchemaType } from "../../formValidation/action";
 export const createActionArgs = (action: ActionSchemaType): ActionArgs => {
   const filter = action.filter;
 
+  const stepId = action.type === ActionType.TriggerStep ? action.stepId : null;
+
   //@ts-expect-error TODO
   delete action.filterOptionId;
   return {
     locked: action.locked,
     type: action.type,
     filter: filter ? { optionId: filter.optionId, resultConfigId: filter.resultConfigId } : null,
+    stepId,
     callWebhook:
       action.type === ActionType.CallWebhook ? createCallWebhookArgs(action.callWebhook) : null,
   };

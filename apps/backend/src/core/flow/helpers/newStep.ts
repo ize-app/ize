@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { newActionConfigSet } from "@/core/action/newActionConfigSet";
 import { newFieldSet } from "@/core/fields/newFieldSet";
 import { newResponseConfig } from "@/core/response/newResponseConfig";
 import { newResultConfigSet } from "@/core/result/newResultConfig";
@@ -49,21 +48,11 @@ export const newStep = async ({
       stepId: step.id,
     });
 
-  const resultConfigs =
-    (await newResultConfigSet({
-      stepId: step.id,
-      resultsArgs: args.result,
-      transaction,
-      responseFieldSet,
-    })) ?? [];
-
-  await newActionConfigSet({
+  await newResultConfigSet({
     stepId: step.id,
-    actionArgs: args.action,
-    responseFieldSet,
-    resultConfigs,
-    flowVersionId,
+    resultsArgs: args.result,
     transaction,
+    responseFieldSet,
   });
 
   const fullStep = await transaction.step.findUniqueOrThrow({

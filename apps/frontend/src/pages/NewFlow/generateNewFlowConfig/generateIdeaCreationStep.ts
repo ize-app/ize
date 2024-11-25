@@ -9,9 +9,13 @@ import { generateResultConfig } from "./generateResultConfig";
 import { generateStepConfig } from "./generateStepConfig";
 
 export const generateIdeaCreationStep = ({
+  stepId,
+  nextStepId,
   question,
   permission,
 }: {
+  stepId: string;
+  nextStepId: string;
   question: string;
   permission: PermissionSchemaType;
 }): [StepSchemaType, ResultSchemaType] => {
@@ -27,10 +31,11 @@ export const generateIdeaCreationStep = ({
   });
 
   const step = generateStepConfig({
+    stepId,
     permission,
     responseFields: [field],
     result: [result],
-    action: generateActionConfig({ type: ActionType.TriggerStep }),
+    action: generateActionConfig({ type: ActionType.TriggerStep, nextStepId }),
   });
 
   return [step, result];

@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { ActionType, Prisma } from "@prisma/client";
 
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
@@ -37,7 +37,15 @@ export const triggerNextStep = async ({
 
   const nextStepIndex = reqData.Step.index + 1;
 
-  const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
+  const currStep = reqData.Request.FlowVersion.Steps.find((s) => s.id === reqData.Step.id);
+  // once we implement multiple actions per step, this will need to be updated
+  const nextStepId = currStep?.ActionConfigSet?.ActionConfigs.find(
+    (ac) => ac.type === ActionType.TriggerStep,
+  )?.ActionConfigTriggerStep?.stepId;
+  const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.id === nextStepId);
+
+  // maybe add this back as a second check until we get multiple steps?
+  // const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
 
   if (!nextStep) {
     throw new GraphQLError(
@@ -73,6 +81,12 @@ export const triggerNextStep = async ({
           id: reqData.requestId,
         },
       },
+      TriggeredByRequestStep: {
+        connect: {
+          id: requestStepId,
+        },
+      }
+      // triggeredByRequestStepId: requestStepId,
     },
   });
 

@@ -1,9 +1,7 @@
-import { Prisma, ResultConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-import { ActionFilterArgs } from "@/graphql/generated/resolver-types";
+import { ActionFilterArgs, FieldSetArgs, ResultArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
-
-import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 type PrismaActionFilterArgs = Omit<Prisma.ActionConfigFilterUncheckedCreateInput, "actionConfigId">;
 
@@ -13,26 +11,26 @@ export const newActionFilter = ({
   resultConfigs,
 }: {
   actionFilterArgs: ActionFilterArgs | undefined | null;
-  responseFieldSet: FieldSetPrismaType | undefined | null;
-  resultConfigs: ResultConfig[];
+  responseFieldSet: FieldSetArgs;
+  resultConfigs: ResultArgs[];
 }): PrismaActionFilterArgs | null => {
   if (!actionFilterArgs) return null;
 
   const { resultConfigId, optionId } = actionFilterArgs;
 
-  const resultConfig = resultConfigs.find((rc) => rc.id === resultConfigId);
+  const resultConfig = resultConfigs.find((rc) => rc.resultConfigId === resultConfigId);
 
   if (!resultConfig)
     throw new GraphQLError("Step does not have corresponding resultConfig for actionFilter", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 
-  const responseField = (responseFieldSet?.Fields ?? []).find((f) => f.id === resultConfig.fieldId);
+  const responseField = (responseFieldSet?.fields ?? []).find(
+    (f) => f.fieldId === resultConfig.fieldId,
+  );
 
-  const hasOptionId = (
-    responseField?.FieldOptionsConfig?.PredefinedOptionSet?.FieldOptions ?? []
-  ).some((option) => {
-    return option.id === optionId;
+  const hasOptionId = (responseField?.optionsConfig?.options ?? []).some((option) => {
+    return option.optionId === optionId;
   });
 
   if (!hasOptionId)

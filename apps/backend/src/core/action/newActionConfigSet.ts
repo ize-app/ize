@@ -1,9 +1,8 @@
-import { Prisma, ResultConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-import { ActionArgs } from "@/graphql/generated/resolver-types";
+import { NewStepArgs } from "@/graphql/generated/resolver-types";
 
 import { newActionConfig } from "./newActionConfig";
-import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 // the delimma
 // if I try to a big create many up top, that means that downstream I'm going to create child tables without knowing parent id
@@ -11,25 +10,29 @@ import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 // so you basically need to create everything at once OR you need to create the parent first and then the children
 
 export const newActionConfigSet = async ({
-  stepId,
-  actionArgs,
-  responseFieldSet,
-  resultConfigs,
+  stepArgs,
   flowVersionId,
+  nextStepId,
   transaction,
 }: {
-  stepId: string;
-  actionArgs: ActionArgs | undefined | null;
-  responseFieldSet: FieldSetPrismaType | undefined | null;
-  resultConfigs: ResultConfig[];
+  stepArgs: NewStepArgs;
   flowVersionId: string;
+  nextStepId: string | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
+  const {
+    stepId,
+    action: actionArgs,
+    fieldSet: responseFieldSet,
+    result: resultConfigs,
+  } = stepArgs;
+
   if (!actionArgs) return null;
 
   // currently only supporting one action on the frontend
   const dbActionArgs = await newActionConfig({
     actionArgs,
+    nextStepId,
     responseFieldSet,
     resultConfigs,
     flowVersionId,

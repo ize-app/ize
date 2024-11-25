@@ -43,7 +43,7 @@ const createFieldFormState = (field: Field, uuidRemapper: UUIDRemapper): FieldSc
         optionsConfig: {
           // array of resultConfig ids
           linkedResultOptions: field.linkedResultOptions.map((lr) => ({
-            id: lr.resultConfigId,
+            id: uuidRemapper.getRemappedUUID(lr.resultConfigId),
           })),
           previousStepOptions: field.previousStepOptions,
           triggerDefinedOptions: field.requestOptionsDataType

@@ -98,6 +98,14 @@ export const FlowFormStage = ({
           //then remove the step
           stepsArrayMethods.remove(index);
         } else {
+          // set step prior to the one being deleted to have a trigger action that points to step after the one being deleted
+          setValue(`steps.${index - 1}.action`, {
+            filter: undefined,
+            stepId: getValues(`steps.${index + 1}.stepId`),
+            type: ActionType.TriggerStep,
+            locked: false,
+          });
+          
           stepsArrayMethods.remove(index);
         }
       };

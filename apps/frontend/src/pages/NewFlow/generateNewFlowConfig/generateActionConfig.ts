@@ -5,6 +5,7 @@ import { ActionType } from "@/graphql/generated/graphql";
 type ActionArg =
   | {
       type: ActionType.TriggerStep;
+      nextStepId: string;
     }
   | {
       type: ActionType.CallWebhook;
@@ -25,6 +26,7 @@ export function generateActionConfig(arg: ActionArg): ActionSchemaType {
         type: ActionType.TriggerStep,
         ...base,
         filter: undefined,
+        stepId: arg.nextStepId,
       };
     case ActionType.CallWebhook: {
       const { webhookName, filterOptionId, filterResultConfigId } = arg;

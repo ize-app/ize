@@ -35,6 +35,7 @@ export const createActionFormState = (
         type: ActionType.TriggerStep,
         locked: action.locked,
         filter,
+        stepId: uuidRemapper.getRemappedUUID(action.stepId),
       };
     case ActionType.EvolveFlow:
       return {

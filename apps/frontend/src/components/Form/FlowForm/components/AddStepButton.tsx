@@ -48,47 +48,43 @@ export const AddStepButton = ({
     const currentStepLength = stepsArrayMethods.fields.length;
     const currentFinalStepIndex = Math.max(stepsArrayMethods.fields.length - 1, 0);
 
-    if (currentStepLength === 0) {
-      stepsArrayMethods.append(getDefaultStepFormValues());
-    }
-    // there will usually be a first step, but sometimes that step is just an action (no response) and other times it actually has a response
-    else if (currentStepLength === 1 && positionIndex === 0) {
-      // if there's a response, insert a new step
-      if (getValues(`steps.${0}.response`)) {
-        const newStep = {
-          ...getDefaultStepFormValues(),
-          action: { filterOptionId: null, type: ActionType.TriggerStep, locked: false },
+    const newStep = getDefaultStepFormValues();
+
+    // if there's one step but it doesn't have a response, reset field but copy over action
+    if (currentStepLength === 1 && !!getValues(`steps.${0}.response`)) {
+      const currentAction = getValues(`steps.${0}.action`);
+      setValue(`steps.${0}`, { ...newStep, action: currentAction });
+    } else {
+      // if adding to the end of the array, copy current final action to new final step
+      if (positionIndex === currentFinalStepIndex + 1) {
+        const currentFinalAction = (newStep.action = getValues(
+          `steps.${currentFinalStepIndex}.action`,
+        ));
+        newStep.action = currentFinalAction;
+      }
+
+      // set prior step to point to new step
+      if (positionIndex > 0) {
+        setValue(`steps.${positionIndex - 1}.action`, {
+          filter: undefined,
+          stepId: newStep.stepId,
+          type: ActionType.TriggerStep,
+          locked: false,
+        });
+      }
+      // point new step to the step after it
+      if (positionIndex <= currentFinalStepIndex) {
+        const newNextStep = getValues(`steps.${positionIndex}`);
+        newStep.action = {
+          filter: undefined,
+          stepId: newNextStep.stepId,
+          type: ActionType.TriggerStep,
+          locked: false,
         };
-        stepsArrayMethods.prepend(newStep);
       }
-      // if no response, overwrite step 0 to have a response config
-      // this will allow it display in the UI as a collaborative step
-      // this will also preserve any previously created actions, if there is one
-      else {
-        setValue(`steps.${0}.response`, getDefaultStepFormValues().response);
-      }
-    }
-    // if adding the final step in the array
-    else if (positionIndex === currentFinalStepIndex + 1) {
-      const newStep = getDefaultStepFormValues();
-      // copy over final action to new final step
-      newStep.action = getValues(`steps.${currentFinalStepIndex}.action`);
-      stepsArrayMethods.append(newStep);
-      // change previous final step to have a trigger action
-      setValue(`steps.${currentFinalStepIndex}.action`, {
-        filter: undefined,
-        type: ActionType.TriggerStep,
-        locked: false,
-      });
-    }
-    // if inserting step anywhere els
-    else {
-      stepsArrayMethods.insert(positionIndex, getDefaultStepFormValues());
-      setValue(`steps.${currentFinalStepIndex}.action`, {
-        filter: undefined,
-        type: ActionType.TriggerStep,
-        locked: false,
-      });
+
+      // finally insert the new step
+      stepsArrayMethods.insert(positionIndex, newStep);
     }
     setSelectedId(`step${positionIndex}`);
   }, [positionIndex, setSelectedId, stepsArrayMethods, setValue, getValues]);
@@ -104,14 +100,10 @@ export const AddStepButton = ({
   };
 
   const addFilterHandler = () => {
-    // const options = getActionFilterResultOptions({
-    //   results: previousStep.result,
-    //   responseFields: previousStep.fieldSet.fields,
-    // });
-    // const defaultOptionFilterId = options[0].value as string;
     setValue(`steps.${positionIndex - 1}.action.filter`, { optionId: "", resultConfigId: "" });
     setSelectedId(`actionFilter${positionIndex - 1}`);
   };
+
   return (
     <Box sx={{ height: "48px", position: "relative", display: "flex", alignItems: "center" }}>
       <Box

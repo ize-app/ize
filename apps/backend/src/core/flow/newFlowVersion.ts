@@ -8,6 +8,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { StepPrismaType } from "./flowPrismaTypes";
 import { newStep } from "./helpers/newStep";
 import { validateFlowTypeArgs } from "./helpers/validateFlowTypeArgs";
+import { newActionConfigSet } from "../action/newActionConfigSet";
 
 export const newFlowVersion = async ({
   transaction,
@@ -85,6 +86,19 @@ export const newFlowVersion = async ({
       createdSteps,
     });
   }
+
+  // creating actions after creating step because actions can reference future steps
+  await Promise.all(
+    flowArgs.steps.map(async (step, index) => {
+      const nextStepId = flowArgs.steps?.[index + 1]?.stepId ?? null;
+      await newActionConfigSet({
+        stepArgs: step,
+        nextStepId,
+        flowVersionId: flowVersion.id,
+        transaction,
+      });
+    }),
+  );
 
   return flowVersion.id;
 };

@@ -24,6 +24,7 @@ export type ActionArgs = {
   callWebhook?: InputMaybe<CallWebhookArgs>;
   filter?: InputMaybe<ActionFilterArgs>;
   locked: Scalars['Boolean']['input'];
+  stepId?: InputMaybe<Scalars['String']['input']>;
   type: ActionType;
 };
 
@@ -1141,6 +1142,7 @@ export type TriggerStep = {
   filter?: Maybe<ActionFilter>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
+  stepId: Scalars['String']['output'];
 };
 
 export type UpdateProfileArgs = {
@@ -2152,6 +2154,7 @@ export type TriggerStepResolvers<ContextType = GraphqlRequestContext, ParentType
   filter?: Resolver<Maybe<ResolversTypes['ActionFilter']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  stepId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

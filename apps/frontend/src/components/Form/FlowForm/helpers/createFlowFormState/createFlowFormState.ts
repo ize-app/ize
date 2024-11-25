@@ -12,6 +12,11 @@ export const createFlowFormState = (flow: FlowFragment): FlowSchemaType => {
 
   const uuidRemapper = new UUIDRemapper();
 
+  // remapping up front because actions can reference future step ids
+  flow.steps.forEach((step) => {
+    uuidRemapper.remapId(step.id);
+  })
+
   return {
     flowVersionId: crypto.randomUUID(),
     type: flow.type,

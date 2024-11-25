@@ -22,6 +22,7 @@ export const actionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ActionType.TriggerStep),
     filter: actionFilterSchema,
+    stepId: z.string().uuid(),
     locked: z.boolean().default(false),
   }),
   z.object({

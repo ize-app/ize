@@ -298,19 +298,20 @@ model Flow {
 }
 
 model FlowVersion {
-  id                       String       @id @default(uuid()) @db.Uuid
-  name                     String
+  id                                           String        @id @default(uuid()) @db.Uuid
+  name                                         String
   // whether the flow version is live
   // TODO: There should only be one active flow version per flow. In the future, we should enforce this constraint in the db
-  active                   Boolean
-  flowId                   String       @map("flow_id") @db.Uuid
-  Flow                     Flow         @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
+  active                                       Boolean
+  flowId                                       String        @map("flow_id") @db.Uuid
+  Flow                                         Flow          @relation("FlowToAllFlowVersions", fields: [flowId], references: [id], onDelete: Cascade)
   // the evolve flow id gives evolve flow edit rights over all steps in the flow
-  evolveFlowId             String?      @map("evolve_flow_id") @db.Uuid
-  EvolveFlow               Flow?        @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
+  evolveFlowId                                 String?       @map("evolve_flow_id") @db.Uuid
+  EvolveFlow                                   Flow?         @relation("EvolveFlowToFlowVersions", fields: [evolveFlowId], references: [id], onDelete: Cascade)
   // this field is used for the evolve process so that a flow version and it's corresponding evolve flow can be evolved at the same time
-  draftEvolveFlowVersionId String?      @map("draft_evolve_flow_version_id") @db.Uuid
-  DraftEvolveFlowVersion   FlowVersion? @relation("DraftEvolveFlowVersion", fields: [draftEvolveFlowVersionId], references: [id], onDelete: SetNull)
+  draftEvolveFlowVersionId                     String?       @map("draft_evolve_flow_version_id") @db.Uuid
+  DraftEvolveFlowVersion                       FlowVersion?  @relation("DraftEvolveFlowVersion", fields: [draftEvolveFlowVersionId], references: [id], onDelete: SetNull)
+  FlowVersionsReferencingThisEvolveFlowVersion FlowVersion[] @relation("DraftEvolveFlowVersion")
 
   createdAt   DateTime  @default(now()) @map("created_at")
   // when the flow version moved from draft to published
@@ -318,13 +319,12 @@ model FlowVersion {
 
   FlowForCurrentVersion Flow? @relation("FlowToCurrentFlowVersion")
 
-  TriggerFieldSet                              FieldSet?
-  TriggerPermissions                           Permission?
-  Steps                                        Step[]
-  Request                                      Request[]     @relation("FlowVersion")
+  TriggerFieldSet    FieldSet?
+  TriggerPermissions Permission?
+  Steps              Step[]
+  Request            Request[]   @relation("FlowVersion")
   // The request that proposes this flow version as the next version
-  EvolutionRequest                             Request?      @relation("ProposedFlowVersionEvolution")
-  FlowVersionsReferencingThisEvolveFlowVersion FlowVersion[] @relation("DraftEvolveFlowVersion")
+  EvolutionRequest   Request?    @relation("ProposedFlowVersionEvolution")
 
   @@map("flow_versions")
 }
@@ -339,12 +339,13 @@ model Step {
   index         Int
   createdAt     DateTime @default(now()) @map("created_at")
 
-  FlowVersion      FlowVersion      @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
-  ResponseConfig   ResponseConfig?
-  ResponseFieldSet FieldSet?
-  ResultConfigSet  ResultConfigSet?
-  ActionConfigSet  ActionConfigSet?
-  RequestStep      RequestStep[]
+  FlowVersion             FlowVersion               @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
+  ResponseConfig          ResponseConfig?
+  ResponseFieldSet        FieldSet?
+  ResultConfigSet         ResultConfigSet?
+  ActionConfigSet         ActionConfigSet?
+  RequestStep             RequestStep[]
+  ActionConfigTriggerStep ActionConfigTriggerStep[]
 
   @@map("steps")
 }
@@ -708,10 +709,11 @@ model ActionConfig {
   locked            Boolean    @default(false)
   createdAt         DateTime   @default(now()) @map("created_at")
 
-  ActionConfigSet     ActionConfigSet      @relation(fields: [actionConfigSetId], references: [id], onDelete: Cascade)
-  ActionConfigWebhook ActionConfigWebhook?
-  ActionConfigFilter  ActionConfigFilter?
-  ActionExecutions    Action[]
+  ActionConfigSet         ActionConfigSet          @relation(fields: [actionConfigSetId], references: [id], onDelete: Cascade)
+  ActionConfigWebhook     ActionConfigWebhook?
+  ActionConfigTriggerStep ActionConfigTriggerStep?
+  ActionConfigFilter      ActionConfigFilter?
+  ActionExecutions        Action[]
 
   @@unique([index, actionConfigSetId])
   @@map("action_configs")
@@ -729,6 +731,18 @@ model ActionConfigFilter {
   FieldOption  FieldOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@map("action_filters")
+}
+
+model ActionConfigTriggerStep {
+  id             String   @id @default(uuid()) @db.Uuid
+  actionConfigId String   @unique @map("action_config_id") @db.Uuid
+  stepId         String   @map("step_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  ActionConfig ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
+  Step         Step         @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@map("trigger_steps")
 }
 
 model ActionConfigWebhook {
@@ -788,19 +802,22 @@ model Request {
 }
 
 model RequestStep {
-  id             String   @id @default(uuid()) @db.Uuid
-  requestId      String   @map("request_id") @db.Uuid
-  stepId         String   @map("step_id") @db.Uuid
-  responseFinal  Boolean  @default(false) @map("response_final")
+  id                       String        @id @default(uuid()) @db.Uuid
+  requestId                String        @map("request_id") @db.Uuid
+  stepId                   String        @map("step_id") @db.Uuid
+  responseFinal            Boolean       @default(false) @map("response_final")
   // 'final' results doesn't necessarily mean there are results, but rather that the step will no longer attempt to create results
-  resultsFinal   Boolean  @default(false) @map("results_final")
+  resultsFinal             Boolean       @default(false) @map("results_final")
   // 'final' action doesn't necessarily mean an action was successfully performed, but rather that the step will no longer attempt to run the action
-  actionsFinal   Boolean  @default(false) @map("actions_final")
+  actionsFinal             Boolean       @default(false) @map("actions_final")
   // request Step is 'final' only if responseFinal, resultsFinal, and actionsFinal are all true
-  final          Boolean  @default(false)
-  expirationDate DateTime @map("expiration_date")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+  final                    Boolean       @default(false)
+  expirationDate           DateTime      @map("expiration_date")
+  triggeredByRequestStepId String?       @map("triggered_by_request_step_id") @db.Uuid
+  TriggeredByRequestStep   RequestStep?  @relation("TriggeredRequestStep", fields: [triggeredByRequestStepId], references: [id], onDelete: SetNull)
+  TriggeredRequestSteps    RequestStep[] @relation("TriggeredRequestStep")
+  createdAt                DateTime      @default(now()) @map("created_at")
+  updatedAt                DateTime      @default(now()) @updatedAt @map("updated_at")
 
   Request           Request            @relation(fields: [requestId], references: [id], onDelete: Cascade)
   Step              Step               @relation(fields: [stepId], references: [id], onDelete: Cascade)

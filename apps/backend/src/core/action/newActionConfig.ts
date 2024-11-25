@@ -1,10 +1,10 @@
-import { Prisma, ResultConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-import { ActionArgs } from "@/graphql/generated/resolver-types";
+import { ActionArgs, FieldSetArgs, ResultArgs } from "@/graphql/generated/resolver-types";
 
 import { newActionFilter } from "./newActionFilter";
+import { newTriggerStepAction } from "./webhook/newTriggerStepAction";
 import { newWebhookAction } from "./webhook/newWebhookAction";
-import { FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 type PrismaWebhookActionConfigArgs = Omit<
   Prisma.ActionConfigUncheckedCreateInput,
@@ -13,14 +13,16 @@ type PrismaWebhookActionConfigArgs = Omit<
 
 export const newActionConfig = async ({
   actionArgs,
+  nextStepId,
   responseFieldSet,
   resultConfigs,
   flowVersionId,
   transaction,
 }: {
   actionArgs: ActionArgs;
-  responseFieldSet: FieldSetPrismaType | undefined | null;
-  resultConfigs: ResultConfig[];
+  nextStepId: string | null;
+  responseFieldSet: FieldSetArgs;
+  resultConfigs: ResultArgs[];
   flowVersionId: string;
   transaction: Prisma.TransactionClient;
 }): Promise<PrismaWebhookActionConfigArgs> => {
@@ -28,6 +30,11 @@ export const newActionConfig = async ({
     actionArgs,
     flowVersionId,
     transaction,
+  });
+
+  const triggerStepArgs = newTriggerStepAction({
+    actionArgs,
+    nextStepId,
   });
 
   const actionFilterArgs = newActionFilter({
@@ -41,6 +48,7 @@ export const newActionConfig = async ({
     type: actionArgs.type,
     ActionConfigFilter: actionFilterArgs ? { create: actionFilterArgs } : undefined,
     ActionConfigWebhook: webhookArgs ? { create: webhookArgs } : undefined,
+    ActionConfigTriggerStep: triggerStepArgs ? { create: triggerStepArgs } : undefined,
   };
 
   return actionConfigArgs;

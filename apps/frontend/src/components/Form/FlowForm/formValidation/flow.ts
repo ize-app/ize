@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { fieldSetSchema } from "./fields";
@@ -164,6 +164,29 @@ export const flowSchema = z
         }
       });
     });
+  })
+  .superRefine((flow, ctx) => {
+    const checkStepAction = (step: StepSchemaType, index: number) => {
+      if (step.action?.type === ActionType.TriggerStep && step.action.stepId) {
+        const nextStep = flow.steps[index + 1];
+        if (!nextStep) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "This step as a trigger action but there is no step to trigger",
+            path: ["steps", index],
+          });
+        }
+        if (nextStep.stepId !== step.action.stepId) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "This step incorrectly points to a different step",
+            path: ["steps", index],
+          });
+        }
+        checkStepAction(nextStep, index + 1);
+      }
+    };
+    checkStepAction(flow.steps[0], 0);
   });
 
 export const reusableSchema = z.object({

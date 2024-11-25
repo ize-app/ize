@@ -72,10 +72,15 @@ export const actionConfigResolver = ({
         name,
       });
     case ActionType.TriggerStep:
+      if (!actionConfig.ActionConfigTriggerStep)
+        throw new GraphQLError("Missing trigger step config.", {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        });
       return {
         __typename: "TriggerStep",
         name,
         filter,
+        stepId: actionConfig.ActionConfigTriggerStep.stepId,
         locked: actionConfig.locked,
       };
     case ActionType.EvolveFlow:

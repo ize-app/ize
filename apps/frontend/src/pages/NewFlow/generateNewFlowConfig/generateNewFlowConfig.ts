@@ -53,6 +53,9 @@ export const generateNewFlowConfig = ({
   let action: ActionSchemaType | undefined = undefined;
   let step: StepSchemaType | null = null;
 
+  const stepId = crypto.randomUUID();
+  const ideationStepId = crypto.randomUUID();
+
   let flowTitle: string = "New flow";
 
   const reusable = config.reusable === Reusable.Reusable;
@@ -64,6 +67,8 @@ export const generateNewFlowConfig = ({
       config.optionsConfig?.linkedOptions.question
     ) {
       [ideationStep, ideationResult] = generateIdeaCreationStep({
+        stepId: ideationStepId,
+        nextStepId: stepId,
         permission,
         question: config.optionsConfig.linkedOptions.question,
       });
@@ -162,6 +167,7 @@ export const generateNewFlowConfig = ({
       }
     }
     step = generateStepConfig({
+      stepId,
       permission,
       responseFields: field ? [field] : [],
       result: result ? [result] : [],

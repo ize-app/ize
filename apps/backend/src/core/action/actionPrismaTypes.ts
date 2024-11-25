@@ -11,6 +11,7 @@ export const actionConfigInclude = Prisma.validator<Prisma.ActionConfigInclude>(
     include: webhookInclude,
   },
   ActionConfigFilter: true,
+  ActionConfigTriggerStep: true,
 });
 
 export type ActionConfigPrismaType = Prisma.ActionConfigGetPayload<{

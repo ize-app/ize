@@ -43,6 +43,7 @@ type TriggerStep {
   name: String!
   locked: Boolean!
   filter: ActionFilter
+  stepId: String!
 }
 
 type GroupWatchFlow {
@@ -77,6 +78,7 @@ input ActionArgs {
   type: ActionType!
   filter: ActionFilterArgs
   callWebhook: CallWebhookArgs
+  stepId: String
   locked: Boolean!
 }
 

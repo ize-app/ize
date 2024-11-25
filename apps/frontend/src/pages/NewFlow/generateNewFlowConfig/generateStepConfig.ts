@@ -6,6 +6,7 @@ import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/resu
 import { ResultType } from "@/graphql/generated/graphql";
 
 interface GenerateStepConfigProps {
+  stepId: string;
   permission: PermissionSchemaType;
   responseFields: FieldSchemaType[];
   result: ResultSchemaType[];
@@ -13,6 +14,7 @@ interface GenerateStepConfigProps {
 }
 
 export const generateStepConfig = ({
+  stepId,
   permission,
   responseFields,
   result,
@@ -20,7 +22,7 @@ export const generateStepConfig = ({
 }: GenerateStepConfigProps): StepSchemaType => {
   const allowMultipleResponses = result[0]?.type === ResultType.LlmSummary;
   return {
-    stepId: crypto.randomUUID(),
+    stepId,
     fieldSet: {
       fields: responseFields,
       locked: false,
