@@ -18,8 +18,8 @@ import {
 } from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
+import { GetPerspectivesForm } from "../initialConfigSetup/GetPerspectivesForm";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
-import { SummaryForm } from "../initialConfigSetup/SummaryForm";
 import { WebhookForm } from "../initialConfigSetup/WebhookForm";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
@@ -81,7 +81,7 @@ export const InitialConfigSetup = () => {
             options={[
               { name: "Decide", value: FlowGoal.Decision },
               { name: "Prioritize", value: FlowGoal.Prioritize },
-              { name: "Summarize ideas", value: FlowGoal.AiSummary },
+              { name: "Get perspectives", value: FlowGoal.GetPerspectives },
               {
                 name: "Trigger another tool",
                 value: FlowGoal.TriggerWebhook,
@@ -128,7 +128,7 @@ export const InitialConfigSetup = () => {
         {goal === FlowGoal.TriggerWebhook && isAnyonePermission && <WebhookForm />}
         {goal === FlowGoal.Decision && isAnyonePermission && <DecisionForm />}
         {goal === FlowGoal.Prioritize && isAnyonePermission && <PrioritizationForm />}
-        {goal === FlowGoal.AiSummary && isAnyonePermission && <SummaryForm />}
+        {goal === FlowGoal.GetPerspectives && isAnyonePermission && <GetPerspectivesForm />}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}

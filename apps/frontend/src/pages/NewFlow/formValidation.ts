@@ -29,7 +29,7 @@ export enum FlowGoal {
   TriggerWebhook = "TriggerWebhook",
   Decision = "Decision",
   Prioritize = "Prioritize",
-  AiSummary = "AISummary",
+  GetPerspectives = "GetPerspectives",
 }
 
 export enum Reusable {
@@ -47,6 +47,12 @@ export enum OptionsType {
   Trigger = "Trigger",
   PrevStep = "PrevStep",
 }
+
+export enum PerspectiveResultType {
+  Raw = "Raw",
+  Ai = "Ai",
+}
+
 export enum AIOutputType {
   Summary = "Summary",
   List = "List",
@@ -95,6 +101,27 @@ const optionConfigSchema = z
     { message: "Add a prompt for the AI", path: ["linkedOptions", "prompt"] },
   );
 
+export const perspectiveResultSchema = z
+  .object({
+    type: z.nativeEnum(PerspectiveResultType),
+    aiOutputType: z.nativeEnum(AIOutputType).optional(),
+    prompt: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === PerspectiveResultType.Ai && !data.aiOutputType) return false;
+      return true;
+    },
+    { message: "Choose a type", path: ["aiOutputType"] },
+  )
+  .refine(
+    (data) => {
+      if (data.type === PerspectiveResultType.Ai && !data.prompt) return false;
+      return true;
+    },
+    { message: "Write a prompt for the AI", path: ["prompt"] },
+  );
+
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
   z.object({
     goal: z.literal(FlowGoal.TriggerWebhook),
@@ -123,12 +150,11 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
     optionsConfig: optionConfigSchema,
   }),
   z.object({
-    goal: z.literal(FlowGoal.AiSummary),
+    goal: z.literal(FlowGoal.GetPerspectives),
     reusable: z.nativeEnum(Reusable),
     permission: permissionSchema,
-    aiOutputType: z.nativeEnum(AIOutputType),
     question: z.string(),
-    prompt: z.string(),
+    result: perspectiveResultSchema,
   }),
 ]);
 

@@ -30,6 +30,7 @@ import {
   ActionTriggerCondition,
   FlowGoal,
   IntitialFlowSetupSchemaType,
+  PerspectiveResultType,
   Reusable,
 } from "../formValidation";
 
@@ -62,7 +63,7 @@ export const generateNewFlowConfig = ({
 
   try {
     if (
-      config.goal !== FlowGoal.AiSummary &&
+      config.goal !== FlowGoal.GetPerspectives &&
       config.optionsConfig?.linkedOptions.hasLinkedOptions &&
       config.optionsConfig?.linkedOptions.question
     ) {
@@ -115,7 +116,7 @@ export const generateNewFlowConfig = ({
         result = generateResultConfig({ type: ResultType.Ranking, fieldId: field.fieldId });
         break;
       }
-      case FlowGoal.AiSummary: {
+      case FlowGoal.GetPerspectives: {
         field = generateFieldConfig({
           type: FieldType.FreeInput,
           question: config.question,
@@ -123,12 +124,20 @@ export const generateNewFlowConfig = ({
 
         flowTitle = config.question;
 
-        result = generateResultConfig({
-          type: ResultType.LlmSummary,
-          isList: config.aiOutputType === AIOutputType.List ? true : false,
-          fieldId: field.fieldId,
-          prompt: config.prompt,
-        });
+        if (config.result.type === PerspectiveResultType.Ai) {
+          result = generateResultConfig({
+            type: ResultType.LlmSummary,
+            isList: config.result.aiOutputType === AIOutputType.List ? true : false,
+            fieldId: field.fieldId,
+            prompt: config.result.prompt ?? "",
+          });
+        } else {
+          result = generateResultConfig({
+            type: ResultType.RawAnswers,
+            fieldId: field.fieldId,
+          });
+        }
+
         break;
       }
       case FlowGoal.TriggerWebhook: {
