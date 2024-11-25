@@ -71,6 +71,8 @@ export const generateNewFlowConfig = ({
         nextStepId: stepId,
         permission,
         question: config.optionsConfig.linkedOptions.question,
+        useAi: config.optionsConfig.linkedOptions.useAi ?? false,
+        prompt: config.optionsConfig.linkedOptions.prompt,
       });
     }
 

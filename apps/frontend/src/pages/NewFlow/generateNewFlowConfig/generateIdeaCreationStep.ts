@@ -13,22 +13,29 @@ export const generateIdeaCreationStep = ({
   nextStepId,
   question,
   permission,
+  useAi,
+  prompt,
 }: {
   stepId: string;
   nextStepId: string;
   question: string;
+  useAi: boolean;
+  prompt?: string;
   permission: PermissionSchemaType;
 }): [StepSchemaType, ResultSchemaType] => {
   const field = generateFieldConfig({
     type: FieldType.FreeInput,
     question,
   });
-  const result = generateResultConfig({
-    type: ResultType.LlmSummary,
-    fieldId: field.fieldId,
-    prompt: "",
-    isList: true,
-  });
+
+  const result = useAi
+    ? generateResultConfig({
+        type: ResultType.LlmSummary,
+        fieldId: field.fieldId,
+        prompt: prompt ?? "",
+        isList: true,
+      })
+    : generateResultConfig({ type: ResultType.RawAnswers, fieldId: field.fieldId });
 
   const step = generateStepConfig({
     stepId,

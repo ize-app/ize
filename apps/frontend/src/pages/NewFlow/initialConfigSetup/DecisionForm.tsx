@@ -27,6 +27,7 @@ export const DecisionForm = () => {
           defaultValue=""
         />
       </FieldBlockFadeIn>
+      {question && <OptionsForm />}
       {question && (
         <FieldBlockFadeIn>
           <Typography variant="description">How will you decide?</Typography>
@@ -53,7 +54,6 @@ export const DecisionForm = () => {
           />
         </FieldBlockFadeIn>
       )}
-      {decisionType && <OptionsForm />}
       {decisionType === DecisionType.Ai && (
         <>
           <FieldBlockFadeIn>

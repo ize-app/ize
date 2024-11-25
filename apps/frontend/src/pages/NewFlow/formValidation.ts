@@ -59,6 +59,8 @@ const optionConfigSchema = z
     linkedOptions: z.object({
       hasLinkedOptions: z.boolean().optional().default(false),
       question: z.string().optional(),
+      useAi: z.boolean().optional(),
+      prompt: z.string().optional(),
     }),
   })
   .refine(
@@ -73,6 +75,24 @@ const optionConfigSchema = z
       return true;
     },
     { message: "Define how participants will select options" },
+  )
+  .refine(
+    (data) => {
+      if (!!data.linkedOptions.hasLinkedOptions && !data.linkedOptions.question) {
+        return false;
+      }
+      return true;
+    },
+    { message: "Add a question", path: ["linkedOptions", "question"] },
+  )
+  .refine(
+    (data) => {
+      if (!!data.linkedOptions.useAi && !data.linkedOptions.prompt) {
+        return false;
+      }
+      return true;
+    },
+    { message: "Add a prompt for the AI", path: ["linkedOptions", "prompt"] },
   );
 
 export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [

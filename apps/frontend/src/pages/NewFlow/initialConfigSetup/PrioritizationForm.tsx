@@ -10,7 +10,7 @@ import { IntitialFlowSetupSchemaType } from "../formValidation";
 export const PrioritizationForm = () => {
   const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
 
-  const decisionName = watch("question");
+  const question = watch("question");
 
   return (
     <>
@@ -25,7 +25,7 @@ export const PrioritizationForm = () => {
           defaultValue=""
         />
       </FieldBlockFadeIn>
-      {decisionName && <OptionsForm />}
+      {question && <OptionsForm />}
     </>
   );
 };

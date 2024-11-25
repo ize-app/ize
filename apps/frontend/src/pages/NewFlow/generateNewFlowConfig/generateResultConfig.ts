@@ -20,6 +20,10 @@ type ResultArgs =
       fieldId: string;
       prompt: string;
       isList: boolean;
+    }
+  | {
+      type: ResultType.RawAnswers;
+      fieldId: string;
     };
 
 const generateDecisionConfig = ({
@@ -64,14 +68,13 @@ const generateDecisionConfig = ({
 
 export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
   const base = {
-    resultId: crypto.randomUUID(),
+    resultConfigId: crypto.randomUUID(),
     fieldId: arg.fieldId,
     minimumAnswers: 1,
   };
   switch (arg.type) {
     case ResultType.Decision: {
       return {
-        resultConfigId: crypto.randomUUID(),
         type: ResultType.Decision,
         ...base,
         decision: generateDecisionConfig({
@@ -82,7 +85,6 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
     }
     case ResultType.Ranking:
       return {
-        resultConfigId: crypto.randomUUID(),
         type: ResultType.Ranking,
         ...base,
         prioritization: {
@@ -91,13 +93,18 @@ export function generateResultConfig(arg: ResultArgs): ResultSchemaType {
       };
     case ResultType.LlmSummary: {
       return {
-        resultConfigId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         ...base,
         llmSummary: {
           prompt: arg.prompt,
           isList: arg.isList,
         },
+      };
+    }
+    case ResultType.RawAnswers: {
+      return {
+        type: ResultType.RawAnswers,
+        ...base,
       };
     }
     default:

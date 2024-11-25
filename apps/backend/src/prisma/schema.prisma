@@ -661,7 +661,7 @@ model ResultConfigRank {
   id                  String       @id @default(uuid()) @db.Uuid
   resultConfigId      String       @unique @map("result_config_id") @db.Uuid
   ResultConfig        ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
-  // null means include all options
+  // Number of options to include in final result. null means include all options
   numOptionsToInclude Int?         @map("num_options")
   createdAt           DateTime     @default(now()) @map("created_at")
 
