@@ -5,7 +5,7 @@ import { entityInclude } from "../entity/entityPrismaTypes";
 export const getGroupsToNotify = async (flowId: string) => {
   const groups = await prisma.group.findMany({
     include: {
-      GroupCustom: {
+      GroupIze: {
         include: {
           NotificationEntity: {
             include: entityInclude,
@@ -31,7 +31,7 @@ export const getGroupsToNotify = async (flowId: string) => {
           },
         },
       ],
-      GroupCustom: {
+      GroupIze: {
         notificationEntityId: { not: null },
       },
     },

@@ -377,12 +377,6 @@ export type Group = {
   organization?: Maybe<Organization>;
 };
 
-export type GroupCustom = {
-  __typename?: 'GroupCustom';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
 export type GroupDiscordRoleArgs = {
   roleId: Scalars['String']['input'];
   serverId: Scalars['String']['input'];
@@ -413,6 +407,12 @@ export type GroupHatArgs = {
   tokenId: Scalars['String']['input'];
 };
 
+export type GroupIze = {
+  __typename?: 'GroupIze';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type GroupNft = {
   __typename?: 'GroupNft';
   NftCollection: NftCollection;
@@ -437,7 +437,7 @@ export type GroupTelegramChat = {
   name: Scalars['String']['output'];
 };
 
-export type GroupType = DiscordRoleGroup | GroupCustom | GroupNft | GroupTelegramChat;
+export type GroupType = DiscordRoleGroup | GroupIze | GroupNft | GroupTelegramChat;
 
 export type GroupWatchFlow = {
   __typename?: 'GroupWatchFlow';
@@ -1262,7 +1262,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
   Field: ( Omit<FreeInput, 'defaultAnswer'> & { defaultAnswer?: Maybe<_RefType['FieldAnswer']> } ) | ( Options );
   FieldAnswer: ( Omit<EntitiesFieldAnswer, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FlowsFieldAnswer ) | ( FreeInputFieldAnswer ) | ( OptionFieldAnswer ) | ( WebhookFieldAnswer );
-  GroupType: ( DiscordRoleGroup ) | ( GroupCustom ) | ( GroupNft ) | ( GroupTelegramChat );
+  GroupType: ( DiscordRoleGroup ) | ( GroupIze ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
   ResultConfig: ( Omit<Decision, 'field'> & { field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } ) | ( Omit<RawAnswers, 'field'> & { field: _RefType['Field'] } );
 };
@@ -1319,13 +1319,13 @@ export type ResolversTypes = {
   FreeInputFieldAnswer: ResolverTypeWrapper<FreeInputFieldAnswer>;
   GenericFieldAndValue: ResolverTypeWrapper<GenericFieldAndValue>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
-  GroupCustom: ResolverTypeWrapper<GroupCustom>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
   GroupFlowArgs: GroupFlowArgs;
   GroupFlowPolicyArgs: GroupFlowPolicyArgs;
   GroupFlowPolicyType: GroupFlowPolicyType;
   GroupHatArgs: GroupHatArgs;
+  GroupIze: ResolverTypeWrapper<GroupIze>;
   GroupNft: ResolverTypeWrapper<GroupNft>;
   GroupNftArgs: GroupNftArgs;
   GroupTelegramChat: ResolverTypeWrapper<GroupTelegramChat>;
@@ -1456,12 +1456,12 @@ export type ResolversParentTypes = {
   FreeInputFieldAnswer: FreeInputFieldAnswer;
   GenericFieldAndValue: GenericFieldAndValue;
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
-  GroupCustom: GroupCustom;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
   GroupFlowArgs: GroupFlowArgs;
   GroupFlowPolicyArgs: GroupFlowPolicyArgs;
   GroupHatArgs: GroupHatArgs;
+  GroupIze: GroupIze;
   GroupNft: GroupNft;
   GroupNftArgs: GroupNftArgs;
   GroupTelegramChat: GroupTelegramChat;
@@ -1763,7 +1763,7 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GroupCustomResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupCustom'] = ResolversParentTypes['GroupCustom']> = {
+export type GroupIzeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupIze'] = ResolversParentTypes['GroupIze']> = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1788,7 +1788,7 @@ export type GroupTelegramChatResolvers<ContextType = GraphqlRequestContext, Pare
 };
 
 export type GroupTypeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupType'] = ResolversParentTypes['GroupType']> = {
-  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupCustom' | 'GroupNft' | 'GroupTelegramChat', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'DiscordRoleGroup' | 'GroupIze' | 'GroupNft' | 'GroupTelegramChat', ParentType, ContextType>;
 };
 
 export type GroupWatchFlowResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupWatchFlow'] = ResolversParentTypes['GroupWatchFlow']> = {
@@ -2210,7 +2210,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   FreeInputFieldAnswer?: FreeInputFieldAnswerResolvers<ContextType>;
   GenericFieldAndValue?: GenericFieldAndValueResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
-  GroupCustom?: GroupCustomResolvers<ContextType>;
+  GroupIze?: GroupIzeResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;
   GroupTelegramChat?: GroupTelegramChatResolvers<ContextType>;
   GroupType?: GroupTypeResolvers<ContextType>;

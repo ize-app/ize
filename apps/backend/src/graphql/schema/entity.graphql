@@ -73,7 +73,7 @@ type IdentityTelegram {
   telegramUsername: String
 }
 
-union GroupType = DiscordRoleGroup | GroupNft | GroupCustom | GroupTelegramChat
+union GroupType = DiscordRoleGroup | GroupNft | GroupIze | GroupTelegramChat
 
 type Group {
   id: String!
@@ -89,7 +89,7 @@ type Group {
   isWatched: Boolean!
 }
 
-# IzeGroup only applies to the GroupCustom entity type
+# IzeGroup only applies to the GroupIze entity type
 # IzeGroup is a more fully hydrated version of this entity
 # TODO: There's probably a more elegant way to model this
 type IzeGroup {
@@ -105,7 +105,7 @@ type Organization {
   icon: String
 }
 
-type GroupCustom {
+type GroupIze {
   id: String!
   name: String!
 }

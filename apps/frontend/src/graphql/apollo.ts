@@ -18,7 +18,7 @@ export const apolloClient = new ApolloClient({
       Action: ["CallWebhook", "EvolveFlow", "TriggerStep", "EvolveGroup", "GroupWatchFlow"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision", "WeightedAverage", "Ai"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
-      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupCustom", "GroupTelegramChat "],
+      GroupType: ["DiscordRoleGroup", "GroupNft", "GroupIze", "GroupTelegramChat "],
       FieldAnswer: [
         "OptionFieldAnswer",
         "FreeInputFieldAnswer",

@@ -2,9 +2,9 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "../../../prisma/client";
 
-// looks whether there are any custom groups for a given identity or set of groups associated with that identity
+// looks whether there are any Ize groups for a given identity or set of groups associated with that identity
 // (e.g. discord role groups for a discord identity)
-export const getCustomGroupsByMembers = async ({
+export const getIzeGroupsByMembers = async ({
   identityId,
   groupIds,
   transaction = prisma,
@@ -13,7 +13,7 @@ export const getCustomGroupsByMembers = async ({
   groupIds: string[];
   transaction?: Prisma.TransactionClient;
 }) => {
-  const identityCustomGroups = await transaction.groupCustom.findMany({
+  const identityIzeGroups = await transaction.groupIze.findMany({
     where: {
       MemberEntitySet: {
         EntitySetEntities: {
@@ -30,5 +30,5 @@ export const getCustomGroupsByMembers = async ({
     },
   });
 
-  return identityCustomGroups.map((group) => group.groupId);
+  return identityIzeGroups.map((group) => group.groupId);
 };

@@ -30,7 +30,7 @@ interface EntitySearchProps<T extends FieldValues> {
   name: Path<T>;
   ariaLabel: string;
   placeholderText?: string;
-  hideCustomGroups?: boolean;
+  hideIzeGroups?: boolean;
   showLabel?: boolean;
   seperateLabel?: boolean;
 }
@@ -39,7 +39,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
   name,
   label,
   ariaLabel,
-  hideCustomGroups = false,
+  hideIzeGroups = false,
   showLabel,
   seperateLabel = false,
   ...props
@@ -61,9 +61,9 @@ export const EntitiesSearchField = <T extends FieldValues>({
 
   const user = me?.user;
 
-  const customGroups = hideCustomGroups ? [] : me?.groups ?? [];
+  const izeGroups = hideIzeGroups ? [] : me?.groups ?? [];
 
-  const options = [...userIdentities, ...recentAgents, ...customGroups];
+  const options = [...userIdentities, ...recentAgents, ...izeGroups];
 
   if (user) options.unshift({ __typename: "User", ...user });
 

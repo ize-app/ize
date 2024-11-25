@@ -7,7 +7,7 @@ import { entityInclude } from "../entityPrismaTypes";
 
 // a custom group's membership list cannot include another custom group
 // this is to prevent circular references, simplify permissions logic, and simplify the UX of understanding what a custom group is
-export const checkEntitiesForCustomGroups = async ({
+export const checkEntitiesForIzeGroups = async ({
   entityIds,
   transaction = prisma,
 }: {
@@ -20,7 +20,7 @@ export const checkEntitiesForCustomGroups = async ({
   });
 
   entities.forEach((entity) => {
-    if (entity.Group?.GroupCustom) {
+    if (entity.Group?.GroupIze) {
       throw new GraphQLError(
         `Error creating custom group entity set. Entity list includes a custom group entity. EntityId: ${entity.id}`,
         {

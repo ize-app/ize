@@ -52,7 +52,7 @@ export const getIzeGroup = async ({
     }
   }
 
-  const customGroup = await prisma.groupCustom.findUnique({
+  const izeGroup = await prisma.groupIze.findUnique({
     where: {
       groupId,
     },
@@ -68,12 +68,12 @@ export const getIzeGroup = async ({
     },
   });
 
-  const evolveFlow = (customGroup?.group.OwnedFlows ?? []).find(
+  const evolveFlow = (izeGroup?.group.OwnedFlows ?? []).find(
     (flow) => flow.type === FlowType.EvolveGroup,
   );
 
   const members = [
-    ...(customGroup?.MemberEntitySet.EntitySetEntities.map((entity) => {
+    ...(izeGroup?.MemberEntitySet.EntitySetEntities.map((entity) => {
       return entityResolver({
         entity: entity.Entity,
         userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
@@ -81,10 +81,10 @@ export const getIzeGroup = async ({
     }) ?? []),
   ];
 
-  if (group.GroupCustom?.notificationEntityId) {
+  if (group.GroupIze?.notificationEntityId) {
     notificationEntity = await prisma.entity.findFirst({
       where: {
-        id: group.GroupCustom?.notificationEntityId ?? undefined,
+        id: group.GroupIze?.notificationEntityId ?? undefined,
       },
       include: entityInclude,
     });
@@ -93,7 +93,7 @@ export const getIzeGroup = async ({
   return {
     group: groupResolver(group, isWatched, isMember),
     members,
-    description: group.GroupCustom?.description,
+    description: group.GroupIze?.description,
     notificationEntity: notificationEntity
       ? entityResolver({
           entity: notificationEntity,

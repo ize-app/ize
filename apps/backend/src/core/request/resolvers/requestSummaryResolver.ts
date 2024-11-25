@@ -83,7 +83,7 @@ export const requestSummaryResolver = ({
       }) ??
       getFlowName({
         flowName: r.FlowVersion.name,
-        ownerGroupName: r.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+        ownerGroupName: r.FlowVersion.Flow.OwnerGroup?.GroupIze?.name,
         flowType: r.FlowVersion.Flow.type,
       }),
     creator: entityResolver({ entity: r.CreatorEntity, userIdentityIds: identityIds }),

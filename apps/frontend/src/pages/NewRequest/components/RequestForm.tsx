@@ -130,7 +130,7 @@ export const RequestForm = () => {
                                 name={`requestFields.${field.fieldId}.value`}
                                 key={fieldId}
                                 ariaLabel={name}
-                                hideCustomGroups={true}
+                                hideIzeGroups={true}
                                 label={name}
                                 showLabel={true}
                                 seperateLabel={true}

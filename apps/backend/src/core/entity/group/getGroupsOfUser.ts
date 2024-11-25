@@ -24,7 +24,7 @@ export const getGroupsOfUser = async ({
   const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
   const entityIds = getUserEntityIds(context.currentUser);
 
-  const groupsCustom = await transaction.groupCustom.findMany({
+  const groupsIze = await transaction.groupIze.findMany({
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { groupId: args.cursor } : undefined,
@@ -79,7 +79,7 @@ export const getGroupsOfUser = async ({
     },
   });
 
-  const formattedGroups = groupsCustom.map((group) => {
+  const formattedGroups = groupsIze.map((group) => {
     const watchRecord = watchRecords.find((record) => record.groupId === group.groupId);
     const isMember = groupIds.includes(group.groupId);
     return groupResolver(group.group, watchRecord?.watched ?? false, isMember);

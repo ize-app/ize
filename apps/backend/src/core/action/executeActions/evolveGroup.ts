@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
+import { checkEntitiesForIzeGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
 import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -30,7 +30,7 @@ export const evolveGroup = async ({
                 include: {
                   OwnerGroup: {
                     include: {
-                      GroupCustom: true,
+                      GroupIze: true,
                     },
                   },
                 },
@@ -45,9 +45,9 @@ export const evolveGroup = async ({
     },
   });
 
-  const customGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupCustom?.id;
+  const izeGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupIze?.id;
 
-  if (!customGroupId)
+  if (!izeGroupId)
     throw new GraphQLError(`Cannot find custom group for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
@@ -78,7 +78,7 @@ export const evolveGroup = async ({
 
   const entityIds = JSON.parse(members.AnswerFreeInput.value) as string[];
 
-  await checkEntitiesForCustomGroups({
+  await checkEntitiesForIzeGroups({
     entityIds: entityIds,
     transaction,
   });
@@ -90,9 +90,9 @@ export const evolveGroup = async ({
     transaction,
   });
 
-  await transaction.groupCustom.update({
+  await transaction.groupIze.update({
     where: {
-      id: customGroupId,
+      id: izeGroupId,
     },
     data: {
       name: name?.AnswerFreeInput?.value ?? "",

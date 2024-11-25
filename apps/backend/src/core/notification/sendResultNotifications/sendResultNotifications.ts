@@ -39,7 +39,7 @@ export const sendResultNotifications = async ({ requestStepId }: { requestStepId
     if (!resultsPayload) return;
 
     const telegramGroups = groups
-      .map((group) => group.GroupCustom?.NotificationEntity?.Group?.GroupTelegramChat)
+      .map((group) => group.GroupIze?.NotificationEntity?.Group?.GroupTelegramChat)
       .filter((tgGroup) => !!tgGroup);
 
     await sendTelegramResultsNotifications({

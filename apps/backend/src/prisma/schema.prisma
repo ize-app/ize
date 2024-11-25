@@ -52,7 +52,7 @@ model IdentityEmail {
 
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
-  @@map("identities_email")
+  @@map("identity_emails")
 }
 
 model IdentityBlockchain {
@@ -65,7 +65,7 @@ model IdentityBlockchain {
 
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
-  @@map("identities_blockchain")
+  @@map("identity_blockchain_addresses")
 }
 
 model IdentityDiscord {
@@ -80,7 +80,7 @@ model IdentityDiscord {
 
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
-  @@map("identities_discord")
+  @@map("identity_discord_users")
 }
 
 model IdentityTelegram {
@@ -94,7 +94,7 @@ model IdentityTelegram {
 
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 
-  @@map("identities_telegram")
+  @@map("identity_telegram_users")
 }
 
 model IdentityGroup {
@@ -137,7 +137,7 @@ enum GroupType {
   DiscordRoleGroup
   GroupNft
   GroupTelegram
-  GroupCustom
+  GroupIze
 }
 
 model Group {
@@ -155,7 +155,7 @@ model Group {
   GroupNft            GroupNft?
   GroupTelegramChat   GroupTelegramChat?
   IdentitiesGroups    IdentityGroup[]
-  GroupCustom         GroupCustom?
+  GroupIze            GroupIze?
   EntityWatchedGroups EntityWatchedGroups[]
   OwnedFlows          Flow[]
   GroupsWatchedFlows  GroupsWatchedFlows[]
@@ -180,7 +180,7 @@ model GroupDiscordRole {
 
   @@unique([discordServerId, discordRoleId])
   @@unique([discordServerId, name])
-  @@map("discord_role_groups")
+  @@map("group_discord_roles")
 }
 
 model GroupTelegramChat {
@@ -194,7 +194,7 @@ model GroupTelegramChat {
   adminTelegramUserId BigInt   @map("admin_telegram_user_id")
   createdAt           DateTime @default(now()) @map("created_at")
 
-  @@map("groups_telegram_chat")
+  @@map("group_telegram_chats")
 }
 
 enum NftTypes {
@@ -210,7 +210,7 @@ enum Blockchain {
   Base
 }
 
-model GroupCustom {
+model GroupIze {
   id                   String  @id @default(uuid()) @db.Uuid
   name                 String
   description          String?
@@ -222,7 +222,7 @@ model GroupCustom {
   MemberEntitySet    EntitySet @relation(fields: [entitySetId], references: [id], onDelete: Cascade)
   group              Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@map("groups_custom")
+  @@map("group_ize_groups")
 }
 
 model GroupNft {
@@ -238,7 +238,7 @@ model GroupNft {
   NftCollection NftCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
   @@unique([collectionId, tokenId])
-  @@map("groups_nft")
+  @@map("group_nfts")
 }
 
 model NftCollection {
@@ -387,7 +387,7 @@ model EntitySet {
   id                String              @id @default(uuid()) @db.Uuid
   createdAt         DateTime            @default(now()) @map("created_at")
   EntitySetEntities EntitySetEntities[]
-  GroupCustom       GroupCustom[]
+  GroupIze          GroupIze[]
   Permission        Permission?
 
   @@map("entity_sets")
@@ -410,17 +410,17 @@ model Entity {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  Group                   Group?
-  Identity                Identity?
-  User                    User?
-  EntitySetEntities       EntitySetEntities[]
-  NotifiesForCustomGroups GroupCustom[]
-  Responses               Response[]
-  EntityWatchedFlows      EntityWatchedFlows[]
-  EntityWatchedGroups     EntityWatchedGroups[]
-  Flow                    Flow[]
-  Request                 Request[]
-  CreatedGroups           Group[]               @relation("Creator")
+  Group                Group?
+  Identity             Identity?
+  User                 User?
+  EntitySetEntities    EntitySetEntities[]
+  NotifiesForIzeGroups GroupIze[]
+  Responses            Response[]
+  EntityWatchedFlows   EntityWatchedFlows[]
+  EntityWatchedGroups  EntityWatchedGroups[]
+  Flow                 Flow[]
+  Request              Request[]
+  CreatedGroups        Group[]               @relation("Creator")
 
   @@map("entities")
 }
@@ -730,7 +730,7 @@ model ActionConfigFilter {
   ResultConfig ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
   FieldOption  FieldOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
-  @@map("action_filters")
+  @@map("action_config_filters")
 }
 
 model ActionConfigTriggerStep {
@@ -742,7 +742,7 @@ model ActionConfigTriggerStep {
   ActionConfig ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
   Step         Step         @relation(fields: [stepId], references: [id], onDelete: Cascade)
 
-  @@map("trigger_steps")
+  @@map("action_config_trigger_steps")
 }
 
 model ActionConfigWebhook {
@@ -755,7 +755,7 @@ model ActionConfigWebhook {
 
   ActionConfig ActionConfig @relation(fields: [actionConfigId], references: [id], onDelete: Cascade)
 
-  @@map("webhooks")
+  @@map("action_config_webhooks")
 }
 
 // Set up for multiple actions to be run in a single step even though there is currently only one action per step
@@ -774,7 +774,7 @@ model Action {
   RequestStep  RequestStep  @relation(fields: [requestStepId], references: [id], onDelete: Cascade)
 
   @@unique([actionConfigId, requestStepId])
-  @@map("action_executions")
+  @@map("actions")
 }
 
 model Request {
@@ -965,9 +965,3 @@ model TelegramMessages {
 
   @@map("telegram_messages")
 }
-
-// model Notifications {
-//   id String @id @default(uuid()) @db.Uuid
-
-//   @@map("notifications")
-// }

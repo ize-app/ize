@@ -76,7 +76,7 @@ export const flowResolver = async ({
     name: getFlowName({
       flowName: flowVersion.name,
       flowType: flowVersion.Flow.type,
-      ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+      ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupIze?.name,
       flowNameOverride,
     }),
     flowsEvolvedByThisFlow: flowVersion.Flow.EvolveRightsForFlowVersions.filter(

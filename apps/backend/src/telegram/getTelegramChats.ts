@@ -40,7 +40,7 @@ export const getTelegramChats = async ({
           id: { not: undefined },
           Group: {
             Entity: {
-              NotifiesForCustomGroups: {
+              NotifiesForIzeGroups: {
                 none: {},
               },
             },

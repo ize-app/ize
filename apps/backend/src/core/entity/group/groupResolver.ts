@@ -15,8 +15,8 @@ export const groupResolver = (
     return resolveGroupNft(group, isWatched, isMember);
   } else if (group.GroupTelegramChat) {
     return resolveGroupTelegram(group, isWatched, isMember);
-  } else if (group.GroupCustom) {
-    return resolveGroupCustom(group, isWatched, isMember);
+  } else if (group.GroupIze) {
+    return resolveGroupIze(group, isWatched, isMember);
   } else {
     throw new GraphQLError("Invalid group type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -103,24 +103,24 @@ const resolveGroupNft = (
   return discordGroup;
 };
 
-const resolveGroupCustom = (
+const resolveGroupIze = (
   group: GroupPrismaType,
   isWatched?: boolean,
   isMember?: boolean,
 ): Group => {
-  if (!group.GroupCustom)
+  if (!group.GroupIze)
     throw new GraphQLError("Missing custom group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
-  const { GroupCustom: custom } = group;
+  const { GroupIze: ize } = group;
   return {
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
 
-    name: custom.name,
+    name: ize.name,
     createdAt: group.createdAt.toString(),
-    groupType: { __typename: "GroupCustom", ...custom } as GroupType,
+    groupType: { __typename: "GroupIze", ...ize } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
   };

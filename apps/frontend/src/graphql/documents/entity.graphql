@@ -79,8 +79,8 @@ fragment GroupTypeSummaryParts on GroupType {
   ... on GroupNft {
     ...GroupNftParts
   }
-  ... on GroupCustom {
-    ...GroupCustomParts
+  ... on GroupIze {
+    ...GroupIze
   }
   ... on GroupTelegramChat {
     ...GroupTelegramChat
@@ -108,7 +108,7 @@ fragment GroupNftParts on GroupNft {
   }
 }
 
-fragment GroupCustomParts on GroupCustom {
+fragment GroupIze on GroupIze {
   id
   name
 }

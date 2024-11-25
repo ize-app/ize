@@ -30,7 +30,7 @@ const defaultGroupAvatarUrl = (
         return discordLogoUrl;
       case "GroupNft":
         return nftUrl;
-      case "GroupCustom":
+      case "GroupIze":
         return izeLogo;
       default:
         return undefined;

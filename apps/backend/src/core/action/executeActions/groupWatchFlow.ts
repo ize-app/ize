@@ -28,7 +28,7 @@ export const groupWatchFlow = async ({
                 include: {
                   OwnerGroup: {
                     include: {
-                      GroupCustom: true,
+                      GroupIze: true,
                     },
                   },
                 },

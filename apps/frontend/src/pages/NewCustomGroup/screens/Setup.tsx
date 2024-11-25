@@ -112,7 +112,7 @@ export const Setup = () => {
               <EntitySearch<GroupInitialSetupSchemaType>
                 ariaLabel={"Individuals and groups to add to custom group"}
                 name={"members"}
-                hideCustomGroups={true}
+                hideIzeGroups={true}
                 label={"Group members *"}
                 showLabel={false}
               />

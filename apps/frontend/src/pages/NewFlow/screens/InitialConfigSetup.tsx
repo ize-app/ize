@@ -117,7 +117,7 @@ export const InitialConfigSetup = () => {
                 <EntitySearch<IntitialFlowSetupSchemaType>
                   ariaLabel={"Individuals and groups to add to custom group"}
                   name={"permission.entities"}
-                  hideCustomGroups={false}
+                  hideIzeGroups={false}
                   label={"Group members *"}
                 />
               )}

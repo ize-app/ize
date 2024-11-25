@@ -37,7 +37,7 @@ export const sendNewStepNotifications = async ({
     const resolvedEntities = await resolveEntitySet({ permission: respondPermission });
 
     const telegramGroups = groups
-      .map((group) => group.GroupCustom?.NotificationEntity?.Group?.GroupTelegramChat)
+      .map((group) => group.GroupIze?.NotificationEntity?.Group?.GroupTelegramChat)
       .filter((tgGroup) => !!tgGroup);
 
     await sendTelegramNewStepMessage({

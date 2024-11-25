@@ -49,19 +49,19 @@ export const createWatchFlowRequests = async ({
     const entitiesOnFlow: Set<string> = new Set();
 
     // get all entities referenced on this flow
-    const getCustomGroups = (permissions: PermissionPrismaType | null | undefined) => {
+    const getIzeGroups = (permissions: PermissionPrismaType | null | undefined) => {
       (permissions?.EntitySet?.EntitySetEntities ?? []).forEach((entity) => {
         entitiesOnFlow.add(entity.entityId);
       });
     };
 
-    getCustomGroups(data.CurrentFlowVersion?.TriggerPermissions);
+    getIzeGroups(data.CurrentFlowVersion?.TriggerPermissions);
 
     data.CurrentFlowVersion?.Steps.forEach((step) => {
-      getCustomGroups(step.ResponseConfig?.ResponsePermissions);
+      getIzeGroups(step.ResponseConfig?.ResponsePermissions);
     });
 
-    const customGroups = await prisma.groupCustom.findMany({
+    const izeGroups = await prisma.groupIze.findMany({
       where: {
         OR: [
           // member of custom group is referenced on the flow
@@ -85,7 +85,7 @@ export const createWatchFlowRequests = async ({
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
       where: {
-        groupId: { in: customGroups.map((group) => group.groupId) },
+        groupId: { in: izeGroups.map((group) => group.groupId) },
         type: FlowType.GroupWatchFlow,
       },
       include: {

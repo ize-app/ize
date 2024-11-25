@@ -1,6 +1,6 @@
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 
-import { newCustomGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
+import { newIzeGroup as newCustomGroupService } from "@/core/entity/group/newGroup/newCustomGroup";
 import { newEntities as newEntitiesService } from "@/core/entity/newEntities";
 import { prisma } from "@/prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
