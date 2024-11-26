@@ -37,7 +37,7 @@ export const Field = ({
           : undefined;
       return (
         <Box>
-          <Typography color="primary" fontSize="1rem">
+          <Typography variant="description">
             {field.name}{" "}
             {/* <span style={{ fontStyle: "italic" }}>
               (
@@ -48,7 +48,8 @@ export const Field = ({
               )
             </span> */}
           </Typography>
-          <LabeledGroupedInputs label="Options" sx={{ backgroundColor: "white" }}>
+          <LabeledGroupedInputs label="
+          " sx={{ backgroundColor: "white" }}>
             <FieldOptions
               onlyShowSelections={onlyShowSelections}
               fieldOptions={field}

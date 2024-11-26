@@ -20,6 +20,18 @@ export const zodDay = z.custom<Dayjs>((val) => {
   return false;
 }, "Invalid date");
 
+// export const freeInputSchema = z.discriminatedUnion("type", [
+//   z.object({
+//     type: z.literal(FieldDataType.Date),
+//     value: z.string(),
+//   }),
+//   z.object({
+//     type: z.literal(FieldDataType.Date),
+//     value: z.string(),
+//   }),
+// ]);
+
+
 export const evaluateMultiTypeInput = (
   value: string,
   type: FieldDataType,

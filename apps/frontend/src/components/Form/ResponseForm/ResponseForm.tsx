@@ -177,7 +177,6 @@ export const ResponseForm = ({
                         <SortableList<ResponseSchemaType>
                           label={name}
                           key={fieldId}
-                          formMethods={formMethods}
                           name={`responseFields.${field.fieldId}.optionSelections`}
                           options={options.map((option) => ({
                             label: option.name,

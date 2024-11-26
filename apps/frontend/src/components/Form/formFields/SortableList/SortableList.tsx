@@ -1,14 +1,7 @@
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Box, FormLabel } from "@mui/material";
-import {
-  ArrayPath,
-  FieldValues,
-  Path,
-  UseFormReturn,
-  useFieldArray,
-  useFormContext,
-} from "react-hook-form";
+import { ArrayPath, FieldValues, Path, useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
 
@@ -26,7 +19,6 @@ interface SortableListProps<T extends FieldValues> {
   name: Path<T>;
   displayLabel?: boolean;
   options: OptionProps[];
-  formMethods: UseFormReturn<T>;
 }
 
 // step one: create formState and lose useEffect
