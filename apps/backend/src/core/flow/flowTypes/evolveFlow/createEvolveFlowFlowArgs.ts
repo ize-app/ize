@@ -15,11 +15,11 @@ import {
   SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 
-const requestFieldSetArgs: FieldArgs[] = [
-  createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
-  createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
-  createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
-];
+// const requestFieldSetArgs: FieldArgs[] = [
+//   createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
+//   createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
+//   createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
+// ];
 
 export const createEvolveFlowFlowArgs = ({
   groupEntityId,
@@ -34,7 +34,11 @@ export const createEvolveFlowFlowArgs = ({
     name: "Evolve flow",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: [
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
+      ],
     },
     trigger: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },

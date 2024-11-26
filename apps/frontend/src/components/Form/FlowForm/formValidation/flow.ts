@@ -1,6 +1,13 @@
 import * as z from "zod";
 
-import { ActionType, FieldType, FlowType, ResultType } from "@/graphql/generated/graphql";
+import {
+  ActionType,
+  DecisionType,
+  FieldType,
+  FlowType,
+  OptionSelectionType,
+  ResultType,
+} from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
 import { fieldSetSchema } from "./fields";
@@ -30,20 +37,32 @@ const stepSchema = z
   })
   // this superRefine isn't strictly necessary since the UI currently ties together fields and
   .superRefine((step, ctx) => {
-    if (
-      (!step.fieldSet.fields || !step.fieldSet.fields.find((f) => f.type === FieldType.Options)) &&
-      step.result.length > 0
-    ) {
-      step.result.forEach((res, index) => {
-        if (res.type === ResultType.Decision) {
+    step.result.forEach((res, index) => {
+      if (res.type === ResultType.Decision) {
+        const field = step.fieldSet.fields.find((f) => {
+          return f.fieldId === res.fieldId;
+        });
+        if (field?.type !== FieldType.Options) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Add an option field in the response before you can use the decision type",
-            path: ["results", index],
+            message: "Decision must have an options field",
+            path: ["result", index],
+          });
+          return;
+        }
+
+        if (
+          res.decision.type !== DecisionType.WeightedAverage &&
+          field.optionsConfig.selectionType !== OptionSelectionType.Select
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Decision's field must be single select",
+            path: ["result", index],
           });
         }
-      });
-    }
+      }
+    });
   })
   // check if default option is valid
   .superRefine((step, ctx) => {

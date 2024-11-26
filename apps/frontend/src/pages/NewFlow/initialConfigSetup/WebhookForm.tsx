@@ -22,7 +22,6 @@ export const WebhookForm = () => {
 
   useEffect(() => {
     if (webhookTriggerCondition === ActionTriggerCondition.Decision) {
-      console.log("setting options");
       setValue("optionsConfig", {
         options: [
           { optionId: crypto.randomUUID(), name: "✅", dataType: FieldDataType.String },
@@ -51,19 +50,6 @@ export const WebhookForm = () => {
     setFilterOptions(options);
   };
 
-  // refreshOptions();
-
-  // const defaultOption: SelectOption = {
-  //   name: "Action runs for every result",
-  //   value: DefaultOptionSelection.None,
-  // };
-  // const filterOptions: SelectOption[] = options.map((option) => ({
-  //   name: option.name,
-  //   value: option.optionId,
-  // }));
-
-  // filterOptions.unshift(defaultOption);
-
   return (
     <>
       <FieldBlockFadeIn>
@@ -72,14 +58,12 @@ export const WebhookForm = () => {
           webhook do?
         </Typography>
         <TextField<IntitialFlowSetupSchemaType>
-          // assuming here that results to fields is 1:1 relationshp
           name={`webhookName`}
           multiline
           placeholderText={"Posts tweet on shared Twitter"}
           label={`Webhook name`}
           defaultValue=""
         />
-        {/* <WebhookURIForm<IntitialFlowSetupSchemaType> fieldName={`webhook`} /> */}
       </FieldBlockFadeIn>
       {webhookName && (
         <FieldBlockFadeIn>

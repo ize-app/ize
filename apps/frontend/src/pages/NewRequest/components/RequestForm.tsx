@@ -178,6 +178,7 @@ export const RequestForm = () => {
                                 options={options.map((option) => ({
                                   label: option.name,
                                   value: option.optionId,
+                                  dataType: option.dataType,
                                 }))}
                               />
                             );
@@ -192,6 +193,7 @@ export const RequestForm = () => {
                                 options={options.map((option) => ({
                                   label: option.name,
                                   value: option.optionId,
+                                  dataType: option.dataType,
                                 }))}
                               />
                             );
@@ -206,6 +208,7 @@ export const RequestForm = () => {
                                 options={options.map((option) => ({
                                   label: option.name,
                                   value: option.optionId,
+                                  dataType: option.dataType,
                                 }))}
                               />
                             );

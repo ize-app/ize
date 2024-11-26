@@ -1,6 +1,6 @@
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { Box, Typography } from "@mui/material";
+import { Box, FormLabel } from "@mui/material";
 import {
   ArrayPath,
   FieldValues,
@@ -10,17 +10,16 @@ import {
   useFormContext,
 } from "react-hook-form";
 
+import { FieldDataType } from "@/graphql/generated/graphql";
+
 import { SortableItem } from "./SortableItem";
 import { TextField } from "../TextField";
 
 export interface OptionProps {
   value: string;
   label: string;
+  dataType: FieldDataType;
 }
-
-export type SampleFormData = {
-  textFields: { text: string }[];
-};
 
 interface SortableListProps<T extends FieldValues> {
   label: string;
@@ -59,33 +58,42 @@ export const SortableList = <T extends FieldValues>({
       }}
     >
       <SortableContext items={fields}>
-        <Typography>{label}</Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {fields.map((field, index) => {
-            const label =
-              options.find((o) => {
+        <Box>
+          {/* <Typography>{label}</Typography> */}
+          {label ? (
+            <FormLabel component="legend" id="radio-buttons-group-options">
+              {label}
+            </FormLabel>
+          ) : null}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {fields.map((field, index) => {
+              const option = options.find((o) => {
                 // @ts-expect-error //@ts-expect-error TODO unclear why this error is happening
                 return field.optionId === o.value;
-              })?.label ?? "";
+              });
 
-            return (
-              <Box key={field.id}>
-                <TextField<T>
-                  //@ts-expect-error TODO unclear why this error is happening
-                  name={`${name}.${index}.optionId`}
-                  control={control}
-                  sx={{ display: "none" }}
-                  showLabel={false}
-                  label={`Option ID - ignore`}
-                  variant="standard"
-                  disabled={true}
-                  size="small"
-                />
+              const label = option?.label ?? "";
+              const dataType = option?.dataType ?? FieldDataType.String;
 
-                <SortableItem id={field.id} label={label} index={index} />
-              </Box>
-            );
-          })}
+              return (
+                <Box key={field.id}>
+                  <TextField<T>
+                    //@ts-expect-error TODO unclear why this error is happening
+                    name={`${name}.${index}.optionId`}
+                    control={control}
+                    sx={{ display: "none" }}
+                    showLabel={false}
+                    label={`Option ID - ignore`}
+                    variant="standard"
+                    disabled={true}
+                    size="small"
+                  />
+
+                  <SortableItem id={field.id} label={label} index={index} dataType={dataType} />
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
       </SortableContext>
     </DndContext>

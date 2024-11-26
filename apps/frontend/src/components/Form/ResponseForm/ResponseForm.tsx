@@ -94,7 +94,7 @@ export const ResponseForm = ({
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
+            gap: "40px",
           }}
         >
           {responseFields
@@ -152,6 +152,7 @@ export const ResponseForm = ({
                           options={options.map((option) => ({
                             label: option.name,
                             value: option.optionId,
+                            dataType: option.dataType,
                           }))}
                         />
                       );
@@ -166,6 +167,7 @@ export const ResponseForm = ({
                           options={options.map((option) => ({
                             label: option.name,
                             value: option.optionId,
+                            dataType: option.dataType,
                           }))}
                         />
                       );
@@ -180,6 +182,7 @@ export const ResponseForm = ({
                           options={options.map((option) => ({
                             label: option.name,
                             value: option.optionId,
+                            dataType: option.dataType,
                           }))}
                         />
                       );

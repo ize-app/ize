@@ -1,7 +1,7 @@
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import { Typography, TypographyProps } from "@mui/material";
+import { Box, Typography, TypographyProps } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Link, generatePath } from "react-router-dom";
@@ -35,21 +35,21 @@ export const FreeInputValue = ({
       return <Typography {...defaultProps}>{stringVal}</Typography>;
     case FieldDataType.Date:
       return (
-        <>
+        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <InsertInvitationOutlinedIcon fontSize="small" color="primary" />
           <Typography {...defaultProps}>{stringVal}</Typography>
-        </>
+        </Box>
       );
     case FieldDataType.DateTime:
       return (
-        <>
+        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <AccessTimeOutlinedIcon fontSize="small" color="primary" />
           <Typography {...defaultProps}>{stringVal}</Typography>
-        </>
+        </Box>
       );
     case FieldDataType.Uri:
       return (
-        <>
+        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <LinkOutlinedIcon fontSize="small" color="primary" />
           <Typography
             component={"a"}
@@ -60,7 +60,7 @@ export const FreeInputValue = ({
           >
             {value}
           </Typography>
-        </>
+        </Box>
       );
     // this case statement shouldn't be hit because it's handled upstream
     // TODO: make this not as janky

@@ -18,11 +18,11 @@ import { createActionArgsForPolicy } from "../../generateFlowArgs/flowArgsForPol
 import { createApprovalFieldSetArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createApprovalFieldSetArgsForPolicy";
 import { createDecisionResultArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createDecisionResultArgsForPolicy";
 
-const requestFieldSetArgs: FieldArgs[] = [
-  createSystemFieldDefaults(SystemFieldType.GroupName),
-  createSystemFieldDefaults(SystemFieldType.GroupDescription),
-  createSystemFieldDefaults(SystemFieldType.GroupMembers),
-];
+// const requestFieldSetArgs: FieldArgs[] = [
+//   createSystemFieldDefaults(SystemFieldType.GroupName),
+//   createSystemFieldDefaults(SystemFieldType.GroupDescription),
+//   createSystemFieldDefaults(SystemFieldType.GroupMembers),
+// ];
 
 export const createEvolveGroupFlowArgs = ({
   groupEntityId,
@@ -44,7 +44,11 @@ export const createEvolveGroupFlowArgs = ({
     name: "Evolve group",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: [
+        createSystemFieldDefaults(SystemFieldType.GroupName),
+        createSystemFieldDefaults(SystemFieldType.GroupDescription),
+        createSystemFieldDefaults(SystemFieldType.GroupMembers),
+      ],
     },
     trigger: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },

@@ -18,10 +18,10 @@ import { createActionArgsForPolicy } from "../../generateFlowArgs/flowArgsForPol
 import { createApprovalFieldSetArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createApprovalFieldSetArgsForPolicy";
 import { createDecisionResultArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createDecisionResultArgsForPolicy";
 
-const requestFieldSetArgs: FieldArgs[] = [
-  createSystemFieldDefaults(SystemFieldType.WatchFlow),
-  createSystemFieldDefaults(SystemFieldType.UnwatchFlow),
-];
+// const requestFieldSetArgs: FieldArgs[] = [
+//   createSystemFieldDefaults(SystemFieldType.WatchFlow),
+//   createSystemFieldDefaults(SystemFieldType.UnwatchFlow),
+// ];
 
 export const createGroupWatchFlowFlowArgs = ({
   groupEntityId,
@@ -43,7 +43,10 @@ export const createGroupWatchFlowFlowArgs = ({
     name: "Watch/unwatch flow",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: [
+        createSystemFieldDefaults(SystemFieldType.WatchFlow),
+        createSystemFieldDefaults(SystemFieldType.UnwatchFlow),
+      ],
     },
     trigger: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
@@ -113,7 +116,7 @@ export const createGroupWatchStepArgs = ({
       : undefined,
     result: decisionResult ? [decisionResult] : [],
     action: createActionArgsForPolicy({
-      actionType: ActionType.EvolveGroup,
+      actionType: ActionType.GroupWatchFlow,
       resultConfigId: decisionResult?.resultConfigId,
       optionId: approveOptionId,
     }),

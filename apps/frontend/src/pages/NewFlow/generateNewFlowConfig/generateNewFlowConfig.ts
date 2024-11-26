@@ -83,9 +83,10 @@ export const generateNewFlowConfig = ({
         field = generateFieldConfig({
           type: FieldType.Options,
           question: config.question,
-          selectionType: DecisionType.WeightedAverage
-            ? OptionSelectionType.Rank
-            : OptionSelectionType.Select,
+          selectionType:
+            config.decision.type === DecisionType.WeightedAverage
+              ? OptionSelectionType.Rank
+              : OptionSelectionType.Select,
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,

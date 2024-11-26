@@ -7,6 +7,9 @@ import { default as MuiRadio } from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
+import { FreeInputValue } from "@/components/Field/FreeInputValue";
+import { FieldDataType } from "@/graphql/generated/graphql";
+
 interface RadioProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
@@ -18,6 +21,7 @@ interface RadioProps<T extends FieldValues> {
 export interface OptionProps {
   value: string;
   label: string;
+  dataType: FieldDataType;
 }
 
 export const Radio = <T extends FieldValues>({
@@ -51,8 +55,8 @@ export const Radio = <T extends FieldValues>({
               <FormControlLabel
                 value={elem.value}
                 key={"option" + index.toString()}
-                control={<MuiRadio />}
-                label={elem.label}
+                control={<MuiRadio size="small" />}
+                label={<FreeInputValue value={elem.label} type={elem.dataType} />}
               />
             ))}
           </RadioGroup>
