@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { createInputFormState } from "@/components/Form/InputField/createInputFormState";
+import { createInputRecordsFormState } from "@/components/Form/InputField/createInputRecordsFormState";
 
 import Loading from "../../../components/Loading";
 import { FieldFragment, Flow, FlowType, GetFlowDocument } from "../../../graphql/generated/graphql";
@@ -13,7 +13,7 @@ import { RequestSchemaType } from "../formValidation";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
 const createRequestFormState = (flow: Flow): RequestSchemaType => {
-  const requestFields = createInputFormState({
+  const requestFields = createInputRecordsFormState({
     fields: flow.fieldSet.fields as FieldFragment[],
   });
 
@@ -42,6 +42,7 @@ export const RequestFormContainer = () => {
     onCompleted: (data) => {
       const flow = data.getFlow as Flow;
       // console.log("flow", flow);
+      //@ts-expect-error Typechecking broken here, not sure why
       setFormState((prev) => {
         return {
           ...prev,

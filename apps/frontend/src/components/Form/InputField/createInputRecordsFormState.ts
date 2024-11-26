@@ -1,13 +1,13 @@
 import { FieldFragment, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
 
+import { createFreeInputDefaultValue } from "./createFreeInputDefaultState";
 import {
   InputRecordSchemaType,
   InputSchemaType,
   OptionSelectionsSchemaType,
-} from "../formValidation/field";
-import { createFreeInputDefaultValue } from "../utils/createFreeInputDefaultState";
+} from "./inputValidation";
 
-export const createInputFormState = ({
+export const createInputRecordsFormState = ({
   fields,
 }: {
   fields: FieldFragment[];

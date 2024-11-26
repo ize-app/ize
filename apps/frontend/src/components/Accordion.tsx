@@ -1,4 +1,4 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { Box } from "@mui/material";
 import { default as MuiAccordion } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -27,13 +27,16 @@ export const Accordion = ({
       "&:before": {
         display: "none", // Removes the default top border
       },
+      "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+        transform: "rotate(90deg)",
+      },
     }}
   >
     <AccordionSummary
       sx={{
         padding: "0px",
       }}
-      expandIcon={<ExpandMoreIcon />}
+      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
     >
       <Typography color="secondary">{label}</Typography>
     </AccordionSummary>

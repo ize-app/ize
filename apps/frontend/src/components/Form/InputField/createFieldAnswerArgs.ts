@@ -1,7 +1,7 @@
 import { FieldAnswerArgs, FieldType } from "@/graphql/generated/graphql";
 
 import { createInputValueArg } from "./createInputValueArg";
-import { InputRecordSchemaType } from "../formValidation/field";
+import { InputRecordSchemaType } from "./inputValidation";
 
 export const createFieldAnswersArgs = (
   fieldAnswers: InputRecordSchemaType | undefined,

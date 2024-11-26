@@ -1,6 +1,6 @@
 import { Entity, FieldDataType, FlowSummaryFragment } from "@/graphql/generated/graphql";
 
-import { InputSchemaType } from "../formValidation/field";
+import { InputSchemaType } from "./inputValidation";
 
 export const createInputValueArg = (input: InputSchemaType): string => {
   switch (input.type) {

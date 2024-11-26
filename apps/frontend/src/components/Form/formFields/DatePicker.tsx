@@ -5,7 +5,7 @@ import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
-import { zodDay } from "../formValidation/field";
+import { zodDay } from "../InputField/inputValidation";
 
 interface DatePickerProps<T extends FieldValues> {
   name: Path<T>;

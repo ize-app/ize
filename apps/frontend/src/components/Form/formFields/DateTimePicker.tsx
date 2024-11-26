@@ -7,7 +7,7 @@ import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
 import { userTimezone } from "@/utils/timezone";
 
-import { zodDay } from "../formValidation/field";
+import { zodDay } from "../InputField/inputValidation";
 
 interface DateTimePickerProps<T extends FieldValues> {
   name: Path<T>;

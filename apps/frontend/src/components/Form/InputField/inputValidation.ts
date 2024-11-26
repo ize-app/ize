@@ -3,11 +3,8 @@ import * as z from "zod";
 
 import { FieldDataType, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
 
-import { entityFormSchema } from "./entity";
-import { flowSummarySchema } from "./flowSummary";
-
-export type FieldAnswerSchemaType = z.infer<typeof fieldAnswerSchema>;
-export type FieldAnswerRecordSchemaType = z.infer<typeof fieldAnswerRecordSchema>;
+import { entityFormSchema } from "../formValidation/entity";
+import { flowSummarySchema } from "../formValidation/flowSummary";
 
 export type InputSchemaType = z.infer<typeof inputSchema>;
 export type InputRecordSchemaType = z.infer<typeof inputRecordSchema>;
@@ -105,38 +102,6 @@ export const evaluateMultiTypeInput = (
 };
 export const optionSelectionSchema = z.object({ optionId: z.string().min(1) });
 export const optionSelectionsSchema = z.array(optionSelectionSchema);
-
-const fieldAnswerSchema = z
-  .object({
-    dataType: z.nativeEnum(FieldDataType).optional(),
-    maxSelections: z.number().nullable().optional(),
-    selectionType: z.nativeEnum(OptionSelectionType).optional(),
-    value: z.any(),
-    optionSelections: optionSelectionsSchema.optional(),
-    required: z.boolean().optional(),
-  })
-  .superRefine((field, ctx) => {
-    if (
-      field.maxSelections &&
-      field.optionSelections &&
-      field.maxSelections < field.optionSelections.length
-    ) {
-      console.log("Error: option selections exceeded");
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Only a maximum of " + field.maxSelections + " selections are allowed",
-        path: ["optionSelections"],
-      });
-    }
-  })
-  .superRefine((field, ctx) => {
-    if (!field?.required && !field.value) return;
-    if (!field.dataType) return;
-    //eslint-disable-next-line
-    evaluateMultiTypeInput(field.value, field.dataType, ["value"], ctx);
-  });
-
-export const fieldAnswerRecordSchema = z.record(z.string().min(1), fieldAnswerSchema);
 
 ///////////////////////
 

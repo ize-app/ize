@@ -7,14 +7,19 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldOption } from "@/components/Field/FieldOption";
 import { formatDataTypeName } from "@/components/Field/formatDataTypeName";
-import { InputSchemaType } from "@/components/Form/formValidation/field";
+import { createFreeInputDefaultValue } from "@/components/Form/InputField/createFreeInputDefaultState";
 import { InputField } from "@/components/Form/InputField/InputField";
-import { createFreeInputDefaultValue } from "@/components/Form/utils/createFreeInputDefaultState";
-import { FieldDataType, FieldType, Flow, OptionsFragment } from "@/graphql/generated/graphql";
+import { InputSchemaType } from "@/components/Form/InputField/inputValidation";
+import {
+  FieldDataType,
+  FieldType,
+  FlowFragment,
+  OptionsFragment,
+} from "@/graphql/generated/graphql";
 
 import { RequestSchemaType } from "../formValidation";
 
-export const RequestDefinedOptionsForm = ({ flow }: { flow: Flow }) => {
+export const RequestDefinedOptionsForm = ({ flow }: { flow: FlowFragment }) => {
   const fields: OptionsFragment[] = [];
 
   flow.steps.forEach((step) => {

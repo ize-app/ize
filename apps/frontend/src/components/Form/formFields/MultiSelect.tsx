@@ -12,7 +12,10 @@ import { Controller, FieldValues, Path, useFormContext, useWatch } from "react-h
 import { FreeInputValue } from "@/components/Field/FreeInputValue";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
-import { OptionSelectionSchemaType, OptionSelectionsSchemaType } from "../formValidation/field";
+import {
+  OptionSelectionSchemaType,
+  OptionSelectionsSchemaType,
+} from "../InputField/inputValidation";
 
 interface MultiSelectProps<T extends FieldValues> {
   label?: string;

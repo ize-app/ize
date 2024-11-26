@@ -1,20 +1,10 @@
 import * as z from "zod";
 
-import { inputRecordSchema, inputSchema } from "../../components/Form/formValidation/field";
+import { inputRecordSchema, inputSchema } from "../../components/Form/InputField/inputValidation";
 
 export type RequestDefinedOptionsRecordSchema = z.infer<typeof requestDefinedOptionsRecordSchema>;
 export type RequestDefinedOptionsFieldSchemaType = z.infer<typeof requestDefinedOptionsFieldSchema>;
 export type RequestSchemaType = z.infer<typeof requestSchema>;
-
-// export const requestDefinedOptionSchema = z
-//   .object({
-//     dataType: z.nativeEnum(FieldDataType),
-//     name: z.any(),
-//   })
-//   .superRefine((field, ctx) => {
-//     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-//     evaluateMultiTypeInput(field.name, field.dataType, ["name"], ctx);
-//   });
 
 export const requestDefinedOptionsFieldSchema = z.array(inputSchema);
 

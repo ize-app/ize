@@ -7,21 +7,17 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import {
-  FieldDataType,
   FieldFragment,
-  FieldType,
   NewResponseDocument,
-  OptionSelectionType,
   PermissionFragment,
 } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 import { createResponseFormState } from "./createResponseFormState";
-import { ResponseSchemaType, responseSchema } from "./formValidation";
-import { DatePicker, DateTimePicker, MultiSelect, SortableList, TextField } from "../formFields";
-import { Radio } from "../formFields/Radio";
-import { createFieldAnswersArgs } from "../utils/createFieldAnswers";
+import { ResponseSchemaType, responseSchema } from "./responseValidation";
+import { createFieldAnswersArgs } from "../InputField/createFieldAnswerArgs";
+import { InputFieldAnswers } from "../InputField/InputFieldAnswers";
 
 export const ResponseForm = ({
   responseFields,
@@ -69,7 +65,7 @@ export const ResponseForm = ({
         response: {
           responseId: data.responseId,
           requestStepId,
-          answers: await createFieldAnswersArgs(data.responseFields),
+          answers: createFieldAnswersArgs(data.responseFields),
         },
       },
     });
@@ -86,7 +82,7 @@ export const ResponseForm = ({
         padding: "16px",
       }}
     >
-      <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
+      <Typography color="primary" variant="label" fontSize="1rem">
         Respond
       </Typography>
       <FormProvider {...formMethods}>
@@ -94,105 +90,12 @@ export const ResponseForm = ({
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "40px",
           }}
         >
-          {responseFields
-            .filter((f) => !f.isInternal)
-            .map((field) => {
-              switch (field.__typename) {
-                case FieldType.FreeInput: {
-                  const { dataType, name, required, fieldId } = field;
-
-                  switch (dataType) {
-                    case FieldDataType.Date:
-                      return (
-                        <DatePicker<ResponseSchemaType>
-                          name={`responseFields.${field.fieldId}.value`}
-                          key={fieldId}
-                          // showLabel={false}
-
-                          label={name}
-                        />
-                      );
-                    case FieldDataType.DateTime:
-                      return (
-                        <DateTimePicker<ResponseSchemaType>
-                          name={`responseFields.${field.fieldId}.value`}
-                          key={fieldId}
-                          label={name}
-                        />
-                      );
-                    default:
-                      return (
-                        <TextField<ResponseSchemaType>
-                          key={fieldId}
-                          label={name}
-                          seperateLabel={true}
-                          variant="outlined"
-                          showLabel={true}
-                          name={`responseFields.${field.fieldId}.value`}
-                          required={required}
-                          multiline
-                        />
-                      );
-                  }
-                }
-                case FieldType.Options: {
-                  const { options, name, selectionType, fieldId } = field;
-
-                  switch (selectionType) {
-                    case OptionSelectionType.Select: {
-                      return (
-                        <Radio<ResponseSchemaType>
-                          name={`responseFields.${field.fieldId}.optionSelections[0].optionId`}
-                          key={fieldId}
-                          label={name}
-                          sx={{ flexDirection: "column", gap: "4px" }}
-                          options={options.map((option) => ({
-                            label: option.name,
-                            value: option.optionId,
-                            dataType: option.dataType,
-                          }))}
-                        />
-                      );
-                    }
-                    case OptionSelectionType.MultiSelect: {
-                      return (
-                        <MultiSelect<ResponseSchemaType>
-                          name={`responseFields.${field.fieldId}.optionSelections`}
-                          label={name}
-                          key={fieldId}
-                          sx={{ flexDirection: "column", gap: "4px" }}
-                          options={options.map((option) => ({
-                            label: option.name,
-                            value: option.optionId,
-                            dataType: option.dataType,
-                          }))}
-                        />
-                      );
-                    }
-                    case OptionSelectionType.Rank: {
-                      return (
-                        <SortableList<ResponseSchemaType>
-                          label={name}
-                          key={fieldId}
-                          name={`responseFields.${field.fieldId}.optionSelections`}
-                          options={options.map((option) => ({
-                            label: option.name,
-                            value: option.optionId,
-                            dataType: option.dataType,
-                          }))}
-                        />
-                      );
-                    }
-                  }
-                  break;
-                }
-                default:
-                  throw Error("Invalid field type");
-              }
-            })}
+          <InputFieldAnswers<ResponseSchemaType>
+            fields={responseFields}
+            basePath={`responseFields`}
+          />
 
           <Button
             variant={"contained"}

@@ -1,4 +1,4 @@
-import { createFreeInputDefaultValue } from "@/components/Form/utils/createFreeInputDefaultState";
+import { createFreeInputDefaultValue } from "@/components/Form/InputField/createFreeInputDefaultState";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
 import { FieldOptionSchemaType } from "../../formValidation/fields";

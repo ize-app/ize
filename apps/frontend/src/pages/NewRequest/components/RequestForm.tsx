@@ -3,13 +3,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { FormProvider, Path, useForm } from "react-hook-form";
 
-import { InputField } from "@/components/Form/InputField/InputField";
+import { InputFieldAnswers } from "@/components/Form/InputField/InputFieldAnswers";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import { RequestDefinedOptionsForm } from "./RequestDefinedOptionsForm";
 import { TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
-import { FieldType } from "../../../graphql/generated/graphql";
 import { RequestSchemaType, requestSchema } from "../formValidation";
 import { NewRequestFormSchema, useNewRequestWizardState } from "../newRequestWizard";
 
@@ -75,51 +74,10 @@ export const RequestForm = () => {
                 multiline
               />
               {/* <hr style={{ border: "1px solid #ddd", width: "100%", margin: "18px 0px" }} /> */}
-              {flow.fieldSet.fields.length > 0 && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    marginBottom: "24px",
-                    padding: "20px",
-                    outline: "1px solid rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  {flow.fieldSet.fields.map((field) => {
-                    if (field.__typename === FieldType.FreeInput) {
-                      return (
-                        <InputField<RequestSchemaType>
-                          fieldName={
-                            `requestFields.${field.fieldId}.value` as Path<RequestSchemaType>
-                          }
-                          label={field.name}
-                          dataType={field.dataType}
-                          key={field.fieldId}
-                          type={FieldType.FreeInput}
-                          showLabel={true}
-                          seperateLabel={true}
-                        />
-                      );
-                    } else if (field.__typename === FieldType.Options) {
-                      return (
-                        <InputField<RequestSchemaType>
-                          fieldName={`requestFields.${field.fieldId}.value`}
-                          label={field.name}
-                          key={field.fieldId}
-                          type={FieldType.Options}
-                          options={field.options.map((o) => ({
-                            label: o.name,
-                            value: o.optionId,
-                            dataType: o.dataType,
-                          }))}
-                          selectionType={field.selectionType}
-                        />
-                      );
-                    }
-                  })}
-                </Box>
-              )}
+              <InputFieldAnswers<RequestSchemaType>
+                fields={flow.fieldSet.fields}
+                basePath={`requestFields` as Path<RequestSchemaType>}
+              />
               <RequestDefinedOptionsForm flow={flow} />
             </Box>
           </Box>
