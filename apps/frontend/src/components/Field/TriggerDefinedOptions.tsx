@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { TriggerDefinedOptions } from "@/graphql/generated/graphql";
 
 import { FreeInputValue } from "./FreeInputValue";
+import { Accordion } from "../Accordion";
 
 export const TriggerDefinedOptionSets = ({
   triggerDefinedOptionSets,
@@ -12,11 +13,8 @@ export const TriggerDefinedOptionSets = ({
 }) => {
   if (triggerDefinedOptionSets.length === 0) return null;
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Typography variant="description">
-        Options added to questions in this request
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", maxWidth: "400px" }}>
+    <Accordion label="The triggerer added options to questions in this request" elevation={0}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         {triggerDefinedOptionSets.map((triggerDefinedOptions) => {
           return (
             <Box
@@ -42,6 +40,6 @@ export const TriggerDefinedOptionSets = ({
           );
         })}
       </Box>
-    </Box>
+    </Accordion>
   );
 };
