@@ -1,29 +1,24 @@
 import * as z from "zod";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { inputRecordSchema, inputSchema } from "../../components/Form/formValidation/field";
 
-import {
-  evaluateMultiTypeInput,
-  inputRecordSchema,
-} from "../../components/Form/formValidation/field";
-
-export type RequestDefinedOptionSchemaType = z.infer<typeof requestDefinedOptionSchema>;
+export type RequestDefinedOptionsRecordSchema = z.infer<typeof requestDefinedOptionsRecordSchema>;
 export type RequestDefinedOptionsFieldSchemaType = z.infer<typeof requestDefinedOptionsFieldSchema>;
 export type RequestSchemaType = z.infer<typeof requestSchema>;
 
-export const requestDefinedOptionSchema = z
-  .object({
-    dataType: z.nativeEnum(FieldDataType),
-    name: z.any(),
-  })
-  .superRefine((field, ctx) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    evaluateMultiTypeInput(field.name, field.dataType, ["name"], ctx);
-  });
+// export const requestDefinedOptionSchema = z
+//   .object({
+//     dataType: z.nativeEnum(FieldDataType),
+//     name: z.any(),
+//   })
+//   .superRefine((field, ctx) => {
+//     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+//     evaluateMultiTypeInput(field.name, field.dataType, ["name"], ctx);
+//   });
 
-export const requestDefinedOptionsFieldSchema = z.array(requestDefinedOptionSchema);
+export const requestDefinedOptionsFieldSchema = z.array(inputSchema);
 
-export const requestDefinedOptionsSchema = z.record(
+export const requestDefinedOptionsRecordSchema = z.record(
   z.string().min(1),
   requestDefinedOptionsFieldSchema,
 );
@@ -33,7 +28,7 @@ export const requestSchema = z
     requestId: z.string().uuid(),
     name: z.string().min(5, "Please make the request name at least 5 characters"),
     requestFields: inputRecordSchema.optional(),
-    requestDefinedOptions: requestDefinedOptionsSchema,
+    requestDefinedOptions: requestDefinedOptionsRecordSchema,
   })
   .refine(
     (req) => {

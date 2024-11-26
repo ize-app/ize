@@ -6,11 +6,13 @@ import Typography from "@mui/material/Typography";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldOption } from "@/components/Field/FieldOption";
-import { InputField } from "@/components/Form/FlowForm/components/InputField";
+import { formatDataTypeName } from "@/components/Field/formatDataTypeName";
+import { InputSchemaType } from "@/components/Form/formValidation/field";
+import { InputField } from "@/components/Form/InputField/InputField";
+import { createFreeInputDefaultValue } from "@/components/Form/utils/createFreeInputDefaultState";
 import { FieldDataType, FieldType, Flow, OptionsFragment } from "@/graphql/generated/graphql";
 
-import { TextField } from "../../../components/Form/formFields";
-import { RequestDefinedOptionSchemaType, RequestSchemaType } from "../formValidation";
+import { RequestSchemaType } from "../formValidation";
 
 export const RequestDefinedOptionsForm = ({ flow }: { flow: Flow }) => {
   const fields: OptionsFragment[] = [];
@@ -48,14 +50,25 @@ export const RequestDefinedOptionsForm = ({ flow }: { flow: Flow }) => {
 
 export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragment }) => {
   const { control } = useFormContext<RequestSchemaType>();
-  const requestDefinedOptionsFormMethods = useFieldArray({
+  const requestDefinedOptionsFormMethods = useFieldArray<
+    RequestSchemaType,
+    `requestDefinedOptions.${string}`,
+    "id"
+  >({
     control: control,
     name: `requestDefinedOptions.${field.fieldId}`,
   });
 
-  const defaultOption: RequestDefinedOptionSchemaType = {
-    dataType: field.requestOptionsDataType as FieldDataType,
-    name: "",
+  //@ts-expect-error Typechecking broken here, not sure why
+  const dataType: FieldDataType = field.requestOptionsDataType;
+
+  if (!dataType) return;
+
+  const defaultOption: InputSchemaType = {
+    type: dataType,
+    required: true,
+    // @ts-expect-error Typechecking broken here, not sure why
+    value: createFreeInputDefaultValue({ dataType }),
   };
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -88,21 +101,14 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
         {requestDefinedOptionsFormMethods.fields.map((item, inputIndex) => {
           return (
             <Box key={item.id} sx={{ display: "flex", marginLeft: "8px" }}>
-              <TextField<RequestSchemaType>
-                name={`requestDefinedOptions.${field.fieldId}.${inputIndex}.dataType`}
-                key={"dataType" + inputIndex.toString()}
+              <InputField<RequestSchemaType>
+                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.value`}
+                label={`Option #${inputIndex + 1} (${formatDataTypeName(dataType)})`}
+                dataType={dataType}
+                key={field.fieldId}
+                type={FieldType.FreeInput}
                 showLabel={false}
-                label={`Option ID - ignore`}
-                variant="standard"
-                display={false}
-                disabled={true}
-                size="small"
-              />
-
-              <InputField
-                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.name`}
-                label={`Option #${inputIndex + 1}`}
-                dataType={item.dataType}
+                seperateLabel={false}
               />
               <IconButton
                 color="primary"

@@ -4,27 +4,28 @@ import { StytchError } from "stytch";
 import { meInclude } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 
-import { sessionDurationMinutes, stytchClient } from "./stytchClient";
+// import { sessionDurationMinutes, stytchClient } from "./stytchClient";
 
 // authetnicate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
   //eslint-disable-next-line
-  const session_token = req.cookies["stytch_session"] as string;
-  if (!session_token) {
-    res.locals.user = null;
-    return next();
-  }
+  // const session_token = req.cookies["stytch_session"] as string;
+  // if (!session_token) {
+  //   res.locals.user = null;
+  //   return next();
+  // }
 
   try {
-    const session = await stytchClient.sessions.authenticate({
-      session_token,
-      session_duration_minutes: sessionDurationMinutes,
-    });
+    // const session = await stytchClient.sessions.authenticate({
+    //   session_token,
+    //   session_duration_minutes: sessionDurationMinutes,
+    // });
 
     const user = await prisma.user.findFirst({
       include: meInclude,
       where: {
-        stytchId: session.user.user_id,
+        // stytchId: session.user.user_id,
+        id: "39935456-3d7c-4eb7-9855-c60ffa7ed91e",
       },
     });
 

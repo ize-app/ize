@@ -1,7 +1,7 @@
 import { createFieldAnswersArgs } from "@/components/Form/InputField/createFieldAnswerArgs";
+import { createRequestDefinedOptionsArgs } from "@/components/Form/InputField/createRequestDefinedOptionsArgs";
 import {
   FieldAnswerArgs,
-  FieldOptionArgs,
   NewRequestArgs,
   RequestDefinedOptionsArgs,
 } from "@/graphql/generated/graphql";
@@ -19,23 +19,9 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
 
   const requestFields: FieldAnswerArgs[] = createFieldAnswersArgs(request.requestFields);
 
-  const requestDefinedOptions: RequestDefinedOptionsArgs[] = Object.entries(
+  const requestDefinedOptions: RequestDefinedOptionsArgs[] = createRequestDefinedOptionsArgs(
     request.requestDefinedOptions,
-  ).map(([fieldId, options]) => {
-    return {
-      fieldId,
-      options: options.map(
-        //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        (option): FieldOptionArgs => ({
-          optionId: crypto.randomUUID(),
-          name: option.name as string,
-          dataType: option.dataType,
-        }),
-      ),
-    };
-  });
-
-  console.log("requestDefinedOptions", requestDefinedOptions);
+  );
 
   return { requestId: request.requestId, flowId, requestFields, requestDefinedOptions, name };
 };
