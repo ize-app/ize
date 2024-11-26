@@ -5,4 +5,4 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const userTimezone = dayjs.tz.guess();
+export const userTimezone = dayjs().tz(dayjs.tz.guess()).format("z");

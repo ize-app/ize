@@ -2,8 +2,7 @@ import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { FieldAnswerRecordSchemaType } from "@/components/Form/formValidation/field";
-import { createFieldAnswersFormState } from "@/components/Form/utils/createFieldAnswersFormState";
+import { createInputFormState } from "@/components/Form/InputField/createInputFormState";
 
 import Loading from "../../../components/Loading";
 import { FieldFragment, Flow, FlowType, GetFlowDocument } from "../../../graphql/generated/graphql";
@@ -14,7 +13,7 @@ import { RequestSchemaType } from "../formValidation";
 import { useNewRequestWizardState } from "../newRequestWizard";
 
 const createRequestFormState = (flow: Flow): RequestSchemaType => {
-  const requestFields: FieldAnswerRecordSchemaType = createFieldAnswersFormState({
+  const requestFields = createInputFormState({
     fields: flow.fieldSet.fields as FieldFragment[],
   });
 

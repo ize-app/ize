@@ -5,7 +5,7 @@ import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTim
 import dayjs from "dayjs";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
-import { userTimezone } from "@/utils/datetime";
+import { userTimezone } from "@/utils/timezone";
 
 import { zodDay } from "../formValidation/field";
 

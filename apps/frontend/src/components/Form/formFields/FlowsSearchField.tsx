@@ -27,6 +27,7 @@ interface FlowSearchProps<T extends FieldValues> {
   showLabel?: boolean;
   seperateLabel?: boolean;
   groupId?: string;
+  required: boolean;
   systemFieldType?: SystemFieldType | undefined | null;
 }
 
@@ -38,6 +39,7 @@ export const FlowsSearchField = <T extends FieldValues>({
   seperateLabel = false,
   groupId,
   systemFieldType,
+  required = true,
   ...props
 }: FlowSearchProps<T>) => {
   const { control } = useFormContext<T>();
@@ -64,7 +66,7 @@ export const FlowsSearchField = <T extends FieldValues>({
         control={control}
         render={({ field, fieldState: { error } }) => {
           return (
-            <FormControl required>
+            <FormControl required={required}>
               {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
               <Autocomplete
                 // need to override autocomplete filtering behavior for async options

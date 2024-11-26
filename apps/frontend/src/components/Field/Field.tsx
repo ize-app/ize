@@ -48,8 +48,11 @@ export const Field = ({
               )
             </span> */}
           </Typography>
-          <LabeledGroupedInputs label="
-          " sx={{ backgroundColor: "white" }}>
+          <LabeledGroupedInputs
+            label="
+          "
+            sx={{ backgroundColor: "white", flexGrow: 0, maxWidth: "400px" }}
+          >
             <FieldOptions
               onlyShowSelections={onlyShowSelections}
               fieldOptions={field}

@@ -31,7 +31,10 @@ export const Radio = <T extends FieldValues>({
   disabled = false,
   ...props
 }: RadioProps<T>): JSX.Element => {
-  const { control } = useFormContext<T>();
+  const { control, watch } = useFormContext<T>();
+
+  // creating a fallback value to avoid "component switching from uncontrolled to controlled" error
+  const currentValue = watch(name) ?? "";
   return (
     <Controller
       name={name}
@@ -48,6 +51,7 @@ export const Radio = <T extends FieldValues>({
             {...props}
             row
             //   defaultValue={defaultValue}
+            value={currentValue}
             aria-labelledby="radio-buttons-group-options"
             name="row-radio-buttons-group-options"
           >

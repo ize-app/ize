@@ -110,6 +110,7 @@ export const Setup = () => {
                 able to participate
               </Typography>
               <EntitySearch<GroupInitialSetupSchemaType>
+                required={true}
                 ariaLabel={"Individuals and groups to add to custom group"}
                 name={"members"}
                 hideIzeGroups={true}

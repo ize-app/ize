@@ -3,6 +3,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 
 import { FieldDataType } from "@/graphql/generated/graphql";
+import { userTimezone } from "@/utils/timezone";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -21,9 +22,9 @@ export const stringifyFreeInputValue = ({
     case FieldDataType.Number:
       return value.toString();
     case FieldDataType.Date:
-      return dayjs.utc(value).tz(dayjs.tz.guess()).format("MMMM D YYYY");
+      return dayjs(value).format("MMMM D YYYY");
     case FieldDataType.DateTime:
-      return `${dayjs.utc(value).tz(dayjs.tz.guess()).format("MMMM D YYYY, HH:mm a").toString()} (${dayjs().tz(dayjs.tz.guess()).format("z")})`;
+      return `${dayjs.utc(value).tz(dayjs.tz.guess()).format("MMMM D YYYY, HH:mm a").toString()} (${userTimezone})`;
     case FieldDataType.Uri:
       return value;
     // this case statement shouldn't be hit because it's handled upstream

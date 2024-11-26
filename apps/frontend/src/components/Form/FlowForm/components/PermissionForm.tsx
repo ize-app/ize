@@ -54,6 +54,7 @@ export const PermissionForm = <T extends FieldValues>({
       {!isAnyonePermission && (
         <EntitySearch
           key="requestRoleSearch"
+          required={true}
           ariaLabel={`Individuals and groups who can ${
             branch === "request" ? "trigger this flow" : "respond"
           }`}

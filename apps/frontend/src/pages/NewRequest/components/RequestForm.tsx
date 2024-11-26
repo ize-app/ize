@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, Path, useForm } from "react-hook-form";
 
-import { InputField } from "@/components/Form/formFields/InputField";
+import { InputField } from "@/components/Form/InputField/InputField";
 import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarrow";
 
 import { RequestDefinedOptionsForm } from "./RequestDefinedOptionsForm";
@@ -22,8 +22,8 @@ export const RequestForm = () => {
     shouldUnregister: false,
   });
 
-  // console.log("form state is ", formMethods.getValues());
-  // console.log("errors are  ", formMethods.formState.errors);
+  console.log("form state is ", formMethods.getValues());
+  console.log("errors are  ", formMethods.formState.errors);
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev): NewRequestFormSchema => {
@@ -89,18 +89,22 @@ export const RequestForm = () => {
                   {flow.fieldSet.fields.map((field) => {
                     if (field.__typename === FieldType.FreeInput) {
                       return (
-                        <InputField
-                          fieldName={`requestFields.${field.fieldId}`}
+                        <InputField<RequestSchemaType>
+                          fieldName={
+                            `requestFields.${field.fieldId}.value` as Path<RequestSchemaType>
+                          }
                           label={field.name}
                           dataType={field.dataType}
                           key={field.fieldId}
                           type={FieldType.FreeInput}
+                          showLabel={true}
+                          seperateLabel={true}
                         />
                       );
                     } else if (field.__typename === FieldType.Options) {
                       return (
                         <InputField<RequestSchemaType>
-                          fieldName={`requestFields.${field.fieldId}`}
+                          fieldName={`requestFields.${field.fieldId}.value`}
                           label={field.name}
                           key={field.fieldId}
                           type={FieldType.Options}

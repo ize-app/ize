@@ -44,9 +44,10 @@ export const NewRequestWizard = () => {
 
   const onComplete = async () => {
     try {
-      // console.log("args are", createNewRequestMutationArgs(formState));
+      const args = createNewRequestMutationArgs(formState);
+      // console.log("args are", args);
       await mutate({
-        variables: { request: await createNewRequestMutationArgs(formState) },
+        variables: { request: args },
       });
     } catch (e) {
       console.log("ERROR: ", e);

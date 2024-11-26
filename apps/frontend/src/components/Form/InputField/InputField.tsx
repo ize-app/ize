@@ -1,4 +1,4 @@
-import { FieldPath, FieldValues, Path, PathValue } from "react-hook-form";
+import { FieldValues, Path, PathValue } from "react-hook-form";
 
 import {
   FieldDataType,
@@ -7,14 +7,14 @@ import {
   SystemFieldType,
 } from "@/graphql/generated/graphql";
 
-import { DatePicker } from "./DatePicker";
-import { DateTimePicker } from "./DateTimePicker";
-import { EntitiesSearchField } from "./EntitiesSearchField";
-import { FlowsSearchField } from "./FlowsSearchField";
-import { MultiSelect } from "./MultiSelect";
-import { Radio } from "./Radio";
-import { SortableList } from "./SortableList";
-import { TextField } from "./TextField";
+import { DatePicker } from "../formFields/DatePicker";
+import { DateTimePicker } from "../formFields/DateTimePicker";
+import { EntitiesSearchField } from "../formFields/EntitiesSearchField";
+import { FlowsSearchField } from "../formFields/FlowsSearchField";
+import { MultiSelect } from "../formFields/MultiSelect";
+import { Radio } from "../formFields/Radio";
+import { SortableList } from "../formFields/SortableList";
+import { TextField } from "../formFields/TextField";
 
 interface OptionProps {
   label: string;
@@ -23,17 +23,17 @@ interface OptionProps {
 }
 
 interface BaseInputProps<T extends FieldValues> {
-  fieldName: FieldPath<T>;
+  fieldName: Path<T>;
   label: string;
   disabled?: boolean;
-  showLabel?: boolean;
-  seperateLabel?: boolean;
   required?: boolean;
 }
 
 interface FreeInputProps<T extends FieldValues> extends BaseInputProps<T> {
   type: FieldType.FreeInput;
   dataType: FieldDataType;
+  showLabel?: boolean;
+  seperateLabel?: boolean;
   groupId?: string;
   systemFieldType?: SystemFieldType | undefined | null;
 }
@@ -54,12 +54,12 @@ export const InputField = <T extends FieldValues>({
   ...props
 }: InputProps<T>) => {
   if (props.type === FieldType.FreeInput) {
-    const { dataType, groupId, systemFieldType } = props;
+    const { dataType, groupId, systemFieldType, showLabel, seperateLabel } = props;
     switch (dataType) {
       case FieldDataType.Date:
         return (
           <DatePicker<T>
-            name={`${fieldName}.value` as Path<T>}
+            name={fieldName}
             required={required}
             label={label}
             showLabel={true}
@@ -69,11 +69,11 @@ export const InputField = <T extends FieldValues>({
       case FieldDataType.DateTime:
         return (
           <DateTimePicker<T>
-            name={`${fieldName}.value` as Path<T>}
-            showLabel={false}
+            name={fieldName}
+            showLabel={showLabel}
             label={label}
             required={required}
-            seperateLabel={true}
+            seperateLabel={seperateLabel}
           />
         );
       case FieldDataType.FlowVersionId:
@@ -81,21 +81,23 @@ export const InputField = <T extends FieldValues>({
       case FieldDataType.EntityIds:
         return (
           <EntitiesSearchField<T>
-            name={`${fieldName}.value` as Path<T>}
+            required={required}
+            name={fieldName}
             ariaLabel={label}
             hideIzeGroups={true}
-            showLabel={true}
-            seperateLabel={true}
+            showLabel={showLabel}
+            seperateLabel={seperateLabel}
           />
         );
       case FieldDataType.FlowIds:
         return (
           <FlowsSearchField<T>
-            name={`${fieldName}.value` as Path<T>}
+            required={required}
+            name={fieldName}
             ariaLabel={label}
             label={label}
-            showLabel={true}
-            seperateLabel={true}
+            showLabel={showLabel}
+            seperateLabel={seperateLabel}
             groupId={groupId}
             systemFieldType={systemFieldType}
           />
@@ -103,13 +105,15 @@ export const InputField = <T extends FieldValues>({
       default:
         return (
           <TextField<T>
-            name={`${fieldName}.value` as Path<T>}
+            name={fieldName}
             defaultValue={"" as PathValue<T, Path<T>>}
             placeholderText={label}
-            showLabel={false}
             multiline
             label={label}
+            required={required}
             disabled={disabled}
+            showLabel={showLabel}
+            seperateLabel={seperateLabel}
             size="small"
           />
         );
@@ -121,7 +125,7 @@ export const InputField = <T extends FieldValues>({
       case OptionSelectionType.Select: {
         return (
           <Radio<T>
-            name={`${fieldName}.optionSelections[0].optionId` as Path<T>}
+            name={`${fieldName}[0].optionId` as Path<T>}
             label={label}
             sx={{ flexDirection: "column", gap: "4px" }}
             options={options}
@@ -131,7 +135,7 @@ export const InputField = <T extends FieldValues>({
       case OptionSelectionType.MultiSelect: {
         return (
           <MultiSelect<T>
-            name={`${fieldName}.optionSelections` as Path<T>}
+            name={fieldName}
             label={label}
             sx={{ flexDirection: "column", gap: "4px" }}
             options={options}
@@ -139,13 +143,7 @@ export const InputField = <T extends FieldValues>({
         );
       }
       case OptionSelectionType.Rank: {
-        return (
-          <SortableList<T>
-            label={label}
-            name={`${fieldName}.optionSelections` as Path<T>}
-            options={options}
-          />
-        );
+        return <SortableList<T> label={label} name={fieldName} options={options} />;
       }
     }
   } else return null;

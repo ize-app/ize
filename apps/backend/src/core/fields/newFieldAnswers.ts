@@ -157,6 +157,7 @@ export const newFieldAnswers = async ({
               type: FieldType.Options,
               fieldId: field.id,
               responseId,
+              requestId,
               AnswerOptionSelections: {
                 createMany: {
                   data: fieldAnswer.optionSelections.map((optionSelectionArgs, index) => {

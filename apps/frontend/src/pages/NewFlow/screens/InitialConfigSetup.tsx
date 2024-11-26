@@ -117,6 +117,7 @@ export const InitialConfigSetup = () => {
               />
               {isAnyonePermission === "false" && (
                 <EntitySearch<IntitialFlowSetupSchemaType>
+                  required={true}
                   ariaLabel={"Individuals and groups to add to custom group"}
                   name={"permission.entities"}
                   hideIzeGroups={false}
