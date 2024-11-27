@@ -5,7 +5,7 @@ import { Box, SvgIconProps, useTheme } from "@mui/material";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { AvatarGroup } from "@/components/Avatar";
-import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
+import { stringifyFreeInputValue } from "@/components/Form/InputField/stringifyFreeInputValue";
 import { StatusProps } from "@/components/status/statusProps";
 import {
   ActionFragment,

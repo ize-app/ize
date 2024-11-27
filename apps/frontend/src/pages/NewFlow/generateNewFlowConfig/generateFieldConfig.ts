@@ -1,8 +1,8 @@
 import {
-  FieldOptionSchemaType,
   FieldSchemaType,
   TriggerDefinedOptionsSchemaType,
 } from "@/components/Form/FlowForm/formValidation/fields";
+import { OptionSchemaType } from "@/components/Form/InputField/inputValidation";
 import {
   DecisionType,
   FieldDataType,
@@ -15,7 +15,7 @@ type FieldArg =
   | {
       type: FieldType.Options;
       question: string;
-      options: FieldOptionSchemaType[];
+      options: OptionSchemaType[];
       linkedResultId: string | undefined | null;
       triggerDefinedOptions: TriggerDefinedOptionsSchemaType;
       selectionType: OptionSelectionType;

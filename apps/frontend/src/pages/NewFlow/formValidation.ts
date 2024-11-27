@@ -1,13 +1,10 @@
 import { ZodErrorMap, setErrorMap, z } from "zod";
 
-// import { fieldOptionSchema } from "@/components/Form/FlowForm/formValidation/fields";
-import {
-  fieldOptionSchema,
-  triggerDefinedOptionsSchema,
-} from "@/components/Form/FlowForm/formValidation/fields";
+import { triggerDefinedOptionsSchema } from "@/components/Form/FlowForm/formValidation/fields";
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 import { decisionSchema } from "@/components/Form/FlowForm/formValidation/result";
+import { optionSchema } from "@/components/Form/InputField/inputValidation";
 
 export type NewFlowWizardFormSchema = z.infer<typeof newFlowWizardFormSchema>;
 
@@ -65,7 +62,7 @@ export enum WebhookFilterType {
 
 const optionConfigSchema = z
   .object({
-    options: z.array(fieldOptionSchema).default([]),
+    options: z.array(optionSchema).default([]),
     triggerDefinedOptions: triggerDefinedOptionsSchema,
     linkedOptions: z.object({
       hasLinkedOptions: z.boolean().optional().default(false),

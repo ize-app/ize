@@ -1,6 +1,6 @@
 import { Entity, FieldDataType, FlowSummaryFragment } from "@/graphql/generated/graphql";
 
-import { InputSchemaType } from "./inputValidation";
+import { InputSchemaType } from "../inputValidation";
 
 export const createInputValueArg = (input: InputSchemaType): string => {
   switch (input.type) {
@@ -9,7 +9,7 @@ export const createInputValueArg = (input: InputSchemaType): string => {
     case FieldDataType.Uri:
       return input.value;
     case FieldDataType.Date:
-      return input.value.utc().format("YYYY-MM-DD"); // 2019-03-06
+      return input.value.format("YYYY-MM-DD"); // 2019-03-06
     case FieldDataType.Number:
       return input.value.toString();
     case FieldDataType.DateTime:

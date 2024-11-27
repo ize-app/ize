@@ -15,8 +15,8 @@ export const AddResultButton = ({
   resultsArrayMethods,
   setResultIndex,
 }: {
-  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
-  resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType>;
+  fieldsArrayMethods: UseFieldArrayReturn<FlowSchemaType, `steps.${number}.fieldSet.fields`>;
+  resultsArrayMethods: UseFieldArrayReturn<FlowSchemaType, `steps.${number}.result`>;
   setResultIndex: Dispatch<SetStateAction<number>>;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

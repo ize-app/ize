@@ -16,7 +16,7 @@ import { SnackbarContext } from "@/hooks/contexts/SnackbarContext";
 
 import { createResponseFormState } from "./createResponseFormState";
 import { ResponseSchemaType, responseSchema } from "./responseValidation";
-import { createFieldAnswersArgs } from "../InputField/createFieldAnswerArgs";
+import { createFieldAnswersArgs } from "../InputField/createMutationArgs/createFieldAnswerArgs";
 import { InputFieldAnswers } from "../InputField/InputFieldAnswers";
 
 export const ResponseForm = ({

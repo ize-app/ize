@@ -9,8 +9,9 @@ import { flowSummarySchema } from "../formValidation/flowSummary";
 export type InputSchemaType = z.infer<typeof inputSchema>;
 export type InputRecordSchemaType = z.infer<typeof inputRecordSchema>;
 
-export type OptionSelectionsSchemaType = z.infer<typeof optionSelectionsSchema>;
-export type OptionSelectionSchemaType = z.infer<typeof optionSelectionSchema>;
+export type OptionSelectionValuesSchemaType = z.infer<typeof optionSelectionValuesSchema>;
+export type OptionSelectionValueSchemaType = z.infer<typeof optionSelectionValueSchema>;
+export type OptionSchemaType = z.infer<typeof optionSchema>;
 
 export const zodDay = z.custom<Dayjs>((val) => {
   if (val instanceof dayjs) {
@@ -24,90 +25,13 @@ const dayjsSchema = z.custom<dayjs.Dayjs>((value) => dayjs.isDayjs(value), {
   message: "Invalid Day.js object",
 });
 
-export const evaluateMultiTypeInput = (
-  value: string,
-  type: FieldDataType,
-  errorPath: (string | number)[],
-  ctx: z.RefinementCtx,
-) => {
-  switch (type) {
-    case FieldDataType.Uri:
-      if (!z.string().url().safeParse(value).success)
-        ctx.addIssue({
-          code: z.ZodIssueCode.invalid_string,
-          validation: "url",
-          message: "Invalid Url",
-          path: errorPath,
-        });
-      return;
-    case FieldDataType.String:
-      if (!z.string().min(1).safeParse(value).success) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.invalid_string,
-          validation: "url",
-          message: "Invalid text",
-          path: errorPath,
-        });
-      }
-      return;
-    case FieldDataType.Number:
-      if (!z.number().or(z.string().min(1)).pipe(z.coerce.number()).safeParse(value).success)
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid number",
-          path: errorPath,
-        });
-      return;
-    case FieldDataType.Date:
-      if (!zodDay.safeParse(value).success)
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid date",
-          path: errorPath,
-        });
-      return;
-    case FieldDataType.DateTime:
-      if (!zodDay.safeParse(value).success)
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid datetime",
-          path: errorPath,
-        });
-      return;
-    case FieldDataType.EntityIds:
-      if (!z.array(entityFormSchema).safeParse(value).success)
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid groups and identities",
-          path: errorPath,
-        });
-      return;
-    case FieldDataType.FlowIds:
-      if (!z.array(flowSummarySchema).safeParse(value).success) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid flows.",
-          path: errorPath,
-        });
-      }
-      return;
-    default:
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Unknown option",
-        path: errorPath,
-      });
-      return;
-  }
-};
-export const optionSelectionSchema = z.object({ optionId: z.string().min(1) });
-export const optionSelectionsSchema = z.array(optionSelectionSchema);
+// the actual values that are selected on an options field
+export const optionSelectionValueSchema = z.object({ optionId: z.string().min(1) });
+export const optionSelectionValuesSchema = z.array(optionSelectionValueSchema);
 
-///////////////////////
-
-export const optionInputSchema = z.object({
+export const optionSelectionInputSchema = z.object({
   type: z.literal(FieldType.Options),
-  value: optionSelectionsSchema,
+  value: optionSelectionValuesSchema,
   required: z.boolean().default(true),
   maxSelections: z.number().nullable().optional(),
   selectionType: z.nativeEnum(OptionSelectionType).optional(),
@@ -156,7 +80,7 @@ export const inputSchema = z
       required: z.boolean().default(true),
       value: z.string().min(1, { message: "Invalid text" }).default(""),
     }),
-    optionInputSchema,
+    optionSelectionInputSchema,
   ])
   .superRefine((field, ctx) => {
     if (field.type === FieldType.Options) {
@@ -170,5 +94,10 @@ export const inputSchema = z
       }
     }
   });
+
+export const optionSchema = z.object({
+  optionId: z.string().uuid(),
+  input: inputSchema,
+});
 
 export const inputRecordSchema = z.record(z.string().min(1), inputSchema);

@@ -37,7 +37,6 @@ interface ResultsFormProps {
 interface ResultFormProps {
   stepIndex: number; // react-hook-form name
   resultIndex: number;
-  id: string;
   locked: boolean;
   reusable: boolean;
   display: boolean;
@@ -47,7 +46,7 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
   const { control, getValues, formState } = useFormContext<FlowSchemaType>();
   const [resultIndex, setResultIndex] = useState(0);
 
-  const resultsArrayMethods = useFieldArray<FlowSchemaType>({
+  const resultsArrayMethods = useFieldArray<FlowSchemaType, `steps.${number}.result`>({
     control,
     name: `steps.${stepIndex}.result`,
   });
@@ -55,7 +54,6 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
   const locked = getValues(`steps.${stepIndex}.fieldSet.locked`);
 
   return (
-    // <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
     <PanelAccordion
       title={"Results"}
       hasError={
@@ -72,14 +70,12 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
         resultsArrayMethods={resultsArrayMethods}
       />
       <hr style={{ width: "100%", borderTop: "1px solid rgba(0, 0, 0, 0.1)" }} />
-      {/* This hidden form is here so that the fields can be added to the response fields array */}
       {resultsArrayMethods.fields.map((item, resIndex) => {
         return (
           <ResultForm
             key={item.id}
             stepIndex={stepIndex}
             resultIndex={resIndex}
-            id={item.id}
             locked={locked}
             reusable={reusable}
             display={resultIndex === resIndex}
@@ -87,11 +83,10 @@ export const ResultsForm = ({ stepIndex, fieldsArrayMethods, reusable }: Results
         );
       })}
     </PanelAccordion>
-    // </Box>
   );
 };
 
-const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: ResultFormProps) => {
+const ResultForm = ({ stepIndex, resultIndex, locked, reusable, display }: ResultFormProps) => {
   const { getValues, formState } = useFormContext<FlowSchemaType>();
 
   const result = getValues(`steps.${stepIndex}.result.${resultIndex}`);
@@ -109,7 +104,6 @@ const ResultForm = ({ stepIndex, id, resultIndex, locked, reusable, display }: R
         width: "100%",
         paddingBottom: "40px",
       }}
-      key={id}
     >
       <LabeledGroupedInputs
         label="Question"

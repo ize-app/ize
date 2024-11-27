@@ -13,8 +13,8 @@ import { FreeInputValue } from "@/components/Field/FreeInputValue";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
 import {
-  OptionSelectionSchemaType,
-  OptionSelectionsSchemaType,
+  OptionSelectionValueSchemaType,
+  OptionSelectionValuesSchemaType,
 } from "../InputField/inputValidation";
 
 interface MultiSelectProps<T extends FieldValues> {
@@ -46,7 +46,7 @@ export const MultiSelect = <T extends FieldValues>({
       control={control}
       render={({ field: { ref, value, onChange, ...inputProps }, fieldState: { error } }) => {
         const handleChange = (value: OptionProps) => {
-          const newArray: OptionSelectionsSchemaType = [...selectedOptions];
+          const newArray: OptionSelectionValuesSchemaType = [...selectedOptions];
           const item = value;
 
           if (newArray.length > 0) {
@@ -79,7 +79,8 @@ export const MultiSelect = <T extends FieldValues>({
                     <Checkbox
                       //eslint-disable-next-line
                       checked={value?.some(
-                        (checked: OptionSelectionSchemaType) => checked.optionId === option.value,
+                        (checked: OptionSelectionValueSchemaType) =>
+                          checked.optionId === option.value,
                       )}
                       checkedIcon={<CheckCircleIcon fontSize="small" />}
                       icon={<RadioButtonUncheckedIcon fontSize="small" />}

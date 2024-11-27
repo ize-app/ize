@@ -4,8 +4,8 @@ import { createFreeInputDefaultValue } from "./createFreeInputDefaultState";
 import {
   InputRecordSchemaType,
   InputSchemaType,
-  OptionSelectionsSchemaType,
-} from "./inputValidation";
+  OptionSelectionValuesSchemaType,
+} from "../inputValidation";
 
 export const createInputRecordsFormState = ({
   fields,
@@ -30,7 +30,7 @@ export const createInputRecordsFormState = ({
         }),
       };
     } else {
-      let optionSelections: OptionSelectionsSchemaType | undefined = undefined;
+      let optionSelections: OptionSelectionValuesSchemaType | undefined = undefined;
       if (f.selectionType === OptionSelectionType.Rank) optionSelections = f.options;
       answer = {
         type: FieldType.Options,

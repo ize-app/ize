@@ -24,9 +24,11 @@ const requestExpirationOptions = [
 ];
 
 export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
-  const { formState, control, getValues } = useFormContext<FlowSchemaType>();
+  const { formState, control, getValues } = useFormContext<
+    FlowSchemaType,
+    `steps.${number}.fieldSet.fields`
+  >();
   const stepError = formState.errors.steps?.[stepIndex];
-  
 
   const fieldsArrayMethods = useFieldArray({
     control: control,

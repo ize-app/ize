@@ -66,8 +66,14 @@ export const generateEvolveConfig = ({
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: approvalOptionId, dataType: FieldDataType.String, name: "✅" },
-        { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "❌" },
+        {
+          optionId: approvalOptionId,
+          input: { type: FieldDataType.String, value: "✅", required: true },
+        },
+        {
+          optionId: crypto.randomUUID(),
+          input: { type: FieldDataType.String, value: "❌", required: true },
+        },
       ],
     },
   };

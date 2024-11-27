@@ -29,7 +29,7 @@ export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType)
 };
 
 export const TriggerFieldsForm = () => {
-  const { control, getValues } = useFormContext<FlowSchemaType>();
+  const { control, getValues } = useFormContext<FlowSchemaType, `fieldSet.fields`>();
   // const { register, setValue } = formMethods;
   // ths def needs to be FlowSchemaType
   const fieldsArrayMethods = useFieldArray({

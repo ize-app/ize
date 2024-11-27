@@ -9,8 +9,8 @@ import { WizardScreenBodyNarrow } from "@/components/Wizard/WizardScreenBodyNarr
 import { RequestDefinedOptionsForm } from "./RequestDefinedOptionsForm";
 import { TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
-import { RequestSchemaType, requestSchema } from "../formValidation";
 import { NewRequestFormSchema, useNewRequestWizardState } from "../newRequestWizard";
+import { RequestSchemaType, requestSchema } from "../requestValidation";
 
 export const RequestForm = () => {
   const { formState, setFormState, onPrev, onNext, nextLabel } = useNewRequestWizardState();

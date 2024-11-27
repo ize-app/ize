@@ -10,7 +10,7 @@ import { FieldDataType } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-import { stringifyFreeInputValue } from "./stringifyFreeInputValue";
+import { stringifyFreeInputValue } from "../Form/InputField/stringifyFreeInputValue";
 
 dayjs.extend(utc);
 

@@ -46,9 +46,6 @@ export const AddOptionButton = <T extends FieldValues>({
         sx={{ position: "relative", alignSelf: "flex-start" }}
         variant="outlined"
         size="small"
-        //   onClick={() => {
-        //     optionsArrayMethods.append(createDefaultOptionState());
-        //   }}
         onClick={handleClick}
       >
         Add option

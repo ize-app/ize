@@ -1,5 +1,5 @@
-import { createFieldAnswersArgs } from "@/components/Form/InputField/createFieldAnswerArgs";
-import { createRequestDefinedOptionsArgs } from "@/components/Form/InputField/createRequestDefinedOptionsArgs";
+import { createFieldAnswersArgs } from "@/components/Form/InputField/createMutationArgs/createFieldAnswerArgs";
+import { createOptionsArgs } from "@/components/Form/InputField/createMutationArgs/createOptionsArgs";
 import {
   FieldAnswerArgs,
   NewRequestArgs,
@@ -19,9 +19,14 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
 
   const requestFields: FieldAnswerArgs[] = createFieldAnswersArgs(request.requestFields);
 
-  const requestDefinedOptions: RequestDefinedOptionsArgs[] = createRequestDefinedOptionsArgs(
+  const requestDefinedOptions: RequestDefinedOptionsArgs[] = Object.entries(
     request.requestDefinedOptions,
-  );
+  ).map(([fieldId, options]) => {
+    return {
+      fieldId,
+      options: createOptionsArgs(options),
+    };
+  });
 
   return { requestId: request.requestId, flowId, requestFields, requestDefinedOptions, name };
 };

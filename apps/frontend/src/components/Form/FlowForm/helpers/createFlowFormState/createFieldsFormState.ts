@@ -1,13 +1,9 @@
-import dayjs from "dayjs";
-
+import { createInputValueFormState } from "@/components/Form/InputField/createFormState/createInputFormState";
+import { OptionSchemaType } from "@/components/Form/InputField/inputValidation";
 import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
-import { Field, FieldDataType, FieldType } from "@/graphql/generated/graphql";
+import { Field, FieldType } from "@/graphql/generated/graphql";
 
-import {
-  FieldOptionSchemaType,
-  FieldSchemaType,
-  FieldsSchemaType,
-} from "../../formValidation/fields";
+import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
 
 export const createFieldsFormState = (
   fields: Field[],
@@ -52,10 +48,14 @@ const createFieldFormState = (field: Field, uuidRemapper: UUIDRemapper): FieldSc
           maxSelections: field.maxSelections,
           selectionType: field.selectionType,
           options: field.options.map(
-            (o): FieldOptionSchemaType => ({
+            (o): OptionSchemaType => ({
               optionId: uuidRemapper.remapId(o.optionId),
-              name: createDataType(o.name, o.dataType),
-              dataType: o.dataType,
+              //@ts-expect-error Typechecking broken here, not sure why
+              input: {
+                value: createInputValueFormState(o.name, o.dataType),
+                type: o.dataType,
+                required: true,
+              },
             }),
           ),
         },
@@ -63,10 +63,4 @@ const createFieldFormState = (field: Field, uuidRemapper: UUIDRemapper): FieldSc
     default:
       throw Error("Invalid field type");
   }
-};
-
-const createDataType = (value: string, dataType: FieldDataType) => {
-  if (dataType === FieldDataType.Date || dataType === FieldDataType.DateTime) {
-    return dayjs.utc(value);
-  } else return value;
 };

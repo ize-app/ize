@@ -2,11 +2,11 @@ import { Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { stringifyFreeInputValue } from "@/components/Field/stringifyFreeInputValue";
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
 import { SelectOption } from "@/components/Form/formFields/Select";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
+import { stringifyFreeInputValue } from "@/components/Form/InputField/stringifyFreeInputValue";
 import { FieldDataType } from "@/graphql/generated/graphql";
 
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
@@ -24,8 +24,14 @@ export const WebhookForm = () => {
     if (webhookTriggerCondition === ActionTriggerCondition.Decision) {
       setValue("optionsConfig", {
         options: [
-          { optionId: crypto.randomUUID(), name: "✅", dataType: FieldDataType.String },
-          { optionId: crypto.randomUUID(), name: "❌", dataType: FieldDataType.String },
+          {
+            optionId: crypto.randomUUID(),
+            input: { value: "✅", type: FieldDataType.String, required: true },
+          },
+          {
+            optionId: crypto.randomUUID(),
+            input: { value: "❌", type: FieldDataType.String, required: true },
+          },
         ],
         triggerDefinedOptions: undefined,
         linkedOptions: { hasLinkedOptions: false },
@@ -44,7 +50,10 @@ export const WebhookForm = () => {
   const refreshOptions = () => {
     const options = (getValues("optionsConfig.options") ?? []).map((option) => ({
       name:
-        stringifyFreeInputValue({ value: option.name as string, dataType: option.dataType }) ?? "",
+        stringifyFreeInputValue({
+          value: option.input.value as string,
+          dataType: option.input.type as FieldDataType,
+        }) ?? "",
       value: option.optionId,
     }));
     setFilterOptions(options);

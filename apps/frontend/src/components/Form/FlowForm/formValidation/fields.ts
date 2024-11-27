@@ -7,10 +7,8 @@ import {
   SystemFieldType,
 } from "@/graphql/generated/graphql";
 
-import { evaluateMultiTypeInput } from "../../InputField/inputValidation";
+import { optionSchema } from "../../InputField/inputValidation";
 
-export type FieldOptionSchemaType = z.infer<typeof fieldOptionSchema>;
-export type FieldOptionsSchemaType = z.infer<typeof fieldOptionsSchema>;
 export type FieldSchemaType = z.infer<typeof fieldSchema>;
 export type FieldsSchemaType = z.infer<typeof fieldsSchema>;
 export type FieldSetSchemaType = z.infer<typeof fieldSetSchema>;
@@ -42,20 +40,6 @@ export const triggerDefinedOptionsSchema = z
   )
   .optional();
 
-export const fieldOptionSchema = z
-  .object({
-    optionId: z.string().uuid(),
-    name: z.any(),
-    dataType: z.nativeEnum(FieldDataType),
-  })
-  .superRefine((option, ctx) => {
-    evaluateMultiTypeInput(option.name as string, option.dataType, ["name"], ctx);
-  });
-// .transform((option) => ({
-//   ...option,
-//   name: option.name.toString(),
-// }));
-
 const fieldOptionsSchema = z
   .object({
     previousStepOptions: z.boolean().default(false),
@@ -71,7 +55,7 @@ const fieldOptionsSchema = z
       .pipe(z.coerce.number())
       .nullable()
       .optional(),
-    options: z.array(fieldOptionSchema).default([]),
+    options: z.array(optionSchema).default([]),
     // array of resultConfig ids
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })

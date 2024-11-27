@@ -1,12 +1,12 @@
 import * as z from "zod";
 
-import { inputRecordSchema, inputSchema } from "../../components/Form/InputField/inputValidation";
+import { inputRecordSchema, optionSchema } from "../../components/Form/InputField/inputValidation";
 
 export type RequestDefinedOptionsRecordSchema = z.infer<typeof requestDefinedOptionsRecordSchema>;
 export type RequestDefinedOptionsFieldSchemaType = z.infer<typeof requestDefinedOptionsFieldSchema>;
 export type RequestSchemaType = z.infer<typeof requestSchema>;
 
-export const requestDefinedOptionsFieldSchema = z.array(inputSchema);
+export const requestDefinedOptionsFieldSchema = z.array(optionSchema);
 
 export const requestDefinedOptionsRecordSchema = z.record(
   z.string().min(1),

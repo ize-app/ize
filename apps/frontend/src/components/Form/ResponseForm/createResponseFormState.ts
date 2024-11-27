@@ -1,7 +1,7 @@
 import { FieldFragment } from "@/graphql/generated/graphql";
 
 import { ResponseSchemaType } from "./responseValidation";
-import { createInputRecordsFormState } from "../InputField/createInputRecordsFormState";
+import { createInputRecordsFormState } from "../InputField/createFormState/createInputRecordsFormState";
 import { InputRecordSchemaType } from "../InputField/inputValidation";
 
 export const createResponseFormState = ({

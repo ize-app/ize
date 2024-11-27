@@ -1,3 +1,4 @@
+import { createOptionsArgs } from "@/components/Form/InputField/createMutationArgs/createOptionsArgs";
 import { FieldArgs, FieldOptionsConfigArgs, FieldType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
@@ -38,13 +39,7 @@ export const createFieldArgs = (field: FieldSchemaType): FieldArgs => {
       maxSelections,
       previousStepOptions,
       requestOptionsDataType: rawOptionsConfig.triggerDefinedOptions?.dataType ?? null,
-      options: rawOptionsConfig.options.map((option) => {
-        return {
-          ...option,
-          //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          name: option.name,
-        };
-      }),
+      options: createOptionsArgs(rawOptionsConfig.options),
       linkedResultOptions: rawOptionsConfig.linkedResultOptions.map(
         (linkedResult) => linkedResult.id,
       ),

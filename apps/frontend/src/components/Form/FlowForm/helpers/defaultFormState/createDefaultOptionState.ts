@@ -1,14 +1,16 @@
-import { createFreeInputDefaultValue } from "@/components/Form/InputField/createFreeInputDefaultState";
+import { createFreeInputDefaultValue } from "@/components/Form/InputField/createFormState/createFreeInputDefaultState";
+import { InputSchemaType, OptionSchemaType } from "@/components/Form/InputField/inputValidation";
 import { FieldDataType } from "@/graphql/generated/graphql";
-
-import { FieldOptionSchemaType } from "../../formValidation/fields";
 
 export const createDefaultOptionState = ({
   dataType,
 }: {
   dataType: FieldDataType;
-}): FieldOptionSchemaType => ({
+}): OptionSchemaType => ({
   optionId: crypto.randomUUID(),
-  name: createFreeInputDefaultValue({ dataType }),
-  dataType: dataType,
+  input: {
+    value: createFreeInputDefaultValue({ dataType }),
+    type: dataType,
+    required: true,
+  } as InputSchemaType,
 });

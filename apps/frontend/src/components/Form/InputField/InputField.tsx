@@ -62,8 +62,8 @@ export const InputField = <T extends FieldValues>({
             name={fieldName}
             required={required}
             label={label}
-            showLabel={true}
-            seperateLabel={true}
+            showLabel={showLabel}
+            seperateLabel={seperateLabel}
           />
         );
       case FieldDataType.DateTime:

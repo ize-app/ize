@@ -7,9 +7,8 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldOption } from "@/components/Field/FieldOption";
 import { formatDataTypeName } from "@/components/Field/formatDataTypeName";
-import { createFreeInputDefaultValue } from "@/components/Form/InputField/createFreeInputDefaultState";
+import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/defaultFormState/createDefaultOptionState";
 import { InputField } from "@/components/Form/InputField/InputField";
-import { InputSchemaType } from "@/components/Form/InputField/inputValidation";
 import {
   FieldDataType,
   FieldType,
@@ -17,7 +16,7 @@ import {
   OptionsFragment,
 } from "@/graphql/generated/graphql";
 
-import { RequestSchemaType } from "../formValidation";
+import { RequestSchemaType } from "../requestValidation";
 
 export const RequestDefinedOptionsForm = ({ flow }: { flow: FlowFragment }) => {
   const fields: OptionsFragment[] = [];
@@ -69,12 +68,6 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
 
   if (!dataType) return;
 
-  const defaultOption: InputSchemaType = {
-    type: dataType,
-    required: true,
-    // @ts-expect-error Typechecking broken here, not sure why
-    value: createFreeInputDefaultValue({ dataType }),
-  };
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Typography color="primary" fontWeight={500} sx={{ marginBottom: "6px" }}>
@@ -107,7 +100,7 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
           return (
             <Box key={item.id} sx={{ display: "flex", marginLeft: "8px" }}>
               <InputField<RequestSchemaType>
-                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.value`}
+                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.input.value`}
                 label={`Option #${inputIndex + 1} (${formatDataTypeName(dataType)})`}
                 dataType={dataType}
                 key={field.fieldId}
@@ -131,7 +124,7 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
             variant="outlined"
             size={"small"}
             onClick={() => {
-              requestDefinedOptionsFormMethods.append(defaultOption);
+              requestDefinedOptionsFormMethods.append(createDefaultOptionState({ dataType }));
             }}
           >
             Add option
