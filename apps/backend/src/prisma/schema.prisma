@@ -293,6 +293,7 @@ model Flow {
   EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
   GroupsWatchedFlows          GroupsWatchedFlows[]
   EntityWatchedFlows          EntityWatchedFlows[]
+  ValueFlows                  ValueFlows[]
 
   @@map("flows")
 }
@@ -325,6 +326,7 @@ model FlowVersion {
   Request            Request[]   @relation("FlowVersion")
   // The request that proposes this flow version as the next version
   EvolutionRequest   Request?    @relation("ProposedFlowVersionEvolution")
+  Value              Value[]
 
   @@map("flow_versions")
 }
@@ -421,8 +423,69 @@ model Entity {
   Flow                 Flow[]
   Request              Request[]
   CreatedGroups        Group[]               @relation("Creator")
+  ValueEntities        ValueEntities[]
 
   @@map("entities")
+}
+
+enum ValueType {
+  OptionSelections
+  String
+  Float
+  Uri
+  Date
+  DateTime
+  FlowVersion
+  Entities
+  Flows
+}
+
+// TODO: add db constraints that require certain fields to be filled out for certain types
+model Value {
+  id                    String                  @id @default(uuid()) @db.Uuid
+  type                  ValueType
+  string                String?
+  float                 Float?
+  date                  DateTime?               @db.Date // Pure date field
+  dateTime              DateTime?
+  flowVersionId         String?                 @map("flow_version_id") @db.Uuid
+  FlowVersion           FlowVersion?            @relation(fields: [flowVersionId], references: [id], onDelete: Cascade)
+  ValueOptionSelections ValueOptionSelections[]
+  ValueEntities         ValueEntities[]
+  ValueFlows            ValueFlows[]
+
+  createdAt    DateTime      @default(now())
+  ResultItems  ResultItems[]
+  FieldAnswers FieldAnswer[]
+  FieldOptions FieldOption[]
+}
+
+model ValueOptionSelections {
+  id       String @id @default(uuid()) @db.Uuid
+  valueId  String @map("value_id") @db.Uuid
+  optionId String @map("option_id") @db.Uuid
+  weight   Float
+
+  Option FieldOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  Value  Value       @relation(fields: [valueId], references: [id], onDelete: Cascade)
+}
+
+model ValueFlows {
+  id      String @id @default(uuid()) @db.Uuid
+  valueId String @map("value_id") @db.Uuid
+  flowId  String @map("flow_id") @db.Uuid
+
+  Value Value @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+}
+
+model ValueEntities {
+  id       String @id @default(uuid()) @db.Uuid
+  valueId  String @map("value_id") @db.Uuid
+  entityId String @map("entity_id") @db.Uuid
+
+  Value  Value  @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  Entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
 }
 
 // List of fields for use in request or response
@@ -440,22 +503,6 @@ model FieldSet {
   @@map("field_sets")
 }
 
-enum FieldDataType {
-  String
-  Number
-  Uri
-  Date
-  DateTime
-  FlowVersionId
-  EntityIds
-  FlowIds
-}
-
-enum FieldType {
-  Options
-  FreeInput
-}
-
 enum SystemFieldType {
   EvolveFlowProposed
   EvolveFlowCurrent
@@ -469,16 +516,15 @@ enum SystemFieldType {
 
 // Describes a single ask for a users input (e.g. select an option)
 model Field {
-  id                String           @id @default(uuid()) @db.Uuid
-  fieldSetId        String           @map("field_set_id") @db.Uuid
-  index             Int
-  type              FieldType
-  name              String
-  required          Boolean          @default(true)
-  isInternal        Boolean          @default(false) @map("is_internal")
-  systemType        SystemFieldType? @map("system_field_type")
-  freeInputDataType FieldDataType?   @map("free_input_data_type")
-  createdAt         DateTime         @default(now()) @map("created_at")
+  id         String           @id @default(uuid()) @db.Uuid
+  fieldSetId String           @map("field_set_id") @db.Uuid
+  index      Int
+  name       String
+  type       ValueType
+  required   Boolean          @default(true)
+  isInternal Boolean          @default(false) @map("is_internal")
+  systemType SystemFieldType? @map("system_field_type")
+  createdAt  DateTime         @default(now()) @map("created_at")
 
   Answers                 FieldAnswer[]
   ResultConfig            ResultConfig[]
@@ -499,20 +545,20 @@ enum OptionSelectionType {
 
 // Describes how a set of options are created on a request 
 model FieldOptionsConfig {
-  id                     String              @id @default(uuid()) @db.Uuid
-  fieldId                String              @unique @map("field_id") @db.Uuid
-  Field                  Field               @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  requestOptionsDataType FieldDataType?      @map("data_type")
-  // Whether or not options are created by the requestor
-  previousStepOptions    Boolean             @default(false) @map("previous_step_options")
-  // Whether option is single or multi-select. Null means no maximum # of selections
-  maxSelections          Int?                @map("max_selections")
-  linkedResultOptions    String[]            @default([]) @map("linked_result_options")
-  // type single select / multi-select / etc
-  selectionType          OptionSelectionType @map("option_selection_type")
-  createdAt              DateTime            @default(now()) @map("created_at")
+  id      String @id @default(uuid()) @db.Uuid
+  fieldId String @unique @map("field_id") @db.Uuid
+  Field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
-  fieldOptionSetId    String?         @map("field_option_set_id") @db.Uuid
+  // type of options that can be created at the trigger, null means options cannot be created
+  triggerOptionsType  ValueType?          @map("trigger_options_type")
+  // Whether option is single or multi-select. Null means no maximum # of selections
+  maxSelections       Int?                @map("max_selections")
+  linkedResultOptions String[]            @default([]) @map("linked_result_options")
+  // type single select / multi-select / etc
+  selectionType       OptionSelectionType @map("option_selection_type")
+  createdAt           DateTime            @default(now()) @map("created_at")
+
+  fieldOptionSetId    String          @map("field_option_set_id") @db.Uuid
   PredefinedOptionSet FieldOptionSet? @relation(fields: [fieldOptionSetId], references: [id])
 
   @@map("field_options_configs")
@@ -530,18 +576,18 @@ model FieldOptionSet {
 }
 
 model FieldOption {
-  id               String        @id @default(uuid()) @db.Uuid
+  id               String   @id @default(uuid()) @db.Uuid
   index            Int
-  fieldOptionSetId String        @map("field_option_set_id") @db.Uuid
-  dataType         FieldDataType @map("data_type")
-  name             String
-  createdAt        DateTime      @default(now()) @map("created_at")
+  fieldOptionSetId String   @map("field_option_set_id") @db.Uuid
+  valueId          String   @map("value_id") @db.Uuid
+  Value            Value    @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now()) @map("created_at")
 
   FieldOptionSet            FieldOptionSet          @relation(fields: [fieldOptionSetId], references: [id], onDelete: Cascade)
-  AnswerOptionSelections    AnswerOptionSelection[]
   DefaultOptionForDecisions ResultConfigDecision[]
   ActionFilter              ActionConfigFilter[]
   ResultItems               ResultItems[]
+  ValueOptionSelections     ValueOptionSelections[]
 
   @@unique([index, fieldOptionSetId])
   @@map("field_options")
@@ -550,48 +596,17 @@ model FieldOption {
 // An answer is either an array of free input responses or option selections for a given field
 model FieldAnswer {
   id         String    @id @default(uuid()) @db.Uuid
-  type       FieldType
+  valueId    String    @map("value_id") @db.Uuid
+  Value      Value     @relation(fields: [valueId], references: [id], onDelete: Cascade)
   responseId String?   @map("response_id") @db.Uuid
   requestId  String?   @map("request_id") @db.Uuid
   fieldId    String    @map("field_id") @db.Uuid
   createdAt  DateTime  @default(now()) @map("created_at")
-
-  Field                  Field                   @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  Response               Response?               @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  Request                Request?                @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  AnswerOptionSelections AnswerOptionSelection[]
-  AnswerFreeInput        AnswerFreeInput?
+  Field      Field     @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  Response   Response? @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  Request    Request?  @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
   @@map("answers")
-}
-
-model AnswerOptionSelection {
-  id                String   @id @default(uuid()) @db.Uuid
-  fieldAnswerId     String   @map("field_answer_id") @db.Uuid
-  fieldOptionId     String   @map("field_option_id") @db.Uuid
-  answerFreeInputId String?  @unique @map("answer_free_input_id") @db.Uuid
-  // score used determining relative weight of option selections (e.g. ranking). higher weight = stronger preference 
-  weight            Int      @default(1)
-  createdAt         DateTime @default(now()) @map("created_at")
-
-  FieldOption     FieldOption      @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)
-  FieldAnswer     FieldAnswer      @relation(fields: [fieldAnswerId], references: [id], onDelete: Cascade)
-  AnswerFreeInput AnswerFreeInput? @relation(fields: [answerFreeInputId], references: [id], onDelete: Cascade)
-
-  @@map("answer_option_selections")
-}
-
-model AnswerFreeInput {
-  id            String        @id @default(uuid()) @db.Uuid
-  dataType      FieldDataType @map("data_type")
-  fieldAnswerId String        @unique @map("field_answer_id") @db.Uuid
-  value         String
-  createdAt     DateTime      @default(now()) @map("created_at")
-
-  FieldAnswer           FieldAnswer            @relation(fields: [fieldAnswerId], references: [id], onDelete: Cascade)
-  AnswerOptionSelection AnswerOptionSelection?
-
-  @@map("answer_free_inputs")
 }
 
 // List of fields for use in request or response
@@ -841,6 +856,7 @@ model RequestDefinedOptionSet {
   FieldOptionSet   FieldOptionSet @relation(fields: [fieldOptionSetId], references: [id])
   // whether these options were defined by triggerer or a result from the previous step
   isTriggerDefined Boolean        @map("is_trigger_defined")
+  createdAt        DateTime       @default(now()) @map("created_at")
 
   @@unique([fieldId, requestId, fieldOptionSetId])
   @@map("request_defined_option_sets")
@@ -888,9 +904,9 @@ model Result {
   resultGroupId String     @map("result_group_id") @db.Uuid
   type          ResultType @map("result_type")
   name          String
-
+  answerCount   Int        @map("answer_count")
   // 0 index is primary result
-  index Int
+  index         Int
 
   ResultGroup ResultGroup   @relation(fields: [resultGroupId], references: [id], onDelete: Cascade)
   ResultItems ResultItems[]
@@ -899,14 +915,13 @@ model Result {
 }
 
 model ResultItems {
-  id            String        @id @default(uuid()) @db.Uuid
-  value         String
-  dataType      FieldDataType @map("data_type")
-  fieldOptionId String?       @map("field_option_id") @db.Uuid
-  resultId      String        @db.Uuid
-  // used for ranking results. higher weight = stronger preference
-  weight        Float         @default(1)
-  createdAt     DateTime      @default(now()) @map("created_at")
+  id            String   @id @default(uuid()) @db.Uuid
+  valueId       String   @map("value_id") @db.Uuid
+  index         Int
+  Value         Value    @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  fieldOptionId String?  @map("field_option_id") @db.Uuid
+  resultId      String   @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
 
   Result Result       @relation(fields: [resultId], references: [id], onDelete: Cascade)
   Option FieldOption? @relation(fields: [fieldOptionId], references: [id], onDelete: Cascade)

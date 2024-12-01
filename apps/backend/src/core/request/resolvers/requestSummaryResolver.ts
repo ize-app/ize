@@ -6,6 +6,7 @@ import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { getResultConfigName } from "@/core/result/resolvers/getResultConfigName";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   ActionStatus,
   RequestSummary,
@@ -16,20 +17,21 @@ import { requestStepStatusResolver } from "./requestStepStatusResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestSummaryPrismaType } from "../requestPrismaTypes";
 
-export const requestSummaryResolver = ({
+export const requestSummaryResolver = async ({
   requestSummary,
-  identityIds,
   groupIds,
-  userId,
+  context,
 }: {
-  requestSummary: RequestSummaryPrismaType;
-  identityIds: string[];
+  context: GraphqlRequestContext;
   groupIds: string[];
-  userId: string | undefined;
-}): RequestSummary => {
+  requestSummary: RequestSummaryPrismaType;
+}): Promise<RequestSummary> => {
   const r = requestSummary;
   const currStep = r.CurrentRequestStep;
   if (!currStep) throw Error("Request does not have current request step");
+
+  // const groupIds: string[] = await getGroupIdsOfUser({ user: context.currentUser });
+  const identityIds: string[] = (context.currentUser?.Identities ?? []).map((id) => id.id) ?? [];
 
   const resultGroup = currStep.ResultGroups.find((rg) => rg.complete);
   const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigs.find(
@@ -60,10 +62,11 @@ export const requestSummaryResolver = ({
     : null;
 
   const result = resultGroup
-    ? resultGroupResolver({
+    ? await resultGroupResolver({
         resultGroup,
         responseFinal: currStep.responseFinal,
         resultsFinal: currStep.resultsFinal,
+        context,
       })
     : null;
 
@@ -104,7 +107,7 @@ export const requestSummaryResolver = ({
             permission: currStep.Step.ResponseConfig?.ResponsePermissions,
             groupIds: groupIds,
             identityIds: identityIds,
-            userId,
+            userId: context.currentUser?.id,
           })
         : false,
       result,

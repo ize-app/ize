@@ -1,17 +1,24 @@
-import { FieldDataType, Option } from "@/graphql/generated/resolver-types";
+import { valueResolver } from "@/core/value/valueResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
+import { Option } from "@/graphql/generated/resolver-types";
 
 import { FieldOptionSetPrismaType } from "../fieldPrismaTypes";
 
 export const fieldOptionSetResolver = ({
   fieldOptionSet,
+  context,
 }: {
   fieldOptionSet: FieldOptionSetPrismaType | null | undefined;
+  context: GraphqlRequestContext;
 }) => {
-  return (fieldOptionSet?.FieldOptions ?? []).map(
-    (option): Option => ({
+  if (!fieldOptionSet) {
+    return [];
+  }
+
+  return fieldOptionSet.FieldOptions.map((option): Option => {
+    return {
       optionId: option.id,
-      name: option.name,
-      dataType: option.dataType as FieldDataType,
-    }),
-  );
+      value: valueResolver({ type: "option", value: option.Value, context }),
+    };
+  });
 };

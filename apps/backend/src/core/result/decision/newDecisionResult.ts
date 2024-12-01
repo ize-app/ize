@@ -1,6 +1,9 @@
-import { FieldDataType, FieldOption, ResultType } from "@prisma/client";
+import { FieldOption, Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
+import { newValue } from "@/core/value/newValue";
+import { validateValue } from "@/core/value/validateValue";
+import { ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { determineDecision } from "./determineDecision";
@@ -12,10 +15,12 @@ export const newDecisionResult = async ({
   resultConfig,
   fieldAnswers,
   requestStepId,
+  transaction,
 }: {
   resultConfig: ResultConfigPrismaType;
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
+  transaction: Prisma.TransactionClient;
 }): Promise<NewResultArgs[] | null> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
   let decisionResultArgs: NewResultArgs | undefined;
@@ -53,29 +58,33 @@ export const newDecisionResult = async ({
       // if decisionFieldOption is null, the decision was not made but we still
       // need to make a result record of no decision
       type: ResultType.Decision,
+      answerCount: fieldAnswers.length,
       ResultItems: decisionFieldOption
         ? {
             create: {
-              dataType: decisionFieldOption.dataType,
-              value: decisionFieldOption.name,
+              index: 0,
+              valueId: decisionFieldOption.valueId,
               fieldOptionId: decisionFieldOption.id,
             },
           }
         : undefined,
     };
 
-    decisionExplainationResultArgs = decisionExplanation
-      ? {
-          name: "Explanation of AI decision",
-          type: ResultType.LlmSummary,
-          ResultItems: {
-            create: {
-              dataType: FieldDataType.String,
-              value: decisionExplanation,
-            },
+    if (decisionExplanation) {
+      const validatedValue = validateValue({ type: ValueType.String, value: decisionExplanation });
+      const valueId = await newValue({ value: validatedValue, transaction });
+      decisionExplainationResultArgs = {
+        name: "Explanation of AI decision",
+        type: ResultType.LlmSummary,
+        answerCount: fieldAnswers.length,
+        ResultItems: {
+          create: {
+            index: 0,
+            valueId,
           },
-        }
-      : undefined;
+        },
+      };
+    }
 
     newResultArgs.push(decisionResultArgs);
     if (decisionExplainationResultArgs) newResultArgs.push(decisionExplainationResultArgs);

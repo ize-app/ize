@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ValueType } from "@prisma/client";
 
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { FieldType, LlmSummaryArgs } from "@/graphql/generated/resolver-types";
+import { LlmSummaryArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newLlmSummaryConfig = async ({
@@ -15,8 +15,8 @@ export const newLlmSummaryConfig = async ({
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
-  if (responseField.type !== FieldType.FreeInput)
-    throw new GraphQLError("Free input field required for llm summary result.", {
+  if (responseField.type === ValueType.OptionSelections)
+    throw new GraphQLError("Llm summary result cannot be for an options field.", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
 

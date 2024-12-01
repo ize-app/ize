@@ -17,7 +17,14 @@ export const groupWatchFlow = async ({
     include: {
       Request: {
         include: {
-          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+          TriggerFieldAnswers: {
+            include: {
+              Field: true,
+              Value: {
+                include: { ValueFlows: true },
+              },
+            },
+          },
         },
       },
       Step: {
@@ -59,19 +66,19 @@ export const groupWatchFlow = async ({
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  if (flowsToWatch && flowsToWatch.AnswerFreeInput?.value) {
-    const flowIds: string[] = JSON.parse(flowsToWatch.AnswerFreeInput.value) as string[];
+  if (flowsToWatch && flowsToWatch.Value.ValueFlows) {
+    const flows = flowsToWatch.Value.ValueFlows;
     await transaction.groupsWatchedFlows.createMany({
-      data: flowIds.map((flowId) => ({
+      data: flows.map((flow) => ({
         groupId,
-        flowId,
+        flowId: flow.flowId,
         watched: true,
       })),
     });
   }
 
-  if (flowsToStopWatching && flowsToStopWatching.AnswerFreeInput?.value) {
-    const flowIds: string[] = JSON.parse(flowsToStopWatching.AnswerFreeInput.value) as string[];
+  if (flowsToStopWatching && flowsToStopWatching.Value.ValueFlows) {
+    const flowIds = flowsToStopWatching.Value.ValueFlows.map((flow) => flow.flowId);
     await transaction.groupsWatchedFlows.deleteMany({
       where: {
         groupId,

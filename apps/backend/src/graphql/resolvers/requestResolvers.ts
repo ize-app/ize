@@ -73,7 +73,7 @@ const getRequests: QueryResolvers["getRequests"] = async (
   args: QueryGetRequestsArgs,
   context: GraphqlRequestContext,
 ): Promise<RequestSummary[]> => {
-  return await getRequestSummariesService({ args, user: context.currentUser });
+  return await getRequestSummariesService({ args, context });
 };
 
 const newResponse: MutationResolvers["newResponse"] = async (

@@ -13,19 +13,22 @@ export const apolloClient = new ApolloClient({
     // apollo client needs help understanding union types
     possibleTypes: {
       Entity: ["Identity", "Group", "User"],
-      Field: ["Options", "FreeInput"],
+      Input: [
+        "OptionsInput",
+        "StringInput",
+        "FloatInput",
+        "UriInput",
+        "DateInput",
+        "DateTimeInput",
+        "EntitiesInput",
+        "FlowsInput",
+        "FlowVersionInput",
+      ],
       ResultConfig: ["Decision", "Ranking", "LlmSummary", "RawAnswers"],
       Action: ["CallWebhook", "EvolveFlow", "TriggerStep", "EvolveGroup", "GroupWatchFlow"],
       DecisionTypes: ["AbsoluteDecision", "PercentageDecision", "WeightedAverage", "Ai"],
       IdentityType: ["IdentityBlockchain", "IdentityEmail", "IdentityDiscord", "IdentityTelegram"],
       GroupType: ["DiscordRoleGroup", "GroupNft", "GroupIze", "GroupTelegramChat "],
-      FieldAnswer: [
-        "OptionFieldAnswer",
-        "FreeInputFieldAnswer",
-        "EntitiesFieldAnswer",
-        "FlowsFieldAnswer",
-        "WebhookFieldAnswer",
-      ],
     },
     typePolicies: {
       Query: {

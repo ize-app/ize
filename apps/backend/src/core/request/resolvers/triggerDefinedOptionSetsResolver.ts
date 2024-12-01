@@ -1,4 +1,5 @@
 import { fieldOptionSetResolver } from "@/core/fields/resolvers/fieldOptionSetResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import { Flow, TriggerDefinedOptions } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -7,9 +8,11 @@ import { RequestDefinedOptionSetPrismaType } from "../requestPrismaTypes";
 export const triggerDefinedOptionSetsResolver = ({
   triggerDefinedOptionSets,
   flow,
+  context,
 }: {
   triggerDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
   flow: Flow;
+  context: GraphqlRequestContext;
 }): TriggerDefinedOptions[] => {
   return triggerDefinedOptionSets
     .map((options) => {
@@ -34,7 +37,10 @@ export const triggerDefinedOptionSetsResolver = ({
       return {
         fieldId: options.fieldId,
         fieldName,
-        options: fieldOptionSetResolver({ fieldOptionSet: options.FieldOptionSet }),
+        options: fieldOptionSetResolver({
+          fieldOptionSet: options.FieldOptionSet,
+          context,
+        }),
       };
     })
     .filter((options) => options !== null);

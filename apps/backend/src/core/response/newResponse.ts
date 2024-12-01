@@ -68,7 +68,10 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
         },
       );
 
-    if (!requestStep.Step.ResponseFieldSet || requestStep.Step.ResponseFieldSet.Fields.every((f) => f.isInternal))
+    if (
+      !requestStep.Step.ResponseFieldSet ||
+      requestStep.Step.ResponseFieldSet.Fields.every((f) => f.isInternal)
+    )
       throw new GraphQLError(
         `Response received for request step that does not have response fields ${requestStepId}`,
         {
@@ -126,6 +129,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     });
 
     await newFieldAnswers({
+      type: "response",
       fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
       requestDefinedOptionSets: requestStep.Request.RequestDefinedOptionSets,

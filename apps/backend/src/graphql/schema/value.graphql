@@ -1,0 +1,76 @@
+enum ValueType {
+  OptionSelections
+  String
+  Float
+  Uri
+  Date
+  DateTime
+  FlowVersion
+  Entities
+  Flows
+}
+
+
+union Value =
+  | OptionSelectionsValue
+  | StringValue
+  | FloatValue
+  | UriValue
+  | DateValue
+  | DateTimeValue
+  | EntitiesValue
+  | FlowsValue
+  | FlowVersionValue
+
+# this should have all the possible values except OptionSelectionsValue
+union OptionValue =
+  | StringValue
+  | FloatValue
+  | UriValue
+  | DateValue
+  | DateTimeValue
+  | EntitiesValue
+  | FlowsValue
+  | FlowVersionValue
+
+type OptionSelection {
+  optionId: String!
+  weight: Int!
+  value: Value!
+}
+
+type OptionSelectionsValue {
+  selections: [OptionSelection!]!
+}
+
+type StringValue {
+  value: String!
+}
+
+type FloatValue {
+  float: Float!
+}
+
+type UriValue {
+  uri: String!
+}
+
+type DateValue {
+  date: String! # ISO 8601 Date
+}
+
+type DateTimeValue {
+  dateTime: String! # YYYY-MM-DD
+}
+
+type EntitiesValue {
+  entities: [Entity!]!
+}
+
+type FlowsValue {
+  flows: [FlowReference!]!
+}
+
+type FlowVersionValue {
+  flowVersion: FlowReference!
+}

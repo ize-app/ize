@@ -1,4 +1,4 @@
-import { FlowVersionPrismaType, createFlowInclude } from "@/core/flow/flowPrismaTypes";
+import { createFlowInclude } from "@/core/flow/flowPrismaTypes";
 import { prisma } from "@/prisma/client";
 import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { FlowType, MutationNewRequestArgs } from "@graphql/generated/resolver-types";
@@ -9,6 +9,7 @@ import { canEndRequestStepWithResponse } from "./utils/endRequestStepWithoutResp
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { getUserEntities } from "../entity/getUserEntities";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
+import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
 import { getEntityPermissions } from "../permission/getEntityPermissions";
@@ -109,14 +110,30 @@ export const newRequest = async ({
       },
     });
 
-    const requestDefinedOptionSets = await Promise.all(
+    await Promise.all(
       requestDefinedOptions.map(async (r) => {
+        let field: FieldPrismaType | undefined = undefined;
+        for (const step of flow.CurrentFlowVersion?.Steps ?? []) {
+          field = step.ResponseFieldSet?.Fields.find((f) => f.id === r.fieldId);
+          if (field) break;
+        }
+        if (!field)
+          throw new GraphQLError("Cannot find field for trigger defined options", {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          });
+
+        const triggerOptionsType = field.FieldOptionsConfig?.triggerOptionsType;
+        if (!triggerOptionsType)
+          throw new GraphQLError(`Field does not allow trigger defined options: ${field.id}`, {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          });
+
         return await createRequestDefinedOptionSet({
-          flowVersion: flow.CurrentFlowVersion as FlowVersionPrismaType,
+          type: "trigger",
+          valueType: triggerOptionsType,
           requestId: request.id,
           newOptionArgs: r.options,
           fieldId: r.fieldId,
-          isTriggerDefinedOptions: true,
           transaction,
         });
       }),
@@ -126,9 +143,9 @@ export const newRequest = async ({
 
     if (flow.CurrentFlowVersion?.TriggerFieldSet) {
       await newFieldAnswers({
+        type: "request",
         fieldSet: flow.CurrentFlowVersion?.TriggerFieldSet,
         fieldAnswers: requestFields,
-        requestDefinedOptionSets: requestDefinedOptionSets,
         requestId: request.id,
         transaction,
       });

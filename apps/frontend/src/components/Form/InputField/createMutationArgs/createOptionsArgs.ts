@@ -4,17 +4,6 @@ import { RequestDefinedOptionsRecordSchema } from "@/pages/NewRequest/requestVal
 import { createInputValueArg } from "./createInputValueArg";
 import { OptionSchemaType } from "../inputValidation";
 
-export const createRequestDefinedOptionsArgs = (
-  requestDefinedOptions: RequestDefinedOptionsRecordSchema,
-): RequestDefinedOptionsArgs[] => {
-  return Object.entries(requestDefinedOptions).map(([fieldId, options]) => {
-    return {
-      fieldId,
-      options: createOptionsArgs(options),
-    };
-  });
-};
-
 export const createOptionsArgs = (options: OptionSchemaType[]): FieldOptionArgs[] => {
   return options
     .map(

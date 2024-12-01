@@ -46,42 +46,44 @@ export const newResult = async ({
   });
 
   try {
-    // TODO set result status to complete on success
-    let newResultArgs: NewResultArgs[] | null = [];
-    switch (resultConfig.resultType) {
-      case ResultType.Decision: {
-        newResultArgs = await newDecisionResult({
-          resultConfig,
-          fieldAnswers,
-          requestStepId,
-        });
-        break;
-      }
-      case ResultType.LlmSummary: {
-        newResultArgs = await newLlmSummaryResult({
-          resultConfig,
-          requestStepId,
-        });
-        break;
-      }
-      case ResultType.Ranking: {
-        newResultArgs = await newRankingResult({ resultConfig, fieldAnswers, requestStepId });
-        break;
-      }
-
-      case ResultType.RawAnswers: {
-        newResultArgs = newRawAnswersResult({ resultConfig, fieldAnswers, requestStepId });
-        break;
-      }
-
-      // default: {
-      //   throw Error("Unknown result type");
-      // }
-    }
-
-    if (!newResultArgs) throw Error("Result config did not generate a result");
-
     return await prisma.$transaction(async (transaction): Promise<void> => {
+      // TODO set result status to complete on success
+      let newResultArgs: NewResultArgs[] | null = [];
+      switch (resultConfig.resultType) {
+        case ResultType.Decision: {
+          newResultArgs = await newDecisionResult({
+            resultConfig,
+            fieldAnswers,
+            requestStepId,
+            transaction,
+          });
+          break;
+        }
+        case ResultType.LlmSummary: {
+          newResultArgs = await newLlmSummaryResult({
+            resultConfig,
+            requestStepId,
+            fieldAnswers,
+            transaction,
+          });
+          break;
+        }
+        case ResultType.Ranking: {
+          newResultArgs = await newRankingResult({ resultConfig, fieldAnswers, requestStepId });
+          break;
+        }
+
+        case ResultType.RawAnswers: {
+          newResultArgs = newRawAnswersResult({ resultConfig, fieldAnswers, requestStepId });
+          break;
+        }
+
+        // default: {
+        //   throw Error("Unknown result type");
+        // }
+      }
+
+      if (!newResultArgs) throw Error("Result config did not generate a result");
       // Delete existing individual results if they exist
       if (existingResultGroup) {
         const existingResults = existingResultGroup.Result.map((r) => r.id);

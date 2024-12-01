@@ -4,6 +4,7 @@ import {
   FieldOptionsConfigArgs,
   FieldSetArgs,
   OptionSelectionType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -63,13 +64,16 @@ export const newFieldSet = async ({
           name: f.name,
           type: f.type,
           systemType: f.systemType,
-          freeInputDataType: f.freeInputDataType,
           isInternal: f.isInternal,
           required: f.required,
         },
       });
 
-      if (f.optionsConfig) {
+      if (f.type === ValueType.OptionSelections) {
+        if (!f.optionsConfig)
+          throw new GraphQLError(`Options field is missing options args`, {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          });
         await createFieldOptionsConfig({
           fieldId: field.id,
           fieldOptionsConfigArgs: f.optionsConfig,
@@ -100,10 +104,10 @@ const createFieldOptionsConfig = async ({
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   // if option Configs hasn't changed, just use the existing Id
-  const { selectionType, options, maxSelections, requestOptionsDataType, linkedResultOptions } =
+  const { selectionType, options, maxSelections, triggerOptionsType, linkedResultOptions } =
     fieldOptionsConfigArgs;
 
-  const optionSetId = await newOptionSet({ optionsArgs: options, transaction });
+  const optionSetId = await newOptionSet({ type: "newValues", optionsArgs: options, transaction });
   const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
       fieldId,
@@ -113,7 +117,7 @@ const createFieldOptionsConfig = async ({
           : selectionType === OptionSelectionType.Select
             ? 1
             : null,
-      requestOptionsDataType,
+      triggerOptionsType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((linkedResultConfigId) => {
         // validating that resultConfigId exists in the flow

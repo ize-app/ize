@@ -1,5 +1,6 @@
-import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { getRequestByRequestStepId } from "@/core/request/getRequestByRequestStepId";
 
+import { getFieldForRequestConfigId } from "./getFieldForRequestConfigId";
 import { openAiClient } from "./openAiClient";
 import { createIzeSystemPrompt } from "./prompt/createIzeSystemPrompt";
 import { createLlmSummaryPrompt } from "./prompt/createLlmSummaryPrompt";
@@ -7,18 +8,22 @@ import { createRequestContextPrompt } from "./prompt/createRequestContextPrompt"
 import { createResponsesPrompt } from "./prompt/createResponsesPrompt";
 
 export const generateAiSummary = async ({
-  requestPayload,
+  requestStepId,
   summaryPrompt,
   exampleOutput,
   isList,
   resultConfigId,
 }: {
-  requestPayload: RequestPayload;
+  requestStepId: string;
   summaryPrompt: string;
   exampleOutput?: string | null;
   resultConfigId: string;
   isList: boolean;
 }): Promise<string[]> => {
+  const request = await getRequestByRequestStepId({ requestStepId });
+
+  const field = getFieldForRequestConfigId({ request, requestStepId, resultConfigId });
+
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
     messages: [
@@ -26,10 +31,10 @@ export const generateAiSummary = async ({
         role: "system",
         content: createIzeSystemPrompt(),
       },
-      { role: "user", content: createRequestContextPrompt({ requestPayload, resultConfigId }) },
+      { role: "user", content: createRequestContextPrompt({ request, requestStepId }) },
       {
         role: "user",
-        content: createResponsesPrompt({ fieldAnswers: requestPayload.fieldAnswers ?? [] }),
+        content: createResponsesPrompt({ request, fieldId: field.fieldId }),
       },
       { role: "user", content: createLlmSummaryPrompt({ isList, summaryPrompt, exampleOutput }) },
     ],

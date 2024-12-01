@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { DecisionArgs, DecisionType, FieldType } from "@/graphql/generated/resolver-types";
+import { DecisionArgs, DecisionType, ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newDecisionConfig = async ({
@@ -22,7 +22,7 @@ export const newDecisionConfig = async ({
 
   // Doing these manual checks in case a decision config has settings that
   // aren't relevant to that decision type
-  if (responseField.type !== FieldType.Options) {
+  if (responseField.type !== ValueType.OptionSelections) {
     throw new GraphQLError("Option field required for decision result", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });

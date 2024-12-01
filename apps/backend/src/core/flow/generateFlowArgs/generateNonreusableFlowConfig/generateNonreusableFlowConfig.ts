@@ -1,13 +1,12 @@
 import {
   ActionType,
   DecisionType,
-  FieldDataType,
-  FieldType,
   FlowType,
   NewFlowArgs,
   OptionSelectionType,
   PermissionArgs,
   ResultType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 
 export enum FlowConfigGeneration {
@@ -55,11 +54,10 @@ export const generateNonreusableFlowConfig = ({
               fields: [
                 {
                   fieldId: crypto.randomUUID(),
-                  type: FieldType.FreeInput,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -106,11 +104,10 @@ export const generateNonreusableFlowConfig = ({
               fields: [
                 {
                   fieldId: responseFieldId,
-                  type: FieldType.FreeInput,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -150,11 +147,10 @@ export const generateNonreusableFlowConfig = ({
           fields: [
             {
               fieldId: crypto.randomUUID(),
-              type: FieldType.FreeInput,
+              type: ValueType.String,
               name: prompt,
               isInternal: false,
               required: true,
-              freeInputDataType: FieldDataType.String,
             },
           ],
           locked: false,
@@ -166,11 +162,10 @@ export const generateNonreusableFlowConfig = ({
               fields: [
                 {
                   fieldId: step1ResponseFieldId,
-                  type: FieldType.FreeInput,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -198,14 +193,12 @@ export const generateNonreusableFlowConfig = ({
               fields: [
                 {
                   fieldId: step2ResponseFieldId,
-                  type: FieldType.Options,
+                  type: ValueType.OptionSelections,
                   name: prompt,
                   isInternal: true,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                   optionsConfig: {
                     options: [],
-                    previousStepOptions: true,
                     selectionType: OptionSelectionType.Select,
                     linkedResultOptions: [step1ResultId],
                   },

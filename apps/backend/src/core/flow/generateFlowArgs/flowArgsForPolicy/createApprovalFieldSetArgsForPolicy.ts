@@ -1,10 +1,9 @@
 import {
   FieldArgs,
-  FieldDataType,
-  FieldType,
   GroupFlowPolicyArgs,
   GroupFlowPolicyType,
   OptionSelectionType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 
 export const createApprovalFieldSetArgsForPolicy = ({
@@ -21,19 +20,18 @@ export const createApprovalFieldSetArgsForPolicy = ({
   const approveOptionId = crypto.randomUUID();
 
   const responseApprovalFieldArgs: FieldArgs = {
-    type: FieldType.Options,
+    type: ValueType.OptionSelections,
     fieldId: crypto.randomUUID(),
     isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {
-      previousStepOptions: false,
       maxSelections: 1,
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: approveOptionId, dataType: FieldDataType.String, name: "✅" },
-        { optionId: crypto.randomUUID(), dataType: FieldDataType.String, name: "❌" },
+        { optionId: approveOptionId, type: ValueType.String, value: "✅" },
+        { optionId: crypto.randomUUID(), type: ValueType.String, value: "❌" },
       ],
     },
   };

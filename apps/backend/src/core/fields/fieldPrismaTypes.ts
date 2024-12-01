@@ -1,7 +1,14 @@
 import { Prisma } from "@prisma/client";
 
+import { valueBaseInclude, valueInclude } from "../value/valuePrismaTypes";
+
 export const fieldOptionSetInclude = Prisma.validator<Prisma.FieldOptionSetInclude>()({
   FieldOptions: {
+    include: {
+      Value: {
+        include: valueBaseInclude, // value base excludes option type
+      },
+    },
     orderBy: {
       index: "asc",
     },
@@ -46,8 +53,9 @@ export type FieldSetPrismaType = Prisma.FieldSetGetPayload<{
 }>;
 
 export const fieldAnswerInclude = Prisma.validator<Prisma.FieldAnswerInclude>()({
-  AnswerFreeInput: true,
-  AnswerOptionSelections: true,
+  Value: {
+    include: valueInclude,
+  },
 });
 
 export type FieldAnswerPrismaType = Prisma.FieldAnswerGetPayload<{

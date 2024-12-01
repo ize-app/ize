@@ -4,7 +4,6 @@ import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefin
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { canEndRequestStepWithResponse } from "@/core/request/utils/endRequestStepWithoutResponse";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
-import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ExecuteActionReturn } from "./executeAction";
@@ -85,13 +84,12 @@ export const triggerNextStep = async ({
         connect: {
           id: requestStepId,
         },
-      }
+      },
       // triggeredByRequestStepId: requestStepId,
     },
   });
 
-  // create a map with an object of resultConfigId and fieldId as the key and options args as the value
-  const linkedResults = new Map<{ resultConfigId: string; fieldId: string }, FieldOptionArgs[]>();
+  const linkedResults = new Map<{ resultConfigId: string; fieldId: string }, string[]>();
 
   (nextStep.ResponseFieldSet?.Fields ?? []).forEach((f) => {
     const linkedResultConfigIds = f.FieldOptionsConfig?.linkedResultOptions;
@@ -112,13 +110,7 @@ export const triggerNextStep = async ({
         // tbd if should throw an error
         if (!result) return;
 
-        const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
-          return {
-            optionId: crypto.randomUUID(),
-            dataType: ri.dataType as unknown as FieldDataType,
-            name: ri.value,
-          };
-        });
+        const newOptionArgs: string[] = result.ResultItems.map((ri) => ri.valueId);
 
         linkedResults.set({ resultConfigId, fieldId: f.id }, newOptionArgs);
       });
@@ -126,13 +118,12 @@ export const triggerNextStep = async ({
   });
 
   await Promise.all(
-    Array.from(linkedResults.entries()).map(async ([{ fieldId }, optionArgs]) => {
+    Array.from(linkedResults.entries()).map(async ([{ fieldId }, valueIds]) => {
       return await createRequestDefinedOptionSet({
-        flowVersion: reqData.Request.FlowVersion,
+        type: "result",
         requestId: reqData.requestId,
-        newOptionArgs: optionArgs,
+        valueIds,
         fieldId,
-        isTriggerDefinedOptions: false,
         transaction,
       });
     }),

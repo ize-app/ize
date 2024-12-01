@@ -8,7 +8,11 @@ export const createFieldAnswersArgs = (
 ): FieldAnswerArgs[] => {
   const res = Object.entries((fieldAnswers ?? []) as InputRecordSchemaType).map(
     (entry): FieldAnswerArgs | null => {
+      // TODO make this so that it creates weights
       if (entry[1].type === FieldType.Options) {
+        ////////
+        // TODO make this so that it creates weights
+        ////////
         if (entry[1].value.length === 0) return null;
         return {
           fieldId: entry[0],

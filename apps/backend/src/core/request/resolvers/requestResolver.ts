@@ -48,32 +48,30 @@ export const requestResolver = async ({
     context,
   });
 
-  const requestSteps = await Promise.all(
-    req.RequestSteps.sort((a, b) => {
-      const aIndex = req.FlowVersion.Steps.find((step) => step.id === a.stepId);
-      const bIndex = req.FlowVersion.Steps.find((step) => step.id === b.stepId);
-      if (!aIndex || !bIndex)
-        throw new GraphQLError("Cannot find corresponding flow step for request step.", {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        });
-      return aIndex.index - bIndex.index;
-    }).map(async (reqStep) => {
-      const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);
-      if (!step)
-        throw new GraphQLError("Cannot find corresponding flow step for request step.", {
-          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-        });
-      return await requestStepResolver({
-        reqStep,
-        step,
-        userId: context.currentUser?.id,
-        responseFieldsCache,
-        resultConfigsCache,
-        requestDefinedOptionSets,
-        context,
+  const requestSteps = req.RequestSteps.sort((a, b) => {
+    const aIndex = req.FlowVersion.Steps.find((step) => step.id === a.stepId);
+    const bIndex = req.FlowVersion.Steps.find((step) => step.id === b.stepId);
+    if (!aIndex || !bIndex)
+      throw new GraphQLError("Cannot find corresponding flow step for request step.", {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
-    }),
-  );
+    return aIndex.index - bIndex.index;
+  }).map((reqStep) => {
+    const step = req.FlowVersion.Steps.find((step) => step.id === reqStep.stepId);
+    if (!step)
+      throw new GraphQLError("Cannot find corresponding flow step for request step.", {
+        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+      });
+    return requestStepResolver({
+      reqStep,
+      step,
+      userId: context.currentUser?.id,
+      responseFieldsCache,
+      resultConfigsCache,
+      requestDefinedOptionSets,
+      context,
+    });
+  });
 
   const Request: Request = {
     name: req.name,
@@ -83,15 +81,15 @@ export const requestResolver = async ({
     currentStepIndex: getRequestStepIndex(req, req.currentRequestStepId),
     final: req.final,
     requestId: req.id,
-    triggerFieldAnswers: await triggerFieldAnswersResolver({
+    triggerFieldAnswers: triggerFieldAnswersResolver({
       fields: flow.fieldSet.fields,
       answers: req.TriggerFieldAnswers,
-      creator,
       context,
     }),
     triggerDefinedOptions: triggerDefinedOptionSetsResolver({
       triggerDefinedOptionSets: req.RequestDefinedOptionSets,
       flow,
+      context,
     }),
     requestSteps: requestSteps,
   };

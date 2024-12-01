@@ -50,12 +50,14 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
     });
 
   if (decConfig.defaultOptionId) {
-    if (field?.__typename !== "Options")
+    if (!field.optionsConfig)
       throw new GraphQLError("Default option specififed but field is not an Options type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    defaultOption = field.options.find((option) => option.optionId === decConfig.defaultOptionId);
+    defaultOption = field.optionsConfig.options.find(
+      (option) => option.optionId === decConfig.defaultOptionId,
+    );
     if (!defaultOption)
       throw new GraphQLError("Cannot find default option for decision", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },

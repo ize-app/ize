@@ -35,6 +35,7 @@ export const newRankingResult = async ({
       type: "fieldAnswer",
       answers: fieldAnswers,
     });
+    
     rankFieldOptions = await prisma.fieldOption.findMany({
       where: {
         id: {
@@ -45,23 +46,31 @@ export const newRankingResult = async ({
     rankResultArgs = {
       name: "Ranking",
       type: ResultType.Ranking,
+      answerCount: fieldAnswers.length,
       ResultItems: {
         createMany: {
           data: rankFieldOptions
-            .map((option) => ({
-              dataType: option.dataType,
-              value: option.name,
-              fieldOptionId: option.id,
-              // calculate average weight of each option
-              weight: optionCount[option.id] / fieldAnswers.length,
-            }))
-            // rank in ascending order of weight
+            .map((option) => {
+              return {
+                valueId: option.valueId,
+                fieldOptionId: option.id,
+                // calculate average weight of each option
+                weight: optionCount[option.id] / fieldAnswers.length,
+              };
+            })
+            // rank in desccending order of weight
             .sort((a, b) => b.weight - a.weight)
+            .map((option, index) => {
+              return {
+                ...option,
+                index,
+              };
+            })
             .slice(0, rankConfig.numOptionsToInclude ?? undefined),
         },
       },
     };
-    return [rankResultArgs];
+    return rankResultArgs ? [rankResultArgs] : null;
   } catch (e) {
     console.error(
       `ERROR determining ranking result for resultConfigId ${resultConfig.id} requestStepId ${requestStepId}`,

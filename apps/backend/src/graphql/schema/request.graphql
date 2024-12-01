@@ -36,7 +36,7 @@ input NewEvolveRequestArgs {
 
 input RequestDefinedOptionsArgs {
   fieldId: String!
-  options: [FieldOptionArgs!]!
+  options: [OptionArgs!]!
 }
 
 input NewResponseArgs {
@@ -75,6 +75,7 @@ enum RequestStepRespondPermissionFilter {
 }
 
 type Request {
+  requestId: String!
   # refers to flow version at time of request, not necessarily the current flow
   name: String!
   flow: Flow!
@@ -88,6 +89,11 @@ type Request {
   requestSteps: [RequestStep!]!
 }
 
+type TriggerContext {
+  answers: [TriggerFieldAnswer!]!
+  options: [TriggerDefinedOptions!]!
+}
+
 type TriggerDefinedOptions {
   fieldId: String!
   fieldName: String!
@@ -96,11 +102,12 @@ type TriggerDefinedOptions {
 
 type RequestStep {
   requestStepId: String!
+  stepId: String!
   createdAt: String!
   expirationDate: String!
-  responseFieldAnswers: [ResponseFieldAnswers!]!
+  answers: [ResponseFieldAnswers!]!
   fieldSet: FieldSet!
-  userResponses: [Response!]!
+  userResponded: Boolean!
   results: [ResultGroup!]!
   actionExecution: ActionExecution
   status: RequestStepStatuses!
@@ -135,23 +142,18 @@ type RequestStepActionSummary {
   status: ActionStatus!
 }
 
-type Response {
-  responseId: String!
-  createdAt: String!
-  creator: Entity!
-  answers: [FieldAnswer!]!
+type GenericFieldWithSingleValue {
+  fieldName: String!
+  value: Value!
 }
 
-type GenericFieldAndValue {
+type GenericFieldWithMultipleValues {
   fieldName: String!
-  value: [String!]!
+  value: [Value!]!
 }
 
-type FieldValue {
-  fieldName: String!
-  value: String
-  optionSelections: [String!]
-}
+# used for stringified request data
+union GenericFieldAndValue = GenericFieldWithSingleValue | GenericFieldWithMultipleValues
 
 type RequestStepStatuses {
   responseFinal: Boolean!

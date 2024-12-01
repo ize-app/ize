@@ -101,5 +101,5 @@ input ResultGroupTestWebhookArgs {
 
 input WebhookValueArgs {
   fieldName: String!
-  fieldType: FieldType!
+  type: ValueType!
 }

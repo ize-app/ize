@@ -49,6 +49,7 @@ type FlowSummary {
 
 type FlowReference {
   flowId: String!
+  flowVersionId: String!
   flowName: String!
 }
 

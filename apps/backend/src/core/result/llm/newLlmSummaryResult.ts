@@ -1,5 +1,9 @@
-import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { FieldDataType, ResultType } from "@/graphql/generated/resolver-types";
+import { Prisma } from "@prisma/client";
+
+import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
+import { newValue } from "@/core/value/newValue";
+import { validateValue } from "@/core/value/validateValue";
+import { ResultType, ValueType } from "@/graphql/generated/resolver-types";
 import { generateAiSummary } from "@/openai/generateAiSummary";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -9,9 +13,13 @@ import { ResultConfigPrismaType } from "../resultPrismaTypes";
 export const newLlmSummaryResult = async ({
   resultConfig,
   requestStepId,
+  transaction,
+  fieldAnswers,
 }: {
   resultConfig: ResultConfigPrismaType;
   requestStepId: string;
+  fieldAnswers: FieldAnswerPrismaType[];
+  transaction: Prisma.TransactionClient;
 }): Promise<NewResultArgs[] | null> => {
   const llmConfig = resultConfig.ResultConfigLlm;
   let llmResultArgs: NewResultArgs | undefined;
@@ -33,26 +41,35 @@ export const newLlmSummaryResult = async ({
         },
       );
 
-    const requestPayload = await createRequestPayload({
-      requestStepId,
-      fieldId: resultConfig.fieldId,
-    });
 
     const res = await generateAiSummary({
-      requestPayload,
+      requestStepId,
       isList: llmConfig.isList,
       summaryPrompt: llmConfig.prompt,
       resultConfigId: resultConfig.id,
     });
 
+    const valueIds = await Promise.all(
+      res.map(async (llmString) => {
+        const validatedValue = validateValue({
+          type: ValueType.String,
+          value: llmString,
+        });
+        const valueId = await newValue({ value: validatedValue, transaction });
+        return valueId;
+      }),
+    );
+
     llmResultArgs = {
       name: "LLM Summary",
       type: ResultType.LlmSummary,
+      answerCount: fieldAnswers.length,
       ResultItems: {
         createMany: {
-          data: res.map((value) => ({
-            dataType: FieldDataType.String,
-            value,
+          data: valueIds.map((valueId, index) => ({
+            index,
+            type: ValueType.String,
+            valueId,
           })),
         },
       },

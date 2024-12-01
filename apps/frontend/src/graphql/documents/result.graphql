@@ -36,8 +36,9 @@ fragment Result on Result {
 
 fragment ResultItem on ResultItem {
   id
-  dataType
-  value
+  value {
+    ...Value
+  }
   optionId
 }
 

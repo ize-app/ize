@@ -1,4 +1,4 @@
-import { ActionType, FieldType } from "@prisma/client";
+import { ActionType } from "@prisma/client";
 
 import {
   Action,
@@ -45,8 +45,10 @@ export const actionConfigResolver = ({
     );
     let option: Option | undefined;
 
-    if (responseField && responseField.__typename === FieldType.Options) {
-      option = responseField.options.find((option) => option.optionId === actionFilter.optionId);
+    if (responseField && responseField.optionsConfig) {
+      option = responseField.optionsConfig.options.find(
+        (option) => option.optionId === actionFilter.optionId,
+      );
     }
 
     if (!option)

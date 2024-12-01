@@ -1,5 +1,5 @@
 import { stepInclude } from "@/core/flow/flowPrismaTypes";
-import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { createWebhookPayload } from "@/core/action/webhook/createWebhookPayload";
 import { finalizeActionAndRequest } from "@/core/request/updateState/finalizeActionAndRequest";
 import { resultGroupInclude } from "@/core/result/resultPrismaTypes";
 import { ActionType } from "@/graphql/generated/resolver-types";
@@ -117,7 +117,7 @@ export const executeAction = async ({
         switch (action.type) {
           case ActionType.CallWebhook: {
             if (!action.ActionConfigWebhook) throw Error("");
-            const payload = await createRequestPayload({ requestStepId });
+            const payload = await createWebhookPayload({ requestStepId });
             const uri = decrypt(action.ActionConfigWebhook.uri);
             await callWebhook({ uri, payload });
             break;

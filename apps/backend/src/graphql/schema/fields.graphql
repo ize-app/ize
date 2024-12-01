@@ -3,70 +3,6 @@ type FieldSet {
   locked: Boolean!
 }
 
-union Field = Options | FreeInput
-
-input FieldAnswerArgs {
-  fieldId: String!
-  value: String
-  optionSelections: [OptionSelectionArgs!]
-}
-
-input OptionSelectionArgs {
-  # for FE UI
-  optionId: String
-  # for Telegram polls
-  optionIndex: Int
-}
-
-type Options {
-  fieldId: String!
-  name: String!
-  required: Boolean!
-  isInternal: Boolean!
-  previousStepOptions: Boolean!
-  requestOptionsDataType: FieldDataType
-  systemType: SystemFieldType
-  selectionType: OptionSelectionType!
-  maxSelections: Int
-  linkedResultOptions: [LinkedResult!]!
-  options: [Option!]!
-}
-
-type LinkedResult {
-  resultConfigId: String!
-  resultName: String!
-  fieldId: String!
-  fieldName: String!
-}
-
-type FreeInput {
-  fieldId: String!
-  name: String!
-  isInternal: Boolean!
-  required: Boolean!
-  systemType: SystemFieldType
-  dataType: FieldDataType!
-  defaultAnswer: FieldAnswer
-}
-
-type Option {
-  optionId: String!
-  name: String!
-  dataType: FieldDataType!
-}
-
-# Should match prisma enum by same name
-enum FieldDataType {
-  String
-  Number
-  Uri
-  Date
-  DateTime
-  FlowVersionId
-  EntityIds
-  FlowIds
-}
-
 enum SystemFieldType {
   EvolveFlowProposed
   EvolveFlowCurrent
@@ -78,51 +14,53 @@ enum SystemFieldType {
   UnwatchFlow
 }
 
-enum FieldType {
-  Options
-  FreeInput
-}
-
 enum OptionSelectionType {
   Rank
   MultiSelect
   Select
 }
 
-union FieldAnswer =
-  | OptionFieldAnswer
-  | FreeInputFieldAnswer
-  | EntitiesFieldAnswer
-  | FlowsFieldAnswer
-  | WebhookFieldAnswer
-
-type OptionFieldAnswer {
-  selections: [OptionFieldAnswerSelection!]!
+type Field {
+  fieldId: String!
+  name: String!
+  type: ValueType!
+  isInternal: Boolean!
+  required: Boolean!
+  systemType: SystemFieldType
+  defaultAnswer: Value
+  optionsConfig: OptionsConfig
 }
 
-type FreeInputFieldAnswer {
-  value: String!
+type OptionsConfig {
+  options: [Option!]!
+  systemType: SystemFieldType
+  selectionType: OptionSelectionType!
+  maxSelections: Int
+  linkedResultOptions: [LinkedResult!]!
+  triggerOptionsType: ValueType
 }
 
-type EntitiesFieldAnswer {
-  entities: [Entity!]!
+type LinkedResult {
+  resultConfigId: String!
+  resultName: String!
+  fieldId: String!
+  fieldName: String!
 }
 
-type FlowsFieldAnswer {
-  flows: [FlowReference!]!
-}
-
-type WebhookFieldAnswer {
-  uri: String!
-  webhookId: String
-  originalUri: String
-  name: String
+type Option {
+  optionId: String!
+  value: Value!
 }
 
 type UserFieldAnswer {
   creator: Entity!
   createdAt: String!
-  answer: FieldAnswer!
+  answer: Value!
+}
+
+type TriggerFieldAnswer {
+  field: Field!
+  answer: Value!
 }
 
 type ResponseFieldAnswers {
@@ -142,17 +80,6 @@ type ResponseFieldAnswersOptionsSummary {
   rank: Float
 }
 
-type TriggerFieldAnswer {
-  field: Field!
-  answer: UserFieldAnswer
-}
-
-# later will use this type to add option free inputs
-type OptionFieldAnswerSelection {
-  optionId: String!
-  weight: Int!
-}
-
 input FieldSetArgs {
   fields: [FieldArgs!]!
   locked: Boolean!
@@ -160,26 +87,37 @@ input FieldSetArgs {
 
 input FieldArgs {
   fieldId: String!
-  type: FieldType!
   name: String!
+  type: ValueType!
   required: Boolean!
   isInternal: Boolean!
   systemType: SystemFieldType
-  freeInputDataType: FieldDataType
   optionsConfig: FieldOptionsConfigArgs
 }
 
 input FieldOptionsConfigArgs {
-  previousStepOptions: Boolean!
-  requestOptionsDataType: FieldDataType
+  triggerOptionsType: ValueType
   maxSelections: Int
   selectionType: OptionSelectionType!
   linkedResultOptions: [String!]! # resultConfigIds
-  options: [FieldOptionArgs!]!
+  options: [OptionArgs!]!
 }
 
-input FieldOptionArgs {
+input FieldAnswerArgs {
+  fieldId: String!
+  value: String # JSON stringified Value, will be interpreted via ValueType of the field
+  optionSelections: [OptionSelectionArgs!]
+}
+
+input OptionSelectionArgs {
+  optionId: String
+  optionIndex: Int
+  weight: Float!
+}
+
+# for creating new Options
+input OptionArgs {
   optionId: String! # UUID created on fontend used in backend
-  dataType: FieldDataType!
-  name: String!
+  type: ValueType!
+  value: String! #JSON stringified Value
 }

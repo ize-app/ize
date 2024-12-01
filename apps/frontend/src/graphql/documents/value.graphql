@@ -1,0 +1,111 @@
+fragment Value on Value {
+  __typename
+  ... on OptionSelectionsValue {
+    ...OptionSelectionsValue
+  }
+  ... on StringValue {
+    ...StringValue
+  }
+  ... on FloatValue {
+    ...FloatValue
+  }
+  ... on UriValue {
+    ...UriValue
+  }
+  ... on DateValue {
+    ...DateValue
+  }
+  ... on DateTimeValue {
+    ...DateTimeValue
+  }
+  ... on EntitiesValue {
+    ...EntitiesValue
+  }
+  ... on FlowsValue {
+    ...FlowsValue
+  }
+  ... on FlowVersionValue {
+    ...FlowVersionValue
+  }
+}
+
+## This should have all the possible values except OptionSelectionsValue
+fragment OptionValue on Value {
+  __typename
+  ... on StringValue {
+    ...StringValue
+  }
+  ... on FloatValue {
+    ...FloatValue
+  }
+  ... on UriValue {
+    ...UriValue
+  }
+  ... on DateValue {
+    ...DateValue
+  }
+  ... on DateTimeValue {
+    ...DateTimeValue
+  }
+  ... on EntitiesValue {
+    ...EntitiesValue
+  }
+  ... on FlowsValue {
+    ...FlowsValue
+  }
+  ... on FlowVersionValue {
+    ...FlowVersionValue
+  }
+}
+
+fragment OptionSelectionsValue on OptionSelectionsValue {
+  selections {
+    ...OptionSelection
+  }
+}
+
+fragment OptionSelection on OptionSelection {
+  optionId
+  weight
+  value {
+    ...OptionValue
+  }
+}
+
+fragment StringValue on StringValue {
+  value
+}
+
+fragment FloatValue on FloatValue {
+  float
+}
+
+fragment UriValue on UriValue {
+  uri
+}
+
+fragment DateValue on DateValue {
+  date
+}
+
+fragment DateTimeValue on DateTimeValue {
+  dateTime
+}
+
+fragment EntitiesValue on EntitiesValue {
+  entities {
+    ...Entity
+  }
+}
+
+fragment FlowsValue on FlowsValue {
+  flows {
+    ...FlowReference
+  }
+}
+
+fragment FlowVersionValue on FlowVersionValue {
+  flowVersion {
+    ...FlowReference
+  }
+}

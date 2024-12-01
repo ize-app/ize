@@ -65,7 +65,7 @@ const resolveDiscordGroup = (
           )
         : null,
     },
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
@@ -95,7 +95,7 @@ const resolveGroupNft = (
       name: nft.NftCollection.name ?? "Unknown collection",
       icon: nft.NftCollection.icon,
     },
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "GroupNft", ...nft } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
@@ -119,7 +119,7 @@ const resolveGroupIze = (
     entityId: group.entityId,
 
     name: ize.name,
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "GroupIze", ...ize } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
@@ -141,7 +141,7 @@ const resolveGroupTelegram = (
     id: group.id,
     entityId: group.entityId,
     name: telegram.name,
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: {
       __typename: "GroupTelegramChat",
       ...telegram,

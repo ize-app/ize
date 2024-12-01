@@ -1,7 +1,5 @@
-import { FieldDataType } from "@prisma/client";
-
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { ResultType } from "@/graphql/generated/resolver-types";
+import { ResultType, ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { NewResultArgs } from "../newResults/newResult";
@@ -36,16 +34,18 @@ export const newRawAnswersResult = ({
       );
 
     // only free input answers can be part of a raw result
-    const answers = fieldAnswers.filter((value) => value.AnswerFreeInput);
+    // TODO: add support for options
+    const answers = fieldAnswers.filter((fa) => fa.Value.type !== ValueType.OptionSelections);
 
     rawAnswersArgs = {
       name: "Raw answers",
       type: ResultType.RawAnswers,
+      answerCount: answers.length,
       ResultItems: {
         createMany: {
-          data: answers.map((answer) => ({
-            dataType: answer.AnswerFreeInput?.dataType as FieldDataType,
-            value: answer.AnswerFreeInput?.value as string,
+          data: answers.map((answer, index) => ({
+            index,
+            valueId: answer.valueId,
           })),
         },
       },

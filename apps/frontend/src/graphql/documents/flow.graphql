@@ -85,6 +85,7 @@ fragment FlowSummary on FlowSummary {
 
 fragment FlowReference on FlowReference {
   flowId
+  flowVersionId
   flowName
 }
 

@@ -3,6 +3,7 @@ import {
   FieldDataType,
   FieldType,
   SystemFieldType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 
 // TODO: have backend/frontend share same default file
@@ -17,73 +18,65 @@ export const createSystemFieldDefaults = (type: SystemFieldType): FieldArgs => {
 
 const systemFieldDefaults: Record<SystemFieldType, Omit<FieldArgs, "fieldId">> = {
   [SystemFieldType.EvolveFlowProposed]: {
-    type: FieldType.FreeInput,
+    type: ValueType.FlowVersion,
     isInternal: false,
     systemType: SystemFieldType.EvolveFlowProposed,
-    freeInputDataType: FieldDataType.FlowVersionId,
     name: "Proposed flow",
     required: true,
   },
 
   [SystemFieldType.EvolveFlowCurrent]: {
-    type: FieldType.FreeInput,
+    type: ValueType.FlowVersion,
     systemType: SystemFieldType.EvolveFlowCurrent,
     isInternal: false,
-    freeInputDataType: FieldDataType.FlowVersionId,
     name: "Current flow",
     required: true,
   },
 
   [SystemFieldType.EvolveFlowDescription]: {
-    type: FieldType.FreeInput,
+    type: ValueType.String,
     systemType: SystemFieldType.EvolveFlowDescription,
     isInternal: false,
-    freeInputDataType: FieldDataType.FlowVersionId,
     name: "Description of changes",
     required: false,
   },
 
   [SystemFieldType.GroupName]: {
-    type: FieldType.FreeInput,
+    type: ValueType.String,
     systemType: SystemFieldType.GroupName,
     isInternal: false,
-    freeInputDataType: FieldDataType.String,
     name: "Group name",
     required: true,
   },
 
   [SystemFieldType.GroupDescription]: {
-    type: FieldType.FreeInput,
+    type: ValueType.String,
     systemType: SystemFieldType.GroupDescription,
     isInternal: false,
-    freeInputDataType: FieldDataType.String,
     name: "Group description",
     required: false,
   },
 
   [SystemFieldType.GroupMembers]: {
-    type: FieldType.FreeInput,
+    type: ValueType.String,
     systemType: SystemFieldType.GroupMembers,
     isInternal: false,
-    freeInputDataType: FieldDataType.EntityIds,
     name: "Membership definition",
     required: true,
   },
 
   [SystemFieldType.WatchFlow]: {
-    type: FieldType.FreeInput,
+    type: ValueType.Flows,
     systemType: SystemFieldType.WatchFlow,
     isInternal: false,
-    freeInputDataType: FieldDataType.FlowIds,
     name: "Flows to watch",
     required: false,
   },
 
   [SystemFieldType.UnwatchFlow]: {
-    type: FieldType.FreeInput,
+    type: ValueType.Flows,
     isInternal: false,
     systemType: SystemFieldType.UnwatchFlow,
-    freeInputDataType: FieldDataType.FlowIds,
     name: "Flows to unwatch",
     required: false,
   },

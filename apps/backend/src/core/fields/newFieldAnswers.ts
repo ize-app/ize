@@ -1,42 +1,68 @@
-import { FieldDataType, FieldType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { InputJsonValue } from "@prisma/client/runtime/library";
 
-import { FieldAnswerArgs, OptionSelectionType } from "@/graphql/generated/resolver-types";
+import { FieldAnswerArgs, ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
-import { constructFieldOptions } from "./constructFieldOptions";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
-import { validateInput } from "./validation/validateInput";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
+import { validateValue } from "../value/validateValue";
+import { getAvailableOptionIds } from "./validation/getAvailableOptionIds";
+import { validateOptionSelections } from "./validation/validateOptionSelections";
+import { newValue } from "../value/newValue";
+import { getOptionArgsWithOptionId } from "./validation/getOptionArgsWithOptionId";
+import { ValueSchemaType } from "../value/valueSchema";
+
+interface FieldAnswersBase {
+  transaction: Prisma.TransactionClient;
+  fieldSet: FieldSetPrismaType;
+  fieldAnswers: FieldAnswerArgs[];
+}
+
+interface RequestFieldAnswerPermission extends FieldAnswersBase {
+  type: "request";
+  requestId: string;
+}
+
+interface ResponseFieldAnswerPermission extends FieldAnswersBase {
+  type: "response";
+  responseId: string;
+  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
+}
+
+type NewFieldAnswers = RequestFieldAnswerPermission | ResponseFieldAnswerPermission;
 
 // creates field answers to a request or response's fields
 // checks that all required fields are presents and that answers are correct type
 export const newFieldAnswers = async ({
   fieldSet,
-  requestDefinedOptionSets,
-  fieldAnswers,
   transaction,
-  responseId,
-  requestId,
-}: {
-  fieldSet: FieldSetPrismaType | null;
-  fieldAnswers: FieldAnswerArgs[];
-  requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[];
-  transaction: Prisma.TransactionClient;
-  responseId?: string | null | undefined;
-  requestId?: string | null | undefined;
-}): Promise<void> => {
+  fieldAnswers,
+  ...props
+}: NewFieldAnswers): Promise<void> => {
   if (!fieldSet) return;
+  let responseId: string | undefined = undefined;
+  let requestId: string | undefined = undefined;
+  let requestDefinedOptionSets: RequestDefinedOptionSetPrismaType[] = [];
+
+  switch (props.type) {
+    case "request": {
+      requestId = props.requestId;
+      break;
+    }
+    case "response": {
+      responseId = props.responseId;
+      requestDefinedOptionSets = props.requestDefinedOptionSets;
+      break;
+    }
+  }
+
   if (!responseId && !requestId)
     throw new GraphQLError("Missing response Id or requestStepId", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
-  // check whether that all required fields have answers
-  const fieldAnswersFiltered = fieldAnswers.filter(
-    (a) =>
-      (a.value !== null && a.value !== undefined) ||
-      (a.optionSelections && a.optionSelections.length > 0),
-  );
-  const answerFieldIds = fieldAnswersFiltered.map((a) => a.fieldId);
+
+  const answerFieldIds = fieldAnswers.map((a) => a.fieldId);
 
   const fields = fieldSet.Fields.filter((f) => !f.isInternal);
 
@@ -46,7 +72,8 @@ export const newFieldAnswers = async ({
     });
   // iterate through each answer
   await Promise.all(
-    fieldAnswersFiltered.map(async (fieldAnswer) => {
+    fieldAnswers.map(async (fieldAnswer) => {
+      let validatedValue: ValueSchemaType;
       const field = fields.find((field) => field.id === fieldAnswer.fieldId);
       if (!field)
         throw new GraphQLError(
@@ -56,137 +83,72 @@ export const newFieldAnswers = async ({
           },
         );
 
-      switch (field.type) {
-        case FieldType.FreeInput: {
-          // the value should never be empty because we filter out empty values above
-          // including this check here to make typescript happy
-          if (fieldAnswer.value === null || fieldAnswer.value === undefined)
-            throw new GraphQLError(
-              `Free input field answer is missing value. fieldId: ${fieldAnswer.fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-              },
-            );
-          if (!validateInput(fieldAnswer.value, field.freeInputDataType as FieldDataType)) {
-            throw new GraphQLError(
-              `Field answer does not match data type. fieldDataType: ${
-                field.freeInputDataType ?? ""
-              } fieldId: ${fieldAnswer.fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-              },
-            );
-          }
-
-          await transaction.fieldAnswer.create({
-            data: {
-              type: FieldType.FreeInput,
-              fieldId: field.id,
-              responseId,
-              requestId,
-              AnswerFreeInput: {
-                create: {
-                  dataType: field.freeInputDataType as FieldDataType,
-                  value: fieldAnswer.value,
-                },
-              },
+      if (field.type === ValueType.OptionSelections) {
+        const optionsConfig = field.FieldOptionsConfig;
+        const optionSelections = fieldAnswer.optionSelections;
+        if (!optionSelections)
+          throw new GraphQLError(
+            `No field answer options selections provided for fieldId: ${fieldAnswer.fieldId}`,
+            {
+              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
             },
-          });
+          );
 
-          break;
-        }
-        //TODO: Make this work for previous step options (same as request defined options)
-        case FieldType.Options: {
-          if (!fieldAnswer.optionSelections)
-            throw new GraphQLError(
-              `Options field answer is missing options values. fieldId: ${fieldAnswer.fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-              },
-            );
-
-          const fieldOptionsConfig = field.FieldOptionsConfig;
-
-          if (!fieldOptionsConfig)
-            throw new GraphQLError(
-              `Options field answer is missing options config. fieldId: ${fieldAnswer.fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-
-          const options = constructFieldOptions({
-            optionsConfig: fieldOptionsConfig,
-            requestDefinedOptionSets,
-          });
-
-          const totalOptionCount = options.length;
-
-          if (
-            fieldOptionsConfig.maxSelections &&
-            fieldAnswer.optionSelections.length > fieldOptionsConfig.maxSelections
-          )
-            throw new GraphQLError(
-              `More option selections submitted than allowable for this field. fieldId: ${fieldAnswer.fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-              },
-            );
-
-          // check whether selected options are part of field's option Set
-          fieldAnswer.optionSelections.map((optionSelectionArgs) => {
-            if (
-              !options.some((option) => {
-                if (optionSelectionArgs.optionId)
-                  return option.optionId === optionSelectionArgs.optionId;
-                else if (typeof optionSelectionArgs.optionIndex === "number")
-                  return option.optionId === options[optionSelectionArgs.optionIndex].optionId;
-                return false;
-              })
-            )
-              throw new GraphQLError(
-                `Option selection is not part of option set. fieldId: ${fieldAnswer.fieldId}`,
-                {
-                  extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-                },
-              );
-          });
-
-          await transaction.fieldAnswer.create({
-            data: {
-              type: FieldType.Options,
-              fieldId: field.id,
-              responseId,
-              requestId,
-              AnswerOptionSelections: {
-                createMany: {
-                  data: fieldAnswer.optionSelections.map((optionSelectionArgs, index) => {
-                    let fieldOptionId: string;
-                    if (optionSelectionArgs.optionId) {
-                      fieldOptionId = optionSelectionArgs.optionId;
-                    } else if (typeof optionSelectionArgs.optionIndex === "number") {
-                      fieldOptionId = options[optionSelectionArgs.optionIndex].optionId;
-                    } else {
-                      throw new GraphQLError(`Missing  option selection for field: ${field.id}`, {
-                        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-                      });
-                    }
-                    return {
-                      fieldOptionId,
-                      weight:
-                        field.FieldOptionsConfig?.selectionType === OptionSelectionType.Rank
-                          ? totalOptionCount - index
-                          : 1,
-                    };
-                  }),
-                },
-              },
+        if (!optionsConfig)
+          throw new GraphQLError(
+            `Options field is missing options config: ${fieldAnswer.fieldId}`,
+            {
+              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
             },
-          });
+          );
+        const availableOptionIds = getAvailableOptionIds({
+          optionsConfig,
+          requestDefinedOptionSets,
+        });
 
-          break;
-        }
+        const optionArgsWithOptionId = getOptionArgsWithOptionId({
+          optionSelections,
+          availableOptionIds,
+          fieldId: fieldAnswer.fieldId,
+        });
+
+        // maybe move this validation logic inside validateOptionSelections
+        validateOptionSelections({
+          selections: optionArgsWithOptionId,
+          optionsConfig,
+          availableOptionIds,
+          fieldId: fieldAnswer.fieldId,
+        });
+
+        validatedValue = validateValue({
+          type: field.type as ValueType,
+          value: optionArgsWithOptionId,
+        });
+      } else {
+        if (!fieldAnswer.value)
+          throw new GraphQLError(
+            `No field answer value provided for fieldId: ${fieldAnswer.fieldId}`,
+            {
+              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+            },
+          );
+
+        validatedValue = validateValue({
+          type: field.type as ValueType,
+          value: JSON.parse(fieldAnswer.value) as InputJsonValue,
+        });
       }
+      const valueId = await newValue({ value: validatedValue, transaction });
+
+      await transaction.fieldAnswer.create({
+        data: {
+          fieldId: field.id,
+          responseId,
+          requestId,
+          valueId,
+        },
+      });
+
       return;
     }),
   );

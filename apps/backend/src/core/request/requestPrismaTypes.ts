@@ -122,6 +122,10 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
         include: fieldOptionSetInclude,
       },
     },
+    // important to order so that options are ordered consistently across app
+    orderBy: {
+      createdAt: "asc",
+    },
   },
   RequestSteps: {
     include: requestStepInclude,

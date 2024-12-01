@@ -19,7 +19,16 @@ export const evolveGroup = async ({
     include: {
       Request: {
         include: {
-          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+          TriggerFieldAnswers: {
+            include: {
+              Field: true,
+              Value: {
+                include: {
+                  ValueEntities: true,
+                },
+              },
+            },
+          },
         },
       },
       Step: {
@@ -67,7 +76,7 @@ export const evolveGroup = async ({
 
   /// validate members and create entity set for members ///
 
-  if (!members || !members.AnswerFreeInput) {
+  if (!members || !members.Value.ValueEntities) {
     throw new GraphQLError(
       `Cannot find members field for evolveGroup, request step ${requestStepId}`,
       {
@@ -76,7 +85,7 @@ export const evolveGroup = async ({
     );
   }
 
-  const entityIds = JSON.parse(members.AnswerFreeInput.value) as string[];
+  const entityIds = members.Value.ValueEntities.map((entity) => entity.entityId);
 
   await checkEntitiesForIzeGroups({
     entityIds: entityIds,
@@ -95,8 +104,8 @@ export const evolveGroup = async ({
       id: izeGroupId,
     },
     data: {
-      name: name?.AnswerFreeInput?.value ?? "",
-      description: description?.AnswerFreeInput?.value ?? "",
+      name: name?.Value.string ?? "",
+      description: description?.Value.string ?? "",
       entitySetId: entitySetId,
     },
   });

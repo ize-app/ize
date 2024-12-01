@@ -30,7 +30,7 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
         answers: [
           {
             fieldId: poll.fieldId,
-            optionSelections: selectedOptions.map((o) => ({ optionIndex: o })),
+            optionSelections: selectedOptions.map((o) => ({ optionIndex: o, weight: 1 })),
           },
         ],
         requestStepId: poll.requestStepId,

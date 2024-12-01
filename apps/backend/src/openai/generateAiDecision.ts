@@ -1,11 +1,12 @@
-import { DecisionType, FieldType, ResultType } from "@prisma/client";
+import { DecisionType, ResultType } from "@prisma/client";
 
-import { createRequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
+import { getRequestByRequestStepId } from "@/core/request/getRequestByRequestStepId";
 import { openAiClient } from "@/openai/openAiClient";
 import { AiDecisionResult, createDecisionPrompt } from "@/openai/prompt/createDecisionPrompt";
 import { createRequestContextPrompt } from "@/openai/prompt/createRequestContextPrompt";
 import { createResponsesPrompt } from "@/openai/prompt/createResponsesPrompt";
 
+import { getFieldForRequestConfigId } from "./getFieldForRequestConfigId";
 import { createIzeSystemPrompt } from "./prompt/createIzeSystemPrompt";
 import { DecisionResult } from "../core/result/decision/determineDecision";
 import { ResultConfigPrismaType } from "../core/result/resultPrismaTypes";
@@ -24,16 +25,24 @@ export const generateAiDecision = async ({
   )
     throw new Error("FieldId is undefined");
 
-  const criteria = resultConfig.ResultConfigDecision.criteria;
+  const request = await getRequestByRequestStepId({ requestStepId });
 
-  const requestPayload = await createRequestPayload({
-    requestStepId,
-    fieldId: resultConfig.fieldId,
+  let hasResponse = false;
+
+  request.requestSteps.forEach((requestStep) => {
+    const answer = requestStep.answers.find((answer) => {
+      answer.field.fieldId === resultConfig.fieldId;
+    });
+    if (answer && answer.answers.length > 0) hasResponse = true;
   });
 
-  const { field } = requestPayload;
+  const field = getFieldForRequestConfigId({
+    request,
+    requestStepId,
+    resultConfigId: resultConfig.id,
+  });
 
-  if (!field) throw new Error("Field is undefined");
+  const criteria = resultConfig.ResultConfigDecision.criteria;
 
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
@@ -45,20 +54,20 @@ export const generateAiDecision = async ({
       {
         role: "user",
         content: createRequestContextPrompt({
-          requestPayload,
-          resultConfigId: resultConfig.id,
+          request,
+          requestStepId,
         }),
       },
       {
         role: "user",
-        content: createResponsesPrompt({ fieldAnswers: requestPayload.fieldAnswers ?? [] }),
+        content: createResponsesPrompt({ request }),
       },
       {
         role: "user",
         content: createDecisionPrompt({
           field,
           criteria,
-          hasResponse: (requestPayload?.fieldAnswers ?? []).length > 0,
+          hasResponse,
         }),
       },
     ],
@@ -69,9 +78,9 @@ export const generateAiDecision = async ({
 
   const result = JSON.parse(message) as AiDecisionResult;
 
-  if (field.__typename !== FieldType.Options) throw Error("Field is not an options field");
+  if (!field.optionsConfig) throw Error("Field is not an options field");
 
-  const option = field.options[result.optionNumber - 1];
+  const option = field.optionsConfig.options[result.optionNumber - 1];
 
   if (!option) throw Error("Invalid option");
 

@@ -1,15 +1,14 @@
 import { DefaultEvolveGroupValues } from "@/core/flow/helpers/getDefaultFlowValues";
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   Field,
-  FieldDataType,
   FieldSet,
-  FieldType,
-  FreeInput,
   LinkedResult,
   OptionSelectionType,
-  Options,
+  OptionsConfig,
   ResultConfig,
   SystemFieldType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -23,37 +22,31 @@ export const fieldSetResolver = ({
   requestDefinedOptionSets,
   responseFieldsCache = [],
   resultConfigsCache = [],
+  context,
 }: {
   fieldSet: FieldSetPrismaType | null;
   defaultValues?: DefaultEvolveGroupValues | undefined;
   requestDefinedOptionSets?: RequestDefinedOptionSetPrismaType[];
   responseFieldsCache?: Field[];
   resultConfigsCache?: ResultConfig[];
+  context: GraphqlRequestContext;
 }): FieldSet => {
-  // if (!fieldSet) return [];
-  const fields: Field[] = (fieldSet?.Fields ?? []).map((field) => {
-    if (field.type === FieldType.FreeInput) {
-      const freeInput: FreeInput = {
-        __typename: FieldType.FreeInput,
-        isInternal: field.isInternal,
-        fieldId: field.id,
-        name: field.name,
-        systemType: field.systemType as SystemFieldType,
-        required: field.required,
-        dataType: field.freeInputDataType as FieldDataType,
-        defaultAnswer:
-          defaultValues && field.systemType ? defaultValues[field.systemType] : undefined,
-      };
-      return freeInput;
-    } else if ((field.type as FieldType) === FieldType.Options) {
-      if (!field.FieldOptionsConfig)
+  if (!fieldSet) return { fields: [], locked: false };
+  let optionsConfig: OptionsConfig | undefined = undefined;
+  const fields: Field[] = (fieldSet?.Fields ?? []).map((field): Field => {
+    const { type, FieldOptionsConfig, id: fieldId, isInternal, name, systemType, required } = field;
+    if (type === ValueType.OptionSelections) {
+      if (!FieldOptionsConfig)
         throw new GraphQLError("Missing options config for Options Field.", {
           extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
         });
+      const config = FieldOptionsConfig;
 
-      const config = field.FieldOptionsConfig;
-
-      const allOptions = constructFieldOptions({ optionsConfig: config, requestDefinedOptionSets });
+      const allOptions = constructFieldOptions({
+        optionsConfig: config,
+        requestDefinedOptionSets,
+        context,
+      });
 
       const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
         const resultConfig = resultConfigsCache.find((r) => {
@@ -85,27 +78,24 @@ export const fieldSetResolver = ({
           fieldName: field.name,
         } as LinkedResult;
       });
-
-      const options: Options = {
-        __typename: FieldType.Options,
-        fieldId: field.id,
-        isInternal: field.isInternal,
-        name: field.name,
-        required: field.required,
-        systemType: field.systemType as SystemFieldType,
-        requestOptionsDataType: config.requestOptionsDataType as FieldDataType,
+      optionsConfig = {
+        triggerOptionsType: (config.triggerOptionsType as ValueType) ?? undefined,
         linkedResultOptions,
-        previousStepOptions: config.previousStepOptions,
         selectionType: config.selectionType as OptionSelectionType,
         maxSelections: config.maxSelections,
         options: allOptions,
-        // defaultAnswer: defaultValues ? defaultValues[f.Field.name] : undefined,
       };
-      return options;
-    } else
-      throw new GraphQLError("Unknown field type.", {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      });
+    }
+
+    return {
+      isInternal,
+      fieldId,
+      name: name,
+      systemType: systemType as SystemFieldType,
+      required: required,
+      optionsConfig,
+      defaultAnswer: defaultValues && systemType ? defaultValues[systemType] : undefined,
+    } as Field;
   });
 
   return { fields, locked: fieldSet?.locked ?? false };

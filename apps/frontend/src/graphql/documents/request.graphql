@@ -79,14 +79,11 @@ fragment RequestStep on RequestStep {
   requestStepId
   createdAt
   expirationDate
-  responseFieldAnswers {
+  answers {
     ...ResponseFieldAnswers
   }
   fieldSet {
     ...FieldSet
-  }
-  userResponses {
-    ...Response
   }
   results {
     ...ResultGroup
@@ -97,6 +94,7 @@ fragment RequestStep on RequestStep {
   status {
     ...RequestStepStatuses
   }
+  userResponded
 }
 
 fragment RequestSummary on RequestSummary {
@@ -132,17 +130,6 @@ fragment RequestStepSummary on RequestStepSummary {
   }
   userRespondPermission
   userResponded
-}
-
-fragment Response on Response {
-  responseId
-  createdAt
-  creator {
-    ...Entity
-  }
-  answers {
-    ...FieldAnswer
-  }
 }
 
 fragment RequestStepStatuses on RequestStepStatuses {
