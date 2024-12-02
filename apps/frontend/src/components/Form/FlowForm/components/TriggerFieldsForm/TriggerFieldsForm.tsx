@@ -2,13 +2,13 @@ import { Box, Button, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
 import { ValueType } from "@/graphql/generated/graphql";
 
 import { FieldForm } from "./FieldForm";
+import { fieldInputTypes } from "../../../InputField/allowedInputTypes";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
-import { defaultFreeInputDefaultOptions } from "../../helpers/defaultFreeInputDataTypeOptions";
-import { newInputTypes } from "../newInputTypes";
 
 export const triggerFieldSetPath = `fieldSet`;
 export const triggerFieldsPath = `${triggerFieldSetPath}.fields`;
@@ -18,16 +18,6 @@ export interface FieldFormProps {
   fieldIndex: number;
   locked: boolean;
 }
-
-export const createFreeInputDataTypeOptions = (type: ValueType) => {
-  if (type === ValueType.Entities) {
-    return [{ name: "Members", value: ValueType.Entities }];
-  } else if (type === ValueType.Flows) {
-    return [{ name: "Flows", value: ValueType.Flows }];
-  } else if (type === ValueType.FlowVersion) {
-    return [{ name: "Flow version", value: ValueType.FlowVersion }];
-  } else return defaultFreeInputDefaultOptions;
-};
 
 export const TriggerFieldsForm = () => {
   const { control, getValues } = useFormContext<FlowSchemaType, `fieldSet.fields`>();
@@ -62,7 +52,7 @@ export const TriggerFieldsForm = () => {
   const isLocked = getValues(lockedPath);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "12px" }}>
       {fieldsArrayMethods.fields.map((item, inputIndex) => (
         <FieldForm
           key={item.id}
@@ -94,9 +84,9 @@ export const TriggerFieldsForm = () => {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            {newInputTypes.map((input, index) => (
-              <MenuItem key={"addTriggerField" + index} onClick={() => addField(input.value)}>
-                {input.name}
+            {fieldInputTypes.map((type) => (
+              <MenuItem key={"addTriggerField." + type.toString()} onClick={() => addField(type)}>
+                {stringifyValueType(type)}
               </MenuItem>
             ))}
           </Menu>

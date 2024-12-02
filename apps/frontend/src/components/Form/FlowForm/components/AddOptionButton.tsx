@@ -6,7 +6,7 @@ import { ArrayPath, FieldArray, FieldValues, UseFieldArrayReturn } from "react-h
 
 import { ValueType } from "@/graphql/generated/graphql";
 
-import { newInputTypes } from "./newInputTypes";
+import { newInputTypes } from "../../InputField/allowedInputTypes";
 import { createDefaultOptionState } from "../helpers/defaultFormState/createDefaultOptionState";
 
 interface AddButtonProps<T extends FieldValues> {

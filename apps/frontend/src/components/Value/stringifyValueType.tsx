@@ -3,22 +3,22 @@ import { ValueType } from "@/graphql/generated/graphql";
 export const stringifyValueType = (type: ValueType): string => {
   switch (type) {
     case ValueType.String:
-      return "text";
+      return "Text";
     case ValueType.Float:
-      return "number";
+      return "Number";
     case ValueType.Date:
-      return "date";
+      return "Date";
     case ValueType.DateTime:
-      return "date + time";
+      return "Date + time";
     case ValueType.Uri:
-      return "URL";
+      return "Url";
     case ValueType.FlowVersion:
-      return "flow version";
+      return "Flow version";
     case ValueType.Entities:
-      return "identities and roles ";
+      return "Identities and roles";
     case ValueType.Flows:
-      return "flows";
+      return "Flows";
     case ValueType.OptionSelections:
-      return "option selections";
+      return "Option selections";
   }
 };

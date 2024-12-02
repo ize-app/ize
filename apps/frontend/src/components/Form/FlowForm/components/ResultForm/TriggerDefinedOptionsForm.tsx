@@ -6,8 +6,8 @@ import { ValueType } from "@/graphql/generated/graphql";
 import { Switch } from "../../../formFields";
 import { Select } from "../../../formFields/Select";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
+import { newInputTypes } from "../../../InputField/allowedInputTypes";
 import { TriggerDefinedOptionsSchemaType } from "../../formValidation/fields";
-import { newInputTypes } from "../newInputTypes";
 
 export interface RequestDefinedOptionsProps<T extends FieldValues> {
   fieldName: FieldPath<T>;
