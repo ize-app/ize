@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 
 import { FieldFragment, SystemFieldType, ValueFragment } from "@/graphql/generated/graphql";
 
+import { stringifyValueType } from "../Value/stringifyValueType";
 import { Value } from "../Value/Value";
 
 // renders name of the field and answer, if it exists.
@@ -22,7 +23,18 @@ export const Field = ({
   }
   return (
     <Box>
-      <Typography variant="description">{fieldNameOverride ?? field.name}</Typography>
+      <Typography
+        sx={(theme) => ({
+          color: !fieldAnswer ? theme.palette.primary.main : theme.palette.secondary.main,
+        })}
+        fontSize={!fieldAnswer ? "1rem" : undefined}
+        variant="description"
+      >
+        {fieldNameOverride ?? field.name}{" "}
+        <Typography fontSize="inherit" color={"secondary"} component={"span"}>
+          ({stringifyValueType(field.type)})
+        </Typography>
+      </Typography>
       {fieldAnswer && <Value value={fieldAnswer} field={field} type={"fieldAnswer"} />}
     </Box>
   );

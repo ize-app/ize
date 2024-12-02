@@ -2,7 +2,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { Box } from "@mui/material";
 import { default as MuiAccordion } from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionSummary, { accordionSummaryClasses } from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 
 export const Accordion = ({
@@ -33,9 +33,13 @@ export const Accordion = ({
     }}
   >
     <AccordionSummary
-      sx={{
+      sx={(theme) => ({
+        flexDirection: "row-reverse",
+        [`& .${accordionSummaryClasses.content}`]: {
+          marginLeft: theme.spacing(1),
+        },
         padding: "0px",
-      }}
+      })}
       expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
     >
       <Typography color="secondary">{label}</Typography>
