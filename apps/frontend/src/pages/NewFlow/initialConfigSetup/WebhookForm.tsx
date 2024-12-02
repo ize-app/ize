@@ -6,8 +6,8 @@ import { ButtonGroupField, TextField } from "@/components/Form/formFields";
 import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
 import { SelectOption } from "@/components/Form/formFields/Select";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
-import { stringifyFreeInputValue } from "@/components/Form/InputField/stringifyFreeInputValue";
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { stringifyFormInputValue } from "@/components/Form/InputField/stringifyFormInputValue";
+import { ValueType } from "@/graphql/generated/graphql";
 
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
 import { DecisionForm } from "./DecisionForm";
@@ -26,11 +26,11 @@ export const WebhookForm = () => {
         options: [
           {
             optionId: crypto.randomUUID(),
-            input: { value: "✅", type: FieldDataType.String, required: true },
+            input: { value: "✅", type: ValueType.String, required: true },
           },
           {
             optionId: crypto.randomUUID(),
-            input: { value: "❌", type: FieldDataType.String, required: true },
+            input: { value: "❌", type: ValueType.String, required: true },
           },
         ],
         triggerDefinedOptions: undefined,
@@ -50,9 +50,8 @@ export const WebhookForm = () => {
   const refreshOptions = () => {
     const options = (getValues("optionsConfig.options") ?? []).map((option) => ({
       name:
-        stringifyFreeInputValue({
-          value: option.input.value as string,
-          dataType: option.input.type as FieldDataType,
+        stringifyFormInputValue({
+          input: option.input,
         }) ?? "",
       value: option.optionId,
     }));

@@ -38,7 +38,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         resultConfig.field;
 
       const responseSummary =
-        reqStep?.responseFieldAnswers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
+        reqStep?.answers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
           ?.summary ?? null;
 
       const triggerDefinedOptions = request.triggerDefinedOptions.find(

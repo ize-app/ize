@@ -8,7 +8,7 @@ import {
   RequestStepFragment,
   RequestStepStatus,
   StepFragment,
-  TriggerDefinedOptions,
+  TriggerDefinedOptionsFragment,
 } from "@/graphql/generated/graphql";
 
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
@@ -22,7 +22,7 @@ export const ConfigRequestStepPanel = ({
 }: {
   step: StepFragment;
   requestStep: RequestStepFragment | null;
-  triggerDefinedOptionSets: TriggerDefinedOptions[];
+  triggerDefinedOptionSets: TriggerDefinedOptionsFragment[];
 }) => {
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;

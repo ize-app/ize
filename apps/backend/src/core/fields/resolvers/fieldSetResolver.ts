@@ -88,6 +88,7 @@ export const fieldSetResolver = ({
     }
 
     return {
+      type,
       isInternal,
       fieldId,
       name: name,

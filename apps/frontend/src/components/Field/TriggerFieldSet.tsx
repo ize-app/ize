@@ -24,13 +24,13 @@ export const TriggerFieldSet = ({
               fieldAnswers.find((fa) => fa.field.fieldId === field.fieldId) ?? undefined;
           }
 
-          if (fieldAnswers && !triggerFieldAnswer?.answer?.answer) return;
+          if (fieldAnswers && !triggerFieldAnswer?.answer) return;
 
           return (
             <Field
               key={field.fieldId}
               field={field}
-              fieldAnswer={triggerFieldAnswer?.answer?.answer ?? undefined}
+              fieldAnswer={triggerFieldAnswer?.answer}
               onlyShowSelections={onlyShowSelections}
             />
           );

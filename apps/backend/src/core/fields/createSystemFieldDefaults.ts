@@ -1,10 +1,4 @@
-import {
-  FieldArgs,
-  FieldDataType,
-  FieldType,
-  SystemFieldType,
-  ValueType,
-} from "@/graphql/generated/resolver-types";
+import { FieldArgs, SystemFieldType, ValueType } from "@/graphql/generated/resolver-types";
 
 // TODO: have backend/frontend share same default file
 

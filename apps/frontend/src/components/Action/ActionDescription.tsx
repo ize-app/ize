@@ -2,9 +2,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { DataTable } from "@/components/Tables/DataTable/DataTable";
-import { ActionFragment, ActionType, FieldDataType } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType } from "@/graphql/generated/graphql";
 
-import { FreeInputValue } from "../Field/FreeInputValue";
+import { Value } from "../Value/Value";
 
 export const ActionDescription = ({
   actionType,
@@ -26,7 +26,9 @@ export const ActionDescription = ({
               data={[
                 {
                   label: "Webhook integration",
-                  value: <FreeInputValue value={action.uri} type={FieldDataType.Uri} />,
+                  value: (
+                    <Value value={{ __typename: "UriValue", uri: action.uri }} type={"option"} />
+                  ),
                 },
                 {
                   label: "What this webhook does",

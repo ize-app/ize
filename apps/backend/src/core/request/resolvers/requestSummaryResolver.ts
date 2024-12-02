@@ -17,7 +17,7 @@ import { requestStepStatusResolver } from "./requestStepStatusResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestSummaryPrismaType } from "../requestPrismaTypes";
 
-export const requestSummaryResolver = async ({
+export const requestSummaryResolver = ({
   requestSummary,
   groupIds,
   context,
@@ -25,7 +25,7 @@ export const requestSummaryResolver = async ({
   context: GraphqlRequestContext;
   groupIds: string[];
   requestSummary: RequestSummaryPrismaType;
-}): Promise<RequestSummary> => {
+}): RequestSummary => {
   const r = requestSummary;
   const currStep = r.CurrentRequestStep;
   if (!currStep) throw Error("Request does not have current request step");
@@ -62,7 +62,7 @@ export const requestSummaryResolver = async ({
     : null;
 
   const result = resultGroup
-    ? await resultGroupResolver({
+    ? resultGroupResolver({
         resultGroup,
         responseFinal: currStep.responseFinal,
         resultsFinal: currStep.resultsFinal,

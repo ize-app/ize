@@ -93,7 +93,7 @@ export const newEvolveRequest = async ({
       (field) => field.systemType === SystemFieldType.EvolveFlowDescription,
     );
 
-    if (!proposedFlowField || !currentFlowField)
+    if (!proposedFlowField || !currentFlowField || !descriptionField)
       throw new GraphQLError("Cannot find proposed flow and current flow fields of evolve flow", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
@@ -126,16 +126,20 @@ export const newEvolveRequest = async ({
     const requestFields: FieldAnswerArgs[] = [
       {
         fieldId: currentFlowField.id,
-        value: flow.CurrentFlowVersion.id,
+        value: JSON.stringify(flow.CurrentFlowVersion.id),
         optionSelections: [],
       },
-      { fieldId: proposedFlowField.id, value: proposedFlowVersionId, optionSelections: [] },
+      {
+        fieldId: proposedFlowField.id,
+        value: JSON.stringify(proposedFlowVersionId),
+        optionSelections: [],
+      },
     ];
 
-    if (descriptionField) {
+    if (args.request.description) {
       requestFields.push({
         fieldId: descriptionField.id,
-        value: args.request.description ?? null,
+        value: JSON.stringify(args.request.description),
         optionSelections: [],
       });
     }

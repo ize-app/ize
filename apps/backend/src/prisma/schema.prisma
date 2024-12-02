@@ -458,6 +458,8 @@ model Value {
   ResultItems  ResultItems[]
   FieldAnswers FieldAnswer[]
   FieldOptions FieldOption[]
+
+  @@map("values")
 }
 
 model ValueOptionSelections {
@@ -468,6 +470,8 @@ model ValueOptionSelections {
 
   Option FieldOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
   Value  Value       @relation(fields: [valueId], references: [id], onDelete: Cascade)
+
+  @@map("values_option_selections")
 }
 
 model ValueFlows {
@@ -477,6 +481,8 @@ model ValueFlows {
 
   Value Value @relation(fields: [valueId], references: [id], onDelete: Cascade)
   Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+
+  @@map("values_flows")
 }
 
 model ValueEntities {
@@ -486,6 +492,8 @@ model ValueEntities {
 
   Value  Value  @relation(fields: [valueId], references: [id], onDelete: Cascade)
   Entity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@map("values_entities")
 }
 
 // List of fields for use in request or response

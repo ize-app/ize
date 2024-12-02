@@ -1,5 +1,5 @@
 import { createOptionsArgs } from "@/components/Form/InputField/createMutationArgs/createOptionsArgs";
-import { FieldArgs, FieldOptionsConfigArgs, FieldType } from "@/graphql/generated/graphql";
+import { FieldArgs, FieldOptionsConfigArgs, ValueType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType, FieldsSchemaType } from "../../formValidation/fields";
 
@@ -10,51 +10,29 @@ export const createFieldsArgs = (fields: FieldsSchemaType): FieldArgs[] => {
 };
 
 export const createFieldArgs = (field: FieldSchemaType): FieldArgs => {
-  if (field.type === FieldType.FreeInput) {
-    const { fieldId, required, name, type, freeInputDataType, systemType, isInternal } = field;
-    return {
-      type,
-      isInternal,
-      fieldId,
-      systemType,
-      freeInputDataType,
-      required,
-      name,
-    };
-  } else if (field.type === FieldType.Options) {
-    const {
-      fieldId,
-      isInternal,
-      required,
-      name,
-      type,
-      systemType,
-      optionsConfig: rawOptionsConfig,
-    } = field;
+  let optionsConfig: FieldOptionsConfigArgs | undefined;
+  const { fieldId, required, name, type, systemType, isInternal } = field;
 
-    const { selectionType, maxSelections, previousStepOptions } = rawOptionsConfig;
+  if (field.type === ValueType.OptionSelections) {
+    const { selectionType, maxSelections, triggerDefinedOptions, linkedResultOptions, options } =
+      field.optionsConfig;
 
-    const optionsConfig: FieldOptionsConfigArgs = {
+    optionsConfig = {
       selectionType,
       maxSelections,
-      previousStepOptions,
-      requestOptionsDataType: rawOptionsConfig.triggerDefinedOptions?.dataType ?? null,
-      options: createOptionsArgs(rawOptionsConfig.options),
-      linkedResultOptions: rawOptionsConfig.linkedResultOptions.map(
-        (linkedResult) => linkedResult.id,
-      ),
+      triggerOptionsType: triggerDefinedOptions?.type ?? null,
+      options: createOptionsArgs(options),
+      linkedResultOptions: linkedResultOptions.map((linkedResult) => linkedResult.id),
     };
-
-    return {
-      type,
-      fieldId,
-      isInternal,
-      systemType,
-      required,
-      name,
-      optionsConfig,
-    };
-  } else {
-    throw Error("Unknown option type");
   }
+
+  return {
+    type,
+    fieldId,
+    required,
+    name,
+    systemType,
+    isInternal,
+    optionsConfig,
+  };
 };

@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 
 import { Select } from "@/components/Form/formFields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -44,7 +44,7 @@ export const PrioritizationForm = ({
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
       <Typography>
-        {field.type === FieldType.Options
+        {field.type === ValueType.OptionSelections
           ? rankingStrategyDescription(field.optionsConfig.selectionType)
           : null}
       </Typography>

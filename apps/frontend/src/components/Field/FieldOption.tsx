@@ -1,19 +1,18 @@
 import { Box, Typography } from "@mui/material";
 
 import {
-  FieldDataType,
   OptionSelectionType,
   ResponseFieldAnswersOptionsSummaryFragment,
+  ValueFragment,
 } from "@/graphql/generated/graphql";
 
-import { FreeInputValue } from "./FreeInputValue";
 import { OptionResponseSummary } from "./OptionResponseSummary";
+import { Value } from "../Value/Value";
 
 // amdmittedly, this component is kind of convulted. due for a refactor
 export const FieldOption = ({
   isSelected = false,
   value,
-  dataType,
   selectionType,
   index,
   final,
@@ -21,8 +20,7 @@ export const FieldOption = ({
   totalResponses,
 }: {
   isSelected?: boolean;
-  value: string;
-  dataType: FieldDataType;
+  value: ValueFragment;
   selectionType: OptionSelectionType;
   index: number | null;
   final: boolean;
@@ -60,7 +58,7 @@ export const FieldOption = ({
               {index + 1}.
             </Typography>
           )}
-          <FreeInputValue value={value} type={dataType} />
+          <Value value={value} type="option" />
         </Box>
         {!!percentage && (
           <Typography sx={{ width: "80px" }} textAlign={"right"}>

@@ -3,11 +3,11 @@ import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { Box, Typography } from "@mui/material";
 
 import {
+  FieldFragment,
   LinkedResult,
-  OptionFieldAnswerSelection,
   OptionFragment,
+  OptionSelectionFragment,
   OptionSelectionType,
-  Options,
   ResponseFieldAnswersOptionsSummaryFragment,
   ResponseFieldAnswersSummaryFragment,
   ResultItemFragment,
@@ -15,7 +15,7 @@ import {
 import muiTheme from "@/style/muiTheme";
 
 import { FieldOption } from "./FieldOption";
-import { formatDataTypeName } from "./formatDataTypeName";
+import { stringifyValueType } from "../Value/stringifyValueType";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
   return `Options created via previous result: "${linkedResult.resultName} (${linkedResult.fieldName})"`;
@@ -25,28 +25,30 @@ const linkedResultDescription = (linkedResult: LinkedResult) => {
 // if final, displays the final list of options. if not final, displays how additional options are created during a request
 
 export const FieldOptions = ({
-  fieldOptions,
+  field,
   optionSelections,
   onlyShowSelections = false,
   finalOptions,
   responseSummary,
   triggerDefinedOptions,
 }: {
-  fieldOptions: Options;
-  optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
+  field: FieldFragment;
+  optionSelections?: OptionSelectionFragment[] | ResultItemFragment[];
   onlyShowSelections?: boolean;
   finalOptions: boolean;
   responseSummary?: ResponseFieldAnswersSummaryFragment | null | undefined;
   triggerDefinedOptions?: OptionFragment[];
 }) => {
-  const { requestOptionsDataType, linkedResultOptions } = fieldOptions;
+  if (!field.optionsConfig) return null;
+
+  const { triggerOptionsType, linkedResultOptions, options, selectionType } = field.optionsConfig;
 
   const totalResponses =
-    fieldOptions.selectionType === OptionSelectionType.Rank
-      ? (responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0
-      : responseSummary?.count ?? 0;
+    selectionType === OptionSelectionType.Rank
+      ? ((responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0)
+      : (responseSummary?.count ?? 0);
 
-  const allOptions = [...fieldOptions.options];
+  const allOptions = [...options];
 
   if (!finalOptions && !!triggerDefinedOptions) allOptions.push(...triggerDefinedOptions);
 
@@ -90,10 +92,9 @@ export const FieldOptions = ({
         return (
           <FieldOption
             key={o.option.optionId}
-            value={o.option.name}
+            value={o.option.value}
             final={finalOptions}
-            dataType={o.option.dataType}
-            selectionType={fieldOptions.selectionType}
+            selectionType={selectionType}
             totalResponses={totalResponses}
             optionResponseSummary={o.optionSummary}
             index={index}
@@ -101,13 +102,13 @@ export const FieldOptions = ({
           />
         );
       })}
-      {!finalOptions && requestOptionsDataType && !triggerDefinedOptions && (
+      {!finalOptions && triggerOptionsType && !triggerDefinedOptions && (
         <Box sx={{ display: "flex", padding: "6px 12px" }}>
           <PlayCircleOutlineIcon
             sx={{ color: muiTheme.palette.secondary.main, marginRight: "8px" }}
           />
           <Typography color="secondary">
-            Trigger can define additional {formatDataTypeName(requestOptionsDataType)} options
+            Trigger can define additional {stringifyValueType(triggerOptionsType)} options
           </Typography>
         </Box>
       )}

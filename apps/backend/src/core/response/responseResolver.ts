@@ -37,14 +37,14 @@ export const responsesResolver = ({
 
   const fieldAnswerCreators: { [id: string]: Entity } = {};
 
-  let userResponded = true;
+  let userResponded = false;
 
   const userEntityIds = getUserEntityIds(context.currentUser);
 
   const dbFieldAnswers: FieldAnswerPrismaType[] = [];
   responses.forEach((response) => {
     const creator = entityResolver({ entity: response.CreatorEntity });
-    if (!userResponded && userEntityIds.includes(creator.id)) userResponded = true;
+    if (!userResponded && userEntityIds.includes(creator.entityId)) userResponded = true;
     response.Answers.forEach((answer) => {
       dbFieldAnswers.push(answer);
       fieldAnswerCreators[answer.id] = creator;

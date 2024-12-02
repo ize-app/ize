@@ -1,15 +1,15 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
-import { TriggerDefinedOptions } from "@/graphql/generated/graphql";
+import { TriggerDefinedOptionsFragment } from "@/graphql/generated/graphql";
 
-import { FreeInputValue } from "./FreeInputValue";
 import { Accordion } from "../Accordion";
+import { Value } from "../Value/Value";
 
 export const TriggerDefinedOptionSets = ({
   triggerDefinedOptionSets,
 }: {
-  triggerDefinedOptionSets: TriggerDefinedOptions[];
+  triggerDefinedOptionSets: TriggerDefinedOptionsFragment[];
 }) => {
   if (triggerDefinedOptionSets.length === 0) return null;
   return (
@@ -29,11 +29,7 @@ export const TriggerDefinedOptionSets = ({
               <Typography variant="description">{triggerDefinedOptions.fieldName}</Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {triggerDefinedOptions.options.map((option) => (
-                  <FreeInputValue
-                    key={option.optionId}
-                    value={option.name}
-                    type={option.dataType}
-                  />
+                  <Value key={option.optionId} value={option.value} type={"option"} />
                 ))}
               </Box>
             </Box>

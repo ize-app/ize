@@ -3,10 +3,10 @@ import * as z from "zod";
 import {
   ActionType,
   DecisionType,
-  FieldType,
   FlowType,
   OptionSelectionType,
   ResultType,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 import { actionSchema } from "./action";
@@ -35,14 +35,15 @@ const stepSchema = z
     result: resultsSchema,
     action: actionSchema.optional(),
   })
-  // this superRefine isn't strictly necessary since the UI currently ties together fields and
   .superRefine((step, ctx) => {
     step.result.forEach((res, index) => {
       if (res.type === ResultType.Decision) {
         const field = step.fieldSet.fields.find((f) => {
           return f.fieldId === res.fieldId;
         });
-        if (field?.type !== FieldType.Options) {
+        const defaultOptionId = res.decision.defaultDecision?.optionId;
+
+        if (field?.type !== ValueType.OptionSelections) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Decision must have an options field",
@@ -61,26 +62,18 @@ const stepSchema = z
             path: ["result", index],
           });
         }
-      }
-    });
-  })
-  // check if default option is valid
-  .superRefine((step, ctx) => {
-    step.result.forEach((res, index) => {
-      if (res.type === ResultType.Decision && res.decision.defaultDecision?.optionId) {
-        const defaultOptionId = res.decision.defaultDecision?.optionId;
-        const field = step.fieldSet.fields.find((f) => f.fieldId === res.fieldId);
 
-        const option =
-          field &&
-          field.type === FieldType.Options &&
-          field.optionsConfig.options.find((o) => o.optionId === defaultOptionId);
-        if (!option) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Default option must be a valid option",
-            path: ["result", index, "decision", "defaultDecision", "optionId"],
-          });
+        if (defaultOptionId) {
+          const defaultOption = field.optionsConfig.options.find(
+            (o) => o.optionId === defaultOptionId,
+          );
+          if (!defaultOption) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Default option must be a valid option",
+              path: ["result", index, "decision", "defaultDecision", "optionId"],
+            });
+          }
         }
       }
     });
@@ -88,7 +81,7 @@ const stepSchema = z
   // check that action filter is valid
   .superRefine((step, ctx) => {
     if (step.action?.filter) {
-      const { resultConfigId, optionId: defaultOptionId } = step.action.filter;
+      const { resultConfigId, optionId } = step.action.filter;
       const resultConfigFieldId = step.result.find(
         (r) => r.resultConfigId === resultConfigId,
       )?.fieldId;
@@ -102,8 +95,8 @@ const stepSchema = z
       }
       const field = step.fieldSet.fields.find((f) => f.fieldId === resultConfigFieldId);
       const foundOption =
-        field?.type === FieldType.Options &&
-        field.optionsConfig.options.some((option) => option.optionId === defaultOptionId);
+        field?.type === ValueType.OptionSelections &&
+        field.optionsConfig.options.some((option) => option.optionId === optionId);
       if (!foundOption) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -148,7 +141,7 @@ export const flowSchema = z
     flow.steps.forEach((step, stepIndex) => {
       step.fieldSet.fields.forEach((field, fieldIndex) => {
         if (
-          field.type === FieldType.Options &&
+          field.type === ValueType.OptionSelections &&
           field.optionsConfig.linkedResultOptions.length > 0
         ) {
           field.optionsConfig.linkedResultOptions.forEach(

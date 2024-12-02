@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 
 import { PermissionFragment } from "@/graphql/generated/graphql";
 
-import { EntityList } from "./EntityList";
+import { EntityList } from "./Value/EntityList";
 
 export const Permissions = ({
   permission,

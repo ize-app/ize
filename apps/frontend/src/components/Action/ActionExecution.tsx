@@ -7,12 +7,11 @@ import {
   ActionFragment,
   ActionStatus,
   ActionType,
-  FieldDataType,
 } from "@/graphql/generated/graphql";
 
-import { FreeInputValue } from "../Field/FreeInputValue";
 import { actionStatusProps } from "../status/actionStatusProps";
 import { StatusTag } from "../status/StatusTag";
+import { Value } from "../Value/Value";
 
 export const ActionExecution = ({
   action,
@@ -41,7 +40,7 @@ export const ActionExecution = ({
       data.unshift(
         {
           label: "Webhook integration",
-          value: <FreeInputValue value={action.uri} type={FieldDataType.Uri} />,
+          value: <Value value={{ __typename: "UriValue", uri: action.uri }} type={"option"} />,
         },
         {
           label: "What this webhook does",

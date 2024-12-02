@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { FieldPath, FieldValues, Path, PathValue, useFormContext } from "react-hook-form";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { ValueType } from "@/graphql/generated/graphql";
 
 import { Switch } from "../../../formFields";
 import { Select } from "../../../formFields/Select";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { TriggerDefinedOptionsSchemaType } from "../../formValidation/fields";
+import { newInputTypes } from "../newInputTypes";
 
 export interface RequestDefinedOptionsProps<T extends FieldValues> {
   fieldName: FieldPath<T>;
@@ -22,7 +23,7 @@ export const TriggerDefinedOptionsForm = <T extends FieldValues>({
   const triggerDefinedOptions = watch(triggerDefinedOptionsPath) as TriggerDefinedOptionsSchemaType;
 
   const hasTriggerDefinedOptions = triggerDefinedOptions?.hasTriggerDefinedOptions ?? false;
-  const triggerDefinedOptionsDataType = triggerDefinedOptions?.dataType;
+  const triggerDefinedOptionsDataType = triggerDefinedOptions?.type;
 
   const [prevHasTriggerDefinedOptions, setPrevHasTriggerDefinedOptions] =
     useState<boolean>(hasTriggerDefinedOptions);
@@ -30,15 +31,24 @@ export const TriggerDefinedOptionsForm = <T extends FieldValues>({
   // change default option value when hasDefaultOption is toggled
   useEffect(() => {
     if (!prevHasTriggerDefinedOptions && hasTriggerDefinedOptions) {
-      setValue(triggerDefinedOptionsPath, {
+      const newValue: TriggerDefinedOptionsSchemaType = {
         hasTriggerDefinedOptions: true,
-        dataType: FieldDataType.String,
-      } as TriggerDefinedOptionsSchemaType as PathValue<T, typeof triggerDefinedOptionsPath>);
+        type: ValueType.String,
+      };
+      setValue(
+        triggerDefinedOptionsPath,
+        newValue as PathValue<T, typeof triggerDefinedOptionsPath>,
+      );
     } else if (prevHasTriggerDefinedOptions && !hasTriggerDefinedOptions) {
-      setValue(triggerDefinedOptionsPath, {
+      const newValue: TriggerDefinedOptionsSchemaType = {
         hasTriggerDefinedOptions: false,
-        dataType: null,
-      } as TriggerDefinedOptionsSchemaType as PathValue<T, typeof triggerDefinedOptionsPath>);
+        type: null,
+      };
+
+      setValue(
+        triggerDefinedOptionsPath,
+        newValue as PathValue<T, typeof triggerDefinedOptionsPath>,
+      );
     }
     setPrevHasTriggerDefinedOptions(hasTriggerDefinedOptions);
   }, [hasTriggerDefinedOptions]);
@@ -56,15 +66,9 @@ export const TriggerDefinedOptionsForm = <T extends FieldValues>({
       />
       {triggerDefinedOptionsDataType && (
         <Select<T>
-          name={`${fieldName}.dataType` as Path<T>}
+          name={`${fieldName}.type` as Path<T>}
           defaultValue=""
-          selectOptions={[
-            { name: "Text", value: FieldDataType.String },
-            { name: "Number", value: FieldDataType.Number },
-            { name: "Uri", value: FieldDataType.Uri },
-            { name: "Date", value: FieldDataType.Date },
-            { name: "DateTime", value: FieldDataType.DateTime },
-          ]}
+          selectOptions={newInputTypes}
           label="Option type"
           size="small"
           sx={{ width: "100px", flexGrow: 0 }}

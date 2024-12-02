@@ -1,4 +1,4 @@
-import { FieldAnswerArgs, FieldType } from "@/graphql/generated/graphql";
+import { FieldAnswerArgs, OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 import { createInputValueArg } from "./createInputValueArg";
 import { InputRecordSchemaType } from "../inputValidation";
@@ -8,22 +8,22 @@ export const createFieldAnswersArgs = (
 ): FieldAnswerArgs[] => {
   const res = Object.entries((fieldAnswers ?? []) as InputRecordSchemaType).map(
     (entry): FieldAnswerArgs | null => {
-      // TODO make this so that it creates weights
-      if (entry[1].type === FieldType.Options) {
-        ////////
-        // TODO make this so that it creates weights
-        ////////
-        if (entry[1].value.length === 0) return null;
+      if (entry[1].type === ValueType.OptionSelections) {
+        const selectionCount = entry[1].value.length;
+        const selectionType = entry[1].selectionType;
+
+        if (!selectionCount) return null;
         return {
           fieldId: entry[0],
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          optionSelections: entry[1].value,
+          optionSelections: entry[1].value.map((v, index) => ({
+            optionId: v.optionId,
+            weight: selectionType === OptionSelectionType.Rank ? selectionCount - index : 1,
+          })),
         };
       } else {
         if (entry[1].value === undefined) return null;
         return {
           fieldId: entry[0],
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           value: createInputValueArg(entry[1]),
         };
       }

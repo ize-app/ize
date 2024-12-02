@@ -338,20 +338,6 @@ export type FlowsValue = {
   flows: Array<FlowReference>;
 };
 
-export type GenericFieldAndValue = GenericFieldWithMultipleValues | GenericFieldWithSingleValue;
-
-export type GenericFieldWithMultipleValues = {
-  __typename?: 'GenericFieldWithMultipleValues';
-  fieldName: Scalars['String']['output'];
-  value: Array<Value>;
-};
-
-export type GenericFieldWithSingleValue = {
-  __typename?: 'GenericFieldWithSingleValue';
-  fieldName: Scalars['String']['output'];
-  value: Value;
-};
-
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -1045,11 +1031,6 @@ export enum ResultGroupStatus {
   Preliminary = 'Preliminary'
 }
 
-export type ResultGroupTestWebhookArgs = {
-  fieldName: Scalars['String']['input'];
-  results: Array<WebhookValueArgs>;
-};
-
 export type ResultItem = {
   __typename?: 'ResultItem';
   id: Scalars['String']['output'];
@@ -1100,9 +1081,14 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  requestFields: Array<WebhookValueArgs>;
-  results: Array<ResultGroupTestWebhookArgs>;
+  results: Array<ResultType>;
+  triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
+};
+
+export type TestWebhookTriggerFieldsArgs = {
+  name: Scalars['String']['input'];
+  type: ValueType;
 };
 
 export type TriggerConfig = {
@@ -1113,6 +1099,12 @@ export type TriggerConfig = {
 
 export type TriggerConfigArgs = {
   permission: PermissionArgs;
+};
+
+export type TriggerContext = {
+  __typename?: 'TriggerContext';
+  answers: Array<TriggerFieldAnswer>;
+  options: Array<TriggerDefinedOptions>;
 };
 
 export type TriggerDefinedOptions = {
@@ -1180,11 +1172,6 @@ export enum WatchFilter {
   Unwatched = 'Unwatched',
   Watched = 'Watched'
 }
-
-export type WebhookValueArgs = {
-  fieldName: Scalars['String']['input'];
-  type: ValueType;
-};
 
 export type SetUpDiscordServerInput = {
   roleId?: InputMaybe<Scalars['String']['input']>;
@@ -1262,7 +1249,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   Action: ( Omit<CallWebhook, 'filter'> & { filter?: Maybe<_RefType['ActionFilter']> } ) | ( Omit<EvolveFlow, 'filter'> & { filter?: Maybe<_RefType['ActionFilter']> } ) | ( Omit<EvolveGroup, 'filter'> & { filter?: Maybe<_RefType['ActionFilter']> } ) | ( Omit<GroupWatchFlow, 'filter'> & { filter?: Maybe<_RefType['ActionFilter']> } ) | ( Omit<TriggerStep, 'filter'> & { filter?: Maybe<_RefType['ActionFilter']> } );
   Entity: ( Omit<Group, 'groupType'> & { groupType: _RefType['GroupType'] } ) | ( Omit<Identity, 'identityType'> & { identityType: _RefType['IdentityType'] } ) | ( User );
-  GenericFieldAndValue: ( Omit<GenericFieldWithMultipleValues, 'value'> & { value: Array<_RefType['Value']> } ) | ( Omit<GenericFieldWithSingleValue, 'value'> & { value: _RefType['Value'] } );
   GroupType: ( DiscordRoleGroup ) | ( GroupIze ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
   OptionValue: ( DateTimeValue ) | ( DateValue ) | ( Omit<EntitiesValue, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FloatValue ) | ( FlowVersionValue ) | ( FlowsValue ) | ( StringValue ) | ( UriValue );
@@ -1317,9 +1303,6 @@ export type ResolversTypes = {
   FlowType: FlowType;
   FlowVersionValue: ResolverTypeWrapper<FlowVersionValue>;
   FlowsValue: ResolverTypeWrapper<FlowsValue>;
-  GenericFieldAndValue: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GenericFieldAndValue']>;
-  GenericFieldWithMultipleValues: ResolverTypeWrapper<Omit<GenericFieldWithMultipleValues, 'value'> & { value: Array<ResolversTypes['Value']> }>;
-  GenericFieldWithSingleValue: ResolverTypeWrapper<Omit<GenericFieldWithSingleValue, 'value'> & { value: ResolversTypes['Value'] }>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1395,7 +1378,6 @@ export type ResolversTypes = {
   ResultConfig: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['ResultConfig']>;
   ResultGroup: ResolverTypeWrapper<Omit<ResultGroup, 'results'> & { results: Array<ResolversTypes['Result']> }>;
   ResultGroupStatus: ResultGroupStatus;
-  ResultGroupTestWebhookArgs: ResultGroupTestWebhookArgs;
   ResultItem: ResolverTypeWrapper<Omit<ResultItem, 'value'> & { value: ResolversTypes['Value'] }>;
   ResultType: ResultType;
   Status: Status;
@@ -1404,8 +1386,10 @@ export type ResolversTypes = {
   StringValue: ResolverTypeWrapper<StringValue>;
   SystemFieldType: SystemFieldType;
   TestWebhookArgs: TestWebhookArgs;
+  TestWebhookTriggerFieldsArgs: TestWebhookTriggerFieldsArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerContext: ResolverTypeWrapper<Omit<TriggerContext, 'answers' | 'options'> & { answers: Array<ResolversTypes['TriggerFieldAnswer']>, options: Array<ResolversTypes['TriggerDefinedOptions']> }>;
   TriggerDefinedOptions: ResolverTypeWrapper<Omit<TriggerDefinedOptions, 'options'> & { options: Array<ResolversTypes['Option']> }>;
   TriggerFieldAnswer: ResolverTypeWrapper<Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversTypes['Value'], field: ResolversTypes['Field'] }>;
   TriggerStep: ResolverTypeWrapper<Omit<TriggerStep, 'filter'> & { filter?: Maybe<ResolversTypes['ActionFilter']> }>;
@@ -1416,7 +1400,6 @@ export type ResolversTypes = {
   Value: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Value']>;
   ValueType: ValueType;
   WatchFilter: WatchFilter;
-  WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
@@ -1459,9 +1442,6 @@ export type ResolversParentTypes = {
   FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'trigger'> & { creator: ResolversParentTypes['Entity'], group?: Maybe<ResolversParentTypes['Group']>, trigger: ResolversParentTypes['TriggerConfig'] };
   FlowVersionValue: FlowVersionValue;
   FlowsValue: FlowsValue;
-  GenericFieldAndValue: ResolversUnionTypes<ResolversParentTypes>['GenericFieldAndValue'];
-  GenericFieldWithMultipleValues: Omit<GenericFieldWithMultipleValues, 'value'> & { value: Array<ResolversParentTypes['Value']> };
-  GenericFieldWithSingleValue: Omit<GenericFieldWithSingleValue, 'value'> & { value: ResolversParentTypes['Value'] };
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
   GroupEnsArgs: GroupEnsArgs;
@@ -1529,14 +1509,15 @@ export type ResolversParentTypes = {
   ResultArgs: ResultArgs;
   ResultConfig: ResolversUnionTypes<ResolversParentTypes>['ResultConfig'];
   ResultGroup: Omit<ResultGroup, 'results'> & { results: Array<ResolversParentTypes['Result']> };
-  ResultGroupTestWebhookArgs: ResultGroupTestWebhookArgs;
   ResultItem: Omit<ResultItem, 'value'> & { value: ResolversParentTypes['Value'] };
   Step: Omit<Step, 'action' | 'fieldSet' | 'response' | 'result'> & { action?: Maybe<ResolversParentTypes['Action']>, fieldSet: ResolversParentTypes['FieldSet'], response?: Maybe<ResolversParentTypes['ResponseConfig']>, result: Array<ResolversParentTypes['ResultConfig']> };
   String: Scalars['String']['output'];
   StringValue: StringValue;
   TestWebhookArgs: TestWebhookArgs;
+  TestWebhookTriggerFieldsArgs: TestWebhookTriggerFieldsArgs;
   TriggerConfig: Omit<TriggerConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   TriggerConfigArgs: TriggerConfigArgs;
+  TriggerContext: Omit<TriggerContext, 'answers' | 'options'> & { answers: Array<ResolversParentTypes['TriggerFieldAnswer']>, options: Array<ResolversParentTypes['TriggerDefinedOptions']> };
   TriggerDefinedOptions: Omit<TriggerDefinedOptions, 'options'> & { options: Array<ResolversParentTypes['Option']> };
   TriggerFieldAnswer: Omit<TriggerFieldAnswer, 'answer' | 'field'> & { answer: ResolversParentTypes['Value'], field: ResolversParentTypes['Field'] };
   TriggerStep: Omit<TriggerStep, 'filter'> & { filter?: Maybe<ResolversParentTypes['ActionFilter']> };
@@ -1545,7 +1526,6 @@ export type ResolversParentTypes = {
   User: User;
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['Value'], creator: ResolversParentTypes['Entity'] };
   Value: ResolversUnionTypes<ResolversParentTypes>['Value'];
-  WebhookValueArgs: WebhookValueArgs;
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
 
@@ -1751,22 +1731,6 @@ export type FlowVersionValueResolvers<ContextType = GraphqlRequestContext, Paren
 
 export type FlowsValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowsValue'] = ResolversParentTypes['FlowsValue']> = {
   flows?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GenericFieldAndValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GenericFieldAndValue'] = ResolversParentTypes['GenericFieldAndValue']> = {
-  __resolveType: TypeResolveFn<'GenericFieldWithMultipleValues' | 'GenericFieldWithSingleValue', ParentType, ContextType>;
-};
-
-export type GenericFieldWithMultipleValuesResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GenericFieldWithMultipleValues'] = ResolversParentTypes['GenericFieldWithMultipleValues']> = {
-  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  value?: Resolver<Array<ResolversTypes['Value']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GenericFieldWithSingleValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GenericFieldWithSingleValue'] = ResolversParentTypes['GenericFieldWithSingleValue']> = {
-  fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['Value'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2155,6 +2119,12 @@ export type TriggerConfigResolvers<ContextType = GraphqlRequestContext, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TriggerContextResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerContext'] = ResolversParentTypes['TriggerContext']> = {
+  answers?: Resolver<Array<ResolversTypes['TriggerFieldAnswer']>, ParentType, ContextType>;
+  options?: Resolver<Array<ResolversTypes['TriggerDefinedOptions']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TriggerDefinedOptionsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['TriggerDefinedOptions'] = ResolversParentTypes['TriggerDefinedOptions']> = {
   fieldId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fieldName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2227,9 +2197,6 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   FlowSummary?: FlowSummaryResolvers<ContextType>;
   FlowVersionValue?: FlowVersionValueResolvers<ContextType>;
   FlowsValue?: FlowsValueResolvers<ContextType>;
-  GenericFieldAndValue?: GenericFieldAndValueResolvers<ContextType>;
-  GenericFieldWithMultipleValues?: GenericFieldWithMultipleValuesResolvers<ContextType>;
-  GenericFieldWithSingleValue?: GenericFieldWithSingleValueResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
   GroupIze?: GroupIzeResolvers<ContextType>;
   GroupNft?: GroupNftResolvers<ContextType>;
@@ -2276,6 +2243,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Step?: StepResolvers<ContextType>;
   StringValue?: StringValueResolvers<ContextType>;
   TriggerConfig?: TriggerConfigResolvers<ContextType>;
+  TriggerContext?: TriggerContextResolvers<ContextType>;
   TriggerDefinedOptions?: TriggerDefinedOptionsResolvers<ContextType>;
   TriggerFieldAnswer?: TriggerFieldAnswerResolvers<ContextType>;
   TriggerStep?: TriggerStepResolvers<ContextType>;

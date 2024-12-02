@@ -337,20 +337,6 @@ export type FlowsValue = {
   flows: Array<FlowReference>;
 };
 
-export type GenericFieldAndValue = GenericFieldWithMultipleValues | GenericFieldWithSingleValue;
-
-export type GenericFieldWithMultipleValues = {
-  __typename?: 'GenericFieldWithMultipleValues';
-  fieldName: Scalars['String']['output'];
-  value: Array<Value>;
-};
-
-export type GenericFieldWithSingleValue = {
-  __typename?: 'GenericFieldWithSingleValue';
-  fieldName: Scalars['String']['output'];
-  value: Value;
-};
-
 export type Group = {
   __typename?: 'Group';
   color?: Maybe<Scalars['String']['output']>;
@@ -1044,11 +1030,6 @@ export enum ResultGroupStatus {
   Preliminary = 'Preliminary'
 }
 
-export type ResultGroupTestWebhookArgs = {
-  fieldName: Scalars['String']['input'];
-  results: Array<WebhookValueArgs>;
-};
-
 export type ResultItem = {
   __typename?: 'ResultItem';
   id: Scalars['String']['output'];
@@ -1099,9 +1080,14 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  requestFields: Array<WebhookValueArgs>;
-  results: Array<ResultGroupTestWebhookArgs>;
+  results: Array<ResultType>;
+  triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
+};
+
+export type TestWebhookTriggerFieldsArgs = {
+  name: Scalars['String']['input'];
+  type: ValueType;
 };
 
 export type TriggerConfig = {
@@ -1112,6 +1098,12 @@ export type TriggerConfig = {
 
 export type TriggerConfigArgs = {
   permission: PermissionArgs;
+};
+
+export type TriggerContext = {
+  __typename?: 'TriggerContext';
+  answers: Array<TriggerFieldAnswer>;
+  options: Array<TriggerDefinedOptions>;
 };
 
 export type TriggerDefinedOptions = {
@@ -1179,11 +1171,6 @@ export enum WatchFilter {
   Unwatched = 'Unwatched',
   Watched = 'Watched'
 }
-
-export type WebhookValueArgs = {
-  fieldName: Scalars['String']['input'];
-  type: ValueType;
-};
 
 export type SetUpDiscordServerInput = {
   roleId?: InputMaybe<Scalars['String']['input']>;
@@ -1738,10 +1725,6 @@ export const WatchFlowDocument = {"kind":"Document","definitions":[{"kind":"Oper
       "Identity",
       "User"
     ],
-    "GenericFieldAndValue": [
-      "GenericFieldWithMultipleValues",
-      "GenericFieldWithSingleValue"
-    ],
     "GroupType": [
       "DiscordRoleGroup",
       "GroupIze",
@@ -2112,20 +2095,6 @@ export type FlowVersionValue = {
 export type FlowsValue = {
   __typename?: 'FlowsValue';
   flows: Array<FlowReference>;
-};
-
-export type GenericFieldAndValue = GenericFieldWithMultipleValues | GenericFieldWithSingleValue;
-
-export type GenericFieldWithMultipleValues = {
-  __typename?: 'GenericFieldWithMultipleValues';
-  fieldName: Scalars['String']['output'];
-  value: Array<Value>;
-};
-
-export type GenericFieldWithSingleValue = {
-  __typename?: 'GenericFieldWithSingleValue';
-  fieldName: Scalars['String']['output'];
-  value: Value;
 };
 
 export type Group = {
@@ -2821,11 +2790,6 @@ export enum ResultGroupStatus {
   Preliminary = 'Preliminary'
 }
 
-export type ResultGroupTestWebhookArgs = {
-  fieldName: Scalars['String']['input'];
-  results: Array<WebhookValueArgs>;
-};
-
 export type ResultItem = {
   __typename?: 'ResultItem';
   id: Scalars['String']['output'];
@@ -2876,9 +2840,14 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  requestFields: Array<WebhookValueArgs>;
-  results: Array<ResultGroupTestWebhookArgs>;
+  results: Array<ResultType>;
+  triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
+};
+
+export type TestWebhookTriggerFieldsArgs = {
+  name: Scalars['String']['input'];
+  type: ValueType;
 };
 
 export type TriggerConfig = {
@@ -2889,6 +2858,12 @@ export type TriggerConfig = {
 
 export type TriggerConfigArgs = {
   permission: PermissionArgs;
+};
+
+export type TriggerContext = {
+  __typename?: 'TriggerContext';
+  answers: Array<TriggerFieldAnswer>;
+  options: Array<TriggerDefinedOptions>;
 };
 
 export type TriggerDefinedOptions = {
@@ -2956,11 +2931,6 @@ export enum WatchFilter {
   Unwatched = 'Unwatched',
   Watched = 'Watched'
 }
-
-export type WebhookValueArgs = {
-  fieldName: Scalars['String']['input'];
-  type: ValueType;
-};
 
 export type SetUpDiscordServerInput = {
   roleId?: InputMaybe<Scalars['String']['input']>;

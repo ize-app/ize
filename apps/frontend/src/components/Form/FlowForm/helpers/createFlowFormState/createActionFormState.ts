@@ -1,10 +1,10 @@
 import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
-import { Action, ActionType } from "@/graphql/generated/graphql";
+import { ActionFragment, ActionType } from "@/graphql/generated/graphql";
 
 import { ActionFilterSchemaType, ActionSchemaType } from "../../formValidation/action";
 
 export const createActionFormState = (
-  action: Action | null | undefined,
+  action: ActionFragment | null | undefined,
   uuidRemapper: UUIDRemapper,
 ): ActionSchemaType | undefined => {
   if (!action) return undefined;

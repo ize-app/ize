@@ -22,7 +22,7 @@ import { colors } from "@/style/style";
 
 import { Responses } from "./Responses";
 import Loading from "../../components/Loading";
-import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
+import { GetRequestDocument } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -60,7 +60,7 @@ export const Request = () => {
 
   const reusable: boolean = request.flow.reusable;
   const acceptingNewResponses: boolean = !currentReqStep.status.responseFinal;
-  const userResponses: ResponseFragment[] = currentReqStep.userResponses;
+  const userResponded = currentReqStep.userResponded;
   const allowMultipleResponses: boolean = !!currentStep.response?.allowMultipleResponses;
   const userIsCreator: boolean =
     (me?.user.entityId === request?.creator.entityId ||
@@ -191,26 +191,24 @@ export const Request = () => {
               />
               <TriggerDefinedOptionSets triggerDefinedOptionSets={request.triggerDefinedOptions} />
             </Box>
-            {!!me &&
-              acceptingNewResponses &&
-              ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
-                <Paper
-                  elevation={4}
-                  sx={(theme) => ({
-                    flexGrow: 2,
-                    minWidth: "300px",
-                    maxWidth: "800px",
-                    border: `solid ${theme.palette.primary.light} 2px`,
-                    outline: `2px solid ${colors.primaryContainer}`,
-                  })}
-                >
-                  <ResponseForm
-                    requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
-                    responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
-                    permission={request.flow.steps[request.currentStepIndex].response?.permission}
-                  />
-                </Paper>
-              )}
+            {!!me && acceptingNewResponses && (!userResponded || allowMultipleResponses) && (
+              <Paper
+                elevation={4}
+                sx={(theme) => ({
+                  flexGrow: 2,
+                  minWidth: "300px",
+                  maxWidth: "800px",
+                  border: `solid ${theme.palette.primary.light} 2px`,
+                  outline: `2px solid ${colors.primaryContainer}`,
+                })}
+              >
+                <ResponseForm
+                  requestStepId={request.requestSteps[request.currentStepIndex].requestStepId}
+                  responseFields={request.requestSteps[request.currentStepIndex].fieldSet.fields}
+                  permission={request.flow.steps[request.currentStepIndex].response?.permission}
+                />
+              </Paper>
+            )}
           </Box>
         </Box>
 

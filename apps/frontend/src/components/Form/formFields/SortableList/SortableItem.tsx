@@ -3,17 +3,16 @@ import { CSS } from "@dnd-kit/utilities";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { Box, Typography } from "@mui/material";
 
-import { FreeInputValue } from "@/components/Field/FreeInputValue";
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { Value } from "@/components/Value/Value";
+import { ValueFragment } from "@/graphql/generated/graphql";
 
 export interface SortableItemProps {
   id: string;
-  label: string;
+  value: ValueFragment;
   index: number;
-  dataType: FieldDataType;
 }
 
-export const SortableItem = ({ id, label, index, dataType }: SortableItemProps) => {
+export const SortableItem = ({ id, value, index }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });
@@ -37,7 +36,7 @@ export const SortableItem = ({ id, label, index, dataType }: SortableItemProps) 
       <DragHandleIcon fontSize={"small"} />
       <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
         <Typography>{(index + 1).toString() + ". "}</Typography>
-        <FreeInputValue value={label} type={dataType} />
+        <Value value={value} type="option" />
       </Box>
     </Box>
   );

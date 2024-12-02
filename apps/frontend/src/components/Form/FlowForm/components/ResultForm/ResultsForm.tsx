@@ -128,7 +128,7 @@ const ResultForm = ({ stepIndex, resultIndex, locked, reusable, display }: Resul
           <Select<FlowSchemaType>
             size={"small"}
             disabled={locked}
-            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.freeInputDataType`}
+            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.type`}
             selectOptions={defaultFreeInputDefaultOptions}
             label="Free input data type"
             defaultValue=""

@@ -41,7 +41,6 @@ export const newLlmSummaryResult = async ({
         },
       );
 
-
     const res = await generateAiSummary({
       requestStepId,
       isList: llmConfig.isList,
@@ -61,14 +60,13 @@ export const newLlmSummaryResult = async ({
     );
 
     llmResultArgs = {
-      name: "LLM Summary",
+      name: "LLM summary",
       type: ResultType.LlmSummary,
       answerCount: fieldAnswers.length,
       ResultItems: {
         createMany: {
           data: valueIds.map((valueId, index) => ({
             index,
-            type: ValueType.String,
             valueId,
           })),
         },

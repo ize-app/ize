@@ -2,7 +2,7 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import { UseFieldArrayReturn } from "react-hook-form";
 
-import { FieldType, OptionSelectionType, ResultType } from "@/graphql/generated/graphql";
+import { OptionSelectionType, ResultType, ValueType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -32,10 +32,10 @@ export const AddResultButton = ({
   const addResult = ({ resultType }: { resultType: ResultType }) => {
     // e.stopPropagation();
     const field: FieldSchemaType = createDefaultFieldState({
-      fieldType:
+      type:
         resultType === ResultType.Ranking || resultType === ResultType.Decision
-          ? FieldType.Options
-          : FieldType.FreeInput,
+          ? ValueType.OptionSelections
+          : ValueType.String,
       selectionType:
         resultType === ResultType.Ranking ? OptionSelectionType.Rank : OptionSelectionType.Select,
     });

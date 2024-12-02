@@ -1,11 +1,7 @@
-import { FieldFragment, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
+import { FieldFragment } from "@/graphql/generated/graphql";
 
-import { createFreeInputDefaultValue } from "./createFreeInputDefaultState";
-import {
-  InputRecordSchemaType,
-  InputSchemaType,
-  OptionSelectionValuesSchemaType,
-} from "../inputValidation";
+import { InputRecordSchemaType } from "../inputValidation";
+import { createInputValueFormState } from "./createInputFormState";
 
 export const createInputRecordsFormState = ({
   fields,
@@ -14,34 +10,11 @@ export const createInputRecordsFormState = ({
 }): InputRecordSchemaType => {
   const responseFieldAnswers: InputRecordSchemaType = {};
   fields.map((f) => {
-    let answer: InputSchemaType;
-    if (f.__typename === FieldType.FreeInput) {
-      //   const defaultValue = createFreeInputDefaultValue({
-      //     defaultValue: f?.defaultAnswer,
-      //     dataType: f.dataType,
-      //   });
-      answer = {
-        type: f.dataType,
-        required: f.required,
-        //@ts-expect-error type inference not working here
-        value: createFreeInputDefaultValue({
-          dataType: f.dataType,
-          defaultValue: f?.defaultAnswer,
-        }),
-      };
-    } else {
-      let optionSelections: OptionSelectionValuesSchemaType | undefined = undefined;
-      if (f.selectionType === OptionSelectionType.Rank) optionSelections = f.options;
-      answer = {
-        type: FieldType.Options,
-        required: f.required,
-        selectionType: f.selectionType,
-        maxSelections: f.maxSelections,
-        //@ts-expect-error type inference not working here
-        value: optionSelections,
-      };
-    }
-    responseFieldAnswers[f.fieldId] = answer;
+    responseFieldAnswers[f.fieldId] = createInputValueFormState({
+      type: "field",
+      value: f.defaultAnswer ?? undefined,
+      field: f,
+    });
   });
 
   return responseFieldAnswers;

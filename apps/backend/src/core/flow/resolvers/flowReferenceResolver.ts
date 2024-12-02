@@ -1,4 +1,4 @@
-import { FlowType, FlowVersion } from "@prisma/client";
+import { FlowType } from "@prisma/client";
 
 import { GroupPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { FlowReference } from "@/graphql/generated/resolver-types";

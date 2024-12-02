@@ -12,11 +12,11 @@ import {
   ActionType,
   DecisionType,
   EntityType,
-  FieldType,
   FlowType,
   OptionSelectionType,
   ResultType,
   UserSummaryPartsFragment,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
@@ -81,7 +81,7 @@ export const generateNewFlowConfig = ({
       case FlowGoal.Decision: {
         // create options config
         field = generateFieldConfig({
-          type: FieldType.Options,
+          type: ValueType.OptionSelections,
           question: config.question,
           selectionType:
             config.decision.type === DecisionType.WeightedAverage
@@ -105,7 +105,7 @@ export const generateNewFlowConfig = ({
       case FlowGoal.Prioritize: {
         // same as prioritize
         field = generateFieldConfig({
-          type: FieldType.Options,
+          type: ValueType.OptionSelections,
           question: config.question,
           selectionType: OptionSelectionType.Rank,
           options: config.optionsConfig.options,
@@ -120,7 +120,7 @@ export const generateNewFlowConfig = ({
       }
       case FlowGoal.GetPerspectives: {
         field = generateFieldConfig({
-          type: FieldType.FreeInput,
+          type: ValueType.String,
           question: config.question,
         });
 
@@ -149,7 +149,7 @@ export const generateNewFlowConfig = ({
           config.optionsConfig
         ) {
           field = generateFieldConfig({
-            type: FieldType.Options,
+            type: ValueType.OptionSelections,
             question: config.question ?? "Select one of the following options:", //todo: this should be a question
             selectionType:
               config.decision?.type === DecisionType.WeightedAverage

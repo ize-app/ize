@@ -1,7 +1,7 @@
 import { StepSchemaType } from "@/components/Form/FlowForm/formValidation/flow";
 import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
-import { ActionType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { ActionType, ResultType, ValueType } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
 import { generateFieldConfig } from "./generateFieldConfig";
@@ -24,7 +24,7 @@ export const generateIdeaCreationStep = ({
   permission: PermissionSchemaType;
 }): [StepSchemaType, ResultSchemaType] => {
   const field = generateFieldConfig({
-    type: FieldType.FreeInput,
+    type: ValueType.String,
     question,
   });
 

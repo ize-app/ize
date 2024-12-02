@@ -1,17 +1,17 @@
 import { Box, SvgIcon, Typography, useTheme } from "@mui/material";
 
-import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
 import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
+import { Value } from "@/components/Value/Value";
 import {
   FieldFragment,
-  FieldType,
   OptionFragment,
   ResponseFieldAnswersSummaryFragment,
   ResultConfigFragment,
   ResultGroupFragment,
   ResultGroupStatus,
   ResultType,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
@@ -115,14 +115,14 @@ export const Result = ({
         {resultGroup &&
           resultGroup.results.map((result) => {
             return result.type !== ResultType.LlmSummary &&
-              field.__typename === FieldType.Options ? (
+              field.type === ValueType.OptionSelections ? (
               <LabeledGroupedInputs
                 key={result.id}
                 sx={{ backgroundColor: "white" }}
                 label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
               >
                 <FieldOptions
-                  fieldOptions={field}
+                  field={field}
                   finalOptions={true}
                   responseSummary={responseSummary}
                   optionSelections={result.resultItems}
@@ -132,24 +132,19 @@ export const Result = ({
             ) : (
               <LabeledGroupedInputs
                 key={result.id}
-                sx={{ backgroundColor: "white" }}
+                sx={{ backgroundColor: "white", padding: "8px" }}
                 label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
               >
                 {result.resultItems.map((item) => (
-                  <AnswerFreeInput
-                    sx={{ padding: "6px 12px" }}
-                    key={item.id}
-                    answer={item.value}
-                    dataType={item.dataType}
-                  />
+                  <Value key={item.id} value={item.value} field={field} type={"fieldAnswer"} />
                 ))}
               </LabeledGroupedInputs>
             );
           })}
-        {!resultGroup && field.__typename === FieldType.Options && (
+        {!resultGroup && field.type === ValueType.OptionSelections && (
           <LabeledGroupedInputs sx={{ backgroundColor: "white" }} label={"Options"}>
             <FieldOptions
-              fieldOptions={field}
+              field={field}
               finalOptions={finalField}
               responseSummary={responseSummary}
               onlyShowSelections={false}

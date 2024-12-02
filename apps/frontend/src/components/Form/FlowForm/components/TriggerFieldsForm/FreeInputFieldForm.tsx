@@ -12,7 +12,7 @@ import { FlowSchemaType } from "../../formValidation/flow";
 export const FreeInputFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
   const { getValues } = useFormContext<FlowSchemaType>();
 
-  const freeInputDataType = getValues(`${triggerFieldsPath}.${fieldIndex}.freeInputDataType`);
+  const type = getValues(`${triggerFieldsPath}.${fieldIndex}.type`);
 
   return (
     <>
@@ -20,9 +20,9 @@ export const FreeInputFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
         <Select<FlowSchemaType>
           size={"small"}
           disabled={locked}
-          name={`${triggerFieldsPath}.${fieldIndex}.freeInputDataType`}
+          name={`${triggerFieldsPath}.${fieldIndex}.type`}
           key={"dataType" + fieldIndex.toString()}
-          selectOptions={createFreeInputDataTypeOptions(freeInputDataType)}
+          selectOptions={createFreeInputDataTypeOptions(type)}
           label="Free input data type"
           defaultValue=""
         />

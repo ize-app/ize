@@ -2,6 +2,8 @@ import { Box, Typography } from "@mui/material";
 
 import { DecisionType, ResultConfigFragment, ResultType } from "@/graphql/generated/graphql";
 
+import { stringifyValue } from "../Value/stringifyValue";
+
 const decisionTypeDescription = (
   decisionType: DecisionType,
   threshold: number | null | undefined,
@@ -68,7 +70,7 @@ export const createResultConfigDescription = ({
           )}
           {minAnswersDescription(minResponses, ResultType.Decision)}
           {resultConfig.defaultOption
-            ? `If decision isn't made, default result is "${resultConfig.defaultOption.name}. `
+            ? `If decision isn't made, default result is "${stringifyValue({ value: resultConfig.defaultOption.value })}. `
             : ""}
         </Typography>
       );

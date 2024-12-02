@@ -1,7 +1,7 @@
 import { Box, FormHelperText } from "@mui/material";
 import { useFormContext, useFormState } from "react-hook-form";
 
-import { AddOptionButton } from "@/components/Form/FlowForm/components/ResultForm/AddOptionButton";
+import { AddOptionButton } from "@/components/Form/FlowForm/components/AddOptionButton";
 import { TriggerDefinedOptionsForm } from "@/components/Form/FlowForm/components/ResultForm/TriggerDefinedOptionsForm";
 import { UsePresetOptionsForm } from "@/components/Form/FlowForm/components/UsePresetOptionsForm";
 import { Switch, TextField } from "@/components/Form/formFields";

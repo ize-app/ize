@@ -14,12 +14,6 @@ import {
   ValueType,
 } from "@/graphql/generated/resolver-types";
 
-// const requestFieldSetArgs: FieldArgs[] = [
-//   createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
-//   createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
-//   createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
-// ];
-
 export const createEvolveFlowFlowArgs = ({
   groupEntityId,
   creatorEntityId,

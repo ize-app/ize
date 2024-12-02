@@ -90,16 +90,11 @@ input ActionFilterArgs {
 input TestWebhookArgs {
   flowName: String!
   uri: String!
-  requestFields: [WebhookValueArgs!]!
-  results: [ResultGroupTestWebhookArgs!]!
+  triggerFields: [TestWebhookTriggerFieldsArgs!]!
+  results: [ResultType!]!
 }
 
-input ResultGroupTestWebhookArgs {
-  fieldName: String!
-  results: [WebhookValueArgs!]!
-}
-
-input WebhookValueArgs {
-  fieldName: String!
+input TestWebhookTriggerFieldsArgs {
+  name: String!
   type: ValueType!
 }

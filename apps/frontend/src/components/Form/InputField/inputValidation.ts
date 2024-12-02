@@ -1,10 +1,10 @@
 import dayjs, { Dayjs } from "dayjs";
 import * as z from "zod";
 
-import { FieldDataType, FieldType, OptionSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 import { entityFormSchema } from "../formValidation/entity";
-import { flowSummarySchema } from "../formValidation/flowSummary";
+import { flowReferenceSchema } from "../formValidation/flowSummary";
 
 export type InputSchemaType = z.infer<typeof inputSchema>;
 export type InputRecordSchemaType = z.infer<typeof inputRecordSchema>;
@@ -29,61 +29,58 @@ const dayjsSchema = z.custom<dayjs.Dayjs>((value) => dayjs.isDayjs(value), {
 export const optionSelectionValueSchema = z.object({ optionId: z.string().min(1) });
 export const optionSelectionValuesSchema = z.array(optionSelectionValueSchema);
 
-export const optionSelectionInputSchema = z.object({
-  type: z.literal(FieldType.Options),
-  value: optionSelectionValuesSchema,
-  required: z.boolean().default(true),
-  maxSelections: z.number().nullable().optional(),
-  selectionType: z.nativeEnum(OptionSelectionType).optional(),
-});
-
 export const inputSchema = z
   .discriminatedUnion("type", [
     z.object({
-      type: z.literal(FieldDataType.String),
+      type: z.literal(ValueType.String),
       required: z.boolean().default(true),
       value: z.string().min(1, { message: "Invalid text" }).default(""),
     }),
     z.object({
-      type: z.literal(FieldDataType.Number),
+      type: z.literal(ValueType.Float),
       required: z.boolean().default(true),
       value: z.number().or(z.string().min(1)).pipe(z.coerce.number()).default(""),
     }),
     z.object({
-      type: z.literal(FieldDataType.Uri),
+      type: z.literal(ValueType.Uri),
       required: z.boolean().default(true),
       value: z.string().url().default(""),
     }),
     z.object({
-      type: z.literal(FieldDataType.Date),
+      type: z.literal(ValueType.Date),
       required: z.boolean().default(true),
       value: dayjsSchema.default(dayjs()),
     }),
     z.object({
-      type: z.literal(FieldDataType.DateTime),
+      type: z.literal(ValueType.DateTime),
       required: z.boolean().default(true),
       value: dayjsSchema.default(dayjs()),
     }),
     z.object({
-      type: z.literal(FieldDataType.FlowIds),
-      required: z.boolean().default(true),
-      value: z.array(flowSummarySchema).default([]),
-    }),
-    z.object({
-      type: z.literal(FieldDataType.EntityIds),
+      type: z.literal(ValueType.Entities),
       required: z.boolean().default(true),
       value: z.array(entityFormSchema).default([]),
     }),
-    // TODO: this shouldn't happen on FE
     z.object({
-      type: z.literal(FieldDataType.FlowVersionId),
+      type: z.literal(ValueType.Flows),
       required: z.boolean().default(true),
-      value: z.string().min(1, { message: "Invalid text" }).default(""),
+      value: z.array(flowReferenceSchema).default([]),
     }),
-    optionSelectionInputSchema,
+    z.object({
+      type: z.literal(ValueType.FlowVersion),
+      required: z.boolean().default(true),
+      value: flowReferenceSchema,
+    }),
+    z.object({
+      type: z.literal(ValueType.OptionSelections),
+      value: optionSelectionValuesSchema,
+      required: z.boolean().default(true),
+      maxSelections: z.number().nullable().optional(),
+      selectionType: z.nativeEnum(OptionSelectionType).optional(),
+    }),
   ])
   .superRefine((field, ctx) => {
-    if (field.type === FieldType.Options) {
+    if (field.type === ValueType.OptionSelections) {
       if (field.maxSelections && field.maxSelections < field.value.length) {
         console.log("Error: option selections exceeded");
         ctx.addIssue({

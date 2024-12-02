@@ -4,12 +4,13 @@ import IconButton from "@mui/material/IconButton";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { FieldType } from "@/graphql/generated/graphql";
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
+import { ValueType } from "@/graphql/generated/graphql";
 
 import { FreeInputFieldForm } from "./FreeInputFieldForm";
 import { OptionFieldForm } from "./OptionsFieldForm";
 import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
-import { Select, TextField } from "../../../formFields";
+import { TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -18,20 +19,20 @@ import { createDefaultFieldState } from "../../helpers/defaultFormState/createDe
 export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormProps) => {
   const { watch, setValue, register } = useFormContext<FlowSchemaType>();
 
-  const fieldType: FieldType = watch(`${triggerFieldsPath}.${fieldIndex}.type`);
+  const type: ValueType = watch(`${triggerFieldsPath}.${fieldIndex}.type`);
 
   const [displayForm, setDisplayForm] = useState<boolean>(true);
-  const [prevFieldType, setPrevFieldType] = useState<FieldType | undefined>(fieldType);
+  const [prevFieldType, setPrevFieldType] = useState<ValueType | undefined>(type);
 
   // register values that are in zod schema but not displayed to user
   useEffect(() => {
-    if (prevFieldType && fieldType && fieldType !== prevFieldType) {
-      const newFieldState: FieldSchemaType = createDefaultFieldState({ fieldType });
+    if (prevFieldType && type && type !== prevFieldType) {
+      const newFieldState: FieldSchemaType = createDefaultFieldState({ type: type });
       setValue(`${triggerFieldsPath}.${fieldIndex}`, newFieldState);
       setDisplayForm(true);
     }
-    setPrevFieldType(fieldType);
-  }, [register, fieldType]);
+    setPrevFieldType(type);
+  }, [register, type]);
 
   return (
     <Box
@@ -43,7 +44,7 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
         alignItems: "space-between",
       }}
     >
-      <LabeledGroupedInputs>
+      <LabeledGroupedInputs label={stringifyValueType(type)}>
         <Box
           sx={{
             display: "flex",
@@ -54,18 +55,6 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
             backgroundColor: "#fffff5",
           }}
         >
-          <Select<FlowSchemaType>
-            size={"small"}
-            name={`${triggerFieldsPath}.${fieldIndex}.type`}
-            key={"type" + fieldIndex.toString()}
-            onChange={() => setDisplayForm(false)}
-            selectOptions={[
-              { name: "Free input", value: FieldType.FreeInput },
-              { name: "Options", value: FieldType.Options },
-            ]}
-            label="Type"
-            disabled={locked}
-          />
           <TextField<FlowSchemaType>
             name={`${triggerFieldsPath}.${fieldIndex}.name`}
             key={"name" + fieldIndex.toString()}
@@ -75,20 +64,21 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
             defaultValue=""
             disabled={locked}
           />
-          {fieldType === FieldType.FreeInput && displayForm && (
-            <FreeInputFieldForm
-              fieldsArrayMethods={fieldsArrayMethods}
-              locked={locked}
-              fieldIndex={fieldIndex}
-            />
-          )}
-          {fieldType === FieldType.Options && displayForm && (
-            <OptionFieldForm
-              fieldsArrayMethods={fieldsArrayMethods}
-              locked={locked}
-              fieldIndex={fieldIndex}
-            />
-          )}
+
+          {displayForm &&
+            (type === ValueType.OptionSelections ? (
+              <OptionFieldForm
+                fieldsArrayMethods={fieldsArrayMethods}
+                locked={locked}
+                fieldIndex={fieldIndex}
+              />
+            ) : (
+              <FreeInputFieldForm
+                fieldsArrayMethods={fieldsArrayMethods}
+                locked={locked}
+                fieldIndex={fieldIndex}
+              />
+            ))}
         </Box>
       </LabeledGroupedInputs>
       {locked ? null : (

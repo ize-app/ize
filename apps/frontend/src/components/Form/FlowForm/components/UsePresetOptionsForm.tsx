@@ -2,10 +2,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton } from "@mui/material";
 import { ArrayPath, FieldValues, Path, useFieldArray, useFormContext } from "react-hook-form";
 
-import { formatDataTypeName } from "@/components/Field/formatDataTypeName";
-import { FieldType } from "@/graphql/generated/graphql";
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
 
 import { InputField } from "../../InputField/InputField";
+import { OptionSchemaType } from "../../InputField/inputValidation";
 
 interface UsePresetOptionsFormProps<T extends FieldValues> {
   fieldsArrayName: ArrayPath<T>;
@@ -24,16 +24,18 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
 
   const PresetOptions = () => {
     return optionsArrayMethods.fields.map((item, inputIndex) => {
-      const dataTypeField = `${fieldsArrayName}.${inputIndex}.input.type` as Path<T>;
+      const optionField = `${fieldsArrayName}.${inputIndex}` as Path<T>;
+
       const valueField = `${fieldsArrayName}.${inputIndex}.input.value` as Path<T>;
-      const dataType = getValues(dataTypeField);
+      const option = getValues(optionField) as OptionSchemaType;
+      console.log(option);
       return (
         <Box key={item.id} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
           <InputField<T>
             fieldName={valueField}
-            label={`Option #${inputIndex + 1} (${formatDataTypeName(dataType)})`}
-            dataType={dataType}
-            type={FieldType.FreeInput}
+            label={`Option #${inputIndex + 1} (${stringifyValueType(option?.input?.type)})`}
+            type="newOption"
+            option={option}
             showLabel={false}
             seperateLabel={false}
           />

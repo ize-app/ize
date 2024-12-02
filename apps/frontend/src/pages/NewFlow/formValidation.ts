@@ -75,7 +75,7 @@ const optionConfigSchema = z
     (data) => {
       if (
         data.options.length === 0 &&
-        !data.triggerDefinedOptions?.dataType &&
+        !data.triggerDefinedOptions?.type &&
         !data.linkedOptions.hasLinkedOptions
       ) {
         return false;

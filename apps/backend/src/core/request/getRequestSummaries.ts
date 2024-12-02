@@ -141,15 +141,12 @@ export const getRequestSummaries = async ({
       ],
     });
 
-    return await Promise.all(
-      requestSteps.map(
-        async (requestStep) =>
-          await requestSummaryResolver({
-            requestSummary: requestStep,
-            context,
-            groupIds,
-          }),
-      ),
+    return requestSteps.map((requestStep) =>
+      requestSummaryResolver({
+        requestSummary: requestStep,
+        context,
+        groupIds,
+      }),
     );
   });
 };

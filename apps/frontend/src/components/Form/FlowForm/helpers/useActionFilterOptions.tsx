@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 
-import { stringifyFreeInputValue } from "@/components/Form/InputField/stringifyFreeInputValue";
-import { FieldDataType, FieldType, ResultType } from "@/graphql/generated/graphql";
+import { stringifyFormInputValue } from "@/components/Form/InputField/stringifyFormInputValue";
+import { ResultType, ValueType } from "@/graphql/generated/graphql";
 
 import { getResultFormLabel } from "./getResultFormLabel";
 import { SelectOption } from "../../formFields/Select";
@@ -40,12 +40,11 @@ export const getActionFilterOptionOptions = ({
   if (!result) return [];
 
   const field = responseFields.find((f) => f.fieldId === result.fieldId);
-  if (!field || field.type !== FieldType.Options) return [];
+  if (!field || field.type !== ValueType.OptionSelections) return [];
   return field.optionsConfig.options.map((option) => ({
     value: option.optionId,
-    name: stringifyFreeInputValue({
-      value: option.input.value as string,
-      dataType: option.input.type as FieldDataType,
+    name: stringifyFormInputValue({
+      input: option.input,
     }),
   }));
 };

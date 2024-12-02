@@ -6,39 +6,35 @@ import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/resu
 import {
   ActionType,
   DecisionType,
-  FieldDataType,
-  FieldType,
   FlowType,
   OptionSelectionType,
   ResultType,
   SystemFieldType,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 const getRequestFieldSetArgs = (): FieldSchemaType[] => {
   return [
     {
-      type: FieldType.FreeInput,
+      type: ValueType.FlowVersion,
       fieldId: crypto.randomUUID(),
       isInternal: false,
       systemType: SystemFieldType.EvolveFlowProposed,
-      freeInputDataType: FieldDataType.FlowVersionId,
       name: "Proposed flow",
       required: true,
     },
     {
-      type: FieldType.FreeInput,
+      type: ValueType.FlowVersion,
       fieldId: crypto.randomUUID(),
       isInternal: false,
-      freeInputDataType: FieldDataType.FlowVersionId,
       systemType: SystemFieldType.EvolveFlowCurrent,
       name: "Current flow",
       required: true,
     },
     {
-      type: FieldType.FreeInput,
+      type: ValueType.String,
       fieldId: crypto.randomUUID(),
       isInternal: false,
-      freeInputDataType: FieldDataType.String,
       systemType: SystemFieldType.EvolveFlowDescription,
       name: "Description of changes",
       required: false,
@@ -55,24 +51,23 @@ export const generateEvolveConfig = ({
 }): FlowSchemaType => {
   const approvalOptionId = crypto.randomUUID();
   const responseField: FieldSchemaType = {
-    type: FieldType.Options,
+    type: ValueType.OptionSelections,
     fieldId: crypto.randomUUID(),
     isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {
-      previousStepOptions: false,
       maxSelections: 1,
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
         {
           optionId: approvalOptionId,
-          input: { type: FieldDataType.String, value: "✅", required: true },
+          input: { type: ValueType.String, value: "✅", required: true },
         },
         {
           optionId: crypto.randomUUID(),
-          input: { type: FieldDataType.String, value: "❌", required: true },
+          input: { type: ValueType.String, value: "❌", required: true },
         },
       ],
     },

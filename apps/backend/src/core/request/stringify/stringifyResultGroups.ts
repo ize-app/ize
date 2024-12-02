@@ -55,7 +55,6 @@ export const stringifyResultGroups = ({
   }
 
   results.map(([resultGroup, resultConfig]) => {
-    // return `${stringifyGenericFieldValues({ values: resultGroup.result, type })}`;
     const fieldAndValues: FieldsAndValues = {
       title: resultConfig.name,
       subtitle: resultConfig.field.name,

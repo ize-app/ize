@@ -4,7 +4,7 @@ import {
   RequestStepFragment,
   ResultGroupFragment,
   StepFragment,
-  TriggerDefinedOptions,
+  TriggerDefinedOptionsFragment,
 } from "@/graphql/generated/graphql";
 
 import { Result } from "../../result/Results/Result";
@@ -16,7 +16,7 @@ export const RequestStepResults = ({
 }: {
   step: StepFragment;
   requestStep: RequestStepFragment | null;
-  triggerDefinedOptionSets: TriggerDefinedOptions[];
+  triggerDefinedOptionSets: TriggerDefinedOptionsFragment[];
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -30,9 +30,8 @@ export const RequestStepResults = ({
           ) ?? null;
 
         const responseSummary =
-          (requestStep?.responseFieldAnswers ?? []).find(
-            (r) => r.field.fieldId === resultConfig.field.fieldId,
-          )?.summary ?? null;
+          (requestStep?.answers ?? []).find((r) => r.field.fieldId === resultConfig.field.fieldId)
+            ?.summary ?? null;
 
         const triggerDefinedOptions = (triggerDefinedOptionSets ?? []).find(
           (t) => t.fieldId === resultConfig.field.fieldId,

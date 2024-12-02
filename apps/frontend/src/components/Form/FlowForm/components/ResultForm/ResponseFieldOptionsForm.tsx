@@ -8,7 +8,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
 import { OptionSelectionType } from "@/graphql/generated/graphql";
 
-import { AddOptionButton } from "./AddOptionButton";
+import { AddOptionButton } from "../AddOptionButton";
 import { TriggerDefinedOptionsForm } from "./TriggerDefinedOptionsForm";
 import { Select } from "../../../formFields";
 import { SelectOption } from "../../../formFields/Select";
@@ -155,8 +155,8 @@ export const ResponseFieldOptionsForm = ({
                           }}
                         >
                           {val
-                            ? getSelectOptionName(possibleLinkOptions, val as string) ??
-                              "Select a previous result"
+                            ? (getSelectOptionName(possibleLinkOptions, val as string) ??
+                              "Select a previous result")
                             : "Select a previous result"}
                         </div>
                       );

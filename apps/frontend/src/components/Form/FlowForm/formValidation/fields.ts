@@ -1,11 +1,6 @@
 import * as z from "zod";
 
-import {
-  FieldDataType,
-  FieldType,
-  OptionSelectionType,
-  SystemFieldType,
-} from "@/graphql/generated/graphql";
+import { OptionSelectionType, SystemFieldType, ValueType } from "@/graphql/generated/graphql";
 
 import { optionSchema } from "../../InputField/inputValidation";
 
@@ -26,11 +21,11 @@ export enum FieldContextType {
 export const triggerDefinedOptionsSchema = z
   .object({
     hasTriggerDefinedOptions: z.boolean().default(false),
-    dataType: z.nativeEnum(FieldDataType).nullable().optional(),
+    type: z.nativeEnum(ValueType).nullable().optional(),
   })
   .refine(
     (options) => {
-      if (options.hasTriggerDefinedOptions && !options.dataType) return false;
+      if (options.hasTriggerDefinedOptions && !options.type) return false;
       return true;
     },
     {
@@ -42,7 +37,6 @@ export const triggerDefinedOptionsSchema = z
 
 const fieldOptionsSchema = z
   .object({
-    previousStepOptions: z.boolean().default(false),
     triggerDefinedOptions: triggerDefinedOptionsSchema,
     selectionType: z.nativeEnum(OptionSelectionType).default(OptionSelectionType.Select),
     maxSelections: z
@@ -71,31 +65,49 @@ const fieldOptionsSchema = z
     { path: ["maxSelections"], message: "Required" },
   );
 
+const baseFieldSchema = z.object({
+  fieldId: z.string().uuid(),
+  name: z.string().min(1),
+  systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
+  required: z.boolean().optional().default(true),
+  isInternal: z.boolean().default(false),
+});
+
 export const fieldSchema = z
   .discriminatedUnion("type", [
-    z.object({
-      type: z.literal(FieldType.FreeInput),
-      fieldId: z.string().uuid(),
-      name: z.string().min(1),
-      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
-      required: z.boolean().optional().default(true),
-      isInternal: z.boolean().default(false),
-      freeInputDataType: z.nativeEnum(FieldDataType),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.String),
     }),
-    z.object({
-      type: z.literal(FieldType.Options),
-      fieldId: z.string().uuid(),
-      name: z.string().min(1),
-      systemType: z.nativeEnum(SystemFieldType).nullable().optional(),
-      required: z.boolean().optional().default(true),
-      isInternal: z.boolean().default(false),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.Date),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.DateTime),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.Uri),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.Float),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.Entities),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.FlowVersion),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.Flows),
+    }),
+    baseFieldSchema.extend({
+      type: z.literal(ValueType.OptionSelections),
       optionsConfig: fieldOptionsSchema,
     }),
   ])
   .refine(
     (field) => {
       if (
-        field.type === FieldType.Options &&
+        field.type === ValueType.OptionSelections &&
         (field.optionsConfig.options ?? []).length === 0 &&
         !field.optionsConfig.triggerDefinedOptions?.hasTriggerDefinedOptions &&
         field.optionsConfig.linkedResultOptions.length === 0

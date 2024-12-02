@@ -45,6 +45,7 @@ export const newOptionSet = async ({ transaction, ...props }: OptionSetArgs): Pr
             });
           }
         }
+      
         const value = validateValue({
           type: optionArgs.type,
           value: JSON.parse(optionArgs.value) as InputJsonValue,

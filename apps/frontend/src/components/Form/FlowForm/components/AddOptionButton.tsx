@@ -4,21 +4,14 @@ import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { ArrayPath, FieldArray, FieldValues, UseFieldArrayReturn } from "react-hook-form";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { ValueType } from "@/graphql/generated/graphql";
 
-import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
+import { newInputTypes } from "./newInputTypes";
+import { createDefaultOptionState } from "../helpers/defaultFormState/createDefaultOptionState";
 
 interface AddButtonProps<T extends FieldValues> {
   optionsArrayMethods: UseFieldArrayReturn<T>;
 }
-
-const optionDataTypes = [
-  { name: "Text", value: FieldDataType.String },
-  { name: "Number", value: FieldDataType.Number },
-  { name: "Url", value: FieldDataType.Uri },
-  { name: "Date Time", value: FieldDataType.DateTime },
-  { name: "Date", value: FieldDataType.Date },
-];
 
 export const AddOptionButton = <T extends FieldValues>({
   optionsArrayMethods,
@@ -33,10 +26,8 @@ export const AddOptionButton = <T extends FieldValues>({
     setAnchorEl(null);
   };
 
-  const addOption = ({ dataType }: { dataType: FieldDataType }) => {
-    optionsArrayMethods.append(
-      createDefaultOptionState({ dataType }) as FieldArray<T, ArrayPath<T>>,
-    );
+  const addOption = ({ type }: { type: ValueType }) => {
+    optionsArrayMethods.append(createDefaultOptionState({ type }) as FieldArray<T, ArrayPath<T>>);
     handleClose();
   };
 
@@ -60,8 +51,8 @@ export const AddOptionButton = <T extends FieldValues>({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {optionDataTypes.map((option) => (
-          <MenuItem key={option.value} onClick={() => addOption({ dataType: option.value })}>
+        {newInputTypes.map((option) => (
+          <MenuItem key={option.value} onClick={() => addOption({ type: option.value })}>
             {option.name}
           </MenuItem>
         ))}

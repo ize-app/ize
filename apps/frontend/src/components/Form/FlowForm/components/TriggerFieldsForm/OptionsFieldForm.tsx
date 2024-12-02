@@ -6,7 +6,7 @@ import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
 import { Select } from "../../../formFields";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { AddOptionButton } from "../ResultForm/AddOptionButton";
+import { AddOptionButton } from "../AddOptionButton";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {

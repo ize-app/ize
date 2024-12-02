@@ -23,7 +23,12 @@ const flowVersionValueSchema = z.string().uuid();
 const stringValueSchema = z.string().min(1);
 const floatValueSchema = z.number();
 const uriValueSchema = z.string().url();
-const dateValueSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)");
+const dateValueSchema = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}T00:00:00\.000Z$/,
+    "Invalid ISO-8601 date format (expected YYYY-MM-DDT00:00:00.000Z)",
+  );
 const dateTimeValueSchema = z.string().refine((value) => !isNaN(Date.parse(value)), {
   message: "Invalid DateTime format",
 });

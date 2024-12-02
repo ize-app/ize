@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
-import { stringifyFreeInputValue } from "@/components/Form/InputField/stringifyFreeInputValue";
-import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
+import { stringifyFormInputValue } from "@/components/Form/InputField/stringifyFormInputValue";
+import { ValueType } from "@/graphql/generated/graphql";
 
 import { DecisionConfigFormProps } from "./DecisionConfigForm";
 import { Switch } from "../../../formFields";
@@ -15,13 +15,12 @@ import { FlowSchemaType } from "../../formValidation/flow";
 const createDefaultDecisionOptions = (field: FieldSchemaType): SelectOption[] => {
   const defaultDecisionOptions: SelectOption[] = [];
 
-  if (field.type === FieldType.Options) {
+  if (field.type === ValueType.OptionSelections) {
     (field.optionsConfig.options ?? []).forEach((o) => {
       if (typeof o.input.value === "string" && o.input.value.length === 0) return;
       defaultDecisionOptions.push({
-        name: stringifyFreeInputValue({
-          value: o.input.value as string,
-          dataType: o.input.type as FieldDataType,
+        name: stringifyFormInputValue({
+          input: o.input,
         }),
         value: o.optionId,
       });
