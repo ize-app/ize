@@ -32,7 +32,7 @@ export const sendTelegramNewStepMessage = async ({
 
     const messageText = stringifyTriggerFields({
       request,
-      title: "New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)",
+      title: `New request in Ize 👀\n\n<strong>${request.name}</strong> (<i>${request.flow.name}</i>)`,
       type: "html",
     });
 

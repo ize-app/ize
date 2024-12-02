@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import { TableCellHideable } from "@/components/Tables/TableCellHideable";
+import { stringifyValue } from "@/components/Value/stringifyValue";
 import { RequestSummaryFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
@@ -117,7 +118,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
                     textAlign: "right",
                   }}
                 >
-                  {result.resultItems.map((ri) => ri.value).join(", ")}
+                  {result.resultItems.map((ri) => stringifyValue({ value: ri.value })).join(", ")}
                 </Typography>
               ) : (
                 <Typography variant="description">No result</Typography>

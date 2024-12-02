@@ -11,7 +11,7 @@ export const createTelegramResultsString = ({
   const resultsString = stringifyResultGroups({
     title: `New results in Ize 👀 for "${request.name}"`,
     request,
-    type: "markdown",
+    type: "html",
     requestStepId,
   });
 
@@ -22,3 +22,4 @@ export const createTelegramResultsString = ({
 
   return `${resultsString}${actionString}`;
 };
+ 

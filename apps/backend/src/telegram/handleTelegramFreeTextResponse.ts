@@ -57,7 +57,7 @@ export const handleTelegramFreeTextResponse = async ({
         answers: [
           {
             fieldId: fieldId,
-            value: textResponse,
+            value: JSON.stringify(textResponse),
           },
         ],
         requestStepId,

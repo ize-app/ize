@@ -30,8 +30,8 @@ export const createApprovalFieldSetArgsForPolicy = ({
       selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: approveOptionId, type: ValueType.String, value: "✅" },
-        { optionId: crypto.randomUUID(), type: ValueType.String, value: "❌" },
+        { optionId: approveOptionId, type: ValueType.String, value: JSON.stringify("✅") },
+        { optionId: crypto.randomUUID(), type: ValueType.String, value: JSON.stringify("❌") },
       ],
     },
   };

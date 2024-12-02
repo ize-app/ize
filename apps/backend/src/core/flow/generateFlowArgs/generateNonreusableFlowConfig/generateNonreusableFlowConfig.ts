@@ -53,7 +53,7 @@ export const generateNonreusableFlowConfig = ({
             fieldSet: {
               fields: [
                 {
-                  fieldId: crypto.randomUUID(),
+                  fieldId: responseFieldId,
                   type: ValueType.String,
                   name: prompt,
                   isInternal: false,
