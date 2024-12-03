@@ -18,6 +18,26 @@ export interface DecisionConfigFormProps {
   display?: boolean;
 }
 
+const getDecisionTypeOptions = (selectionType: OptionSelectionType) => {
+  if (selectionType === OptionSelectionType.Rank)
+    return [
+      {
+        name: "Weighted average of rankings",
+        value: DecisionType.WeightedAverage,
+      },
+    ];
+  else
+    return [
+      { name: "Threshold vote", value: DecisionType.NumberThreshold },
+      { name: "Percentage vote", value: DecisionType.PercentageThreshold },
+      {
+        name: "Most selected option",
+        value: DecisionType.WeightedAverage,
+      },
+      { name: "AI decides", value: DecisionType.Ai },
+    ];
+};
+
 export const DecisionConfigForm = ({
   stepIndex,
   resultIndex,
@@ -27,6 +47,9 @@ export const DecisionConfigForm = ({
   const { watch, setValue } = useFormContext<FlowSchemaType>();
 
   const decisionType = watch(`steps.${stepIndex}.result.${resultIndex}.decision.type`);
+  const selectionType = watch(
+    `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+  );
 
   const [prevDecisionType, setPrevDecisionType] = useState<DecisionType>(decisionType);
 
@@ -34,22 +57,6 @@ export const DecisionConfigForm = ({
   // but don't reset state, on first render of flow form's default state
   useEffect(() => {
     if (prevDecisionType && decisionType && decisionType !== prevDecisionType) {
-      // if (decisionType === DecisionType.WeightedAverage) {
-      //   setValue(
-      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-      //     OptionSelectionType.Rank,
-      //   );
-      //   setValue(
-      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
-      //     2,
-      //   );
-      // } else {
-      //   setValue(
-      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-      //     OptionSelectionType.Select,
-      //   );
-      // }
-
       if (decisionType === DecisionType.Ai) {
         setValue(`steps.${stepIndex}.result.${resultIndex}.decision.defaultDecision`, undefined);
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
@@ -68,20 +75,21 @@ export const DecisionConfigForm = ({
     setPrevDecisionType(decisionType);
   }, [decisionType]);
 
+  useEffect(() => {
+    if (selectionType === OptionSelectionType.Rank) {
+      setValue(
+        `steps.${stepIndex}.result.${resultIndex}.decision.type`,
+        DecisionType.WeightedAverage,
+      );
+    }
+  }, [selectionType]);
+
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           label="How do we determine the final result?"
-          selectOptions={[
-            { name: "Threshold vote", value: DecisionType.NumberThreshold },
-            { name: "Percentage vote", value: DecisionType.PercentageThreshold },
-            {
-              name: "Weighted average of votes",
-              value: DecisionType.WeightedAverage,
-            },
-            { name: "AI decides", value: DecisionType.Ai },
-          ]}
+          selectOptions={getDecisionTypeOptions(selectionType)}
           defaultValue=""
           name={`steps.${stepIndex}.result.${resultIndex}.decision.type`}
           size="small"

@@ -2,7 +2,9 @@ import * as z from "zod";
 
 import {
   ActionType,
+  DecisionType,
   FlowType,
+  OptionSelectionType,
   ResultType,
   ValueType,
 } from "@/graphql/generated/graphql";
@@ -50,6 +52,28 @@ const stepSchema = z
           return;
         }
 
+        if (
+          field.optionsConfig.selectionType === OptionSelectionType.Rank &&
+          res.decision.type !== DecisionType.WeightedAverage
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Ranked field must have a weighted average decision",
+            path: ["result", index],
+          });
+        }
+
+        if (
+          field.optionsConfig.selectionType === OptionSelectionType.None &&
+          res.decision.type !== DecisionType.Ai
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Ai decision cannot be selectable",
+            path: ["result", index],
+          });
+        }
+
         if (defaultOptionId) {
           const defaultOption = field.optionsConfig.options.find(
             (o) => o.optionId === defaultOptionId,
@@ -93,6 +117,7 @@ const stepSchema = z
       }
     }
   })
+
   .refine(
     (step) => {
       if (step.response && step.fieldSet.fields.length === 0) return false;
