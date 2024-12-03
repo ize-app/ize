@@ -60,6 +60,8 @@ export const Request = () => {
   const currentReqStep = request.requestSteps[request.currentStepIndex];
 
   const reusable: boolean = request.flow.reusable;
+  const hasMinResponses =
+    (currentReqStep.answers[0]?.answers.length ?? 0) >= (currentStep.response?.minResponses ?? 0);
   const acceptingNewResponses: boolean = !currentReqStep.status.responseFinal;
   const userResponded = currentReqStep.userResponded;
   const allowMultipleResponses: boolean = !!currentStep.response?.allowMultipleResponses;
@@ -69,6 +71,7 @@ export const Request = () => {
     false;
   const showManuallyEndStepButton: boolean =
     (currentStep.response?.canBeManuallyEnded &&
+      hasMinResponses &&
       userIsCreator &&
       !currentReqStep?.status.responseFinal) ??
     false;
