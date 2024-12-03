@@ -21,9 +21,10 @@ const UnauthenticatedHome = () => {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "white",
-          padding: "50px",
+          padding: "30px",
           gap: "20px",
           borderRadius: "10px",
+          minWidth: "300px",
           maxWidth: "400px",
           // border: "#6750A4 1px solid",
           [theme.breakpoints.down("sm")]: {
@@ -32,11 +33,15 @@ const UnauthenticatedHome = () => {
           },
         })}
       >
-        <img src={izeLogoUrl} style={{ width: "200px" }} />
-        <Typography textAlign={"center"}>
-          The Collaboration Engine
-          <br />
-        </Typography>
+        <img src={izeLogoUrl} style={{ width: "260px" }} />
+        <Box sx={{ width: "100%" }}>
+          <Typography variant="h2" textAlign={"center"}>
+            The collective process platform
+          </Typography>
+          <Typography textAlign={"center"}>
+            How distributed teams share power and harness collective intelligence
+          </Typography>
+        </Box>
         <Button
           variant="contained"
           color="primary"
