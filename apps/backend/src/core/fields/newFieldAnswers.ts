@@ -4,10 +4,10 @@ import { InputJsonValue } from "@prisma/client/runtime/library";
 import { FieldAnswerArgs, ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { constructOrderedOptions } from "./constructOrderedOptions";
 import { FieldSetPrismaType } from "./fieldPrismaTypes";
 import { RequestDefinedOptionSetPrismaType } from "../request/requestPrismaTypes";
 import { validateValue } from "../value/validateValue";
-import { getAvailableOptionIds } from "./validation/getAvailableOptionIds";
 import { validateOptionSelections } from "./validation/validateOptionSelections";
 import { newValue } from "../value/newValue";
 import { getOptionArgsWithOptionId } from "./validation/getOptionArgsWithOptionId";
@@ -101,10 +101,11 @@ export const newFieldAnswers = async ({
               extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
             },
           );
-        const availableOptionIds = getAvailableOptionIds({
+          
+        const availableOptionIds = constructOrderedOptions({
           optionsConfig,
           requestDefinedOptionSets,
-        });
+        }).map((option) => option.id);
 
         const optionArgsWithOptionId = getOptionArgsWithOptionId({
           optionSelections,

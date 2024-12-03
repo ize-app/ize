@@ -20,7 +20,7 @@ export const generateStepConfig = ({
   result,
   action,
 }: GenerateStepConfigProps): StepSchemaType => {
-  const allowMultipleResponses = result[0]?.type === ResultType.LlmSummary;
+  const allowMultipleResponses = [ResultType.LlmSummary, ResultType.RawAnswers].includes(result[0]?.type);
   return {
     stepId,
     fieldSet: {

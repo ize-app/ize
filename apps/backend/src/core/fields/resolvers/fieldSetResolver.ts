@@ -12,8 +12,8 @@ import {
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { fieldOptionsResolver } from "./fieldOptionsResolver";
 import { RequestDefinedOptionSetPrismaType } from "../../request/requestPrismaTypes";
-import { constructFieldOptions } from "../constructFieldOptions";
 import { FieldSetPrismaType } from "../fieldPrismaTypes";
 
 export const fieldSetResolver = ({
@@ -42,7 +42,7 @@ export const fieldSetResolver = ({
         });
       const config = FieldOptionsConfig;
 
-      const allOptions = constructFieldOptions({
+      const allOptions = fieldOptionsResolver({
         optionsConfig: config,
         requestDefinedOptionSets,
         context,

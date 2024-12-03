@@ -2,6 +2,16 @@ import { Prisma } from "@prisma/client";
 
 import { valueBaseInclude, valueInclude } from "../value/valuePrismaTypes";
 
+export const fieldOptionInclude = Prisma.validator<Prisma.FieldOptionInclude>()({
+  Value: {
+    include: valueBaseInclude, // value base excludes option type
+  },
+});
+
+export type FieldOptionPrismaType = Prisma.FieldOptionGetPayload<{
+  include: typeof fieldOptionInclude;
+}>;
+
 export const fieldOptionSetInclude = Prisma.validator<Prisma.FieldOptionSetInclude>()({
   FieldOptions: {
     include: {
