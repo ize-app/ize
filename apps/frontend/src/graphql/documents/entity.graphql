@@ -149,24 +149,22 @@ fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
 
 fragment IdentityEmailSummaryParts on IdentityEmail {
   id
-  email
-  icon
+  # email
+  # icon
 }
 
 fragment IdentityDiscordSummaryParts on IdentityDiscord {
   id
-  username
-  discordUserId
-  avatar
+  # username
+  # discordUserId
+  # avatar
 }
 
 fragment IdentityTelegram on IdentityTelegram {
   id
-  telegramUserId
-  photo
-  firstName
-  lastName
-  telegramUsername
+  # telegramUserId
+  # photo
+  # telegramUsername
 }
 
 fragment IdentityTypesSummaryParts on IdentityType {

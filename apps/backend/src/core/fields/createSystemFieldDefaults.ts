@@ -52,7 +52,7 @@ const systemFieldDefaults: Record<SystemFieldType, Omit<FieldArgs, "fieldId">> =
   },
 
   [SystemFieldType.GroupMembers]: {
-    type: ValueType.String,
+    type: ValueType.Entities,
     systemType: SystemFieldType.GroupMembers,
     isInternal: false,
     name: "Membership definition",

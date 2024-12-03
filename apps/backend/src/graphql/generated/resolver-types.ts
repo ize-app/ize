@@ -443,10 +443,7 @@ export type IdentityBlockchainArgs = {
 
 export type IdentityDiscord = {
   __typename?: 'IdentityDiscord';
-  avatar?: Maybe<Scalars['String']['output']>;
-  discordUserId: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  username: Scalars['String']['output'];
 };
 
 export type IdentityDiscordArgs = {
@@ -455,8 +452,6 @@ export type IdentityDiscordArgs = {
 
 export type IdentityEmail = {
   __typename?: 'IdentityEmail';
-  email: Scalars['String']['output'];
-  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
 };
 
@@ -466,12 +461,7 @@ export type IdentityEmailArgs = {
 
 export type IdentityTelegram = {
   __typename?: 'IdentityTelegram';
-  firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  lastName?: Maybe<Scalars['String']['output']>;
-  photo?: Maybe<Scalars['String']['output']>;
-  telegramUserId: Scalars['String']['output'];
-  telegramUsername?: Maybe<Scalars['String']['output']>;
 };
 
 export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail | IdentityTelegram;
@@ -1800,27 +1790,17 @@ export type IdentityBlockchainResolvers<ContextType = GraphqlRequestContext, Par
 };
 
 export type IdentityDiscordResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityDiscord'] = ResolversParentTypes['IdentityDiscord']> = {
-  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  discordUserId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type IdentityEmailResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityEmail'] = ResolversParentTypes['IdentityEmail']> = {
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type IdentityTelegramResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IdentityTelegram'] = ResolversParentTypes['IdentityTelegram']> = {
-  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  photo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  telegramUserId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  telegramUsername?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

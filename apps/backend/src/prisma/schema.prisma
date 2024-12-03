@@ -89,8 +89,6 @@ model IdentityTelegram {
   telegramUserId BigInt  @unique @map("telegram_user_id")
   username       String?
   photoUrl       String? @map("photo_url")
-  firstName      String  @map("first_name")
-  lastName       String? @map("last_name")
 
   Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
 

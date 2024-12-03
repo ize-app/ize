@@ -19,7 +19,11 @@ export const identityResolver = (
         identity.IdentityBlockchain.ens ?? displayEthAddress(identity.IdentityBlockchain.address),
       // TODO: replace with avatar logo
       icon: null,
-      identityType: { __typename: "IdentityBlockchain", ...identity.IdentityBlockchain },
+      identityType: {
+        __typename: "IdentityBlockchain",
+        id: identity.IdentityBlockchain.id,
+        address: identity.IdentityBlockchain.address,
+      },
     };
   else if (identity.IdentityEmail) {
     const isUserIdentity =
@@ -34,7 +38,7 @@ export const identityResolver = (
           ? identity.IdentityEmail.email
           : identity.IdentityEmail.email.replace(/(\w{1})[\w.-]+@([\w.]+\w)/, "$1***@$2"),
       icon: identity.IdentityEmail.icon,
-      identityType: { __typename: "IdentityEmail", ...identity.IdentityEmail },
+      identityType: { __typename: "IdentityEmail", id: identity.IdentityEmail.id },
     };
   } else if (identity.IdentityDiscord)
     return {
@@ -48,22 +52,18 @@ export const identityResolver = (
             identity.IdentityDiscord.avatar,
           )
         : null,
-      identityType: { __typename: "IdentityDiscord", ...identity.IdentityDiscord },
+      identityType: { __typename: "IdentityDiscord", id: identity.IdentityDiscord.id },
     };
   else if (identity.IdentityTelegram)
     return {
       __typename: "Identity",
       id: identity.id,
       entityId: identity.entityId,
-      name:
-        identity.IdentityTelegram.username ??
-        identity.IdentityTelegram.firstName +
-          (identity.IdentityTelegram.lastName ? " " + identity.IdentityTelegram.lastName : ""),
+      name: identity.IdentityTelegram.username ?? "Telegram user",
       icon: identity.IdentityTelegram.photoUrl,
       identityType: {
         __typename: "IdentityTelegram",
-        ...identity.IdentityTelegram,
-        telegramUserId: String(identity.IdentityTelegram.telegramUserId), // convert BigInt to string
+        id: identity.IdentityTelegram.id,
       },
     };
   else {

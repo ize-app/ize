@@ -53,24 +53,22 @@ type IdentityBlockchain {
 
 type IdentityEmail {
   id: String!
-  icon: String
-  email: String!
+  # icon: String
+  # email: String!
 }
 
 type IdentityDiscord {
   id: String!
-  avatar: String
-  username: String!
-  discordUserId: String!
+  # avatar: String
+  # username: String!
+  # discordUserId: String!
 }
 
 type IdentityTelegram {
   id: String!
-  telegramUserId: String!
-  photo: String
-  firstName: String!
-  lastName: String
-  telegramUsername: String
+  # telegramUserId: String!
+  # photo: String
+  # telegramUsername: String
 }
 
 union GroupType = DiscordRoleGroup | GroupNft | GroupIze | GroupTelegramChat
