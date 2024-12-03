@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { generatePath, useNavigate } from "react-router-dom";
 
+import { ResultGroupStatusDisplay } from "@/components/result/Results/ResultGroupStatus";
 import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { stringifyValue } from "@/components/Value/stringifyValue";
 import { RequestSummaryFragment } from "@/graphql/generated/graphql";
@@ -37,6 +38,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
   const navigate = useNavigate();
   const theme = useTheme();
   const responseComplete = request.currentStep.status.responseFinal;
+  const resultGroup = request.currentStep.result;
   const result = request.currentStep.result?.results[0];
   const action = request.currentStep.action;
   const userResponded = request.currentStep.userResponded;
@@ -104,7 +106,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
                 padding: "0 4px",
               }}
             >
-              {result ? (
+              {result && result.resultItems.length > 0 ? (
                 <Typography
                   variant="description"
                   color={theme.palette.success.main}
@@ -121,7 +123,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
                   {result.resultItems.map((ri) => stringifyValue({ value: ri.value })).join(", ")}
                 </Typography>
               ) : (
-                <Typography variant="description">No result</Typography>
+                <ResultGroupStatusDisplay status={resultGroup?.status} resultType={result?.type} />
               )}
               {action && (
                 <Box sx={{ display: "flex", gap: "4px" }}>

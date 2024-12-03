@@ -66,7 +66,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         <Result
           key={resultData.resultConfig.resultConfigId}
           {...resultData}
-          displayDescripton={false}
+          displayDescripton={true}
         />
       ))}
     </Box>

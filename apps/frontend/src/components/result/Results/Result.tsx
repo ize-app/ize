@@ -1,4 +1,4 @@
-import { Box, SvgIcon, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { FieldOptions } from "@/components/Field/FieldOptions";
 import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
@@ -17,6 +17,7 @@ import {
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { ResultHeader } from "../ResultName";
+import { ResultGroupStatusDisplay } from "./ResultGroupStatus";
 
 const getResultGroupLabel = ({ name, status }: { name: string; status: ResultGroupStatus }) => {
   if ([ResultGroupStatus.FinalResult].includes(status)) return name;
@@ -52,14 +53,9 @@ export const Result = ({
   triggerDefinedOptions?: OptionFragment[];
   finalField: boolean;
 }) => {
-  const theme = useTheme();
   const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
   const backgroundColor = statusProps.lightColor ?? "white";
-  const icon = statusProps.icon ? (
-    <Box sx={{ marginRight: "12px", display: "flex" }}>
-      <SvgIcon component={statusProps.icon} style={{ color: statusProps.color }} />
-    </Box>
-  ) : null;
+
   return (
     <LabeledGroupedInputs
       sx={{
@@ -85,33 +81,10 @@ export const Result = ({
             {createResultConfigDescription({ resultConfig, minResponses })}
           </Typography>
         )}
-        {resultGroup?.status === ResultGroupStatus.Error && (
-          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
-            {icon}
-            <Typography variant="description" color={theme.palette.warning.main}>
-              Error creating final {resultConfig.__typename === "Decision" ? "decision" : "result"}.
-            </Typography>
-          </Box>
-        )}
-        {resultGroup?.status === ResultGroupStatus.Attempting && (
-          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
-            {icon}
-            <Typography variant="description" color={theme.palette.warning.main}>
-              Creating results
-              {resultConfig.__typename === "Decision" ? "decision" : "result"}.
-            </Typography>
-          </Box>
-        )}
-        {resultGroup?.status === ResultGroupStatus.FinalNoResult && (
-          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
-            {icon}
-            <Typography variant="description" color={theme.palette.warning.main}>
-              This collaborative step finished without a final{" "}
-              {resultConfig.__typename === "Decision" ? "decision" : "result"}.
-            </Typography>
-          </Box>
-        )}
-
+        <ResultGroupStatusDisplay
+          status={resultGroup?.status}
+          resultType={resultConfig.__typename as ResultType}
+        />
         {resultGroup &&
           resultGroup.results.map((result) => {
             return result.type !== ResultType.LlmSummary &&

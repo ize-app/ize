@@ -20,7 +20,8 @@ export const resultGroupStatusResolver = ({
   } else {
     if (resultsFinal) {
       if (resultGroup.complete) {
-        if (resultGroup.Result.length > 0) return ResultGroupStatus.FinalResult;
+        if ((resultGroup.Result[0]?.ResultItems ?? []).length > 0)
+          return ResultGroupStatus.FinalResult;
         else return ResultGroupStatus.FinalNoResult;
       } else return ResultGroupStatus.Error;
     } else return ResultGroupStatus.Attempting;
