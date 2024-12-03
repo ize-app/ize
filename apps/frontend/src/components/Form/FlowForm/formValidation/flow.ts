@@ -2,9 +2,7 @@ import * as z from "zod";
 
 import {
   ActionType,
-  DecisionType,
   FlowType,
-  OptionSelectionType,
   ResultType,
   ValueType,
 } from "@/graphql/generated/graphql";
@@ -50,17 +48,6 @@ const stepSchema = z
             path: ["result", index],
           });
           return;
-        }
-
-        if (
-          res.decision.type !== DecisionType.WeightedAverage &&
-          field.optionsConfig.selectionType !== OptionSelectionType.Select
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Decision's field must be single select",
-            path: ["result", index],
-          });
         }
 
         if (defaultOptionId) {

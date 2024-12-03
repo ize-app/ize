@@ -15,9 +15,9 @@ enum SystemFieldType {
 }
 
 enum OptionSelectionType {
-  Rank
-  MultiSelect
+  None
   Select
+  Rank
 }
 
 type Field {

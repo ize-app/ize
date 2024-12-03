@@ -33,6 +33,7 @@ import {
   PerspectiveResultType,
   Reusable,
 } from "../formValidation";
+import { getDefaultOptionSelectionType } from "./getDefaultOptionSelectionType";
 
 export const generateNewFlowConfig = ({
   config,
@@ -83,10 +84,7 @@ export const generateNewFlowConfig = ({
         field = generateFieldConfig({
           type: ValueType.OptionSelections,
           question: config.question,
-          selectionType:
-            config.decision.type === DecisionType.WeightedAverage
-              ? OptionSelectionType.Rank
-              : OptionSelectionType.Select,
+          selectionType: getDefaultOptionSelectionType(config.decision?.type),
           options: config.optionsConfig.options,
           linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
           triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
@@ -151,10 +149,9 @@ export const generateNewFlowConfig = ({
           field = generateFieldConfig({
             type: ValueType.OptionSelections,
             question: config.question ?? "Select one of the following options:", //todo: this should be a question
-            selectionType:
-              config.decision?.type === DecisionType.WeightedAverage
-                ? OptionSelectionType.Rank
-                : OptionSelectionType.Select,
+            selectionType: getDefaultOptionSelectionType(
+              config.decision?.type ?? DecisionType.NumberThreshold,
+            ),
             options: config.optionsConfig?.options,
             linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
             triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,

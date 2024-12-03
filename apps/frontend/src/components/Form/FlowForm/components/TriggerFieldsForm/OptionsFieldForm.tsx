@@ -27,13 +27,10 @@ export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
           size="small"
           selectOptions={[
             {
-              name: "Select one option",
+              name: "Choose option(s)",
               value: OptionSelectionType.Select,
             },
-            {
-              name: "Select multiple options",
-              value: OptionSelectionType.MultiSelect,
-            },
+
             {
               name: "Rank options",
               value: OptionSelectionType.Rank,

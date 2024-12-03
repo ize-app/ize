@@ -47,23 +47,22 @@ const fieldOptionsSchema = z
         return val;
       })
       .pipe(z.coerce.number())
-      .nullable()
-      .optional(),
+      .nullable(),
     options: z.array(optionSchema).default([]),
     // array of resultConfig ids
     linkedResultOptions: z.array(z.object({ id: z.string().min(1) })).default([]),
   })
-  .refine(
-    (options) => {
-      if (
-        options.selectionType === OptionSelectionType.MultiSelect &&
-        options.maxSelections === undefined
-      )
-        return false;
-      return true;
-    },
-    { path: ["maxSelections"], message: "Required" },
-  );
+  // .refine(
+  //   (options) => {
+  //     if (
+  //       options.selectionType === OptionSelectionType.MultiSelect &&
+  //       options.maxSelections === undefined
+  //     )
+  //       return false;
+  //     return true;
+  //   },
+  //   { path: ["maxSelections"], message: "Required" },
+  // );
 
 const baseFieldSchema = z.object({
   fieldId: z.string().uuid(),

@@ -28,8 +28,6 @@ const rankingStrategyDescription = (selectionType: OptionSelectionType) => {
   switch (selectionType) {
     case OptionSelectionType.Select:
       return "Ranking determined by number of times option is selected";
-    case OptionSelectionType.MultiSelect:
-      return "Ranking determined by number of times option is selected";
     case OptionSelectionType.Rank:
       return "Ranking determined by weighted average of individual rankings";
   }

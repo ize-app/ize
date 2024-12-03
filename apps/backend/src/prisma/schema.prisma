@@ -546,8 +546,8 @@ model Field {
 }
 
 enum OptionSelectionType {
+  None
   Rank
-  MultiSelect
   Select
 }
 

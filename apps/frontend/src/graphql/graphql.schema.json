@@ -6088,7 +6088,7 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "MultiSelect",
+            "name": "None",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

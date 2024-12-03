@@ -44,6 +44,15 @@ export const validateOptionSelections = ({
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
+  // in case there is no maxSelections
+  if (selections.length > availableOptionIds.length)
+    throw new GraphQLError(
+      `Option selection error ${selectionType}: Total option selections exceeds number of available options for field ${fieldId}`,
+      {
+        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+      },
+    );
+
   if (hasDuplicateIds(selections))
     throw new GraphQLError(`Duplicate option ids found in options`, {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
@@ -72,14 +81,6 @@ export const validateOptionSelections = ({
       return;
     }
     case OptionSelectionType.Select: {
-      if (selections.length !== 1)
-        throw new GraphQLError(
-          `Option selection error ${selectionType}: Total selections should be 1, but got ${selections.length} for field ${fieldId}`,
-          {
-            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-          },
-        );
-
       selections.forEach(({ weight }) => {
         if (weight !== 1)
           throw new GraphQLError(
@@ -91,26 +92,5 @@ export const validateOptionSelections = ({
       });
       return;
     }
-    case OptionSelectionType.MultiSelect:
-      {
-        if (selections.length > availableOptionIds.length)
-          throw new GraphQLError(
-            `Option selection error ${selectionType}: Total option selections exceeds number of available options for field ${fieldId}`,
-            {
-              extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-            },
-          );
-
-        selections.forEach(({ weight }) => {
-          if (weight !== 1)
-            throw new GraphQLError(
-              `Option weight error for ${selectionType}: Option weight should be 1, but got ${weight} for field ${fieldId}`,
-              {
-                extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-              },
-            );
-        });
-      }
-      return;
   }
 };

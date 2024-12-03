@@ -1,6 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import LinkIcon from "@mui/icons-material/Link";
-import { Box, FormHelperText, InputAdornment } from "@mui/material";
+import { Box, FormHelperText, InputAdornment, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -36,12 +36,12 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
 };
 
 const multiSelectOptions = [
-  { name: "1 option", value: 1 },
-  { name: "2 options", value: 2 },
-  { name: "3 options", value: 3 },
-  { name: "4 options", value: 4 },
-  { name: "5 options", value: 5 },
-  { name: "No limit", value: OptionSelectionCountLimit.None },
+  { name: "1 selection", value: 1 },
+  { name: "2 selection", value: 2 },
+  { name: "3 selections", value: 3 },
+  { name: "4 selections", value: 4 },
+  { name: "5 selections", value: 5 },
+  { name: "No selection limit", value: OptionSelectionCountLimit.None },
 ];
 
 interface ResponseFieldOptionsFormProps {
@@ -50,6 +50,16 @@ interface ResponseFieldOptionsFormProps {
   locked: boolean;
   reusable: boolean;
 }
+
+const getSelectionTypeOptions = (selectionType: OptionSelectionType) => {
+  if (selectionType === OptionSelectionType.None) {
+    return [{ name: "Not answered by respondants", value: OptionSelectionType.None }];
+  } else
+    return [
+      { name: "Choose option(s)", value: OptionSelectionType.Select },
+      { name: "Rank", value: OptionSelectionType.Rank },
+    ];
+};
 
 export const ResponseFieldOptionsForm = ({
   stepIndex,
@@ -92,6 +102,7 @@ export const ResponseFieldOptionsForm = ({
   return (
     <Box sx={{ margin: "0px 0px" }}>
       <LabeledGroupedInputs
+        // label="Options"
         sx={{
           padding: "16px",
           gap: "8px",
@@ -100,20 +111,37 @@ export const ResponseFieldOptionsForm = ({
           borderColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
-        {optionSelectionType === OptionSelectionType.MultiSelect && (
+        <Typography variant="description">How participants select options</Typography>
+        <ResponsiveFormRow>
           <Select<FlowSchemaType>
             defaultValue=""
-            display={optionSelectionType === OptionSelectionType.MultiSelect}
-            label="How many options can be selected?"
-            renderValue={(val) => {
-              const option = multiSelectOptions.find((option) => option.value === val);
-              return "User can select " + option?.name + " maximum";
-            }}
-            selectOptions={multiSelectOptions}
-            name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
+            label="How do participants select options?"
+            // renderValue={(val) => {
+            //   const option = multiSelectOptions.find((option) => option.value === val);
+            //   return "User can select " + option?.name + " maximum";
+            // }}
+            disabled={optionSelectionType === OptionSelectionType.None}
+            selectOptions={getSelectionTypeOptions(optionSelectionType)}
+            name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.selectionType`}
             size={"small"}
           />
-        )}
+          {optionSelectionType === OptionSelectionType.Select && (
+            <Select<FlowSchemaType>
+              defaultValue=""
+              display={optionSelectionType === OptionSelectionType.Select}
+              label="How many options can be selected?"
+              renderValue={(val) => {
+                const option = multiSelectOptions.find((option) => option.value === val);
+                // return "User can select " + option?.name + " maximum";
+                return option?.name;
+              }}
+              selectOptions={multiSelectOptions}
+              name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
+              size={"small"}
+            />
+          )}
+        </ResponsiveFormRow>
+        <Typography variant="description">Available options</Typography>
         {reusable && (
           <Box sx={{ marginRight: "40px" }}>
             <TriggerDefinedOptionsForm<FlowSchemaType>

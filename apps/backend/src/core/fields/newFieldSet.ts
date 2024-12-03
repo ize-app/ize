@@ -111,12 +111,7 @@ const createFieldOptionsConfig = async ({
   const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
       fieldId,
-      maxSelections:
-        selectionType === OptionSelectionType.MultiSelect
-          ? maxSelections
-          : selectionType === OptionSelectionType.Select
-            ? 1
-            : null,
+      maxSelections: selectionType === OptionSelectionType.Rank ? maxSelections : maxSelections,
       triggerOptionsType,
       selectionType,
       linkedResultOptions: linkedResultOptions.map((linkedResultConfigId) => {

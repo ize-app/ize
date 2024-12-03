@@ -199,7 +199,7 @@ export const generateNonreusableFlowConfig = ({
                   required: true,
                   optionsConfig: {
                     options: [],
-                    selectionType: OptionSelectionType.Select,
+                    selectionType: OptionSelectionType.None,
                     linkedResultOptions: [step1ResultId],
                   },
                 },

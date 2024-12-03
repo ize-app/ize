@@ -18,41 +18,6 @@ export interface DecisionConfigFormProps {
   display?: boolean;
 }
 
-const selectTypeOptions = (decisionType: DecisionType) => {
-  const selectOne = {
-    name: "Vote for 1 option",
-    value: OptionSelectionType.Select,
-  };
-  const multiSelect = {
-    name: "Vote for multiple options",
-    value: OptionSelectionType.MultiSelect,
-  };
-  const rank = {
-    name: "Rank options",
-    value: OptionSelectionType.Rank,
-  };
-
-  switch (decisionType) {
-    case DecisionType.NumberThreshold:
-      return [selectOne];
-    case DecisionType.PercentageThreshold:
-      return [selectOne];
-    case DecisionType.WeightedAverage:
-      return [multiSelect, rank];
-    case DecisionType.Ai:
-      return [];
-  }
-};
-
-// const weightedAverageDescription = (selectionType: OptionSelectionType) => {
-//   switch (selectionType) {
-//     case OptionSelectionType.MultiSelect:
-//       return "Decision will be whichever option is selected the most.";
-//     case OptionSelectionType.Rank:
-//       return "Decision is the option with the highest weighted average rank";
-//   }
-// };
-
 export const DecisionConfigForm = ({
   stepIndex,
   resultIndex,
@@ -69,27 +34,35 @@ export const DecisionConfigForm = ({
   // but don't reset state, on first render of flow form's default state
   useEffect(() => {
     if (prevDecisionType && decisionType && decisionType !== prevDecisionType) {
-      if (decisionType === DecisionType.WeightedAverage) {
-        setValue(
-          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-          OptionSelectionType.Rank,
-        );
-        setValue(
-          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
-          2,
-        );
-      } else {
-        setValue(
-          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-          OptionSelectionType.Select,
-        );
-      }
+      // if (decisionType === DecisionType.WeightedAverage) {
+      //   setValue(
+      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+      //     OptionSelectionType.Rank,
+      //   );
+      //   setValue(
+      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.maxSelections`,
+      //     2,
+      //   );
+      // } else {
+      //   setValue(
+      //     `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+      //     OptionSelectionType.Select,
+      //   );
+      // }
 
       if (decisionType === DecisionType.Ai) {
         setValue(`steps.${stepIndex}.result.${resultIndex}.decision.defaultDecision`, undefined);
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, true);
+        setValue(
+          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+          OptionSelectionType.None,
+        );
       } else {
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
+        setValue(
+          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+          OptionSelectionType.Select,
+        );
       }
     }
     setPrevDecisionType(decisionType);
@@ -134,17 +107,6 @@ export const DecisionConfigForm = ({
             defaultValue=""
             name={`steps.${stepIndex}.result.${resultIndex}.decision.threshold`}
             endAdornment={<InputAdornment position="end">% of votes to win</InputAdornment>}
-          />
-        )}
-
-        {decisionType === DecisionType.WeightedAverage && (
-          <Select<FlowSchemaType>
-            name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`}
-            size="small"
-            sx={{ width: "200px" }}
-            defaultValue=""
-            selectOptions={selectTypeOptions(decisionType)}
-            label="How do participants select options?"
           />
         )}
         {decisionType === DecisionType.Ai && (

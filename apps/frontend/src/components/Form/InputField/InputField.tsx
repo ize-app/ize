@@ -107,28 +107,30 @@ export const InputField = <T extends FieldValues>({
       if (props.type === "fieldAnswer") {
         const optionsConfig = props.field.optionsConfig;
         if (!optionsConfig) throw Error("OptionSelections field must have optionsConfig");
-        const { options, selectionType } = optionsConfig;
+        const { options, selectionType, maxSelections } = optionsConfig;
 
         switch (selectionType) {
           case OptionSelectionType.Select: {
-            return (
-              <Radio<T>
-                name={`${fieldName}[0].optionId` as Path<T>}
-                label={label}
-                sx={{ flexDirection: "column", gap: "4px" }}
-                options={options}
-              />
-            );
-          }
-          case OptionSelectionType.MultiSelect: {
-            return (
-              <MultiSelect<T>
-                name={fieldName}
-                label={label}
-                sx={{ flexDirection: "column", gap: "4px" }}
-                options={options}
-              />
-            );
+            // TODO: condense this to just one component
+            if (maxSelections === 1) {
+              return (
+                <Radio<T>
+                  name={`${fieldName}[0].optionId` as Path<T>}
+                  label={label}
+                  sx={{ flexDirection: "column", gap: "4px" }}
+                  options={options}
+                />
+              );
+            } else {
+              return (
+                <MultiSelect<T>
+                  name={fieldName}
+                  label={label}
+                  sx={{ flexDirection: "column", gap: "4px" }}
+                  options={options}
+                />
+              );
+            }
           }
           case OptionSelectionType.Rank: {
             return <SortableList<T> label={label} name={fieldName} options={options} />;

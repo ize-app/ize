@@ -701,7 +701,7 @@ export type OptionSelectionArgs = {
 };
 
 export enum OptionSelectionType {
-  MultiSelect = 'MultiSelect',
+  None = 'None',
   Rank = 'Rank',
   Select = 'Select'
 }

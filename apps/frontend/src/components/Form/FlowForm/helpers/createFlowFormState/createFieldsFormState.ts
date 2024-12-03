@@ -45,7 +45,7 @@ const createFieldFormState = (
         triggerDefinedOptions: optionsConfig.triggerOptionsType
           ? { hasTriggerDefinedOptions: true, type: optionsConfig.triggerOptionsType }
           : { hasTriggerDefinedOptions: false, type: null },
-        maxSelections: optionsConfig.maxSelections,
+        maxSelections: optionsConfig.maxSelections ?? null,
         selectionType: optionsConfig.selectionType,
         options: optionsConfig.options.map(
           (o): OptionSchemaType => ({
