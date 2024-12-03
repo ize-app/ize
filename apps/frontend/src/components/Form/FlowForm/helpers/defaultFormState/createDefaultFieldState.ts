@@ -17,9 +17,10 @@ export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaTy
       required: true,
       optionsConfig: {
         options: [],
+        maxSelections:
+          props.selectionType === OptionSelectionType.Select || !props.selectionType ? 1 : null,
         selectionType: props.selectionType ?? OptionSelectionType.Select,
         previousStepOptions: false,
-        maxSelections: props.selectionType === OptionSelectionType.Select ? 1 : null,
         linkedResultOptions: [],
       },
     } as FieldSchemaType;

@@ -31,9 +31,11 @@ export const Field = ({
         variant="description"
       >
         {fieldNameOverride ?? field.name}{" "}
-        <Typography fontSize="inherit" color={"secondary"} component={"span"}>
-          ({stringifyValueType(field.type)})
-        </Typography>
+        {!fieldAnswer && (
+          <Typography fontSize="inherit" color={"secondary"} component={"span"}>
+            ({stringifyValueType(field.type)})
+          </Typography>
+        )}
       </Typography>
       {fieldAnswer && <Value value={fieldAnswer} field={field} type={"fieldAnswer"} />}
     </Box>

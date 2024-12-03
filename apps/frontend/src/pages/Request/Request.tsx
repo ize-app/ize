@@ -185,13 +185,15 @@ export const Request = () => {
                   <EndRequestStepButton requestStepId={currRequestStepId} />
                 </Box>
               )}
-              <Accordion label="Request context" elevation={0} defaultExpanded={true}>
-                <TriggerFieldSet
-                  fieldSet={request.flow.fieldSet}
-                  fieldAnswers={request.triggerFieldAnswers}
-                  onlyShowSelections={true}
-                />
-              </Accordion>
+              {request.triggerFieldAnswers.length > 0 && (
+                <Accordion label="Request context" elevation={0} defaultExpanded={true}>
+                  <TriggerFieldSet
+                    fieldSet={request.flow.fieldSet}
+                    fieldAnswers={request.triggerFieldAnswers}
+                    onlyShowSelections={true}
+                  />
+                </Accordion>
+              )}
               <TriggerDefinedOptionSets triggerDefinedOptionSets={request.triggerDefinedOptions} />
             </Box>
             {!!me && acceptingNewResponses && (!userResponded || allowMultipleResponses) && (

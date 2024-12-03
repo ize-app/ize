@@ -22,7 +22,7 @@ const resultFieldNamePlaceholderText = (resultType: ResultType) => {
     case ResultType.Ranking:
       return "Describe what you're trying to rank";
     case ResultType.LlmSummary:
-      return "Add a question on instructions for how to respond";
+      return "Add a question or instructions for how to respond";
     default:
       return "What's your question?";
   }

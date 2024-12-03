@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { useFormContext } from "react-hook-form";
 
+import { LabeledGroupedInputs } from "@/components/Form/formLayout/LabeledGroupedInputs";
 import { stringifyValueType } from "@/components/Value/stringifyValueType";
 import { ValueType } from "@/graphql/generated/graphql";
 
@@ -26,34 +27,36 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
         alignItems: "space-between",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
-          width: "100%",
-        }}
-      >
-        <TextField<FlowSchemaType>
-          name={`${triggerFieldsPath}.${fieldIndex}.name`}
-          key={"name" + fieldIndex.toString()}
-          multiline
-          placeholderText={`What's your question?`}
-          label={stringifyValueType(type)}
-          showLabel={true}
-          // seperateLabel={true}
-          defaultValue=""
-          disabled={locked}
-        />
-
-        {type === ValueType.OptionSelections && (
-          <OptionFieldForm
-            fieldsArrayMethods={fieldsArrayMethods}
-            locked={locked}
-            fieldIndex={fieldIndex}
+      <LabeledGroupedInputs label={stringifyValueType(type)} sx={{ padding: "12px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px",
+            width: "100%",
+          }}
+        >
+          <TextField<FlowSchemaType>
+            name={`${triggerFieldsPath}.${fieldIndex}.name`}
+            key={"name" + fieldIndex.toString()}
+            multiline
+            placeholderText={`What's your question?`}
+            label={`Trigger question name: ${stringifyValueType(type)}`}
+            // showLabel={true}
+            // seperateLabel={true}
+            defaultValue=""
+            disabled={locked}
           />
-        )}
-      </Box>
+
+          {type === ValueType.OptionSelections && (
+            <OptionFieldForm
+              fieldsArrayMethods={fieldsArrayMethods}
+              locked={locked}
+              fieldIndex={fieldIndex}
+            />
+          )}
+        </Box>
+      </LabeledGroupedInputs>
       {locked ? null : (
         <IconButton
           color="primary"

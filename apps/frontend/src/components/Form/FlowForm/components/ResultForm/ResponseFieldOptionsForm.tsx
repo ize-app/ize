@@ -14,9 +14,9 @@ import { Select } from "../../../formFields";
 import { SelectOption } from "../../../formFields/Select";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { getSelectOptionName } from "../../../utils/getSelectOptionName";
-import { OptionSelectionCountLimit } from "../../formValidation/fields";
 import { FlowSchemaType, StepSchemaType } from "../../formValidation/flow";
 import { getResultFormLabel } from "../../helpers/getResultFormLabel";
+import { maxOptionSelectionsOptions } from "../maxOptionSelections";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) => {
@@ -34,15 +34,6 @@ const createLinkOptions = (steps: StepSchemaType[], currentStepIndex: number) =>
   });
   return results;
 };
-
-const multiSelectOptions = [
-  { name: "1 selection", value: 1 },
-  { name: "2 selection", value: 2 },
-  { name: "3 selections", value: 3 },
-  { name: "4 selections", value: 4 },
-  { name: "5 selections", value: 5 },
-  { name: "No selection limit", value: OptionSelectionCountLimit.None },
-];
 
 interface ResponseFieldOptionsFormProps {
   stepIndex: number;
@@ -116,10 +107,6 @@ export const ResponseFieldOptionsForm = ({
           <Select<FlowSchemaType>
             defaultValue=""
             label="How do participants select options?"
-            // renderValue={(val) => {
-            //   const option = multiSelectOptions.find((option) => option.value === val);
-            //   return "User can select " + option?.name + " maximum";
-            // }}
             disabled={optionSelectionType === OptionSelectionType.None}
             selectOptions={getSelectionTypeOptions(optionSelectionType)}
             name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.selectionType`}
@@ -130,12 +117,7 @@ export const ResponseFieldOptionsForm = ({
               defaultValue=""
               display={optionSelectionType === OptionSelectionType.Select}
               label="How many options can be selected?"
-              renderValue={(val) => {
-                const option = multiSelectOptions.find((option) => option.value === val);
-                // return "User can select " + option?.name + " maximum";
-                return option?.name;
-              }}
-              selectOptions={multiSelectOptions}
+              selectOptions={maxOptionSelectionsOptions}
               name={`steps.${stepIndex}.fieldSet.fields.${fieldIndex}.optionsConfig.maxSelections`}
               size={"small"}
             />
