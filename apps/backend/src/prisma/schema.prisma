@@ -559,15 +559,24 @@ model FieldOptionsConfig {
   triggerOptionsType  ValueType?          @map("trigger_options_type")
   // Whether option is single or multi-select. Null means no maximum # of selections
   maxSelections       Int?                @map("max_selections")
-  linkedResultOptions String[]            @default([]) @map("linked_result_options")
   // type single select / multi-select / etc
   selectionType       OptionSelectionType @map("option_selection_type")
   createdAt           DateTime            @default(now()) @map("created_at")
 
-  fieldOptionSetId    String          @map("field_option_set_id") @db.Uuid
-  PredefinedOptionSet FieldOptionSet? @relation(fields: [fieldOptionSetId], references: [id])
+  fieldOptionSetId                String                            @map("field_option_set_id") @db.Uuid
+  PredefinedOptionSet             FieldOptionSet?                   @relation(fields: [fieldOptionSetId], references: [id])
+  FieldOptionsConfigLinkedResults FieldOptionsConfigLinkedResults[]
 
   @@map("field_options_configs")
+}
+
+model FieldOptionsConfigLinkedResults {
+  id                   String @id @default(uuid()) @db.Uuid
+  fieldOptionsConfigId String @unique @map("field_options_config_id") @db.Uuid
+  resultConfigId       String @map("result_config_id") @db.Uuid
+
+  ResultConfig       ResultConfig       @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
+  FieldOptionsConfig FieldOptionsConfig @relation(fields: [fieldOptionsConfigId], references: [id], onDelete: Cascade)
 }
 
 model FieldOptionSet {
@@ -645,11 +654,12 @@ model ResultConfig {
   // whether output will be a single item or a list of items
   createdAt         DateTime        @default(now()) @map("created_at")
 
-  ResultConfigDecision ResultConfigDecision?
-  ResultConfigRank     ResultConfigRank?
-  ResultConfigLlm      ResultConfigLlm?
-  ResultGroups         ResultGroup[]
-  ActionConfigFilter   ActionConfigFilter[]
+  ResultConfigDecision            ResultConfigDecision?
+  ResultConfigRank                ResultConfigRank?
+  ResultConfigLlm                 ResultConfigLlm?
+  ResultGroups                    ResultGroup[]
+  ActionConfigFilter              ActionConfigFilter[]
+  FieldOptionsConfigLinkedResults FieldOptionsConfigLinkedResults[]
 
   @@unique([index, resultConfigSetId])
   @@map("result_configs")

@@ -48,36 +48,39 @@ export const fieldSetResolver = ({
         context,
       });
 
-      const linkedResultOptions = config.linkedResultOptions.map((linkedResultConfigId) => {
-        const resultConfig = resultConfigsCache.find((r) => {
-          return r.resultConfigId === linkedResultConfigId;
-        });
+      const linkedResultOptions = config.FieldOptionsConfigLinkedResults.map(
+        (linkedResultConfig) => {
+          const resultConfigId = linkedResultConfig.resultConfigId;
+          const resultConfig = resultConfigsCache.find((r) => {
+            return r.resultConfigId === resultConfigId;
+          });
 
-        if (!resultConfig)
-          throw new GraphQLError(
-            `Linked result config not found for resultConfigId ${linkedResultConfigId} `,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
+          if (!resultConfig)
+            throw new GraphQLError(
+              `Linked result config not found for resultConfigId ${resultConfigId} `,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
 
-        const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.field.fieldId);
+          const field = responseFieldsCache.find((f) => f.fieldId === resultConfig.field.fieldId);
 
-        if (!field)
-          throw new GraphQLError(
-            `Linked result config's field not found for resultConfigId ${linkedResultConfigId} `,
-            {
-              extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-            },
-          );
+          if (!field)
+            throw new GraphQLError(
+              `Linked result config's field not found for resultConfigId ${resultConfigId} `,
+              {
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+              },
+            );
 
-        return {
-          resultConfigId: linkedResultConfigId,
-          resultName: resultConfig.name,
-          fieldId: field.fieldId,
-          fieldName: field.name,
-        } as LinkedResult;
-      });
+          return {
+            resultConfigId,
+            resultName: resultConfig.name,
+            fieldId: field.fieldId,
+            fieldName: field.name,
+          } as LinkedResult;
+        },
+      );
       optionsConfig = {
         triggerOptionsType: (config.triggerOptionsType as ValueType) ?? undefined,
         linkedResultOptions,

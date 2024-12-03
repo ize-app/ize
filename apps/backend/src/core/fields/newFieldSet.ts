@@ -107,6 +107,25 @@ const createFieldOptionsConfig = async ({
   const { selectionType, options, maxSelections, triggerOptionsType, linkedResultOptions } =
     fieldOptionsConfigArgs;
 
+  linkedResultOptions.map((linkedResultConfigId) => {
+    // validating that resultConfigId exists in the flow
+    let hasLinkedResult = false;
+    for (const step of createdSteps) {
+      const foundMatch = (step.ResultConfigSet?.ResultConfigs ?? []).find((rc) => {
+        return rc.id === linkedResultConfigId;
+      });
+      if (foundMatch) {
+        hasLinkedResult = true;
+        break;
+      }
+    }
+    if (!hasLinkedResult)
+      throw new GraphQLError(`Cannot find result config`, {
+        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+      });
+    return linkedResultConfigId;
+  });
+
   const optionSetId = await newOptionSet({ type: "newValues", optionsArgs: options, transaction });
   const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
@@ -114,24 +133,15 @@ const createFieldOptionsConfig = async ({
       maxSelections: selectionType === OptionSelectionType.Rank ? maxSelections : maxSelections,
       triggerOptionsType,
       selectionType,
-      linkedResultOptions: linkedResultOptions.map((linkedResultConfigId) => {
-        // validating that resultConfigId exists in the flow
-        let hasLinkedResult = false;
-        for (const step of createdSteps) {
-          const foundMatch = (step.ResultConfigSet?.ResultConfigs ?? []).find((rc) => {
-            return rc.id === linkedResultConfigId;
-          });
-          if (foundMatch) {
-            hasLinkedResult = true;
-            break;
-          }
-        }
-        if (!hasLinkedResult)
-          throw new GraphQLError(`Cannot find result config`, {
-            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-          });
-        return linkedResultConfigId;
-      }),
+      FieldOptionsConfigLinkedResults: {
+        createMany: {
+          data: linkedResultOptions.map((linkedResultConfigId) => {
+            return {
+              resultConfigId: linkedResultConfigId,
+            };
+          }),
+        },
+      },
       fieldOptionSetId: optionSetId,
     },
   });

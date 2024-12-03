@@ -92,8 +92,10 @@ export const triggerNextStep = async ({
   const linkedResults = new Map<{ resultConfigId: string; fieldId: string }, string[]>();
 
   (nextStep.ResponseFieldSet?.Fields ?? []).forEach((f) => {
-    const linkedResultConfigIds = f.FieldOptionsConfig?.linkedResultOptions;
-    if (linkedResultConfigIds && linkedResultConfigIds.length > 0) {
+    const linkedResultConfigIds = (f.FieldOptionsConfig?.FieldOptionsConfigLinkedResults ?? []).map(
+      (r) => r.resultConfigId,
+    );
+    if (linkedResultConfigIds.length > 0) {
       linkedResultConfigIds.forEach((resultConfigId) => {
         let result: ResultPrismaType | undefined = undefined;
 
