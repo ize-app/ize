@@ -57,6 +57,8 @@ jobs:
         working-directory: ./apps/backend
 
       - name: Lint
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run lint
         working-directory: ./
   deploy:
