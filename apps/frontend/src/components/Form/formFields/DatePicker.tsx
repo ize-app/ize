@@ -51,7 +51,8 @@ export const DatePicker = <T extends FieldValues>({
                 },
               }}
               aria-label={label}
-              timezone="system"
+              // using UTC to make it easier to keep timezones consistent for date picker
+              timezone="UTC"
               label={showLabel && !seperateLabel ? label : ""}
             />
             <FormHelperText

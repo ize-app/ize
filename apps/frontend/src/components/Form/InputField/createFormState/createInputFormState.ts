@@ -71,7 +71,8 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
         };
       case "DateValue":
         return {
-          value: dayjs.utc(value.date),
+          // all pure date values are handled with UTC
+          value: dayjs.utc(value.date).startOf("day"),
           type: ValueType.Date,
           required,
         };
@@ -115,7 +116,8 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
   } else {
     switch (type) {
       case ValueType.Date:
-        return { value: dayjs(), type: ValueType.Date, required };
+        // all pure date values are handled with UTC
+        return { value: dayjs().utc().startOf("day"), type: ValueType.Date, required };
       case ValueType.DateTime:
         return { value: dayjs(), type: ValueType.DateTime, required };
       case ValueType.Entities:

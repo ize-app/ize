@@ -1,5 +1,11 @@
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
 import { Entity, ValueType } from "@/graphql/generated/graphql";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { InputSchemaType } from "../inputValidation";
 
 export const createInputValueArg = (input: InputSchemaType): string => {
@@ -9,8 +15,8 @@ export const createInputValueArg = (input: InputSchemaType): string => {
     case ValueType.Uri:
       return JSON.stringify(input.value);
     case ValueType.Date:
-      // return JSON.stringify(input.value.utc().format("YYYY-MM-DDT00:00:00.000Z")); // 2019-03-06
-      return JSON.stringify(input.value.utc().startOf('day').toISOString())
+      // On FE, dates are already in UTC with time set to 00:00:00
+      return JSON.stringify(input.value.utc().startOf("day").toISOString());
     case ValueType.Float:
       return JSON.stringify(input.value);
     case ValueType.DateTime:
