@@ -1,7 +1,6 @@
-import { FieldType, ResultArgs, ResultType } from "@/graphql/generated/graphql";
+import { ResultArgs, ResultType } from "@/graphql/generated/graphql";
 
-import { ResultConfigCache } from "./createNewFlowArgs";
-import { DefaultOptionSelection, FieldsSchemaType } from "../../formValidation/fields";
+import { FieldsSchemaType } from "../../formValidation/fields";
 import { ResultSchemaType, ResultsSchemaType } from "../../formValidation/result";
 
 export const createResultArgs = (
@@ -9,49 +8,26 @@ export const createResultArgs = (
   responseFields: FieldsSchemaType | undefined | null,
 ): ResultArgs => {
   if (!responseFields) throw Error("Missing response fields for result>");
-
-  const responseFieldIndex = responseFields
-    ? responseFields.findIndex((f) => f.fieldId === result.fieldId)
-    : null;
-
-  if (responseFieldIndex === null || responseFieldIndex === -1)
-    throw Error("Cannot find response field for result");
-
-  if (result.type === ResultType.Decision && result.decision.defaultOptionId) {
-    let defaultOptionIndex: number | null = null;
-
-    if (result.decision.defaultOptionId !== DefaultOptionSelection.None.toString()) {
-      const responseField = responseFields[responseFieldIndex];
-      if (!responseField || responseField.type !== FieldType.Options)
-        throw Error("Missing option set for default result");
-      const options = responseField.optionsConfig.options;
-      defaultOptionIndex = options.findIndex(
-        (option) => option.optionId === result.decision.defaultOptionId,
-      );
-      if (defaultOptionIndex === -1) throw Error("Default option not found ");
-    }
-
-    delete result.decision.defaultOptionId;
+  if (result.type === ResultType.Decision) {
+    const defaultOptionId: string | null = result.decision.defaultDecision?.optionId ?? null;
+    delete result.decision.defaultDecision;
     return {
       ...result,
-      responseFieldIndex,
       decision: {
         ...result.decision,
-        defaultOptionIndex,
+        defaultOptionId,
       },
     };
   }
-  return { ...result, responseFieldIndex };
+
+  return { ...result };
 };
 
 export const createResultsArgs = (
   results: ResultsSchemaType,
   responseFields: FieldsSchemaType,
-  stepIndex: number,
-  resultConfigCache: ResultConfigCache[],
 ): ResultArgs[] => {
-  return results.map((resultConfig, resultIndex) => {
-    resultConfigCache.push({ id: resultConfig.resultId, stepIndex, resultIndex });
+  return results.map((resultConfig) => {
     return createResultArgs(resultConfig, responseFields);
   });
 };

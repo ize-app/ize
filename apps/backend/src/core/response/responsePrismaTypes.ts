@@ -1,13 +1,11 @@
 import { Prisma } from "@prisma/client";
 
 import { entityInclude } from "../entity/entityPrismaTypes";
+import { fieldAnswerInclude } from "../fields/fieldPrismaTypes";
 
 export const responseInclude = Prisma.validator<Prisma.ResponseInclude>()({
   Answers: {
-    include: {
-      AnswerOptionSelections: true,
-      AnswerFreeInput: true,
-    },
+    include: fieldAnswerInclude,
   },
   CreatorEntity: {
     include: entityInclude,

@@ -1,18 +1,16 @@
-import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
 import { stringifyResultGroups } from "@/core/request/stringify/stringifyResultGroups";
 import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTriggerFields";
+import { Request } from "@/graphql/generated/resolver-types";
 
 export const createRequestContextPrompt = ({
-  requestPayload,
+  request,
+  requestStepId,
 }: {
-  requestPayload: RequestPayload;
+  request: Request;
+  requestStepId: string;
 }): string => {
-  const { flowName, requestName, results, requestTriggerAnswers } = requestPayload;
-
-  return `Here is context about the results from this request so far \n\nRequest name: [${flowName}] ${requestName}\n\n
-  **Request context**: \n\n
-  ${stringifyTriggerFields({ triggerFields: requestTriggerAnswers, type: "markdown" })} \n\n
-  **Results so far**: \n\n
-  ${stringifyResultGroups({ results, type: "markdown" })} \n\n
+  return `# Context about this request\n\nRequest name: [${request.flow.name}] ${request.name}\n\n
+  ${stringifyTriggerFields({ request, title: "Request context", type: "markdown" })}\n\n
+  ${stringifyResultGroups({ request, title: "Results so far", type: "markdown", excludeRequestStepId: requestStepId })}\n\n
   `;
 };

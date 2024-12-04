@@ -1,21 +1,34 @@
 type Mutation {
   testWebhook(inputs: TestWebhookArgs!): Boolean!
-  createWebhook(inputs: CallWebhookArgs!): String!
 }
 
 union Action = CallWebhook | EvolveFlow | EvolveGroup | TriggerStep | GroupWatchFlow
 
+enum ActionStatus {
+  NotStarted
+  Attempting
+  Error
+  DidNotPassFilter
+  Complete
+}
+
+type ActionFilter {
+  resultConfigId: String!
+  resultName: String!
+  option: Option!
+}
+
 type ActionExecution {
   actionId: String!
   lastAttemptedAt: String
-  status: Status!
+  status: ActionStatus!
 }
 
 type CallWebhook {
   name: String!
   locked: Boolean!
   webhookId: String!
-  filterOption: Option
+  filter: ActionFilter
   uri: String!
   webhookName: String!
 }
@@ -23,25 +36,26 @@ type CallWebhook {
 type EvolveFlow {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 type TriggerStep {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
+  stepId: String!
 }
 
 type GroupWatchFlow {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 type EvolveGroup {
   name: String!
   locked: Boolean!
-  filterOption: Option
+  filter: ActionFilter
 }
 
 # mirrors Prisma type + "None" type
@@ -51,7 +65,6 @@ enum ActionType {
   EvolveFlow
   EvolveGroup
   GroupWatchFlow
-  None
 }
 
 input CallWebhookArgs {
@@ -63,25 +76,25 @@ input CallWebhookArgs {
 
 input ActionArgs {
   type: ActionType!
-  filterResponseFieldIndex: Int
-  filterOptionIndex: Int
+  filter: ActionFilterArgs
   callWebhook: CallWebhookArgs
+  stepId: String
   locked: Boolean!
+}
+
+input ActionFilterArgs {
+  resultConfigId: String!
+  optionId: String!
 }
 
 input TestWebhookArgs {
   flowName: String!
   uri: String!
-  requestFields: [WebhookValueArgs!]!
-  results: [ResultGroupTestWebhookArgs!]!
+  triggerFields: [TestWebhookTriggerFieldsArgs!]!
+  results: [ResultType!]!
 }
 
-input ResultGroupTestWebhookArgs {
-  fieldName: String!
-  results: [WebhookValueArgs!]!
-}
-
-input WebhookValueArgs {
-  fieldName: String!
-  fieldType: FieldType!
+input TestWebhookTriggerFieldsArgs {
+  name: String!
+  type: ValueType!
 }

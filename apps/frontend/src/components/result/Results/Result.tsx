@@ -1,38 +1,61 @@
-import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { Box, Typography } from "@mui/material";
 
-import { AnswerFreeInput } from "@/components/Field/AnswerFreeInput";
 import { FieldOptions } from "@/components/Field/FieldOptions";
-import { statusProps } from "@/components/status/statusProps";
+import { resultGroupStatusProps } from "@/components/status/resultGroupStatusProps";
+import { Value } from "@/components/Value/Value";
 import {
   FieldFragment,
-  FieldType,
+  OptionFragment,
+  ResponseFieldAnswersSummaryFragment,
   ResultConfigFragment,
   ResultGroupFragment,
-  Status,
+  ResultGroupStatus,
+  ResultType,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 import { LabeledGroupedInputs } from "../../Form/formLayout/LabeledGroupedInputs";
 import { createResultConfigDescription } from "../createResultConfigDescription";
 import { ResultHeader } from "../ResultName";
+import { ResultGroupStatusDisplay } from "./ResultGroupStatus";
+
+const getResultGroupLabel = ({ name, status }: { name: string; status: ResultGroupStatus }) => {
+  if ([ResultGroupStatus.FinalResult].includes(status)) return name;
+  else if ([ResultGroupStatus.FinalNoResult, ResultGroupStatus.Error].includes(status))
+    return `No result: ${name}`;
+  else if (
+    [
+      ResultGroupStatus.Attempting,
+      ResultGroupStatus.NotStarted,
+      ResultGroupStatus.Preliminary,
+    ].includes(status)
+  )
+    return `Pending: ${name}`;
+  else return name;
+};
 
 export const Result = ({
   field,
   resultConfig,
   resultGroup,
-  requestStepStatus,
   displayDescripton,
-  onlyShowSelections = false,
-  displayFieldOptionsIfNoResult = true,
+  minResponses,
+  responseSummary,
+  triggerDefinedOptions,
+  finalField,
 }: {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
   resultGroup: ResultGroupFragment | null;
-  requestStepStatus: Status;
-  onlyShowSelections?: boolean;
+  responseSummary: ResponseFieldAnswersSummaryFragment | null;
+  minResponses: number | undefined | null;
   displayDescripton: boolean;
-  displayFieldOptionsIfNoResult?: boolean;
+  triggerDefinedOptions?: OptionFragment[];
+  finalField: boolean;
 }) => {
+  const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
+  const backgroundColor = statusProps.lightColor ?? "white";
+
   return (
     <LabeledGroupedInputs
       sx={{
@@ -40,71 +63,68 @@ export const Result = ({
         display: "flex",
         flexDirection: "column",
         gap: "12px",
-        borderColor: statusProps[requestStepStatus].backgroundColor,
-        backgroundColor:
-          requestStepStatus === Status.Completed
-            ? "#f5faf5"
-            : requestStepStatus === Status.InProgress
-              ? "#f3f8fb"
-              : "white",
+        borderColor: statusProps.color,
+        backgroundColor,
       }}
       key={resultConfig.resultConfigId}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <ResultHeader label={resultConfig.name} requestStatus={requestStepStatus} />
+        <ResultHeader
+          label={resultConfig.name}
+          resultGroupStatus={resultGroup?.status ?? ResultGroupStatus.NotStarted}
+        />
         <Typography color="primary" fontSize="1rem">
           {field?.name}
         </Typography>
         {displayDescripton && (
           <Typography variant="description" sx={{ whiteSpace: "pre-line" }}>
-            {createResultConfigDescription(resultConfig)}
+            {createResultConfigDescription({ resultConfig, minResponses })}
           </Typography>
         )}
-        {resultGroup && !resultGroup?.hasResult && (
-          <Box sx={{ display: "flex", flexDirection: "row", gap: "8px", alignItems: "center" }}>
-            <DoNotDisturbIcon color="warning" fontSize="small" />
-            <Typography variant="description" color={(theme) => theme.palette.warning.main}>
-              This collaborative step finished without a final{" "}
-              {resultConfig.__typename === "Decision" ? "decision" : "result"}.
-            </Typography>
-          </Box>
-        )}
+        <ResultGroupStatusDisplay
+          status={resultGroup?.status}
+          resultType={resultConfig.__typename as ResultType}
+        />
         {resultGroup &&
-          resultGroup.results.map((result, index) => {
-            return (
-              <Box key={"result" + index}>
-                {index > 0 && <Typography variant="description">{result.name}</Typography>}
-                {field &&
-                  field.__typename === FieldType.Options &&
-                  result.resultItems.some((item) => item.optionId) &&
-                  (resultGroup || (!resultGroup && displayFieldOptionsIfNoResult)) && (
-                    <FieldOptions
-                      // key={"options" + index}
-                      fieldOptions={field}
-                      final={!!result}
-                      optionSelections={result.resultItems}
-                      onlyShowSelections={onlyShowSelections}
-                    />
-                  )}
-                {field &&
-                  // field.__typename === FieldType.FreeInput &&
-                  result.resultItems.some((item) => !item.optionId) &&
-                  result.resultItems.map((item) => (
-                    <AnswerFreeInput answer={item.value} dataType={item.dataType} key={item.id} />
-                  ))}
-              </Box>
+          resultGroup.results.map((result) => {
+            return result.type !== ResultType.LlmSummary &&
+              field.type === ValueType.OptionSelections ? (
+              <LabeledGroupedInputs
+                key={result.id}
+                sx={{ backgroundColor: "white" }}
+                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+              >
+                <FieldOptions
+                  field={field}
+                  finalOptions={true}
+                  responseSummary={responseSummary}
+                  optionSelections={result.resultItems}
+                  onlyShowSelections={false}
+                />
+              </LabeledGroupedInputs>
+            ) : (
+              <LabeledGroupedInputs
+                key={result.id}
+                sx={{ backgroundColor: "white", padding: "8px" }}
+                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+              >
+                {result.resultItems.map((item) => (
+                  <Value key={item.id} value={item.value} field={field} type={"fieldAnswer"} />
+                ))}
+              </LabeledGroupedInputs>
             );
           })}
-        {(!resultGroup || !resultGroup.hasResult) &&
-          field &&
-          field.__typename === FieldType.Options &&
-          displayFieldOptionsIfNoResult && (
+        {!resultGroup && field.type === ValueType.OptionSelections && (
+          <LabeledGroupedInputs sx={{ backgroundColor: "white" }} label={"Options"}>
             <FieldOptions
-              fieldOptions={field}
-              final={!!resultGroup}
-              onlyShowSelections={onlyShowSelections}
+              field={field}
+              finalOptions={finalField}
+              responseSummary={responseSummary}
+              onlyShowSelections={false}
+              triggerDefinedOptions={triggerDefinedOptions}
             />
-          )}
+          </LabeledGroupedInputs>
+        )}
       </Box>
     </LabeledGroupedInputs>
   );

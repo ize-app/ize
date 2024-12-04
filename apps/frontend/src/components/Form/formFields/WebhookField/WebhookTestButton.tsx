@@ -1,6 +1,6 @@
-import { Button } from "@mui/material";
+import { Button, SvgIcon } from "@mui/material";
 
-import { statusProps } from "@/components/status/statusProps";
+import { genericStatusProps } from "@/components/status/statusProps";
 import { Status } from "@/graphql/generated/graphql";
 
 export const WebhookTestButton = ({
@@ -10,22 +10,17 @@ export const WebhookTestButton = ({
   handleTestWebhook: (_event: React.MouseEvent<HTMLElement>) => void;
   testWebhookStatus: Status | null;
 }) => {
-  const WebhookStatusIcon = testWebhookStatus
-    ? statusProps[testWebhookStatus].icon
-    : statusProps.NotAttempted.icon;
+  const statusProps = genericStatusProps[testWebhookStatus ?? Status.NotAttempted];
+
   return (
     <Button
       variant="outlined"
       sx={{ width: "60px", marginTop: "8px" }}
       size={"small"}
       endIcon={
-        <WebhookStatusIcon
-          sx={{
-            color: testWebhookStatus
-              ? statusProps[testWebhookStatus].backgroundColor
-              : statusProps.NotAttempted.backgroundColor,
-          }}
-        />
+        statusProps.icon ? (
+          <SvgIcon component={statusProps.icon} sx={{ color: statusProps.color }} />
+        ) : null
       }
       onClick={handleTestWebhook}
     >

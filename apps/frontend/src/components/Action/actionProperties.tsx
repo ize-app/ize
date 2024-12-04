@@ -1,6 +1,5 @@
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import BoltIcon from "@mui/icons-material/Bolt";
-import CloseIcon from "@mui/icons-material/Close";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { SvgIconProps } from "@mui/material";
@@ -30,10 +29,6 @@ export const actionProperties: ActionProps = {
   [ActionType.GroupWatchFlow]: {
     label: "Watch/unwatch flow",
     icon: VisibilityIcon,
-  },
-  [ActionType.None]: {
-    label: "None",
-    icon: CloseIcon,
   },
   [ActionType.EvolveGroup]: {
     label: "Evolve group",

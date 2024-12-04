@@ -1,5 +1,4 @@
-import { FieldType } from "@prisma/client";
-
+import { stringifyValue } from "@/core/request/stringify/stringifyInput";
 import { Field } from "@/graphql/generated/resolver-types";
 
 export interface AiDecisionResult {
@@ -47,8 +46,7 @@ export const createDecisionPrompt = ({
   criteria: string | null;
   hasResponse: boolean;
 }): string => {
-  if (field.__typename !== FieldType.Options)
-    throw Error(`Field is not an options field ${field.fieldId}`);
+  if (!field.optionsConfig) throw Error(`Field is not an options field ${field.fieldId}`);
 
   const fieldInstructions = `You must make a decision for the following question: ${field.name}`;
   const defaultDecisionCriteria = hasResponse
@@ -57,9 +55,9 @@ export const createDecisionPrompt = ({
 
   const criteriaInstructions = `Your decision must incororate the following decision criteria: ${criteria ? `${criteria}` : defaultDecisionCriteria}`;
 
-  const options = field.options.map((option, index) => ({
+  const options = field.optionsConfig.options.map((option, index) => ({
     optionNumber: index + 1,
-    value: option.name,
+    value: stringifyValue(option.value),
   }));
 
   const chooseOptionInstructions = `Decide one of the following options:\n ${JSON.stringify(options)} `;

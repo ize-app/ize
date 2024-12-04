@@ -20,6 +20,7 @@ type Query {
 }
 
 input NewRequestArgs {
+  requestId: String!
   flowId: String!
   name: String!
   requestFields: [FieldAnswerArgs!]!
@@ -35,10 +36,11 @@ input NewEvolveRequestArgs {
 
 input RequestDefinedOptionsArgs {
   fieldId: String!
-  options: [FieldOptionArgs!]!
+  options: [OptionArgs!]!
 }
 
 input NewResponseArgs {
+  responseId: String!
   requestStepId: String!
   answers: [FieldAnswerArgs!]!
 }
@@ -49,6 +51,15 @@ enum Status {
   Completed
   Failure
   Cancelled
+}
+
+enum RequestStepStatus {
+  NotStarted
+  CollectingResponses
+  CreatingResult
+  ExecutingAction
+  Complete
+  Error
 }
 
 enum RequestStepStatusFilter {
@@ -72,20 +83,33 @@ type Request {
   currentStepIndex: Int!
   createdAt: String!
   triggerFieldAnswers: [TriggerFieldAnswer!]!
+  triggerDefinedOptions: [TriggerDefinedOptions!]!
   final: Boolean!
   requestSteps: [RequestStep!]!
 }
 
+type TriggerContext {
+  answers: [TriggerFieldAnswer!]!
+  options: [TriggerDefinedOptions!]!
+}
+
+type TriggerDefinedOptions {
+  fieldId: String!
+  fieldName: String!
+  options: [Option!]!
+}
+
 type RequestStep {
   requestStepId: String!
+  stepId: String!
   createdAt: String!
   expirationDate: String!
-  responseFieldAnswers: [ResponseFieldAnswers!]!
+  answers: [ResponseFieldAnswers!]!
   fieldSet: FieldSet!
-  userResponses: [Response!]!
+  userResponded: Boolean!
   results: [ResultGroup!]!
   actionExecution: ActionExecution
-  status: RequestStepStatus!
+  status: RequestStepStatuses!
 }
 
 type RequestSummary {
@@ -101,7 +125,7 @@ type RequestSummary {
 
 type RequestStepSummary {
   requestStepId: String!
-  status: RequestStepStatus!
+  status: RequestStepStatuses!
   expirationDate: String!
   action: RequestStepActionSummary
   respondPermission: Permission
@@ -114,38 +138,13 @@ type RequestStepSummary {
 }
 type RequestStepActionSummary {
   name: String!
-  status: Status!
+  status: ActionStatus!
 }
 
-type Response {
-  responseId: String!
-  createdAt: String!
-  creator: Entity!
-  answers: [FieldAnswer!]!
-}
-
-type GenericFieldAndValue {
-  fieldName: String!
-  value: [String!]!
-}
-
-# type RequestPayload {
-#   requestId: String!
-#   requestName: String!
-#   flowName: String!
-#   triggerFieldAnswers: [FieldValue]!
-#   results: [FieldValue]!
-# }
-
-type FieldValue {
-  fieldName: String!
-  value: String
-  optionSelections: [String!]
-}
-
-type RequestStepStatus {
+type RequestStepStatuses {
   responseFinal: Boolean!
   resultsFinal: Boolean!
   actionsFinal: Boolean!
   final: Boolean!
+  status: RequestStepStatus!
 }

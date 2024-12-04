@@ -20,17 +20,19 @@ export const getResultConfigName = ({
         case DecisionType.PercentageThreshold:
           return "Majority vote";
         case DecisionType.WeightedAverage:
-          return "Prioritize options";
+          return "Rank vote";
         default:
           return "Decision";
       }
     }
     case ResultType.Ranking:
       return "Prioritize into ranked list";
-    case ResultType.LlmSummary:
-      return "Summarize w/ AI";
-    case ResultType.LlmSummaryList:
-      return "Summarize options w/ AI";
+    case ResultType.LlmSummary: {
+      if (resultConfig.ResultConfigLlm?.isList) return "Summarize options w/ AI";
+      else return "Summarize w/ AI";
+    }
+    case ResultType.RawAnswers:
+      return "Collect raw answers";
     default:
       return "Collaborative step";
   }

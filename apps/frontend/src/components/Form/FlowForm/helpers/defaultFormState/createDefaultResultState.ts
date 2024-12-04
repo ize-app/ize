@@ -1,7 +1,12 @@
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "../../formValidation/fields";
-import { ResultSchemaType } from "../../formValidation/result";
+import {
+  DecisionResultSchemaType,
+  LlmSummaryResultSchemaType,
+  RankingResultSchemaType,
+  RawAnswersResultSchemaType,
+  ResultSchemaType,
+} from "../../formValidation/result";
 
 interface DefaultResultStateProps {
   resultType: ResultType;
@@ -15,46 +20,42 @@ export const createDefaultResultState = ({
   switch (resultType) {
     case ResultType.Decision:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Decision,
         fieldId,
-        minimumAnswers: 1,
+
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,
-          defaultOptionId: DefaultOptionSelection.None,
+          defaultDecision: {
+            hasDefault: false,
+            optionId: null,
+          },
         },
-      };
+      } as DecisionResultSchemaType;
     case ResultType.Ranking:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.Ranking,
         fieldId,
-        minimumAnswers: 2,
+
         prioritization: { numPrioritizedItems: 3 },
-      };
+      } as RankingResultSchemaType;
     case ResultType.LlmSummary:
       return {
-        resultId: crypto.randomUUID(),
+        resultConfigId: crypto.randomUUID(),
         type: ResultType.LlmSummary,
         fieldId,
-        minimumAnswers: 2,
         llmSummary: {
-          prompt:
-            "Write a summary of all the responses that describes the overall thoughts and sentiment of the group, common points of disagreement, and next steps.",
-          example: undefined, // "Overall, the group was in agreement that it is OK to where socks and sandals. Most agree that socks and sandals optimizes for comfort, warmth and hygiene. A few noted that socks and sandals can be a daring and ironic fashion choice. Others remain convinced that socks with sandals is a fatal fashion faux pas that must be avoided at all costs, though socks with certain kinds of sandals may acceptable. Further discussion may be warranted to understand the types of sandals that are appropriate to wear with socks. "
+          prompt: "",
+          isList: false,
         },
-      };
-    case ResultType.LlmSummaryList:
+      } as LlmSummaryResultSchemaType;
+    case ResultType.RawAnswers:
       return {
-        resultId: crypto.randomUUID(),
-        type: ResultType.LlmSummaryList,
+        resultConfigId: crypto.randomUUID(),
+        type: ResultType.RawAnswers,
         fieldId,
-        minimumAnswers: 2,
-        llmSummary: {
-          prompt: "Synthesize the responses into a list of conise key points.",
-          example: undefined,
-        },
-      };
+      } as RawAnswersResultSchemaType;
   }
 };

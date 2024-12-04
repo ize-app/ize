@@ -58,7 +58,7 @@ telegramBot.on("message", async (ctx) => {
 
 // launcing the bot sets up getUpdates polling or webhook by default
 // either of which would cause webhook in main process to fail
-console.log("about to launch Telegram Bot. config.CRON", config.CRON);
+// console.log("about to launch Telegram Bot. config.CRON", config.CRON);
 if (!config.CRON) {
   telegramBot.launch();
 }

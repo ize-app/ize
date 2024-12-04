@@ -9,8 +9,8 @@ fragment ResultConfig on ResultConfig {
   ... on LlmSummary {
     ...LlmSummary
   }
-  ... on LlmSummaryList {
-    ...LlmSummaryList
+  ... on RawAnswers {
+    ...RawAnswers
   }
 }
 
@@ -18,14 +18,17 @@ fragment ResultGroup on ResultGroup {
   id
   createdAt
   resultConfigId
-  hasResult
+  complete
+  status
   results {
     ...Result
   }
 }
 
 fragment Result on Result {
+  id
   name
+  type
   resultItems {
     ...ResultItem
   }
@@ -33,8 +36,9 @@ fragment Result on Result {
 
 fragment ResultItem on ResultItem {
   id
-  dataType
-  value
+  value {
+    ...Value
+  }
   optionId
 }
 
@@ -44,7 +48,6 @@ fragment Decision on Decision {
   }
   name
   resultConfigId
-  minimumAnswers
   decisionType
   criteria
   defaultOption {
@@ -60,7 +63,6 @@ fragment Ranking on Ranking {
   name
   resultConfigId
   numOptionsToInclude
-  minimumAnswers
 }
 
 fragment LlmSummary on LlmSummary {
@@ -70,17 +72,13 @@ fragment LlmSummary on LlmSummary {
   name
   resultConfigId
   prompt
-  example
-  minimumAnswers
+  isList
 }
 
-fragment LlmSummaryList on LlmSummaryList {
+fragment RawAnswers on RawAnswers {
   field {
     ...Field
   }
   name
   resultConfigId
-  prompt
-  example
-  minimumAnswers
 }

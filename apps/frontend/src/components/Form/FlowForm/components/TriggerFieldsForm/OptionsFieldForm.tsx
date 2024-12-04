@@ -1,25 +1,32 @@
-import { Box, Button } from "@mui/material";
+import { Box, FormHelperText, Typography } from "@mui/material";
+import { useFormContext } from "react-hook-form";
 
-import { FieldOptionsSelectionType } from "@/graphql/generated/graphql";
+import { OptionSelectionType } from "@/graphql/generated/graphql";
 
 import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
 import { Select } from "../../../formFields";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
 import { FlowSchemaType } from "../../formValidation/flow";
-import { createDefaultOptionState } from "../../helpers/defaultFormState/createDefaultOptionState";
+import { AddOptionButton } from "../AddOptionButton";
+import { maxOptionSelectionsOptions } from "../maxOptionSelections";
 import { UsePresetOptionsForm } from "../UsePresetOptionsForm";
 
 export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
-  const { PresetOptions, append } = UsePresetOptionsForm<FlowSchemaType>({
+  const { watch, formState } = useFormContext<FlowSchemaType>();
+  const { PresetOptions, optionsArrayMethods } = UsePresetOptionsForm<FlowSchemaType>({
     locked,
     fieldsArrayName: `${triggerFieldsPath}.${fieldIndex}.optionsConfig.options`,
   });
-  // const optionsSelctionTypePath = `${name}.optionsConfig.selectionType` as Path<FlowSchemaType>;
 
-  // if (!selectionType) return null;
+  const optionsError = formState.errors?.fieldSet?.fields?.[fieldIndex]?.root?.message ?? "";
+
+  const optionSelectionType = watch(
+    `${triggerFieldsPath}.${fieldIndex}.optionsConfig.selectionType`,
+  );
 
   return (
     <>
+      <Typography variant="description">How options are selected</Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           disabled={locked}
@@ -27,40 +34,44 @@ export const OptionFieldForm = ({ fieldIndex, locked }: FieldFormProps) => {
           size="small"
           selectOptions={[
             {
-              name: "Select one option",
-              value: FieldOptionsSelectionType.Select,
+              name: "Choose option(s)",
+              value: OptionSelectionType.Select,
             },
-            {
-              name: "Select multiple options",
-              value: FieldOptionsSelectionType.MultiSelect,
-            },
+
             {
               name: "Rank options",
-              value: FieldOptionsSelectionType.Rank,
+              value: OptionSelectionType.Rank,
             },
           ]}
-          // defaultValue={FieldOptionsSelectionType.Select}
           label="How do participants select options?"
         />
+        {optionSelectionType === OptionSelectionType.Select && (
+          <Select<FlowSchemaType>
+            defaultValue=""
+            display={optionSelectionType === OptionSelectionType.Select}
+            label="How many options can be selected?"
+            selectOptions={maxOptionSelectionsOptions}
+            name={`${triggerFieldsPath}.${fieldIndex}.optionsConfig.maxSelections`}
+            size={"small"}
+          />
+        )}
       </ResponsiveFormRow>
-
+      <Typography variant="description">Available options</Typography>
       <Box
         sx={{ width: "100%", display: "flex", flexDirection: "column", gap: "8px", flexGrow: 1 }}
       >
         <PresetOptions />
-        <ResponsiveFormRow>
-          <Button
-            sx={{ position: "relative" }}
-            variant="outlined"
-            size="small"
-            onClick={() => {
-              append(createDefaultOptionState());
-            }}
-          >
-            Add option
-          </Button>
-        </ResponsiveFormRow>
+        <AddOptionButton<FlowSchemaType> optionsArrayMethods={optionsArrayMethods} />
       </Box>
+      {optionsError && (
+        <FormHelperText
+          sx={{
+            color: "error.main",
+          }}
+        >
+          {optionsError}
+        </FormHelperText>
+      )}
     </>
   );
 };

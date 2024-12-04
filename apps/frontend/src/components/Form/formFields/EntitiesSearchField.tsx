@@ -30,18 +30,20 @@ interface EntitySearchProps<T extends FieldValues> {
   name: Path<T>;
   ariaLabel: string;
   placeholderText?: string;
-  hideCustomGroups?: boolean;
+  hideIzeGroups?: boolean;
   showLabel?: boolean;
   seperateLabel?: boolean;
+  required: boolean;
 }
 
 export const EntitiesSearchField = <T extends FieldValues>({
   name,
   label,
   ariaLabel,
-  hideCustomGroups = false,
+  hideIzeGroups = false,
   showLabel,
   seperateLabel = false,
+  required = true,
   ...props
 }: EntitySearchProps<T>) => {
   const { control, setValue, getValues } = useFormContext<T>();
@@ -61,9 +63,9 @@ export const EntitiesSearchField = <T extends FieldValues>({
 
   const user = me?.user;
 
-  const customGroups = hideCustomGroups ? [] : me?.groups ?? [];
+  const izeGroups = hideIzeGroups ? [] : me?.groups ?? [];
 
-  const options = [...userIdentities, ...recentAgents, ...customGroups];
+  const options = [...userIdentities, ...recentAgents, ...izeGroups];
 
   if (user) options.unshift({ __typename: "User", ...user });
 
@@ -94,7 +96,7 @@ export const EntitiesSearchField = <T extends FieldValues>({
         control={control}
         render={({ field, fieldState: { error } }) => {
           return (
-            <FormControl required>
+            <FormControl required={required}>
               {showLabel && seperateLabel && <FormLabel>{label}</FormLabel>}
               <Autocomplete
                 includeInputInList={true}

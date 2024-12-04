@@ -39,8 +39,6 @@ export const upsertTelegramIdentity = async ({
         },
         IdentityTelegram: {
           create: {
-            firstName: telegramUserData.first_name,
-            lastName: telegramUserData.last_name,
             username: telegramUserData.username,
             photoUrl: telegramUserData.photo_url,
             telegramUserId: telegramUserData.id,
@@ -66,8 +64,6 @@ export const upsertTelegramIdentity = async ({
           : {},
         IdentityTelegram: {
           update: {
-            firstName: telegramUserData.first_name ?? identity.IdentityTelegram?.firstName,
-            lastName: telegramUserData.last_name ?? identity.IdentityTelegram?.lastName,
             username: telegramUserData.username ?? identity.IdentityTelegram?.username,
             photoUrl: telegramUserData.photo_url ?? identity.IdentityTelegram?.photoUrl,
             telegramUserId: telegramUserData.id ?? identity.IdentityTelegram?.telegramUserId,

@@ -1,20 +1,21 @@
 import { Box, Chip } from "@mui/material";
 
-import { Status } from "@/graphql/generated/graphql";
+import { ResultGroupStatus } from "@/graphql/generated/graphql";
 
+import { resultGroupStatusProps } from "../status/resultGroupStatusProps";
 import { StatusTag } from "../status/StatusTag";
 
 export const ResultHeader = ({
   label,
-  requestStatus,
+  resultGroupStatus,
 }: {
   label: string;
-  requestStatus?: Status;
+  resultGroupStatus?: ResultGroupStatus | undefined;
 }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Chip label={label} size="small" />
-      {requestStatus && <StatusTag status={requestStatus} />}
+      {resultGroupStatus && <StatusTag statusProps={resultGroupStatusProps[resultGroupStatus]} />}
     </Box>
   );
-}
+};

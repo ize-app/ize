@@ -1,29 +1,62 @@
 import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { ButtonGroupField, TextField } from "@/components/Form/formFields";
+import AsyncSelect from "@/components/Form/formFields/AsyncSelect";
+import { SelectOption } from "@/components/Form/formFields/Select";
 import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn";
+import { stringifyFormInputValue } from "@/components/Form/InputField/stringifyFormInputValue";
+import { ValueType } from "@/graphql/generated/graphql";
 
-import { OptionsForm } from "./OptionsForm";
 import { ActionTriggerCondition, IntitialFlowSetupSchemaType } from "../formValidation";
+import { DecisionForm } from "./DecisionForm";
 
 export const WebhookForm = () => {
-  const { watch } = useFormContext<IntitialFlowSetupSchemaType>();
+  const { watch, setValue, getValues } = useFormContext<IntitialFlowSetupSchemaType>();
+  const [filterOptions, setFilterOptions] = useState<SelectOption[]>([]);
 
   const webhookName = watch("webhookName");
   const webhookTriggerCondition = watch("webhookTriggerCondition");
-  // const options = watch("optionsConfig.options") ?? [];
+  const question = watch("question");
 
-  // const defaultOption: SelectOption = {
-  //   name: "Action runs for every result",
-  //   value: DefaultOptionSelection.None,
-  // };
-  // const filterOptions: SelectOption[] = options.map((option) => ({
-  //   name: option.name,
-  //   value: option.optionId,
-  // }));
+  useEffect(() => {
+    if (webhookTriggerCondition === ActionTriggerCondition.Decision) {
+      setValue("optionsConfig", {
+        options: [
+          {
+            optionId: crypto.randomUUID(),
+            input: { value: "✅", type: ValueType.String, required: true },
+          },
+          {
+            optionId: crypto.randomUUID(),
+            input: { value: "❌", type: ValueType.String, required: true },
+          },
+        ],
+        triggerDefinedOptions: undefined,
+        linkedOptions: { hasLinkedOptions: false },
+      });
+    } else {
+      setValue("optionsConfig", undefined);
+      setValue("decision", undefined);
+      setValue("question", undefined);
+    }
+  }, [webhookTriggerCondition]);
 
-  // filterOptions.unshift(defaultOption);
+  useEffect(() => {
+    refreshOptions();
+  }, []);
+
+  const refreshOptions = () => {
+    const options = (getValues("optionsConfig.options") ?? []).map((option) => ({
+      name:
+        stringifyFormInputValue({
+          input: option.input,
+        }) ?? "",
+      value: option.optionId,
+    }));
+    setFilterOptions(options);
+  };
 
   return (
     <>
@@ -33,14 +66,12 @@ export const WebhookForm = () => {
           webhook do?
         </Typography>
         <TextField<IntitialFlowSetupSchemaType>
-          // assuming here that results to fields is 1:1 relationshp
           name={`webhookName`}
           multiline
           placeholderText={"Posts tweet on shared Twitter"}
           label={`Webhook name`}
           defaultValue=""
         />
-        {/* <WebhookURIForm<IntitialFlowSetupSchemaType> fieldName={`webhook`} /> */}
       </FieldBlockFadeIn>
       {webhookName && (
         <FieldBlockFadeIn>
@@ -61,28 +92,36 @@ export const WebhookForm = () => {
           />
         </FieldBlockFadeIn>
       )}
-      {webhookTriggerCondition === ActionTriggerCondition.Decision && <OptionsForm />}
-      {/* {options.length > 0 && (
-        <FieldBlock>
-          <Typography variant="description">
-            On which decision should the webhook trigger?
-          </Typography>
-          <Select<IntitialFlowSetupSchemaType>
-            label="When to run action"
-            renderValue={(val) => {
-              if (val === DefaultOptionSelection.None)
-                return "Webhook is triggered on every decision";
-              const optionName = getSelectOptionName(filterOptions, val);
-              if (optionName) {
-                return "Only trigger webhook on: " + optionName;
-              } else "Webhook is triggered on every decision";
-            }}
-            selectOptions={filterOptions}
-            defaultValue=""
-            name={`filterOptionId`}
-          />
-        </FieldBlock>
-      )} */}
+      {webhookTriggerCondition === ActionTriggerCondition.Decision && (
+        <>
+          <DecisionForm />
+
+          {!!question && (
+            <>
+              <FieldBlockFadeIn>
+                <Typography variant="description">
+                  Which option will this webhook be triggered for?
+                </Typography>
+                <AsyncSelect<IntitialFlowSetupSchemaType, string>
+                  label="Default option"
+                  variant="standard"
+                  name={`filterOptionId`}
+                  getOptionLabel={(option) => {
+                    return filterOptions.find((o) => o.value === option)?.name ?? "";
+                  }}
+                  sx={{ maxWidth: "300px", width: "200px" }}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  loading={false}
+                  options={filterOptions.map((option) => option.value as string)}
+                  fetchOptions={() => {
+                    refreshOptions();
+                  }}
+                />
+              </FieldBlockFadeIn>
+            </>
+          )}
+        </>
+      )}
     </>
   );
 };

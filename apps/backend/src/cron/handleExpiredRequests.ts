@@ -1,7 +1,8 @@
-import { runResultsAndActions } from "../core/result/newResults/runResultsAndActions";
+import { finalizeStepResults } from "../core/request/updateState/finalizeStepResults";
 import { prisma } from "../prisma/client";
 
-// run results and actions on newly expired requests
+// get all steps where response is not final and is expired
+// attempt to finalize results if they are all complete so rest of step execution can complete
 export const handleExpiredResults = async () => {
   const now = new Date();
   try {
@@ -24,9 +25,9 @@ export const handleExpiredResults = async () => {
       },
     });
 
-    return await Promise.all(
+    await Promise.allSettled(
       newlyExpiredSteps.map(async (requestStep) => {
-        return await runResultsAndActions({
+        return await finalizeStepResults({
           requestStepId: requestStep.id,
         });
       }),

@@ -10,9 +10,7 @@ export const TelegramLogin = () => {
     <TelegramLoginButton
       botUsername={telegramBotName}
       onAuthCallback={async (data) => {
-        
         setTimeout(() => {
-          console.log("refetching #1", refetch);
           if (refetch) refetch();
         }, 2000);
 

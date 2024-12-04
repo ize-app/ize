@@ -55,6 +55,9 @@ fragment Request on Request {
   triggerFieldAnswers {
     ...TriggerFieldAnswer
   }
+  triggerDefinedOptions {
+    ...TriggerDefinedOptions
+  }
   requestId
   currentStepIndex
   createdAt
@@ -64,18 +67,23 @@ fragment Request on Request {
   final
 }
 
+fragment TriggerDefinedOptions on TriggerDefinedOptions {
+  fieldId
+  fieldName
+  options {
+    ...Option
+  }
+}
+
 fragment RequestStep on RequestStep {
   requestStepId
   createdAt
   expirationDate
-  responseFieldAnswers {
+  answers {
     ...ResponseFieldAnswers
   }
   fieldSet {
     ...FieldSet
-  }
-  userResponses {
-    ...Response
   }
   results {
     ...ResultGroup
@@ -84,8 +92,9 @@ fragment RequestStep on RequestStep {
     ...ActionExecution
   }
   status {
-    ...RequestStepStatus
+    ...RequestStepStatuses
   }
+  userResponded
 }
 
 fragment RequestSummary on RequestSummary {
@@ -106,7 +115,7 @@ fragment RequestSummary on RequestSummary {
 fragment RequestStepSummary on RequestStepSummary {
   requestStepId
   status {
-    ...RequestStepStatus
+    ...RequestStepStatuses
   }
   expirationDate
   respondPermission {
@@ -123,22 +132,12 @@ fragment RequestStepSummary on RequestStepSummary {
   userResponded
 }
 
-fragment Response on Response {
-  responseId
-  createdAt
-  creator {
-    ...Entity
-  }
-  answers {
-    ...FieldAnswer
-  }
-}
-
-fragment RequestStepStatus on RequestStepStatus {
+fragment RequestStepStatuses on RequestStepStatuses {
   responseFinal
   resultsFinal
   actionsFinal
   final
+  status
 }
 
 fragment RequestStepActionSummary on RequestStepActionSummary {

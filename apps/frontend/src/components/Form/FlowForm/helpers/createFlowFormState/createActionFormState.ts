@@ -1,21 +1,27 @@
-import { Action, ActionType } from "@/graphql/generated/graphql";
+import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
+import { ActionFragment, ActionType } from "@/graphql/generated/graphql";
 
-import { ActionSchemaType } from "../../formValidation/action";
-import { DefaultOptionSelection } from "../../formValidation/fields";
+import { ActionFilterSchemaType, ActionSchemaType } from "../../formValidation/action";
 
-export const createActionFormState = (action: Action | null | undefined): ActionSchemaType => {
-  if (!action)
-    return {
-      type: ActionType.None,
-      locked: false,
-    };
+export const createActionFormState = (
+  action: ActionFragment | null | undefined,
+  uuidRemapper: UUIDRemapper,
+): ActionSchemaType | undefined => {
+  if (!action) return undefined;
+
+  const filter: ActionFilterSchemaType | undefined = action.filter
+    ? {
+        resultConfigId: uuidRemapper.getRemappedUUID(action.filter.resultConfigId),
+        optionId: uuidRemapper.getRemappedUUID(action.filter.option.optionId),
+      }
+    : undefined;
 
   switch (action?.__typename) {
     case ActionType.CallWebhook:
       return {
         type: ActionType.CallWebhook,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filter,
         callWebhook: {
           webhookId: action.webhookId,
           name: action.webhookName,
@@ -28,25 +34,26 @@ export const createActionFormState = (action: Action | null | undefined): Action
       return {
         type: ActionType.TriggerStep,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filter,
+        stepId: uuidRemapper.getRemappedUUID(action.stepId),
       };
     case ActionType.EvolveFlow:
       return {
         type: ActionType.EvolveFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filter,
       };
     case ActionType.EvolveGroup:
       return {
         type: ActionType.EvolveGroup,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filter,
       };
     case ActionType.GroupWatchFlow: {
       return {
         type: ActionType.GroupWatchFlow,
         locked: action.locked,
-        filterOptionId: action.filterOption?.optionId ?? DefaultOptionSelection.None,
+        filter,
       };
     }
     default:

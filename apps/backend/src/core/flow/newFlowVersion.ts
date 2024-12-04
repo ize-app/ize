@@ -8,6 +8,7 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 import { StepPrismaType } from "./flowPrismaTypes";
 import { newStep } from "./helpers/newStep";
 import { validateFlowTypeArgs } from "./helpers/validateFlowTypeArgs";
+import { newActionConfigSet } from "../action/newActionConfigSet";
 
 export const newFlowVersion = async ({
   transaction,
@@ -37,22 +38,12 @@ export const newFlowVersion = async ({
 
   validateFlowTypeArgs({ args: flowArgs });
 
-  const triggerFieldsSet = await newFieldSet({
-    fieldSetArgs: flowArgs.fieldSet,
-    createdSteps: [],
-    transaction,
-  });
   const flowVersion = await transaction.flowVersion.create({
     data: {
+      id: flowArgs.flowVersionId,
       name: flowArgs.name,
       active,
-      totalSteps: flowArgs.steps.length,
       publishedAt: !active ? null : new Date(),
-      triggerPermissionsId: await newPermission({
-        permission: flowArgs.trigger.permission,
-        transaction,
-      }),
-      triggerFieldSetId: triggerFieldsSet?.id,
       draftEvolveFlowVersionId,
       evolveFlowId,
       // sets parent flow as using this newly created flow version
@@ -65,6 +56,21 @@ export const newFlowVersion = async ({
           },
       flowId: flowId,
     },
+  });
+
+  await newPermission({
+    permission: flowArgs.trigger.permission,
+    transaction,
+    type: "trigger",
+    flowVersionId: flowVersion.id,
+  });
+
+  await newFieldSet({
+    type: "trigger",
+    flowVersionId: flowVersion.id,
+    fieldSetArgs: flowArgs.fieldSet,
+    createdSteps: [],
+    transaction,
   });
 
   const createdSteps: StepPrismaType[] = [];
@@ -80,6 +86,19 @@ export const newFlowVersion = async ({
       createdSteps,
     });
   }
+
+  // creating actions after creating step because actions can reference future steps
+  await Promise.all(
+    flowArgs.steps.map(async (step, index) => {
+      const nextStepId = flowArgs.steps?.[index + 1]?.stepId ?? null;
+      await newActionConfigSet({
+        stepArgs: step,
+        nextStepId,
+        flowVersionId: flowVersion.id,
+        transaction,
+      });
+    }),
+  );
 
   return flowVersion.id;
 };

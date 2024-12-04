@@ -1,31 +1,59 @@
 import { Prisma } from "@prisma/client";
 
-import { DecisionType, ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
+import { ResultArgs, ResultType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { newDecisionConfig } from "./decision/newDecisionConfig";
-import { newLlmSummaryConfig } from "./decision/newLlmSummaryConfig";
 import { newRankConfig } from "./decision/newRankConfig";
+import { newLlmSummaryConfig } from "./llm/newLlmSummaryConfig";
+import { checkRawAnswersConfig } from "./rawAnswers.ts/newRawAnswersConfig";
 import { FieldPrismaType, FieldSetPrismaType } from "../fields/fieldPrismaTypes";
 
 export const newResultConfigSet = async ({
   resultsArgs,
+  stepId,
   responseFieldSet,
   transaction,
 }: {
   resultsArgs: ResultArgs[];
+  stepId: string;
   responseFieldSet: FieldSetPrismaType | undefined | null;
   transaction: Prisma.TransactionClient;
 }): Promise<string | undefined> => {
   if (resultsArgs.length === 0) return undefined;
-  const dbResults = await Promise.all(
-    resultsArgs.map(async (res) => {
+
+  const resultConfigSet = await transaction.resultConfigSet.create({
+    data: {
+      stepId,
+    },
+  });
+
+  await Promise.all(
+    resultsArgs.map(async (res, index) => {
       // responseFieldSet?.FieldSetFields.find((f) => f.fieldId === res.p)
       let responseField = null;
-      if (typeof res.responseFieldIndex === "number")
-        responseField = responseFieldSet?.FieldSetFields[res.responseFieldIndex].Field;
+
+      responseField = (responseFieldSet?.Fields ?? []).find((f) => {
+        return f.id === res.fieldId;
+      });
+
+      if (!responseField)
+        throw new GraphQLError(`Missing response field for ${res.fieldId}`, {
+          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+        });
+
+      const resultConfig = await transaction.resultConfig.create({
+        data: {
+          id: res.resultConfigId,
+          resultConfigSetId: resultConfigSet.id,
+          index,
+          resultType: res.type,
+          fieldId: responseField.id,
+        },
+      });
 
       return await newResultConfig({
+        resultConfigId: resultConfig.id,
         resultArgs: res,
         responseField,
         transaction,
@@ -33,42 +61,31 @@ export const newResultConfigSet = async ({
     }),
   );
 
-  const fieldSet = await transaction.resultConfigSet.create({
-    data: {
-      ResultConfigSetResultConfigs: {
-        createMany: {
-          data: dbResults.map((resultConfigId) => ({ resultConfigId: resultConfigId })),
-        },
-      },
-    },
-  });
-
-  return fieldSet.id;
+  return resultConfigSet.id;
 };
 
 export const newResultConfig = async ({
+  resultConfigId,
   resultArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   resultArgs: ResultArgs;
-  responseField: FieldPrismaType | undefined | null;
+  responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
-}): Promise<string> => {
-  let decisionId;
-  let rankId;
-  let llmId;
-
+}): Promise<void> => {
   switch (resultArgs.type) {
     case ResultType.Decision:
       if (!resultArgs.decision)
         throw new GraphQLError("Missing decision config.", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      decisionId = await newDecisionConfig({
+      await newDecisionConfig({
+        resultConfigId,
         decisionArgs: resultArgs.decision,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
       break;
     case ResultType.Ranking:
@@ -76,10 +93,11 @@ export const newResultConfig = async ({
         throw new GraphQLError("Missing prioritization config.", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      rankId = await newRankConfig({
+      await newRankConfig({
+        resultConfigId,
         rankArgs: resultArgs.prioritization,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
       break;
     case ResultType.LlmSummary:
@@ -87,39 +105,17 @@ export const newResultConfig = async ({
         throw new GraphQLError("Missing LLM Summary config", {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
-      llmId = await newLlmSummaryConfig({
+      await newLlmSummaryConfig({
+        resultConfigId,
         llmArgs: resultArgs.llmSummary,
         transaction,
-        responseField: responseField as FieldPrismaType,
+        responseField,
       });
       break;
-    case ResultType.LlmSummaryList:
-      if (!resultArgs.llmSummary)
-        throw new GraphQLError("Missing LLM Summary config", {
-          extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-        });
-      llmId = await newLlmSummaryConfig({
-        llmArgs: resultArgs.llmSummary,
-        transaction,
-        responseField: responseField as FieldPrismaType,
-      });
+    case ResultType.RawAnswers:
+      checkRawAnswersConfig({ responseField });
       break;
   }
 
-  const minAnswers: number | undefined =
-    resultArgs.decision?.type !== DecisionType.Ai
-      ? resultArgs.minimumAnswers ?? undefined
-      : undefined;
-
-  const resultConfig = await transaction.resultConfig.create({
-    data: {
-      resultType: resultArgs.type,
-      minAnswers,
-      fieldId: responseField?.id,
-      decisionId,
-      rankId,
-      llmId,
-    },
-  });
-  return resultConfig.id;
+  return;
 };

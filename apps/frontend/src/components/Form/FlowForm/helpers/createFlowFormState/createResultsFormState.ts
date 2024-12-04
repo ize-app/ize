@@ -1,3 +1,4 @@
+import { UUIDRemapper } from "@/components/Form/utils/UUIDRemapper";
 import {
   DecisionFragment,
   DecisionType,
@@ -5,31 +6,30 @@ import {
   ResultType,
 } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "../../formValidation/fields";
 import {
-  DecisionResultSchemaType,
   DecisionSchemaType,
-  LlmSummaryListResultSchemaType,
-  LlmSummaryResultSchemaType,
   RankingResultSchemaType,
   ResultSchemaType,
 } from "../../formValidation/result";
 
-export const createResultFormState = (results: ResultConfigFragment[]): ResultSchemaType[] => {
-  return results.map((result) => {
+export const createResultFormState = (
+  results: ResultConfigFragment[],
+  uuidRemapper: UUIDRemapper,
+): ResultSchemaType[] => {
+  return results.map((result): ResultSchemaType => {
     const resultBase = {
-      resultId: result.resultConfigId,
-      fieldId: result.field.fieldId,
-      minimumAnswers: result.minimumAnswers,
+      resultConfigId: uuidRemapper.remapId(result.resultConfigId),
+      fieldId: uuidRemapper.getRemappedUUID(result.field.fieldId),
     };
 
+    // TODO typechecking isn't working here for some reason
     switch (result.__typename) {
       case ResultType.Decision:
         return {
           type: ResultType.Decision,
           ...resultBase,
-          decision: createDecisionFormState(result),
-        } as DecisionResultSchemaType;
+          decision: createDecisionFormState(result, uuidRemapper),
+        };
       case ResultType.Ranking:
         return {
           type: ResultType.Ranking,
@@ -43,54 +43,59 @@ export const createResultFormState = (results: ResultConfigFragment[]): ResultSc
           type: ResultType.LlmSummary,
           ...resultBase,
           llmSummary: {
-            prompt: result.prompt ?? undefined,
-            example: result.example ?? undefined,
+            prompt: result.prompt ?? "",
+            isList: result.isList,
           },
-        } as LlmSummaryResultSchemaType;
-      case ResultType.LlmSummaryList:
+        };
+      case ResultType.RawAnswers:
         return {
-          type: ResultType.LlmSummaryList,
+          type: ResultType.RawAnswers,
           ...resultBase,
-          llmSummary: {
-            prompt: result.prompt ?? undefined,
-            example: result.example ?? undefined,
-          },
-        } as LlmSummaryListResultSchemaType;
+        };
       default:
         throw Error(`Unknown result type`);
     }
   });
 };
 
-const createDecisionFormState = (decision: DecisionFragment): DecisionSchemaType => {
-  const defaultOptionId = decision.defaultOption?.optionId ?? DefaultOptionSelection.None;
-  const type = decision.decisionType;
+const createDecisionFormState = (
+  decision: DecisionFragment,
+  uuidRemapper: UUIDRemapper,
+): DecisionSchemaType => {
+  const defaultOptionId = decision.defaultOption?.optionId
+    ? uuidRemapper.getRemappedUUID(decision.defaultOption?.optionId)
+    : null;
+
+  const defaultDecision = {
+    hasDefault: !!defaultOptionId,
+    optionId: defaultOptionId,
+  };
   const threshold = decision.threshold;
   switch (decision.decisionType) {
     case DecisionType.NumberThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
       return {
-        type,
+        type: DecisionType.NumberThreshold,
         threshold,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.PercentageThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
       return {
-        type,
+        type: DecisionType.PercentageThreshold,
         threshold,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.WeightedAverage:
       return {
         type: DecisionType.WeightedAverage,
-        defaultOptionId,
+        defaultDecision,
       };
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
-        criteria: decision.criteria ?? undefined,
-        defaultOptionId,
+        criteria: decision.criteria ?? "",
+        defaultDecision,
       };
   }
 };

@@ -1,19 +1,11 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton } from "@mui/material";
-import {
-  ArrayPath,
-  FieldValues,
-  Path,
-  PathValue,
-  useFieldArray,
-  useFormContext,
-} from "react-hook-form";
+import { ArrayPath, FieldValues, Path, useFieldArray, useFormContext } from "react-hook-form";
 
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
 
-import { InputField } from "./InputField";
-import { Select } from "../../formFields";
-import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
+import { InputField } from "../../InputField/InputField";
+import { OptionSchemaType } from "../../InputField/inputValidation";
 
 interface UsePresetOptionsFormProps<T extends FieldValues> {
   fieldsArrayName: ArrayPath<T>;
@@ -24,59 +16,36 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
   fieldsArrayName,
   locked,
 }: UsePresetOptionsFormProps<T>) => {
-  const { control, watch } = useFormContext<T>();
-  const { fields, remove, append } = useFieldArray<T>({
+  const { control, getValues } = useFormContext<T>();
+  const optionsArrayMethods = useFieldArray<T>({
     control: control,
     name: fieldsArrayName,
   });
 
   const PresetOptions = () => {
-    return fields.map((item, inputIndex) => {
-      const dataTypeField = `${fieldsArrayName}.${inputIndex}.dataType` as Path<T>;
-      const valueField = `${fieldsArrayName}.${inputIndex}.name` as Path<T>;
-      const dataType = watch(dataTypeField);
-      return (
-        <Box
-          key={item.id}
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexGrow: 1,
-            alignItems: "flex-start",
-          }}
-        >
-          <ResponsiveFormRow key={item.id} sx={{ alignItem: "flex-start" }}>
-            <Select<T>
-              disabled={locked}
-              size={"small"}
-              sx={{ width: "140px", flexGrow: 0 }}
-              name={dataTypeField}
-              key={dataTypeField}
-              selectOptions={[
-                { name: "Text", value: FieldDataType.String },
-                { name: "Number", value: FieldDataType.Number },
-                { name: "Url", value: FieldDataType.Uri },
-                { name: "Date Time", value: FieldDataType.DateTime },
-                { name: "Date", value: FieldDataType.Date },
-              ]}
-              label="Type"
-              defaultValue={"" as PathValue<T, Path<T>>}
-            />
-            <InputField
-              disabled={locked}
-              fieldName={valueField}
-              dataType={dataType}
-              label={`Option #${inputIndex + 1}`}
-            />
-          </ResponsiveFormRow>
+    return optionsArrayMethods.fields.map((item, inputIndex) => {
+      const optionField = `${fieldsArrayName}.${inputIndex}` as Path<T>;
 
+      const valueField = `${fieldsArrayName}.${inputIndex}.input.value` as Path<T>;
+      const option = getValues(optionField) as OptionSchemaType;
+      console.log(option);
+      return (
+        <Box key={item.id} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+          <InputField<T>
+            fieldName={valueField}
+            label={`Option #${inputIndex + 1} (${stringifyValueType(option?.input?.type)})`}
+            type="newOption"
+            option={option}
+            showLabel={false}
+            seperateLabel={false}
+          />
           {!locked && (
             <IconButton
               color="primary"
               aria-label="Remove option"
               size="small"
-              sx={{ alignItems: "flex-start" }}
-              onClick={() => remove(inputIndex)}
+              sx={{ flexShrink: 0 }}
+              onClick={() => optionsArrayMethods.remove(inputIndex)}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -85,5 +54,5 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
       );
     });
   };
-  return { PresetOptions, append };
+  return { PresetOptions, optionsArrayMethods };
 };

@@ -49,19 +49,19 @@ export const createWatchFlowRequests = async ({
     const entitiesOnFlow: Set<string> = new Set();
 
     // get all entities referenced on this flow
-    const getCustomGroups = (permissions: PermissionPrismaType | null | undefined) => {
+    const getIzeGroups = (permissions: PermissionPrismaType | null | undefined) => {
       (permissions?.EntitySet?.EntitySetEntities ?? []).forEach((entity) => {
         entitiesOnFlow.add(entity.entityId);
       });
     };
 
-    getCustomGroups(data.CurrentFlowVersion?.TriggerPermissions);
+    getIzeGroups(data.CurrentFlowVersion?.TriggerPermissions);
 
     data.CurrentFlowVersion?.Steps.forEach((step) => {
-      getCustomGroups(step.ResponseConfig?.ResponsePermissions);
+      getIzeGroups(step.ResponseConfig?.ResponsePermissions);
     });
 
-    const customGroups = await prisma.groupCustom.findMany({
+    const izeGroups = await prisma.groupIze.findMany({
       where: {
         OR: [
           // member of custom group is referenced on the flow
@@ -85,7 +85,7 @@ export const createWatchFlowRequests = async ({
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
       where: {
-        groupId: { in: customGroups.map((group) => group.groupId) },
+        groupId: { in: izeGroups.map((group) => group.groupId) },
         type: FlowType.GroupWatchFlow,
       },
       include: {
@@ -106,18 +106,19 @@ export const createWatchFlowRequests = async ({
     await Promise.all(
       watchFlows.map(async (flow) => {
         try {
-          const watchFlowField = (
-            flow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? []
-          ).find((field) => field.Field.systemType === SystemFieldType.WatchFlow);
+          const watchFlowField = (flow.CurrentFlowVersion?.TriggerFieldSet?.Fields ?? []).find(
+            (field) => field.systemType === SystemFieldType.WatchFlow,
+          );
 
           if (!watchFlowField) return;
 
           await newRequest({
             args: {
               request: {
+                requestId: crypto.randomUUID(),
                 name: flowName ? `Watch '${flowName}'` : "Watch flow",
                 requestDefinedOptions: [],
-                requestFields: [{ fieldId: watchFlowField.fieldId, value: fieldAnswerValue }],
+                requestFields: [{ fieldId: watchFlowField.id, value: fieldAnswerValue }],
                 flowId: flow.id,
               },
             },

@@ -1,58 +1,31 @@
 import { Box, Typography } from "@mui/material";
-import { useContext } from "react";
 
 import { ConfigurationPanel, PanelAccordion, PanelContainer } from "@/components/ConfigDiagram";
-import { EndRequestStepButton } from "@/components/EndRequestStepButton";
 import { RequestStepResults } from "@/components/result/Results";
+import { requestStepStatusProps } from "@/components/status/requestStepStatusProps";
 import { StatusTag } from "@/components/status/StatusTag";
 import {
-  ActionFragment,
-  EntityFragment,
   RequestStepFragment,
+  RequestStepStatus,
   StepFragment,
+  TriggerDefinedOptionsFragment,
 } from "@/graphql/generated/graphql";
-import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 
-import { determineRequestStepStatus } from "./determineRequestStepStatus";
 import { remainingTimeToRespond } from "./remainingTimeToRespond";
 import { TimeLeft } from "./TimeLeft";
-import { ActionFilter } from "../../Action/ActionFilter";
 import { RespondPermissionPanel } from "../RespondPermissionPanel";
 
 export const ConfigRequestStepPanel = ({
   step,
   requestStep,
-  triggeringAction,
-  requestStepIndex,
-  currentStepIndex,
-  requestFinal,
-  creator,
+  triggerDefinedOptionSets,
 }: {
   step: StepFragment;
-  requestFinal: boolean;
   requestStep: RequestStepFragment | null;
-  triggeringAction: ActionFragment | null | undefined;
-  requestStepIndex: number;
-  currentStepIndex: number;
-  creator: EntityFragment;
+  triggerDefinedOptionSets: TriggerDefinedOptionsFragment[];
 }) => {
-  const { me } = useContext(CurrentUserContext);
-
-  const userIsCreator =
-    me?.user.entityId === creator.entityId ||
-    me?.identities.some((i) => i.entityId === creator.entityId);
-
-  const status = determineRequestStepStatus(
-    requestStepIndex,
-    requestStep?.status.resultsFinal ?? false,
-    currentStepIndex,
-    requestFinal,
-  );
   let remainingTime: number | null = null;
   let expirationDate: Date | null = null;
-
-  const showManuallyEndButton =
-    step.response?.canBeManuallyEnded && userIsCreator && !requestStep?.status.responseFinal;
 
   if (requestStep) {
     expirationDate = new Date(requestStep.expirationDate);
@@ -63,19 +36,15 @@ export const ConfigRequestStepPanel = ({
 
   return (
     <PanelContainer>
-      {/* <PanelHeader>
-        <Typography color="primary" variant="label">
-          Step configuration
-        </Typography>{" "}
-      </PanelHeader> */}
       <ConfigurationPanel>
         <PanelAccordion title="Status" hasError={false}>
-          {showManuallyEndButton && requestStep && (
-            <EndRequestStepButton requestStepId={requestStep.requestStepId} />
-          )}
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>Status </Typography>
-            <StatusTag status={status} />
+            <StatusTag
+              statusProps={
+                requestStepStatusProps[requestStep?.status.status ?? RequestStepStatus.NotStarted]
+              }
+            />
           </Box>
           {requestStep && (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -99,19 +68,12 @@ export const ConfigRequestStepPanel = ({
               </Box>
             )}
         </PanelAccordion>
-        {triggeringAction && triggeringAction.filterOption && (
-          <PanelAccordion title="Filter" hasError={false}>
-            <ActionFilter action={triggeringAction} />
-          </PanelAccordion>
-        )}
         <RespondPermissionPanel step={step} initialOpenState={false} />
-        <PanelAccordion title="Collaborations 👀" hasError={false}>
-          {/* <ResultConfigs resultConfigs={step.result} responseFields={step.response.fields} /> */}
+        <PanelAccordion title="Results" hasError={false} initialState={true}>
           <RequestStepResults
             requestStep={requestStep}
-            resultConfigs={step.result}
-            results={requestStep?.results ?? []}
-            requestStatus={status}
+            step={step}
+            triggerDefinedOptionSets={triggerDefinedOptionSets}
           />
         </PanelAccordion>
       </ConfigurationPanel>

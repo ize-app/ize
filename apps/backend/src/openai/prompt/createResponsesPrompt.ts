@@ -1,13 +1,30 @@
 import { stringifyFieldResponses } from "@/core/request/stringify/stringifyResponses";
-import { ResponseFieldAnswers } from "@/graphql/generated/resolver-types";
+import { Request, ResponseFieldAnswers, ValueType } from "@/graphql/generated/resolver-types";
 
 export const createResponsesPrompt = ({
-  fieldAnswers,
+  request,
+  fieldId,
 }: {
-  fieldAnswers: ResponseFieldAnswers[];
+  request: Request;
+  // limit responses to a single field
+  fieldId?: string | undefined;
 }) => {
-  if (fieldAnswers.length === 0)
-    return "This request was designed to not have responses. Use the other information in the request to create your ouput";
+  const fieldAnswers: ResponseFieldAnswers[] = [];
+  request.requestSteps.forEach((requestStep) => {
+    requestStep.answers
+      .filter((answer) => answer.field.type !== ValueType.OptionSelections)
+      .forEach((answer) => {
+        if (fieldId && answer.field.fieldId !== fieldId) return;
+        if (answer.answers.length > 0) fieldAnswers.push(answer);
+        return;
+      });
+  });
 
-  return `Here are the responses from this request: \n\n${stringifyFieldResponses({ fieldAnswers })}`;
+  const noFieldAnswersDefault =
+    "This request was designed to not have responses. Use the other information in the request to create your ouput";
+
+  const fieldAnswersString =
+    fieldAnswers.length > 0 ? stringifyFieldResponses({ fieldAnswers }) : noFieldAnswersDefault;
+
+  return `#Responses\n\n${fieldAnswersString}`;
 };

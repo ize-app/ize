@@ -1,9 +1,8 @@
-import { InputAdornment } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
-import { Select, TextField } from "@/components/Form/formFields";
+import { Select } from "@/components/Form/formFields";
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
-import { FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 import { FlowSchemaType } from "../../formValidation/flow";
@@ -25,13 +24,11 @@ const maxListItemsOptions = [
   { name: "No limit", value: ResultListCountLimit.None },
 ];
 
-const rankingStrategyDescription = (selectionType: FieldOptionsSelectionType) => {
+const rankingStrategyDescription = (selectionType: OptionSelectionType) => {
   switch (selectionType) {
-    case FieldOptionsSelectionType.Select:
+    case OptionSelectionType.Select:
       return "Ranking determined by number of times option is selected";
-    case FieldOptionsSelectionType.MultiSelect:
-      return "Ranking determined by number of times option is selected";
-    case FieldOptionsSelectionType.Rank:
+    case OptionSelectionType.Rank:
       return "Ranking determined by weighted average of individual rankings";
   }
 };
@@ -44,9 +41,8 @@ export const PrioritizationForm = ({
 }: PrioritizationFormProps) => {
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
-      <Typography variant={"label2"}>Ranking configuration</Typography>
       <Typography>
-        {field.type === FieldType.Options
+        {field.type === ValueType.OptionSelections
           ? rankingStrategyDescription(field.optionsConfig.selectionType)
           : null}
       </Typography>
@@ -62,14 +58,6 @@ export const PrioritizationForm = ({
         name={`steps.${formIndex}.result.${resultIndex}.prioritization.numPrioritizedItems`}
         size={"small"}
         defaultValue=""
-      />
-      <TextField<FlowSchemaType>
-        label="Minimum # of responses for a result"
-        showLabel={false}
-        size={"small"}
-        defaultValue=""
-        endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
-        name={`steps.${formIndex}.result.${resultIndex}.minimumAnswers`}
       />
     </FieldBlock>
   );

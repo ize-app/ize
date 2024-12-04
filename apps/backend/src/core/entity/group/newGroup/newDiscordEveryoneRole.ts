@@ -53,9 +53,9 @@ export const newDiscordEveryoneRole = async ({
         create: {
           Entity: { create: {} },
           type: GroupType.DiscordRoleGroup,
-          creator: {
+          Creator: {
             connect: {
-              id: context.currentUser?.id as string,
+              id: context.currentUser?.entityId as string,
             },
           },
         },

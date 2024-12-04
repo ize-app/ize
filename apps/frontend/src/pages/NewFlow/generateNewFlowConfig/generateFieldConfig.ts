@@ -1,20 +1,22 @@
 import {
-  FieldOptionSchemaType,
   FieldSchemaType,
+  TriggerDefinedOptionsSchemaType,
 } from "@/components/Form/FlowForm/formValidation/fields";
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { OptionSchemaType } from "@/components/Form/InputField/inputValidation";
+import { DecisionType, OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 // Define a union type for all possible arguments with a discriminant 'type' field
 type FieldArg =
   | {
-      type: FieldType.Options;
+      type: ValueType.OptionSelections;
       question: string;
-      options: FieldOptionSchemaType[];
+      options: OptionSchemaType[];
       linkedResultId: string | undefined | null;
-      requestCreatedOptions: boolean;
-      selectionType: FieldOptionsSelectionType;
+      triggerDefinedOptions: TriggerDefinedOptionsSchemaType;
+      selectionType: OptionSelectionType;
+      decisionType?: DecisionType;
     }
-  | { type: FieldType.FreeInput; question: string };
+  | { type: ValueType.String; question: string };
 
 // A single function that uses discriminated unions
 export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
@@ -26,24 +28,23 @@ export function generateFieldConfig(arg: FieldArg): FieldSchemaType {
   };
 
   switch (arg.type) {
-    case FieldType.Options:
+    case ValueType.OptionSelections:
       return {
-        type: FieldType.Options,
+        type: ValueType.OptionSelections,
         ...base,
+        isInternal: arg.decisionType === DecisionType.Ai,
         optionsConfig: {
-          previousStepOptions: !!arg.linkedResultId,
-          requestOptionsDataType: arg.requestCreatedOptions ? FieldDataType.String : null,
+          triggerDefinedOptions: arg.triggerDefinedOptions,
           selectionType: arg.selectionType,
-          maxSelections: null,
+          maxSelections: arg.selectionType === OptionSelectionType.Select ? 1 : null,
           options: arg.options,
           linkedResultOptions: arg.linkedResultId ? [{ id: arg.linkedResultId }] : [],
         },
       };
-    case FieldType.FreeInput:
+    case ValueType.String:
       return {
-        type: FieldType.FreeInput,
+        type: ValueType.String,
         ...base,
-        freeInputDataType: FieldDataType.String,
       };
 
     default:

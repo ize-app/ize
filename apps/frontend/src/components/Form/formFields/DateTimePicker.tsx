@@ -5,9 +5,9 @@ import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTim
 import dayjs from "dayjs";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
-import { userTimezone } from "@/utils/datetime";
+import { userTimezone } from "@/utils/timezone";
 
-import { zodDay } from "../formValidation/field";
+import { zodDay } from "../InputField/inputValidation";
 
 interface DateTimePickerProps<T extends FieldValues> {
   name: Path<T>;
@@ -37,7 +37,7 @@ export const DateTimePicker = <T extends FieldValues>({
       render={({ field, fieldState: { error } }) => {
         if (!zodDay.safeParse(field.value).success) field.onChange(dayjs.utc());
         return (
-          <FormControl error={Boolean(error)} required={required}>
+          <FormControl error={Boolean(error)} required={required} sx={{ flexGrow: 1 }}>
             {showLabel && seperateLabel && <FormLabel>{labelText}</FormLabel>}
             <MuiDateTimePicker
               {...field}

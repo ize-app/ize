@@ -33,6 +33,7 @@ export const Select = <T extends FieldValues>({
   required = false,
   loading = false,
   onChange,
+  startAdornment,
   disabled = false,
   variant = "outlined",
   size = "small",
@@ -51,7 +52,6 @@ export const Select = <T extends FieldValues>({
             error={Boolean(error)}
             required={required}
           >
-            {/* {<InputLabel id={`select-${name}`}>{label}</InputLabel>} */}
             <MuiSelect
               // {...props}
 
@@ -59,6 +59,7 @@ export const Select = <T extends FieldValues>({
               inputProps={{ multiline: "true" }}
               {...field}
               label={""}
+              startAdornment={startAdornment}
               disabled={disabled}
               onChange={(e) => {
                 field.onChange(e.target.value);

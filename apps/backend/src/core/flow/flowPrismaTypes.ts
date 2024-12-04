@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { actionInclude } from "../action/actionPrismaTypes";
+import { actionConfigInclude } from "../action/actionPrismaTypes";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
@@ -12,14 +12,18 @@ export const stepInclude = Prisma.validator<Prisma.StepInclude>()({
   ResponseConfig: {
     include: responseConfigInclude,
   },
-  FieldSet: {
+  ResponseFieldSet: {
     include: fieldSetInclude,
   },
   ResultConfigSet: {
     include: resultConfigSetInclude,
   },
-  Action: {
-    include: actionInclude,
+  ActionConfigSet: {
+    include: {
+      ActionConfigs: {
+        include: actionConfigInclude,
+      },
+    },
   },
 });
 

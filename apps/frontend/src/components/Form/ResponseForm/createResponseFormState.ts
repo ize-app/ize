@@ -1,15 +1,15 @@
 import { FieldFragment } from "@/graphql/generated/graphql";
 
-import { ResponseSchemaType } from "./formValidation";
-import { createFieldAnswersFormState } from "../createFieldAnswersFormState";
-import { FieldAnswerRecordSchemaType } from "../formValidation/field";
+import { ResponseSchemaType } from "./responseValidation";
+import { createInputRecordsFormState } from "../InputField/createFormState/createInputRecordsFormState";
+import { InputRecordSchemaType } from "../InputField/inputValidation";
 
 export const createResponseFormState = ({
   fields,
 }: {
   fields: FieldFragment[];
 }): ResponseSchemaType => {
-  const responseFieldAnswers: FieldAnswerRecordSchemaType = createFieldAnswersFormState({ fields });
+  const responseFieldAnswers: InputRecordSchemaType = createInputRecordsFormState({ fields });
 
-  return { responseFields: responseFieldAnswers };
+  return { responseId: crypto.randomUUID(), responseFields: responseFieldAnswers };
 };

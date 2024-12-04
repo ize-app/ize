@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 
 import {
-  GroupCustomPrismaType,
   GroupDiscordPrismaType,
+  GroupIzePrismaType,
   GroupNftPrismaType,
   GroupPrismaType,
   GroupTelegramChatPrismaType,
@@ -41,7 +41,7 @@ export const resolveEntitySet = async ({
       users: [],
     };
 
-  const customGroups = new Set<GroupCustomPrismaType>();
+  const izeGroups = new Set<GroupIzePrismaType>();
   const discordRoleGroups = new Set<GroupDiscordPrismaType>();
   const nftGroups = new Set<GroupNftPrismaType>();
   const telegramGroups = new Set<GroupTelegramChatPrismaType>();
@@ -49,7 +49,7 @@ export const resolveEntitySet = async ({
   const users = new Set<UserPrismaType>();
 
   const sortGroup = (group: GroupPrismaType) => {
-    if (group.GroupCustom) customGroups.add(group.GroupCustom);
+    if (group.GroupIze) izeGroups.add(group.GroupIze);
     else if (group.GroupDiscordRole) discordRoleGroups.add(group.GroupDiscordRole);
     else if (group.GroupNft) nftGroups.add(group.GroupNft);
     else if (group.GroupTelegramChat) telegramGroups.add(group.GroupTelegramChat);
@@ -61,7 +61,7 @@ export const resolveEntitySet = async ({
     else if (entity.Entity.User) users.add(entity.Entity.User);
   });
 
-  const customGroupIds = Array.from(customGroups).map((cg) => cg.id);
+  const izeGroupIds = Array.from(izeGroups).map((cg) => cg.id);
 
   const resolvedGroups = await transaction.group.findMany({
     include: groupInclude,
@@ -70,9 +70,9 @@ export const resolveEntitySet = async ({
         EntitySetEntities: {
           some: {
             EntitySet: {
-              GroupCustom: {
+              GroupIze: {
                 some: {
-                  id: { in: customGroupIds },
+                  id: { in: izeGroupIds },
                 },
               },
             },
@@ -89,9 +89,9 @@ export const resolveEntitySet = async ({
         EntitySetEntities: {
           some: {
             EntitySet: {
-              GroupCustom: {
+              GroupIze: {
                 some: {
-                  id: { in: customGroupIds },
+                  id: { in: izeGroupIds },
                 },
               },
             },

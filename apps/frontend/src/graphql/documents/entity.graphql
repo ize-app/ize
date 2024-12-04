@@ -79,8 +79,8 @@ fragment GroupTypeSummaryParts on GroupType {
   ... on GroupNft {
     ...GroupNftParts
   }
-  ... on GroupCustom {
-    ...GroupCustomParts
+  ... on GroupIze {
+    ...GroupIze
   }
   ... on GroupTelegramChat {
     ...GroupTelegramChat
@@ -108,7 +108,7 @@ fragment GroupNftParts on GroupNft {
   }
 }
 
-fragment GroupCustomParts on GroupCustom {
+fragment GroupIze on GroupIze {
   id
   name
 }
@@ -149,24 +149,22 @@ fragment IdentityBlockchainSummaryParts on IdentityBlockchain {
 
 fragment IdentityEmailSummaryParts on IdentityEmail {
   id
-  email
-  icon
+  # email
+  # icon
 }
 
 fragment IdentityDiscordSummaryParts on IdentityDiscord {
   id
-  username
-  discordUserId
-  avatar
+  # username
+  # discordUserId
+  # avatar
 }
 
 fragment IdentityTelegram on IdentityTelegram {
   id
-  telegramUserId
-  photo
-  firstName
-  lastName
-  telegramUsername
+  # telegramUserId
+  # photo
+  # telegramUsername
 }
 
 fragment IdentityTypesSummaryParts on IdentityType {

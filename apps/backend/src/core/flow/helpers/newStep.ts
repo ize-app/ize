@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { newActionConfig } from "@/core/action/newAction";
 import { newFieldSet } from "@/core/fields/newFieldSet";
 import { newResponseConfig } from "@/core/response/newResponseConfig";
 import { newResultConfigSet } from "@/core/result/newResultConfig";
@@ -21,52 +20,47 @@ export const newStep = async ({
   createdSteps: StepPrismaType[];
   transaction: Prisma.TransactionClient;
 }): Promise<StepPrismaType> => {
-  let responseConfigId: string | null = null;
+  const step = await transaction.step.create({
+    data: {
+      id: args.stepId,
+      index,
+      flowVersionId,
+    },
+  });
 
   const responseFieldSet =
     (args.fieldSet.fields.length > 0 || args.fieldSet.locked) && args.result.length > 0
       ? await newFieldSet({
+          type: "response",
+          stepId: step.id,
           fieldSetArgs: args.fieldSet,
           transaction,
           createdSteps,
         })
       : null;
 
-  // console.log("responseFieldSet", responseFieldSet?.FieldSetFields);
-
   const hasResponse = args.fieldSet.fields.filter((f) => !f.isInternal).length > 0;
 
-  if (hasResponse) responseConfigId = await newResponseConfig({ args: args.response, transaction });
+  if (hasResponse)
+    await newResponseConfig({
+      args: args.response,
+      transaction,
+      stepId: step.id,
+    });
 
-  const resultConfigSetId = await newResultConfigSet({
+  await newResultConfigSet({
+    stepId: step.id,
     resultsArgs: args.result,
     transaction,
     responseFieldSet,
   });
 
-  const actionId = args.action
-    ? await newActionConfig({
-        actionArgs: args.action,
-        locked: args.action.locked ?? false,
-        responseFieldSet,
-        flowVersionId,
-        transaction,
-      })
-    : null;
-
-  const step = await transaction.step.create({
+  const fullStep = await transaction.step.findUniqueOrThrow({
     include: stepInclude,
-    data: {
-      fieldSetId: responseFieldSet?.id,
-      responseConfigId,
-      actionId: actionId,
-      resultConfigSetId: resultConfigSetId,
-      index,
-      flowVersionId,
-    },
+    where: { id: step.id },
   });
 
-  createdSteps.push(step);
+  createdSteps.push(fullStep);
 
-  return step;
+  return fullStep;
 };

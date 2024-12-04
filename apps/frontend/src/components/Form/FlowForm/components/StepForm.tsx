@@ -1,11 +1,11 @@
-import { Box, FormHelperText } from "@mui/material";
+import { Box, FormHelperText, InputAdornment } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { ActionFilterForm } from "./ActionFilterForm";
 import { PermissionForm } from "./PermissionForm";
 import { ResultsForm } from "./ResultForm/ResultsForm";
 import { PanelAccordion } from "../../../ConfigDiagram/ConfigPanel/PanelAccordion";
-import { Select, Switch } from "../../formFields";
+import { Select, Switch, TextField } from "../../formFields";
+import { ResponsiveFormRow } from "../../formLayout/ResponsiveFormRow";
 import { FlowSchemaType } from "../formValidation/flow";
 
 interface StepFormProps {
@@ -24,7 +24,10 @@ const requestExpirationOptions = [
 ];
 
 export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
-  const { formState, control, getValues } = useFormContext<FlowSchemaType>();
+  const { formState, control, getValues } = useFormContext<
+    FlowSchemaType,
+    `steps.${number}.fieldSet.fields`
+  >();
   const stepError = formState.errors.steps?.[stepIndex];
 
   const fieldsArrayMethods = useFieldArray({
@@ -34,7 +37,7 @@ export const StepForm = ({ stepIndex, show, reusable }: StepFormProps) => {
 
   const fields = getValues(`steps.${stepIndex}.fieldSet.fields`);
 
-const allInternalFields = fields.every((field) => field.isInternal);
+  const allInternalFields = fields.every((field) => field.isInternal);
 
   return (
     <Box sx={{ display: show ? "box" : "none" }}>
@@ -48,13 +51,6 @@ const allInternalFields = fields.every((field) => field.isInternal);
           {stepError?.root.message}
         </FormHelperText>
       )}
-      {stepIndex > 0 && (
-        <ActionFilterForm
-          stepIndex={stepIndex - 1}
-          action={getValues(`steps.${stepIndex - 1}.action`)}
-          isTriggerAction={true}
-        />
-      )}
       {!allInternalFields && (
         <PanelAccordion
           title="Permissions"
@@ -64,16 +60,27 @@ const allInternalFields = fields.every((field) => field.isInternal);
             fieldName={`steps.${stepIndex}.response.permission`}
             branch={"response"}
           />
-          <Select<FlowSchemaType>
-            label="How long do people have to respond?"
-            renderValue={(val) => {
-              const option = requestExpirationOptions.find((option) => option.value === val);
-              return option?.name + " to respond";
-            }}
-            selectOptions={requestExpirationOptions}
-            name={`steps.${stepIndex}.response.expirationSeconds`}
-            size={"small"}
-          />
+          <ResponsiveFormRow>
+            <Select<FlowSchemaType>
+              label="How long do people have to respond?"
+              renderValue={(val) => {
+                const option = requestExpirationOptions.find((option) => option.value === val);
+                return option?.name + " to respond";
+              }}
+              selectOptions={requestExpirationOptions}
+              name={`steps.${stepIndex}.response.expirationSeconds`}
+              size={"small"}
+            />
+            <TextField<FlowSchemaType>
+              label="Minimum # of responses for a result"
+              showLabel={false}
+              size={"small"}
+              defaultValue=""
+              sx={{ width: "200px" }}
+              endAdornment={<InputAdornment position="end">responses minimum</InputAdornment>}
+              name={`steps.${stepIndex}.response.minResponses`}
+            />
+          </ResponsiveFormRow>
           <Switch<FlowSchemaType>
             name={`steps.${stepIndex}.response.allowMultipleResponses`}
             label="Allow multiple responses"
@@ -84,21 +91,11 @@ const allInternalFields = fields.every((field) => field.isInternal);
           />
         </PanelAccordion>
       )}
-      <PanelAccordion
-        title="Collaborations"
-        sx={{ paddingBottom: "40px" }}
-        hasError={
-          !!formState.errors.steps?.[stepIndex]?.fieldSet ||
-          !!formState.errors.steps?.[stepIndex]?.result
-        }
-      >
-        <ResultsForm
-          reusable={reusable}
-          stepIndex={stepIndex}
-          //@ts-expect-error TODO
-          fieldsArrayMethods={fieldsArrayMethods}
-        />
-      </PanelAccordion>
+      <ResultsForm
+        reusable={reusable}
+        stepIndex={stepIndex}
+        fieldsArrayMethods={fieldsArrayMethods}
+      />
     </Box>
   );
 };

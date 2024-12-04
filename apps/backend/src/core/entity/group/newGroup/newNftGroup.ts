@@ -155,7 +155,7 @@ const upsertNftTokenGroup = async ({
         Group: {
           create: {
             type: GroupType.GroupNft,
-            creatorId: context.currentUser?.id as string,
+            creatorEntityId: context.currentUser?.entityId as string,
             GroupNft: {
               create: {
                 name: tokenId

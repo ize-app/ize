@@ -85,6 +85,7 @@ fragment FlowSummary on FlowSummary {
 
 fragment FlowReference on FlowReference {
   flowId
+  flowVersionId
   flowName
 }
 
@@ -119,4 +120,5 @@ fragment ResponseConfig on ResponseConfig {
   canBeManuallyEnded
   allowMultipleResponses
   userPermission
+  minResponses
 }

@@ -1,25 +1,45 @@
-import { FieldDataType, Result, ResultGroup, ResultItem } from "@/graphql/generated/resolver-types";
+import { valueResolver } from "@/core/value/valueResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
+import { Result, ResultGroup, ResultItem, ResultType } from "@/graphql/generated/resolver-types";
 
+import { resultGroupStatusResolver } from "./resultGroupStatusResolver";
 import { ResultGroupPrismaType } from "../resultPrismaTypes";
 
-export const resultGroupResolver = (result: ResultGroupPrismaType): ResultGroup => {
+export const resultGroupResolver = ({
+  resultGroup,
+  responseFinal,
+  resultsFinal,
+  context,
+}: {
+  resultGroup: ResultGroupPrismaType;
+  responseFinal: boolean;
+  resultsFinal: boolean;
+  context: GraphqlRequestContext;
+}): ResultGroup => {
   return {
     __typename: "ResultGroup",
-    id: result.id,
-    createdAt: result.createdAt.toISOString(),
-    resultConfigId: result.resultConfigId,
-    hasResult: result.hasResult,
-    results: result.Result.map(
+    id: resultGroup.id,
+    createdAt: resultGroup.createdAt.toISOString(),
+    resultConfigId: resultGroup.resultConfigId,
+    complete: resultGroup.complete,
+    status: resultGroupStatusResolver({
+      resultGroup,
+      responseFinal,
+      resultsFinal,
+      results: resultGroup.Result,
+    }),
+    results: resultGroup.Result.map(
       (result): Result => ({
+        id: result.id,
         name: result.name,
-        resultItems: result.ResultItems.map(
-          (resultItem): ResultItem => ({
+        type: result.type as ResultType,
+        resultItems: result.ResultItems.map((resultItem): ResultItem => {
+          return {
             id: resultItem.id,
-            value: resultItem.value,
-            dataType: resultItem.dataType as FieldDataType,
+            value: valueResolver({ type: "default", value: resultItem.Value, context }),
             optionId: resultItem.fieldOptionId,
-          }),
-        ),
+          };
+        }),
       }),
     ),
   };

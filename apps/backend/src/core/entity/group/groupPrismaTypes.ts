@@ -1,7 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { userInclude } from "@/core/user/userPrismaTypes";
-
 export const groupNftInclude = Prisma.validator<Prisma.GroupNftInclude>()({
   NftCollection: true,
 });
@@ -18,10 +16,10 @@ export type GroupDiscordPrismaType = Prisma.GroupDiscordRoleGetPayload<{
   include: typeof groupDiscordInclude;
 }>;
 
-export const groupCustomInclude = Prisma.validator<Prisma.GroupCustomInclude>()({});
+export const groupIzeInclude = Prisma.validator<Prisma.GroupIzeInclude>()({});
 
-export type GroupCustomPrismaType = Prisma.GroupCustomGetPayload<{
-  include: typeof groupCustomInclude;
+export type GroupIzePrismaType = Prisma.GroupIzeGetPayload<{
+  include: typeof groupIzeInclude;
 }>;
 
 export const groupTelegramChatInclude = Prisma.validator<Prisma.GroupTelegramChatInclude>()({});
@@ -31,17 +29,24 @@ export type GroupTelegramChatPrismaType = Prisma.GroupTelegramChatGetPayload<{
 }>;
 
 export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
-  creator: {
-    include: userInclude,
-  },
+  // Creator: {
+  //   include: {
+  //     User: {
+  //       include: userInclude,
+  //     },
+  //     Identity: {
+  //       include: identityInclude,
+  //     },
+  //   },
+  // },
   GroupDiscordRole: {
     include: groupDiscordInclude,
   },
   GroupNft: {
     include: groupNftInclude,
   },
-  GroupCustom: {
-    include: groupCustomInclude,
+  GroupIze: {
+    include: groupIzeInclude,
   },
   GroupTelegramChat: {
     include: groupTelegramChatInclude,

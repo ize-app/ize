@@ -53,7 +53,7 @@ export const PanelAccordion = ({
             width: "100%",
           }}
         >
-          <Typography color="secondary" variant={"label2"}>
+          <Typography variant="label2" color="secondary">
             {title.toLocaleUpperCase()}
           </Typography>
           {hasError && (

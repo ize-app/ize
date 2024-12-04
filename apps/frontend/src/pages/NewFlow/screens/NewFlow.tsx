@@ -70,8 +70,16 @@ export const NewFlow = () => {
     initialFormState: {},
   };
 
-  const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel } =
-    useWizard(newFlowWizard);
+  const {
+    onPrev,
+    onNext,
+    progressBarStep,
+    title,
+    formState,
+    setFormState,
+    nextLabel,
+    disableNext,
+  } = useWizard(newFlowWizard);
 
   return me ? (
     <PageContainer>
@@ -86,7 +94,7 @@ export const NewFlow = () => {
         progressBarStep={progressBarStep}
         progressBarSteps={NEW_FLOW_PROGRESS_BAR_STEPS}
       >
-        <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
+        <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel, disableNext }} />
       </WizardContainer>
     </PageContainer>
   ) : null;

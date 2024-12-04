@@ -3,9 +3,9 @@ import {
   DecisionType,
   Field,
   LlmSummary,
-  LlmSummaryList,
   Option,
   Ranking,
+  RawAnswers,
   ResultConfig,
   ResultType,
 } from "@/graphql/generated/resolver-types";
@@ -30,8 +30,9 @@ export const resultConfigResolver = ({
       return resultConfigRankResolver({ resultConfig, field });
     case ResultType.LlmSummary:
       return resultConfigLlmResolver({ resultConfig, field });
-    case ResultType.LlmSummaryList:
-      return resultConfigLlmListResolver({ resultConfig, field });
+    case ResultType.RawAnswers: {
+      return resultRawAnswersResolver({ resultConfig, field });
+    }
     default:
       throw new GraphQLError("Invalid result type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -49,12 +50,14 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
     });
 
   if (decConfig.defaultOptionId) {
-    if (field?.__typename !== "Options")
+    if (!field.optionsConfig)
       throw new GraphQLError("Default option specififed but field is not an Options type", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    defaultOption = field.options.find((option) => option.optionId === decConfig.defaultOptionId);
+    defaultOption = field.optionsConfig.options.find(
+      (option) => option.optionId === decConfig.defaultOptionId,
+    );
     if (!defaultOption)
       throw new GraphQLError("Cannot find default option for decision", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -62,12 +65,11 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
   }
 
   return {
-    __typename: "Decision",
+    __typename: ResultType.Decision,
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
     field,
     criteria: decConfig.criteria,
-    minimumAnswers: resultConfig.minAnswers,
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
     defaultOption,
@@ -81,11 +83,10 @@ const resultConfigRankResolver = ({ resultConfig, field }: ResultConfigResolver)
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   return {
-    __typename: "Ranking",
+    __typename: ResultType.Ranking,
     name: getResultConfigName({ resultConfig }),
     field,
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     numOptionsToInclude: rankConfig.numOptionsToInclude,
   };
 };
@@ -97,32 +98,19 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
   return {
-    __typename: "LlmSummary",
+    __typename: ResultType.LlmSummary,
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     field,
     prompt: llmConfig.prompt,
-    example: llmConfig.example,
+    isList: llmConfig.isList,
   };
 };
-
-const resultConfigLlmListResolver = ({
-  resultConfig,
-  field,
-}: ResultConfigResolver): LlmSummaryList => {
-  const llmConfig = resultConfig.ResultConfigLlm;
-  if (!llmConfig)
-    throw new GraphQLError("Missing llm config.", {
-      extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-    });
+const resultRawAnswersResolver = ({ resultConfig, field }: ResultConfigResolver): RawAnswers => {
   return {
-    __typename: "LlmSummaryList",
+    __typename: ResultType.RawAnswers,
     name: getResultConfigName({ resultConfig }),
     resultConfigId: resultConfig.id,
-    minimumAnswers: resultConfig.minAnswers,
     field,
-    prompt: llmConfig.prompt,
-    example: llmConfig.example,
   };
 };

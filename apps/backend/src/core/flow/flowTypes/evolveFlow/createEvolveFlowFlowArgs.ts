@@ -1,25 +1,18 @@
-import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
+import { createSystemFieldDefaults } from "@/core/fields/createSystemFieldDefaults";
 import {
   ActionArgs,
   ActionType,
   DecisionType,
   FieldArgs,
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FieldType,
   FlowType,
   NewFlowArgs,
   NewStepArgs,
+  OptionSelectionType,
   ResultArgs,
   ResultType,
   SystemFieldType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
-
-const requestFieldSetArgs: FieldArgs[] = [
-  systemFieldDefaults[SystemFieldType.EvolveFlowProposed],
-  systemFieldDefaults[SystemFieldType.EvolveFlowCurrent],
-  systemFieldDefaults[SystemFieldType.EvolveFlowDescription],
-];
 
 export const createEvolveFlowFlowArgs = ({
   groupEntityId,
@@ -29,11 +22,16 @@ export const createEvolveFlowFlowArgs = ({
   creatorEntityId: string;
 }): NewFlowArgs => {
   return {
+    flowVersionId: crypto.randomUUID(),
     type: FlowType.Evolve,
     name: "Evolve flow",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: [
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowProposed),
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowCurrent),
+        createSystemFieldDefaults(SystemFieldType.EvolveFlowDescription),
+      ],
     },
     trigger: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
@@ -43,45 +41,49 @@ export const createEvolveFlowFlowArgs = ({
 };
 
 const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
+  const approveOptionId = crypto.randomUUID();
   const responseFieldSetArgs: FieldArgs = {
-    type: FieldType.Options,
-    fieldId: "new",
+    type: ValueType.OptionSelections,
+    fieldId: crypto.randomUUID(),
     isInternal: false,
     name: "Do you approve of these changes?",
     required: true,
     optionsConfig: {
-      previousStepOptions: false,
       maxSelections: 1,
-      selectionType: FieldOptionsSelectionType.Select,
+      selectionType: OptionSelectionType.Select,
       linkedResultOptions: [],
       options: [
-        { optionId: "approve", dataType: FieldDataType.String, name: "✅" },
-        { optionId: "deny", dataType: FieldDataType.String, name: "❌" },
+        { optionId: approveOptionId, type: ValueType.String, value: JSON.stringify("✅") },
+        { optionId: crypto.randomUUID(), type: ValueType.String, value: JSON.stringify("❌") },
       ],
     },
   };
 
   const resultArgs: ResultArgs = {
+    resultConfigId: crypto.randomUUID(),
+    fieldId: responseFieldSetArgs.fieldId,
     type: ResultType.Decision,
-    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionIndex: null },
-    responseFieldIndex: 0,
-    minimumAnswers: 1,
+    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionId: null },
   };
 
   const actionArgs: ActionArgs = {
     type: ActionType.EvolveFlow,
-    filterResponseFieldIndex: 0,
-    filterOptionIndex: 0,
+    filter: {
+      resultConfigId: resultArgs.resultConfigId,
+      optionId: approveOptionId,
+    },
     locked: true,
   };
 
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: { fields: [responseFieldSetArgs], locked: false },
     response: {
       permission: { anyone: false, entities: [{ id: creatorEntityId }] },
       expirationSeconds: 259200,
       allowMultipleResponses: false,
       canBeManuallyEnded: false,
+      minResponses: 1,
     },
     result: [resultArgs],
     action: actionArgs,

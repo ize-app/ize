@@ -1,4 +1,4 @@
-import { entityInclude } from "@/core/entity/entityPrismaTypes";
+import { EntityPrismaType, entityInclude } from "@/core/entity/entityPrismaTypes";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes, GraphQLError } from "@/graphql/errors";
@@ -25,32 +25,45 @@ export const getTelegramChats = async ({
 
   const telegramUserId = telegramIdentity.IdentityTelegram.telegramUserId;
 
-  const telegramIzeBots = await prisma.entity.findMany({
-    include: entityInclude,
-    where: {
-      Group: {
-        IdentitiesGroups: {
-          some: {
-            identityId: telegramIdentity.id,
-            active: true,
-          },
+  let telegramIzeBots: EntityPrismaType[] = [];
+
+  // used for setting up a new bot
+  if (args.adminOnly) {
+    telegramIzeBots = await prisma.entity.findMany({
+      include: entityInclude,
+      where: {
+        NotifiesForIzeGroups: {
+          none: {},
         },
-        // this only pulls groups where user was last admin to call /linkgroup telegram command
-        GroupTelegramChat: {
-          id: { not: undefined },
-          Group: {
-            Entity: {
-              NotifiesForCustomGroups: {
-                none: {},
-              },
-            },
+        Group: {
+          // this only pulls groups where user was last admin to call /linkgroup telegram command
+          GroupTelegramChat: {
+            id: { not: undefined },
+            adminTelegramUserId: args.adminOnly ? { equals: telegramUserId } : {},
           },
-          adminTelegramUserId: args.adminOnly ? { equals: telegramUserId } : {},
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    });
+  } else {
+    telegramIzeBots = await prisma.entity.findMany({
+      include: entityInclude,
+      where: {
+        Group: {
+          IdentitiesGroups: {
+            some: {
+              identityId: telegramIdentity.id,
+              active: true,
+            },
+          },
+          GroupTelegramChat: {
+            id: { not: undefined },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
 
   return telegramIzeBots.map((entity) => {
     return entityResolver({ entity, userIdentityIds: [] });

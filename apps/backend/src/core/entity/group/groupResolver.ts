@@ -3,7 +3,6 @@ import { Group, GroupType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { GroupPrismaType } from "./groupPrismaTypes";
-import { userResolver } from "../../user/userResolver";
 
 export const groupResolver = (
   group: GroupPrismaType,
@@ -16,8 +15,8 @@ export const groupResolver = (
     return resolveGroupNft(group, isWatched, isMember);
   } else if (group.GroupTelegramChat) {
     return resolveGroupTelegram(group, isWatched, isMember);
-  } else if (group.GroupCustom) {
-    return resolveGroupCustom(group, isWatched, isMember);
+  } else if (group.GroupIze) {
+    return resolveGroupIze(group, isWatched, isMember);
   } else {
     throw new GraphQLError("Invalid group type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -38,7 +37,6 @@ const resolveDiscordGroup = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     // discord only includes the @sign for @everyone
     name: `${
       group.GroupDiscordRole.name !== "@everyone"
@@ -67,7 +65,7 @@ const resolveDiscordGroup = (
           )
         : null,
     },
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
@@ -89,7 +87,6 @@ const resolveGroupNft = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     name: nft.name,
     icon: nft.icon,
     color: null,
@@ -98,7 +95,7 @@ const resolveGroupNft = (
       name: nft.NftCollection.name ?? "Unknown collection",
       icon: nft.NftCollection.icon,
     },
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "GroupNft", ...nft } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
@@ -106,24 +103,24 @@ const resolveGroupNft = (
   return discordGroup;
 };
 
-const resolveGroupCustom = (
+const resolveGroupIze = (
   group: GroupPrismaType,
   isWatched?: boolean,
   isMember?: boolean,
 ): Group => {
-  if (!group.GroupCustom)
+  if (!group.GroupIze)
     throw new GraphQLError("Missing custom group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
-  const { GroupCustom: custom } = group;
+  const { GroupIze: ize } = group;
   return {
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
-    name: custom.name,
-    createdAt: group.createdAt.toString(),
-    groupType: { __typename: "GroupCustom", ...custom } as GroupType,
+
+    name: ize.name,
+    createdAt: group.createdAt.toISOString(),
+    groupType: { __typename: "GroupIze", ...ize } as GroupType,
     isMember: isMember ?? false,
     isWatched: isWatched ?? false,
   };
@@ -143,9 +140,8 @@ const resolveGroupTelegram = (
     __typename: "Group",
     id: group.id,
     entityId: group.entityId,
-    creator: group.creator ? userResolver(group.creator) : null,
     name: telegram.name,
-    createdAt: group.createdAt.toString(),
+    createdAt: group.createdAt.toISOString(),
     groupType: {
       __typename: "GroupTelegramChat",
       ...telegram,

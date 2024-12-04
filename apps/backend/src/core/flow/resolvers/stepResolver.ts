@@ -1,7 +1,8 @@
 import { resultsConfigSetResolver } from "@/core/result/resolvers/resultConfigSetResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, Group, ResultConfig, Step } from "@/graphql/generated/resolver-types";
 
-import { actionResolver } from "../../action/actionResolver";
+import { actionConfigResolver } from "../../action/actionConfigResolver";
 import { fieldSetResolver } from "../../fields/resolvers/fieldSetResolver";
 import { hasReadPermission } from "../../permission/hasReadPermission";
 import { permissionResolver } from "../../permission/permissionResolver";
@@ -16,6 +17,7 @@ export const stepResolver = ({
   responseFieldsCache,
   resultConfigsCache,
   ownerGroup,
+  context,
 }: {
   step: StepPrismaType;
   userIdentityIds: string[];
@@ -26,11 +28,13 @@ export const stepResolver = ({
   ownerGroup: Group | null;
   hideSensitiveInfo?: boolean;
   defaultValues?: DefaultEvolveGroupValues | undefined;
+  context: GraphqlRequestContext;
 }): Step => {
   const responseFields = fieldSetResolver({
-    fieldSet: step.FieldSet,
+    fieldSet: step.ResponseFieldSet,
     responseFieldsCache,
     resultConfigsCache,
+    context,
   });
   responseFieldsCache.push(...responseFields.fields);
 
@@ -54,10 +58,12 @@ export const stepResolver = ({
           canBeManuallyEnded: step.ResponseConfig.canBeManuallyEnded,
           expirationSeconds: step.ResponseConfig.expirationSeconds,
           allowMultipleResponses: step.ResponseConfig.allowMultipleResponses,
+          minResponses: step.ResponseConfig.minResponses,
         }
       : undefined,
-    action: actionResolver({
-      action: step.Action,
+    action: actionConfigResolver({
+      actionConfig: step.ActionConfigSet?.ActionConfigs[0],
+      resultConfigs: result,
       responseFields: responseFieldsCache,
       ownerGroup,
     }),

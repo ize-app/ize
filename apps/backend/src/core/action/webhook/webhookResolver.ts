@@ -1,14 +1,19 @@
-import { Webhook } from "@prisma/client";
+import { ActionConfigWebhook } from "@prisma/client";
 
-import { CallWebhook, Option } from "@/graphql/generated/resolver-types";
+import { ActionFilter, CallWebhook } from "@/graphql/generated/resolver-types";
 
 export const callWebhookResolver = (
   {
     webhook,
-    filterOption,
+    filter,
     name,
     locked = false,
-  }: { webhook: Webhook; filterOption: Option | undefined; locked: boolean; name: string },
+  }: {
+    webhook: ActionConfigWebhook;
+    filter: ActionFilter | undefined;
+    locked: boolean;
+    name: string;
+  },
   // obscureUri = true,
 ): CallWebhook => {
   return {
@@ -17,7 +22,7 @@ export const callWebhookResolver = (
     webhookId: webhook.id,
     uri: "https://" + webhook.uriPreview, // Only return the hostname for privacy
     webhookName: webhook.name,
-    filterOption,
+    filter,
     locked,
   };
 };

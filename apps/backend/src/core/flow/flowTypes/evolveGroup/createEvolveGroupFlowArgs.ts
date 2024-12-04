@@ -1,7 +1,6 @@
-import { SystemFieldType } from "@prisma/client";
 import { GraphQLError } from "graphql";
 
-import { systemFieldDefaults } from "@/core/fields/systemFieldDefaults";
+import { createSystemFieldDefaults } from "@/core/fields/createSystemFieldDefaults";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { CustomErrorCodes } from "@/graphql/errors";
 import {
@@ -12,17 +11,18 @@ import {
   GroupFlowPolicyType,
   NewFlowArgs,
   NewStepArgs,
+  SystemFieldType,
 } from "@/graphql/generated/resolver-types";
 
 import { createActionArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createActionArgsForPolicy";
 import { createApprovalFieldSetArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createApprovalFieldSetArgsForPolicy";
 import { createDecisionResultArgsForPolicy } from "../../generateFlowArgs/flowArgsForPolicy/createDecisionResultArgsForPolicy";
 
-const requestFieldSetArgs: FieldArgs[] = [
-  systemFieldDefaults[SystemFieldType.GroupName],
-  systemFieldDefaults[SystemFieldType.GroupDescription],
-  systemFieldDefaults[SystemFieldType.GroupMembers],
-];
+// const requestFieldSetArgs: FieldArgs[] = [
+//   createSystemFieldDefaults(SystemFieldType.GroupName),
+//   createSystemFieldDefaults(SystemFieldType.GroupDescription),
+//   createSystemFieldDefaults(SystemFieldType.GroupMembers),
+// ];
 
 export const createEvolveGroupFlowArgs = ({
   groupEntityId,
@@ -39,11 +39,16 @@ export const createEvolveGroupFlowArgs = ({
     });
 
   return {
+    flowVersionId: crypto.randomUUID(),
     type: FlowType.EvolveGroup,
     name: "Evolve group",
     fieldSet: {
       locked: true,
-      fields: requestFieldSetArgs,
+      fields: [
+        createSystemFieldDefaults(SystemFieldType.GroupName),
+        createSystemFieldDefaults(SystemFieldType.GroupDescription),
+        createSystemFieldDefaults(SystemFieldType.GroupMembers),
+      ],
     },
     trigger: {
       permission: { anyone: false, entities: [{ id: groupEntityId }] },
@@ -65,17 +70,29 @@ export const createEvolveGroupStepArgs = ({
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },
     });
+  let responseApprovalFieldArgs: FieldArgs | undefined = undefined;
+  let approveOptionId: string | undefined = undefined;
 
   const creatorEntityId = context.currentUser.entityId;
-  const responseApprovalFieldArgs: FieldArgs | undefined = createApprovalFieldSetArgsForPolicy({
+  const approvalField = createApprovalFieldSetArgsForPolicy({
     policy,
   });
 
-  const decisionResult = createDecisionResultArgsForPolicy({ policy });
+  if (approvalField) {
+    [responseApprovalFieldArgs, approveOptionId] = approvalField;
+  }
+
+  const decisionResult = responseApprovalFieldArgs
+    ? createDecisionResultArgsForPolicy({
+        policy,
+        fieldId: responseApprovalFieldArgs?.fieldId,
+      })
+    : null;
 
   const noResponse = policy.type === GroupFlowPolicyType.GroupAutoApprove;
 
   return {
+    stepId: crypto.randomUUID(),
     fieldSet: {
       fields: responseApprovalFieldArgs ? [responseApprovalFieldArgs] : [],
       locked: false,
@@ -85,6 +102,7 @@ export const createEvolveGroupStepArgs = ({
           canBeManuallyEnded: false,
           expirationSeconds: 259200,
           allowMultipleResponses: false,
+          minResponses: 1,
           permission: {
             anyone: false,
             entities: [
@@ -99,6 +117,10 @@ export const createEvolveGroupStepArgs = ({
         }
       : undefined,
     result: decisionResult ? [decisionResult] : [],
-    action: createActionArgsForPolicy({ actionType: ActionType.EvolveGroup, policy }),
+    action: createActionArgsForPolicy({
+      actionType: ActionType.EvolveGroup,
+      resultConfigId: decisionResult?.resultConfigId,
+      optionId: approveOptionId,
+    }),
   };
 };

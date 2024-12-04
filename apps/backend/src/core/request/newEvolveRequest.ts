@@ -79,21 +79,21 @@ export const newEvolveRequest = async ({
       },
     });
 
-    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.FieldSetFields ?? [];
+    const evoleFlowFields = evolveFlow.CurrentFlowVersion?.TriggerFieldSet?.Fields ?? [];
 
     const proposedFlowField = evoleFlowFields.find((field) => {
-      return field.Field.systemType === SystemFieldType.EvolveFlowProposed;
+      return field.systemType === SystemFieldType.EvolveFlowProposed;
     });
 
     const currentFlowField = evoleFlowFields.find(
-      (field) => field.Field.systemType === SystemFieldType.EvolveFlowCurrent,
+      (field) => field.systemType === SystemFieldType.EvolveFlowCurrent,
     );
 
     const descriptionField = evoleFlowFields.find(
-      (field) => field.Field.systemType === SystemFieldType.EvolveFlowDescription,
+      (field) => field.systemType === SystemFieldType.EvolveFlowDescription,
     );
 
-    if (!proposedFlowField || !currentFlowField)
+    if (!proposedFlowField || !currentFlowField || !descriptionField)
       throw new GraphQLError("Cannot find proposed flow and current flow fields of evolve flow", {
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
@@ -125,22 +125,27 @@ export const newEvolveRequest = async ({
 
     const requestFields: FieldAnswerArgs[] = [
       {
-        fieldId: currentFlowField.fieldId,
-        value: flow.CurrentFlowVersion.id,
+        fieldId: currentFlowField.id,
+        value: JSON.stringify(flow.CurrentFlowVersion.id),
         optionSelections: [],
       },
-      { fieldId: proposedFlowField.fieldId, value: proposedFlowVersionId, optionSelections: [] },
+      {
+        fieldId: proposedFlowField.id,
+        value: JSON.stringify(proposedFlowVersionId),
+        optionSelections: [],
+      },
     ];
 
-    if (descriptionField) {
+    if (args.request.description) {
       requestFields.push({
-        fieldId: descriptionField.fieldId,
-        value: args.request.description ?? null,
+        fieldId: descriptionField.id,
+        value: JSON.stringify(args.request.description),
         optionSelections: [],
       });
     }
 
     const requestArgs: NewRequestArgs = {
+      requestId: crypto.randomUUID(),
       flowId: flow.CurrentFlowVersion.evolveFlowId,
       name: args.request.name,
       requestFields,

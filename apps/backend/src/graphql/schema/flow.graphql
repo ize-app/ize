@@ -49,6 +49,7 @@ type FlowSummary {
 
 type FlowReference {
   flowId: String!
+  flowVersionId: String!
   flowName: String!
 }
 
@@ -80,6 +81,7 @@ type ResponseConfig {
   allowMultipleResponses: Boolean!
   # whether or not that particular user has permission to respond
   userPermission: Boolean!
+  minResponses: Int!
 }
 
 input NewFlowWithEvolveArgs {
@@ -89,6 +91,7 @@ input NewFlowWithEvolveArgs {
 }
 
 input NewFlowArgs {
+  flowVersionId: String!
   type: FlowType!
   name: String!
   steps: [NewStepArgs!]!
@@ -99,6 +102,7 @@ input NewFlowArgs {
 }
 
 input NewStepArgs {
+  stepId: String!
   fieldSet: FieldSetArgs!
   response: ResponseConfigArgs
   result: [ResultArgs!]!
@@ -114,6 +118,7 @@ input ResponseConfigArgs {
   expirationSeconds: Int!
   allowMultipleResponses: Boolean!
   canBeManuallyEnded: Boolean!
+  minResponses: Int!
 }
 
 enum FlowTriggerPermissionFilter {

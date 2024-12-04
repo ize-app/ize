@@ -5,7 +5,7 @@ import { WizardBody, WizardNav } from "../../../components/Wizard";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 
 export const Confirm = () => {
-  const { onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
+  const { onNext, onPrev, nextLabel, disableNext } = useNewCustomGroupWizardState();
 
   return (
     <>
@@ -18,7 +18,7 @@ export const Confirm = () => {
         </Box>
       </WizardBody>
 
-      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} />
+      <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} disableNext={disableNext} />
     </>
   );
 };

@@ -6,8 +6,9 @@ import { prisma } from "@/prisma/client";
 
 import { sessionDurationMinutes, stytchClient } from "./stytchClient";
 
-// authetnicate session token and get user data for graphql context
+// authenticate session token and get user data for graphql context
 export const authenticateSession = async (req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line
   const session_token = req.cookies["stytch_session"] as string;
   if (!session_token) {
     res.locals.user = null;

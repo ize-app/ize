@@ -26,10 +26,11 @@ export const handleTelegramPollResponse = async ({ pollAnswer }: { pollAnswer: P
     entityContext: { type: "identity", identity },
     args: {
       response: {
+        responseId: crypto.randomUUID(),
         answers: [
           {
             fieldId: poll.fieldId,
-            optionSelections: selectedOptions.map((o) => ({ optionIndex: o })),
+            optionSelections: selectedOptions.map((o) => ({ optionIndex: o, weight: 1 })),
           },
         ],
         requestStepId: poll.requestStepId,

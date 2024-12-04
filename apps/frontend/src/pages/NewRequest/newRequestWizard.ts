@@ -1,11 +1,11 @@
-import { Flow } from "@/graphql/generated/graphql";
+import { FlowFragment } from "@/graphql/generated/graphql";
 import { WizardSteps, useWizardFormState } from "@/hooks/useWizard";
 
-import { RequestSchemaType } from "./formValidation";
+import { RequestSchemaType } from "./requestValidation";
 import { NewRequestRoute, newRequestRoute } from "../../routers/routes";
 
 export interface NewRequestFormSchema {
-  flow?: Flow;
+  flow?: FlowFragment;
   request?: RequestSchemaType;
 }
 

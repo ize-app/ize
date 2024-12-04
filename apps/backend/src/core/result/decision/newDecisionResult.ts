@@ -1,114 +1,100 @@
-import { FieldDataType, FieldOption, Prisma, ResultType } from "@prisma/client";
+import { FieldOption, Prisma, ResultType } from "@prisma/client";
 
 import { FieldAnswerPrismaType } from "@/core/fields/fieldPrismaTypes";
+import { newValue } from "@/core/value/newValue";
+import { validateValue } from "@/core/value/validateValue";
+import { ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { determineDecision } from "./determineDecision";
 import { prisma } from "../../../prisma/client";
-import {
-  ResultConfigPrismaType,
-  ResultGroupPrismaType,
-  resultGroupInclude,
-} from "../resultPrismaTypes";
+import { NewResultArgs } from "../newResults/newResult";
+import { ResultConfigPrismaType } from "../resultPrismaTypes";
 
-// returns result if there is no result
 export const newDecisionResult = async ({
   resultConfig,
   fieldAnswers,
   requestStepId,
+  transaction,
 }: {
   resultConfig: ResultConfigPrismaType;
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
-}): Promise<ResultGroupPrismaType> => {
+  transaction: Prisma.TransactionClient;
+}): Promise<NewResultArgs[] | null> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
-  let decisionFieldOption: FieldOption | null = null;
-
-  if (resultConfig.resultType !== ResultType.Decision || !decisionConfig)
-    throw new GraphQLError(
-      `Cannot create decision result without a decision config. resultConfigId: ${resultConfig.id}`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
+  let decisionResultArgs: NewResultArgs | undefined;
+  let decisionExplainationResultArgs: NewResultArgs | undefined;
+  const newResultArgs: NewResultArgs[] = [];
 
   // find the decision and choose default option if no decision was made
-  const { optionId: decisionOptionId, explanation } =
-    (await determineDecision({
-      resultConfig,
-      answers: fieldAnswers,
-      requestStepId,
-    })) ?? decisionConfig.defaultOptionId;
-
-  if (decisionOptionId) {
-    decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
-      where: {
-        id: decisionOptionId,
-      },
-    });
-  }
-
-  const resultArgs: Prisma.ResultGroupUncheckedCreateInput = {
-    itemCount: 2,
-    requestStepId,
-    resultConfigId: resultConfig.id,
-    final: true,
-    hasResult: !!decisionFieldOption,
-    Result: decisionFieldOption
-      ? {
-          create: {
-            name: "Decision",
-            itemCount: explanation ? 2 : 1,
-            index: 0,
-            ResultItems: {
-              create: {
-                dataType: decisionFieldOption.dataType,
-                value: decisionFieldOption.name,
-                fieldOptionId: decisionFieldOption.id,
-              },
-            },
-          },
-        }
-      : undefined,
-  };
-
-  ////// upsert results for decision
-  const resultGroup = await prisma.resultGroup.upsert({
-    where: {
-      requestStepId_resultConfigId: {
+  try {
+    if (resultConfig.resultType !== ResultType.Decision || !decisionConfig)
+      throw new GraphQLError(
+        `Cannot create decision result without a decision config. resultConfigId: ${resultConfig.id}`,
+        {
+          extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+        },
+      );
+    let decisionFieldOption: FieldOption | null = null;
+    const { optionId: decisionOptionId, explanation: decisionExplanation } =
+      await determineDecision({
+        resultConfig,
+        answers: fieldAnswers,
         requestStepId,
-        resultConfigId: resultConfig.id,
-      },
-    },
-    include: resultGroupInclude,
-    create: resultArgs,
-    update: resultArgs,
-  });
+      });
 
-  if (decisionOptionId && explanation) {
-    await prisma.result.create({
-      data: {
-        resultGroupId: resultGroup.id,
-        itemCount: 1,
-        index: 1,
+    // check that decision is actually valid
+    if (decisionOptionId) {
+      decisionFieldOption = await prisma.fieldOption.findFirstOrThrow({
+        where: {
+          id: decisionOptionId,
+        },
+      });
+    }
+
+    decisionResultArgs = {
+      name: "Decision",
+      // if decisionFieldOption is null, the decision was not made but we still
+      // need to make a result record of no decision
+      type: ResultType.Decision,
+      answerCount: fieldAnswers.length,
+      ResultItems: decisionFieldOption
+        ? {
+            create: {
+              index: 0,
+              valueId: decisionFieldOption.valueId,
+              fieldOptionId: decisionFieldOption.id,
+            },
+          }
+        : undefined,
+    };
+
+    if (decisionExplanation) {
+      const validatedValue = validateValue({ type: ValueType.String, value: decisionExplanation });
+      const valueId = await newValue({ value: validatedValue, transaction });
+      decisionExplainationResultArgs = {
         name: "Explanation of AI decision",
+        type: ResultType.LlmSummary,
+        answerCount: fieldAnswers.length,
         ResultItems: {
           create: {
-            dataType: FieldDataType.String,
-            value: explanation,
+            index: 0,
+            valueId,
           },
         },
-      },
-    });
-  }
+      };
+    }
 
-  return await prisma.resultGroup.findUniqueOrThrow({
-    where: {
-      requestStepId_resultConfigId: {
-        requestStepId,
-        resultConfigId: resultConfig.id,
-      },
-    },
-    include: resultGroupInclude,
-  });
+    newResultArgs.push(decisionResultArgs);
+    if (decisionExplainationResultArgs) newResultArgs.push(decisionExplainationResultArgs);
+
+    return newResultArgs;
+  } catch (e) {
+    console.error(
+      `ERROR determining decision result for resultConfigId ${resultConfig.id} requestStepId ${requestStepId}`,
+      e,
+    );
+    return null;
+  }
 };

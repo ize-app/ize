@@ -3,10 +3,10 @@ import { Box, Typography } from "@mui/material";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { PermissionType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ButtonGroupField, EntitySearch } from "@/components/Form/formFields";
 import { WizardNav } from "@/components/Wizard";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
+import { Route } from "@/routers/routes";
 
 import { FieldBlockFadeIn } from "../../../components/Form/formLayout/FieldBlockFadeIn";
 import {
@@ -18,8 +18,8 @@ import {
 } from "../formValidation";
 import { generateNewFlowConfig } from "../generateNewFlowConfig/generateNewFlowConfig";
 import { DecisionForm } from "../initialConfigSetup/DecisionForm";
+import { GetPerspectivesForm } from "../initialConfigSetup/GetPerspectivesForm";
 import { PrioritizationForm } from "../initialConfigSetup/PrioritizationForm";
-import { SummaryForm } from "../initialConfigSetup/SummaryForm";
 import { WebhookForm } from "../initialConfigSetup/WebhookForm";
 import { useNewFlowWizardState } from "../newFlowWizard";
 
@@ -35,7 +35,6 @@ export const InitialConfigSetup = () => {
 
   const onSubmit = (data: IntitialFlowSetupSchemaType) => {
     const newConfig = generateNewFlowConfig({ config: data, creator: me?.user });
-    console.log("generated new config", newConfig);
 
     setFormState(
       (prev): NewFlowWizardFormSchema => ({
@@ -47,14 +46,14 @@ export const InitialConfigSetup = () => {
     );
     onNext();
   };
-  // console.log("errors are", formMethods.formState.errors);
+  console.log("errors are", formMethods.formState.errors);
 
-  // console.log("form state", formMethods.getValues());
+  console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
 
   const reusable = formMethods.watch("reusable");
 
-  const permissionType = formMethods.watch("permission.type");
+  const isAnyonePermission = (formMethods.watch("permission.anyone") ?? true).toString();
 
   return (
     <FormProvider {...formMethods}>
@@ -63,20 +62,27 @@ export const InitialConfigSetup = () => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
+          maxWidth: "800px",
           gap: "30px",
+          marginBottom: "48px",
         }}
       >
+        <Typography variant="description">
+          Flows are language for defining and automating collaborative processes that span tools,
+          teams, and time.{" "}
+          <a href={Route.About} target="_blank" rel="noopener noreferrer">
+            Learn more
+          </a>
+        </Typography>
         <FieldBlockFadeIn>
-          <Typography variant="description">
-            What&apos;s the goal of this collaborative process?
-          </Typography>
+          <Typography variant="description">What&apos;s the goal of this flow?</Typography>
           <ButtonGroupField<IntitialFlowSetupSchemaType>
             label="Test"
             name="goal"
             options={[
               { name: "Decide", value: FlowGoal.Decision },
               { name: "Prioritize", value: FlowGoal.Prioritize },
-              { name: "Summarize ideas", value: FlowGoal.AiSummary },
+              { name: "Get perspectives", value: FlowGoal.GetPerspectives },
               {
                 name: "Trigger another tool",
                 value: FlowGoal.TriggerWebhook,
@@ -103,27 +109,28 @@ export const InitialConfigSetup = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <ButtonGroupField<IntitialFlowSetupSchemaType>
                 label="Test"
-                name="permission.type"
+                name="permission.anyone"
                 options={[
-                  { name: "Anyone with the link", value: PermissionType.Anyone },
-                  { name: "Only certain people", value: PermissionType.Entities },
+                  { name: "Anyone with the link", value: "true" },
+                  { name: "Only certain people", value: "false" },
                 ]}
               />
-              {permissionType === PermissionType.Entities && (
+              {isAnyonePermission === "false" && (
                 <EntitySearch<IntitialFlowSetupSchemaType>
+                  required={true}
                   ariaLabel={"Individuals and groups to add to custom group"}
                   name={"permission.entities"}
-                  hideCustomGroups={false}
+                  hideIzeGroups={false}
                   label={"Group members *"}
                 />
               )}
             </Box>
           </FieldBlockFadeIn>
         )}
-        {goal === FlowGoal.TriggerWebhook && permissionType && <WebhookForm />}
-        {goal === FlowGoal.Decision && permissionType && <DecisionForm />}
-        {goal === FlowGoal.Prioritize && permissionType && <PrioritizationForm />}
-        {goal === FlowGoal.AiSummary && permissionType && <SummaryForm />}
+        {goal === FlowGoal.TriggerWebhook && isAnyonePermission && <WebhookForm />}
+        {goal === FlowGoal.Decision && isAnyonePermission && <DecisionForm />}
+        {goal === FlowGoal.Prioritize && isAnyonePermission && <PrioritizationForm />}
+        {goal === FlowGoal.GetPerspectives && isAnyonePermission && <GetPerspectivesForm />}
         <WizardNav
           onNext={formMethods.handleSubmit(onSubmit)}
           onPrev={onPrev}

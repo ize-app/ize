@@ -9,7 +9,7 @@ export const userResolver = (user: UserPrismaType): User => {
     id: user.id,
     entityId: user.entityId,
     name: user.name,
-    createdAt: user.createdAt.toString(),
+    createdAt: user.createdAt.toISOString(),
     icon: findFirstIdentityIcon(user),
   };
 };

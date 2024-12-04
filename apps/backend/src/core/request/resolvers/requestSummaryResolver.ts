@@ -1,46 +1,80 @@
-import { getActionExecutionStatus } from "@/core/action/getActionExecutionStatus";
 import { getActionName } from "@/core/action/getActionName";
+import { getActionStatus } from "@/core/action/getActionStatus";
 import { entityResolver } from "@/core/entity/entityResolver";
 import { getFlowName } from "@/core/flow/helpers/getFlowName";
 import { hasReadPermission } from "@/core/permission/hasReadPermission";
 import { permissionResolver } from "@/core/permission/permissionResolver";
 import { getResultConfigName } from "@/core/result/resolvers/getResultConfigName";
 import { resultGroupResolver } from "@/core/result/resolvers/resultGroupResolver";
-import { RequestSummary, Status } from "@/graphql/generated/resolver-types";
+import { GraphqlRequestContext } from "@/graphql/context";
+import {
+  ActionStatus,
+  RequestSummary,
+  ResultGroupStatus,
+} from "@/graphql/generated/resolver-types";
 
+import { requestStepStatusResolver } from "./requestStepStatusResolver";
 import { getEvolveRequestFlowName } from "../getEvolveRequestFlowName";
 import { RequestSummaryPrismaType } from "../requestPrismaTypes";
 
 export const requestSummaryResolver = ({
   requestSummary,
-  identityIds,
   groupIds,
-  userId,
+  context,
 }: {
-  requestSummary: RequestSummaryPrismaType;
-  identityIds: string[];
+  context: GraphqlRequestContext;
   groupIds: string[];
-  userId: string | undefined;
+  requestSummary: RequestSummaryPrismaType;
 }): RequestSummary => {
   const r = requestSummary;
   const currStep = r.CurrentRequestStep;
   if (!currStep) throw Error("Request does not have current request step");
 
-  const resultGroup = currStep.ResultGroups.find((rg) => rg.hasResult);
-  const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigSetResultConfigs.find(
-    (r) => r.ResultConfig.id === resultGroup?.resultConfigId,
-  )?.ResultConfig;
-  const field = currStep.Step.FieldSet?.FieldSetFields.find(
-    (f) => f.fieldId === resultConfig?.fieldId,
-  )?.Field;
+  // const groupIds: string[] = await getGroupIdsOfUser({ user: context.currentUser });
+  const identityIds: string[] = (context.currentUser?.Identities ?? []).map((id) => id.id) ?? [];
 
-  const action = currStep.Step.Action;
+  const resultGroup = currStep.ResultGroups.find((rg) => rg.complete);
+  const resultConfig = currStep.Step.ResultConfigSet?.ResultConfigs.find(
+    (r) => r.id === resultGroup?.resultConfigId,
+  );
+  const field = (currStep.Step.ResponseFieldSet?.Fields ?? []).find(
+    (f) => f.id === resultConfig?.fieldId,
+  );
+
+  const actionConfig = currStep.Step.ActionConfigSet?.ActionConfigs[0];
 
   const actionExecution =
-    action &&
-    currStep.ActionExecution.find((ae) => {
-      ae.actionId === action.id;
+    actionConfig &&
+    currStep.Actions.find((ae) => {
+      ae.actionConfigId === actionConfig.id;
     });
+
+  const actionSummary = actionConfig
+    ? {
+        name: getActionName({ action: actionConfig, ownerGroup: null }),
+        status: getActionStatus({
+          actionConfig: actionConfig,
+          action: actionExecution,
+          resultsFinal: currStep.resultsFinal,
+          actionsFinal: currStep.actionsFinal,
+        }),
+      }
+    : null;
+
+  const result = resultGroup
+    ? resultGroupResolver({
+        resultGroup,
+        responseFinal: currStep.responseFinal,
+        resultsFinal: currStep.resultsFinal,
+        context,
+      })
+    : null;
+
+  const status = requestStepStatusResolver({
+    requestStep: currStep,
+    hasActionError: actionSummary?.status === ActionStatus.Error,
+    hasResultsError: result?.status === ResultGroupStatus.Error,
+  });
 
   const res: RequestSummary = {
     requestId: r.id,
@@ -52,7 +86,7 @@ export const requestSummaryResolver = ({
       }) ??
       getFlowName({
         flowName: r.FlowVersion.name,
-        ownerGroupName: r.FlowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+        ownerGroupName: r.FlowVersion.Flow.OwnerGroup?.GroupIze?.name,
         flowType: r.FlowVersion.Flow.type,
       }),
     creator: entityResolver({ entity: r.CreatorEntity, userIdentityIds: identityIds }),
@@ -60,12 +94,7 @@ export const requestSummaryResolver = ({
     status: r.final,
     currentStep: {
       requestStepId: currStep.id,
-      status: {
-        responseFinal: currStep.responseFinal,
-        resultsFinal: currStep.resultsFinal,
-        actionsFinal: currStep.actionsFinal,
-        final: currStep.final,
-      },
+      status,
       fieldName: field?.name ?? "",
       resultName: resultConfig ? getResultConfigName({ resultConfig }) : "",
       expirationDate: currStep.expirationDate?.toISOString(),
@@ -78,18 +107,11 @@ export const requestSummaryResolver = ({
             permission: currStep.Step.ResponseConfig?.ResponsePermissions,
             groupIds: groupIds,
             identityIds: identityIds,
-            userId,
+            userId: context.currentUser?.id,
           })
         : false,
-      result: resultGroup ? resultGroupResolver(resultGroup) : null,
-      action: action
-        ? {
-            name: getActionName({ action, ownerGroup: null }),
-            status: actionExecution
-              ? getActionExecutionStatus(actionExecution, r.final)
-              : Status.NotAttempted,
-          }
-        : null,
+      result,
+      action: actionSummary,
     },
   };
 

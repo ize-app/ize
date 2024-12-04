@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { actionExecutionInclude, actionInclude } from "../action/actionPrismaTypes";
+import { actionConfigInclude, actionInclude } from "../action/actionPrismaTypes";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import {
@@ -44,8 +44,8 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
   ResultGroups: {
     include: resultGroupInclude,
   },
-  ActionExecution: {
-    include: actionExecutionInclude,
+  Actions: {
+    include: actionInclude,
   },
 });
 
@@ -80,21 +80,25 @@ export const createRequestSummaryInclude = (userEntityIds: string[]) =>
         ResultGroups: {
           include: resultGroupInclude,
         },
-        ActionExecution: {
-          include: actionExecutionInclude,
+        Actions: {
+          include: actionInclude,
         },
         Step: {
           include: {
             ResponseConfig: {
               include: responseConfigInclude,
             },
-            Action: {
-              include: actionInclude,
+            ActionConfigSet: {
+              include: {
+                ActionConfigs: {
+                  include: actionConfigInclude,
+                },
+              },
             },
             ResultConfigSet: {
               include: resultConfigSetInclude,
             },
-            FieldSet: {
+            ResponseFieldSet: {
               include: fieldSetInclude,
             },
           },
@@ -117,6 +121,10 @@ export const requestInclude = Prisma.validator<Prisma.RequestInclude>()({
       FieldOptionSet: {
         include: fieldOptionSetInclude,
       },
+    },
+    // important to order so that options are ordered consistently across app
+    orderBy: {
+      createdAt: "asc",
     },
   },
   RequestSteps: {

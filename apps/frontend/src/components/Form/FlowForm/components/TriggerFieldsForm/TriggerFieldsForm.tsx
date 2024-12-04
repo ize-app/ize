@@ -1,10 +1,12 @@
-import { Box } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Box, Button, Menu, MenuItem } from "@mui/material";
+import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { FieldDataType, FieldType } from "@/graphql/generated/graphql";
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
+import { ValueType } from "@/graphql/generated/graphql";
 
 import { FieldForm } from "./FieldForm";
+import { fieldInputTypes } from "../../../InputField/allowedInputTypes";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { createDefaultFieldState } from "../../helpers/defaultFormState/createDefaultFieldState";
 
@@ -17,27 +19,27 @@ export interface FieldFormProps {
   locked: boolean;
 }
 
-export const createFreeInputDataTypeOptions = (freeInputDataType: FieldDataType) => {
-  if (freeInputDataType === FieldDataType.EntityIds) {
-    return [{ name: "Members", value: FieldDataType.EntityIds }];
-  } else if (freeInputDataType === FieldDataType.FlowIds) {
-    return [{ name: "Flows", value: FieldDataType.FlowIds }];
-  } else if (freeInputDataType === FieldDataType.FlowVersionId) {
-    return [{ name: "Flows", value: FieldDataType.FlowVersionId }];
-  } else if (freeInputDataType === FieldDataType.Webhook) {
-    return [{ name: "Webhook", value: FieldDataType.Webhook }];
-  } else
-    return [
-      { name: "Text", value: FieldDataType.String },
-      { name: "Number", value: FieldDataType.Number },
-      { name: "Url", value: FieldDataType.Uri },
-      { name: "Date Time", value: FieldDataType.DateTime },
-      { name: "Date", value: FieldDataType.Date },
-    ];
-};
-
 export const TriggerFieldsForm = () => {
-  const { control, getValues } = useFormContext<FlowSchemaType>();
+  const { control, getValues } = useFormContext<FlowSchemaType, `fieldSet.fields`>();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const addField = (type: ValueType) => {
+    fieldsArrayMethods.append(
+      createDefaultFieldState({
+        type,
+      }),
+    );
+  };
+
   // const { register, setValue } = formMethods;
   // ths def needs to be FlowSchemaType
   const fieldsArrayMethods = useFieldArray({
@@ -50,7 +52,7 @@ export const TriggerFieldsForm = () => {
   const isLocked = getValues(lockedPath);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "12px" }}>
       {fieldsArrayMethods.fields.map((item, inputIndex) => (
         <FieldForm
           key={item.id}
@@ -68,16 +70,26 @@ export const TriggerFieldsForm = () => {
             sx={{
               flexGrow: 0,
             }}
-            onClick={() => {
-              fieldsArrayMethods.append(
-                createDefaultFieldState({
-                  fieldType: FieldType.FreeInput,
-                }),
-              );
-            }}
+            onClick={handleClick}
           >
             Add field
           </Button>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            autoFocus={false}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            {fieldInputTypes.map((type) => (
+              <MenuItem key={"addTriggerField." + type.toString()} onClick={() => addField(type)}>
+                {stringifyValueType(type)}
+              </MenuItem>
+            ))}
+          </Menu>
         </Box>
       )}
     </Box>

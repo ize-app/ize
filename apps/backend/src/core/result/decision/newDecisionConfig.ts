@@ -1,25 +1,28 @@
 import { Prisma } from "@prisma/client";
 
 import { FieldPrismaType } from "@/core/fields/fieldPrismaTypes";
-import { DecisionArgs, DecisionType, FieldType } from "@/graphql/generated/resolver-types";
+import { DecisionArgs, DecisionType, ValueType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 export const newDecisionConfig = async ({
+  resultConfigId,
   decisionArgs,
   responseField,
   transaction,
 }: {
+  resultConfigId: string;
   decisionArgs: DecisionArgs;
   responseField: FieldPrismaType;
   transaction: Prisma.TransactionClient;
 }): Promise<string | null> => {
-  let defaultOptionId: null | string = null;
+  const defaultOptionId: null | string =
+    decisionArgs.type !== DecisionType.Ai ? decisionArgs.defaultOptionId ?? null : null;
   let threshold: null | number = null;
   let criteria: null | string = null;
 
   // Doing these manual checks in case a decision config has settings that
   // aren't relevant to that decision type
-  if (responseField.type !== FieldType.Options) {
+  if (responseField.type !== ValueType.OptionSelections) {
     throw new GraphQLError("Option field required for decision result", {
       extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
     });
@@ -32,16 +35,13 @@ export const newDecisionConfig = async ({
     threshold = decisionArgs.threshold ?? null;
   }
 
-  if (
-    typeof decisionArgs.defaultOptionIndex === "number" &&
-    decisionArgs.type !== DecisionType.Ai
-  ) {
-    defaultOptionId =
-      responseField.FieldOptionsConfigs?.FieldOptionSet.FieldOptionSetFieldOptions.find(
-        (fo) => fo.index === decisionArgs.defaultOptionIndex,
-      )?.fieldOptionId ?? null;
+  responseField.FieldOptionsConfig;
+  if (defaultOptionId) {
+    const validDefaultOptionId = (
+      responseField.FieldOptionsConfig?.PredefinedOptionSet?.FieldOptions ?? []
+    ).some((fo) => fo.id === defaultOptionId);
 
-    if (defaultOptionId === null)
+    if (!validDefaultOptionId)
       throw new GraphQLError("Cannot find default option.", {
         extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
       });
@@ -63,6 +63,7 @@ export const newDecisionConfig = async ({
 
   const decisionConfig = await transaction.resultConfigDecision.create({
     data: {
+      resultConfigId,
       type: decisionArgs.type,
       defaultOptionId,
       threshold,

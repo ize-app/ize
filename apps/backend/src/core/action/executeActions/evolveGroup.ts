@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-import { checkEntitiesForCustomGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
+import { checkEntitiesForIzeGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
 import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -19,7 +19,16 @@ export const evolveGroup = async ({
     include: {
       Request: {
         include: {
-          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+          TriggerFieldAnswers: {
+            include: {
+              Field: true,
+              Value: {
+                include: {
+                  ValueEntities: true,
+                },
+              },
+            },
+          },
         },
       },
       Step: {
@@ -30,7 +39,7 @@ export const evolveGroup = async ({
                 include: {
                   OwnerGroup: {
                     include: {
-                      GroupCustom: true,
+                      GroupIze: true,
                     },
                   },
                 },
@@ -45,9 +54,9 @@ export const evolveGroup = async ({
     },
   });
 
-  const customGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupCustom?.id;
+  const izeGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupIze?.id;
 
-  if (!customGroupId)
+  if (!izeGroupId)
     throw new GraphQLError(`Cannot find custom group for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
@@ -67,7 +76,7 @@ export const evolveGroup = async ({
 
   /// validate members and create entity set for members ///
 
-  if (!members) {
+  if (!members || !members.Value.ValueEntities) {
     throw new GraphQLError(
       `Cannot find members field for evolveGroup, request step ${requestStepId}`,
       {
@@ -76,9 +85,9 @@ export const evolveGroup = async ({
     );
   }
 
-  const entityIds = JSON.parse(members.AnswerFreeInput[0].value) as string[];
+  const entityIds = members.Value.ValueEntities.map((entity) => entity.entityId);
 
-  await checkEntitiesForCustomGroups({
+  await checkEntitiesForIzeGroups({
     entityIds: entityIds,
     transaction,
   });
@@ -90,13 +99,13 @@ export const evolveGroup = async ({
     transaction,
   });
 
-  await transaction.groupCustom.update({
+  await transaction.groupIze.update({
     where: {
-      id: customGroupId,
+      id: izeGroupId,
     },
     data: {
-      name: name?.AnswerFreeInput[0].value ?? "",
-      description: description?.AnswerFreeInput[0].value ?? "",
+      name: name?.Value.string ?? "",
+      description: description?.Value.string ?? "",
       entitySetId: entitySetId,
     },
   });

@@ -7,17 +7,15 @@ import { default as MuiRadio } from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 
+import { Value } from "@/components/Value/Value";
+import { OptionFragment } from "@/graphql/generated/graphql";
+
 interface RadioProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
   disabled?: boolean;
-  options: OptionProps[];
+  options: OptionFragment[];
   sx: SxProps;
-}
-
-export interface OptionProps {
-  value: string;
-  label: string;
 }
 
 export const Radio = <T extends FieldValues>({
@@ -27,7 +25,10 @@ export const Radio = <T extends FieldValues>({
   disabled = false,
   ...props
 }: RadioProps<T>): JSX.Element => {
-  const { control } = useFormContext<T>();
+  const { control, watch } = useFormContext<T>();
+
+  // creating a fallback value to avoid "component switching from uncontrolled to controlled" error
+  const currentValue = watch(name) ?? "";
   return (
     <Controller
       name={name}
@@ -44,15 +45,16 @@ export const Radio = <T extends FieldValues>({
             {...props}
             row
             //   defaultValue={defaultValue}
+            value={currentValue}
             aria-labelledby="radio-buttons-group-options"
             name="row-radio-buttons-group-options"
           >
             {options.map((elem, index) => (
               <FormControlLabel
-                value={elem.value}
+                value={elem.optionId}
                 key={"option" + index.toString()}
-                control={<MuiRadio />}
-                label={elem.label}
+                control={<MuiRadio size="small" />}
+                label={<Value value={elem.value} type="option" />}
               />
             ))}
           </RadioGroup>

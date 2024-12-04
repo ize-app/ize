@@ -1,17 +1,15 @@
-import { ResultType } from "@/graphql/generated/resolver-types";
-
 import { llmSummaryListExamples } from "../examples/llmSummaryListExamples";
 
 export const createLlmSummaryPrompt = ({
-  type,
+  isList,
   summaryPrompt,
   exampleOutput,
 }: {
-  type: ResultType.LlmSummary | ResultType.LlmSummaryList;
+  isList: boolean;
   summaryPrompt: string;
   exampleOutput?: string | null;
 }): string => {
-  if (type === ResultType.LlmSummary) {
+  if (!isList) {
     const flowDefinedSummaryInstructions =
       summaryPrompt &&
       summaryPrompt.length > 8 &&

@@ -4,7 +4,7 @@ import { PermissionPrismaType } from "./permissionPrismaTypes";
 import { entityResolver } from "../entity/entityResolver";
 
 export const permissionResolver = (
-  permission: PermissionPrismaType,
+  permission: PermissionPrismaType | null,
   userIdentityIds: string[],
 ): Permission => {
   if (!permission) return { anyone: false, entities: [] };

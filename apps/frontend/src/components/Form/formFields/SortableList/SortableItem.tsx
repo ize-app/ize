@@ -3,13 +3,16 @@ import { CSS } from "@dnd-kit/utilities";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { Box, Typography } from "@mui/material";
 
+import { Value } from "@/components/Value/Value";
+import { ValueFragment } from "@/graphql/generated/graphql";
+
 export interface SortableItemProps {
   id: string;
-  label: string;
+  value: ValueFragment;
   index: number;
 }
 
-export const SortableItem = ({ id, label, index }: SortableItemProps) => {
+export const SortableItem = ({ id, value, index }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });
@@ -31,10 +34,10 @@ export const SortableItem = ({ id, label, index }: SortableItemProps) => {
       }}
     >
       <DragHandleIcon fontSize={"small"} />
-      <Typography>
-        {(index + 1).toString() + ". "}
-        {label}
-      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <Typography>{(index + 1).toString() + ". "}</Typography>
+        <Value value={value} type="option" />
+      </Box>
     </Box>
   );
 };

@@ -11,7 +11,7 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
   if (!result) return "Collaborative step";
   switch (result.type) {
     case ResultType.Decision: {
-      const decisionType = result.decision.type;
+      const decisionType = result.decision?.type;
       switch (decisionType) {
         case DecisionType.Ai:
           return "Let AI decide";
@@ -20,17 +20,20 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
         case DecisionType.PercentageThreshold:
           return "Majority vote";
         case DecisionType.WeightedAverage:
-          return "Prioritize options";
+          return "Ranked vote";
         default:
           return "Decision";
       }
     }
     case ResultType.Ranking:
       return "Prioritize into ranked list";
-    case ResultType.LlmSummary:
-      return "Summarize w/ AI";
-    case ResultType.LlmSummaryList:
-      return "Summarize options w/ AI";
+    case ResultType.LlmSummary: {
+      if (result.llmSummary && result.llmSummary.isList) return "Summarize options w/ AI";
+      else return "Summarize w/ AI";
+    }
+    case ResultType.RawAnswers:
+      return "Collect raw answers";
+
     default:
       return "Collaborative step";
   }

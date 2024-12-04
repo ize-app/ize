@@ -2,8 +2,9 @@ import { Prisma } from "@prisma/client";
 
 import {
   FieldOptionsConfigArgs,
-  FieldOptionsSelectionType,
   FieldSetArgs,
+  OptionSelectionType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -12,98 +13,138 @@ import { newOptionSet } from "./newOptionSet";
 import { prisma } from "../../prisma/client";
 import { StepPrismaType } from "../flow/flowPrismaTypes";
 
+interface FieldSetArgsBase {
+  fieldSetArgs: FieldSetArgs;
+  createdSteps: StepPrismaType[];
+  transaction: Prisma.TransactionClient;
+}
+
+interface TriggerFieldSetArgs extends FieldSetArgsBase {
+  type: "trigger";
+  flowVersionId: string;
+}
+
+interface ResponseFieldSetArgs extends FieldSetArgsBase {
+  type: "response";
+  stepId: string;
+}
+
+type NewFieldSet = TriggerFieldSetArgs | ResponseFieldSetArgs;
+
 export const newFieldSet = async ({
   fieldSetArgs,
   createdSteps,
   transaction,
-}: {
-  fieldSetArgs: FieldSetArgs;
-  createdSteps: StepPrismaType[];
-  transaction: Prisma.TransactionClient;
-}): Promise<FieldSetPrismaType | null> => {
+  ...props
+}: NewFieldSet): Promise<FieldSetPrismaType | null> => {
   const { fields, locked } = fieldSetArgs;
+  let flowVersionId: string | undefined = undefined;
+  let stepId: string | undefined = undefined;
+
+  if (props.type === "trigger") flowVersionId = props.flowVersionId;
+  else if (props.type === "response") stepId = props.stepId;
+
   if (fields.length === 0) return null;
-  const dbFields = await Promise.all(
-    fields.map(async (field) => {
-      let fieldOptionsConfigId: string | null = null;
-      if (field.optionsConfig) {
-        fieldOptionsConfigId = await createFieldOptionsConfig({
-          fieldOptionsConfigArgs: field.optionsConfig,
+
+  const fieldSet = await transaction.fieldSet.create({
+    data: {
+      flowVersionId,
+      stepId,
+      locked,
+    },
+  });
+
+  await Promise.all(
+    fields.map(async (f, fieldIndex) => {
+      const field = await transaction.field.create({
+        data: {
+          fieldSetId: fieldSet.id,
+          id: f.fieldId,
+          index: fieldIndex,
+          name: f.name,
+          type: f.type,
+          systemType: f.systemType,
+          isInternal: f.isInternal,
+          required: f.required,
+        },
+      });
+
+      if (f.type === ValueType.OptionSelections) {
+        if (!f.optionsConfig)
+          throw new GraphQLError(`Options field is missing options args`, {
+            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+          });
+        await createFieldOptionsConfig({
+          fieldId: field.id,
+          fieldOptionsConfigArgs: f.optionsConfig,
           createdSteps,
           transaction,
         });
       }
 
-      const dbField = await transaction.field.create({
-        data: {
-          name: field.name,
-          type: field.type,
-          systemType: field.systemType,
-          freeInputDataType: field.freeInputDataType,
-          isInternal: field.isInternal,
-          fieldOptionsConfigId,
-          required: field.required,
-        },
-      });
-
-      return dbField.id;
+      return;
     }),
   );
 
-  const fieldSet = await transaction.fieldSet.create({
+  return await transaction.fieldSet.findUniqueOrThrow({
+    where: { id: fieldSet.id },
     include: fieldSetInclude,
-    data: {
-      locked,
-      FieldSetFields: { createMany: { data: dbFields.map((fieldId) => ({ fieldId: fieldId })) } },
-    },
   });
-
-  return fieldSet;
 };
 
 const createFieldOptionsConfig = async ({
+  fieldId,
   fieldOptionsConfigArgs,
   createdSteps,
   transaction = prisma,
 }: {
+  fieldId: string;
   fieldOptionsConfigArgs: FieldOptionsConfigArgs;
   createdSteps: StepPrismaType[];
   transaction?: Prisma.TransactionClient;
 }): Promise<string> => {
   // if option Configs hasn't changed, just use the existing Id
-  const { selectionType, options, maxSelections, requestOptionsDataType, linkedResultOptions } =
+  const { selectionType, options, maxSelections, triggerOptionsType, linkedResultOptions } =
     fieldOptionsConfigArgs;
 
-  const optionSetId = await newOptionSet({ options, transaction });
-  const dbOptionSet = await transaction.fieldOptionsConfig.create({
+  linkedResultOptions.map((linkedResultConfigId) => {
+    // validating that resultConfigId exists in the flow
+    let hasLinkedResult = false;
+    for (const step of createdSteps) {
+      const foundMatch = (step.ResultConfigSet?.ResultConfigs ?? []).find((rc) => {
+        return rc.id === linkedResultConfigId;
+      });
+      if (foundMatch) {
+        hasLinkedResult = true;
+        break;
+      }
+    }
+    if (!hasLinkedResult)
+      throw new GraphQLError(`Cannot find result config`, {
+        extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
+      });
+    return linkedResultConfigId;
+  });
+
+  const optionSetId = await newOptionSet({ type: "newValues", optionsArgs: options, transaction });
+  const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
-      maxSelections:
-        selectionType === FieldOptionsSelectionType.MultiSelect
-          ? maxSelections
-          : selectionType === FieldOptionsSelectionType.Select
-            ? 1
-            : null,
-      requestOptionsDataType,
+      fieldId,
+      maxSelections: selectionType === OptionSelectionType.Rank ? maxSelections : maxSelections,
+      triggerOptionsType,
       selectionType,
-      linkedResultOptions: linkedResultOptions.map((l) => {
-        const resultConfigId =
-          createdSteps[l.stepIndex].ResultConfigSet?.ResultConfigSetResultConfigs[l.resultIndex]
-            .resultConfigId;
-        if (!resultConfigId)
-          throw new GraphQLError(`Cannot find result config`, {
-            extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
-          });
-        return resultConfigId;
-      }),
-      FieldOptionSet: optionSetId
-        ? {
-            connect: {
-              id: optionSetId,
-            },
-          }
-        : {},
+      FieldOptionsConfigLinkedResults: {
+        createMany: {
+          data: linkedResultOptions.map((linkedResultConfigId) => {
+            return {
+              resultConfigId: linkedResultConfigId,
+            };
+          }),
+        },
+      },
+      fieldOptionSetId: optionSetId,
     },
   });
 
-  return dbOptionSet.id;
+  return optionsConfig.id;
 };

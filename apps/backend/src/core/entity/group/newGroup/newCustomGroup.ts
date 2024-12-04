@@ -7,9 +7,9 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
 import { newEntitySet } from "../../newEntitySet";
-import { checkEntitiesForCustomGroups } from "../checkEntitiesForCustomGroups";
+import { checkEntitiesForIzeGroups } from "../checkEntitiesForCustomGroups";
 
-export const newCustomGroup = async ({
+export const newIzeGroup = async ({
   context,
   args,
   transaction,
@@ -20,7 +20,7 @@ export const newCustomGroup = async ({
 }): Promise<string> => {
   if (!context.currentUser) throw Error("ERROR Unauthenticated user");
 
-  await checkEntitiesForCustomGroups({
+  await checkEntitiesForIzeGroups({
     entityIds: args.inputs.members.map((entity) => entity.id),
     transaction,
   });
@@ -31,16 +31,17 @@ export const newCustomGroup = async ({
     await confirmNotificationEntity({ entityId: args.inputs.notificationEntity.id, context });
   }
 
-  const customGroupEntity = await transaction.entity.create({
+  const izeGroupEntity = await transaction.entity.create({
     select: {
       Group: true,
     },
     data: {
+      id: args.inputs.entityId,
       Group: {
         create: {
-          creatorId: context.currentUser?.id,
-          type: GroupType.GroupCustom,
-          GroupCustom: {
+          creatorEntityId: context.currentUser?.entityId,
+          type: GroupType.GroupIze,
+          GroupIze: {
             create: {
               name: args.inputs.name,
               description: args.inputs.description,
@@ -56,18 +57,18 @@ export const newCustomGroup = async ({
   await newEvolveGroupFlow({
     transaction,
     context,
-    groupEntityId: customGroupEntity.Group?.entityId as string,
-    groupId: customGroupEntity.Group?.id as string,
+    groupEntityId: izeGroupEntity.Group?.entityId as string,
+    groupId: izeGroupEntity.Group?.id as string,
     policy: args.inputs.flows.evolveGroup,
   });
 
   await newGroupWatchFlowFlow({
     transaction,
     context,
-    groupEntityId: customGroupEntity.Group?.entityId as string,
-    groupId: customGroupEntity.Group?.id as string,
+    groupEntityId: izeGroupEntity.Group?.entityId as string,
+    groupId: izeGroupEntity.Group?.id as string,
     policy: args.inputs.flows.watch,
   });
 
-  return customGroupEntity.Group?.id as string;
+  return izeGroupEntity.Group?.id as string;
 };

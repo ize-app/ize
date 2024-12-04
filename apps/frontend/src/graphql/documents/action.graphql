@@ -2,14 +2,18 @@ mutation TestWebhook($inputs: TestWebhookArgs!) {
   testWebhook(inputs: $inputs)
 }
 
-mutation CreateWebhook($inputs: CallWebhookArgs!) {
-  createWebhook(inputs: $inputs)
-}
-
 fragment ActionExecution on ActionExecution {
   actionId
   lastAttemptedAt
   status
+}
+
+fragment ActionFilter on ActionFilter {
+  resultConfigId
+  resultName
+  option {
+    ...Option
+  }
 }
 
 fragment Action on Action {
@@ -34,8 +38,8 @@ fragment Action on Action {
 fragment CallWebhook on CallWebhook {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
   webhookId
   uri
@@ -45,31 +49,32 @@ fragment CallWebhook on CallWebhook {
 fragment EvolveFlow on EvolveFlow {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }
 
 fragment TriggerStep on TriggerStep {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
+  stepId
 }
 
 fragment GroupWatchFlow on GroupWatchFlow {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }
 
 fragment EvolveGroup on EvolveGroup {
   name
   locked
-  filterOption {
-    ...Option
+  filter {
+    ...ActionFilter
   }
 }

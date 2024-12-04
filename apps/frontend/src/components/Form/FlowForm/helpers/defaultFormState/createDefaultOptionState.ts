@@ -1,9 +1,8 @@
-import { FieldDataType } from "@/graphql/generated/graphql";
+import { createInputValueFormState } from "@/components/Form/InputField/createFormState/createInputFormState";
+import { OptionSchemaType } from "@/components/Form/InputField/inputValidation";
+import { ValueType } from "@/graphql/generated/graphql";
 
-import { FieldOptionSchemaType } from "../../formValidation/fields";
-
-export const createDefaultOptionState = (): FieldOptionSchemaType => ({
+export const createDefaultOptionState = ({ type }: { type: ValueType }): OptionSchemaType => ({
   optionId: crypto.randomUUID(),
-  name: "",
-  dataType: FieldDataType.String,
+  input: createInputValueFormState({ type: "newOption", valueType: type }),
 });

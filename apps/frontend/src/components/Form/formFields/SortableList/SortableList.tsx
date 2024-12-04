@@ -1,33 +1,18 @@
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { Box, Typography } from "@mui/material";
-import {
-  ArrayPath,
-  FieldValues,
-  Path,
-  UseFormReturn,
-  useFieldArray,
-  useFormContext,
-} from "react-hook-form";
+import { Box, FormLabel } from "@mui/material";
+import { ArrayPath, FieldValues, Path, useFieldArray, useFormContext } from "react-hook-form";
+
+import { OptionFragment } from "@/graphql/generated/graphql";
 
 import { SortableItem } from "./SortableItem";
 import { TextField } from "../TextField";
-
-export interface OptionProps {
-  value: string;
-  label: string;
-}
-
-export type SampleFormData = {
-  textFields: { text: string }[];
-};
 
 interface SortableListProps<T extends FieldValues> {
   label: string;
   name: Path<T>;
   displayLabel?: boolean;
-  options: OptionProps[];
-  formMethods: UseFormReturn<T>;
+  options: OptionFragment[];
 }
 
 // step one: create formState and lose useEffect
@@ -39,7 +24,7 @@ export const SortableList = <T extends FieldValues>({
   label,
 }: SortableListProps<T>) => {
   const { control } = useFormContext<T>();
-  const { fields, move } = useFieldArray({
+  const { fields, move } = useFieldArray<T>({
     control,
     name: name as ArrayPath<T>,
   });
@@ -59,33 +44,40 @@ export const SortableList = <T extends FieldValues>({
       }}
     >
       <SortableContext items={fields}>
-        <Typography>{label}</Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {fields.map((field, index) => {
-            const label =
-              options.find((o) => {
-                // @ts-expect-error //@ts-expect-error TODO unclear why this error is happening
-                return field.optionId === o.value;
-              })?.label ?? "";
+        <Box>
+          {/* <Typography>{label}</Typography> */}
+          {label ? (
+            <FormLabel component="legend" id="radio-buttons-group-options">
+              {label}
+            </FormLabel>
+          ) : null}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {fields.map((field, index) => {
+              const option = options.find((o) => {
+                //@ts-expect-error TODO unclear why this error is happening
+                return field.optionId === o.optionId;
+              });
+              if(!option) return null;
 
-            return (
-              <Box key={field.id}>
-                <TextField<T>
-                  //@ts-expect-error TODO unclear why this error is happening
-                  name={`${name}.${index}.optionId`}
-                  control={control}
-                  sx={{ display: "none" }}
-                  showLabel={false}
-                  label={`Option ID - ignore`}
-                  variant="standard"
-                  disabled={true}
-                  size="small"
-                />
+              return (
+                <Box key={field.id}>
+                  <TextField<T>
+                    //@ts-expect-error TODO unclear why this error is happening
+                    name={`${name}.${index}.optionId`}
+                    control={control}
+                    sx={{ display: "none" }}
+                    showLabel={false}
+                    label={`Option ID - ignore`}
+                    variant="standard"
+                    disabled={true}
+                    size="small"
+                  />
 
-                <SortableItem id={field.id} label={label} index={index} />
-              </Box>
-            );
-          })}
+                  <SortableItem id={field.id} value={option.value} index={index} />
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
       </SortableContext>
     </DndContext>

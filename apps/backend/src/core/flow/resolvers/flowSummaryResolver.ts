@@ -41,7 +41,7 @@ export const flowSummaryResolver = ({
     name: getFlowName({
       flowName: flow.CurrentFlowVersion.name,
       flowType: flow.type,
-      ownerGroupName: flow.OwnerGroup?.GroupCustom?.name,
+      ownerGroupName: flow.OwnerGroup?.GroupIze?.name,
     }),
     isWatched: context.currentUser
       ? isWatchedFlowSummary({ flowSummary: flow, user: context.currentUser })

@@ -28,6 +28,7 @@ type ContextType<FormState> = {
   setFormState: Dispatch<SetStateAction<FormState>>;
   onNext: () => void;
   onPrev: () => void;
+  disableNext: boolean;
   params: Params;
   setParams: Dispatch<SetStateAction<Params>>;
   validWizardState: (formState: FormState) => boolean;
@@ -41,6 +42,8 @@ export function useWizardFormState<FormState>() {
 export function useWizard<FormState>(wizard: Wizard<FormState>) {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [disableNext, setDisableNext] = useState(false);
 
   const [formState, setFormState] = useState<FormState>(wizard.initialFormState);
 
@@ -77,7 +80,11 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
   }
 
   const onNext = isFinalStep
-    ? wizard.onComplete
+    ? async () => {
+        setDisableNext(true);
+        if (wizard?.onComplete) await wizard.onComplete();
+        setDisableNext(false);
+      }
     : nextStep
       ? () => {
           navigate(generatePath(nextStep.path, params));
@@ -97,6 +104,7 @@ export function useWizard<FormState>(wizard: Wizard<FormState>) {
     onNext,
     progressBarStep,
     nextLabel,
+    disableNext,
     formState,
     setFormState,
     title,

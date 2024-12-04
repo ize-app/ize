@@ -2,11 +2,11 @@ import { FlowType } from "@prisma/client";
 
 import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { FieldAnswer, SystemFieldType } from "@/graphql/generated/resolver-types";
+import { SystemFieldType, Value } from "@/graphql/generated/resolver-types";
 
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
 
-export type DefaultEvolveGroupValues = Partial<Record<SystemFieldType, FieldAnswer>>;
+export type DefaultEvolveGroupValues = Partial<Record<SystemFieldType, Value>>;
 
 // TODO this is janky as hell
 export const getDefaultFlowValues = async ({
@@ -26,15 +26,15 @@ export const getDefaultFlowValues = async ({
     });
     defaultValues = {
       [SystemFieldType.GroupName]: {
-        __typename: "FreeInputFieldAnswer",
+        __typename: "StringValue",
         value: group.group.name,
       },
       [SystemFieldType.GroupDescription]: {
-        __typename: "FreeInputFieldAnswer",
+        __typename: "StringValue",
         value: group.description ?? "",
       },
       [SystemFieldType.GroupMembers]: {
-        __typename: "EntitiesFieldAnswer",
+        __typename: "EntitiesValue",
         entities: group.members,
       },
     };

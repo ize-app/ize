@@ -6,7 +6,6 @@ import {
   GroupSummaryPartsFragment,
 } from "@/graphql/generated/graphql";
 
-import { ActionFilter } from "../../Action/ActionFilter";
 
 export const ConfigRequestActionPanel = ({
   action,
@@ -19,11 +18,6 @@ export const ConfigRequestActionPanel = ({
   return (
     <PanelContainer>
       <ConfigurationPanel>
-        {action.filterOption && (
-          <PanelAccordion title="Filter" hasError={false}>
-            <ActionFilter action={action} />
-          </PanelAccordion>
-        )}
         <PanelAccordion title={action.name} hasError={false}>
           <ActionExecution action={action} actionExecution={actionExecution} />
         </PanelAccordion>

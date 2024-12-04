@@ -1,62 +1,43 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { FieldAnswerFragment, FieldFragment, FieldType } from "@/graphql/generated/graphql";
+import { FieldFragment, SystemFieldType, ValueFragment } from "@/graphql/generated/graphql";
 
-import { Answer } from "./Answer";
-import { FieldOptions } from "./FieldOptions";
+import { stringifyValueType } from "../Value/stringifyValueType";
+import { Value } from "../Value/Value";
 
 // renders name of the field and answer, if it exists.
 // option fields show all options
 export const Field = ({
   field,
   fieldAnswer,
-  onlyShowSelections = false,
+  // onlyShowSelections = false,
 }: {
   field: FieldFragment;
-  fieldAnswer?: FieldAnswerFragment | undefined;
+  fieldAnswer?: ValueFragment;
   onlyShowSelections?: boolean;
 }) => {
-  switch (field.__typename) {
-    case FieldType.FreeInput: {
-      return (
-        <Box>
-          <Typography color="primary" fontSize="1rem">
-            {field.name}
-            {/* <span style={{ fontStyle: "italic" }}> ({formatDataTypeName(field.dataType)})</span> */}
-          </Typography>
-          {fieldAnswer && <Answer field={field} fieldAnswer={fieldAnswer} />}
-        </Box>
-      );
-    }
-    case FieldType.Options: {
-      const optionSelections =
-        fieldAnswer && fieldAnswer.__typename === "OptionFieldAnswer"
-          ? fieldAnswer.selections
-          : undefined;
-      return (
-        <Box>
-          <Typography color="primary" fontSize="1rem">
-            {field.name}{" "}
-            {/* <span style={{ fontStyle: "italic" }}>
-              (
-              {formatOptionSelectionType({
-                type: field.selectionType,
-                maxSelections: field.maxSelections,
-              })}
-              )
-            </span> */}
-          </Typography>
-          <FieldOptions
-            onlyShowSelections={onlyShowSelections}
-            fieldOptions={field}
-            optionSelections={optionSelections}
-            final={!!optionSelections} // TODO: revisit this
-          />
-        </Box>
-      );
-    }
-    default:
-      return null;
+  let fieldNameOverride: string | undefined = undefined;
+  if (field.systemType === SystemFieldType.EvolveFlowCurrent) {
+    fieldNameOverride = "Current flow (at the time of this request)";
   }
+  return (
+    <Box>
+      <Typography
+        sx={(theme) => ({
+          color: !fieldAnswer ? theme.palette.primary.main : theme.palette.secondary.main,
+        })}
+        fontSize={!fieldAnswer ? "1rem" : undefined}
+        variant="description"
+      >
+        {fieldNameOverride ?? field.name}{" "}
+        {!fieldAnswer && (
+          <Typography fontSize="inherit" color={"secondary"} component={"span"}>
+            ({stringifyValueType(field.type)})
+          </Typography>
+        )}
+      </Typography>
+      {fieldAnswer && <Value value={fieldAnswer} field={field} type={"fieldAnswer"} />}
+    </Box>
+  );
 };

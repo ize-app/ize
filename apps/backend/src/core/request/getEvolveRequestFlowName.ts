@@ -11,5 +11,5 @@ export const getEvolveRequestFlowName = ({
 }): string | null => {
   if (!proposedFlowVersion) return null;
   const currentProposedEvolutionFlowName = proposedFlowVersion.Flow.CurrentFlowVersion?.name;
-  return `Evolve the "${currentProposedEvolutionFlowName}" flow` ?? null;
+  return `Evolve the "${currentProposedEvolutionFlowName}" flow`;
 };

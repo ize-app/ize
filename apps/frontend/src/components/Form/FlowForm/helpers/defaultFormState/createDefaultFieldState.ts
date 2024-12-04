@@ -1,45 +1,36 @@
-import { FieldDataType, FieldOptionsSelectionType, FieldType } from "@/graphql/generated/graphql";
+import { OptionSelectionType, ValueType } from "@/graphql/generated/graphql";
 
 import { FieldSchemaType } from "../../formValidation/fields";
 
 interface DefaultFieldProps {
-  fieldType: FieldType;
-  selectionType?: FieldOptionsSelectionType;
+  type: ValueType;
+  selectionType?: OptionSelectionType;
 }
 
 export const createDefaultFieldState = (props: DefaultFieldProps): FieldSchemaType => {
-  switch (props.fieldType) {
-    case FieldType.Options: {
-      const { selectionType } = props;
-      return {
-        fieldId: crypto.randomUUID(),
-        type: FieldType.Options,
-        name: "",
-        isInternal: false,
-        required: true,
-        optionsConfig: {
-          options: [],
-          selectionType: selectionType ?? FieldOptionsSelectionType.Select,
-          previousStepOptions: false,
-          maxSelections:
-            selectionType === FieldOptionsSelectionType.MultiSelect
-              ? 3
-              : selectionType === FieldOptionsSelectionType.Select
-                ? 1
-                : null,
-          linkedResultOptions: [],
-        },
-      };
-    }
-    case FieldType.FreeInput: {
-      return {
-        fieldId: crypto.randomUUID(),
-        isInternal: false,
-        type: FieldType.FreeInput,
-        name: "",
-        required: true,
-        freeInputDataType: FieldDataType.String,
-      };
-    }
+  if (props.type === ValueType.OptionSelections) {
+    return {
+      fieldId: crypto.randomUUID(),
+      type: ValueType.OptionSelections,
+      name: "",
+      isInternal: false,
+      required: true,
+      optionsConfig: {
+        options: [],
+        maxSelections:
+          props.selectionType === OptionSelectionType.Select || !props.selectionType ? 1 : null,
+        selectionType: props.selectionType ?? OptionSelectionType.Select,
+        previousStepOptions: false,
+        linkedResultOptions: [],
+      },
+    } as FieldSchemaType;
+  } else {
+    return {
+      fieldId: crypto.randomUUID(),
+      isInternal: false,
+      type: props.type,
+      name: "",
+      required: true,
+    };
   }
 };

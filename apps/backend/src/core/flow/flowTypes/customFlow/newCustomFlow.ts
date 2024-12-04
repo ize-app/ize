@@ -27,9 +27,11 @@ export const newCustomFlow = async ({
   await createWatchFlowRequests({ flowId, entityContext });
 
   if (!args.new.reusable) {
-    const requestId = await newRequest({
+    const requestId = crypto.randomUUID();
+    await newRequest({
       args: {
         request: {
+          requestId,
           flowId: flowId,
           name: args.new.flow.requestName ?? args.new.flow.name ?? "",
           requestFields: [],

@@ -1,21 +1,24 @@
 import { GroupTelegramChat } from "@prisma/client";
 
-import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { stringifyAction } from "@/core/request/stringify/stringifyAction";
-import { stringifyResultGroups } from "@/core/request/stringify/stringifyResultGroups";
+import { createRequestUrl } from "@/core/request/createRequestUrl";
+import { Request } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
+import { createTelegramResultsString } from "./createResultNotificationString";
+
 export const sendTelegramResultsNotifications = async ({
   telegramGroups,
-  payload,
+  request,
   requestStepId,
 }: {
   telegramGroups: GroupTelegramChat[];
-  payload: RequestPayload;
+  request: Request;
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
+  const message = createTelegramResultsString({ request, requestStepId });
+  const requestUrl = createRequestUrl({ requestId: request.requestId });
   try {
     // using allSettled so that one message failure doesn't stop other messages from being sent out
     return await Promise.allSettled(
@@ -32,13 +35,6 @@ export const sendTelegramResultsNotifications = async ({
             },
           });
 
-          // only add title string if message won't be on a thread
-          const titleString = !originalMessage
-            ? `\n\n${payload.requestName} (<i>${payload.flowName}</i>)`
-            : "";
-
-          const message = `New results in Ize 👀${titleString}\n\n${stringifyResultGroups({ results: payload.results, type: "html" })}${payload.action ? `\n\n<i>⚡ Triggering action: ${stringifyAction({ action: payload.action })}</i>` : ""}`;
-
           await telegramBot.telegram.sendMessage(group.chatId.toString(), message, {
             // reply_markup: {
             //   inline_keyboard: [[{ url, text: "See request on Ize" }]],
@@ -54,7 +50,7 @@ export const sendTelegramResultsNotifications = async ({
             // if message isn't on the thread, we send link to request for context
             reply_markup: !originalMessage
               ? {
-                  inline_keyboard: [[{ url: payload.requestUrl, text: "See request on Ize" }]],
+                  inline_keyboard: [[{ url: requestUrl, text: "See request on Ize" }]],
                 }
               : undefined,
           });

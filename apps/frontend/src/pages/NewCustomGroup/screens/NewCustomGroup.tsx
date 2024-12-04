@@ -62,7 +62,7 @@ export const NewCustomGroup = () => {
     initialFormState: newCustomGroupFormFieldsDefault,
   };
 
-  const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel } =
+  const { onPrev, onNext, progressBarStep, title, formState, setFormState, nextLabel, disableNext } =
     useWizard(newCustomGroupWizard);
 
   return me ? (
@@ -75,7 +75,7 @@ export const NewCustomGroup = () => {
         progressBarSteps={NEW_CUSTOM_GROUP_PROGRESS_BAR_STEPS}
         progressBarStep={progressBarStep}
       >
-        <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel }} />
+        <Outlet context={{ formState, setFormState, onNext, onPrev, nextLabel, disableNext }} />
       </WizardContainer>
     </PageContainer>
   ) : null;

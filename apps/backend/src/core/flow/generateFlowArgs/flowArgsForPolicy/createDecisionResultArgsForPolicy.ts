@@ -1,22 +1,17 @@
 import {
   DecisionType,
   GroupFlowPolicyArgs,
-  GroupFlowPolicyType,
   ResultArgs,
   ResultType,
 } from "@/graphql/generated/resolver-types";
 
 export const createDecisionResultArgsForPolicy = ({
   policy,
+  fieldId,
 }: {
   policy: GroupFlowPolicyArgs;
-}): ResultArgs | undefined => {
-  if (
-    policy.type === GroupFlowPolicyType.GroupAutoApprove ||
-    policy.type === GroupFlowPolicyType.CreatorAutoApprove
-  )
-    return undefined;
-
+  fieldId: string;
+}): ResultArgs => {
   policy.decision?.type;
   const decisionType = policy.decision?.type ?? DecisionType.NumberThreshold;
 
@@ -24,10 +19,10 @@ export const createDecisionResultArgsForPolicy = ({
     policy.decision?.threshold ?? (decisionType === DecisionType.NumberThreshold ? 2 : 51);
 
   const resultArgs: ResultArgs = {
+    resultConfigId: crypto.randomUUID(),
+    fieldId,
     type: ResultType.Decision,
     decision: { type: decisionType, threshold },
-    responseFieldIndex: 0,
-    minimumAnswers: 1,
   };
   return resultArgs;
 };

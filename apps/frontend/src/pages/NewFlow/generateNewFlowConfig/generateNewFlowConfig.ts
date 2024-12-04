@@ -5,21 +5,18 @@ import {
   FlowWithEvolveFlowSchemaType,
   StepSchemaType,
 } from "@/components/Form/FlowForm/formValidation/flow";
-import {
-  PermissionSchemaType,
-  PermissionType,
-} from "@/components/Form/FlowForm/formValidation/permission";
+import { PermissionSchemaType } from "@/components/Form/FlowForm/formValidation/permission";
 import { ResultSchemaType } from "@/components/Form/FlowForm/formValidation/result";
-import { defaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDefaultFormValues";
+import { getDefaultStepFormValues } from "@/components/Form/FlowForm/helpers/getDefaultFormValues";
 import {
   ActionType,
   DecisionType,
   EntityType,
-  FieldOptionsSelectionType,
-  FieldType,
   FlowType,
+  OptionSelectionType,
   ResultType,
   UserSummaryPartsFragment,
+  ValueType,
 } from "@/graphql/generated/graphql";
 
 import { generateActionConfig } from "./generateActionConfig";
@@ -33,8 +30,10 @@ import {
   ActionTriggerCondition,
   FlowGoal,
   IntitialFlowSetupSchemaType,
+  PerspectiveResultType,
   Reusable,
 } from "../formValidation";
+import { getDefaultOptionSelectionType } from "./getDefaultOptionSelectionType";
 
 export const generateNewFlowConfig = ({
   config,
@@ -45,7 +44,7 @@ export const generateNewFlowConfig = ({
 }): FlowWithEvolveFlowSchemaType => {
   const permission: PermissionSchemaType = config.permission;
   const creatorPermission: PermissionSchemaType = {
-    type: PermissionType.Entities,
+    anyone: false,
     entities: creator ? [{ ...creator, __typename: EntityType.User }] : [],
   };
   let ideationStep: StepSchemaType | null = null;
@@ -56,19 +55,26 @@ export const generateNewFlowConfig = ({
   let action: ActionSchemaType | undefined = undefined;
   let step: StepSchemaType | null = null;
 
+  const stepId = crypto.randomUUID();
+  const ideationStepId = crypto.randomUUID();
+
   let flowTitle: string = "New flow";
 
   const reusable = config.reusable === Reusable.Reusable;
 
   try {
     if (
-      config.goal !== FlowGoal.AiSummary &&
+      config.goal !== FlowGoal.GetPerspectives &&
       config.optionsConfig?.linkedOptions.hasLinkedOptions &&
       config.optionsConfig?.linkedOptions.question
     ) {
       [ideationStep, ideationResult] = generateIdeaCreationStep({
+        stepId: ideationStepId,
+        nextStepId: stepId,
         permission,
         question: config.optionsConfig.linkedOptions.question,
+        useAi: config.optionsConfig.linkedOptions.useAi ?? false,
+        prompt: config.optionsConfig.linkedOptions.prompt,
       });
     }
 
@@ -76,12 +82,13 @@ export const generateNewFlowConfig = ({
       case FlowGoal.Decision: {
         // create options config
         field = generateFieldConfig({
-          type: FieldType.Options,
+          type: ValueType.OptionSelections,
           question: config.question,
-          selectionType: FieldOptionsSelectionType.Select,
+          selectionType: getDefaultOptionSelectionType(config.decision?.type),
           options: config.optionsConfig.options,
-          linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-          requestCreatedOptions: config.optionsConfig.requestCreatedOptions,
+          linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
+          triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
+          decisionType: config.decision.type,
         });
 
         flowTitle = config.question;
@@ -89,19 +96,19 @@ export const generateNewFlowConfig = ({
         result = generateResultConfig({
           type: ResultType.Decision,
           fieldId: field.fieldId,
-          decisionType: config.decisionType,
+          decision: config.decision,
         });
         break;
       }
       case FlowGoal.Prioritize: {
         // same as prioritize
         field = generateFieldConfig({
-          type: FieldType.Options,
+          type: ValueType.OptionSelections,
           question: config.question,
-          selectionType: FieldOptionsSelectionType.Rank,
+          selectionType: OptionSelectionType.Rank,
           options: config.optionsConfig.options,
-          linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-          requestCreatedOptions: config.optionsConfig.requestCreatedOptions,
+          linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
+          triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
         });
 
         flowTitle = config.question;
@@ -109,37 +116,45 @@ export const generateNewFlowConfig = ({
         result = generateResultConfig({ type: ResultType.Ranking, fieldId: field.fieldId });
         break;
       }
-      case FlowGoal.AiSummary: {
+      case FlowGoal.GetPerspectives: {
         field = generateFieldConfig({
-          type: FieldType.FreeInput,
+          type: ValueType.String,
           question: config.question,
         });
 
         flowTitle = config.question;
 
-        result = generateResultConfig({
-          type:
-            config.aiOutputType === AIOutputType.List
-              ? ResultType.LlmSummaryList
-              : ResultType.LlmSummary,
-          fieldId: field.fieldId,
-          prompt: config.prompt,
-          example: config.example,
-        });
+        if (config.result.type === PerspectiveResultType.Ai) {
+          result = generateResultConfig({
+            type: ResultType.LlmSummary,
+            isList: config.result.aiOutputType === AIOutputType.List ? true : false,
+            fieldId: field.fieldId,
+            prompt: config.result.prompt ?? "",
+          });
+        } else {
+          result = generateResultConfig({
+            type: ResultType.RawAnswers,
+            fieldId: field.fieldId,
+          });
+        }
+
         break;
       }
       case FlowGoal.TriggerWebhook: {
+        let filterResultConfigId: null | string = null;
         if (
           config.webhookTriggerCondition === ActionTriggerCondition.Decision &&
           config.optionsConfig
         ) {
           field = generateFieldConfig({
-            type: FieldType.Options,
-            question: "Select one of the following options:", //todo: this should be a question
-            selectionType: FieldOptionsSelectionType.Select,
+            type: ValueType.OptionSelections,
+            question: config.question ?? "Select one of the following options:", //todo: this should be a question
+            selectionType: getDefaultOptionSelectionType(
+              config.decision?.type ?? DecisionType.NumberThreshold,
+            ),
             options: config.optionsConfig?.options,
-            linkedResultId: ideationResult ? ideationResult?.resultId : undefined,
-            requestCreatedOptions: config.optionsConfig?.requestCreatedOptions,
+            linkedResultId: ideationResult ? ideationResult?.resultConfigId : undefined,
+            triggerDefinedOptions: config.optionsConfig.triggerDefinedOptions,
           });
 
           flowTitle = config.webhookName;
@@ -147,29 +162,40 @@ export const generateNewFlowConfig = ({
           result = generateResultConfig({
             type: ResultType.Decision,
             fieldId: field.fieldId,
-            decisionType: DecisionType.NumberThreshold,
+            decision: config.decision ?? {
+              type: DecisionType.NumberThreshold,
+              threshold: 1,
+            },
           });
+
+          filterResultConfigId = result.resultConfigId;
         }
 
         action = generateActionConfig({
           type: ActionType.CallWebhook,
           webhookName: config.webhookName,
-          filterOptionId: config.filterOptionId,
+          filterOptionId: config.filterOptionId ?? null,
+          filterResultConfigId,
         });
 
         break;
       }
     }
     step = generateStepConfig({
+      stepId,
       permission,
       responseFields: field ? [field] : [],
       result: result ? [result] : [],
       action,
     });
 
-    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    const evolve = generateEvolveConfig({
+      triggerPermission: creatorPermission,
+      respondPermission: permission,
+    });
 
     const flow: FlowSchemaType = {
+      flowVersionId: crypto.randomUUID(),
       type: FlowType.Custom,
       name: flowTitle,
       trigger: {
@@ -185,8 +211,9 @@ export const generateNewFlowConfig = ({
     return { flow, evolve, reusable };
   } catch (e) {
     console.log("Error: generateNewFlowConfig", e);
-    const anyonePermission: PermissionSchemaType = { type: PermissionType.Anyone, entities: [] };
+    const anyonePermission: PermissionSchemaType = { anyone: true, entities: [] };
     const flow = {
+      flowVersionId: crypto.randomUUID(),
       name: "",
       type: FlowType.Custom,
       fieldSet: {
@@ -196,9 +223,12 @@ export const generateNewFlowConfig = ({
       trigger: {
         permission: anyonePermission,
       },
-      steps: [defaultStepFormValues],
+      steps: [getDefaultStepFormValues()],
     };
-    const evolve = generateEvolveConfig({ permission: creatorPermission });
+    const evolve = generateEvolveConfig({
+      triggerPermission: creatorPermission,
+      respondPermission: creatorPermission,
+    });
     return { flow, evolve, reusable };
   }
 };

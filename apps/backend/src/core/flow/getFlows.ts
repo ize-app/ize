@@ -63,7 +63,7 @@ export const getFlows = async ({
                 },
                 {
                   OwnerGroup: {
-                    GroupCustom: {
+                    GroupIze: {
                       name: {
                         contains: args.searchQuery,
                         mode: "insensitive",

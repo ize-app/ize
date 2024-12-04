@@ -72,20 +72,22 @@ export const flowResolver = async ({
     fieldSet: fieldSetResolver({
       fieldSet: flowVersion.TriggerFieldSet,
       defaultValues,
+      context,
     }),
     name: getFlowName({
       flowName: flowVersion.name,
       flowType: flowVersion.Flow.type,
-      ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupCustom?.name,
+      ownerGroupName: flowVersion.Flow.OwnerGroup?.GroupIze?.name,
       flowNameOverride,
     }),
     flowsEvolvedByThisFlow: flowVersion.Flow.EvolveRightsForFlowVersions.filter(
       (fv) => fv.active && fv.Flow.type !== FlowType.Evolve,
     ).map((fv) => ({
       flowName: fv.name,
+      flowVersionId: fv.id,
       flowId: fv.Flow.id,
     })),
-    steps: flowVersion.Steps.map((step) =>
+    steps: flowVersion.Steps.sort((a, b) => a.index - b.index).map((step) =>
       stepResolver({
         step,
         userIdentityIds,
@@ -94,8 +96,9 @@ export const flowResolver = async ({
         responseFieldsCache,
         resultConfigsCache,
         ownerGroup: ownerGroup,
+        context,
       }),
-    ).sort((a, b) => a.index - b.index),
+    ),
     evolve: evolveFlow
       ? await flowResolver({
           flowVersion: evolveFlow,

@@ -4,10 +4,14 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
-import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
+import { Accordion } from "@/components/Accordion";
 import { AvatarWithName } from "@/components/Avatar";
+import { BreadCrumbItem, Breadcrumbs } from "@/components/BreadCrumbs";
 import { ConfigDiagramRequest } from "@/components/ConfigDiagram/ConfigDiagramRequest/ConfigDiagramRequest";
+import { EndRequestStepButton } from "@/components/EndRequestStepButton";
+import { TriggerDefinedOptionSets } from "@/components/Field/TriggerDefinedOptions";
 import { TriggerFieldSet } from "@/components/Field/TriggerFieldSet";
 import { ResponseForm } from "@/components/Form/ResponseForm/ResponseForm";
 import { RequestResults } from "@/components/result/Results/RequestResults";
@@ -19,30 +23,11 @@ import { colors } from "@/style/style";
 
 import { Responses } from "./Responses";
 import Loading from "../../components/Loading";
-import { GetRequestDocument, ResponseFragment } from "../../graphql/generated/graphql";
+import { GetRequestDocument } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-
-export const SectionHeader = ({ title }: { title: string }) => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "40px",
-        display: "flex",
-        alignItems: "center",
-        // outline: "1px solid rgba(0, 0, 0, 0.1)",
-        padding: "1rem",
-      }}
-    >
-      <Typography color="primary" variant="label">
-        {title}
-      </Typography>
-    </Box>
-  );
-};
 
 export const Request = () => {
   const { requestId: shortRequestId } = useParams();
@@ -53,11 +38,6 @@ export const Request = () => {
   const navigate = useNavigate();
 
   const [currentTabIndex, setTabIndex] = useState(0);
-
-  let reusable = false;
-  let acceptingNewResponses = false;
-  let userResponses: ResponseFragment[] | undefined = undefined;
-  let allowMultipleResponses: boolean = false;
 
   const { data, loading, error } = useQuery(GetRequestDocument, {
     variables: {
@@ -75,17 +55,29 @@ export const Request = () => {
 
   const request = data?.getRequest;
 
-  if (request) {
-    reusable = request.flow.reusable;
-    acceptingNewResponses = !request.requestSteps[request.currentStepIndex].status.responseFinal;
-    userResponses = request.requestSteps[request.currentStepIndex].userResponses;
-    allowMultipleResponses =
-      !!request.flow.steps[request.currentStepIndex].response?.allowMultipleResponses;
-  }
+  if (loading || !request) return <Loading />;
+  const currentStep = request.flow.steps[request.currentStepIndex];
+  const currentReqStep = request.requestSteps[request.currentStepIndex];
+
+  const reusable: boolean = request.flow.reusable;
+  const hasMinResponses =
+    (currentReqStep.answers[0]?.answers.length ?? 0) >= (currentStep.response?.minResponses ?? 0);
+  const acceptingNewResponses: boolean = !currentReqStep.status.responseFinal;
+  const userResponded = currentReqStep.userResponded;
+  const allowMultipleResponses: boolean = !!currentStep.response?.allowMultipleResponses;
+  const userIsCreator: boolean =
+    (me?.user.entityId === request?.creator.entityId ||
+      me?.identities.some((i) => i.entityId === request.creator.entityId)) ??
+    false;
+  const showManuallyEndStepButton: boolean =
+    (currentStep.response?.canBeManuallyEnded &&
+      hasMinResponses &&
+      userIsCreator &&
+      !currentReqStep?.status.responseFinal) ??
+    false;
+  const currRequestStepId: string = currentReqStep.requestStepId;
 
   console.log("request is ", request);
-
-  if (loading || !request) return <Loading />;
 
   const tabs: TabProps[] = [
     {
@@ -93,10 +85,40 @@ export const Request = () => {
       content: <ConfigDiagramRequest request={request} />,
     },
     {
+      title: "Results",
+      content: <RequestResults request={request} />,
+    },
+    {
       title: "Responses",
       content: <Responses request={request} />,
     },
   ];
+
+  const breadcrumbItems: BreadCrumbItem[] = [
+    {
+      title: request.name,
+      link: generatePath(Route.Request, {
+        requestId: fullUUIDToShort(request.requestId),
+      }),
+    },
+  ];
+
+  if (reusable)
+    breadcrumbItems.unshift(
+      { title: "Flows", link: Route.Flows.toString() },
+      {
+        title: request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : ""),
+        link: generatePath(Route.Flow, {
+          flowId: fullUUIDToShort(request.flow.flowId),
+          // Link to old version of flow if request is made from an older version
+          flowVersionId:
+            request.flow.flowVersionId !== request?.flow.currentFlowVersionId
+              ? fullUUIDToShort(request.flow.flowVersionId)
+              : null,
+        }),
+      },
+    );
+  else breadcrumbItems.unshift({ title: "Requests", link: Route.Home.toString() });
 
   return (
     <PageContainer>
@@ -104,85 +126,88 @@ export const Request = () => {
         title={"Request for " + request.flow.name}
         description={"Request for " + request.flow.name}
       />
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Breadcrumbs items={breadcrumbItems} />
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "36px" }}>
+        {/* top component */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant={"body1"} fontWeight={600} color="primary">
-            Request
-          </Typography>
-          <Typography
-            variant={"h1"}
-            marginBottom={".75rem"}
+          <Box
             sx={{
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: "4",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "36px",
+              [theme.breakpoints.down("md")]: {
+                flexDirection: "column",
+                marginLeft: 0,
+              },
             }}
           >
-            {request.name}
-          </Typography>
-          {reusable && (
-            <Typography variant={"description"} lineHeight={"24px"}>
-              <Link
-                to={generatePath(Route.Flow, {
-                  flowId: fullUUIDToShort(request.flow.flowId),
-                  // Link to old version of flow if request is made from an older version
-                  flowVersionId:
-                    request.flow.flowVersionId !== request?.flow.currentFlowVersionId
-                      ? fullUUIDToShort(request.flow.flowVersionId)
-                      : null,
-                })}
-              >
-                {request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : "")}
-              </Link>
-            </Typography>
-          )}
-          <Box sx={{ display: "flex", gap: "6px" }}>
-            <Typography variant="description" lineHeight={"24px"}>
-              Created by{"  "}
-            </Typography>
-            <AvatarWithName
-              avatar={request.creator}
-              typography="description"
-              size="14px"
-              fontSize="14px"
-            />
-            <Typography variant="description" lineHeight={"24px"}>
-              on {new Date(request.createdAt).toLocaleDateString()}
-            </Typography>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            marginTop: "36px",
-            marginBottom: "36px",
-            gap: "60px",
-          }}
-        >
-          {!!me &&
-            acceptingNewResponses &&
-            ((userResponses && userResponses.length === 0) || allowMultipleResponses) && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                outline: "1px solid rgba(0, 0, 0, 0.1)",
+                backgroundColor: "white",
+                flexGrow: 3,
+                minWidth: "300px",
+
+                padding: "12px",
+                gap: "12px",
+              }}
+            >
+              <Box>
+                <Typography
+                  variant={"h1"}
+                  sx={{
+                    margin: "0px",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "4",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {request.name}
+                </Typography>
+                <Box sx={{ display: "flex", gap: "6px" }}>
+                  <Typography variant="description" lineHeight={"24px"}>
+                    Created by{"  "}
+                  </Typography>
+                  <AvatarWithName
+                    avatar={request.creator}
+                    typography="description"
+                    size="14px"
+                    fontSize="14px"
+                  />
+                  <Typography variant="description" lineHeight={"24px"}>
+                    on {new Date(request.createdAt).toLocaleDateString()}
+                  </Typography>
+                </Box>
+              </Box>
+              {showManuallyEndStepButton && (
+                <Box sx={{}}>
+                  <EndRequestStepButton requestStepId={currRequestStepId} />
+                </Box>
+              )}
+              {request.triggerFieldAnswers.length > 0 && (
+                <Accordion label="Request context" elevation={0} defaultExpanded={true}>
+                  <TriggerFieldSet
+                    fieldSet={request.flow.fieldSet}
+                    fieldAnswers={request.triggerFieldAnswers}
+                    onlyShowSelections={true}
+                  />
+                </Accordion>
+              )}
+              <TriggerDefinedOptionSets triggerDefinedOptionSets={request.triggerDefinedOptions} />
+            </Box>
+            {!!me && acceptingNewResponses && (!userResponded || allowMultipleResponses) && (
               <Paper
                 elevation={4}
                 sx={(theme) => ({
-                  display: "block",
-                  alignSelf: "center",
-                  minWidth: "500px",
+                  flexGrow: 2,
+                  minWidth: "300px",
                   maxWidth: "800px",
                   border: `solid ${theme.palette.primary.light} 2px`,
-                  borderRadius: "8px",
                   outline: `2px solid ${colors.primaryContainer}`,
-
-                  [theme.breakpoints.down("md")]: {
-                    width: "100%",
-                    marginLeft: 0,
-                    maxWidth: "100%",
-                    minWidth: "300px",
-                  },
                 })}
               >
                 <ResponseForm
@@ -192,83 +217,10 @@ export const Request = () => {
                 />
               </Paper>
             )}
-          <Box
-            sx={(theme) => ({
-              display: "flex",
-              [theme.breakpoints.down("md")]: {
-                flexDirection: "column",
-                gap: "36px",
-              },
-              maxWidth: request.triggerFieldAnswers.length === 0 ? "700px" : undefined,
-
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-              flexGrow: 1,
-              minWidth: "300px",
-              outline: `1px solid ${theme.palette.primary.main}`,
-              padding: "16px 24px 16px 16px",
-              borderRadius: "8px",
-
-              gap: "60px",
-              backgroundColor: theme.palette.background.paper,
-            })}
-          >
-            {request.triggerFieldAnswers.length > 0 && (
-              <Box
-                sx={{
-                  [theme.breakpoints.down("md")]: {
-                    width: "100%",
-                  },
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: "300px",
-                  width: "50%",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                }}
-              >
-                <>
-                  <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                    Request context
-                  </Typography>
-                  <Box
-                    sx={{
-                      borderRadius: "8px",
-                      outline: "1.25px solid rgba(0, 0, 0, 0.1)",
-                      padding: "12px 16px 12px",
-                    }}
-                  >
-                    <TriggerFieldSet
-                      fieldSet={request.flow.fieldSet}
-                      fieldAnswers={request.triggerFieldAnswers}
-                      onlyShowSelections={true}
-                    />
-                  </Box>
-                </>
-              </Box>
-            )}
-            <Box
-              sx={{
-                [theme.breakpoints.down("md")]: {
-                  width: "100%",
-                },
-                flexGrow: 1,
-                display: "flex",
-                flexDirection: "column",
-                minWidth: "300px",
-                wordBreak: "break-word",
-                width: request.triggerFieldAnswers.length > 0 ? "50%" : "100%",
-              }}
-            >
-              <Typography color="primary" variant="label" fontSize="1rem" marginBottom="12px">
-                Results
-              </Typography>
-              <RequestResults request={request} />
-            </Box>
           </Box>
         </Box>
-        <Box>
+
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}

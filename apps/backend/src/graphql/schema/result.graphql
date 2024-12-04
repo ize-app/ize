@@ -1,30 +1,40 @@
+enum ResultGroupStatus {
+  NotStarted
+  Preliminary
+  Attempting
+  Error
+  FinalResult
+  FinalNoResult
+}
+
 type ResultGroup {
   id: String!
   createdAt: String!
   resultConfigId: String!
-  hasResult: Boolean!
+  complete: Boolean!
+  status: ResultGroupStatus!
   results: [Result!]!
 }
 
 type Result {
+  id: String!
   name: String!
+  type: ResultType!
   resultItems: [ResultItem!]!
 }
 
 type ResultItem {
   id: String!
-  dataType: FieldDataType!
-  value: String!
+  value: Value!
   optionId: String
 }
 
-union ResultConfig = Decision | Ranking | LlmSummary | LlmSummaryList
+union ResultConfig = Decision | Ranking | LlmSummary | RawAnswers
 
 type Decision {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   criteria: String
   decisionType: DecisionType!
   defaultOption: Option
@@ -35,7 +45,6 @@ type Ranking {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   numOptionsToInclude: Int
 }
 
@@ -43,18 +52,14 @@ type LlmSummary {
   resultConfigId: String!
   name: String!
   field: Field!
-  minimumAnswers: Int!
   prompt: String!
-  example: String
+  isList: Boolean!
 }
 
-type LlmSummaryList {
+type RawAnswers {
   resultConfigId: String!
-  field: Field!
   name: String!
-  minimumAnswers: Int!
-  prompt: String!
-  example: String
+  field: Field!
 }
 
 # mirrors Prisma type
@@ -62,7 +67,7 @@ enum ResultType {
   Decision
   Ranking
   LlmSummary
-  LlmSummaryList
+  RawAnswers
 }
 
 # mirrors Prisma type
@@ -73,17 +78,10 @@ enum DecisionType {
   Ai
 }
 
-enum LlmSummaryType {
-  AfterEveryResponse
-  AtTheEnd
-}
-
 input ResultArgs {
   type: ResultType!
-  resultId: String
-  fieldId: String
-  minimumAnswers: Int
-  responseFieldIndex: Int!
+  resultConfigId: String!
+  fieldId: String!
   decision: DecisionArgs
   prioritization: PrioritizationArgs
   llmSummary: LlmSummaryArgs
@@ -91,7 +89,7 @@ input ResultArgs {
 
 input DecisionArgs {
   type: DecisionType!
-  defaultOptionIndex: Int
+  defaultOptionId: String
   criteria: String
   threshold: Int
 }
@@ -102,5 +100,5 @@ input PrioritizationArgs {
 
 input LlmSummaryArgs {
   prompt: String!
-  example: String
+  isList: Boolean!
 }

@@ -1,10 +1,9 @@
-import { Prisma } from "@prisma/client";
+import { ActionType, Prisma } from "@prisma/client";
 
 import { createRequestDefinedOptionSet } from "@/core/request/createRequestDefinedOptionSet";
 import { requestInclude } from "@/core/request/requestPrismaTypes";
 import { canEndRequestStepWithResponse } from "@/core/request/utils/endRequestStepWithoutResponse";
 import { ResultPrismaType } from "@/core/result/resultPrismaTypes";
-import { FieldDataType, FieldOptionArgs } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { ExecuteActionReturn } from "./executeAction";
@@ -37,7 +36,15 @@ export const triggerNextStep = async ({
 
   const nextStepIndex = reqData.Step.index + 1;
 
-  const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
+  const currStep = reqData.Request.FlowVersion.Steps.find((s) => s.id === reqData.Step.id);
+  // once we implement multiple actions per step, this will need to be updated
+  const nextStepId = currStep?.ActionConfigSet?.ActionConfigs.find(
+    (ac) => ac.type === ActionType.TriggerStep,
+  )?.ActionConfigTriggerStep?.stepId;
+  const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.id === nextStepId);
+
+  // maybe add this back as a second check until we get multiple steps?
+  // const nextStep = reqData.Request.FlowVersion.Steps.find((s) => s.index === nextStepIndex);
 
   if (!nextStep) {
     throw new GraphQLError(
@@ -51,13 +58,13 @@ export const triggerNextStep = async ({
   }
 
   const responseComplete = canEndRequestStepWithResponse({ step: nextStep });
-  // trigger the next step if it exists
+
   const nextRequestStep = await transaction.requestStep.create({
     data: {
       expirationDate: new Date(
         new Date().getTime() + (nextStep.ResponseConfig?.expirationSeconds ?? 0) * 1000,
       ),
-      responseFinal: responseComplete,
+      responseFinal: false,
       Request: {
         connect: {
           id: reqData.requestId,
@@ -73,15 +80,22 @@ export const triggerNextStep = async ({
           id: reqData.requestId,
         },
       },
+      TriggeredByRequestStep: {
+        connect: {
+          id: requestStepId,
+        },
+      },
+      // triggeredByRequestStepId: requestStepId,
     },
   });
 
-  // create a map with an object of resultConfigId and fieldId as the key and options args as the value
-  const linkedResults = new Map<{ resultConfigId: string; fieldId: string }, FieldOptionArgs[]>();
+  const linkedResults = new Map<{ resultConfigId: string; fieldId: string }, string[]>();
 
-  nextStep.FieldSet?.FieldSetFields.forEach((f) => {
-    const linkedResultConfigIds = f.Field.FieldOptionsConfigs?.linkedResultOptions;
-    if (linkedResultConfigIds && linkedResultConfigIds.length > 0) {
+  (nextStep.ResponseFieldSet?.Fields ?? []).forEach((f) => {
+    const linkedResultConfigIds = (f.FieldOptionsConfig?.FieldOptionsConfigLinkedResults ?? []).map(
+      (r) => r.resultConfigId,
+    );
+    if (linkedResultConfigIds.length > 0) {
       linkedResultConfigIds.forEach((resultConfigId) => {
         let result: ResultPrismaType | undefined = undefined;
 
@@ -98,26 +112,20 @@ export const triggerNextStep = async ({
         // tbd if should throw an error
         if (!result) return;
 
-        const newOptionArgs: FieldOptionArgs[] = result.ResultItems.map((ri) => {
-          return {
-            dataType: ri.dataType as unknown as FieldDataType,
-            name: ri.value,
-          };
-        });
+        const newOptionArgs: string[] = result.ResultItems.map((ri) => ri.valueId);
 
-        linkedResults.set({ resultConfigId, fieldId: f.Field.id }, newOptionArgs);
+        linkedResults.set({ resultConfigId, fieldId: f.id }, newOptionArgs);
       });
     }
   });
 
   await Promise.all(
-    Array.from(linkedResults.entries()).map(async ([{ fieldId }, optionArgs]) => {
+    Array.from(linkedResults.entries()).map(async ([{ fieldId }, valueIds]) => {
       return await createRequestDefinedOptionSet({
-        flowVersion: reqData.Request.FlowVersion,
+        type: "result",
         requestId: reqData.requestId,
-        newOptionArgs: optionArgs,
+        valueIds,
         fieldId,
-        isTriggerDefinedOptions: false,
         transaction,
       });
     }),
@@ -132,8 +140,10 @@ export const triggerNextStep = async ({
     },
   });
 
+  // note: not running results or finalizing responses on request step in this function
+  // because we don't want to create nested transactions
   return {
-    runResultsForNextStep: responseComplete,
+    responseComplete: responseComplete,
     nextRequestStepId: nextRequestStep.id,
   };
 };

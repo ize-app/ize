@@ -1,3 +1,5 @@
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { SxProps } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
@@ -7,19 +9,20 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
 import { Controller, FieldValues, Path, useFormContext, useWatch } from "react-hook-form";
 
-import { OptionSelectionSchemaType, OptionSelectionsSchemaType } from "../formValidation/field";
+import { Value } from "@/components/Value/Value";
+import { OptionFragment } from "@/graphql/generated/graphql";
+
+import {
+  OptionSelectionValueSchemaType,
+  OptionSelectionValuesSchemaType,
+} from "../InputField/inputValidation";
 
 interface MultiSelectProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
   disabled?: boolean;
-  options: OptionProps[];
+  options: OptionFragment[];
   sx: SxProps;
-}
-
-export interface OptionProps {
-  value: string;
-  label: string;
 }
 
 export const MultiSelect = <T extends FieldValues>({
@@ -36,20 +39,20 @@ export const MultiSelect = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field: { ref, value, onChange, ...inputProps }, fieldState: { error } }) => {
-        const handleChange = (value: OptionProps) => {
-          const newArray: OptionSelectionsSchemaType = [...selectedOptions];
+        const handleChange = (value: OptionFragment) => {
+          const newArray: OptionSelectionValuesSchemaType = [...selectedOptions];
           const item = value;
 
           if (newArray.length > 0) {
-            const index = newArray.findIndex((x) => x.optionId === item.value);
+            const index = newArray.findIndex((x) => x.optionId === item.optionId);
 
             if (index === -1) {
-              newArray.push({ optionId: item.value });
+              newArray.push({ optionId: item.optionId });
             } else {
               newArray.splice(index, 1);
             }
           } else {
-            newArray.push({ optionId: item.value });
+            newArray.push({ optionId: item.optionId });
           }
 
           onChange(newArray);
@@ -70,17 +73,20 @@ export const MultiSelect = <T extends FieldValues>({
                     <Checkbox
                       //eslint-disable-next-line
                       checked={value?.some(
-                        (checked: OptionSelectionSchemaType) => checked.optionId === option.value,
+                        (checked: OptionSelectionValueSchemaType) =>
+                          checked.optionId === option.optionId,
                       )}
+                      checkedIcon={<CheckCircleIcon fontSize="small" />}
+                      icon={<RadioButtonUncheckedIcon fontSize="small" />}
                       {...inputProps}
                       inputRef={ref}
-                      key={"checkbox-" + option.value}
+                      key={"checkbox-" + option.optionId}
                       onChange={() => handleChange(option)}
                       disabled={rest?.disabled}
                     />
                   }
-                  label={<p className="body2">{option.label}</p>}
-                  key={option.value}
+                  label={<Value value={option.value} type="option" />}
+                  key={option.optionId}
                 />
               ))}
             </FormGroup>

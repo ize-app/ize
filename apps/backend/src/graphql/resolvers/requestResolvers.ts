@@ -1,5 +1,5 @@
 import { getRequest as getRequestService } from "@/core/request/getRequest";
-import { getRequestSummaries as getRequestSummariesService } from "@/core/request/getRequestSteps";
+import { getRequestSummaries as getRequestSummariesService } from "@/core/request/getRequestSummaries";
 import { newEvolveRequest as newEvolveRequestService } from "@/core/request/newEvolveRequest";
 import { newRequest as newRequestService } from "@/core/request/newRequest";
 import { newResponse as newResponseService } from "@/core/response/newResponse";
@@ -17,7 +17,7 @@ import {
   RequestSummary,
 } from "@graphql/generated/resolver-types";
 
-import { endRequestStep as endRequestStepService } from "@/core/request/endRequestStep";
+import { endRequestStep as endRequestStepService } from "@/core/request/updateState/endRequestStep";
 
 import { GraphqlRequestContext } from "../context";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
@@ -73,7 +73,7 @@ const getRequests: QueryResolvers["getRequests"] = async (
   args: QueryGetRequestsArgs,
   context: GraphqlRequestContext,
 ): Promise<RequestSummary[]> => {
-  return await getRequestSummariesService({ args, user: context.currentUser });
+  return await getRequestSummariesService({ args, context });
 };
 
 const newResponse: MutationResolvers["newResponse"] = async (

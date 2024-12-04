@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { AvatarWithName } from "@/components/Avatar";
 import { FieldFragment, UserFieldAnswerFragment } from "@/graphql/generated/graphql";
 
-import { Answer } from "./Answer";
+import { Value } from "../Value/Value";
 
 export const UserFieldAnswer = ({
   userFieldAnswer,
@@ -21,7 +21,7 @@ export const UserFieldAnswer = ({
           {createdAt}
         </Typography>
       </Box>
-      <Answer field={field} fieldAnswer={userFieldAnswer.answer} />
+      <Value value={userFieldAnswer.answer} field={field} type={"fieldAnswer"} />
     </Box>
   );
 };

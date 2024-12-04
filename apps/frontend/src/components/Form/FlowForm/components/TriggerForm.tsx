@@ -20,7 +20,7 @@ export const TriggerForm = ({ show, isReusable }: TriggerFormProps) => {
     <Box sx={{ display: show ? "block" : "none" }}>
       {isReusable ? (
         <>
-          <PanelAccordion title="Permission" hasError={!!permissionsError}>
+          <PanelAccordion title="Permissions" hasError={!!permissionsError}>
             <PermissionForm<FlowSchemaType> fieldName={`trigger.permission`} branch={"request"} />
           </PanelAccordion>
           <PanelAccordion title="Request fields" hasError={!!fieldsError?.fields}>

@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 
+import { valueInclude } from "../value/valuePrismaTypes";
+
 export const resultConfigDecisionInclude = Prisma.validator<Prisma.ResultConfigDecisionInclude>()(
   {},
 );
@@ -37,12 +39,8 @@ export type ResultConfigPrismaType = Prisma.ResultConfigGetPayload<{
 }>;
 
 export const resultConfigSetInclude = Prisma.validator<Prisma.ResultConfigSetInclude>()({
-  ResultConfigSetResultConfigs: {
-    include: {
-      ResultConfig: {
-        include: resultConfigInclude,
-      },
-    },
+  ResultConfigs: {
+    include: resultConfigInclude,
   },
 });
 
@@ -52,8 +50,12 @@ export type ResultConfigSetPrismaType = Prisma.ResultConfigSetGetPayload<{
 
 export const resultInclude = Prisma.validator<Prisma.ResultInclude>()({
   ResultItems: {
-    // heighest weight = highest preference
-    orderBy: { weight: "desc" },
+    include: {
+      Value: {
+        include: valueInclude,
+      },
+    },
+    orderBy: { index: "asc" },
   },
 });
 

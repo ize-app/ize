@@ -1,13 +1,12 @@
 import {
   ActionType,
   DecisionType,
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FieldType,
   FlowType,
   NewFlowArgs,
+  OptionSelectionType,
   PermissionArgs,
   ResultType,
+  ValueType,
 } from "@/graphql/generated/resolver-types";
 
 export enum FlowConfigGeneration {
@@ -34,7 +33,9 @@ export const generateNonreusableFlowConfig = ({
 
   switch (type) {
     case FlowConfigGeneration.Synthesize: {
+      const responseFieldId = crypto.randomUUID();
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Synthesize group perspectives",
 
@@ -48,15 +49,15 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
-                  type: FieldType.FreeInput,
+                  fieldId: responseFieldId,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -66,13 +67,14 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
+                resultConfigId: crypto.randomUUID(),
                 type: ResultType.LlmSummary,
-                responseFieldIndex: 0,
-                minimumAnswers: 2,
-                llmSummary: { prompt: "", example: "" },
+                fieldId: responseFieldId,
+                llmSummary: { prompt: "", isList: false },
               },
             ],
             action: undefined,
@@ -81,7 +83,9 @@ export const generateNonreusableFlowConfig = ({
       };
     }
     case FlowConfigGeneration.Ideate: {
+      const responseFieldId = crypto.randomUUID();
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
 
@@ -95,15 +99,15 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
-                  type: FieldType.FreeInput,
+                  fieldId: responseFieldId,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -113,13 +117,14 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
-                type: ResultType.LlmSummaryList,
-                responseFieldIndex: 0,
-                minimumAnswers: 2,
-                llmSummary: { prompt: "", example: "" },
+                resultConfigId: crypto.randomUUID(),
+                type: ResultType.LlmSummary,
+                fieldId: responseFieldId,
+                llmSummary: { prompt: "", isList: true },
               },
             ],
             action: undefined,
@@ -128,7 +133,11 @@ export const generateNonreusableFlowConfig = ({
       };
     }
     case FlowConfigGeneration.LetAiDecide: {
+      const step1ResponseFieldId = crypto.randomUUID();
+      const step2ResponseFieldId = crypto.randomUUID();
+      const step1ResultId = crypto.randomUUID();
       return {
+        flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
 
@@ -137,27 +146,26 @@ export const generateNonreusableFlowConfig = ({
         fieldSet: {
           fields: [
             {
-              fieldId: "",
-              type: FieldType.FreeInput,
+              fieldId: crypto.randomUUID(),
+              type: ValueType.String,
               name: prompt,
               isInternal: false,
               required: true,
-              freeInputDataType: FieldDataType.String,
             },
           ],
           locked: false,
         },
         steps: [
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
-                  type: FieldType.FreeInput,
+                  fieldId: step1ResponseFieldId,
+                  type: ValueType.String,
                   name: prompt,
                   isInternal: false,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                 },
               ],
               locked: false,
@@ -167,32 +175,32 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: true,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
-                type: ResultType.LlmSummaryList,
-                responseFieldIndex: 0,
-                minimumAnswers: 2,
-                llmSummary: { prompt: "", example: "" },
+                resultConfigId: step1ResultId,
+                type: ResultType.LlmSummary,
+                fieldId: step1ResponseFieldId,
+                llmSummary: { prompt: "", isList: true },
               },
             ],
             action: { type: ActionType.TriggerStep, locked: false },
           },
           {
+            stepId: crypto.randomUUID(),
             fieldSet: {
               fields: [
                 {
-                  fieldId: "",
-                  type: FieldType.Options,
+                  fieldId: step2ResponseFieldId,
+                  type: ValueType.OptionSelections,
                   name: prompt,
                   isInternal: true,
                   required: true,
-                  freeInputDataType: FieldDataType.String,
                   optionsConfig: {
                     options: [],
-                    previousStepOptions: true,
-                    selectionType: FieldOptionsSelectionType.Select,
-                    linkedResultOptions: [{ stepIndex: 0, resultIndex: 0 }],
+                    selectionType: OptionSelectionType.None,
+                    linkedResultOptions: [step1ResultId],
                   },
                 },
               ],
@@ -203,13 +211,13 @@ export const generateNonreusableFlowConfig = ({
               expirationSeconds,
               allowMultipleResponses: false,
               canBeManuallyEnded,
+              minResponses: 1,
             },
             result: [
               {
+                resultConfigId: crypto.randomUUID(),
                 type: ResultType.Decision,
-                responseFieldIndex: 0,
-                minimumAnswers: 0,
-
+                fieldId: step2ResponseFieldId,
                 decision: { type: DecisionType.Ai },
               },
             ],

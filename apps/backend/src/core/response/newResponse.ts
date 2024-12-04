@@ -8,8 +8,9 @@ import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext"
 import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { getEntityPermissions } from "../permission/getEntityPermissions";
-import { checkIfEarlyResult } from "../result/checkIfEarlyResult";
-import { runResultsAndActions } from "../result/newResults/runResultsAndActions";
+import { finalizeStepResponses } from "../request/updateState/finalizeStepResponses";
+import { checkToEndResponseEarly } from "../result/checkIfEarlyResult";
+import { newResultsForStep } from "../result/newResults/newResultsForStep";
 import { watchFlow } from "../user/watchFlow";
 
 interface NewResponseProps {
@@ -68,8 +69,8 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
       );
 
     if (
-      !requestStep.Step.FieldSet ||
-      requestStep.Step.FieldSet.FieldSetFields.every((f) => f.Field.isInternal)
+      !requestStep.Step.ResponseFieldSet ||
+      requestStep.Step.ResponseFieldSet.Fields.every((f) => f.isInternal)
     )
       throw new GraphQLError(
         `Response received for request step that does not have response fields ${requestStepId}`,
@@ -121,13 +122,15 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
 
     const newResponse = await transaction.response.create({
       data: {
+        id: args.response.responseId,
         creatorEntityId: entityId,
         requestStepId,
       },
     });
 
     await newFieldAnswers({
-      fieldSet: requestStep.Step.FieldSet,
+      type: "response",
+      fieldSet: requestStep.Step.ResponseFieldSet,
       fieldAnswers: answers,
       requestDefinedOptionSets: requestStep.Request.RequestDefinedOptionSets,
       responseId: newResponse.id,
@@ -145,12 +148,15 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
     return newResponse.id;
   });
 
-  if (await checkIfEarlyResult({ requestStepId })) {
-    // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
-    // there is cron job to rerun stalled actions / results
-    await runResultsAndActions({
-      requestStepId,
-    });
+  // perliminary results are determined after every response
+  // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
+  // there is cron job to rerun stalled actions / results
+  await newResultsForStep({ requestStepId });
+
+  const hasEarlyResult = await checkToEndResponseEarly({ requestStepId });
+
+  if (hasEarlyResult) {
+    await finalizeStepResponses({ requestStepId });
   }
 
   return responseId;

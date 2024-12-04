@@ -32,9 +32,9 @@ export const NewRequestWizard = () => {
       setSnackbarData({ message: "Request created!", type: "success" });
     },
     onError: (data) => {
-      if (data.graphQLErrors[0].extensions.code === "InsufficientPermissions") {
+      if (data.graphQLErrors[0]?.extensions?.code === "InsufficientPermissions") {
         setIdentityModalState({ type: "request", permission: undefined });
-      } else if (data.graphQLErrors[0].extensions.code === "Unauthenticated") {
+      } else if (data.graphQLErrors[0]?.extensions?.code === "Unauthenticated") {
         setAuthModalOpen(true);
       }
       setSnackbarOpen(true);
@@ -44,9 +44,10 @@ export const NewRequestWizard = () => {
 
   const onComplete = async () => {
     try {
-      // console.log("args are", createNewRequestMutationArgs(formState));
+      const args = createNewRequestMutationArgs(formState);
+      // console.log("args are", args);
       await mutate({
-        variables: { request: await createNewRequestMutationArgs(formState) },
+        variables: { request: args },
       });
     } catch (e) {
       console.log("ERROR: ", e);
@@ -69,6 +70,7 @@ export const NewRequestWizard = () => {
     nextLabel,
     params,
     setParams,
+    disableNext,
   } = useWizard(newRequestWizard);
 
   formState;
@@ -94,6 +96,7 @@ export const NewRequestWizard = () => {
             nextLabel,
             params,
             setParams,
+            disableNext,
           }}
         />
       </WizardContainer>

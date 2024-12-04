@@ -1,6 +1,6 @@
-import { RequestPayload } from "@/core/request/createRequestPayload/createRequestPayload";
-import { ResultType } from "@/graphql/generated/resolver-types";
+import { getRequestByRequestStepId } from "@/core/request/getRequestByRequestStepId";
 
+import { getFieldForRequestConfigId } from "./getFieldForRequestConfigId";
 import { openAiClient } from "./openAiClient";
 import { createIzeSystemPrompt } from "./prompt/createIzeSystemPrompt";
 import { createLlmSummaryPrompt } from "./prompt/createLlmSummaryPrompt";
@@ -8,16 +8,22 @@ import { createRequestContextPrompt } from "./prompt/createRequestContextPrompt"
 import { createResponsesPrompt } from "./prompt/createResponsesPrompt";
 
 export const generateAiSummary = async ({
-  requestPayload,
+  requestStepId,
   summaryPrompt,
   exampleOutput,
-  type,
+  isList,
+  resultConfigId,
 }: {
-  requestPayload: RequestPayload;
+  requestStepId: string;
   summaryPrompt: string;
   exampleOutput?: string | null;
-  type: ResultType.LlmSummary | ResultType.LlmSummaryList;
+  resultConfigId: string;
+  isList: boolean;
 }): Promise<string[]> => {
+  const request = await getRequestByRequestStepId({ requestStepId });
+
+  const field = getFieldForRequestConfigId({ request, requestStepId, resultConfigId });
+
   const completion = await openAiClient.chat.completions.create({
     model: "gpt-4o", //"gpt-4", //gpt-3.5-turbo
     messages: [
@@ -25,17 +31,17 @@ export const generateAiSummary = async ({
         role: "system",
         content: createIzeSystemPrompt(),
       },
-      { role: "user", content: createRequestContextPrompt({ requestPayload }) },
+      { role: "user", content: createRequestContextPrompt({ request, requestStepId }) },
       {
         role: "user",
-        content: createResponsesPrompt({ fieldAnswers: requestPayload.fieldAnswers ?? [] }),
+        content: createResponsesPrompt({ request, fieldId: field.fieldId }),
       },
-      { role: "user", content: createLlmSummaryPrompt({ type, summaryPrompt, exampleOutput }) },
+      { role: "user", content: createLlmSummaryPrompt({ isList, summaryPrompt, exampleOutput }) },
     ],
-    response_format: { type: type === ResultType.LlmSummaryList ? "json_object" : "text" },
+    response_format: { type: isList ? "json_object" : "text" },
   });
   const message = completion.choices[0].message.content ?? "";
-  const value = type === ResultType.LlmSummaryList ? extractJsonArray(message) : [message];
+  const value = isList ? extractJsonArray(message) : [message];
   if (value.length === 0) throw new Error("Empty response from AI");
   return value;
 };
@@ -44,17 +50,17 @@ export const generateAiSummary = async ({
 // this parsing function handles both the desired output and situations where the AI doesn't return the desired format
 /* eslint-disable */
 const extractJsonArray = (json: string): string[] => {
-  try {
-    const parsed = JSON.parse(json);
-    if (Array.isArray(parsed)) return parsed;
-    else if (parsed.items) {
-      if (Array.isArray(parsed.items)) return parsed.items;
-      else return [parsed.items];
-    } else {
-      return [Object.keys(parsed)[0]];
-    }
-  } catch (e) {
-    return [json];
+  // try {
+  const parsed = JSON.parse(json);
+  if (Array.isArray(parsed)) return parsed;
+  else if (parsed.items) {
+    if (Array.isArray(parsed.items)) return parsed.items;
+    else return [parsed.items];
+  } else {
+    return [Object.keys(parsed)[0]];
   }
+  // } catch (e) {
+  //   return [json];
+  // }
 };
 /* eslint-enable */

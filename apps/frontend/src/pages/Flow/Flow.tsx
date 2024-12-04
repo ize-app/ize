@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
+import { Breadcrumbs } from "@/components/BreadCrumbs";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import TabPanel from "@/components/Tables/TabPanel";
 import { TabProps, Tabs } from "@/components/Tables/Tabs";
@@ -66,16 +67,18 @@ export const Flow = () => {
     },
   ];
 
-  if (flow && flow.evolve)
+  if (flowLoading || !flow) return <Loading />;
+
+  if (flow.evolve)
     tabs.push({
       title: "Evolve flow",
       content: <ConfigDiagramFlow flow={flow.evolve} />,
     });
 
-  const isCurrentFlowVersion = flow ? flow.flowVersionId === flow.currentFlowVersionId : true;
-  const isDraft = flow ? !flow.active && !flow.versionPublishedAt : false;
-  const isOldVersion = flow ? !flow.active && flow.versionPublishedAt : false;
-  const isEvolveFlow = (flow && flow.type === FlowType.Evolve) ?? false;
+  const isCurrentFlowVersion = flow.flowVersionId === flow.currentFlowVersionId;
+  const isDraft = !flow.active && !flow.versionPublishedAt;
+  const isOldVersion = !flow.active && flow.versionPublishedAt;
+  const isEvolveFlow = flow.type === FlowType.Evolve;
 
   const onError = () => {
     navigate("/");
@@ -85,69 +88,109 @@ export const Flow = () => {
 
   if (processError) onError();
 
-  return flowLoading || !flow ? (
-    <Loading />
-  ) : (
+  const breadCrumbItems = [
+    { title: "Flows", link: Route.Flows.toString() },
+    {
+      title: flow.name + (flow.group ? ` (${flow.group.name})` : ""),
+      link: generatePath(Route.Flow, {
+        flowId: fullUUIDToShort(flow.flowId),
+        // Link to old version of flow if request is made from an older version
+        flowVersionId:
+          flow.flowVersionId !== flow.currentFlowVersionId
+            ? fullUUIDToShort(flow.flowVersionId)
+            : null,
+      }),
+    },
+  ];
+
+  return (
     <PageContainer>
       <Head title={flow.name} description={""} />
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box>
-            <Typography variant={"body1"} fontWeight={600} color="primary">
-              Flow
+      <Breadcrumbs items={breadCrumbItems} />
+      {/* manages top component, flow diagram, request search */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {/* top component */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            outline: "1px solid rgba(0, 0, 0, 0.1)",
+            backgroundColor: "white",
+            flexGrow: 1,
+            padding: "12px",
+            paddingBottom: "36px",
+            // gap: "12px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            <Typography variant={"h1"} margin="8px 0px">
+              {flow.name}
             </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              <Typography variant={"h1"} margin="8px 0px">
-                {flow.name}
-              </Typography>
 
-              <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
-            </Box>
-            {flow.group && (
-              <Typography variant="description" lineHeight={"24px"}>
-                Modifies{" "}
-                <Link
-                  style={{ color: "inherit" }}
-                  to={generatePath(Route.Group, {
-                    groupId: fullUUIDToShort(flow.group.id),
-                  })}
-                >
-                  {flow.group.name}
-                </Link>
-              </Typography>
-            )}
-            {isDraft && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <Box sx={{ display: "flex", gap: "8px" }}>
-                  <Chip label={"Draft"} size="small" />
-                  <Typography variant="description">
-                    Version created on {new Date(flow.versionCreatedAt).toLocaleString()}
-                  </Typography>
-                </Box>
-                <Typography>
-                  This draft flow version has not been published. See the{" "}
-                  <Link
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(flow.flowId),
-                      flowVersionId: null,
-                    })}
-                  >
-                    current published version of this flow.
-                  </Link>
+            <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
+          </Box>
+          {flow.group && (
+            <Typography variant="description" lineHeight={"24px"}>
+              Modifies{" "}
+              <Link
+                style={{ color: "inherit" }}
+                to={generatePath(Route.Group, {
+                  groupId: fullUUIDToShort(flow.group.id),
+                })}
+              >
+                {flow.group.name}
+              </Link>
+            </Typography>
+          )}
+          {isDraft && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <Box sx={{ display: "flex", gap: "8px" }}>
+                <Chip label={"Draft"} size="small" />
+                <Typography variant="description">
+                  Version created on {new Date(flow.versionCreatedAt).toLocaleString()}
                 </Typography>
               </Box>
-            )}
-            {isCurrentFlowVersion && (
+              <Typography>
+                This draft flow version has not been published. See the{" "}
+                <Link
+                  to={generatePath(Route.Flow, {
+                    flowId: fullUUIDToShort(flow.flowId),
+                    flowVersionId: null,
+                  })}
+                >
+                  current published version of this flow.
+                </Link>
+              </Typography>
+            </Box>
+          )}
+          {isCurrentFlowVersion && (
+            <Box sx={{ display: "flex", gap: "8px" }}>
+              {flow.versionPublishedAt && (
+                <Typography variant="description" lineHeight={"24px"}>
+                  Version published on{" "}
+                  {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
+                    year: "numeric",
+                    day: "numeric",
+                    month: "long",
+                  })}
+                </Typography>
+              )}
+              <Chip label={"Active"} size="small" />
+            </Box>
+          )}
+          {isOldVersion && (
+            <Box>
               <Box sx={{ display: "flex", gap: "8px" }}>
+                <Chip label={"Old version"} size="small" />
                 {flow.versionPublishedAt && (
                   <Typography variant="description" lineHeight={"24px"}>
-                    Version published on{" "}
+                    This version published on{" "}
                     {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
                       year: "numeric",
                       day: "numeric",
@@ -155,38 +198,21 @@ export const Flow = () => {
                     })}
                   </Typography>
                 )}
-                <Chip label={"Active"} size="small" />
               </Box>
-            )}
-            {isOldVersion && (
-              <>
-                <Box sx={{ display: "flex", gap: "8px" }}>
-                  <Chip label={"Old version"} size="small" />
-                  {flow.versionPublishedAt && (
-                    <Typography variant="description" lineHeight={"24px"}>
-                      This version published on{" "}
-                      {new Date(flow.versionPublishedAt).toLocaleString(undefined, {
-                        year: "numeric",
-                        day: "numeric",
-                        month: "long",
-                      })}
-                    </Typography>
-                  )}
-                </Box>
-                <Typography variant="description" lineHeight={"24px"}>
-                  This is an old version of this flow. See the{" "}
-                  <Link
-                    to={generatePath(Route.Flow, {
-                      flowId: fullUUIDToShort(flow.flowId),
-                      flowVersionId: null,
-                    })}
-                  >
-                    current published version of this flow.
-                  </Link>
-                </Typography>
-              </>
-            )}
-          </Box>
+              <Typography variant="description" lineHeight={"24px"}>
+                This is an old version of this flow. See the{" "}
+                <Link
+                  to={generatePath(Route.Flow, {
+                    flowId: fullUUIDToShort(flow.flowId),
+                    flowVersionId: null,
+                  })}
+                >
+                  current published version of this flow.
+                </Link>
+              </Typography>
+            </Box>
+          )}
+          {/* Button row */}
           <Box
             sx={{
               display: "flex",
@@ -279,8 +305,8 @@ export const Flow = () => {
             </>
           )}
         </Box>
-        {/* <ConfigDiagramFlow flow={flow} /> */}
-        <Box>
+
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Tabs
             tabs={tabs}
             currentTabIndex={currentTabIndex}
@@ -288,7 +314,6 @@ export const Flow = () => {
               setTabIndex(newValue);
             }}
           />
-
           {tabs.map((tab: TabProps, index) => (
             <TabPanel value={currentTabIndex} index={index} key={index}>
               {tab.content}

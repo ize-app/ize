@@ -13,8 +13,7 @@ import { useNewFlowWizardState } from "@/pages/NewFlow/newFlowWizard";
 import { Switch } from "../../formFields";
 import { FlowForm, FlowFormRef } from "../FlowForm";
 import { ReusableSchema, reusableSchema } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
-import { defaultFlowFormValues } from "../helpers/getDefaultFormValues";
+import { getDefaultFlowFormValues } from "../helpers/getDefaultFormValues";
 
 export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
   // refs expose methods of child forms
@@ -32,7 +31,7 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
           ref={flowFormRef}
           name="flow"
           isReusable={true}
-          defaultFormValues={{ ...defaultFlowFormValues }}
+          defaultFormValues={{ ...getDefaultFlowFormValues() }}
         />
       }
       evolveForm={
@@ -41,7 +40,8 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
           name="evolve"
           isReusable={true}
           defaultFormValues={generateEvolveConfig({
-            permission: { type: PermissionType.Entities, entities: [] },
+            triggerPermission: { anyone: false, entities: [] },
+            respondPermission: { anyone: false, entities: [] },
           })}
         />
       }
@@ -87,6 +87,7 @@ export const FullConfig = ({
     const isReusable = formMethods.getValues("reusable");
     if (flowFormRef.current && (isReusable ? evolveFormRef.current : true)) {
       const { isValid: flowIsValid, values: flow } = await flowFormRef.current.validate();
+
       const { isValid: evolveIsValid, values: evolve } =
         isReusable && evolveFormRef.current
           ? await evolveFormRef.current.validate()

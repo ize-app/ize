@@ -6,49 +6,31 @@ fragment FieldSet on FieldSet {
 }
 
 fragment Field on Field {
-  __typename
-  ... on Options {
-    ...Options
+  fieldId
+  name
+  type
+  isInternal
+  required
+  systemType
+  defaultAnswer {
+    ...Value
   }
-  ... on FreeInput {
-    ...FreeInput
+  optionsConfig {
+    ...OptionsConfig
   }
 }
 
-fragment Options on Options {
-  fieldId
-  name
-  isInternal
-  required
-  previousStepOptions
-  requestOptionsDataType
-  selectionType
+fragment OptionsConfig on OptionsConfig {
+  options {
+    ...Option
+  }
   systemType
+  selectionType
   maxSelections
   linkedResultOptions {
     ...LinkedResult
   }
-  options {
-    ...Option
-  }
-}
-
-fragment FreeInput on FreeInput {
-  fieldId
-  name
-  isInternal
-  required
-  dataType
-  systemType
-  defaultAnswer {
-    ...FieldAnswer
-  }
-}
-
-fragment Option on Option {
-  optionId
-  name
-  dataType
+  triggerOptionsType
 }
 
 fragment LinkedResult on LinkedResult {
@@ -58,13 +40,30 @@ fragment LinkedResult on LinkedResult {
   fieldName
 }
 
+fragment Option on Option {
+  optionId
+  value {
+    ...Value
+  }
+}
+
+
 fragment UserFieldAnswer on UserFieldAnswer {
-  createdAt
   creator {
     ...Entity
   }
+  createdAt
   answer {
-    ...FieldAnswer
+    ...Value
+  }
+}
+
+fragment TriggerFieldAnswer on TriggerFieldAnswer {
+  field {
+    ...Field
+  }
+  answer {
+    ...Value
   }
 }
 
@@ -75,65 +74,20 @@ fragment ResponseFieldAnswers on ResponseFieldAnswers {
   answers {
     ...UserFieldAnswer
   }
-}
-
-fragment TriggerFieldAnswer on TriggerFieldAnswer {
-  field {
-    ...Field
-  }
-  answer {
-    ...UserFieldAnswer
+  summary {
+    ...ResponseFieldAnswersSummary
   }
 }
 
-fragment FieldAnswer on FieldAnswer {
-  __typename
-  ... on OptionFieldAnswer {
-    ...OptionFieldAnswer
-  }
-  ... on FreeInputFieldAnswer {
-    ...FreeInputFieldAnswer
-  }
-  ... on EntitiesFieldAnswer {
-    ...EntitiesFieldAnswer
-  }
-  ... on FlowsFieldAnswer {
-    ...FlowsFieldAnswer
-  }
-  ... on WebhookFieldAnswer {
-    ...WebhookFieldAnswer
+fragment ResponseFieldAnswersSummary on ResponseFieldAnswersSummary {
+  count
+  options {
+    ...ResponseFieldAnswersOptionsSummary
   }
 }
 
-fragment OptionFieldAnswer on OptionFieldAnswer {
-  selections {
-    ...OptionFieldAnswerSelection
-  }
-}
-
-fragment FreeInputFieldAnswer on FreeInputFieldAnswer {
-  value
-}
-
-fragment FlowsFieldAnswer on FlowsFieldAnswer {
-  flows {
-    ...FlowReference
-  }
-}
-
-fragment EntitiesFieldAnswer on EntitiesFieldAnswer {
-  entities {
-    ...Entity
-  }
-}
-
-fragment OptionFieldAnswerSelection on OptionFieldAnswerSelection {
+fragment ResponseFieldAnswersOptionsSummary on ResponseFieldAnswersOptionsSummary {
   optionId
-}
-
-fragment WebhookFieldAnswer on WebhookFieldAnswer {
-  uri
-  webhookId
-  originalUri
-  name
+  count
+  rank
 }

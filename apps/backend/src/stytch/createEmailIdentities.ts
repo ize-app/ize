@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Email } from "stytch";
+import { UsersEmail } from "stytch";
 
 import { UserPrismaType } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
@@ -13,7 +13,7 @@ export const createEmailIdentities = async ({
   profilePictureURL,
 }: {
   user: UserPrismaType;
-  stytchEmails: Email[];
+  stytchEmails: UsersEmail[];
   profilePictureURL?: string | undefined;
   transaction: Prisma.TransactionClient;
 }) => {

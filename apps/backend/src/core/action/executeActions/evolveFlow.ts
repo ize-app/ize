@@ -1,4 +1,4 @@
-import { FieldDataType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
@@ -17,7 +17,7 @@ export const evolveFlow = async ({
     include: {
       Request: {
         include: {
-          TriggerFieldAnswers: { include: { Field: true, AnswerFreeInput: true } },
+          TriggerFieldAnswers: { include: { Field: true, Value: true } },
         },
       },
     },
@@ -30,26 +30,15 @@ export const evolveFlow = async ({
     return fieldAnswer.Field.systemType === SystemFieldType.EvolveFlowProposed;
   });
 
-  if (!proposedFlowField)
+  if (!proposedFlowField || !proposedFlowField.Value.flowVersionId)
     throw new GraphQLError(`Cannot find proposed flow version for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
-  if (
-    proposedFlowField.type !== "FreeInput" ||
-    proposedFlowField.Field.freeInputDataType !== FieldDataType.FlowVersionId
-  )
-    throw new GraphQLError(
-      `Field id ${proposedFlowField.Field.id} is the incorrect type for an evolve request`,
-      {
-        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
-      },
-    );
-
   // make proposed the current_flow_version_id and switch it's status to draft = false
 
   const proposedFlowVersion = await transaction.flowVersion.findFirstOrThrow({
-    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    where: { id: proposedFlowField.Value.flowVersionId },
     include: {
       Flow: {
         include: {
@@ -69,7 +58,7 @@ export const evolveFlow = async ({
     );
 
   await transaction.flowVersion.update({
-    where: { id: proposedFlowField.AnswerFreeInput[0].value },
+    where: { id: proposedFlowField.Value.flowVersionId },
     data: {
       active: true,
       publishedAt: new Date(),

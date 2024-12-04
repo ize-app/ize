@@ -1,16 +1,17 @@
 import { ActionSchemaType } from "@/components/Form/FlowForm/formValidation/action";
-import { DefaultOptionSelection } from "@/components/Form/FlowForm/formValidation/fields";
 import { ActionType } from "@/graphql/generated/graphql";
 
 // Define a union type for all possible arguments with a discriminant 'type' field
 type ActionArg =
   | {
       type: ActionType.TriggerStep;
+      nextStepId: string;
     }
   | {
       type: ActionType.CallWebhook;
       webhookName: string;
       filterOptionId: string | null;
+      filterResultConfigId: string | null;
     };
 
 // A single function that uses discriminated unions
@@ -24,14 +25,21 @@ export function generateActionConfig(arg: ActionArg): ActionSchemaType {
       return {
         type: ActionType.TriggerStep,
         ...base,
-        filterOptionId: null,
+        filter: undefined,
+        stepId: arg.nextStepId,
       };
     case ActionType.CallWebhook: {
-      const { webhookName, filterOptionId } = arg;
+      const { webhookName, filterOptionId, filterResultConfigId } = arg;
       return {
         type: ActionType.CallWebhook,
         ...base,
-        filterOptionId: filterOptionId ?? DefaultOptionSelection.None,
+        filter:
+          filterOptionId && filterResultConfigId
+            ? {
+                optionId: filterOptionId,
+                resultConfigId: filterResultConfigId,
+              }
+            : undefined,
         callWebhook: {
           name: webhookName,
           uri: "",

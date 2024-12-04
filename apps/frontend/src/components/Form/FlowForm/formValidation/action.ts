@@ -2,40 +2,48 @@ import * as z from "zod";
 
 import { ActionType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "./fields";
 import { webhookSchema } from "../../formValidation/webhook";
 
 export type ActionSchemaType = z.infer<typeof actionSchema>;
+export type ActionFilterSchemaType = z.infer<typeof actionFilterSchema>;
+
+const actionFilterSchema = z
+  .object({
+    resultConfigId: z
+      .string({ errorMap: () => ({ message: "Choose a result to filter action by" }) })
+      .uuid(),
+    optionId: z
+      .string({ errorMap: () => ({ message: "Choose an option to filter action by" }) })
+      .uuid(),
+  })
+  .optional();
 
 export const actionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ActionType.TriggerStep),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filter: actionFilterSchema,
+    stepId: z.string().uuid(),
     locked: z.boolean().default(false),
   }),
   z.object({
     type: z.literal(ActionType.CallWebhook),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filter: actionFilterSchema,
     callWebhook: webhookSchema,
     locked: z.boolean().default(false),
   }),
   z.object({
     type: z.literal(ActionType.EvolveFlow),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filter: actionFilterSchema,
     locked: z.boolean().default(true),
   }),
   z.object({
     type: z.literal(ActionType.EvolveGroup),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filter: actionFilterSchema,
     locked: z.boolean().default(true),
   }),
   z.object({
     type: z.literal(ActionType.GroupWatchFlow),
-    filterOptionId: z.string().nullable().default(DefaultOptionSelection.None),
+    filter: actionFilterSchema,
     locked: z.boolean().default(true),
-  }),
-  z.object({
-    type: z.literal(ActionType.None),
-    locked: z.boolean().default(false),
   }),
 ]);

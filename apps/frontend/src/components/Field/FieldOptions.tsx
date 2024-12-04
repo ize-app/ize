@@ -1,15 +1,21 @@
+import LinkIcon from "@mui/icons-material/Link";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import { Box, Typography } from "@mui/material";
+
 import {
-  FieldDataType,
-  FieldOptionsSelectionType,
+  FieldFragment,
   LinkedResult,
-  OptionFieldAnswerSelection,
-  Options,
+  OptionFragment,
+  OptionSelectionFragment,
+  OptionSelectionType,
+  ResponseFieldAnswersOptionsSummaryFragment,
+  ResponseFieldAnswersSummaryFragment,
   ResultItemFragment,
 } from "@/graphql/generated/graphql";
 import muiTheme from "@/style/muiTheme";
 
 import { FieldOption } from "./FieldOption";
-import { FieldOptionsContainer } from "./FieldOptionsContainer";
+import { stringifyValueType } from "../Value/stringifyValueType";
 
 const linkedResultDescription = (linkedResult: LinkedResult) => {
   return `Options created via previous result: "${linkedResult.resultName} (${linkedResult.fieldName})"`;
@@ -17,126 +23,104 @@ const linkedResultDescription = (linkedResult: LinkedResult) => {
 
 // renders only the full list of options for a field and option selections, if they are provided
 // if final, displays the final list of options. if not final, displays how additional options are created during a request
-// this form is brittle and slow. due for a rework
+
 export const FieldOptions = ({
-  fieldOptions,
+  field,
   optionSelections,
   onlyShowSelections = false,
-  final,
+  finalOptions,
+  responseSummary,
+  triggerDefinedOptions,
 }: {
-  fieldOptions: Options;
-  optionSelections?: OptionFieldAnswerSelection[] | ResultItemFragment[] | undefined;
+  field: FieldFragment;
+  optionSelections?: OptionSelectionFragment[] | ResultItemFragment[];
   onlyShowSelections?: boolean;
-  final: boolean;
+  finalOptions: boolean;
+  responseSummary?: ResponseFieldAnswersSummaryFragment | null | undefined;
+  triggerDefinedOptions?: OptionFragment[];
 }) => {
-  const { options, requestOptionsDataType, linkedResultOptions } = fieldOptions;
+  if (!field.optionsConfig) return null;
 
-  // intended for showing a field answer without the other options
-  // used for displaying user field answers in both request and response
-  if (onlyShowSelections) {
-    return (
-      <FieldOptionsContainer>
-        {optionSelections?.map((os, index) => {
-          const option = options.find((o) => o.optionId === os.optionId);
-          if (!option) return null;
-          return (
-            <FieldOption
-              key={os.optionId}
-              value={option.name}
-              final={final}
-              dataType={option.dataType}
-              selectionType={fieldOptions.selectionType}
-              index={index}
-            />
-          );
-        })}
-      </FieldOptionsContainer>
-    );
-  }
-  // if result is for a final ranking, display options that are part of result first and other options
-  else if (fieldOptions.selectionType === FieldOptionsSelectionType.Rank && final) {
-    const nonResultOptions = options.filter((option) => {
-      return !optionSelections?.some((os) => os.optionId === option.optionId);
+  const { triggerOptionsType, linkedResultOptions, options, selectionType } = field.optionsConfig;
+
+  const totalResponses =
+    selectionType === OptionSelectionType.Rank
+      ? ((responseSummary?.options ?? []).reduce((acc, o) => acc + (o.rank ?? 0), 0) ?? 0)
+      : (responseSummary?.count ?? 0);
+
+  const allOptions = [...options];
+
+  if (!finalOptions && !!triggerDefinedOptions) allOptions.push(...triggerDefinedOptions);
+
+  const hydratedOptions: {
+    option: OptionFragment;
+    optionSummary: ResponseFieldAnswersOptionsSummaryFragment | undefined;
+    isSelected: boolean;
+    selectionIndex: number;
+  }[] = allOptions
+    .map((option) => {
+      const selectionIndex =
+        (optionSelections ?? []).findIndex((os) => os.optionId === option.optionId) ?? false;
+
+      const isSelected = selectionIndex !== -1;
+
+      const optionSummary = (responseSummary?.options ?? []).find(
+        (o) => o.optionId === option.optionId,
+      );
+      return {
+        option,
+        optionSummary,
+        isSelected,
+        selectionIndex,
+      };
+    })
+    .filter((o) => {
+      if (onlyShowSelections) return o.isSelected;
+      else return true;
+    })
+    .sort((a, b) => {
+      if (responseSummary) {
+        return (b.optionSummary?.count ?? 0) - (a.optionSummary?.count ?? 0);
+      }
+      if (optionSelections) return a.selectionIndex - b.selectionIndex;
+      // keep default order if there is no response summary
+      else return 0;
     });
-    return (
-      <FieldOptionsContainer>
-        {optionSelections?.map((os, index) => {
-          const option = options.find((o) => o.optionId === os.optionId);
-          if (!option) return null;
-          return (
-            <FieldOption
-              isSelected={true}
-              key={os.optionId}
-              value={option.name}
-              final={final}
-              dataType={option.dataType}
-              selectionType={fieldOptions.selectionType}
-              index={index}
-            />
-          );
-        })}
-        {nonResultOptions?.map((os) => {
-          const option = options.find((o) => o.optionId === os.optionId);
-          if (!option) return null;
-          return (
-            <FieldOption
-              isSelected={false}
-              key={os.optionId}
-              value={option.name}
-              index={null}
-              final={final}
-              dataType={option.dataType}
-              selectionType={fieldOptions.selectionType}
-            />
-          );
-        })}
-      </FieldOptionsContainer>
-    );
-  }
-  // shows all options for a field
-  // if it's not final, it will also describe how options can be created in the option list
-  else
-    return (
-      <FieldOptionsContainer>
-        {options.map((option, index) => {
-          const isSelected =
-            optionSelections?.some((os) => os.optionId === option.optionId) ?? false;
-          return (
-            <FieldOption
-              key={option.optionId}
-              isSelected={isSelected}
-              value={option.name}
-              index={index}
-              final={final}
-              selectionType={fieldOptions.selectionType}
-              dataType={option.dataType}
-            />
-          );
-        })}
-        {!final && requestOptionsDataType && (
+  return (
+    <>
+      {hydratedOptions.map((o, index) => {
+        return (
           <FieldOption
-            selectionType={fieldOptions.selectionType}
-            sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
-            value={`Additional ${requestOptionsDataType} options defined by triggerer`}
-            dataType={FieldDataType.String}
-            index={null}
-            final={final}
+            key={o.option.optionId}
+            value={o.option.value}
+            final={finalOptions}
+            selectionType={selectionType}
+            totalResponses={totalResponses}
+            optionResponseSummary={o.optionSummary}
+            index={index}
+            isSelected={o.isSelected && !onlyShowSelections}
           />
-        )}
-        {!final &&
-          linkedResultOptions.map((lr) => {
-            return (
-              <FieldOption
-                key={lr.resultConfigId + lr.fieldId}
-                selectionType={fieldOptions.selectionType}
-                sx={{ fontStyle: "italic", color: muiTheme.palette.primary.main }}
-                value={linkedResultDescription(lr)}
-                index={null}
-                final={final}
-                dataType={FieldDataType.String}
-              />
-            );
-          })}
-      </FieldOptionsContainer>
-    );
+        );
+      })}
+      {!finalOptions && triggerOptionsType && !triggerDefinedOptions && (
+        <Box sx={{ display: "flex", padding: "6px 12px" }}>
+          <PlayCircleOutlineIcon
+            sx={{ color: muiTheme.palette.secondary.main, marginRight: "8px" }}
+          />
+          <Typography color="secondary">
+            Trigger can define additional {stringifyValueType(triggerOptionsType)} options
+          </Typography>
+        </Box>
+      )}
+      {!finalOptions &&
+        linkedResultOptions.map((lr) => {
+          return (
+            <Box sx={{ display: "flex", padding: "6px 12px" }} key={lr.resultConfigId + lr.fieldId}>
+              <LinkIcon sx={{ color: muiTheme.palette.secondary.main, marginRight: "8px" }} />
+              <Typography color="secondary">{linkedResultDescription(lr)}</Typography>
+            </Box>
+          );
+        })}
+    </>
+  );
 };

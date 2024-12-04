@@ -2,44 +2,55 @@ import * as z from "zod";
 
 import { DecisionType, ResultType } from "@/graphql/generated/graphql";
 
-import { DefaultOptionSelection } from "./fields";
-
 export type ResultSchemaType = z.infer<typeof resultSchema>;
 export type ResultsSchemaType = z.infer<typeof resultsSchema>;
 export type DecisionSchemaType = z.infer<typeof decisionSchema>;
+
 export type DecisionResultSchemaType = z.infer<typeof decisionResultSchema>;
 export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
-export type LlmSummaryListResultSchemaType = z.infer<typeof llmListResultSchema>;
 export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
-
-export enum LlmSummaryType {
-  AfterEveryResponse = "AfterEveryResponse",
-  AtTheEnd = "AtTheEnd",
-}
+export type RawAnswersResultSchemaType = z.infer<typeof rawAnswersResultSchema>;
 
 export enum ResultListCountLimit {
   None = "None",
 }
 
+const defaultDecisionSchema = z
+  .object({
+    hasDefault: z.boolean().default(false),
+    optionId: z.string().nullable().default(null),
+  })
+  .refine(
+    (defaultDecision) => {
+      if (defaultDecision.hasDefault && !defaultDecision.optionId) return false;
+      else return true;
+    },
+    {
+      message: "Select a default option",
+      path: ["optionId"],
+    },
+  )
+  .optional();
+
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
-    defaultOptionId: z.string().optional(),
+    defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().positive(),
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
-    defaultOptionId: z.string().optional(),
+    defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().min(51).max(100),
   }),
   z.object({
     type: z.literal(DecisionType.WeightedAverage),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultDecision: defaultDecisionSchema,
   }),
   z.object({
     type: z.literal(DecisionType.Ai),
-    criteria: z.string().optional(),
-    defaultOptionId: z.string().default(DefaultOptionSelection.None),
+    defaultDecision: defaultDecisionSchema,
+    criteria: z.string(),
   }),
 ]);
 
@@ -56,55 +67,49 @@ const prioritizationSchema = z.object({
 });
 
 const llmSchema = z.object({
-  prompt: z.string(),
-  example: z.string().optional(),
+  prompt: z.string().min(5),
+  isList: z.boolean(),
 });
 
 const decisionResultSchema = z.object({
   type: z.literal(ResultType.Decision),
-  resultId: z.string(),
-  fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().default(1),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   decision: decisionSchema,
 });
 
 const llmResultSchema = z.object({
   type: z.literal(ResultType.LlmSummary),
-  resultId: z.string(),
-  fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(2),
-  llmSummary: llmSchema,
-});
-
-const llmListResultSchema = z.object({
-  type: z.literal(ResultType.LlmSummaryList),
-  resultId: z.string(),
-  fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().int().positive().default(2),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   llmSummary: llmSchema,
 });
 
 const rankingResultSchema = z.object({
   type: z.literal(ResultType.Ranking),
-  resultId: z.string(),
-  fieldId: z.string().nullable(),
-  minimumAnswers: z.coerce.number().default(2),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
   prioritization: prioritizationSchema,
 });
 
-export const resultSchema = z
-  .discriminatedUnion("type", [
-    decisionResultSchema,
-    rankingResultSchema,
-    llmResultSchema,
-    llmListResultSchema,
-  ])
-  // .refine(
-  //   (result) => {
-  //     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
-  //     return true;
-  //   },
-  //   { message: "There must be at least 2 responses to create a result" },
-  // );
+const rawAnswersResultSchema = z.object({
+  type: z.literal(ResultType.RawAnswers),
+  resultConfigId: z.string().uuid(),
+  fieldId: z.string().uuid(),
+});
+
+export const resultSchema = z.discriminatedUnion("type", [
+  decisionResultSchema,
+  rankingResultSchema,
+  llmResultSchema,
+  rawAnswersResultSchema,
+]);
+// .refine(
+//   (result) => {
+//     if (result.type !== ResultType.Decision && result.minimumAnswers < 2) return false;
+//     return true;
+//   },
+//   { message: "There must be at least 2 responses to create a result" },
+// );
 
 export const resultsSchema = z.array(resultSchema).default([]);

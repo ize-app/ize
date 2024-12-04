@@ -7,7 +7,7 @@ export const Responses = ({ request }: { request: RequestFragment }) => {
   const responseFieldAnswers: ResponseFieldAnswersFragment[] = [];
 
   request.requestSteps.forEach((step) => {
-    responseFieldAnswers.push(...step.responseFieldAnswers);
+    responseFieldAnswers.push(...step.answers);
   });
 
   const filteredResponseFieldAnswers = responseFieldAnswers.filter(

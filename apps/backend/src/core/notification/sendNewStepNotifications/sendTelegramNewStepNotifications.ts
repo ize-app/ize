@@ -1,18 +1,15 @@
-import { FieldType, GroupTelegramChat } from "@prisma/client";
+import { GroupTelegramChat } from "@prisma/client";
 
 import { ResolvedEntities } from "@/core/permission/hasWritePermission/resolveEntitySet";
-import { getRequestTriggerFieldAnswers } from "@/core/request/createRequestPayload/getRequestTriggerFieldAnswers";
 import { stringifyTriggerFields } from "@/core/request/stringify/stringifyTriggerFields";
-import {
-  FieldDataType,
-  FieldOptionsSelectionType,
-  FlowType,
-  Request,
-} from "@/graphql/generated/resolver-types";
+import { OptionSelectionType, Request, ValueType } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { createRequestUrl } from "../../request/createRequestPayload/createRequestUrl";
+import { sendDefaultResponseMessage } from "./sendDefaultResponseMessage";
+import { sendStringFieldResponseMessage } from "./sendStringFieldResponseMessage";
+import { sendTelegramPoll } from "./sendTelegramPoll";
+import { createRequestUrl } from "../../request/createRequestUrl";
 
 export const sendTelegramNewStepMessage = async ({
   telegramGroups,
@@ -33,8 +30,12 @@ export const sendTelegramNewStepMessage = async ({
 
     if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
-    const requestName = request.name;
-    const flowName = request.flow.name;
+    const messageText = stringifyTriggerFields({
+      request,
+      title: `New request in Ize 👀\n\n<strong>${request.name}</strong> (<i>${request.flow.name}</i>)`,
+      type: "html",
+    });
+
     const { fieldSet } = requestStep;
     const responseFields = fieldSet.fields.filter((f) => !f.isInternal);
     const firstField = responseFields[0];
@@ -52,15 +53,8 @@ export const sendTelegramNewStepMessage = async ({
 
           if (responseFields.length === 0) return;
           0;
-          const requestFieldsString = stringifyTriggerFields({
-            triggerFields: getRequestTriggerFieldAnswers({ request }),
-            type: "html",
-          });
 
-          const displayTriggerFields = request.flow.type !== FlowType.Evolve;
-
-          const messageText = `New request in Ize 👀\n\n<strong>${requestName}</strong> (<i>${flowName}</i>)${requestFieldsString.length > 0 && displayTriggerFields ? `\n\n<strong><u>Request details</u></strong>\n${requestFieldsString}` : ""}`;
-
+          // message describing the request
           const message = await telegramBot.telegram.sendMessage(
             group.chatId.toString(),
             messageText,
@@ -73,6 +67,7 @@ export const sendTelegramNewStepMessage = async ({
             },
           );
 
+          // record of message so we can reply to it later on
           await prisma.telegramMessages.create({
             data: {
               chatId: group.chatId,
@@ -81,76 +76,35 @@ export const sendTelegramNewStepMessage = async ({
             },
           });
 
-          if (responseFields.length > 1 || !chatHasRespondPermission) return;
-
-          if (
-            firstField.__typename === FieldType.Options &&
-            firstField.selectionType === FieldOptionsSelectionType.Select
-          ) {
-            const options = firstField.options;
-            const question = `${firstField.name}`;
-            const poll = await telegramBot.telegram.sendPoll(
-              group.chatId.toString(),
-              question.substring(0, 300),
-              options.map((option) => option.name.substring(0, 100)),
-              {
-                // anonymous polls don't send poll_answer update
-                // to be confirmed: this might just be a testing env issue
-                message_thread_id: group.messageThreadId
-                  ? Number(group.messageThreadId)
-                  : undefined,
-                is_anonymous: false,
-                close_date: Date.parse(requestStep.expirationDate),
-                reply_parameters: { message_id: message.message_id },
-              },
-            );
-
-            await prisma.telegramMessages.create({
-              data: {
-                pollId: BigInt(poll.poll.id),
-                chatId: group.chatId,
-                messageId: poll.message_id,
-                requestStepId,
-                fieldId: firstField.fieldId,
-              },
+          if (responseFields.length === 0) return;
+          else if (!chatHasRespondPermission)
+            await sendDefaultResponseMessage({
+              message: "The permissions of this request require a response within Ize",
+              telegramGroup: group,
+              replyMessageId: message.message_id,
+              requestUrl: url,
             });
-            return;
-          } else if (
-            firstField.__typename === FieldType.FreeInput &&
-            firstField.dataType === FieldDataType.String
-          ) {
-            const prompt = await telegramBot.telegram.sendMessage(
-              group.chatId.toString(),
-              `<strong>${firstField.name}</strong>\n\n↩️ Reply to this message to respond`,
-              {
-                reply_parameters: { message_id: message.message_id },
-                message_thread_id: messageThreadId,
-
-                parse_mode: "HTML",
-              },
-            );
-
-            await prisma.telegramMessages.create({
-              data: {
-                chatId: group.chatId,
-                messageId: prompt.message_id,
-                requestStepId,
-                fieldId: firstField.fieldId,
-              },
+          else if (firstField.optionsConfig?.selectionType === OptionSelectionType.Select)
+            await sendTelegramPoll({
+              field: firstField,
+              requestStep,
+              telegramGroup: group,
+              replyMessageId: message.message_id,
             });
-            return;
-          } else {
-            await telegramBot.telegram.sendMessage(
-              group.chatId.toString(),
-              `<strong>${firstField.name}</strong>\n\n↩️ <a href="${url}">Open this request in Ize to respond</a>`,
-              {
-                message_thread_id: messageThreadId,
-                parse_mode: "HTML",
-                reply_parameters: { message_id: message.message_id },
-              },
-            );
-            return;
-          }
+          else if (firstField.type === ValueType.String)
+            await sendStringFieldResponseMessage({
+              field: firstField,
+              telegramGroup: group,
+              replyMessageId: message.message_id,
+              requestStepId,
+            });
+          else
+            await sendDefaultResponseMessage({
+              message: "This request requires a response within Ize",
+              telegramGroup: group,
+              replyMessageId: message.message_id,
+              requestUrl: url,
+            });
         } catch (e) {
           console.log(
             `Error sending new step notification to Telegram chat Id ${group.chatId} `,

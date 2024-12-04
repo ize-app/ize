@@ -6,19 +6,19 @@ import Typography from "@mui/material/Typography";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FieldOption } from "@/components/Field/FieldOption";
-import { FieldOptionsContainer } from "@/components/Field/FieldOptionsContainer";
-import { InputField } from "@/components/Form/FlowForm/components/InputField";
-import { FieldDataType, FieldType, Flow, OptionsFragment } from "@/graphql/generated/graphql";
+import { createDefaultOptionState } from "@/components/Form/FlowForm/helpers/defaultFormState/createDefaultOptionState";
+import { InputField } from "@/components/Form/InputField/InputField";
+import { stringifyValueType } from "@/components/Value/stringifyValueType";
+import { FieldFragment, FlowFragment, ValueType } from "@/graphql/generated/graphql";
 
-import { TextField } from "../../../components/Form/formFields";
-import { RequestDefinedOptionSchemaType, RequestSchemaType } from "../formValidation";
+import { RequestSchemaType } from "../requestValidation";
 
-export const RequestDefinedOptionsForm = ({ flow }: { flow: Flow }) => {
-  const fields: OptionsFragment[] = [];
+export const RequestDefinedOptionsForm = ({ flow }: { flow: FlowFragment }) => {
+  const fields: FieldFragment[] = [];
 
   flow.steps.forEach((step) => {
     step.fieldSet.fields.forEach((field) => {
-      if (field.__typename === FieldType.Options && field.requestOptionsDataType) {
+      if (field.type === ValueType.OptionSelections && field.optionsConfig?.triggerOptionsType) {
         fields.push(field);
       }
     });
@@ -47,17 +47,22 @@ export const RequestDefinedOptionsForm = ({ flow }: { flow: Flow }) => {
   );
 };
 
-export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragment }) => {
+export const RequestDefinedOptionsFieldForm = ({ field }: { field: FieldFragment }) => {
   const { control } = useFormContext<RequestSchemaType>();
-  const requestDefinedOptionsFormMethods = useFieldArray({
+  const requestDefinedOptionsArrayMethods = useFieldArray<
+    RequestSchemaType,
+    `requestDefinedOptions.${string}`,
+    "id"
+  >({
     control: control,
     name: `requestDefinedOptions.${field.fieldId}`,
   });
 
-  const defaultOption: RequestDefinedOptionSchemaType = {
-    dataType: field.requestOptionsDataType as FieldDataType,
-    name: "",
-  };
+  const optionsConfig = field.optionsConfig;
+  if (!optionsConfig) return;
+  const type = optionsConfig.triggerOptionsType;
+  if (!type) return;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Typography color="primary" fontWeight={500} sx={{ marginBottom: "6px" }}>
@@ -65,62 +70,62 @@ export const RequestDefinedOptionsFieldForm = ({ field }: { field: OptionsFragme
       </Typography>
 
       {/* Existing options defined on the workflow */}
-      <FieldOptionsContainer>
-        {field.options.map((option, index) => {
-          return (
-            <FieldOption
-              isSelected={false}
-              key={option.optionId}
-              value={option.name}
-              final={true}
-              dataType={option.dataType}
-              selectionType={field.selectionType}
-              index={index}
-            />
-          );
-        })}
-        {requestDefinedOptionsFormMethods.fields.map((item, inputIndex) => {
+      <Box
+        sx={{
+          borderRadius: "4px",
+          border: "1px solid rgba(0, 0, 0, 0.1)",
+          backgroundColor: "white",
+          padding: "6px",
+        }}
+      >
+        {!!field.optionsConfig &&
+          field.optionsConfig.options.map((option, index) => {
+            return (
+              <FieldOption
+                isSelected={false}
+                key={option.optionId}
+                value={option.value}
+                final={true}
+                selectionType={optionsConfig.selectionType}
+                index={index}
+              />
+            );
+          })}
+        {requestDefinedOptionsArrayMethods.fields.map((item, inputIndex) => {
           return (
             <Box key={item.id} sx={{ display: "flex", marginLeft: "8px" }}>
-              <TextField<RequestSchemaType>
-                name={`requestDefinedOptions.${field.fieldId}.${inputIndex}.dataType`}
-                key={"dataType" + inputIndex.toString()}
+              <InputField<RequestSchemaType>
+                type="newOption"
+                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.input.value`}
+                label={`Option #${inputIndex + 1} (${stringifyValueType(type)})`}
+                option={item}
+                key={field.fieldId}
                 showLabel={false}
-                label={`Option ID - ignore`}
-                variant="standard"
-                display={false}
-                disabled={true}
-                size="small"
-              />
-
-              <InputField
-                fieldName={`requestDefinedOptions.${field.fieldId}.${inputIndex}.name`}
-                label={`Option #${inputIndex + 1}`}
-                dataType={item.dataType}
+                seperateLabel={false}
               />
               <IconButton
                 color="primary"
                 aria-label="Remove option"
-                onClick={() => requestDefinedOptionsFormMethods.remove(inputIndex)}
+                onClick={() => requestDefinedOptionsArrayMethods.remove(inputIndex)}
               >
                 <HighlightOffOutlined />
               </IconButton>
             </Box>
           );
         })}
-        {field.requestOptionsDataType && (
+        {
           <Button
             sx={{ position: "relative", margin: "8px 0px 8px 8px" }}
             variant="outlined"
             size={"small"}
             onClick={() => {
-              requestDefinedOptionsFormMethods.append(defaultOption);
+              requestDefinedOptionsArrayMethods.append(createDefaultOptionState({ type }));
             }}
           >
             Add option
           </Button>
-        )}
-      </FieldOptionsContainer>
+        }
+      </Box>
     </Box>
   );
 };

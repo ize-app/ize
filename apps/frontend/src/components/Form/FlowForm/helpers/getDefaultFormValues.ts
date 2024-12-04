@@ -1,24 +1,26 @@
-import { ActionType, FlowType } from "@/graphql/generated/graphql";
+import { FlowType } from "@/graphql/generated/graphql";
 
 import { FlowSchemaType, StepSchemaType } from "../formValidation/flow";
-import { PermissionType } from "../formValidation/permission";
 
-export const defaultStepFormValues: StepSchemaType = {
+export const getDefaultStepFormValues = (): StepSchemaType => ({
+  stepId: crypto.randomUUID(),
   fieldSet: {
     fields: [],
     locked: false,
   },
   response: {
-    permission: { type: PermissionType.Anyone, entities: [] },
+    permission: { anyone: true, entities: [] },
     expirationSeconds: 259200,
     canBeManuallyEnded: true,
     allowMultipleResponses: false,
+    minResponses: 1,
   },
   result: [],
-  action: { type: ActionType.None, locked: false },
-};
+  action: undefined,
+});
 
-export const defaultFlowFormValues: FlowSchemaType = {
+export const getDefaultFlowFormValues = (): FlowSchemaType => ({
+  flowVersionId: crypto.randomUUID(),
   name: "",
   type: FlowType.Custom,
   fieldSet: {
@@ -27,9 +29,9 @@ export const defaultFlowFormValues: FlowSchemaType = {
   },
   trigger: {
     permission: {
-      type: PermissionType.Anyone,
+      anyone: true,
       entities: [],
     },
   },
-  steps: [defaultStepFormValues],
-};
+  steps: [getDefaultStepFormValues()],
+});
