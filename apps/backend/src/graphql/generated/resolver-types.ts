@@ -287,7 +287,6 @@ export type Flow = {
   flowsEvolvedByThisFlow: Array<FlowReference>;
   group?: Maybe<Group>;
   id: Scalars['String']['output'];
-  isWatched: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   reusable: Scalars['Boolean']['output'];
   steps: Array<Step>;
@@ -295,6 +294,7 @@ export type Flow = {
   type: FlowType;
   versionCreatedAt: Scalars['String']['output'];
   versionPublishedAt?: Maybe<Scalars['String']['output']>;
+  watching: FlowWatchers;
 };
 
 export type FlowReference = {
@@ -310,9 +310,9 @@ export type FlowSummary = {
   creator: Entity;
   flowId: Scalars['String']['output'];
   group?: Maybe<Group>;
-  isWatched: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   trigger: TriggerConfig;
+  watching: FlowWatchers;
 };
 
 export enum FlowTriggerPermissionFilter {
@@ -331,6 +331,12 @@ export enum FlowType {
 export type FlowVersionValue = {
   __typename?: 'FlowVersionValue';
   flowVersion: FlowReference;
+};
+
+export type FlowWatchers = {
+  __typename?: 'FlowWatchers';
+  groups: Array<Group>;
+  user: Scalars['Boolean']['output'];
 };
 
 export type FlowsValue = {
@@ -1286,12 +1292,13 @@ export type ResolversTypes = {
   FieldSetArgs: FieldSetArgs;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   FloatValue: ResolverTypeWrapper<FloatValue>;
-  Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger'> & { evolve?: Maybe<ResolversTypes['Flow']>, fieldSet: ResolversTypes['FieldSet'], group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']>, trigger: ResolversTypes['TriggerConfig'] }>;
+  Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger' | 'watching'> & { evolve?: Maybe<ResolversTypes['Flow']>, fieldSet: ResolversTypes['FieldSet'], group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']>, trigger: ResolversTypes['TriggerConfig'], watching: ResolversTypes['FlowWatchers'] }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
-  FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'trigger'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, trigger: ResolversTypes['TriggerConfig'] }>;
+  FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'trigger' | 'watching'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, trigger: ResolversTypes['TriggerConfig'], watching: ResolversTypes['FlowWatchers'] }>;
   FlowTriggerPermissionFilter: FlowTriggerPermissionFilter;
   FlowType: FlowType;
   FlowVersionValue: ResolverTypeWrapper<FlowVersionValue>;
+  FlowWatchers: ResolverTypeWrapper<Omit<FlowWatchers, 'groups'> & { groups: Array<ResolversTypes['Group']> }>;
   FlowsValue: ResolverTypeWrapper<FlowsValue>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
@@ -1427,10 +1434,11 @@ export type ResolversParentTypes = {
   FieldSetArgs: FieldSetArgs;
   Float: Scalars['Float']['output'];
   FloatValue: FloatValue;
-  Flow: Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, fieldSet: ResolversParentTypes['FieldSet'], group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']>, trigger: ResolversParentTypes['TriggerConfig'] };
+  Flow: Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger' | 'watching'> & { evolve?: Maybe<ResolversParentTypes['Flow']>, fieldSet: ResolversParentTypes['FieldSet'], group?: Maybe<ResolversParentTypes['Group']>, steps: Array<ResolversParentTypes['Step']>, trigger: ResolversParentTypes['TriggerConfig'], watching: ResolversParentTypes['FlowWatchers'] };
   FlowReference: FlowReference;
-  FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'trigger'> & { creator: ResolversParentTypes['Entity'], group?: Maybe<ResolversParentTypes['Group']>, trigger: ResolversParentTypes['TriggerConfig'] };
+  FlowSummary: Omit<FlowSummary, 'creator' | 'group' | 'trigger' | 'watching'> & { creator: ResolversParentTypes['Entity'], group?: Maybe<ResolversParentTypes['Group']>, trigger: ResolversParentTypes['TriggerConfig'], watching: ResolversParentTypes['FlowWatchers'] };
   FlowVersionValue: FlowVersionValue;
+  FlowWatchers: Omit<FlowWatchers, 'groups'> & { groups: Array<ResolversParentTypes['Group']> };
   FlowsValue: FlowsValue;
   Group: Omit<Group, 'groupType'> & { groupType: ResolversParentTypes['GroupType'] };
   GroupDiscordRoleArgs: GroupDiscordRoleArgs;
@@ -1685,7 +1693,6 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   flowsEvolvedByThisFlow?: Resolver<Array<ResolversTypes['FlowReference']>, ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reusable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   steps?: Resolver<Array<ResolversTypes['Step']>, ParentType, ContextType>;
@@ -1693,6 +1700,7 @@ export type FlowResolvers<ContextType = GraphqlRequestContext, ParentType extend
   type?: Resolver<ResolversTypes['FlowType'], ParentType, ContextType>;
   versionCreatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   versionPublishedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  watching?: Resolver<ResolversTypes['FlowWatchers'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1708,14 +1716,20 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
   creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
-  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trigger?: Resolver<ResolversTypes['TriggerConfig'], ParentType, ContextType>;
+  watching?: Resolver<ResolversTypes['FlowWatchers'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type FlowVersionValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowVersionValue'] = ResolversParentTypes['FlowVersionValue']> = {
   flowVersion?: Resolver<ResolversTypes['FlowReference'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FlowWatchersResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['FlowWatchers'] = ResolversParentTypes['FlowWatchers']> = {
+  groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2176,6 +2190,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   FlowReference?: FlowReferenceResolvers<ContextType>;
   FlowSummary?: FlowSummaryResolvers<ContextType>;
   FlowVersionValue?: FlowVersionValueResolvers<ContextType>;
+  FlowWatchers?: FlowWatchersResolvers<ContextType>;
   FlowsValue?: FlowsValueResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
   GroupIze?: GroupIzeResolvers<ContextType>;

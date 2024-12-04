@@ -33,7 +33,7 @@ type Flow {
   steps: [Step!]!
   flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
-  isWatched: Boolean!
+  watching: FlowWatchers!
 }
 
 type FlowSummary {
@@ -44,7 +44,7 @@ type FlowSummary {
   createdAt: String!
   # permission to trigger first step of the flow
   trigger: TriggerConfig!
-  isWatched: Boolean!
+  watching: FlowWatchers!
 }
 
 type FlowReference {
@@ -125,4 +125,9 @@ enum FlowTriggerPermissionFilter {
   All
   TriggerPermission
   NoTriggerPermission
+}
+
+type FlowWatchers {
+  user: Boolean!
+  groups: [Group!]!
 }

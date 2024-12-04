@@ -156,7 +156,6 @@ model Group {
   GroupIze            GroupIze?
   EntityWatchedGroups EntityWatchedGroups[]
   OwnedFlows          Flow[]
-  GroupsWatchedFlows  GroupsWatchedFlows[]
 
   @@map("groups")
 }
@@ -289,7 +288,6 @@ model Flow {
   CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id])
   FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
   EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
-  GroupsWatchedFlows          GroupsWatchedFlows[]
   EntityWatchedFlows          EntityWatchedFlows[]
   ValueFlows                  ValueFlows[]
 
@@ -969,18 +967,6 @@ model EntityWatchedFlows {
 
   @@unique([entityId, flowId])
   @@map("entity_watched_flows")
-}
-
-model GroupsWatchedFlows {
-  flowId  String  @map("flow_id") @db.Uuid
-  groupId String  @map("group_id") @db.Uuid
-  watched Boolean
-
-  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
-  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([flowId, groupId])
-  @@map("groups_watched_flows")
 }
 
 model TelegramMessages {

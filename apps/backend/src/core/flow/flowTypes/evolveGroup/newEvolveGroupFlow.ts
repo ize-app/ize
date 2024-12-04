@@ -21,7 +21,7 @@ export const newEvolveGroupFlow = async ({
   groupEntityId: string;
   transaction: Prisma.TransactionClient;
   policy: GroupFlowPolicyArgs;
-}): Promise<string | null> => {
+}): Promise<string> => {
   if (!context.currentUser)
     throw new GraphQLError("Unauthenticated", {
       extensions: { code: CustomErrorCodes.Unauthenticated },

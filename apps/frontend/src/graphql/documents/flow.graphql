@@ -64,7 +64,9 @@ fragment FlowFields on Flow {
   steps {
     ...Step
   }
-  isWatched
+  watching {
+    ...FlowWatchers
+  }
 }
 
 fragment FlowSummary on FlowSummary {
@@ -80,7 +82,9 @@ fragment FlowSummary on FlowSummary {
   trigger {
     ...TriggerConfig
   }
-  isWatched
+  watching {
+    ...FlowWatchers
+  }
 }
 
 fragment FlowReference on FlowReference {
@@ -121,4 +125,11 @@ fragment ResponseConfig on ResponseConfig {
   allowMultipleResponses
   userPermission
   minResponses
+}
+
+fragment FlowWatchers on FlowWatchers {
+  user
+  groups {
+    ...GroupSummaryParts
+  }
 }

@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
+import { AvatarGroup } from "@/components/Avatar";
 import { Breadcrumbs } from "@/components/BreadCrumbs";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -133,7 +134,7 @@ export const Flow = () => {
               {flow.name}
             </Typography>
 
-            <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
+            <WatchFlowButton watched={flow.watching.user} flowId={flow.id} size="medium" />
           </Box>
           {flow.group && (
             <Typography variant="description" lineHeight={"24px"}>
@@ -147,6 +148,22 @@ export const Flow = () => {
                 {flow.group.name}
               </Link>
             </Typography>
+          )}
+          {flow.watching.groups.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "6px",
+                height: "24px",
+              }}
+            >
+              <Typography variant="description" color="textSecondary">
+                Watched by
+              </Typography>
+              <AvatarGroup avatars={flow.watching.groups} />
+            </Box>
           )}
           {isDraft && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>

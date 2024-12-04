@@ -31,7 +31,17 @@ export type StepPrismaType = Prisma.StepGetPayload<{
   include: typeof stepInclude;
 }>;
 
-export const createFlowVersionInclude = (entityIds: string[]) =>
+export const entityWatchedFlowsInclude = Prisma.validator<Prisma.EntityWatchedFlowsInclude>()({
+  Entity: {
+    include: entityInclude,
+  },
+});
+
+export type EntityWatchedFlowsPrismaType = Prisma.EntityWatchedFlowsGetPayload<{
+  include: typeof entityWatchedFlowsInclude;
+}>;
+
+export const createFlowVersionInclude = (userEntityIds: string[]) =>
   Prisma.validator<Prisma.FlowVersionInclude>()({
     TriggerFieldSet: {
       include: fieldSetInclude,
@@ -51,31 +61,15 @@ export const createFlowVersionInclude = (entityIds: string[]) =>
           },
         },
         OwnerGroup: {
-          include: {
-            ...groupInclude,
-            EntityWatchedGroups: {
-              where: {
-                entityId: { in: entityIds },
-                watched: true,
-              },
-            },
-          },
-        },
-        GroupsWatchedFlows: {
-          where: {
-            Group: {
-              EntityWatchedGroups: {
-                some: {
-                  entityId: { in: entityIds },
-                  watched: true,
-                },
-              },
-            },
-          },
+          include: groupInclude,
         },
         EntityWatchedFlows: {
+          include: entityWatchedFlowsInclude,
           where: {
-            entityId: { in: entityIds },
+            OR: [
+              { entityId: { in: userEntityIds } },
+              { Entity: { Group: { GroupIze: { NOT: undefined } } } },
+            ],
           },
         },
       },
@@ -112,45 +106,8 @@ export const createUserWatchedFlowFilter = ({
   entityIds: string[];
   watched: boolean;
 }) => {
-  const groupWatchQuery: Prisma.FlowWhereInput = {
-    // user is not watching flow and...
-    EntityWatchedFlows: {
-      none: {
-        entityId: { in: entityIds },
-        watched: false,
-      },
-    },
-    // owned by a group that the user is watching
-    OR: [
-      {
-        OwnerGroup: {
-          EntityWatchedGroups: {
-            some: {
-              entityId: { in: entityIds },
-              watched: true,
-            },
-          },
-        },
-      },
-      // flow is watched by group that user is watching
-      {
-        GroupsWatchedFlows: {
-          some: {
-            Group: {
-              EntityWatchedGroups: {
-                some: {
-                  entityId: { in: entityIds },
-                  watched: true,
-                },
-              },
-            },
-          }, // TODO switch out for watched groups
-        },
-      },
-    ],
-  };
-
-  const userWatchQuery: Prisma.FlowWhereInput = {
+  // flows watched directly by user
+  const userWatchedQuery: Prisma.FlowWhereInput = {
     EntityWatchedFlows: {
       some: {
         entityId: { in: entityIds },
@@ -159,12 +116,71 @@ export const createUserWatchedFlowFilter = ({
     },
   };
 
+  //
+  const userNotWatchedQuery: Prisma.FlowWhereInput = {
+    AND: [
+      {
+        EntityWatchedFlows: {
+          none: {
+            entityId: { in: entityIds },
+            watched: false,
+          },
+        },
+      },
+      {
+        EntityWatchedFlows: {
+          none: {
+            Entity: {
+              Group: {
+                EntityWatchedGroups: {
+                  some: {
+                    entityId: { in: entityIds },
+                    watched: false,
+                  },
+                },
+              },
+            },
+            watched: true,
+          },
+        },
+      },
+    ],
+  };
+  // owned by a group that the user is watching
+  // OR: [
+  //   {
+  //     OwnerGroup: {
+  //       EntityWatchedGroups: {
+  //         some: {
+  //           entityId: { in: entityIds },
+  //           watched: true,
+  //         },
+  //       },
+  //     },
+  //   },
+  //   // flow is watched by group that user is watching
+  //   {
+  //     GroupsWatchedFlows: {
+  //       some: {
+  //         Group: {
+  //           EntityWatchedGroups: {
+  //             some: {
+  //               entityId: { in: entityIds },
+  //               watched: true,
+  //             },
+  //           },
+  //         },
+  //       }, // TODO switch out for watched groups
+  //     },
+  //   },
+  // ],
+
   // flow is watched if either
   // 1) user is watching that flow
   // 2) The user did not unwatch that flow that they are watching
   //    a group that is watching that flow
   return Prisma.validator<Prisma.FlowWhereInput>()({
-    [watched ? "OR" : "NOT"]: [userWatchQuery, groupWatchQuery],
+    [watched ? "OR" : "NOT"]: [userWatchedQuery, userNotWatchedQuery],
   });
 };
 
@@ -176,15 +192,41 @@ export const createGroupWatchedFlowFilter = ({
   groupId: string;
   watched: boolean;
   excudeOwnedFlows?: boolean;
-}) =>
-  Prisma.validator<Prisma.FlowWhereInput>()({
-    [watched ? "OR" : "NOT"]: [
-      !excudeOwnedFlows ? { OwnerGroup: { id: groupId } } : {},
-      { GroupsWatchedFlows: { some: { groupId: groupId, watched: true } } },
-    ],
-  });
+}) => {
+  if (watched)
+    return Prisma.validator<Prisma.FlowWhereInput>()({
+      OR: [
+        !excudeOwnedFlows ? { OwnerGroup: { id: groupId } } : {},
+        {
+          EntityWatchedFlows: {
+            some: {
+              Entity: {
+                Group: {
+                  id: groupId,
+                },
+              },
+            },
+          },
+        },
+      ],
+    });
+  else
+    return Prisma.validator<Prisma.FlowWhereInput>()({
+      NOT: {
+        EntityWatchedFlows: {
+          some: {
+            Entity: {
+              Group: {
+                id: groupId,
+              },
+            },
+          },
+        },
+      },
+    });
+};
 
-export const createFlowSummaryInclude = (entityIds: string[]) =>
+export const createFlowSummaryInclude = (userEntityIds: string[]) =>
   Prisma.validator<Prisma.FlowInclude>()({
     CurrentFlowVersion: {
       include: {
@@ -201,28 +243,19 @@ export const createFlowSummaryInclude = (entityIds: string[]) =>
         ...groupInclude,
         EntityWatchedGroups: {
           where: {
-            entityId: { in: entityIds },
+            entityId: { in: userEntityIds },
             watched: true,
           },
         },
       },
     },
-    GroupsWatchedFlows: {
-      where: {
-        Group: {
-          EntityWatchedGroups: {
-            some: {
-              entityId: { in: entityIds },
-              watched: true,
-            },
-          },
-        },
-      },
-    },
-
     EntityWatchedFlows: {
+      include: entityWatchedFlowsInclude,
       where: {
-        entityId: { in: entityIds },
+        OR: [
+          { entityId: { in: userEntityIds } },
+          { Entity: { Group: { GroupIze: { NOT: undefined } } } },
+        ],
       },
     },
   });
