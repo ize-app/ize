@@ -556,12 +556,12 @@ model FieldOptionsConfig {
   Field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   // type of options that can be created at the trigger, null means options cannot be created
-  triggerOptionsType  ValueType?          @map("trigger_options_type")
+  triggerOptionsType ValueType?          @map("trigger_options_type")
   // Whether option is single or multi-select. Null means no maximum # of selections
-  maxSelections       Int?                @map("max_selections")
+  maxSelections      Int?                @map("max_selections")
   // type single select / multi-select / etc
-  selectionType       OptionSelectionType @map("option_selection_type")
-  createdAt           DateTime            @default(now()) @map("created_at")
+  selectionType      OptionSelectionType @map("option_selection_type")
+  createdAt          DateTime            @default(now()) @map("created_at")
 
   fieldOptionSetId                String                            @map("field_option_set_id") @db.Uuid
   PredefinedOptionSet             FieldOptionSet?                   @relation(fields: [fieldOptionSetId], references: [id])
@@ -577,6 +577,8 @@ model FieldOptionsConfigLinkedResults {
 
   ResultConfig       ResultConfig       @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
   FieldOptionsConfig FieldOptionsConfig @relation(fields: [fieldOptionsConfigId], references: [id], onDelete: Cascade)
+
+  @@map("field_options_configs_linked_results")
 }
 
 model FieldOptionSet {
