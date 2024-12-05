@@ -6,9 +6,9 @@ import {
   FlowConfigGeneration,
   generateNonreusableFlowConfig,
 } from "@/core/flow/generateFlowArgs/generateNonreusableFlowConfig/generateNonreusableFlowConfig";
-import { prisma } from "@/prisma/client";
 
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";
+import { getGroupsForTelegramChat } from "../utils/getTelegramGroupOfTelegramChat";
 import { trimCommandMessage } from "../utils/trimCommandMessage";
 
 export const letAiDecide = async ({
@@ -31,17 +31,10 @@ export const letAiDecide = async ({
     return;
   }
 
-  const telegramGroup = await prisma.groupTelegramChat.findUniqueOrThrow({
-    where: {
-      chatId: BigInt(ctx.chat.id),
-    },
-    include: {
-      Group: true,
-    },
-  });
+  const { telegramGroupEntityId, izeGroupIds } = await getGroupsForTelegramChat(ctx.chat.id);
 
   const configArgs = generateNonreusableFlowConfig({
-    respondEntityId: telegramGroup.Group.entityId,
+    respondEntityId: telegramGroupEntityId,
     prompt,
     type: FlowConfigGeneration.LetAiDecide,
   });
@@ -49,9 +42,13 @@ export const letAiDecide = async ({
   // new custom flow will also create request and send notification to the relevant groups
   await newCustomFlow({
     args: {
-      new: {
-        flow: configArgs,
-        reusable: false,
+      newFlow: {
+        new: {
+          flow: configArgs,
+          reusable: false,
+        },
+        groupsToWatch: izeGroupIds,
+        requestName: prompt,
       },
     },
     entityContext: { type: "identity", identity },

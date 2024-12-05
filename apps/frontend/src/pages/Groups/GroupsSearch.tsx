@@ -71,7 +71,7 @@ export const GroupsSearch = () => {
             size="small"
             value="check"
             selected={watchFilter === WatchFilter.Watched}
-            sx={{ width: "140px", height: "30px" }}
+            sx={{ width: "160px" }}
             color="primary"
             onChange={() => {
               setWatchFilter(

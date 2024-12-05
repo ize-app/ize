@@ -1,10 +1,9 @@
-import { Prisma } from "@prisma/client";
-
 import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowSummary, QueryGetFlowsArgs } from "@/graphql/generated/resolver-types";
 
 import {
   FlowSummaryPrismaType,
+  createFlowPermissionFilter,
   createFlowSummaryInclude,
   createGroupWatchedFlowFilter,
   createUserGroupsWatchedFlowsFilter,
@@ -111,30 +110,3 @@ export const getFlows = async ({
   const res = flows.map((flow) => flowSummaryResolver({ flow, groupIds, context }));
   return res;
 };
-
-const createFlowPermissionFilter = (
-  groupIds: string[],
-  identityIds: string[],
-  userId: string | undefined,
-): Prisma.FlowVersionWhereInput => ({
-  TriggerPermissions: {
-    OR: [
-      { anyone: true },
-      {
-        EntitySet: {
-          EntitySetEntities: {
-            some: {
-              Entity: {
-                OR: [
-                  { Group: { id: { in: groupIds } } },
-                  { Identity: { id: { in: identityIds } } },
-                  { User: { id: userId } },
-                ],
-              },
-            },
-          },
-        },
-      },
-    ],
-  },
-});

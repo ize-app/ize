@@ -1,10 +1,16 @@
-mutation NewFlow($new: NewFlowWithEvolveArgs!) {
-  newFlow(new: $new)
+mutation NewFlow($newFlow: NewFlowMutationArgs!) {
+  newFlow(newFlow: $newFlow)
 }
 
 query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Boolean) {
   getFlow(flowId: $flowId, flowVersionId: $flowVersionId, isForEvolveRequest: $isForEvolveRequest) {
     ...Flow
+  }
+}
+
+query GetGroupsToWatchFlow($flowId: String, $entities: [String!]!) {
+  getGroupsToWatchFlow(flowId: $flowId, entities: $entities) {
+    ...GroupsToWatch
   }
 }
 
@@ -134,6 +140,15 @@ fragment ResponseConfig on ResponseConfig {
 fragment FlowWatchers on FlowWatchers {
   user
   groups {
+    ...GroupSummaryParts
+  }
+}
+
+fragment GroupsToWatch on GroupsToWatch {
+  relevantGroups {
+    ...GroupSummaryParts
+  }
+  otherGroups  {
     ...GroupSummaryParts
   }
 }

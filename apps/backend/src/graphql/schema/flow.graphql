@@ -1,9 +1,10 @@
 type Mutation {
-  newFlow(new: NewFlowWithEvolveArgs!): String!
+  newFlow(newFlow: NewFlowMutationArgs!): String!
 }
 
 type Query {
   getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
+  getGroupsToWatchFlow(flowId: String, entities: [String!]!): GroupsToWatch!
   getFlows(
     cursor: String
     limit: Int!
@@ -86,6 +87,13 @@ type ResponseConfig {
   minResponses: Int!
 }
 
+input NewFlowMutationArgs {
+  new: NewFlowWithEvolveArgs!
+  groupsToWatch: [String!]!
+  # only used if flow is non-reusable (which means initial request is triggered automatically)
+  requestName: String
+}
+
 input NewFlowWithEvolveArgs {
   flow: NewFlowArgs!
   evolve: NewFlowArgs
@@ -99,8 +107,6 @@ input NewFlowArgs {
   steps: [NewStepArgs!]!
   fieldSet: FieldSetArgs!
   trigger: TriggerConfigArgs!
-  # only used if flow is non-reusable (which means initial request is triggered automatically)
-  requestName: String
 }
 
 input NewStepArgs {
@@ -126,4 +132,9 @@ input ResponseConfigArgs {
 type FlowWatchers {
   user: Boolean!
   groups: [Group!]!
+}
+
+type GroupsToWatch {
+  relevantGroups: [Group!]!
+  otherGroups: [Group!]!
 }

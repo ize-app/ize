@@ -59,24 +59,24 @@ export const FlowsTable = ({
               </Table>
             </TableContainer>
             <Typography variant={"label2"}>Flows that modify this group</Typography>
-            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
-              <Table aria-label="Flows that modify this group Table" stickyHeader={true}>
-                <TableBody>
-                  {groupFlows.map((flow) => (
-                    <FlowRow
-                      key={flow.flowId}
-                      flow={flow}
-                      hideTriggerButton={hideTriggerButton}
-                      hideWatchButton={hideWatchButton}
-                      onClickRow={onClickRow}
-                      groupId={groupId}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
           </>
         ) : null}
+        <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
+          <Table aria-label="Flows that modify this group Table" stickyHeader={true}>
+            <TableBody>
+              {groupFlows.map((flow) => (
+                <FlowRow
+                  key={flow.flowId}
+                  flow={flow}
+                  hideTriggerButton={hideTriggerButton}
+                  hideWatchButton={hideWatchButton}
+                  onClickRow={onClickRow}
+                  groupId={groupId}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     );
   }

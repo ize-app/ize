@@ -2,12 +2,13 @@ import dayjs from "dayjs";
 
 import {
   FieldFragment,
+  OptionSelectionType,
   OptionsConfigFragment,
   ValueFragment,
   ValueType,
 } from "@/graphql/generated/graphql";
 
-import { InputSchemaType } from "../inputValidation";
+import { InputSchemaType, OptionSelectionValueSchemaType } from "../inputValidation";
 
 // take raw data from the server and convert it to the form state
 // used currently for evolving the flow form
@@ -83,14 +84,18 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
           required,
         };
       // TODO I don't think I'm handling the types below correctly
-      case "OptionSelectionsValue":
+      case "OptionSelectionsValue": {
+        if (!optionsConfig) throw Error("Only fields can have option selections");
+
+        const { maxSelections, selectionType } = optionsConfig;
         return {
           value: value.selections,
           type: ValueType.OptionSelections,
           required,
-          maxSelections: optionsConfig?.maxSelections,
-          selectionType: optionsConfig?.selectionType,
+          maxSelections: maxSelections ?? null,
+          selectionType: selectionType,
         };
+      }
       case "FlowVersionValue":
         return {
           value: value.flowVersion,
@@ -130,8 +135,22 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
         return { value: "", type: ValueType.String, required };
       case ValueType.Uri:
         return { value: "", type: ValueType.Uri, required };
-      case ValueType.OptionSelections:
-        return { value: [], type: ValueType.OptionSelections, required };
+      case ValueType.OptionSelections: {
+        if (!optionsConfig) throw Error("Only fields can have option selections");
+        const { selectionType, maxSelections } = optionsConfig;
+
+        const value: OptionSelectionValueSchemaType[] =
+          selectionType === OptionSelectionType.Rank
+            ? optionsConfig?.options.map((option) => ({ optionId: option.optionId }))
+            : [];
+        return {
+          value,
+          type: ValueType.OptionSelections,
+          required,
+          selectionType,
+          maxSelections: maxSelections ?? null,
+        };
+      }
       case ValueType.FlowVersion:
         // Flow version isn't supported as an input type, it's only used by backend
         throw Error("Flow version input should always have a value");

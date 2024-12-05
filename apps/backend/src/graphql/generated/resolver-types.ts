@@ -422,6 +422,12 @@ export type GroupWatchFlow = {
   name: Scalars['String']['output'];
 };
 
+export type GroupsToWatch = {
+  __typename?: 'GroupsToWatch';
+  otherGroups: Array<Group>;
+  relevantGroups: Array<Group>;
+};
+
 export type Identity = {
   __typename?: 'Identity';
   entityId: Scalars['String']['output'];
@@ -541,7 +547,7 @@ export type MutationNewEvolveRequestArgs = {
 
 
 export type MutationNewFlowArgs = {
-  new: NewFlowWithEvolveArgs;
+  newFlow: NewFlowMutationArgs;
 };
 
 
@@ -607,10 +613,15 @@ export type NewFlowArgs = {
   fieldSet: FieldSetArgs;
   flowVersionId: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  requestName?: InputMaybe<Scalars['String']['input']>;
   steps: Array<NewStepArgs>;
   trigger: TriggerConfigArgs;
   type: FlowType;
+};
+
+export type NewFlowMutationArgs = {
+  groupsToWatch: Array<Scalars['String']['input']>;
+  new: NewFlowWithEvolveArgs;
+  requestName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type NewFlowWithEvolveArgs = {
@@ -740,6 +751,7 @@ export type Query = {
   getDiscordServers: Array<DiscordServer>;
   getFlow: Flow;
   getFlows: Array<FlowSummary>;
+  getGroupsToWatchFlow: GroupsToWatch;
   getRequest: Request;
   getRequests: Array<RequestSummary>;
   group: IzeGroup;
@@ -775,6 +787,12 @@ export type QueryGetFlowsArgs = {
   searchQuery: Scalars['String']['input'];
   watchedByUser: Scalars['Boolean']['input'];
   watchedByUserGroups: Scalars['Boolean']['input'];
+};
+
+
+export type QueryGetGroupsToWatchFlowArgs = {
+  entities: Array<Scalars['String']['input']>;
+  flowId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1310,6 +1328,7 @@ export type ResolversTypes = {
   GroupTelegramChat: ResolverTypeWrapper<GroupTelegramChat>;
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
   GroupWatchFlow: ResolverTypeWrapper<Omit<GroupWatchFlow, 'filter'> & { filter?: Maybe<ResolversTypes['ActionFilter']> }>;
+  GroupsToWatch: ResolverTypeWrapper<Omit<GroupsToWatch, 'otherGroups' | 'relevantGroups'> & { otherGroups: Array<ResolversTypes['Group']>, relevantGroups: Array<ResolversTypes['Group']> }>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
   IdentityBlockchain: ResolverTypeWrapper<IdentityBlockchain>;
   IdentityBlockchainArgs: IdentityBlockchainArgs;
@@ -1330,6 +1349,7 @@ export type ResolversTypes = {
   NewEntityTypes: NewEntityTypes;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
+  NewFlowMutationArgs: NewFlowMutationArgs;
   NewFlowWithEvolveArgs: NewFlowWithEvolveArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -1449,6 +1469,7 @@ export type ResolversParentTypes = {
   GroupTelegramChat: GroupTelegramChat;
   GroupType: ResolversUnionTypes<ResolversParentTypes>['GroupType'];
   GroupWatchFlow: Omit<GroupWatchFlow, 'filter'> & { filter?: Maybe<ResolversParentTypes['ActionFilter']> };
+  GroupsToWatch: Omit<GroupsToWatch, 'otherGroups' | 'relevantGroups'> & { otherGroups: Array<ResolversParentTypes['Group']>, relevantGroups: Array<ResolversParentTypes['Group']> };
   Identity: Omit<Identity, 'identityType'> & { identityType: ResolversParentTypes['IdentityType'] };
   IdentityBlockchain: IdentityBlockchain;
   IdentityBlockchainArgs: IdentityBlockchainArgs;
@@ -1468,6 +1489,7 @@ export type ResolversParentTypes = {
   NewEntityArgs: NewEntityArgs;
   NewEvolveRequestArgs: NewEvolveRequestArgs;
   NewFlowArgs: NewFlowArgs;
+  NewFlowMutationArgs: NewFlowMutationArgs;
   NewFlowWithEvolveArgs: NewFlowWithEvolveArgs;
   NewRequestArgs: NewRequestArgs;
   NewResponseArgs: NewResponseArgs;
@@ -1785,6 +1807,12 @@ export type GroupWatchFlowResolvers<ContextType = GraphqlRequestContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GroupsToWatchResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['GroupsToWatch'] = ResolversParentTypes['GroupsToWatch']> = {
+  otherGroups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
+  relevantGroups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type IdentityResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Identity'] = ResolversParentTypes['Identity']> = {
   entityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1857,7 +1885,7 @@ export type MutationResolvers<ContextType = GraphqlRequestContext, ParentType ex
   newCustomGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewCustomGroupArgs, 'inputs'>>;
   newEntities?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType, RequireFields<MutationNewEntitiesArgs, 'entities'>>;
   newEvolveRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewEvolveRequestArgs, 'request'>>;
-  newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'new'>>;
+  newFlow?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewFlowArgs, 'newFlow'>>;
   newRequest?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewRequestArgs, 'request'>>;
   newResponse?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationNewResponseArgs, 'response'>>;
   testWebhook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationTestWebhookArgs, 'inputs'>>;
@@ -1934,6 +1962,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getDiscordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'hasTriggerPermissions' | 'limit' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
+  getGroupsToWatchFlow?: Resolver<ResolversTypes['GroupsToWatch'], ParentType, ContextType, RequireFields<QueryGetGroupsToWatchFlowArgs, 'entities'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'hasRespondPermission' | 'limit' | 'open' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
@@ -2195,6 +2224,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   GroupTelegramChat?: GroupTelegramChatResolvers<ContextType>;
   GroupType?: GroupTypeResolvers<ContextType>;
   GroupWatchFlow?: GroupWatchFlowResolvers<ContextType>;
+  GroupsToWatch?: GroupsToWatchResolvers<ContextType>;
   Identity?: IdentityResolvers<ContextType>;
   IdentityBlockchain?: IdentityBlockchainResolvers<ContextType>;
   IdentityDiscord?: IdentityDiscordResolvers<ContextType>;

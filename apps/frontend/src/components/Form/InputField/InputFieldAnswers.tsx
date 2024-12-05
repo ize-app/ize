@@ -8,7 +8,7 @@ import { InputField } from "./InputField";
 export const InputFieldAnswers = <T extends FieldValues>({
   fields,
   basePath,
-  groupId
+  groupId,
 }: {
   fields: FieldFragment[];
   basePath: Path<T>;
@@ -20,7 +20,7 @@ export const InputFieldAnswers = <T extends FieldValues>({
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "8px",
+        gap: "24px",
         marginBottom: "24px",
         padding: "20px",
         outline: "1px solid rgba(0, 0, 0, 0.1)",

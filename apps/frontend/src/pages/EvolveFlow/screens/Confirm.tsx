@@ -1,13 +1,20 @@
+// import { zodResolver } from "@hookform/resolvers/zod";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-// import { diff } from "deep-object-diff";
+// import { useForm } from "react-hook-form";
 
+// import { groupsToWatchSchema } from "@/components/Form/SelectGroupsToWatchForm/selectGroupsValidation";
 import { WizardBody, WizardNav } from "@/components/Wizard";
 
 import { useEvolveFlowWizardState } from "../evolveFlowWizard";
 
 export const Confirm = () => {
   const { onNext, onPrev, nextLabel } = useEvolveFlowWizardState();
+  // const formMethods = useForm({
+  //   defaultValues: [],
+  //   resolver: zodResolver(groupsToWatchSchema),
+  //   shouldUnregister: true,
+  // });
 
   // const diffFlow = diff(formState, formState.currentFlow);
 
