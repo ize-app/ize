@@ -315,12 +315,6 @@ export type FlowSummary = {
   watching: FlowWatchers;
 };
 
-export enum FlowTriggerPermissionFilter {
-  All = 'All',
-  NoTriggerPermission = 'NoTriggerPermission',
-  TriggerPermission = 'TriggerPermission'
-}
-
 export enum FlowType {
   Custom = 'Custom',
   Evolve = 'Evolve',
@@ -772,13 +766,15 @@ export type QueryGetFlowArgs = {
 
 
 export type QueryGetFlowsArgs = {
+  createdByUser: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
-  excludeOwnedFlows?: InputMaybe<Scalars['Boolean']['input']>;
+  excludeGroupId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
+  hasTriggerPermissions: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
-  triggerPermissionFilter: FlowTriggerPermissionFilter;
-  watchFilter: WatchFilter;
+  watchedByUser: Scalars['Boolean']['input'];
+  watchedByUserGroups: Scalars['Boolean']['input'];
 };
 
 
@@ -1295,7 +1291,6 @@ export type ResolversTypes = {
   Flow: ResolverTypeWrapper<Omit<Flow, 'evolve' | 'fieldSet' | 'group' | 'steps' | 'trigger' | 'watching'> & { evolve?: Maybe<ResolversTypes['Flow']>, fieldSet: ResolversTypes['FieldSet'], group?: Maybe<ResolversTypes['Group']>, steps: Array<ResolversTypes['Step']>, trigger: ResolversTypes['TriggerConfig'], watching: ResolversTypes['FlowWatchers'] }>;
   FlowReference: ResolverTypeWrapper<FlowReference>;
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'trigger' | 'watching'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, trigger: ResolversTypes['TriggerConfig'], watching: ResolversTypes['FlowWatchers'] }>;
-  FlowTriggerPermissionFilter: FlowTriggerPermissionFilter;
   FlowType: FlowType;
   FlowVersionValue: ResolverTypeWrapper<FlowVersionValue>;
   FlowWatchers: ResolverTypeWrapper<Omit<FlowWatchers, 'groups'> & { groups: Array<ResolversTypes['Group']> }>;
@@ -1936,7 +1931,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getDiscordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
-  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'limit' | 'searchQuery' | 'triggerPermissionFilter' | 'watchFilter'>>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'hasTriggerPermissions' | 'limit' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'limit' | 'respondPermissionFilter' | 'searchQuery' | 'statusFilter' | 'userOnly'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;

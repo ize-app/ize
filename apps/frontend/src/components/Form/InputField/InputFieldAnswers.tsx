@@ -8,9 +8,11 @@ import { InputField } from "./InputField";
 export const InputFieldAnswers = <T extends FieldValues>({
   fields,
   basePath,
+  groupId
 }: {
   fields: FieldFragment[];
   basePath: Path<T>;
+  groupId?: string;
 }) => {
   if (fields.length === 0) return null;
   return (
@@ -34,6 +36,7 @@ export const InputFieldAnswers = <T extends FieldValues>({
             key={field.fieldId}
             showLabel={true}
             seperateLabel={true}
+            groupId={groupId}
           />
         );
       })}

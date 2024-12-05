@@ -13,18 +13,22 @@ query GetFlows(
   $limit: Int!
   $groupId: String
   $searchQuery: String!
-  $watchFilter: WatchFilter!
-  $excludeOwnedFlows: Boolean
-  $triggerPermissionFilter: FlowTriggerPermissionFilter!
+  $watchedByUserGroups: Boolean!
+  $watchedByUser: Boolean!
+  $excludeGroupId: String
+  $createdByUser: Boolean!
+  $hasTriggerPermissions: Boolean!
 ) {
   getFlows(
     cursor: $cursor
     limit: $limit
     groupId: $groupId
     searchQuery: $searchQuery
-    watchFilter: $watchFilter
-    triggerPermissionFilter: $triggerPermissionFilter
-    excludeOwnedFlows: $excludeOwnedFlows
+    watchedByUserGroups: $watchedByUserGroups
+    watchedByUser: $watchedByUser
+    hasTriggerPermissions: $hasTriggerPermissions
+    createdByUser: $createdByUser
+    excludeGroupId: $excludeGroupId
   ) {
     ...FlowSummary
   }

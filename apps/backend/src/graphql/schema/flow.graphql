@@ -9,9 +9,11 @@ type Query {
     limit: Int!
     groupId: String
     searchQuery: String!
-    watchFilter: WatchFilter!
-    excludeOwnedFlows: Boolean
-    triggerPermissionFilter: FlowTriggerPermissionFilter!
+    watchedByUserGroups: Boolean!
+    watchedByUser: Boolean!
+    createdByUser: Boolean!
+    excludeGroupId: String
+    hasTriggerPermissions: Boolean!
   ): [FlowSummary!]!
 }
 
@@ -119,12 +121,6 @@ input ResponseConfigArgs {
   allowMultipleResponses: Boolean!
   canBeManuallyEnded: Boolean!
   minResponses: Int!
-}
-
-enum FlowTriggerPermissionFilter {
-  All
-  TriggerPermission
-  NoTriggerPermission
 }
 
 type FlowWatchers {

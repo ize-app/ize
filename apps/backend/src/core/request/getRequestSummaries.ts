@@ -62,12 +62,16 @@ export const getRequestSummaries = async ({
                 OR: [
                   {
                     FlowVersion: {
-                      Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
+                      Flow: createUserWatchedFlowFilter({
+                        userEntityIds: entityIds,
+                      }),
                     },
                   },
                   {
                     ProposedFlowVersionEvolution: {
-                      Flow: createUserWatchedFlowFilter({ entityIds, watched: true }),
+                      Flow: createUserWatchedFlowFilter({
+                        userEntityIds: entityIds,
+                      }),
                     },
                   },
                 ],

@@ -42,7 +42,7 @@ export const FlowsTable = ({
             <Typography variant={"label2"} marginTop={"8px"}>
               Flows watched by this group
             </Typography>
-            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
               <Table aria-label="Flows watched by this group Table" stickyHeader={true}>
                 <TableBody>
                   {otherFlows.map((flow) => (
@@ -59,7 +59,7 @@ export const FlowsTable = ({
               </Table>
             </TableContainer>
             <Typography variant={"label2"}>Flows that modify this group</Typography>
-            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
               <Table aria-label="Flows that modify this group Table" stickyHeader={true}>
                 <TableBody>
                   {groupFlows.map((flow) => (
@@ -82,7 +82,7 @@ export const FlowsTable = ({
   }
 
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
       <Table aria-label="Flows Table" stickyHeader={true}>
         <TableBody>
           {flows.map((flow) => (
@@ -185,7 +185,7 @@ const FlowRow = ({
         )}
 
         {!hideTriggerButton && (
-          <TableCellHideable align={"right"}>
+          <TableCellHideable hideOnSmallScreen align={"right"}>
             <Box sx={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
               <Tooltip
                 title={

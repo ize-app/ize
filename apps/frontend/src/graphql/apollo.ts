@@ -71,9 +71,11 @@ export const apolloClient = new ApolloClient({
             keyArgs: [
               "groupId",
               "searchQuery",
-              "watchFilter",
-              "triggerPermissionFilter",
-              "excludeOwnedFlows",
+              "watchedByUser",
+              "watchedByUserGroups",
+              "createdByUser",
+              "hasTriggerPermissions",
+              "excludeGroupId",
             ],
             // used a different merge function here to solve a problem
             // multiple getFlow queries happening on a single page

@@ -1,15 +1,15 @@
-import { Button } from "@mui/material";
+import { Button, MenuItem, Select, SelectChangeEvent, ToggleButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
+import { ChangeEvent, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
-import { FlowsSearchBar } from "@/components/searchBars/FlowsSearchBar.tsx";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
-import { FlowSummaryFragment, WatchFilter } from "@/graphql/generated/graphql.ts";
-import { CurrentUserContext } from "@/hooks/contexts/current_user_context.tsx";
+import Search from "@/components/Tables/Search";
+import { FlowSummaryFragment } from "@/graphql/generated/graphql.ts";
+import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 import { Route } from "@/routers/routes.ts";
 
@@ -17,29 +17,27 @@ import { FlowsTable } from "./FlowsTable.tsx";
 
 export const FlowsSearch = ({
   groupId,
-  initialWatchFilter = WatchFilter.Watched,
   onClickRow,
-  hideTriggerButton = false,
+  onlyShowTriggerable = false,
   hideWatchButton = false,
-  hideTriggerFilterButton = false,
-  hideCreateButton = false,
 }: {
   groupId?: string;
-  initialWatchFilter?: WatchFilter;
   onClickRow: (flow: FlowSummaryFragment) => void;
-  hideTriggerButton?: boolean;
+  onlyShowTriggerable?: boolean;
   hideWatchButton?: boolean;
-  hideTriggerFilterButton?: boolean;
-  hideCreateButton?: boolean;
 }) => {
   const queryResultLimit = 20;
 
   const { me } = useContext(CurrentUserContext);
   const {
-    watchFilter,
-    setWatchFilter,
-    triggerPermissionFilter,
-    setTriggerPermissionFilter,
+    watchedByUser,
+    watchedByUserGroups,
+    hasTriggerPermissions,
+    setWatchedByUser,
+    setWatchedByUserGroups,
+    setHasTriggerPermission,
+    selectedGroupId,
+    setGroupId,
     searchQuery,
     setSearchQuery,
     oldCursor,
@@ -47,9 +45,17 @@ export const FlowsSearch = ({
     newCursor,
     flows,
     loading,
+    createdByUser,
+    setCreatedByUser,
     fetchMore,
     queryVars,
-  } = useFlowsSearch({ groupId, queryResultLimit, initialWatchFilter });
+  } = useFlowsSearch({
+    groupId,
+    queryResultLimit,
+    initialWatchedByUser: groupId ? false : true,
+    initialWatchedByUserGroups: groupId ? false : true,
+    initialHasTriggerPermissions: onlyShowTriggerable ? true : false,
+  });
 
   return (
     <Box
@@ -58,29 +64,105 @@ export const FlowsSearch = ({
         flexDirection: "column",
         gap: "30px",
         height: "100%",
+        width: "100%",
+        minWidth: "0",
       }}
     >
       <Box
         sx={{
           width: "100%",
+          minWidth: "0",
           display: "flex",
           justifyContent: "space-between",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: "16px",
-          minWidth: "360px",
+          // minWidth: "360px",
         }}
       >
-        <FlowsSearchBar
-          watchFilter={watchFilter}
-          setWatchFilter={setWatchFilter}
-          triggerPermissionFilter={triggerPermissionFilter}
-          setTriggerPermissionFilter={setTriggerPermissionFilter}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          hideTriggerFilterButton={hideTriggerFilterButton || !me}
-          hideWatchButton={hideWatchButton || !me || !!groupId}
-        />
-        {!hideCreateButton && !!me && <CreateButton />}
+        <Box sx={{ display: "flex", gap: "16px" }}>
+          <Search
+            searchQuery={searchQuery}
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
+              setSearchQuery(event.target.value);
+            }}
+          />
+          {!!me && <CreateButton />}
+        </Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", width: "100%", minWidth: "0", gap: "8px" }}>
+          {
+            <ToggleButton
+              size="small"
+              value={watchedByUser}
+              selected={watchedByUser}
+              sx={{ width: "140px", flexShrink: 0 }}
+              color="primary"
+              onChange={() => {
+                setWatchedByUser(!watchedByUser);
+              }}
+            >
+              Watched by me
+            </ToggleButton>
+          }
+          {!groupId && (
+            <ToggleButton
+              size="small"
+              value={watchedByUserGroups}
+              selected={watchedByUserGroups}
+              sx={{ width: "160px", flexShrink: 0 }}
+              color="primary"
+              onChange={() => {
+                setWatchedByUserGroups(!watchedByUserGroups);
+              }}
+            >
+              Watched by my groups
+            </ToggleButton>
+          )}
+          {!onlyShowTriggerable && (
+            <ToggleButton
+              size="small"
+              value={hasTriggerPermissions}
+              selected={hasTriggerPermissions}
+              sx={{ width: "140px", flexShrink: 0 }}
+              color="primary"
+              onChange={() => {
+                setHasTriggerPermission(!hasTriggerPermissions);
+              }}
+            >
+              Flows I can trigger
+            </ToggleButton>
+          )}
+          {
+            <ToggleButton
+              size="small"
+              value={createdByUser}
+              selected={createdByUser}
+              sx={{ width: "140px", flexShrink: 0 }}
+              color="primary"
+              onChange={() => {
+                setCreatedByUser(!createdByUser);
+              }}
+            >
+              Created by me
+            </ToggleButton>
+          }
+          {!groupId && (
+            <Select
+              sx={{ width: "160px", flexShrink: 0 }}
+              size="small"
+              value={selectedGroupId ?? "all"}
+              onChange={(event: SelectChangeEvent<typeof selectedGroupId>) => {
+                setGroupId(event.target.value === "all" ? undefined : event.target.value);
+              }}
+            >
+              <MenuItem value={"all"}>All groups</MenuItem>
+              {me?.groups.map((group) => (
+                <MenuItem key={group.id} value={group.id}>
+                  {group.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        </Box>
       </Box>
       {loading ? (
         <Loading />
@@ -89,8 +171,8 @@ export const FlowsSearch = ({
           flows={flows}
           groupId={groupId}
           onClickRow={onClickRow}
-          hideTriggerButton={hideTriggerButton || !me}
-          hideWatchButton={hideWatchButton || !me}
+          hideTriggerButton={false}
+          hideWatchButton={hideWatchButton}
         />
       ) : (
         <EmptyTablePlaceholder>

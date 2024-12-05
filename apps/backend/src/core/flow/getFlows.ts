@@ -1,17 +1,13 @@
 import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
-import {
-  FlowSummary,
-  FlowTriggerPermissionFilter,
-  QueryGetFlowsArgs,
-  WatchFilter,
-} from "@/graphql/generated/resolver-types";
+import { FlowSummary, QueryGetFlowsArgs } from "@/graphql/generated/resolver-types";
 
 import {
   FlowSummaryPrismaType,
   createFlowSummaryInclude,
   createGroupWatchedFlowFilter,
+  createUserGroupsWatchedFlowsFilter,
   createUserWatchedFlowFilter,
 } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
@@ -42,14 +38,21 @@ export const getFlows = async ({
     where: {
       reusable: true,
       AND: [
-        // when query is for a user's watched flows
-        args.watchFilter !== WatchFilter.All && user && !args.groupId
-          ? createUserWatchedFlowFilter({
-              entityIds: userEntityIds,
-              watched: args.watchFilter === WatchFilter.Watched,
-            })
-          : {},
         { type: { not: "Evolve" } },
+        {
+          // we want results to be concatenation of user watched flows and grouped watched flows
+          // not the intersection
+          OR: [
+            args.watchedByUser
+              ? createUserWatchedFlowFilter({
+                  userEntityIds: userEntityIds,
+                })
+              : {},
+            args.watchedByUserGroups ? createUserGroupsWatchedFlowsFilter({ userEntityIds }) : {},
+          ],
+        },
+        args.createdByUser ? { creatorEntityId: { in: userEntityIds } } : {},
+        // filter by search query
         args.searchQuery !== ""
           ? {
               OR: [
@@ -78,31 +81,24 @@ export const getFlows = async ({
           ? {
               AND: [
                 createGroupWatchedFlowFilter({
-                  excudeOwnedFlows: args.excludeOwnedFlows ?? false,
+                  excudeOwnedFlows: false,
                   groupId: args.groupId,
-                  watched: args.watchFilter !== WatchFilter.Unwatched,
+                  watched: true,
                 }),
-                // when showing "unwatched flows" for a group,
-                // show flows that are watched by the user (though excluding flows watched by groups)
-                // this is useful for the flow "unwatch" field
-                args.watchFilter === WatchFilter.Unwatched
-                  ? createUserWatchedFlowFilter({
-                      entityIds: userEntityIds,
-                      watched: true,
-                    })
-                  : {},
               ],
             }
           : { groupId: null },
+        args.excludeGroupId
+          ? createGroupWatchedFlowFilter({
+              excudeOwnedFlows: false,
+              groupId: args.excludeGroupId,
+              watched: false,
+            })
+          : {},
 
-        args.triggerPermissionFilter !== FlowTriggerPermissionFilter.All
+        args.hasTriggerPermissions
           ? {
-              CurrentFlowVersion: {
-                // the type checking breaks with this is/not logic, so I had to move createFlowPermissionFilter to its own function
-                [args.triggerPermissionFilter === FlowTriggerPermissionFilter.TriggerPermission
-                  ? "is"
-                  : "NOT"]: createFlowPermissionFilter(groupIds, identityIds, user?.id),
-              },
+              CurrentFlowVersion: createFlowPermissionFilter(groupIds, identityIds, user?.id),
             }
           : {},
       ],

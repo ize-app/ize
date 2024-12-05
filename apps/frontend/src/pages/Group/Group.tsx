@@ -19,7 +19,6 @@ import {
   GroupDocument,
   IzeGroupFragment,
   RequestStepRespondPermissionFilter,
-  WatchFilter,
 } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
@@ -76,7 +75,6 @@ export const Group = () => {
       content: !loading ? (
         <FlowsSearch
           groupId={groupId}
-          initialWatchFilter={WatchFilter.All}
           onClickRow={(flow) => {
             navigate(
               generatePath(Route.Flow, {
