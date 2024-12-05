@@ -784,14 +784,16 @@ export type QueryGetRequestArgs = {
 
 
 export type QueryGetRequestsArgs = {
+  createdByUser: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   flowId?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['String']['input']>;
+  hasRespondPermission: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
-  respondPermissionFilter: RequestStepRespondPermissionFilter;
+  open: Scalars['Boolean']['input'];
   searchQuery: Scalars['String']['input'];
-  statusFilter: RequestStepStatusFilter;
-  userOnly: Scalars['Boolean']['input'];
+  watchedByUser: Scalars['Boolean']['input'];
+  watchedByUserGroups: Scalars['Boolean']['input'];
 };
 
 
@@ -1933,7 +1935,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'hasTriggerPermissions' | 'limit' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'limit' | 'respondPermissionFilter' | 'searchQuery' | 'statusFilter' | 'userOnly'>>;
+  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'hasRespondPermission' | 'limit' | 'open' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;

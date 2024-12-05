@@ -45,12 +45,14 @@ export const apolloClient = new ApolloClient({
         fields: {
           getRequests: {
             keyArgs: [
-              "userOnly",
               "groupId",
               "flowId",
               "searchQuery",
-              "statusFilter",
-              "respondPermissionFilter",
+              "watchedByUserGroups",
+              "watchedByUser",
+              "createdByUser",
+              "open",
+              "hasRespondPermission",
             ],
             merge(existing, incoming, { args, readField }) {
               const cursor = args && args.cursor;

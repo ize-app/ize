@@ -6677,6 +6677,22 @@
             "description": null,
             "args": [
               {
+                "name": "createdByUser",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "cursor",
                 "description": null,
                 "type": {
@@ -6713,6 +6729,22 @@
                 "deprecationReason": null
               },
               {
+                "name": "hasRespondPermission",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "limit",
                 "description": null,
                 "type": {
@@ -6729,14 +6761,14 @@
                 "deprecationReason": null
               },
               {
-                "name": "respondPermissionFilter",
+                "name": "open",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "RequestStepRespondPermissionFilter",
+                    "kind": "SCALAR",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 },
@@ -6761,14 +6793,14 @@
                 "deprecationReason": null
               },
               {
-                "name": "statusFilter",
+                "name": "watchedByUser",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "RequestStepStatusFilter",
+                    "kind": "SCALAR",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 },
@@ -6777,7 +6809,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "userOnly",
+                "name": "watchedByUserGroups",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

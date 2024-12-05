@@ -18,7 +18,6 @@ import { TabProps, Tabs } from "../../components/Tables/Tabs";
 import {
   GroupDocument,
   IzeGroupFragment,
-  RequestStepRespondPermissionFilter,
 } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
@@ -62,13 +61,7 @@ export const Group = () => {
   const tabs: TabProps[] = [
     {
       title: "Requests",
-      content: !loading ? (
-        <RequestSearch
-          userOnly={false}
-          groupId={groupId}
-          initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
-        />
-      ) : null,
+      content: !loading ? <RequestSearch userOnly={false} groupId={groupId} /> : null,
     },
     {
       title: "Flows",

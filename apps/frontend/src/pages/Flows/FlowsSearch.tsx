@@ -94,7 +94,7 @@ export const FlowsSearch = ({
               size="small"
               value={watchedByUser}
               selected={watchedByUser}
-              sx={{ width: "140px", flexShrink: 0 }}
+              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
               color="primary"
               onChange={() => {
                 setWatchedByUser(!watchedByUser);
@@ -108,7 +108,7 @@ export const FlowsSearch = ({
               size="small"
               value={watchedByUserGroups}
               selected={watchedByUserGroups}
-              sx={{ width: "160px", flexShrink: 0 }}
+              sx={{ width: "160px", flexShrink: 0, height: "30px" }}
               color="primary"
               onChange={() => {
                 setWatchedByUserGroups(!watchedByUserGroups);
@@ -122,7 +122,7 @@ export const FlowsSearch = ({
               size="small"
               value={hasTriggerPermissions}
               selected={hasTriggerPermissions}
-              sx={{ width: "140px", flexShrink: 0 }}
+              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
               color="primary"
               onChange={() => {
                 setHasTriggerPermission(!hasTriggerPermissions);
@@ -136,7 +136,7 @@ export const FlowsSearch = ({
               size="small"
               value={createdByUser}
               selected={createdByUser}
-              sx={{ width: "140px", flexShrink: 0 }}
+              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
               color="primary"
               onChange={() => {
                 setCreatedByUser(!createdByUser);
@@ -147,7 +147,7 @@ export const FlowsSearch = ({
           }
           {!groupId && (
             <Select
-              sx={{ width: "160px", flexShrink: 0 }}
+              sx={{ width: "160px", flexShrink: 0, height: "30px" }}
               size="small"
               value={selectedGroupId ?? "all"}
               onChange={(event: SelectChangeEvent<typeof selectedGroupId>) => {
