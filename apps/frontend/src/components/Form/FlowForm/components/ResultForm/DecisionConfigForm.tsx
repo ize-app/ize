@@ -65,11 +65,13 @@ export const DecisionConfigForm = ({
           OptionSelectionType.None,
         );
       } else {
+        if (selectionType === OptionSelectionType.None) {
+          setValue(
+            `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
+            OptionSelectionType.Select,
+          );
+        }
         setValue(`steps.${stepIndex}.fieldSet.fields.${resultIndex}.isInternal`, false);
-        setValue(
-          `steps.${stepIndex}.fieldSet.fields.${resultIndex}.optionsConfig.selectionType`,
-          OptionSelectionType.Select,
-        );
       }
     }
     setPrevDecisionType(decisionType);

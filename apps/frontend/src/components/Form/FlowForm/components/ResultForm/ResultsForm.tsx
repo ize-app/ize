@@ -91,7 +91,7 @@ const ResultForm = ({ stepIndex, resultIndex, locked, reusable, display }: Resul
 
   const result = getValues(`steps.${stepIndex}.result.${resultIndex}`);
   const resultField = getValues(`steps.${stepIndex}.fieldSet.fields.${resultIndex}`);
-  const resultType = result.type;
+  const resultType = result?.type;
 
   const resultError = formState.errors?.steps?.[stepIndex]?.result?.[resultIndex]?.root?.message;
 
