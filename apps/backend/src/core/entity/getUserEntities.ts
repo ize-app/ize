@@ -31,7 +31,7 @@ export const getUserEntities = async ({
 
     user = context.currentUser;
     entityId = context.currentUser.entityId;
-    entityIds = getUserEntityIds(context.currentUser);
+    entityIds = context.userEntityIds;
   } else if (entityContext.type === "identity") {
     const { identity } = entityContext;
 

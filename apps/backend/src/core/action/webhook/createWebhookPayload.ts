@@ -36,7 +36,7 @@ export async function createWebhookPayload({
 
   const request = await requestResolver({
     req: reqStep.Request,
-    context: { currentUser: null, discordApi: undefined },
+    context: { currentUser: null, discordApi: undefined, userEntityIds: [] },
     userGroupIds: [],
   });
 

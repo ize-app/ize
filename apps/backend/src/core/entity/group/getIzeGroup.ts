@@ -2,7 +2,6 @@ import { EntityPrismaType, entityInclude, entitySetInclude } from "@/core/entity
 import { entityResolver } from "@/core/entity/entityResolver";
 import { GroupPrismaType, groupInclude } from "@/core/entity/group/groupPrismaTypes";
 import { groupResolver } from "@/core/entity/group/groupResolver";
-import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowType, IzeGroup } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -21,25 +20,24 @@ export const getIzeGroup = async ({
     where: { id: groupId },
   });
 
-  const entityIds = getUserEntityIds(context.currentUser);
-
   let notificationEntity: EntityPrismaType | null = null;
   let isWatched = false;
   let isMember = false;
+  console.log("groupid", groupId);
 
   if (context?.currentUser && getWatchAndPermissionStatus) {
     const watchRecord = await prisma.entityWatchedGroups.findFirst({
       where: {
-        entityId: { in: entityIds },
+        entityId: { in: context.userEntityIds },
         groupId,
         watched: true,
       },
     });
 
-    const groupMember = await prisma.identityGroup.findFirst({
+    const groupMember = await prisma.entityGroup.findFirst({
       where: {
         groupId,
-        identityId: { in: context.currentUser.Identities.map((id) => id.id) },
+        entityId: { in: context.userEntityIds },
       },
     });
 

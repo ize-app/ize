@@ -4,7 +4,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 
 import { prisma } from "../../../../prisma/client";
 import { getIzeGroupsByMembers } from "../getCustomGroupsForIdentity";
-import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
+import { updateEntitiesGroups } from "../updateEntitiesGroups";
 
 export const updateUserIzeGroups = async ({
   context,
@@ -15,21 +15,21 @@ export const updateUserIzeGroups = async ({
 }) => {
   // try / catch so that me object will still return
   try {
-    const identityIds = context.currentUser?.Identities.map((id) => id.id);
-    if (!identityIds) return;
+    const entityIds = context.userEntityIds;
+    if (!entityIds) return;
     await Promise.all(
-      identityIds.map(async (identityId) => {
-        const groupsOfIdentity = await transaction.identityGroup.findMany({
+      entityIds.map(async (entityId) => {
+        const groupsOfIdentity = await transaction.entityGroup.findMany({
           where: {
-            identityId,
+            entityId,
           },
         });
         const izeGroupIds = await getIzeGroupsByMembers({
-          identityId,
+          identityId: entityId,
           groupIds: groupsOfIdentity.map((group) => group.groupId),
         });
-        await updateIdentitiesGroups({
-          identityId,
+        await updateEntitiesGroups({
+          entityId,
           groupIds: izeGroupIds,
           groupType: GroupType.GroupIze,
           transaction,

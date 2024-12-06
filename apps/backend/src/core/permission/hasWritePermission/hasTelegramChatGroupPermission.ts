@@ -1,6 +1,6 @@
 import { GroupTelegramChatPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
-import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
+import { upsertEntityGroup } from "@/core/entity/updateIdentitiesGroups/upsertEntityGroup";
 import { telegramBot } from "@/telegram/TelegramClient";
 
 // checks whether user has permission according to their discord @roles
@@ -32,15 +32,15 @@ export const hasTelegramChatGroupPermission = async ({
       ) {
         // updating identities_groups association because we can't query all of a user's telegram chats
         // like we do with other platforms
-        upsertIdentityGroup({
-          identityId: telegramIdentity.id,
+        upsertEntityGroup({
+          entityId: telegramIdentity.entityId,
           groupId: telegramGroup.groupId,
           active: true,
         });
         return true;
       } else {
-        upsertIdentityGroup({
-          identityId: telegramIdentity.id,
+        upsertEntityGroup({
+          entityId: telegramIdentity.entityId,
           groupId: telegramGroup.groupId,
           active: false,
         });

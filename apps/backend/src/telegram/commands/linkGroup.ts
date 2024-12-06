@@ -1,7 +1,7 @@
 import { Message, Update } from "@telegraf/types";
 import { Context } from "telegraf";
 
-import { upsertIdentityGroup } from "@/core/entity/updateIdentitiesGroups/upsertIdentityGroup";
+import { upsertEntityGroup } from "@/core/entity/updateIdentitiesGroups/upsertEntityGroup";
 
 import { upsertTelegramChatGroup } from "../upsertTelegramChatGroup";
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";
@@ -43,8 +43,8 @@ export const linkGroup = async ({
         creatorEntityId: tgIdentity.entityId,
       });
 
-      await upsertIdentityGroup({
-        identityId: tgIdentity.id,
+      await upsertEntityGroup({
+        entityId: tgIdentity.entityId,
         groupId: tgGroupId,
         active: true,
       });

@@ -35,7 +35,6 @@ model Identity {
   IdentityEmail      IdentityEmail?
   IdentityBlockchain IdentityBlockchain?
   IdentityDiscord    IdentityDiscord?
-  IdentitiesGroups   IdentityGroup[]
   Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
   IdentityTelegram   IdentityTelegram?
 
@@ -95,18 +94,20 @@ model IdentityTelegram {
   @@map("identity_telegram_users")
 }
 
-model IdentityGroup {
-  identityId String   @map("identity_id") @db.Uuid
-  groupId    String   @map("group_id") @db.Uuid
-  active     Boolean
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+// maps which entities belong to which groups
+// used for read operations
+model EntityGroup {
+  entityId  String   @map("entity_id") @db.Uuid
+  groupId   String   @map("group_id") @db.Uuid
+  active    Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  Group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Identity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([identityId, groupId])
-  @@map("identities_groups")
+  @@unique([entityId, groupId])
+  @@map("entities_groups")
 }
 
 enum OauthTypes {
@@ -152,7 +153,7 @@ model Group {
   GroupDiscordRole    GroupDiscordRole?
   GroupNft            GroupNft?
   GroupTelegramChat   GroupTelegramChat?
-  IdentitiesGroups    IdentityGroup[]
+  EntitiesInGroup     EntityGroup[]
   GroupIze            GroupIze?
   EntityWatchedGroups EntityWatchedGroups[]
   OwnedFlows          Flow[]
@@ -420,6 +421,7 @@ model Entity {
   Request              Request[]
   CreatedGroups        Group[]               @relation("Creator")
   ValueEntities        ValueEntities[]
+  EntityGroups         EntityGroup[]
 
   @@map("entities")
 }

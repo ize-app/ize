@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { QueryGroupsForCurrentUserArgs, WatchFilter } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
@@ -21,8 +20,8 @@ export const getGroupsOfUser = async ({
   if (!context.currentUser) throw Error("ERROR: Unauthenticated user");
 
   // Get groups that the user is in a server, role or has created.
-  const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
-  const entityIds = getUserEntityIds(context.currentUser);
+  const groupIds = await getGroupIdsOfUser({ context, transaction });
+  const entityIds = context.userEntityIds;
 
   const groupsIze = await transaction.groupIze.findMany({
     take: args.limit,

@@ -12,7 +12,6 @@ import {
   createUserGroupsWatchedFlowsFilter,
   createUserWatchedFlowFilter,
 } from "../flow/flowPrismaTypes";
-import { getUserEntityIds } from "../user/getUserEntityIds";
 
 export const getRequestSummaries = async ({
   args,
@@ -23,9 +22,9 @@ export const getRequestSummaries = async ({
 }): Promise<RequestSummary[]> => {
   const user = (context as GraphqlRequestContextWithUser).currentUser;
   if (!user) return [];
-  const groupIds: string[] = await getGroupIdsOfUser({ user });
+  const groupIds: string[] = await getGroupIdsOfUser({ context });
   const identityIds: string[] = (user.Identities ?? []).map((id) => id.id) ?? [];
-  const entityIds = getUserEntityIds(user);
+  const entityIds = context.userEntityIds;
 
   return await prisma.$transaction(async (transaction) => {
     const requestSteps = await transaction.request.findMany({

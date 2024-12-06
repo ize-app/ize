@@ -11,7 +11,6 @@ import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
 import { groupResolver } from "../entity/group/groupResolver";
 import { createPermissionFilter } from "../permission/permissionPrismaTypes";
-import { getUserEntityIds } from "../user/getUserEntityIds";
 
 export const getGroupsToWatchFlow = async ({
   args,
@@ -21,10 +20,8 @@ export const getGroupsToWatchFlow = async ({
   context: GraphqlRequestContext;
 }): Promise<GroupsToWatch> => {
   const user = context.currentUser;
-  const groupIds: string[] = await getGroupIdsOfUser({ user });
+  const groupIds: string[] = await getGroupIdsOfUser({ context });
   const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
-
-  const userEntityIds = getUserEntityIds(user);
 
   // get groups that user is watching, can make watch requets for, and the group isn't already watching that flow
   const groups = await prisma.group.findMany({
@@ -44,7 +41,7 @@ export const getGroupsToWatchFlow = async ({
       },
       EntityWatchedGroups: {
         some: {
-          entityId: { in: userEntityIds },
+          entityId: { in: context.userEntityIds },
         },
       },
       Entity: args.flowId ? { EntityWatchedFlows: { none: { flowId: args.flowId } } } : {},

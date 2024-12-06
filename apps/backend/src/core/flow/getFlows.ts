@@ -12,7 +12,6 @@ import {
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { getUserEntityIds } from "../user/getUserEntityIds";
 
 // Gets all flows that user has request permissions for on the first step of the flow, or that user created
 // intentionally not pulling processes that have the "anyone" permission
@@ -24,13 +23,11 @@ export const getFlows = async ({
   context: GraphqlRequestContext;
 }): Promise<FlowSummary[]> => {
   const user = context.currentUser;
-  const groupIds: string[] = await getGroupIdsOfUser({ user });
+  const groupIds: string[] = await getGroupIdsOfUser({ context });
   const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
 
-  const userEntityIds = getUserEntityIds(user);
-
   const flows: FlowSummaryPrismaType[] = await prisma.flow.findMany({
-    include: createFlowSummaryInclude(userEntityIds),
+    include: createFlowSummaryInclude(context.userEntityIds),
     take: args.limit,
     skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
     cursor: args.cursor ? { id: args.cursor } : undefined,
@@ -44,13 +41,15 @@ export const getFlows = async ({
           OR: [
             args.watchedByUser
               ? createUserWatchedFlowFilter({
-                  userEntityIds: userEntityIds,
+                  userEntityIds: context.userEntityIds,
                 })
               : {},
-            args.watchedByUserGroups ? createUserGroupsWatchedFlowsFilter({ userEntityIds }) : {},
+            args.watchedByUserGroups
+              ? createUserGroupsWatchedFlowsFilter({ userEntityIds: context.userEntityIds })
+              : {},
           ],
         },
-        args.createdByUser ? { creatorEntityId: { in: userEntityIds } } : {},
+        args.createdByUser ? { creatorEntityId: { in: context.userEntityIds } } : {},
         // filter by search query
         args.searchQuery !== ""
           ? {

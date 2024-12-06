@@ -3,6 +3,7 @@ import { MePrismaType } from "@/core/user/userPrismaTypes";
 
 export type GraphqlRequestContext = {
   currentUser?: MePrismaType | null;
+  userEntityIds: string[];
   discordApi?: DiscordApi;
 };
 
