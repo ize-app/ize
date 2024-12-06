@@ -104,8 +104,8 @@ CREATE TABLE "identity_telegram_users" (
 );
 
 -- CreateTable
-CREATE TABLE "identities_groups" (
-    "identity_id" UUID NOT NULL,
+CREATE TABLE "entities_groups" (
+    "entity_id" UUID NOT NULL,
     "group_id" UUID NOT NULL,
     "active" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -658,13 +658,6 @@ CREATE TABLE "entity_watched_flows" (
 );
 
 -- CreateTable
-CREATE TABLE "groups_watched_flows" (
-    "flow_id" UUID NOT NULL,
-    "group_id" UUID NOT NULL,
-    "watched" BOOLEAN NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "telegram_messages" (
     "id" UUID NOT NULL,
     "chat_id" BIGINT NOT NULL,
@@ -708,7 +701,7 @@ CREATE UNIQUE INDEX "identity_telegram_users_identity_id_key" ON "identity_teleg
 CREATE UNIQUE INDEX "identity_telegram_users_telegram_user_id_key" ON "identity_telegram_users"("telegram_user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "identities_groups_identity_id_group_id_key" ON "identities_groups"("identity_id", "group_id");
+CREATE UNIQUE INDEX "entities_groups_entity_id_group_id_key" ON "entities_groups"("entity_id", "group_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "groups_entity_id_key" ON "groups"("entity_id");
@@ -834,9 +827,6 @@ CREATE UNIQUE INDEX "entity_watched_groups_entity_id_group_id_key" ON "entity_wa
 CREATE UNIQUE INDEX "entity_watched_flows_entity_id_flow_id_key" ON "entity_watched_flows"("entity_id", "flow_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "groups_watched_flows_flow_id_group_id_key" ON "groups_watched_flows"("flow_id", "group_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "telegram_messages_message_id_key" ON "telegram_messages"("message_id");
 
 -- CreateIndex
@@ -864,10 +854,10 @@ ALTER TABLE "identity_discord_users" ADD CONSTRAINT "identity_discord_users_iden
 ALTER TABLE "identity_telegram_users" ADD CONSTRAINT "identity_telegram_users_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "identities_groups" ADD CONSTRAINT "identities_groups_identity_id_fkey" FOREIGN KEY ("identity_id") REFERENCES "identities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entities_groups" ADD CONSTRAINT "entities_groups_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "identities_groups" ADD CONSTRAINT "identities_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "entities_groups" ADD CONSTRAINT "entities_groups_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "oauths" ADD CONSTRAINT "oauths_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -1117,12 +1107,6 @@ ALTER TABLE "entity_watched_flows" ADD CONSTRAINT "entity_watched_flows_flow_id_
 
 -- AddForeignKey
 ALTER TABLE "entity_watched_flows" ADD CONSTRAINT "entity_watched_flows_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "groups_watched_flows" ADD CONSTRAINT "groups_watched_flows_flow_id_fkey" FOREIGN KEY ("flow_id") REFERENCES "flows"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "groups_watched_flows" ADD CONSTRAINT "groups_watched_flows_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "telegram_messages" ADD CONSTRAINT "telegram_messages_request_step_id_fkey" FOREIGN KEY ("request_step_id") REFERENCES "request_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
