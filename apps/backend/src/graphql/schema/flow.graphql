@@ -1,20 +1,17 @@
 type Mutation {
-  newFlow(newFlow: NewFlowMutationArgs!): String!
+  newFlow(new: NewFlowWithEvolveArgs!): String!
 }
 
 type Query {
   getFlow(flowId: String, flowVersionId: String, isForEvolveRequest: Boolean): Flow!
-  getGroupsToWatchFlow(flowId: String, entities: [String!]!): GroupsToWatch!
   getFlows(
     cursor: String
     limit: Int!
     groupId: String
     searchQuery: String!
-    watchedByUserGroups: Boolean!
-    watchedByUser: Boolean!
-    createdByUser: Boolean!
-    excludeGroupId: String
-    hasTriggerPermissions: Boolean!
+    watchFilter: WatchFilter!
+    excludeOwnedFlows: Boolean
+    triggerPermissionFilter: FlowTriggerPermissionFilter!
   ): [FlowSummary!]!
 }
 
@@ -36,7 +33,7 @@ type Flow {
   steps: [Step!]!
   flowsEvolvedByThisFlow: [FlowReference!]!
   evolve: Flow
-  watching: FlowWatchers!
+  isWatched: Boolean!
 }
 
 type FlowSummary {
@@ -47,7 +44,7 @@ type FlowSummary {
   createdAt: String!
   # permission to trigger first step of the flow
   trigger: TriggerConfig!
-  watching: FlowWatchers!
+  isWatched: Boolean!
 }
 
 type FlowReference {
@@ -87,13 +84,6 @@ type ResponseConfig {
   minResponses: Int!
 }
 
-input NewFlowMutationArgs {
-  new: NewFlowWithEvolveArgs!
-  groupsToWatch: [String!]!
-  # only used if flow is non-reusable (which means initial request is triggered automatically)
-  requestName: String
-}
-
 input NewFlowWithEvolveArgs {
   flow: NewFlowArgs!
   evolve: NewFlowArgs
@@ -107,6 +97,8 @@ input NewFlowArgs {
   steps: [NewStepArgs!]!
   fieldSet: FieldSetArgs!
   trigger: TriggerConfigArgs!
+  # only used if flow is non-reusable (which means initial request is triggered automatically)
+  requestName: String
 }
 
 input NewStepArgs {
@@ -129,12 +121,8 @@ input ResponseConfigArgs {
   minResponses: Int!
 }
 
-type FlowWatchers {
-  user: Boolean!
-  groups: [Group!]!
-}
-
-type GroupsToWatch {
-  relevantGroups: [Group!]!
-  otherGroups: [Group!]!
+enum FlowTriggerPermissionFilter {
+  All
+  TriggerPermission
+  NoTriggerPermission
 }

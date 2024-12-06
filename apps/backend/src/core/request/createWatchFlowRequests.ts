@@ -7,34 +7,85 @@ import { CustomErrorCodes, GraphQLError } from "@graphql/errors";
 import { newRequest } from "./newRequest";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { fieldSetInclude } from "../fields/fieldPrismaTypes";
+import { PermissionPrismaType, permissionInclude } from "../permission/permissionPrismaTypes";
 
-// creates watch flow requests for a flow for a set of groups
+// creates watch flow requests for a flow
+// assumption here is that creator of a flow would want to create watch flow requests for all custom groups where
+// 1) this custom group participating on the flow (via respond / request permissions)
+// 2) this particular entity has permissions to request the "watch flow" flow
 export const createWatchFlowRequests = async ({
   flowId,
-  groupIds, // Ids of Ize groups to watch the flow
   entityContext,
 }: {
   flowId: string;
-  groupIds: string[];
   entityContext: UserOrIdentityContextInterface;
 }) => {
   try {
     // Find all entities referenced on this flow
-    const flow = await prisma.flow.findUniqueOrThrow({
+    const data = await prisma.flow.findUniqueOrThrow({
       include: {
-        CurrentFlowVersion: true,
+        CurrentFlowVersion: {
+          include: {
+            TriggerPermissions: { include: permissionInclude },
+            Steps: {
+              include: {
+                ResponseConfig: {
+                  include: {
+                    ResponsePermissions: { include: permissionInclude },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       where: {
         id: flowId,
       },
     });
 
-    const flowName = flow.CurrentFlowVersion?.name;
+    const flowName = data.CurrentFlowVersion?.name;
+
+    const entitiesOnFlow: Set<string> = new Set();
+
+    // get all entities referenced on this flow
+    const getIzeGroups = (permissions: PermissionPrismaType | null | undefined) => {
+      (permissions?.EntitySet?.EntitySetEntities ?? []).forEach((entity) => {
+        entitiesOnFlow.add(entity.entityId);
+      });
+    };
+
+    getIzeGroups(data.CurrentFlowVersion?.TriggerPermissions);
+
+    data.CurrentFlowVersion?.Steps.forEach((step) => {
+      getIzeGroups(step.ResponseConfig?.ResponsePermissions);
+    });
+
+    const izeGroups = await prisma.groupIze.findMany({
+      where: {
+        OR: [
+          // member of custom group is referenced on the flow
+          {
+            MemberEntitySet: {
+              EntitySetEntities: {
+                some: { entityId: { in: Array.from(entitiesOnFlow) } },
+              },
+            },
+          },
+          // custom group is itself referenced on the flow
+          {
+            group: {
+              entityId: { in: Array.from(entitiesOnFlow) },
+            },
+          },
+        ],
+      },
+    });
 
     // find "watch flow" flows for all of these custom groups
     const watchFlows = await prisma.flow.findMany({
       where: {
-        groupId: { in: groupIds },
+        groupId: { in: izeGroups.map((group) => group.groupId) },
         type: FlowType.GroupWatchFlow,
       },
       include: {

@@ -35,6 +35,7 @@ model Identity {
   IdentityEmail      IdentityEmail?
   IdentityBlockchain IdentityBlockchain?
   IdentityDiscord    IdentityDiscord?
+  IdentitiesGroups   IdentityGroup[]
   Entity             Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
   IdentityTelegram   IdentityTelegram?
 
@@ -94,20 +95,18 @@ model IdentityTelegram {
   @@map("identity_telegram_users")
 }
 
-// maps which entities belong to which groups
-// used for read operations
-model EntityGroup {
-  entityId  String   @map("entity_id") @db.Uuid
-  groupId   String   @map("group_id") @db.Uuid
-  active    Boolean
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+model IdentityGroup {
+  identityId String   @map("identity_id") @db.Uuid
+  groupId    String   @map("group_id") @db.Uuid
+  active     Boolean
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Identity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  Group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Identity Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  Group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([entityId, groupId])
-  @@map("entities_groups")
+  @@unique([identityId, groupId])
+  @@map("identities_groups")
 }
 
 enum OauthTypes {
@@ -153,10 +152,11 @@ model Group {
   GroupDiscordRole    GroupDiscordRole?
   GroupNft            GroupNft?
   GroupTelegramChat   GroupTelegramChat?
-  EntitiesInGroup     EntityGroup[]
+  IdentitiesGroups    IdentityGroup[]
   GroupIze            GroupIze?
   EntityWatchedGroups EntityWatchedGroups[]
   OwnedFlows          Flow[]
+  GroupsWatchedFlows  GroupsWatchedFlows[]
 
   @@map("groups")
 }
@@ -289,6 +289,7 @@ model Flow {
   CurrentFlowVersion          FlowVersion?         @relation("FlowToCurrentFlowVersion", fields: [currentFlowVersionId], references: [id])
   FlowVersions                FlowVersion[]        @relation("FlowToAllFlowVersions")
   EvolveRightsForFlowVersions FlowVersion[]        @relation("EvolveFlowToFlowVersions")
+  GroupsWatchedFlows          GroupsWatchedFlows[]
   EntityWatchedFlows          EntityWatchedFlows[]
   ValueFlows                  ValueFlows[]
 
@@ -421,7 +422,6 @@ model Entity {
   Request              Request[]
   CreatedGroups        Group[]               @relation("Creator")
   ValueEntities        ValueEntities[]
-  EntityGroups         EntityGroup[]
 
   @@map("entities")
 }
@@ -969,6 +969,18 @@ model EntityWatchedFlows {
 
   @@unique([entityId, flowId])
   @@map("entity_watched_flows")
+}
+
+model GroupsWatchedFlows {
+  flowId  String  @map("flow_id") @db.Uuid
+  groupId String  @map("group_id") @db.Uuid
+  watched Boolean
+
+  Flow  Flow  @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([flowId, groupId])
+  @@map("groups_watched_flows")
 }
 
 model TelegramMessages {

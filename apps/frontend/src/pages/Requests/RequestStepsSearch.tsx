@@ -1,11 +1,4 @@
-import {
-  Button,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  ToggleButton,
-  Typography,
-} from "@mui/material";
+import { Button, ToggleButton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent, useContext } from "react";
 import { Link, generatePath } from "react-router-dom";
@@ -14,6 +7,10 @@ import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
 import Search from "@/components/Tables/Search";
+import {
+  RequestStepRespondPermissionFilter,
+  RequestStepStatusFilter,
+} from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useRequestStepsSearch from "@/hooks/useRequestStepsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
@@ -25,27 +22,21 @@ export const RequestSearch = ({
   userOnly,
   flowId,
   groupId,
+  initialRespondPermissionFilter = RequestStepRespondPermissionFilter.RespondPermission,
 }: {
   userOnly: boolean;
   groupId?: string;
   flowId?: string;
+  initialRespondPermissionFilter?: RequestStepRespondPermissionFilter;
 }) => {
   const queryResultLimit = 20;
   const {
     searchQuery,
     setSearchQuery,
-    hasRespondPermission,
-    watchedByUser,
-    watchedByUserGroups,
-    createdByUser,
-    open,
-    selectedGroupId,
-    setHasRespondPermission,
-    setWatchedByUser,
-    setWatchedByUserGroups,
-    setCreatedByUser,
-    setOpen,
-    setSelectedGroupId,
+    respondPermissionFilter,
+    setRespondPermissionFilter,
+    statusFilter,
+    setStatusFilter,
     setOldCursor,
     oldCursor,
     newCursor,
@@ -58,6 +49,7 @@ export const RequestSearch = ({
     groupId,
     flowId,
     queryResultLimit,
+    initialRespondPermissionFilter,
   });
 
   const { me } = useContext(CurrentUserContext);
@@ -74,118 +66,73 @@ export const RequestSearch = ({
       <Box
         sx={{
           width: "100%",
-          minWidth: "0",
           display: "flex",
           justifyContent: "space-between",
-          flexDirection: "column",
+          flexDirection: "row",
           gap: "16px",
+          minWidth: "360px",
         }}
       >
-        <Box sx={{ display: "flex", gap: "16px" }}>
+        <Box
+          sx={(theme) => ({
+            display: "flex",
+            flexDirection: "row",
+            gap: "16px",
+            width: "100%",
+            // maxWidth: "500px",
+            [theme.breakpoints.down("md")]: {
+              flexDirection: "column",
+            },
+          })}
+        >
           <Search
             searchQuery={searchQuery}
             changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />
-          {me && <CreateButton />}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "16px",
-            width: "100%",
-          }}
-        >
-          <Box sx={{ display: "flex", flexWrap: "wrap", width: "100%", minWidth: "0", gap: "8px" }}>
+          <Box sx={{ display: "flex", gap: "8px" }}>
             <ToggleButton
               size="small"
-              value={open}
-              selected={open}
-              sx={{ width: "80px", height: "30px" }}
+              value="check"
+              selected={statusFilter === RequestStepStatusFilter.Open}
+              sx={{ width: "140px" }}
               color="primary"
               onChange={() => {
-                setOpen(!open);
+                // setSelected(!selected);
+                setStatusFilter(
+                  statusFilter === RequestStepStatusFilter.Open
+                    ? RequestStepStatusFilter.All
+                    : RequestStepStatusFilter.Open,
+                );
               }}
             >
-              Open
+              Open requests
             </ToggleButton>
-            {!flowId && (
+            {me && (
               <ToggleButton
                 size="small"
-                value={watchedByUser}
-                selected={watchedByUser}
-                sx={{ width: "160px", height: "30px" }}
+                value="check"
+                selected={
+                  respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                }
+                sx={{ width: "160px" }}
                 color="primary"
                 onChange={() => {
-                  setWatchedByUser(!watchedByUser);
+                  // setSelected(!selected);
+                  setRespondPermissionFilter(
+                    respondPermissionFilter === RequestStepRespondPermissionFilter.RespondPermission
+                      ? RequestStepRespondPermissionFilter.All
+                      : RequestStepRespondPermissionFilter.RespondPermission,
+                  );
                 }}
               >
-                Watched by me
+                Respond permission
               </ToggleButton>
-            )}
-            {!groupId && !flowId && (
-              <ToggleButton
-                size="small"
-                value={watchedByUserGroups}
-                selected={watchedByUserGroups}
-                sx={{ width: "160px", height: "30px" }}
-                color="primary"
-                onChange={() => {
-                  setWatchedByUserGroups(!watchedByUserGroups);
-                }}
-              >
-                Watched by my groups
-              </ToggleButton>
-            )}
-            <ToggleButton
-              size="small"
-              value={createdByUser}
-              selected={createdByUser}
-              sx={{ width: "140px", height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setCreatedByUser(!createdByUser);
-              }}
-            >
-              Created by me
-            </ToggleButton>
-            <ToggleButton
-              size="small"
-              value={hasRespondPermission}
-              selected={hasRespondPermission}
-              sx={{ width: "140px", height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setHasRespondPermission(!hasRespondPermission);
-              }}
-            >
-              I can respond
-            </ToggleButton>
-            {!groupId && !flowId && (
-              <Select
-                sx={{
-                  width: "160px",
-                  height: "30px",
-                  flexShrink: 0,
-                }}
-                size="small"
-                value={selectedGroupId ?? "all"}
-                onChange={(event: SelectChangeEvent<typeof selectedGroupId>) => {
-                  setSelectedGroupId(event.target.value === "all" ? undefined : event.target.value);
-                }}
-              >
-                <MenuItem value={"all"}>All groups</MenuItem>
-                {me?.groups.map((group) => (
-                  <MenuItem key={group.id} value={group.id}>
-                    {group.name}
-                  </MenuItem>
-                ))}
-              </Select>
             )}
           </Box>
         </Box>
+        {me && <CreateButton />}
       </Box>
       {loading ? (
         <Loading />

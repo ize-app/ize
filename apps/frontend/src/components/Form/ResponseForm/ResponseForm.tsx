@@ -55,8 +55,8 @@ export const ResponseForm = ({
     shouldUnregister: false,
   });
 
-  // console.log("form state is ", formMethods.getValues());
-  // console.log("errors are", formMethods.formState.errors);
+  console.log("form state is ", formMethods.getValues());
+  console.log("errors are", formMethods.formState.errors);
 
   const onSubmit = async (data: ResponseSchemaType) => {
     console.log("submitting response", data);

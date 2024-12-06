@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+import { WatchFilter } from "@/graphql/generated/graphql";
 import { FlowsSearch } from "@/pages/Flows/FlowsSearch";
 
 import { fullUUIDToShort } from "../../../utils/inputs";
@@ -15,8 +16,11 @@ export const SelectFlow = () => {
         setParams({ flowId: fullUUIDToShort(flow.flowId) });
         navigate(fullUUIDToShort(flow.flowId));
       }}
-      onlyShowTriggerable={true}
+      initialWatchFilter={WatchFilter.Watched}
+      hideTriggerButton={true}
       hideWatchButton={true}
+      hideCreateButton={true}
+      hideTriggerFilterButton={true}
     />
   );
 };

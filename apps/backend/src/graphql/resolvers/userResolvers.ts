@@ -50,7 +50,7 @@ const me: QueryResolvers["me"] = async (
 
   return {
     user,
-    groups: groups.map((group) => group.group),
+    groups,
     identities: [...identities],
   };
 };

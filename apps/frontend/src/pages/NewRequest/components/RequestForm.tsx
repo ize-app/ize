@@ -77,7 +77,6 @@ export const RequestForm = () => {
               <InputFieldAnswers<RequestSchemaType>
                 fields={flow.fieldSet.fields}
                 basePath={`requestFields` as Path<RequestSchemaType>}
-                groupId={flow.group?.id}
               />
               <RequestDefinedOptionsForm flow={flow} />
             </Box>

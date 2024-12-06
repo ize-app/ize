@@ -4,15 +4,19 @@ import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { GroupPrismaType } from "./groupPrismaTypes";
 
-export const groupResolver = (group: GroupPrismaType): Group => {
+export const groupResolver = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (group.GroupDiscordRole) {
-    return resolveDiscordGroup(group);
+    return resolveDiscordGroup(group, isWatched, isMember);
   } else if (group.GroupNft) {
-    return resolveGroupNft(group);
+    return resolveGroupNft(group, isWatched, isMember);
   } else if (group.GroupTelegramChat) {
-    return resolveGroupTelegram(group);
+    return resolveGroupTelegram(group, isWatched, isMember);
   } else if (group.GroupIze) {
-    return resolveGroupIze(group);
+    return resolveGroupIze(group, isWatched, isMember);
   } else {
     throw new GraphQLError("Invalid group type.", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -20,7 +24,11 @@ export const groupResolver = (group: GroupPrismaType): Group => {
   }
 };
 
-const resolveDiscordGroup = (group: GroupPrismaType): Group => {
+const resolveDiscordGroup = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupDiscordRole)
     throw new GraphQLError("Missing Discord role group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -59,11 +67,17 @@ const resolveDiscordGroup = (group: GroupPrismaType): Group => {
     },
     createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "DiscordRoleGroup", ...group.GroupDiscordRole },
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
   return discordGroup;
 };
 
-const resolveGroupNft = (group: GroupPrismaType): Group => {
+const resolveGroupNft = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupNft)
     throw new GraphQLError("Missing NFT group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -83,11 +97,17 @@ const resolveGroupNft = (group: GroupPrismaType): Group => {
     },
     createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "GroupNft", ...nft } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
   return discordGroup;
 };
 
-const resolveGroupIze = (group: GroupPrismaType): Group => {
+const resolveGroupIze = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupIze)
     throw new GraphQLError("Missing custom group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -101,10 +121,16 @@ const resolveGroupIze = (group: GroupPrismaType): Group => {
     name: ize.name,
     createdAt: group.createdAt.toISOString(),
     groupType: { __typename: "GroupIze", ...ize } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
 };
 
-const resolveGroupTelegram = (group: GroupPrismaType): Group => {
+const resolveGroupTelegram = (
+  group: GroupPrismaType,
+  isWatched?: boolean,
+  isMember?: boolean,
+): Group => {
   if (!group.GroupTelegramChat)
     throw new GraphQLError("Missing Telegram group details", {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
@@ -122,5 +148,7 @@ const resolveGroupTelegram = (group: GroupPrismaType): Group => {
       chatId: String(telegram.chatId), // need to convert bigint to string because graphql doesn't know how to handle bigint
       messageThreadId: telegram.messageThreadId ? String(telegram.messageThreadId) : null,
     } as GroupType,
+    isMember: isMember ?? false,
+    isWatched: isWatched ?? false,
   };
 };

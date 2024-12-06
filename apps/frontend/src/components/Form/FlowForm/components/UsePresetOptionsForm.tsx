@@ -28,6 +28,7 @@ export const UsePresetOptionsForm = <T extends FieldValues>({
 
       const valueField = `${fieldsArrayName}.${inputIndex}.input.value` as Path<T>;
       const option = getValues(optionField) as OptionSchemaType;
+      console.log(option);
       return (
         <Box key={item.id} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
           <InputField<T>
