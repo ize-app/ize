@@ -46,7 +46,7 @@ export const Confirm = () => {
     <FormProvider {...formMethods}>
       <form>
         <WizardBody>
-          <Box sx={{ maxWidth: "800px" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "30px", maxWidth: "800px" }}>
             <Typography>
               Confirm your flow.
               {/* <span style={{ fontWeight: "bold" }}>{formState.name}</span> */}
