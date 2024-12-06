@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 
+import { entityInclude, entitySetInclude } from "../entityPrismaTypes";
+
 export const groupNftInclude = Prisma.validator<Prisma.GroupNftInclude>()({
   NftCollection: true,
 });
@@ -53,6 +55,38 @@ export const groupInclude = Prisma.validator<Prisma.GroupInclude>()({
   },
 });
 
+export const createIzeGroupInclude = (userEntityIds: string[]) =>
+  Prisma.validator<Prisma.GroupIzeInclude>()({
+    NotificationEntity: {
+      include: entityInclude,
+    },
+    MemberEntitySet: {
+      include: entitySetInclude,
+    },
+    group: {
+      include: {
+        ...groupInclude,
+        OwnedFlows: true,
+        EntitiesInGroup: {
+          where: {
+            entityId: { in: userEntityIds },
+          },
+        },
+        EntityWatchedGroups: {
+          where: {
+            entityId: { in: userEntityIds },
+          },
+        },
+      },
+    },
+  });
+
 export type GroupPrismaType = Prisma.GroupGetPayload<{
   include: typeof groupInclude;
+}>;
+
+const exampleIzeGroupInclude = createIzeGroupInclude([]);
+
+export type IzeGroupPrismaType = Prisma.GroupIzeGetPayload<{
+  include: typeof exampleIzeGroupInclude;
 }>;

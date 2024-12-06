@@ -28,7 +28,9 @@ const useRequestStepsSearch = ({
   const [open, setOpen] = useState<boolean>(true);
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupId);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument);
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument, {
+    // fetchPolicy: "network-only",
+  });
 
   const newCursor = data?.getRequests.length
     ? data.getRequests[data.getRequests.length - 1].requestId // might want to change this to requestStepId depending on caching

@@ -346,8 +346,6 @@ export type Group = {
   groupType: GroupType;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  isMember: Scalars['Boolean']['output'];
-  isWatched: Scalars['Boolean']['output'];
   memberCount?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   organization?: Maybe<Organization>;
@@ -477,6 +475,9 @@ export type IzeGroup = {
   description?: Maybe<Scalars['String']['output']>;
   evolveGroupFlowId?: Maybe<Scalars['String']['output']>;
   group: Group;
+  groupId: Scalars['String']['output'];
+  isMember: Scalars['Boolean']['output'];
+  isWatched: Scalars['Boolean']['output'];
   members: Array<Entity>;
   notificationEntity?: Maybe<Entity>;
 };
@@ -755,7 +756,7 @@ export type Query = {
   getRequest: Request;
   getRequests: Array<RequestSummary>;
   group: IzeGroup;
-  groupsForCurrentUser: Array<Group>;
+  groupsForCurrentUser: Array<IzeGroup>;
   hatToken?: Maybe<ApiHatToken>;
   me?: Maybe<Me>;
   nftContract?: Maybe<AlchemyApiNftContract>;
@@ -1764,8 +1765,6 @@ export type GroupResolvers<ContextType = GraphqlRequestContext, ParentType exten
   groupType?: Resolver<ResolversTypes['GroupType'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  isMember?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   memberCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
@@ -1851,6 +1850,9 @@ export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType ex
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   evolveGroupFlowId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
+  groupId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isMember?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isWatched?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Entity']>, ParentType, ContextType>;
   notificationEntity?: Resolver<Maybe<ResolversTypes['Entity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1966,7 +1968,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'hasRespondPermission' | 'limit' | 'open' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsForCurrentUser?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
+  groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;

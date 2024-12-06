@@ -144,22 +144,6 @@ export const Flow = () => {
               </Link>
             </Typography>
           )}
-          {flow.watching.groups.length > 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "6px",
-                height: "24px",
-              }}
-            >
-              <Typography variant="description" color="textSecondary">
-                Watched by
-              </Typography>
-              <AvatarGroup avatars={flow.watching.groups} />
-            </Box>
-          )}
           {isDraft && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <Box sx={{ display: "flex", gap: "8px" }}>
@@ -222,6 +206,22 @@ export const Flow = () => {
                   current published version of this flow.
                 </Link>
               </Typography>
+            </Box>
+          )}
+          {flow.watching.groups.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "6px",
+                height: "24px",
+              }}
+            >
+              <Typography variant="description" color="textSecondary">
+                Watched by
+              </Typography>
+              <AvatarGroup avatars={flow.watching.groups} size={"20px"} />
             </Box>
           )}
           {/* Button row */}

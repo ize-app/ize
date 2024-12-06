@@ -35,7 +35,9 @@ const useFlowsSearch = ({
   const [selectedGroupId, setGroupId] = useState<string | undefined>(groupId);
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument, {
+    // fetchPolicy: "network-only",
+  });
 
   const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";
 

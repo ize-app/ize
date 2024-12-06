@@ -32,58 +32,31 @@ export const FlowsTable = ({
   hideWatchButton?: boolean;
   groupId?: string;
 }) => {
-  if (groupId) {
-    const groupFlows = flows.filter((flow) => flow.group?.id === groupId);
-    const otherFlows = flows.filter((flow) => flow.group?.id !== groupId);
-    return (
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {otherFlows.length > 0 ? (
-          <>
-            <Typography variant={"label2"} marginTop={"8px"}>
-              Flows watched by this group
-            </Typography>
-            <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
-              <Table aria-label="Flows watched by this group Table" stickyHeader={true}>
-                <TableBody>
-                  {otherFlows.map((flow) => (
-                    <FlowRow
-                      key={flow.flowId}
-                      flow={flow}
-                      hideTriggerButton={hideTriggerButton}
-                      hideWatchButton={hideWatchButton}
-                      onClickRow={onClickRow}
-                      groupId={groupId}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Typography variant={"label2"}>Flows that modify this group</Typography>
-          </>
-        ) : null}
-        <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
-          <Table aria-label="Flows that modify this group Table" stickyHeader={true}>
-            <TableBody>
-              {groupFlows.map((flow) => (
-                <FlowRow
-                  key={flow.flowId}
-                  flow={flow}
-                  hideTriggerButton={hideTriggerButton}
-                  hideWatchButton={hideWatchButton}
-                  onClickRow={onClickRow}
-                  groupId={groupId}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    );
-  }
-
   return (
     <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
-      <Table aria-label="Flows Table" stickyHeader={true}>
+      <Table aria-label="Flows watched by this group Table" stickyHeader={true}>
+        {/* <TableHead>
+          <TableRow
+            sx={{
+              "& .MuiTableCell-root": {
+                padding: "0px",
+              },
+            }}
+          >
+            <TableCellHideable width="60px" />
+            <TableCellHideable sx={{ minWidth: "140px" }} />
+            
+            <TableCellHideable sx={{ width: "60px" }} align="center">
+              Members
+            </TableCellHideable>
+
+            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
+              Created
+            </TableCellHideable>
+          </TableRow>
+        </TableHead> 
+        */}
+
         <TableBody>
           {flows.map((flow) => (
             <FlowRow
