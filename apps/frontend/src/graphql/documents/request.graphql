@@ -23,22 +23,26 @@ mutation EndRequestStep($requestStepId: String!) {
 query getRequests(
   $cursor: String
   $limit: Int!
-  $userOnly: Boolean!
   $flowId: String
   $groupId: String
   $searchQuery: String!
-  $statusFilter: RequestStepStatusFilter!
-  $respondPermissionFilter: RequestStepRespondPermissionFilter!
+  $watchedByUserGroups: Boolean!
+  $watchedByUser: Boolean!
+  $createdByUser: Boolean!
+  $open: Boolean!
+  $hasRespondPermission: Boolean!
 ) {
   getRequests(
     cursor: $cursor
     limit: $limit
-    userOnly: $userOnly
     flowId: $flowId
     groupId: $groupId
     searchQuery: $searchQuery
-    statusFilter: $statusFilter
-    respondPermissionFilter: $respondPermissionFilter
+    watchedByUserGroups: $watchedByUserGroups
+    watchedByUser: $watchedByUser
+    createdByUser: $createdByUser
+    open: $open
+    hasRespondPermission: $hasRespondPermission
   ) {
     ...RequestSummary
   }

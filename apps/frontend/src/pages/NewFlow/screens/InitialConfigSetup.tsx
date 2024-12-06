@@ -46,9 +46,9 @@ export const InitialConfigSetup = () => {
     );
     onNext();
   };
-  console.log("errors are", formMethods.formState.errors);
+  // console.log("errors are", formMethods.formState.errors);
 
-  console.log("form state", formMethods.getValues());
+  // console.log("form state", formMethods.getValues());
   const goal = formMethods.watch("goal");
 
   const reusable = formMethods.watch("reusable");

@@ -13,7 +13,6 @@ import { ResponsePrismaType } from "./responsePrismaTypes";
 import { entityResolver } from "../entity/entityResolver";
 import { FieldAnswerPrismaType } from "../fields/fieldPrismaTypes";
 import { calculateAggregateOptionWeights } from "../result/utils/calculateAggregateOptionWeights";
-import { getUserEntityIds } from "../user/getUserEntityIds";
 import { valueResolver } from "../value/valueResolver";
 
 export const responsesResolver = ({
@@ -39,12 +38,10 @@ export const responsesResolver = ({
 
   let userResponded = false;
 
-  const userEntityIds = getUserEntityIds(context.currentUser);
-
   const dbFieldAnswers: FieldAnswerPrismaType[] = [];
   responses.forEach((response) => {
     const creator = entityResolver({ entity: response.CreatorEntity });
-    if (!userResponded && userEntityIds.includes(creator.entityId)) userResponded = true;
+    if (!userResponded && context.userEntityIds.includes(creator.entityId)) userResponded = true;
     response.Answers.forEach((answer) => {
       dbFieldAnswers.push(answer);
       fieldAnswerCreators[answer.id] = creator;

@@ -1,13 +1,16 @@
 import { Prisma } from "@prisma/client";
 
-import { getUserEntityIds } from "@/core/user/getUserEntityIds";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { QueryGroupsForCurrentUserArgs, WatchFilter } from "@/graphql/generated/resolver-types";
+import {
+  IzeGroup,
+  QueryGroupsForCurrentUserArgs,
+  WatchFilter,
+} from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
-import { groupInclude } from "./groupPrismaTypes";
-import { groupResolver } from "./groupResolver";
+import { createIzeGroupInclude } from "./groupPrismaTypes";
+import { izeGroupResolver } from "./izeGroupResolver";
 
 export const getGroupsOfUser = async ({
   context,
@@ -17,12 +20,12 @@ export const getGroupsOfUser = async ({
   context: GraphqlRequestContext;
   args: QueryGroupsForCurrentUserArgs;
   transaction?: Prisma.TransactionClient;
-}) => {
+}): Promise<IzeGroup[]> => {
   if (!context.currentUser) throw Error("ERROR: Unauthenticated user");
 
   // Get groups that the user is in a server, role or has created.
-  const groupIds = await getGroupIdsOfUser({ user: context.currentUser, transaction });
-  const entityIds = getUserEntityIds(context.currentUser);
+  const groupIds = await getGroupIdsOfUser({ context, transaction });
+  const entityIds = context.userEntityIds;
 
   const groupsIze = await transaction.groupIze.findMany({
     take: args.limit,
@@ -53,36 +56,21 @@ export const getGroupsOfUser = async ({
               groupId: {
                 in: groupIds,
               },
-              group: {
-                EntityWatchedGroups: {
-                  none: {
-                    entityId: { in: entityIds },
-                    watched: true,
-                  },
-                },
-              },
+              // group: {
+              //   EntityWatchedGroups: {
+              //     none: {
+              //       entityId: { in: entityIds },
+              //       watched: true,
+              //     },
+              //   },
+              // },
             },
       ],
     },
 
-    include: {
-      group: {
-        include: groupInclude,
-      },
-    },
+    include: createIzeGroupInclude(entityIds),
     orderBy: { group: { createdAt: "desc" } },
   });
 
-  const watchRecords = await transaction.entityWatchedGroups.findMany({
-    where: {
-      entityId: { in: entityIds },
-    },
-  });
-
-  const formattedGroups = groupsIze.map((group) => {
-    const watchRecord = watchRecords.find((record) => record.groupId === group.groupId);
-    const isMember = groupIds.includes(group.groupId);
-    return groupResolver(group.group, watchRecord?.watched ?? false, isMember);
-  });
-  return formattedGroups;
+  return groupsIze.map((izeGroup) => izeGroupResolver({ izeGroup, context }));
 };

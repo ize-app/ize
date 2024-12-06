@@ -10,9 +10,9 @@ import { prisma } from "@/prisma/client";
 
 import { stepResolver } from "./stepResolver";
 import { FlowVersionPrismaType } from "../flowPrismaTypes";
+import { watchingResolver } from "./watchingResolver";
 import { DefaultEvolveGroupValues, getDefaultFlowValues } from "../helpers/getDefaultFlowValues";
 import { getFlowName } from "../helpers/getFlowName";
-import { isWatchedFlow } from "../helpers/isWatchedFlow";
 
 export const flowResolver = async ({
   flowVersion,
@@ -59,7 +59,9 @@ export const flowResolver = async ({
     active: flowVersion.active,
     type: flowVersion.Flow.type as FlowType,
     reusable: flowVersion.Flow.reusable,
-    isWatched: isWatchedFlow({ flowVersion: flowVersion, user: context.currentUser }),
+    watching: watchingResolver({
+      entityWatchedFlows: flowVersion.Flow.EntityWatchedFlows,
+    }),
     trigger: {
       permission: permissionResolver(flowVersion.TriggerPermissions, userIdentityIds),
       userPermission: hasReadPermission({

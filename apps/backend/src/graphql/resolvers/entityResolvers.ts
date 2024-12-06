@@ -6,7 +6,6 @@ import { prisma } from "@/prisma/client";
 import { GraphqlRequestContext } from "@graphql/context";
 import {
   Entity,
-  Group,
   IzeGroup,
   MutationNewCustomGroupArgs,
   MutationNewEntitiesArgs,
@@ -35,12 +34,12 @@ const group: QueryResolvers["group"] = async (
 ): Promise<IzeGroup> => {
   return await getIzeGroup({ groupId: args.id, context, getWatchAndPermissionStatus: true });
 };
-
+ 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (
   root: unknown,
   args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
-): Promise<Group[]> => {
+): Promise<IzeGroup[]> => {
   return await getGroupsOfUser({ args, context });
 };
 

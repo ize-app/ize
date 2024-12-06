@@ -77,7 +77,7 @@ export const Request = () => {
     false;
   const currRequestStepId: string = currentReqStep.requestStepId;
 
-  console.log("request is ", request);
+  // console.log("request is ", request);
 
   const tabs: TabProps[] = [
     {

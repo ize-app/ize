@@ -23,10 +23,12 @@ export const getGroupsToNotify = async (flowId: string) => {
         },
         // flow is either watched by group or evolves flow that group watches
         {
-          GroupsWatchedFlows: {
-            some: {
-              OR: [{ flowId }, { Flow: { CurrentFlowVersion: { evolveFlowId: flowId } } }],
-              watched: true,
+          Entity: {
+            EntityWatchedFlows: {
+              some: {
+                OR: [{ flowId }, { Flow: { CurrentFlowVersion: { evolveFlowId: flowId } } }],
+                watched: true,
+              },
             },
           },
         },

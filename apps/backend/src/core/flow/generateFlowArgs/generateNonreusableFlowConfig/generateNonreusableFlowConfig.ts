@@ -38,8 +38,6 @@ export const generateNonreusableFlowConfig = ({
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Synthesize group perspectives",
-
-        requestName: prompt,
         trigger: {
           permission: emptyPermission,
         },
@@ -88,8 +86,6 @@ export const generateNonreusableFlowConfig = ({
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
-
-        requestName: prompt,
         fieldSet: {
           locked: false,
           fields: [],
@@ -140,8 +136,6 @@ export const generateNonreusableFlowConfig = ({
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
         name: "Ideate together",
-
-        requestName: prompt,
         trigger: { permission: emptyPermission },
         fieldSet: {
           fields: [

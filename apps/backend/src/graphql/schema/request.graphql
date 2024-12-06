@@ -10,12 +10,14 @@ type Query {
   getRequests(
     cursor: String
     limit: Int!
-    userOnly: Boolean!
     flowId: String
     groupId: String
     searchQuery: String!
-    statusFilter: RequestStepStatusFilter!
-    respondPermissionFilter: RequestStepRespondPermissionFilter!
+    watchedByUserGroups: Boolean!
+    watchedByUser: Boolean!
+    createdByUser: Boolean!
+    open: Boolean!
+    hasRespondPermission: Boolean!
   ): [RequestSummary!]!
 }
 

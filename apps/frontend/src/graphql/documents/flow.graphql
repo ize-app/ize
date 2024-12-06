@@ -1,5 +1,5 @@
-mutation NewFlow($new: NewFlowWithEvolveArgs!) {
-  newFlow(new: $new)
+mutation NewFlow($newFlow: NewFlowMutationArgs!) {
+  newFlow(newFlow: $newFlow)
 }
 
 query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Boolean) {
@@ -8,23 +8,33 @@ query GetFlow($flowId: String, $flowVersionId: String, $isForEvolveRequest: Bool
   }
 }
 
+query GetGroupsToWatchFlow($flowId: String, $entities: [String!]!) {
+  getGroupsToWatchFlow(flowId: $flowId, entities: $entities) {
+    ...GroupsToWatch
+  }
+}
+
 query GetFlows(
   $cursor: String
   $limit: Int!
   $groupId: String
   $searchQuery: String!
-  $watchFilter: WatchFilter!
-  $excludeOwnedFlows: Boolean
-  $triggerPermissionFilter: FlowTriggerPermissionFilter!
+  $watchedByUserGroups: Boolean!
+  $watchedByUser: Boolean!
+  $excludeGroupId: String
+  $createdByUser: Boolean!
+  $hasTriggerPermissions: Boolean!
 ) {
   getFlows(
     cursor: $cursor
     limit: $limit
     groupId: $groupId
     searchQuery: $searchQuery
-    watchFilter: $watchFilter
-    triggerPermissionFilter: $triggerPermissionFilter
-    excludeOwnedFlows: $excludeOwnedFlows
+    watchedByUserGroups: $watchedByUserGroups
+    watchedByUser: $watchedByUser
+    hasTriggerPermissions: $hasTriggerPermissions
+    createdByUser: $createdByUser
+    excludeGroupId: $excludeGroupId
   ) {
     ...FlowSummary
   }
@@ -64,7 +74,9 @@ fragment FlowFields on Flow {
   steps {
     ...Step
   }
-  isWatched
+  watching {
+    ...FlowWatchers
+  }
 }
 
 fragment FlowSummary on FlowSummary {
@@ -80,7 +92,9 @@ fragment FlowSummary on FlowSummary {
   trigger {
     ...TriggerConfig
   }
-  isWatched
+  watching {
+    ...FlowWatchers
+  }
 }
 
 fragment FlowReference on FlowReference {
@@ -121,4 +135,20 @@ fragment ResponseConfig on ResponseConfig {
   allowMultipleResponses
   userPermission
   minResponses
+}
+
+fragment FlowWatchers on FlowWatchers {
+  user
+  groups {
+    ...GroupSummaryParts
+  }
+}
+
+fragment GroupsToWatch on GroupsToWatch {
+  relevantGroups {
+    ...GroupSummaryParts
+  }
+  otherGroups  {
+    ...GroupSummaryParts
+  }
 }

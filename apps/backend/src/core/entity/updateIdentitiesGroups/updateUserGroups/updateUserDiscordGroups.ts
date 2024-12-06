@@ -5,7 +5,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
-import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
+import { updateEntitiesGroups } from "../updateEntitiesGroups";
 
 export const updateUserDiscordGroups = async ({
   context,
@@ -67,8 +67,8 @@ export const updateUserDiscordGroups = async ({
       .filter((roleGroup) => roleGroup.GroupDiscordRole?.name === "@everyone")
       .forEach((roleGroup) => discordRoleGroupIds.push(roleGroup.id));
 
-    await updateIdentitiesGroups({
-      identityId: userDiscordIdentity.id,
+    await updateEntitiesGroups({
+      entityId: userDiscordIdentity.entityId,
       groupIds: discordRoleGroupIds,
       groupType: GroupType.DiscordRoleGroup,
       transaction,
