@@ -38,7 +38,7 @@ export const createNewFlowArgs = (formState: FlowSchemaType, _userId: string): N
     }),
   };
 
-  console.log("new flow args", args);
+  // console.log("new flow args", args);
 
   return args;
 };

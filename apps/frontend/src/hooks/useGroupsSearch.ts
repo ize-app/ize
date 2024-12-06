@@ -3,9 +3,9 @@ import { debounce } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
-  GroupSummaryPartsFragment,
   GroupsDocument,
   GroupsQueryVariables,
+  IzeGroupFragment,
   WatchFilter,
 } from "@/graphql/generated/graphql";
 
@@ -20,10 +20,12 @@ const useGroupsSearch = ({
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
   const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GroupsDocument);
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GroupsDocument, {
+    // fetchPolicy: "network-only",
+  });
 
   const newCursor = data?.groupsForCurrentUser.length
-    ? data.groupsForCurrentUser[data.groupsForCurrentUser.length - 1].id
+    ? data.groupsForCurrentUser[data.groupsForCurrentUser.length - 1].groupId
     : "";
 
   const queryVarsRef = useRef<GroupsQueryVariables>({
@@ -65,7 +67,7 @@ const useGroupsSearch = ({
   useEffect(() => {
     getResults({ variables: queryVarsRef.current });
   }, []);
-  const groups = (data?.groupsForCurrentUser ?? []) as GroupSummaryPartsFragment[];
+  const groups = (data?.groupsForCurrentUser ?? []) as IzeGroupFragment[];
 
   return {
     searchQuery,

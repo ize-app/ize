@@ -15,12 +15,7 @@ import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import {
-  GroupDocument,
-  IzeGroupFragment,
-  RequestStepRespondPermissionFilter,
-  WatchFilter,
-} from "../../graphql/generated/graphql";
+import { GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -44,7 +39,6 @@ export const Group = () => {
 
   const group = data?.group as IzeGroupFragment;
 
-  // console.log("group is ", group);
 
   const [currentTabIndex, setTabIndex] = useState(0);
 
@@ -63,20 +57,13 @@ export const Group = () => {
   const tabs: TabProps[] = [
     {
       title: "Requests",
-      content: !loading ? (
-        <RequestSearch
-          userOnly={false}
-          groupId={groupId}
-          initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
-        />
-      ) : null,
+      content: !loading ? <RequestSearch userOnly={false} groupId={groupId} /> : null,
     },
     {
       title: "Flows",
       content: !loading ? (
         <FlowsSearch
           groupId={groupId}
-          initialWatchFilter={WatchFilter.All}
           onClickRow={(flow) => {
             navigate(
               generatePath(Route.Flow, {
@@ -130,11 +117,7 @@ export const Group = () => {
               }}
             >
               <Typography variant="h1">{group.group.name}</Typography>
-              <WatchGroupButton
-                watched={group.group.isWatched}
-                groupId={group.group.id}
-                size="medium"
-              />
+              <WatchGroupButton watched={group.isWatched} groupId={group.group.id} size="medium" />
             </Box>
 
             {!isSmallScreenSize && (
@@ -152,7 +135,7 @@ export const Group = () => {
             })}
           >
             <MembersList members={group.members} />
-            {group.group.isMember && (
+            {group.isMember && (
               <Box sx={{ display: "flex", gap: "8px" }}>
                 <CheckCircleOutline color="primary" fontSize="small" />
                 <Typography variant="description" color="primary">

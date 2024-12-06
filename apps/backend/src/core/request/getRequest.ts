@@ -18,7 +18,7 @@ export const getRequest = async ({
       where: { id: args.requestId },
       include: requestInclude,
     });
-    const userGroupIds = await getGroupIdsOfUser({ user: context.currentUser });
+    const userGroupIds = await getGroupIdsOfUser({ context });
     return await requestResolver({ req: request, context, userGroupIds });
   });
 };

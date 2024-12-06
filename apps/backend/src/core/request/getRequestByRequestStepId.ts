@@ -25,7 +25,7 @@ export const getRequestByRequestStepId = async ({
 
   return await requestResolver({
     req: reqStep.Request,
-    context: { currentUser: null, discordApi: undefined },
+    context: { currentUser: null, discordApi: undefined, userEntityIds: [] },
     userGroupIds: [],
   });
 };

@@ -4,7 +4,10 @@ import { triggerDefinedOptionsSchema } from "@/components/Form/FlowForm/formVali
 import { newFlowFormSchema } from "@/components/Form/FlowForm/formValidation/flow";
 import { permissionSchema } from "@/components/Form/FlowForm/formValidation/permission";
 import { decisionSchema } from "@/components/Form/FlowForm/formValidation/result";
-import { optionSchema } from "@/components/Form/InputField/inputValidation";
+import {
+  optionSchema,
+  optionSelectionValuesSchema,
+} from "@/components/Form/InputField/inputValidation";
 
 export type NewFlowWizardFormSchema = z.infer<typeof newFlowWizardFormSchema>;
 
@@ -163,4 +166,5 @@ export const intitialFlowSetupSchema = z.discriminatedUnion("goal", [
 
 export const newFlowWizardFormSchema = newFlowFormSchema.extend({
   initialFlowSetup: intitialFlowSetupSchema,
+  groupsToWatch: optionSelectionValuesSchema,
 });

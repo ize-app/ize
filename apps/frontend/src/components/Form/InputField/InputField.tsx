@@ -122,14 +122,7 @@ export const InputField = <T extends FieldValues>({
                 />
               );
             } else {
-              return (
-                <MultiSelect<T>
-                  name={fieldName}
-                  label={label}
-                  sx={{ flexDirection: "column", gap: "4px" }}
-                  options={options}
-                />
-              );
+              return <MultiSelect<T> name={fieldName} label={label} options={options} />;
             }
           }
           case OptionSelectionType.Rank: {

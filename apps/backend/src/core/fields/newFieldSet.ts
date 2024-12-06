@@ -130,7 +130,7 @@ const createFieldOptionsConfig = async ({
   const optionsConfig = await transaction.fieldOptionsConfig.create({
     data: {
       fieldId,
-      maxSelections: selectionType === OptionSelectionType.Rank ? maxSelections : maxSelections,
+      maxSelections: selectionType === OptionSelectionType.Rank ? null : maxSelections,
       triggerOptionsType,
       selectionType,
       FieldOptionsConfigLinkedResults: {

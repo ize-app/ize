@@ -1,6 +1,5 @@
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import { SxProps } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -22,7 +21,6 @@ interface MultiSelectProps<T extends FieldValues> {
   name: Path<T>;
   disabled?: boolean;
   options: OptionFragment[];
-  sx: SxProps;
 }
 
 export const MultiSelect = <T extends FieldValues>({

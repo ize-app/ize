@@ -59,18 +59,18 @@ export const groupWatchFlow = async ({
     return fieldAnswer.Field.systemType === SystemFieldType.UnwatchFlow;
   });
 
-  const groupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.id;
+  const groupEntityId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.entityId;
 
-  if (!groupId)
+  if (!groupEntityId)
     throw new GraphQLError(`Cannot find owner group for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
 
   if (flowsToWatch && flowsToWatch.Value.ValueFlows) {
     const flows = flowsToWatch.Value.ValueFlows;
-    await transaction.groupsWatchedFlows.createMany({
+    await transaction.entityWatchedFlows.createMany({
       data: flows.map((flow) => ({
-        groupId,
+        entityId: groupEntityId,
         flowId: flow.flowId,
         watched: true,
       })),
@@ -79,9 +79,9 @@ export const groupWatchFlow = async ({
 
   if (flowsToStopWatching && flowsToStopWatching.Value.ValueFlows) {
     const flowIds = flowsToStopWatching.Value.ValueFlows.map((flow) => flow.flowId);
-    await transaction.groupsWatchedFlows.deleteMany({
+    await transaction.entityWatchedFlows.deleteMany({
       where: {
-        groupId,
+        entityId: groupEntityId,
         flowId: {
           in: flowIds,
         },

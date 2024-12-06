@@ -28,9 +28,7 @@ export const AvatarGroup = ({ avatars, size }: AvatarProps) => {
       <MuiAvatarGroup
         max={3}
         total={avatars.length}
-        sx={{
-          "& .MuiAvatarGroup-avatar": {},
-        }}
+        // sx={{ width: "fit-content" }}
         aria-haspopup="true"
         spacing={22}
         onMouseEnter={handlePopperOpen}

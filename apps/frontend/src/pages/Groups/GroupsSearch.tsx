@@ -35,7 +35,7 @@ export const GroupsSearch = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "30px",
+        gap: "8px",
         height: "100%",
       }}
     >
@@ -46,32 +46,35 @@ export const GroupsSearch = () => {
           justifyContent: "space-between",
           flexDirection: "row",
           gap: "16px",
-          minWidth: "360px",
+          minWidth: "300px",
         }}
       >
         <Box
           sx={(theme) => ({
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
             gap: "16px",
             width: "100%",
-            maxWidth: "500px",
+
             [theme.breakpoints.down("md")]: {
               flexDirection: "column",
             },
           })}
         >
-          <Search
-            searchQuery={searchQuery}
-            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
-              setSearchQuery(event.target.value);
-            }}
-          />
+          <Box sx={{ display: "flex", gap: "30px" }}>
+            <Search
+              searchQuery={searchQuery}
+              changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
+                setSearchQuery(event.target.value);
+              }}
+            />
+            <CreateButton />
+          </Box>
           <ToggleButton
             size="small"
             value="check"
             selected={watchFilter === WatchFilter.Watched}
-            sx={{ width: "160px" }}
+            sx={{ width: "160px", height: "30px" }}
             color="primary"
             onChange={() => {
               setWatchFilter(
@@ -82,7 +85,6 @@ export const GroupsSearch = () => {
             Watched groups
           </ToggleButton>
         </Box>
-        <CreateButton />
       </Box>
       {loading ? (
         <Loading />

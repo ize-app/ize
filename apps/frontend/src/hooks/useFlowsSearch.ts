@@ -4,41 +4,51 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   FlowSummaryFragment,
-  FlowTriggerPermissionFilter,
   GetFlowsDocument,
   GetFlowsQueryVariables,
-  WatchFilter,
 } from "@/graphql/generated/graphql";
 
 const useFlowsSearch = ({
   groupId,
   queryResultLimit,
-  initialWatchFilter = WatchFilter.Watched,
-  initialTriggerPermissionFilter = FlowTriggerPermissionFilter.All,
-  excludeOwnedFlows = false,
+  initialWatchedByUser,
+  initialWatchedByUserGroups,
+  initialHasTriggerPermissions,
+  excludeGroupId,
 }: {
   groupId?: string;
   queryResultLimit: number;
-  initialWatchFilter?: WatchFilter;
-  initialTriggerPermissionFilter?: FlowTriggerPermissionFilter;
-  excludeOwnedFlows?: boolean;
+  initialWatchedByUser: boolean;
+  initialWatchedByUserGroups: boolean;
+  initialHasTriggerPermissions: boolean;
+  excludeGroupId?: string;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [createdByUser, setCreatedByUser] = useState<boolean>(false);
+  const [watchedByUser, setWatchedByUser] = useState<boolean>(initialWatchedByUser);
+  const [watchedByUserGroups, setWatchedByUserGroups] = useState<boolean>(
+    initialWatchedByUserGroups,
+  );
+  const [hasTriggerPermissions, setHasTriggerPermission] = useState<boolean>(
+    initialHasTriggerPermissions,
+  );
+  const [selectedGroupId, setGroupId] = useState<string | undefined>(groupId);
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
-  const [triggerPermissionFilter, setTriggerPermissionFilter] =
-    useState<FlowTriggerPermissionFilter>(initialTriggerPermissionFilter);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument);
+  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument, {
+    // fetchPolicy: "network-only",
+  });
 
   const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";
 
   const queryVarsRef = useRef<GetFlowsQueryVariables>({
-    groupId,
+    groupId: selectedGroupId,
+    createdByUser,
     searchQuery,
-    watchFilter,
-    triggerPermissionFilter,
-    excludeOwnedFlows,
+    watchedByUser,
+    watchedByUserGroups,
+    hasTriggerPermissions,
+    excludeGroupId,
     limit: queryResultLimit,
     cursor: newCursor,
   });
@@ -55,16 +65,26 @@ const useFlowsSearch = ({
   useEffect(() => {
     setOldCursor(undefined);
     queryVarsRef.current = {
-      groupId,
+      groupId: selectedGroupId,
       searchQuery,
-      watchFilter,
-      excludeOwnedFlows,
-      triggerPermissionFilter,
+      watchedByUser,
+      watchedByUserGroups,
+      hasTriggerPermissions,
+      createdByUser,
+      excludeGroupId,
       limit: queryResultLimit,
       cursor: undefined,
     };
     debouncedRefetch();
-  }, [groupId, searchQuery, queryResultLimit, watchFilter, triggerPermissionFilter]);
+  }, [
+    selectedGroupId,
+    searchQuery,
+    queryResultLimit,
+    createdByUser,
+    watchedByUser,
+    watchedByUserGroups,
+    hasTriggerPermissions,
+  ]);
 
   // Update queryVarsRef with the new cursor if there is new data
   useEffect(() => {
@@ -83,11 +103,17 @@ const useFlowsSearch = ({
   return {
     searchQuery,
     setSearchQuery,
-    triggerPermissionFilter,
-    setTriggerPermissionFilter,
-    watchFilter,
-    setWatchFilter,
+    watchedByUser,
+    watchedByUserGroups,
+    hasTriggerPermissions,
+    selectedGroupId,
+    setGroupId,
+    setWatchedByUser,
+    setWatchedByUserGroups,
+    setHasTriggerPermission,
     setOldCursor,
+    createdByUser,
+    setCreatedByUser,
     oldCursor,
     newCursor,
     flows,

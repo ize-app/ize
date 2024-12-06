@@ -21,7 +21,7 @@ query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter:
     searchQuery: $searchQuery
     watchFilter: $watchFilter
   ) {
-    ...GroupSummaryParts
+    ...IzeGroup
   }
 }
 
@@ -46,8 +46,6 @@ fragment GroupSummaryParts on Group {
   icon
   memberCount
   color
-  isWatched
-  isMember
   createdAt
   groupType {
     ...GroupTypeSummaryParts
@@ -58,6 +56,7 @@ fragment GroupSummaryParts on Group {
 }
 
 fragment IzeGroup on IzeGroup {
+  groupId
   group {
     ...GroupSummaryParts
   }
@@ -69,6 +68,8 @@ fragment IzeGroup on IzeGroup {
     ...Entity
   }
   evolveGroupFlowId
+  isWatched
+  isMember
 }
 
 fragment GroupTypeSummaryParts on GroupType {

@@ -35,13 +35,16 @@ export const NewFlow = () => {
       if (!me?.user.id) throw Error("Missing user Id");
       await mutate({
         variables: {
-          new: {
-            flow: createNewFlowArgs(formState.new.flow, me?.user.id),
-            evolve:
-              formState.new.reusable && formState.new?.evolve
-                ? createNewFlowArgs(formState.new.evolve, me?.user.id)
-                : undefined,
-            reusable: formState.new.reusable,
+          newFlow: {
+            new: {
+              flow: createNewFlowArgs(formState.new.flow, me?.user.id),
+              evolve:
+                formState.new.reusable && formState.new?.evolve
+                  ? createNewFlowArgs(formState.new.evolve, me?.user.id)
+                  : undefined,
+              reusable: formState.new.reusable,
+            },
+            groupsToWatch: (formState.groupsToWatch ?? []).map((group) => group.optionId),
           },
         },
       });
@@ -67,7 +70,7 @@ export const NewFlow = () => {
     steps: NEW_FLOW_WIZARD_STEPS,
     onComplete,
     //@ts-expect-error TODO: fix initial state
-    initialFormState: {},
+    initialFormState: { groupsToWatch: [] },
   };
 
   const {

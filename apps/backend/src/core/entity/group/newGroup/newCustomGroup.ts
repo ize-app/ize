@@ -32,7 +32,7 @@ export const newIzeGroup = async ({
   }
 
   const izeGroupEntity = await transaction.entity.create({
-    select: {
+    include: {
       Group: true,
     },
     data: {
@@ -54,7 +54,7 @@ export const newIzeGroup = async ({
     },
   });
 
-  await newEvolveGroupFlow({
+  const evolveGroupFlowId = await newEvolveGroupFlow({
     transaction,
     context,
     groupEntityId: izeGroupEntity.Group?.entityId as string,
@@ -62,12 +62,21 @@ export const newIzeGroup = async ({
     policy: args.inputs.flows.evolveGroup,
   });
 
-  await newGroupWatchFlowFlow({
+  const watchFlowFlowId = await newGroupWatchFlowFlow({
     transaction,
     context,
     groupEntityId: izeGroupEntity.Group?.entityId as string,
     groupId: izeGroupEntity.Group?.id as string,
     policy: args.inputs.flows.watch,
+  });
+
+  // have group watch its own flows
+  // maybe this is unnecessary
+  await transaction.entityWatchedFlows.createMany({
+    data: [
+      { entityId: izeGroupEntity.id, flowId: evolveGroupFlowId, watched: true },
+      { entityId: izeGroupEntity.id, flowId: watchFlowFlowId, watched: true },
+    ],
   });
 
   return izeGroupEntity.Group?.id as string;
