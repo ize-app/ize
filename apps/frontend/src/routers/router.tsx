@@ -149,11 +149,7 @@ export const router = createBrowserRouter([
       {
         path: Routes.Route.Groups,
         errorElement: <ErrorBoundary />,
-        element: (
-          <AuthRoute>
-            <Groups />
-          </AuthRoute>
-        ),
+        element: <Groups />,
       },
       {
         path: Routes.Route.Request,

@@ -27,11 +27,7 @@ export const sendNewStepNotifications = async ({
       return;
     }
 
-    const request = await requestResolver({
-      req: data,
-      context: { userEntityIds: [] },
-      userGroupIds: [],
-    });
+    const request = await requestResolver({ req: data, context: {}, userGroupIds: [] });
 
     const stepIndex = data.RequestSteps.findIndex((rs) => rs.id === data.currentRequestStepId);
     const step = data.FlowVersion.Steps[stepIndex];

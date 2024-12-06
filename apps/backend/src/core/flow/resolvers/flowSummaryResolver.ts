@@ -7,8 +7,8 @@ import { FlowSummary } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { FlowSummaryPrismaType } from "../flowPrismaTypes";
-import { watchingResolver } from "./watchingResolver";
 import { getFlowName } from "../helpers/getFlowName";
+import { isWatchedFlowSummary } from "../helpers/isWatchedFlowSummary";
 
 export const flowSummaryResolver = ({
   flow,
@@ -43,9 +43,9 @@ export const flowSummaryResolver = ({
       flowType: flow.type,
       ownerGroupName: flow.OwnerGroup?.GroupIze?.name,
     }),
-    watching: watchingResolver({
-      entityWatchedFlows: flow.EntityWatchedFlows,
-    }),
+    isWatched: context.currentUser
+      ? isWatchedFlowSummary({ flowSummary: flow, user: context.currentUser })
+      : false,
     createdAt: flow.createdAt.toISOString(),
     creator: entityResolver({ entity: flow.CreatorEntity, userIdentityIds: identityIds }),
     trigger: {

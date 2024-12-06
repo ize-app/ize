@@ -8,11 +8,9 @@ import {
   MutationResolvers,
   QueryGetFlowArgs,
   QueryGetFlowsArgs,
-  QueryGetGroupsToWatchFlowArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
-import { getGroupsToWatchFlow as getGroupsToWatchFlowService } from "@/core/flow/getGroupsToWatchFlow";
 
 const getFlow: QueryResolvers["getFlow"] = async (
   root: unknown,
@@ -54,14 +52,6 @@ const newFlow: MutationResolvers["newFlow"] = async (
   return flowId;
 };
 
-const getGroupsToWatchFlow: QueryResolvers["getGroupsToWatchFlow"] = async (
-  root: unknown,
-  args: QueryGetGroupsToWatchFlowArgs,
-  context: GraphqlRequestContext,
-) => {
-  return await getGroupsToWatchFlowService({ args, context });
-};
-
 export const flowMutations = {
   newFlow,
 };
@@ -69,5 +59,4 @@ export const flowMutations = {
 export const flowQueries = {
   getFlow,
   getFlows,
-  getGroupsToWatchFlow,
 };

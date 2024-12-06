@@ -1,3 +1,4 @@
+import { Check as CheckIcon } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -9,41 +10,33 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { Avatar, AvatarGroup } from "@/components/Avatar";
+import { Avatar } from "@/components/Avatar";
 import { TableCellHideable } from "@/components/Tables/TableCellHideable";
 import { WatchGroupButton } from "@/components/watchButton/WatchGroupButton";
-import { IzeGroupFragment } from "@/graphql/generated/graphql";
+import { GroupSummaryPartsFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-export const GroupsTable = ({ groups }: { groups: IzeGroupFragment[] }) => {
+export const GroupsTable = ({ groups }: { groups: GroupSummaryPartsFragment[] }) => {
   return (
-    <TableContainer sx={{ overflowX: "initial", minWidth: "300px" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
       <Table aria-label="Groups Table" stickyHeader={true}>
         <TableHead>
-          <TableRow
-            sx={{
-              "& .MuiTableCell-root": {
-                padding: "0px",
-              },
-            }}
-          >
+          <TableRow>
             <TableCellHideable width="60px" />
             {/* <TableCellHideable width="60px" /> */}
-            <TableCellHideable sx={{ minWidth: "140px" }} />
-            {/* <TableCellHideable hideOnSmallScreen /> */}
-            <TableCellHideable sx={{ width: "60px" }} align="center">
-              Members
+            <TableCellHideable sx={{ minWidth: "140px" }}>Group</TableCellHideable>
+            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
+              Member
             </TableCellHideable>
-
             <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
               Created
             </TableCellHideable>
           </TableRow>
         </TableHead>
-        <TableBody component={Paper}>
+        <TableBody>
           {groups.map((group) => (
-            <GroupRow key={group.groupId} group={group} />
+            <GroupRow key={group.id} group={group} />
           ))}
         </TableBody>
       </Table>
@@ -51,7 +44,7 @@ export const GroupsTable = ({ groups }: { groups: IzeGroupFragment[] }) => {
   );
 };
 
-const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
+const GroupRow = ({ group }: { group: GroupSummaryPartsFragment }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -60,13 +53,13 @@ const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
         onClick={() =>
           navigate(
             generatePath(Route.Group, {
-              groupId: fullUUIDToShort(group.groupId),
+              groupId: fullUUIDToShort(group.id),
             }),
           )
         }
       >
         <TableCell>
-          <WatchGroupButton size="small" groupId={group.groupId} watched={group.isWatched} />
+          <WatchGroupButton size="small" groupId={group.id} watched={group.isWatched} />
         </TableCell>
         <TableCell component="th" scope="row" align="left">
           <Box
@@ -77,7 +70,7 @@ const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
               gap: "8px",
             }}
           >
-            <Avatar avatar={group.group} />
+            <Avatar avatar={group} />
             <Typography
               variant={"body1"}
               sx={{
@@ -89,48 +82,15 @@ const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
                 width: "100%",
               }}
             >
-              {group.group.name}
+              {group.name}
             </Typography>
           </Box>
         </TableCell>
-        {/* <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-          {group.isMember ? (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "4px",
-                // width: "74px",
-              }}
-            >
-              <CheckIcon color={"success"} fontSize="small" />
-              <Typography
-                variant="description"
-                fontSize={".75rem"}
-                color={theme.palette.success.main}
-              >
-                Member
-              </Typography>
-            </Box>
-          ) : null}
-        </TableCellHideable> */}
-        <TableCellHideable align="center" width={"100px"}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              // width: "100%",
-              // backgroundColor: "red",
-            }}
-          >
-            <AvatarGroup avatars={group.members} />
-          </Box>
+        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
+          {group.isMember ? <CheckIcon color={"success"} fontSize="small" /> : null}
         </TableCellHideable>
         <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-          {new Date(group.group.createdAt).toLocaleDateString()}
+          {new Date(group.createdAt).toLocaleDateString()}
         </TableCellHideable>
       </TableRow>
     </>

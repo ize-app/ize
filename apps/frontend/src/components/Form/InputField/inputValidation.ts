@@ -27,7 +27,7 @@ const dayjsSchema = z.custom<dayjs.Dayjs>((value) => dayjs.isDayjs(value), {
 
 // the actual values that are selected on an options field
 export const optionSelectionValueSchema = z.object({ optionId: z.string().min(1) });
-export const optionSelectionValuesSchema = z.array(optionSelectionValueSchema).default([]);
+export const optionSelectionValuesSchema = z.array(optionSelectionValueSchema);
 
 export const inputSchema = z
   .discriminatedUnion("type", [
@@ -75,8 +75,8 @@ export const inputSchema = z
       type: z.literal(ValueType.OptionSelections),
       value: optionSelectionValuesSchema,
       required: z.boolean().default(true),
-      maxSelections: z.number().nullable(),
-      selectionType: z.nativeEnum(OptionSelectionType),
+      maxSelections: z.number().nullable().optional(),
+      selectionType: z.nativeEnum(OptionSelectionType).optional(),
     }),
   ])
   .superRefine((field, ctx) => {

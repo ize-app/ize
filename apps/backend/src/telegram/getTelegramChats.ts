@@ -50,9 +50,9 @@ export const getTelegramChats = async ({
       include: entityInclude,
       where: {
         Group: {
-          EntitiesInGroup: {
+          IdentitiesGroups: {
             some: {
-              entityId: telegramIdentity.entityId,
+              identityId: telegramIdentity.id,
               active: true,
             },
           },

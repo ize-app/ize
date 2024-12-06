@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { AvatarGroup } from "@/components/Avatar";
 import { Breadcrumbs } from "@/components/BreadCrumbs";
 import { ConfigDiagramFlow } from "@/components/ConfigDiagram";
 import TabPanel from "@/components/Tables/TabPanel";
@@ -23,7 +22,12 @@ import {
 } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
-import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  FlowType,
+  GetFlowDocument,
+  RequestStepRespondPermissionFilter,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
@@ -54,7 +58,7 @@ export const Flow = () => {
   });
 
   const flow = flowData?.getFlow as FlowFragment;
-  // console.log("flow", flow);
+  console.log("flow", flow);
 
   const tabs: TabProps[] = [
     {
@@ -129,7 +133,7 @@ export const Flow = () => {
               {flow.name}
             </Typography>
 
-            <WatchFlowButton watched={flow.watching.user} flowId={flow.id} size="medium" />
+            <WatchFlowButton watched={flow.isWatched} flowId={flow.id} size="medium" />
           </Box>
           {flow.group && (
             <Typography variant="description" lineHeight={"24px"}>
@@ -206,22 +210,6 @@ export const Flow = () => {
                   current published version of this flow.
                 </Link>
               </Typography>
-            </Box>
-          )}
-          {flow.watching.groups.length > 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "6px",
-                height: "24px",
-              }}
-            >
-              <Typography variant="description" color="textSecondary">
-                Watched by
-              </Typography>
-              <AvatarGroup avatars={flow.watching.groups} size={"20px"} />
             </Box>
           )}
           {/* Button row */}
@@ -332,7 +320,13 @@ export const Flow = () => {
             </TabPanel>
           ))}
         </Box>
-        {isCurrentFlowVersion && <RequestSearch userOnly={false} flowId={flow.flowId} />}
+        {isCurrentFlowVersion && (
+          <RequestSearch
+            userOnly={false}
+            flowId={flow.flowId}
+            initialRespondPermissionFilter={RequestStepRespondPermissionFilter.All}
+          />
+        )}
       </Box>
     </PageContainer>
   );

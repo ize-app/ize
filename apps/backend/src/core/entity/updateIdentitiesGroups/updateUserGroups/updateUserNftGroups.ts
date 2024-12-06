@@ -6,7 +6,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
 
 import { prisma } from "../../../../prisma/client";
-import { updateEntitiesGroups } from "../updateEntitiesGroups";
+import { updateIdentitiesGroups } from "../updateIdentitiesGroups";
 
 export const updateUserNftGroups = async ({
   context,
@@ -33,8 +33,8 @@ export const updateUserNftGroups = async ({
 
     const nftGroupIds = res.flat(1);
 
-    await updateEntitiesGroups({
-      entityId: userBlockchainIdentity.entityId,
+    await updateIdentitiesGroups({
+      identityId: userBlockchainIdentity.id,
       groupIds: nftGroupIds,
       groupType: GroupType.GroupNft,
       transaction,

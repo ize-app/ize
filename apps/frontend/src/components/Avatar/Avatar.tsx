@@ -3,7 +3,7 @@ import MuiAvatar, { AvatarProps as MuiAvatarProps } from "@mui/material/Avatar";
 import Blockies from "react-blockies";
 
 import discordLogoUrl from "@/assets/discord-logo-blue.svg";
-// import izeLogo from "@/assets/ize-logo-circle.svg";
+import izeLogo from "@/assets/ize-logo-circle.svg";
 import nftUrl from "@/assets/nft.svg";
 import telegramLogoUrl from "@/assets/telegram-logo.svg";
 import { EntityFragment, UserSummaryPartsFragment } from "@/graphql/generated/graphql";
@@ -31,8 +31,7 @@ const defaultGroupAvatarUrl = (
       case "GroupNft":
         return nftUrl;
       case "GroupIze":
-        // return izeLogo;
-        return undefined;
+        return izeLogo;
       default:
         return undefined;
     }
@@ -53,7 +52,6 @@ export const Avatar = ({ avatar, size, ...props }: AvatarProps) => {
     <MuiAvatar
       src={avatar.icon ?? defaultGroupAvatarUrl(avatar)}
       alt={avatar.name}
-
       {...props}
       sx={{ ...defaultStyles, ...sx }}
     >

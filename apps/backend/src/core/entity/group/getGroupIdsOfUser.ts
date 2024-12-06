@@ -1,21 +1,23 @@
 import { Prisma } from "@prisma/client";
 
-import { GraphqlRequestContext } from "@/graphql/context";
+import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 
 // get groups that a user is a member of
 export const getGroupIdsOfUser = async ({
-  context,
+  user,
   transaction = prisma,
 }: {
-  context: GraphqlRequestContext;
+  user: MePrismaType | undefined | null;
   transaction?: Prisma.TransactionClient;
 }): Promise<string[]> => {
-  const resp = await transaction.entityGroup.findMany({
+  if (!user) return [];
+  const identityIds = user.Identities.map((id) => id.id);
+  const resp = await transaction.identityGroup.findMany({
     where: {
       active: true,
-      entityId: { in: context.userEntityIds },
+      identityId: { in: identityIds },
     },
   });
-  return resp.map((entityGroup) => entityGroup.groupId);
+  return resp.map((identityGroup) => identityGroup.groupId);
 };

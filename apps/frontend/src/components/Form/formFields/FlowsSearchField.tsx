@@ -13,7 +13,11 @@ import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { Avatar, AvatarGroup } from "@/components/Avatar";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 
-import { FlowSummaryFragment, SystemFieldType } from "../../../graphql/generated/graphql";
+import {
+  FlowSummaryFragment,
+  SystemFieldType,
+  WatchFilter,
+} from "../../../graphql/generated/graphql";
 
 interface FlowSearchProps<T extends FieldValues> {
   name: Path<T>;
@@ -39,35 +43,19 @@ export const FlowsSearchField = <T extends FieldValues>({
   ...props
 }: FlowSearchProps<T>) => {
   const { control } = useFormContext<T>();
-
-  let includeGroupId: string | undefined;
-  let excludeGroupId: string | undefined;
-  let showUserWatched: boolean;
+  let initialWatchFilter: WatchFilter = WatchFilter.All;
+  let excludeOwnedFlows: boolean = false;
 
   if (systemFieldType === SystemFieldType.WatchFlow) {
-    includeGroupId = undefined;
-    excludeGroupId = groupId;
-    showUserWatched = true;
+    initialWatchFilter = WatchFilter.Unwatched;
   } else if (systemFieldType === SystemFieldType.UnwatchFlow) {
-    includeGroupId = groupId;
-    excludeGroupId = undefined;
-    showUserWatched = false;
-  } else {
-    includeGroupId = undefined;
-    excludeGroupId = undefined;
-    showUserWatched = true;
+    excludeOwnedFlows = true;
+    initialWatchFilter = WatchFilter.Watched;
   }
 
   const queryResultLimit = 20;
   const { setSearchQuery, oldCursor, setOldCursor, newCursor, flows, fetchMore, queryVars } =
-    useFlowsSearch({
-      queryResultLimit,
-      groupId: includeGroupId,
-      initialWatchedByUser: showUserWatched,
-      initialWatchedByUserGroups: showUserWatched,
-      initialHasTriggerPermissions: false,
-      excludeGroupId,
-    });
+    useFlowsSearch({ queryResultLimit, groupId, initialWatchFilter, excludeOwnedFlows });
 
   const options: FlowSummaryFragment[] = [...flows];
 

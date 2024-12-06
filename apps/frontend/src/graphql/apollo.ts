@@ -45,14 +45,12 @@ export const apolloClient = new ApolloClient({
         fields: {
           getRequests: {
             keyArgs: [
+              "userOnly",
               "groupId",
               "flowId",
               "searchQuery",
-              "watchedByUserGroups",
-              "watchedByUser",
-              "createdByUser",
-              "open",
-              "hasRespondPermission",
+              "statusFilter",
+              "respondPermissionFilter",
             ],
             merge(existing, incoming, { args, readField }) {
               const cursor = args && args.cursor;
@@ -73,11 +71,9 @@ export const apolloClient = new ApolloClient({
             keyArgs: [
               "groupId",
               "searchQuery",
-              "watchedByUser",
-              "watchedByUserGroups",
-              "createdByUser",
-              "hasTriggerPermissions",
-              "excludeGroupId",
+              "watchFilter",
+              "triggerPermissionFilter",
+              "excludeOwnedFlows",
             ],
             // used a different merge function here to solve a problem
             // multiple getFlow queries happening on a single page

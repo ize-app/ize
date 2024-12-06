@@ -2,25 +2,25 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "../../../prisma/client";
 
-export const upsertEntityGroup = async ({
-  entityId,
+export const upsertIdentityGroup = async ({
+  identityId,
   groupId,
   active,
   transaction = prisma,
 }: {
-  entityId: string;
+  identityId: string;
   groupId: string;
   active: boolean;
   transaction?: Prisma.TransactionClient;
 }) => {
   try {
-    await transaction.entityGroup.upsert({
-      where: { entityId_groupId: { entityId, groupId } },
+    await transaction.identityGroup.upsert({
+      where: { identityId_groupId: { identityId, groupId } },
       update: {
         active,
       },
       create: {
-        entityId,
+        identityId,
         groupId,
         active,
       },
