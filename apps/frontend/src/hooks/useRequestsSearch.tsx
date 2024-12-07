@@ -33,7 +33,7 @@ const useRequestsSearch = ({
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupId);
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument, {
-    // fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network", // Use cache first, then update with network data
   });
 
   const newCursor = data?.getRequests.length

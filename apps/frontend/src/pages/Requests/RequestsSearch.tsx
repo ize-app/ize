@@ -146,7 +146,7 @@ export const RequestSearch = ({
           )}
         </ToggleButtonGroup>
       </Box>
-      {loading ? (
+      {loading && requestSteps.length === 0? (
         <Loading />
       ) : requestSteps.length > 0 ? (
         <RequestSummaryTable requests={requestSteps} />

@@ -133,7 +133,7 @@ export const FlowsSearch = ({
           )}
         </ToggleButtonGroup>
       </Box>
-      {loading ? (
+      {loading && flows.length === 0 ? (
         <Loading />
       ) : flows.length > 0 ? (
         <FlowsTable

@@ -32,7 +32,7 @@ const useFlowsSearch = ({
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetFlowsDocument, {
-    // fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network", // Use cache first, then update with network data
   });
 
   const newCursor = data?.getFlows.length ? data.getFlows[data.getFlows.length - 1].flowId : "";

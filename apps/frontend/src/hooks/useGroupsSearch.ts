@@ -24,7 +24,6 @@ const useGroupsSearch = ({
 
   const [getResults, { loading, data, fetchMore, refetch }] = useLazyQuery(GroupsDocument, {
     fetchPolicy: "cache-and-network", // Use cache first, then update with network data
-    // nextFetchPolicy: "network-only", // For subsequent fetches, use the network
   });
 
   const newCursor = data?.groupsForCurrentUser.length
