@@ -11,11 +11,8 @@ import { createRequestSummaryInclude } from "./requestPrismaTypes";
 import { requestSummaryResolver } from "./resolvers/requestSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import {
-  createFlowWatchFilter,
-  createGroupWatchedFlowFilter,
-  createUserWatchedFlowFilter,
-} from "../flow/flowPrismaTypes";
+import { createFlowWatchFilter, createGroupWatchedFlowFilter } from "../flow/flowPrismaFilters";
+
 
 export const getRequestSummaries = async ({
   args,
@@ -75,7 +72,8 @@ export const getRequestSummaries = async ({
               {
                 // flow evolves another flow that is watched
                 ProposedFlowVersionEvolution: {
-                  Flow: createUserWatchedFlowFilter({
+                  Flow: createFlowWatchFilter({
+                    flowWatchFilter: args.flowWatchFilter,
                     userEntityIds: entityIds,
                   }),
                 },

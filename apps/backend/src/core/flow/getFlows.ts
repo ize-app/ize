@@ -2,13 +2,11 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { FlowSummary, QueryGetFlowsArgs } from "@/graphql/generated/resolver-types";
 
 import {
-  FlowSummaryPrismaType,
   createFlowPermissionFilter,
-  createFlowSummaryInclude,
+  createFlowWatchFilter,
   createGroupWatchedFlowFilter,
-  createUserGroupsWatchedFlowsFilter,
-  createUserWatchedFlowFilter,
-} from "./flowPrismaTypes";
+} from "./flowPrismaFilters";
+import { FlowSummaryPrismaType, createFlowSummaryInclude } from "./flowPrismaTypes";
 import { flowSummaryResolver } from "./resolvers/flowSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
@@ -35,20 +33,10 @@ export const getFlows = async ({
       reusable: true,
       AND: [
         { type: { not: "Evolve" } },
-        {
-          // we want results to be concatenation of user watched flows and grouped watched flows
-          // not the intersection
-          OR: [
-            args.watchedByUser
-              ? createUserWatchedFlowFilter({
-                  userEntityIds: context.userEntityIds,
-                })
-              : {},
-            args.watchedByUserGroups
-              ? createUserGroupsWatchedFlowsFilter({ userEntityIds: context.userEntityIds })
-              : {},
-          ],
-        },
+        createFlowWatchFilter({
+          flowWatchFilter: args.flowWatchFilter,
+          userEntityIds: context.userEntityIds,
+        }),
         args.createdByUser ? { creatorEntityId: { in: context.userEntityIds } } : {},
         // filter by search query
         args.searchQuery !== ""

@@ -17,13 +17,13 @@ const flowFilterOptions: { name: string; value: FlowWatchFilter }[] = [
 ];
 
 export const FlowsFilterToggle = ({
-  watchFlowFilter,
+  flowWatchFilter,
   setWatchFlowFilter,
-  showWatchedByGroupsOption
+  showWatchedByGroupsOption,
 }: {
-  watchFlowFilter: FlowWatchFilter;
+  flowWatchFilter: FlowWatchFilter;
   setWatchFlowFilter: Dispatch<SetStateAction<FlowWatchFilter>>;
-  showWatchedByGroupsOption: boolean
+  showWatchedByGroupsOption: boolean;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -40,7 +40,9 @@ export const FlowsFilterToggle = ({
     handleClose();
   };
 
-  const options = showWatchedByGroupsOption ? flowFilterOptions : flowFilterOptions.filter(option => option.value !== FlowWatchFilter.WatchedByMeOrMyGroups)
+  const options = showWatchedByGroupsOption
+    ? flowFilterOptions
+    : flowFilterOptions.filter((option) => option.value !== FlowWatchFilter.WatchedByMeOrMyGroups);
 
   return (
     <>
@@ -55,7 +57,7 @@ export const FlowsFilterToggle = ({
           //   setWatchedByUser(!watchedByUser);
         }}
       >
-        {flowFilterOptions.find((option) => option.value === watchFlowFilter)?.name}
+        {flowFilterOptions.find((option) => option.value === flowWatchFilter)?.name}
         <ArrowDropDownIcon />
       </ToggleButton>
       <Menu

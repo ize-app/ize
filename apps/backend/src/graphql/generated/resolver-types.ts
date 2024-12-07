@@ -789,12 +789,11 @@ export type QueryGetFlowsArgs = {
   createdByUser: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   excludeGroupId?: InputMaybe<Scalars['String']['input']>;
+  flowWatchFilter: FlowWatchFilter;
   groupId?: InputMaybe<Scalars['String']['input']>;
   hasTriggerPermissions: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
-  watchedByUser: Scalars['Boolean']['input'];
-  watchedByUserGroups: Scalars['Boolean']['input'];
 };
 
 
@@ -1979,7 +1978,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   discordServerRoles?: Resolver<Array<ResolversTypes['DiscordAPIServerRole']>, ParentType, ContextType, RequireFields<QueryDiscordServerRolesArgs, 'serverId'>>;
   getDiscordServers?: Resolver<Array<ResolversTypes['DiscordServer']>, ParentType, ContextType>;
   getFlow?: Resolver<ResolversTypes['Flow'], ParentType, ContextType, Partial<QueryGetFlowArgs>>;
-  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'hasTriggerPermissions' | 'limit' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
+  getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasTriggerPermissions' | 'limit' | 'searchQuery'>>;
   getGroupsToWatchFlow?: Resolver<ResolversTypes['GroupsToWatch'], ParentType, ContextType, RequireFields<QueryGetGroupsToWatchFlowArgs, 'entities'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasRespondPermission' | 'limit' | 'requestStatusFilter' | 'searchQuery'>>;

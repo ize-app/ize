@@ -10,8 +10,7 @@ type Query {
     limit: Int!
     groupId: String
     searchQuery: String!
-    watchedByUserGroups: Boolean!
-    watchedByUser: Boolean!
+    flowWatchFilter: FlowWatchFilter!
     createdByUser: Boolean!
     excludeGroupId: String
     hasTriggerPermissions: Boolean!

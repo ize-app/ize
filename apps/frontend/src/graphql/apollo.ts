@@ -72,8 +72,7 @@ export const apolloClient = new ApolloClient({
             keyArgs: [
               "groupId",
               "searchQuery",
-              "watchedByUser",
-              "watchedByUserGroups",
+              "flowWatchFilter",
               "createdByUser",
               "hasTriggerPermissions",
               "excludeGroupId",

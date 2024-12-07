@@ -48,8 +48,8 @@ export const RequestSearch = ({
     requestStatusFilter,
     selectedGroupId,
     setHasRespondPermission,
-    watchFlowFilter,
-    setWatchFlowFilter,
+    flowWatchFilter,
+    setFlowWatchFilter,
     setCreatedByUser,
     setRequestStatusFilter,
     setSelectedGroupId,
@@ -68,7 +68,6 @@ export const RequestSearch = ({
   });
 
   const { me } = useContext(CurrentUserContext);
-  console.log("selectedGropId", selectedGroupId);
 
   return (
     <Box
@@ -105,9 +104,9 @@ export const RequestSearch = ({
           />
           {!flowId && (
             <FlowsFilterToggle
-              watchFlowFilter={watchFlowFilter}
+              flowWatchFilter={flowWatchFilter}
               showWatchedByGroupsOption={!groupId}
-              setWatchFlowFilter={setWatchFlowFilter}
+              setWatchFlowFilter={setFlowWatchFilter}
             />
           )}
           {!groupId && !flowId && (

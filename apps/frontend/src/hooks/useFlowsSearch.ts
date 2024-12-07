@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   FlowSummaryFragment,
+  FlowWatchFilter,
   GetFlowsDocument,
   GetFlowsQueryVariables,
 } from "@/graphql/generated/graphql";
@@ -11,24 +12,19 @@ import {
 const useFlowsSearch = ({
   groupId,
   queryResultLimit,
-  initialWatchedByUser,
-  initialWatchedByUserGroups,
+  initialFlowWatchFilter,
   initialHasTriggerPermissions,
   excludeGroupId,
 }: {
   groupId?: string;
   queryResultLimit: number;
-  initialWatchedByUser: boolean;
-  initialWatchedByUserGroups: boolean;
+  initialFlowWatchFilter: FlowWatchFilter;
   initialHasTriggerPermissions: boolean;
   excludeGroupId?: string;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [createdByUser, setCreatedByUser] = useState<boolean>(false);
-  const [watchedByUser, setWatchedByUser] = useState<boolean>(initialWatchedByUser);
-  const [watchedByUserGroups, setWatchedByUserGroups] = useState<boolean>(
-    initialWatchedByUserGroups,
-  );
+  const [flowWatchFilter, setFlowWatchFilter] = useState<FlowWatchFilter>(initialFlowWatchFilter);
   const [hasTriggerPermissions, setHasTriggerPermission] = useState<boolean>(
     initialHasTriggerPermissions,
   );
@@ -45,8 +41,7 @@ const useFlowsSearch = ({
     groupId: selectedGroupId,
     createdByUser,
     searchQuery,
-    watchedByUser,
-    watchedByUserGroups,
+    flowWatchFilter,
     hasTriggerPermissions,
     excludeGroupId,
     limit: queryResultLimit,
@@ -67,8 +62,7 @@ const useFlowsSearch = ({
     queryVarsRef.current = {
       groupId: selectedGroupId,
       searchQuery,
-      watchedByUser,
-      watchedByUserGroups,
+      flowWatchFilter,
       hasTriggerPermissions,
       createdByUser,
       excludeGroupId,
@@ -81,8 +75,7 @@ const useFlowsSearch = ({
     searchQuery,
     queryResultLimit,
     createdByUser,
-    watchedByUser,
-    watchedByUserGroups,
+    flowWatchFilter,
     hasTriggerPermissions,
   ]);
 
@@ -103,13 +96,11 @@ const useFlowsSearch = ({
   return {
     searchQuery,
     setSearchQuery,
-    watchedByUser,
-    watchedByUserGroups,
+    flowWatchFilter,
     hasTriggerPermissions,
     selectedGroupId,
     setGroupId,
-    setWatchedByUser,
-    setWatchedByUserGroups,
+    setFlowWatchFilter,
     setHasTriggerPermission,
     setOldCursor,
     createdByUser,

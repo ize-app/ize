@@ -1,4 +1,4 @@
-import { Button, MenuItem, Select, SelectChangeEvent, ToggleButton } from "@mui/material";
+import { Button, ToggleButton, ToggleButtonGroup, useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent, useContext } from "react";
@@ -7,8 +7,10 @@ import { Link } from "react-router-dom";
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { FlowsFilterToggle } from "@/components/Tables/FlowsFilterToggle.tsx";
+import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle.tsx";
 import Search from "@/components/Tables/Search";
-import { FlowSummaryFragment } from "@/graphql/generated/graphql.ts";
+import { FlowSummaryFragment, FlowWatchFilter } from "@/graphql/generated/graphql.ts";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 import { Route } from "@/routers/routes.ts";
@@ -29,13 +31,14 @@ export const FlowsSearch = ({
   const queryResultLimit = 20;
 
   const { me } = useContext(CurrentUserContext);
+
+  const theme = useTheme();
+  const isMdScreenSize = useMediaQuery(theme.breakpoints.down("md"));
   const {
-    watchedByUser,
-    watchedByUserGroups,
     hasTriggerPermissions,
-    setWatchedByUser,
-    setWatchedByUserGroups,
     setHasTriggerPermission,
+    flowWatchFilter,
+    setFlowWatchFilter,
     selectedGroupId,
     setGroupId,
     searchQuery,
@@ -52,8 +55,7 @@ export const FlowsSearch = ({
   } = useFlowsSearch({
     groupId,
     queryResultLimit,
-    initialWatchedByUser: groupId ? false : true,
-    initialWatchedByUserGroups: groupId ? false : true,
+    initialFlowWatchFilter: groupId ? FlowWatchFilter.All : FlowWatchFilter.WatchedByMeOrMyGroups,
     initialHasTriggerPermissions: onlyShowTriggerable ? true : false,
   });
 
@@ -88,34 +90,18 @@ export const FlowsSearch = ({
           />
           {!!me && <CreateButton />}
         </Box>
-        <Box sx={{ display: "flex", flexWrap: "wrap", width: "100%", minWidth: "0", gap: "8px" }}>
-          {
-            <ToggleButton
-              size="small"
-              value={watchedByUser}
-              selected={watchedByUser}
-              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setWatchedByUser(!watchedByUser);
-              }}
-            >
-              Watched by me
-            </ToggleButton>
-          }
+        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
+          <FlowsFilterToggle
+            flowWatchFilter={flowWatchFilter}
+            showWatchedByGroupsOption={!groupId}
+            setWatchFlowFilter={setFlowWatchFilter}
+          />
           {!groupId && (
-            <ToggleButton
-              size="small"
-              value={watchedByUserGroups}
-              selected={watchedByUserGroups}
-              sx={{ width: "160px", flexShrink: 0, height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setWatchedByUserGroups(!watchedByUserGroups);
-              }}
-            >
-              Watched by my groups
-            </ToggleButton>
+            <GroupsFilterToggle
+              setSelectedGroupId={setGroupId}
+              selectedGroupId={selectedGroupId}
+              groups={me?.groups ?? []}
+            />
           )}
           {!onlyShowTriggerable && (
             <ToggleButton
@@ -131,7 +117,7 @@ export const FlowsSearch = ({
               Flows I can trigger
             </ToggleButton>
           )}
-          {
+          {!isMdScreenSize && (
             <ToggleButton
               size="small"
               value={createdByUser}
@@ -144,25 +130,8 @@ export const FlowsSearch = ({
             >
               Created by me
             </ToggleButton>
-          }
-          {!groupId && (
-            <Select
-              sx={{ width: "160px", flexShrink: 0, height: "30px" }}
-              size="small"
-              value={selectedGroupId ?? "all"}
-              onChange={(event: SelectChangeEvent<typeof selectedGroupId>) => {
-                setGroupId(event.target.value === "all" ? undefined : event.target.value);
-              }}
-            >
-              <MenuItem value={"all"}>All groups</MenuItem>
-              {me?.groups.map((group) => (
-                <MenuItem key={group.id} value={group.id}>
-                  {group.name}
-                </MenuItem>
-              ))}
-            </Select>
           )}
-        </Box>
+        </ToggleButtonGroup>
       </Box>
       {loading ? (
         <Loading />
