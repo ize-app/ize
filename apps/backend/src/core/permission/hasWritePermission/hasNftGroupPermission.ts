@@ -16,74 +16,79 @@ export const hasNftGroupPermission = async ({
   nftGroups: GroupNftPrismaType[];
   userIdentities: IdentityPrismaType[];
 }): Promise<boolean> => {
-  let foundRole = false;
+  try {
+    let foundRole = false;
 
-  const userAddress = userIdentities.find((id) => !!id.IdentityBlockchain)?.IdentityBlockchain
-    ?.address;
+    const userAddress = userIdentities.find((id) => !!id.IdentityBlockchain)?.IdentityBlockchain
+      ?.address;
 
-  if (!userAddress) return false;
+    if (!userAddress) return false;
 
-  if (nftGroups.length === 0) return false;
+    if (nftGroups.length === 0) return false;
 
-  const tokensByChain = new Map<Blockchain, GroupNftPrismaType[]>();
+    const tokensByChain = new Map<Blockchain, GroupNftPrismaType[]>();
 
-  // seperate out NFTs into each chain
-  nftGroups.forEach((role) => {
-    if (!role) return;
-    if (tokensByChain.has(role.NftCollection.chain as Blockchain)) {
-      (tokensByChain.get(role.NftCollection.chain as Blockchain) as GroupNftPrismaType[]).push(
-        role,
-      );
-    } else {
-      // Key doesn't exist, so create a new entry with an array containing the value
-      tokensByChain.set(role?.NftCollection.chain as Blockchain, [role]);
-    }
-    role?.NftCollection.chain;
-  });
-
-  // get owners NFts by chain
-  for (const [chain, nfts] of tokensByChain.entries()) {
-    if (foundRole === true) break;
-    // create unique list of collections that are assigned roles
-    const contractAddresses = new Set<string>();
-    nfts.forEach((nft) => contractAddresses.add(nft.NftCollection.address));
-    // get all of a user's nfts
-    const { ownedNfts } = await alchemyClient.forChain(chain).nft.getNftsForOwner(userAddress, {
-      omitMetadata: true,
-      contractAddresses: Array.from(contractAddresses),
+    // seperate out NFTs into each chain
+    nftGroups.forEach((role) => {
+      if (!role) return;
+      if (tokensByChain.has(role.NftCollection.chain as Blockchain)) {
+        (tokensByChain.get(role.NftCollection.chain as Blockchain) as GroupNftPrismaType[]).push(
+          role,
+        );
+      } else {
+        // Key doesn't exist, so create a new entry with an array containing the value
+        tokensByChain.set(role?.NftCollection.chain as Blockchain, [role]);
+      }
+      role?.NftCollection.chain;
     });
 
-    for (let i = 0; i <= nfts.length - 1; i++) {
-      const nft = nfts[i];
-      // check whether user has permission depending on the type of the nft
-      // allTokens means that any token in collection has access to this role
-      if (!nft.tokenId) {
-        if (ownedNfts.some((ownedNft) => ownedNft.contractAddress === nft.NftCollection.address))
-          return true; // TODO: this is probebly not quite right
-      }
-      // hats tokens have special logic to determine 1) if the hat is active
-      // and 2) whether the role applies to tokens further down in the hats tree
-      else if (nft.NftCollection.address === HATS_V1) {
-        const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
-          wearer: userAddress as `0x${string}`,
-          hatId: BigInt(nft.tokenId),
-        });
-        if (isWearer) foundRole = true;
-      }
-      // for all other nfts, it's just whether or not you have that particular token
-      else {
-        if (
-          ownedNfts.some(
-            (ownedNft) =>
-              ownedNft.contractAddress === nft.NftCollection.address &&
-              ownedNft.tokenId === nft.tokenId,
-          )
-        )
-          foundRole = true;
-      }
+    // get owners NFts by chain
+    for (const [chain, nfts] of tokensByChain.entries()) {
       if (foundRole === true) break;
-    }
-  }
+      // create unique list of collections that are assigned roles
+      const contractAddresses = new Set<string>();
+      nfts.forEach((nft) => contractAddresses.add(nft.NftCollection.address));
+      // get all of a user's nfts
+      const { ownedNfts } = await alchemyClient.forChain(chain).nft.getNftsForOwner(userAddress, {
+        omitMetadata: true,
+        contractAddresses: Array.from(contractAddresses),
+      });
 
-  return foundRole;
+      for (let i = 0; i <= nfts.length - 1; i++) {
+        const nft = nfts[i];
+        // check whether user has permission depending on the type of the nft
+        // allTokens means that any token in collection has access to this role
+        if (!nft.tokenId) {
+          if (ownedNfts.some((ownedNft) => ownedNft.contractAddress === nft.NftCollection.address))
+            return true; // TODO: this is probebly not quite right
+        }
+        // hats tokens have special logic to determine 1) if the hat is active
+        // and 2) whether the role applies to tokens further down in the hats tree
+        else if (nft.NftCollection.address === HATS_V1) {
+          const isWearer = await hatsClient.forChain(chain).isWearerOfHat({
+            wearer: userAddress as `0x${string}`,
+            hatId: BigInt(nft.tokenId),
+          });
+          if (isWearer) foundRole = true;
+        }
+        // for all other nfts, it's just whether or not you have that particular token
+        else {
+          if (
+            ownedNfts.some(
+              (ownedNft) =>
+                ownedNft.contractAddress === nft.NftCollection.address &&
+                ownedNft.tokenId === nft.tokenId,
+            )
+          )
+            foundRole = true;
+        }
+        if (foundRole === true) break;
+      }
+    }
+
+    return foundRole;
+  } catch (error) {
+    console.log("Error in hasNftGroupPermission: ", error);
+    return false;
+  }
 };

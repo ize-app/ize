@@ -20,18 +20,24 @@ export const hasWriteIdentityPermission = async ({
   identity: IdentityPrismaType;
   transaction?: Prisma.TransactionClient;
 }): Promise<boolean> => {
-  if (!permission) return false;
+  try {
+    if (!permission) return false;
 
-  if (permission.anyone) return true;
+    if (permission.anyone) return true;
 
-  const { telegramGroups, identities } = await resolveEntitySet({
-    permission,
-    transaction,
-  });
+    const { telegramGroups, identities } = await resolveEntitySet({
+      permission,
+      transaction,
+    });
 
-  if (hasIdentityPermission({ identities, userIdentities: [identity] })) return true;
+    if (hasIdentityPermission({ identities, userIdentities: [identity] })) return true;
 
-  if (await hasTelegramChatGroupPermission({ telegramGroups, identities: [identity] })) return true;
+    if (await hasTelegramChatGroupPermission({ telegramGroups, identities: [identity] }))
+      return true;
 
-  return false;
+    return false;
+  } catch (error) {
+    console.error("Error in hasWriteIdentityPermission: ", error);
+    return false;
+  }
 };

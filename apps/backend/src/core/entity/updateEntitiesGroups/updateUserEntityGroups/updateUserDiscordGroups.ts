@@ -46,7 +46,7 @@ export const updateUserDiscordGroups = async ({
       },
     });
 
-    // get finds ize role role groups for all roles that the user holds in servers that have the cults bot
+    // get finds ize role role groups for all roles that the user holds in servers that have the ize bot
     await Promise.all(
       discordServers.map(async (server) => {
         if (!server.hasCultsBot) return;

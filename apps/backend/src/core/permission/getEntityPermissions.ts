@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/prisma/client";
-import { ApolloServerErrorCode, CustomErrorCodes, GraphQLError } from "@graphql/errors";
+import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
 import { hasWriteIdentityPermission, hasWriteUserPermission } from "./hasWritePermission";
 import { PermissionPrismaType } from "./permissionPrismaTypes";
@@ -22,10 +22,7 @@ export const getEntityPermissions = async ({
   if (entityContext.type === "user") {
     const { context } = entityContext;
 
-    if (!context?.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
-      });
+    if (!context?.currentUser) return false;
 
     hasPermission = await hasWriteUserPermission({
       permission,
