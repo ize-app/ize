@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
-import { FlowsFilterToggle } from "@/components/Tables/FlowsFilterToggle.tsx";
+import { FlowWatchFilterToggle } from "@/components/Tables/FlowWatchFilterToggle.tsx";
 import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle.tsx";
 import Search from "@/components/Tables/Search";
 import { FlowSummaryFragment, FlowWatchFilter } from "@/graphql/generated/graphql.ts";
@@ -91,7 +91,7 @@ export const FlowsSearch = ({
           {!!me && <CreateButton />}
         </Box>
         <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
-          <FlowsFilterToggle
+          <FlowWatchFilterToggle
             flowWatchFilter={flowWatchFilter}
             showWatchedByGroupsOption={!groupId}
             setWatchFlowFilter={setFlowWatchFilter}
@@ -146,8 +146,7 @@ export const FlowsSearch = ({
       ) : (
         <EmptyTablePlaceholder>
           <Typography>
-            There aren&apos;t any flows yet. Learn more <Link to={Route.About}>here</Link> or{" "}
-            <Link to={Route.NewFlow}>create your first flow</Link>. <br />
+            <Link to={Route.NewFlow}>Create a flow</Link>
           </Typography>
         </EmptyTablePlaceholder>
       )}

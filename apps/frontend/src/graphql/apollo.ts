@@ -108,7 +108,7 @@ export const apolloClient = new ApolloClient({
             },
           },
           groupsForCurrentUser: {
-            keyArgs: ["searchQuery", "watchFilter", "acknowledged"],
+            keyArgs: ["searchQuery", "watchFilter", "isMember"],
             merge(existing, incoming, { args, readField }) {
               const cursor = args?.cursor;
               const merged = existing ? existing.slice(0) : [];

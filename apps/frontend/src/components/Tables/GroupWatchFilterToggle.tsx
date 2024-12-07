@@ -4,26 +4,29 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Dispatch, SetStateAction, useState } from "react";
 
-import { FlowWatchFilter } from "@/graphql/generated/graphql";
+import { GroupWatchFilter } from "@/graphql/generated/graphql";
 
-const flowFilterOptions: { name: string; value: FlowWatchFilter }[] = [
+const watchFilterOptions: { name: string; value: GroupWatchFilter }[] = [
   {
-    name: "Watched by me or my groups",
-    value: FlowWatchFilter.WatchedByMeOrMyGroups,
+    name: "Watched",
+    value: GroupWatchFilter.Watched,
   },
-  { name: "Watched by me", value: FlowWatchFilter.WatchedByMe },
-  { name: "Not watched", value: FlowWatchFilter.NotWatching },
-  { name: "All", value: FlowWatchFilter.All },
+  {
+    name: "Not watched",
+    value: GroupWatchFilter.NotWatched,
+  },
+  {
+    name: "All",
+    value: GroupWatchFilter.All,
+  },
 ];
 
-export const FlowsFilterToggle = ({
-  flowWatchFilter,
-  setWatchFlowFilter,
-  showWatchedByGroupsOption,
+export const GroupWatchFilterToggle = ({
+  watchFilter,
+  setWatchFilter,
 }: {
-  flowWatchFilter: FlowWatchFilter;
-  setWatchFlowFilter: Dispatch<SetStateAction<FlowWatchFilter>>;
-  showWatchedByGroupsOption: boolean;
+  watchFilter: GroupWatchFilter;
+  setWatchFilter: Dispatch<SetStateAction<GroupWatchFilter>>;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -35,14 +38,10 @@ export const FlowsFilterToggle = ({
     setAnchorEl(null);
   };
 
-  const toggleHandler = ({ type }: { type: FlowWatchFilter }) => {
-    setWatchFlowFilter(type);
+  const toggleHandler = ({ type }: { type: GroupWatchFilter }) => {
+    setWatchFilter(type);
     handleClose();
   };
-
-  const options = showWatchedByGroupsOption
-    ? flowFilterOptions
-    : flowFilterOptions.filter((option) => option.value !== FlowWatchFilter.WatchedByMeOrMyGroups);
 
   return (
     <>
@@ -53,11 +52,8 @@ export const FlowsFilterToggle = ({
         sx={{ height: "30px", display: "flex", justifyContent: "space-between" }}
         color="primary"
         onClick={handleClick}
-        onChange={() => {
-          //   setWatchedByUser(!watchedByUser);
-        }}
       >
-        {flowFilterOptions.find((option) => option.value === flowWatchFilter)?.name}
+        {watchFilterOptions.find((option) => option.value === watchFilter)?.name}
         <ArrowDropDownIcon />
       </ToggleButton>
       <Menu
@@ -70,7 +66,7 @@ export const FlowsFilterToggle = ({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {options.map((option) => (
+        {watchFilterOptions.map((option) => (
           <MenuItem key={option.value} onClick={() => toggleHandler({ type: option.value })}>
             {option.name}
           </MenuItem>

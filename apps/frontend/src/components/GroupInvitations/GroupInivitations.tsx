@@ -3,7 +3,7 @@ import { Box, Button, Icon, Paper, Typography, useTheme } from "@mui/material";
 import { Link, generatePath } from "react-router-dom";
 
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
-import { WatchFilter, WatchGroupDocument } from "@/graphql/generated/graphql";
+import { GroupWatchFilter, WatchGroupDocument } from "@/graphql/generated/graphql";
 import useGroupsSearch from "@/hooks/useGroupsSearch";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
@@ -12,14 +12,14 @@ import { fullUUIDToShort } from "@/utils/inputs";
 export const GroupInvitations = () => {
   const { groups, refetch } = useGroupsSearch({
     queryResultLimit: 5,
-    initialWatchFilter: WatchFilter.Watched,
-    acknowledged: false,
+    initialWatchFilter: GroupWatchFilter.NotAcknowledged,
+    initialIsMember: true,
   });
-  const theme = useTheme()
-  const [mutate] = useMutation(WatchGroupDocument,{
+  const theme = useTheme();
+  const [mutate] = useMutation(WatchGroupDocument, {
     onCompleted: () => {
-      refetch()
-    }
+      refetch();
+    },
   });
 
   if (groups.length === 0) return null;
@@ -79,6 +79,7 @@ export const GroupInvitations = () => {
                     await mutate({
                       variables: { groupId: group.groupId, watch: true },
                     });
+                    // a bit clunky. in the future, i want to trigger update on groups search table here istead
                     window.location.reload();
                   }}
                   endIcon={

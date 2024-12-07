@@ -3669,6 +3669,42 @@
         ]
       },
       {
+        "kind": "ENUM",
+        "name": "GroupWatchFilter",
+        "description": null,
+        "isOneOf": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "All",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NotAcknowledged",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NotWatched",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Watched",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "GroupWatchFlow",
         "description": null,
@@ -7068,7 +7104,19 @@
             "description": null,
             "args": [
               {
-                "name": "acknowledged",
+                "name": "cursor",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "isMember",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -7078,18 +7126,6 @@
                     "name": "Boolean",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "cursor",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -7135,7 +7171,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "ENUM",
-                    "name": "WatchFilter",
+                    "name": "GroupWatchFilter",
                     "ofType": null
                   }
                 },

@@ -1,4 +1,4 @@
-import { Button, ToggleButton, Typography } from "@mui/material";
+import { Button, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent } from "react";
 import { Link, generatePath } from "react-router-dom";
@@ -6,8 +6,9 @@ import { Link, generatePath } from "react-router-dom";
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { GroupWatchFilterToggle } from "@/components/Tables/GroupWatchFilterToggle";
 import Search from "@/components/Tables/Search";
-import { WatchFilter } from "@/graphql/generated/graphql";
+import { GroupWatchFilter } from "@/graphql/generated/graphql";
 import useGroupsSearch from "@/hooks/useGroupsSearch";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "@/routers/routes";
 
@@ -21,6 +22,8 @@ export const GroupsSearch = () => {
     setSearchQuery,
     watchFilter,
     setWatchFilter,
+    isMember,
+    setIsMember,
     setOldCursor,
     oldCursor,
     newCursor,
@@ -30,8 +33,8 @@ export const GroupsSearch = () => {
     queryVars,
   } = useGroupsSearch({
     queryResultLimit,
-    initialWatchFilter: WatchFilter.Watched,
-    acknowledged: true,
+    initialWatchFilter: GroupWatchFilter.Watched,
+    initialIsMember: false,
   });
 
   return (
@@ -60,20 +63,21 @@ export const GroupsSearch = () => {
           />
           <CreateButton />
         </Box>
-        <ToggleButton
-          size="small"
-          value="check"
-          selected={watchFilter === WatchFilter.Watched}
-          sx={{ width: "160px", height: "30px" }}
-          color="primary"
-          onChange={() => {
-            setWatchFilter(
-              watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
-            );
-          }}
-        >
-          Watched groups
-        </ToggleButton>
+        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap" }}>
+          <GroupWatchFilterToggle setWatchFilter={setWatchFilter} watchFilter={watchFilter} />
+          <ToggleButton
+            size="small"
+            value={isMember}
+            selected={isMember}
+            sx={{ height: "30px" }}
+            color="primary"
+            onChange={() => {
+              setIsMember(!isMember);
+            }}
+          >
+            Groups I am a member of
+          </ToggleButton>
+        </ToggleButtonGroup>
       </Box>
 
       {loading && groups.length == 0 ? (
@@ -83,7 +87,6 @@ export const GroupsSearch = () => {
       ) : (
         <EmptyTablePlaceholder>
           <Typography>
-            You aren&apos;t a part of any Ize groups (yet!).{" "}
             <Link to={generatePath(newCustomGroupRoute(NewCustomGroupRoute.Setup))}>
               Create a group
             </Link>

@@ -13,7 +13,7 @@ import { Link, generatePath } from "react-router-dom";
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
-import { FlowsFilterToggle } from "@/components/Tables/FlowsFilterToggle";
+import { FlowWatchFilterToggle } from "@/components/Tables/FlowWatchFilterToggle";
 import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle";
 import { RequestStatusToggle } from "@/components/Tables/RequestStatusToggle";
 import Search from "@/components/Tables/Search";
@@ -103,7 +103,7 @@ export const RequestSearch = ({
             setRequestStatusFilter={setRequestStatusFilter}
           />
           {!flowId && (
-            <FlowsFilterToggle
+            <FlowWatchFilterToggle
               flowWatchFilter={flowWatchFilter}
               showWatchedByGroupsOption={!groupId}
               setWatchFlowFilter={setFlowWatchFilter}
@@ -146,7 +146,7 @@ export const RequestSearch = ({
           )}
         </ToggleButtonGroup>
       </Box>
-      {loading && requestSteps.length === 0? (
+      {loading && requestSteps.length === 0 ? (
         <Loading />
       ) : requestSteps.length > 0 ? (
         <RequestSummaryTable requests={requestSteps} />
@@ -154,13 +154,12 @@ export const RequestSearch = ({
         <EmptyTablePlaceholder>
           {!flowId ? (
             <Typography>
-              {groupId ? "This group doesn't " : "You don't "}have any requests. Create a{" "}
-              <Link to={Route.NewFlow}>flow</Link> first or a{" "}
+              Create a <Link to={Route.NewFlow}>flow</Link> or a{" "}
               <Link to={Route.NewRequest}>request</Link> or for an existing flow.
             </Typography>
           ) : (
             <Typography>
-              You don&apos;t have any requests for this flow. Create a{" "}
+              Create a{" "}
               <Link
                 to={generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
                   flowId: fullUUIDToShort(flowId),

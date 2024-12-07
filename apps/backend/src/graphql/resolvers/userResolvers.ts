@@ -3,6 +3,7 @@ import { identityResolver } from "@/core/entity/identity/identityResolver";
 import { userInclude } from "@/core/user/userPrismaTypes";
 import { userResolver } from "@/core/user/userResolver";
 import {
+  GroupWatchFilter,
   Identity,
   Me,
   MutationResolvers,
@@ -10,7 +11,6 @@ import {
   MutationWatchFlowArgs,
   MutationWatchGroupArgs,
   QueryResolvers,
-  WatchFilter,
 } from "@graphql/generated/resolver-types";
 import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
 import { watchFlow as watchFlowService } from "@/core/user/watchFlow";
@@ -39,7 +39,7 @@ const me: QueryResolvers["me"] = async (
 
   const groups = await getGroupsOfUser({
     context,
-    args: { limit: 10, searchQuery: "", watchFilter: WatchFilter.Watched, acknowledged: true },
+    args: { limit: 10, searchQuery: "", watchFilter: GroupWatchFilter.Watched, isMember: false },
   });
 
   const userData = await prisma.user.findFirstOrThrow({

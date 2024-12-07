@@ -14,13 +14,19 @@ query Group($id: String!) {
   }
 }
 
-query Groups($cursor: String, $limit: Int!, $searchQuery: String!, $watchFilter: WatchFilter!, $acknowledged: Boolean!) {
+query Groups(
+  $cursor: String
+  $limit: Int!
+  $searchQuery: String!
+  $watchFilter: GroupWatchFilter!
+  $isMember: Boolean!
+) {
   groupsForCurrentUser(
     cursor: $cursor
     limit: $limit
     searchQuery: $searchQuery
     watchFilter: $watchFilter
-    acknowledged: $acknowledged
+    isMember: $isMember
   ) {
     ...IzeGroup
   }

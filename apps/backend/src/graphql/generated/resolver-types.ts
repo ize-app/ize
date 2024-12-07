@@ -420,6 +420,13 @@ export type GroupTelegramChat = {
 
 export type GroupType = DiscordRoleGroup | GroupIze | GroupNft | GroupTelegramChat;
 
+export enum GroupWatchFilter {
+  All = 'All',
+  NotAcknowledged = 'NotAcknowledged',
+  NotWatched = 'NotWatched',
+  Watched = 'Watched'
+}
+
 export type GroupWatchFlow = {
   __typename?: 'GroupWatchFlow';
   filter?: Maybe<ActionFilter>;
@@ -827,11 +834,11 @@ export type QueryGroupArgs = {
 
 
 export type QueryGroupsForCurrentUserArgs = {
-  acknowledged: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
+  isMember: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
-  watchFilter: WatchFilter;
+  watchFilter: GroupWatchFilter;
 };
 
 
@@ -1342,6 +1349,7 @@ export type ResolversTypes = {
   GroupNftArgs: GroupNftArgs;
   GroupTelegramChat: ResolverTypeWrapper<GroupTelegramChat>;
   GroupType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GroupType']>;
+  GroupWatchFilter: GroupWatchFilter;
   GroupWatchFlow: ResolverTypeWrapper<Omit<GroupWatchFlow, 'filter'> & { filter?: Maybe<ResolversTypes['ActionFilter']> }>;
   GroupsToWatch: ResolverTypeWrapper<Omit<GroupsToWatch, 'otherGroups' | 'relevantGroups'> & { otherGroups: Array<ResolversTypes['Group']>, relevantGroups: Array<ResolversTypes['Group']> }>;
   Identity: ResolverTypeWrapper<Omit<Identity, 'identityType'> & { identityType: ResolversTypes['IdentityType'] }>;
@@ -1983,7 +1991,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasRespondPermission' | 'limit' | 'requestStatusFilter' | 'searchQuery'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'acknowledged' | 'limit' | 'searchQuery' | 'watchFilter'>>;
+  groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'isMember' | 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
