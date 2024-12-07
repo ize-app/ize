@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 
+import { FlowWatchFilter } from "@/graphql/generated/resolver-types";
+
 import { actionConfigInclude } from "../action/actionPrismaTypes";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { groupInclude } from "../entity/group/groupPrismaTypes";
@@ -98,6 +100,29 @@ const flowExampleInclude = Prisma.validator<Prisma.FlowInclude>()({
 export type FlowPrismaType = Prisma.FlowGetPayload<{
   include: typeof flowExampleInclude;
 }>;
+
+export const createFlowWatchFilter = ({
+  flowWatchFilter,
+  userEntityIds,
+}: {
+  flowWatchFilter: FlowWatchFilter;
+  userEntityIds: string[];
+}): Prisma.FlowWhereInput => {
+  const watchedByMe = createUserWatchedFlowFilter({ userEntityIds });
+  const watchedByMyGroups = createUserGroupsWatchedFlowsFilter({ userEntityIds });
+
+  switch (flowWatchFilter) {
+    case FlowWatchFilter.WatchedByMeOrMyGroups:
+      return { OR: [watchedByMe, watchedByMyGroups] };
+    case FlowWatchFilter.WatchedByMe:
+      return watchedByMe;
+    case FlowWatchFilter.NotWatching:
+      return { NOT: [watchedByMe, watchedByMyGroups] };
+    default:
+      return {};
+  }
+};
+
 // used for getting flows that a user is watching as well as request steps from flows they are watching
 export const createUserWatchedFlowFilter = ({ userEntityIds }: { userEntityIds: string[] }) => {
   // flows watched directly by user OR

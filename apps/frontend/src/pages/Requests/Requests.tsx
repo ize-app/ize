@@ -1,10 +1,11 @@
 import Typography from "@mui/material/Typography";
 
 import { GroupInvitations } from "@/components/GroupInvitations/GroupInivitations";
+import { FlowWatchFilter } from "@/graphql/generated/graphql";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
-import { RequestSearch } from "./RequestStepsSearch";
+import { RequestSearch } from "./RequestsSearch";
 
 export const Requests = () => {
   return (
@@ -15,7 +16,7 @@ export const Requests = () => {
       />
       <Typography variant="h1">Requests</Typography>
       <GroupInvitations />
-      <RequestSearch userOnly />
+      <RequestSearch initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups} />
     </PageContainer>
   );
 };

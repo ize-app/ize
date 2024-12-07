@@ -15,13 +15,13 @@ import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import { GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
+import { FlowWatchFilter, GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { FlowsSearch } from "../Flows/FlowsSearch";
-import { RequestSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestsSearch";
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();
@@ -57,7 +57,9 @@ export const Group = () => {
   const tabs: TabProps[] = [
     {
       title: "Requests",
-      content: !loading ? <RequestSearch userOnly={false} groupId={groupId} /> : null,
+      content: !loading ? (
+        <RequestSearch initialFlowWatchFilter={FlowWatchFilter.All} groupId={groupId} />
+      ) : null,
     },
     {
       title: "Flows",

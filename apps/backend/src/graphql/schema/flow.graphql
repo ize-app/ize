@@ -138,3 +138,10 @@ type GroupsToWatch {
   relevantGroups: [Group!]!
   otherGroups: [Group!]!
 }
+
+enum FlowWatchFilter {
+  WatchedByMe
+  WatchedByMeOrMyGroups
+  NotWatching
+  All
+}

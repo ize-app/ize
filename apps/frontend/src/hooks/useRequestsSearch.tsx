@@ -3,18 +3,20 @@ import { debounce } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  FlowWatchFilter,
   GetRequestsDocument,
   GetRequestsQueryVariables,
+  RequestStatusFilter,
   RequestSummaryFragment,
 } from "@/graphql/generated/graphql";
 
-const useRequestStepsSearch = ({
-  userOnly,
+const useRequestsSearch = ({
+  initialFlowWatchFilter,
   groupId,
   flowId,
   queryResultLimit,
 }: {
-  userOnly: boolean;
+  initialFlowWatchFilter: FlowWatchFilter;
   groupId?: string;
   flowId?: string;
   queryResultLimit: number;
@@ -22,10 +24,12 @@ const useRequestStepsSearch = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
   const [hasRespondPermission, setHasRespondPermission] = useState<boolean>(false);
-  const [watchedByUser, setWatchedByUser] = useState<boolean>(userOnly);
-  const [watchedByUserGroups, setWatchedByUserGroups] = useState<boolean>(userOnly);
+  const [flowWatchFilter, setFlowWatchFilter] = useState<FlowWatchFilter>(initialFlowWatchFilter);
+
   const [createdByUser, setCreatedByUser] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(true);
+  const [requestStatusFilter, setRequestStatusFilter] = useState<RequestStatusFilter>(
+    RequestStatusFilter.Open,
+  );
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupId);
 
   const [getResults, { loading, data, fetchMore }] = useLazyQuery(GetRequestsDocument, {
@@ -42,10 +46,9 @@ const useRequestStepsSearch = ({
     searchQuery,
     limit: queryResultLimit,
     hasRespondPermission,
-    watchedByUser,
-    watchedByUserGroups,
+    flowWatchFilter,
     createdByUser,
-    open,
+    requestStatusFilter,
     cursor: newCursor,
   });
 
@@ -65,24 +68,22 @@ const useRequestStepsSearch = ({
       groupId: selectedGroupId,
       searchQuery,
       hasRespondPermission,
-      watchedByUser,
-      watchedByUserGroups,
+      flowWatchFilter,
       createdByUser,
-      open,
+      requestStatusFilter,
       limit: queryResultLimit,
       cursor: undefined,
     };
     debouncedRefetch();
   }, [
-    groupId,
+    selectedGroupId,
     flowId,
     searchQuery,
     queryResultLimit,
     hasRespondPermission,
-    watchedByUser,
-    watchedByUserGroups,
+    flowWatchFilter,
     createdByUser,
-    open,
+    requestStatusFilter,
   ]);
 
   // Update queryVarsRef with the new cursor if there is new data
@@ -102,18 +103,16 @@ const useRequestStepsSearch = ({
   return {
     searchQuery,
     hasRespondPermission,
-    watchedByUser,
-    watchedByUserGroups,
     createdByUser,
-    open,
+    requestStatusFilter,
     selectedGroupId,
     setSearchQuery,
     setHasRespondPermission,
-    setWatchedByUser,
-    setWatchedByUserGroups,
     setCreatedByUser,
-    setOpen,
+    setRequestStatusFilter,
     setSelectedGroupId,
+    watchFlowFilter: flowWatchFilter,
+    setWatchFlowFilter: setFlowWatchFilter,
     setOldCursor,
     oldCursor,
     newCursor,
@@ -124,4 +123,4 @@ const useRequestStepsSearch = ({
   };
 };
 
-export default useRequestStepsSearch;
+export default useRequestsSearch;

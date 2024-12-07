@@ -327,6 +327,13 @@ export type FlowVersionValue = {
   flowVersion: FlowReference;
 };
 
+export enum FlowWatchFilter {
+  All = 'All',
+  NotWatching = 'NotWatching',
+  WatchedByMe = 'WatchedByMe',
+  WatchedByMeOrMyGroups = 'WatchedByMeOrMyGroups'
+}
+
 export type FlowWatchers = {
   __typename?: 'FlowWatchers';
   groups: Array<Group>;
@@ -806,13 +813,12 @@ export type QueryGetRequestsArgs = {
   createdByUser: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   flowId?: InputMaybe<Scalars['String']['input']>;
+  flowWatchFilter: FlowWatchFilter;
   groupId?: InputMaybe<Scalars['String']['input']>;
   hasRespondPermission: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
-  open: Scalars['Boolean']['input'];
+  requestStatusFilter: RequestStatusFilter;
   searchQuery: Scalars['String']['input'];
-  watchedByUser: Scalars['Boolean']['input'];
-  watchedByUserGroups: Scalars['Boolean']['input'];
 };
 
 
@@ -892,6 +898,12 @@ export type RequestDefinedOptionsArgs = {
   fieldId: Scalars['String']['input'];
   options: Array<OptionArgs>;
 };
+
+export enum RequestStatusFilter {
+  All = 'All',
+  Final = 'Final',
+  Open = 'Open'
+}
 
 export type RequestStep = {
   __typename?: 'RequestStep';
@@ -1316,6 +1328,7 @@ export type ResolversTypes = {
   FlowSummary: ResolverTypeWrapper<Omit<FlowSummary, 'creator' | 'group' | 'trigger' | 'watching'> & { creator: ResolversTypes['Entity'], group?: Maybe<ResolversTypes['Group']>, trigger: ResolversTypes['TriggerConfig'], watching: ResolversTypes['FlowWatchers'] }>;
   FlowType: FlowType;
   FlowVersionValue: ResolverTypeWrapper<FlowVersionValue>;
+  FlowWatchFilter: FlowWatchFilter;
   FlowWatchers: ResolverTypeWrapper<Omit<FlowWatchers, 'groups'> & { groups: Array<ResolversTypes['Group']> }>;
   FlowsValue: ResolverTypeWrapper<FlowsValue>;
   Group: ResolverTypeWrapper<Omit<Group, 'groupType'> & { groupType: ResolversTypes['GroupType'] }>;
@@ -1377,6 +1390,7 @@ export type ResolversTypes = {
   RawAnswers: ResolverTypeWrapper<Omit<RawAnswers, 'field'> & { field: ResolversTypes['Field'] }>;
   Request: ResolverTypeWrapper<Omit<Request, 'creator' | 'flow' | 'requestSteps' | 'triggerDefinedOptions' | 'triggerFieldAnswers'> & { creator: ResolversTypes['Entity'], flow: ResolversTypes['Flow'], requestSteps: Array<ResolversTypes['RequestStep']>, triggerDefinedOptions: Array<ResolversTypes['TriggerDefinedOptions']>, triggerFieldAnswers: Array<ResolversTypes['TriggerFieldAnswer']> }>;
   RequestDefinedOptionsArgs: RequestDefinedOptionsArgs;
+  RequestStatusFilter: RequestStatusFilter;
   RequestStep: ResolverTypeWrapper<Omit<RequestStep, 'actionExecution' | 'answers' | 'fieldSet' | 'results'> & { actionExecution?: Maybe<ResolversTypes['ActionExecution']>, answers: Array<ResolversTypes['ResponseFieldAnswers']>, fieldSet: ResolversTypes['FieldSet'], results: Array<ResolversTypes['ResultGroup']> }>;
   RequestStepActionSummary: ResolverTypeWrapper<RequestStepActionSummary>;
   RequestStepRespondPermissionFilter: RequestStepRespondPermissionFilter;
@@ -1968,7 +1982,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'hasTriggerPermissions' | 'limit' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   getGroupsToWatchFlow?: Resolver<ResolversTypes['GroupsToWatch'], ParentType, ContextType, RequireFields<QueryGetGroupsToWatchFlowArgs, 'entities'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'hasRespondPermission' | 'limit' | 'open' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
+  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasRespondPermission' | 'limit' | 'requestStatusFilter' | 'searchQuery'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'acknowledged' | 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;

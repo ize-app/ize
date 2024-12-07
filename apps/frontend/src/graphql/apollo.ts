@@ -48,10 +48,9 @@ export const apolloClient = new ApolloClient({
               "groupId",
               "flowId",
               "searchQuery",
-              "watchedByUserGroups",
-              "watchedByUser",
+              "flowWatchFilter",
+              "requestStatusFilter",
               "createdByUser",
-              "open",
               "hasRespondPermission",
             ],
             merge(existing, incoming, { args, readField }) {

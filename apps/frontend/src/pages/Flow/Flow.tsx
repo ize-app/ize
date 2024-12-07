@@ -23,11 +23,16 @@ import {
 } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
-import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  FlowType,
+  FlowWatchFilter,
+  GetFlowDocument,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { RequestSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestsSearch";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -332,7 +337,9 @@ export const Flow = () => {
             </TabPanel>
           ))}
         </Box>
-        {isCurrentFlowVersion && <RequestSearch userOnly={false} flowId={flow.flowId} />}
+        {isCurrentFlowVersion && (
+          <RequestSearch initialFlowWatchFilter={FlowWatchFilter.All} flowId={flow.flowId} />
+        )}
       </Box>
     </PageContainer>
   );
