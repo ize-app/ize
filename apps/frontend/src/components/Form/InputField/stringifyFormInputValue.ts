@@ -23,7 +23,7 @@ export const stringifyFormInputValue = ({ input }: { input: InputSchemaType }): 
     case ValueType.DateTime:
       return `${dayjs.utc(value).tz(dayjs.tz.guess()).format("MMMM D YYYY, HH:mm a").toString()} (${userTimezone})`;
     case ValueType.Uri:
-      return value;
+      return value.name || value.uri;
     // this case statement shouldn't be hit because it's handled upstream
     // TODO: make this not as janky
     case ValueType.Entities:

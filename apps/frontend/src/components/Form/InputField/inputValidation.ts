@@ -44,7 +44,9 @@ export const inputSchema = z
     z.object({
       type: z.literal(ValueType.Uri),
       required: z.boolean().default(true),
-      value: z.string().url().default(""),
+      value: z
+        .object({ uri: z.string().url(), name: z.string().min(1) })
+        .default({ uri: "", name: "" }),
     }),
     z.object({
       type: z.literal(ValueType.Date),

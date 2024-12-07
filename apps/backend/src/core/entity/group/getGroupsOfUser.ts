@@ -9,7 +9,7 @@ import {
 import { prisma } from "@/prisma/client";
 
 import { getGroupIdsOfUser } from "./getGroupIdsOfUser";
-import { createIzeGroupInclude } from "./groupPrismaTypes";
+import { IzeGroupPrismaType, createIzeGroupInclude } from "./groupPrismaTypes";
 import { izeGroupResolver } from "./izeGroupResolver";
 
 export const getGroupsOfUser = async ({
@@ -27,50 +27,59 @@ export const getGroupsOfUser = async ({
   const groupIds = await getGroupIdsOfUser({ context, transaction });
   const entityIds = context.userEntityIds;
 
-  const groupsIze = await transaction.groupIze.findMany({
-    take: args.limit,
-    skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
-    cursor: args.cursor ? { groupId: args.cursor } : undefined,
-    where: {
-      AND: [
-        args.searchQuery !== ""
-          ? {
-              name: {
-                contains: args.searchQuery,
-                mode: "insensitive",
-              },
-            }
-          : {},
-        args.watchFilter !== WatchFilter.All
-          ? {
-              group: {
-                EntityWatchedGroups: {
-                  some: {
-                    entityId: { in: entityIds },
-                    watched: args.watchFilter === WatchFilter.Watched,
-                  },
+  let groupsIze: IzeGroupPrismaType[] = [];
+
+  if (!args.acknowledged) {
+    groupsIze = await transaction.groupIze.findMany({
+      include: createIzeGroupInclude(entityIds),
+      take: args.limit,
+      skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
+      cursor: args.cursor ? { groupId: args.cursor } : undefined,
+      where: {
+        group: {
+          EntityWatchedGroups: {
+            none: {
+              entityId: { in: entityIds },
+            },
+          },
+          id: { in: groupIds },
+        },
+      },
+    });
+  } else {
+    groupsIze = await transaction.groupIze.findMany({
+      include: createIzeGroupInclude(entityIds),
+      take: args.limit,
+      skip: args.cursor ? 1 : 0, // Skip the cursor if it exists
+      cursor: args.cursor ? { groupId: args.cursor } : undefined,
+      where: {
+        AND: [
+          args.searchQuery !== ""
+            ? {
+                name: {
+                  contains: args.searchQuery,
+                  mode: "insensitive",
+                },
+              }
+            : {}, 
+          {
+            group: {
+              EntityWatchedGroups: {
+                some: {
+                  entityId: { in: entityIds },
+                  watched:
+                    args.watchFilter !== WatchFilter.All
+                      ? args.watchFilter === WatchFilter.Watched
+                      : undefined,
                 },
               },
-            }
-          : {
-              groupId: {
-                in: groupIds,
-              },
-              // group: {
-              //   EntityWatchedGroups: {
-              //     none: {
-              //       entityId: { in: entityIds },
-              //       watched: true,
-              //     },
-              //   },
-              // },
             },
-      ],
-    },
-
-    include: createIzeGroupInclude(entityIds),
-    orderBy: { group: { createdAt: "desc" } },
-  });
+          },
+        ],
+      },
+      orderBy: { group: { createdAt: "desc" } },
+    });
+  }
 
   return groupsIze.map((izeGroup) => izeGroupResolver({ izeGroup, context }));
 };

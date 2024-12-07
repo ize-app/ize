@@ -16,7 +16,7 @@ import {
 } from "@graphql/generated/resolver-types";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
-import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
 import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 
 const newEntities: MutationResolvers["newEntities"] = async (
@@ -34,7 +34,7 @@ const group: QueryResolvers["group"] = async (
 ): Promise<IzeGroup> => {
   return await getIzeGroup({ groupId: args.id, context, getWatchAndPermissionStatus: true });
 };
- 
+
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (
   root: unknown,
   args: QueryGroupsForCurrentUserArgs,

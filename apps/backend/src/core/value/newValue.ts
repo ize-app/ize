@@ -28,7 +28,7 @@ export const newValue = async ({
       dbValue = await transaction.value.create({
         data: {
           type: value.type,
-          string: value.value,
+          json: value.value,
         },
       });
       break;

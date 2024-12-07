@@ -79,7 +79,7 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
         };
       case "UriValue":
         return {
-          value: value.uri,
+          value: { uri: value.uri, name: value.name ?? "" },
           type: ValueType.Uri,
           required,
         };
@@ -134,7 +134,7 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
       case ValueType.String:
         return { value: "", type: ValueType.String, required };
       case ValueType.Uri:
-        return { value: "", type: ValueType.Uri, required };
+        return { value: { uri: "", name: "" }, type: ValueType.Uri, required };
       case ValueType.OptionSelections: {
         if (!optionsConfig) throw Error("Only fields can have option selections");
         const { selectionType, maxSelections } = optionsConfig;

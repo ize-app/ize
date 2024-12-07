@@ -822,6 +822,7 @@ export type QueryGroupArgs = {
 
 
 export type QueryGroupsForCurrentUserArgs = {
+  acknowledged: Scalars['Boolean']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   searchQuery: Scalars['String']['input'];
@@ -1147,6 +1148,7 @@ export type UpdateProfileArgs = {
 
 export type UriValue = {
   __typename?: 'UriValue';
+  name: Scalars['String']['output'];
   uri: Scalars['String']['output'];
 };
 
@@ -1968,7 +1970,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
   getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'hasRespondPermission' | 'limit' | 'open' | 'searchQuery' | 'watchedByUser' | 'watchedByUserGroups'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
-  groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'limit' | 'searchQuery' | 'watchFilter'>>;
+  groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'acknowledged' | 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;
   me?: Resolver<Maybe<ResolversTypes['Me']>, ParentType, ContextType>;
   nftContract?: Resolver<Maybe<ResolversTypes['AlchemyApiNftContract']>, ParentType, ContextType, RequireFields<QueryNftContractArgs, 'address' | 'chain'>>;
@@ -2169,6 +2171,7 @@ export type TriggerStepResolvers<ContextType = GraphqlRequestContext, ParentType
 };
 
 export type UriValueResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['UriValue'] = ResolversParentTypes['UriValue']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

@@ -71,12 +71,12 @@ export const Value = ({ value, fontSize = "1rem", ...args }: ValueProps) => {
           <LinkOutlinedIcon fontSize="small" color="primary" />
           <Typography
             component={"a"}
-            href={value}
+            href={value.uri}
             target="_blank"
             rel="noopener noreferrer"
             {...defaultProps}
           >
-            {value.uri}
+            {value.name ?? value.uri}
           </Typography>
         </Box>
       );

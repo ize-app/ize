@@ -7,6 +7,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
 import { newEntitySet } from "../../newEntitySet";
+import { upsertAllEntitiesForGroup } from "../../updateEntitiesGroups/upsertAllEntitiesForGroup";
 import { checkEntitiesForIzeGroups } from "../checkEntitiesForCustomGroups";
 
 export const newIzeGroup = async ({
@@ -68,6 +69,12 @@ export const newIzeGroup = async ({
     groupEntityId: izeGroupEntity.Group?.entityId as string,
     groupId: izeGroupEntity.Group?.id as string,
     policy: args.inputs.flows.watch,
+  });
+
+  await upsertAllEntitiesForGroup({
+    entityIds: args.inputs.members.map((entity) => entity.id),
+    groupId: izeGroupEntity.Group?.id as string,
+    transaction,
   });
 
   // have group watch its own flows

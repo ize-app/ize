@@ -28,65 +28,55 @@ export const GroupsSearch = () => {
     loading,
     fetchMore,
     queryVars,
-  } = useGroupsSearch({ queryResultLimit, initialWatchFilter: WatchFilter.Watched });
+  } = useGroupsSearch({
+    queryResultLimit,
+    initialWatchFilter: WatchFilter.Watched,
+    acknowledged: true,
+  });
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "8px",
+        // gap: "0px",
         height: "100%",
       }}
     >
       <Box
         sx={{
-          width: "100%",
           display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: "16px",
-          minWidth: "300px",
+          width: "100%",
         }}
       >
-        <Box
-          sx={(theme) => ({
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-            width: "100%",
-
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column",
-            },
-          })}
-        >
-          <Box sx={{ display: "flex", gap: "30px" }}>
-            <Search
-              searchQuery={searchQuery}
-              changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
-                setSearchQuery(event.target.value);
-              }}
-            />
-            <CreateButton />
-          </Box>
-          <ToggleButton
-            size="small"
-            value="check"
-            selected={watchFilter === WatchFilter.Watched}
-            sx={{ width: "160px", height: "30px" }}
-            color="primary"
-            onChange={() => {
-              setWatchFilter(
-                watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
-              );
+        <Box sx={{ display: "flex", gap: "30px" }}>
+          <Search
+            searchQuery={searchQuery}
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
+              setSearchQuery(event.target.value);
             }}
-          >
-            Watched groups
-          </ToggleButton>
+          />
+          <CreateButton />
         </Box>
+        <ToggleButton
+          size="small"
+          value="check"
+          selected={watchFilter === WatchFilter.Watched}
+          sx={{ width: "160px", height: "30px" }}
+          color="primary"
+          onChange={() => {
+            setWatchFilter(
+              watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
+            );
+          }}
+        >
+          Watched groups
+        </ToggleButton>
       </Box>
-      {loading ? (
+
+      {loading && groups.length == 0 ? (
         <Loading />
       ) : groups.length > 0 ? (
         <GroupsTable groups={groups} />

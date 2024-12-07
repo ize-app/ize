@@ -1,3 +1,4 @@
+import { Box, FormLabel } from "@mui/material";
 import { FieldValues, Path, PathValue } from "react-hook-form";
 
 import {
@@ -16,6 +17,7 @@ import { MultiSelect } from "../formFields/MultiSelect";
 import { Radio } from "../formFields/Radio";
 import { SortableList } from "../formFields/SortableList";
 import { TextField } from "../formFields/TextField";
+import { LabeledGroupedInputs } from "../formLayout/LabeledGroupedInputs";
 
 interface BaseInputProps<T extends FieldValues> {
   fieldName: Path<T>;
@@ -67,6 +69,42 @@ export const InputField = <T extends FieldValues>({
           seperateLabel={seperateLabel}
         />
       );
+    case ValueType.Uri:
+      return (
+        // TODO move this to its own component
+        <Box>
+          {showLabel && <FormLabel required={required}>{label}</FormLabel>}
+          <LabeledGroupedInputs
+            // label={label}
+            sx={{ display: "flex", flexDirection: "column", width: "100%", padding: "8px" }}
+          >
+            <TextField<T>
+              name={`${fieldName}.name` as Path<T>}
+              defaultValue={"" as PathValue<T, Path<T>>}
+              placeholderText={"Name of URL"}
+              multiline
+              label={label}
+              required={required}
+              disabled={disabled}
+              showLabel={false}
+              seperateLabel={false}
+              size="small"
+            />
+            <TextField<T>
+              name={`${fieldName}.uri` as Path<T>}
+              defaultValue={"" as PathValue<T, Path<T>>}
+              placeholderText={"URL"}
+              multiline
+              label={label}
+              required={required}
+              disabled={disabled}
+              showLabel={false}
+              seperateLabel={false}
+              size="small"
+            />
+          </LabeledGroupedInputs>
+        </Box>
+      );
     case ValueType.DateTime:
       return (
         <DateTimePicker<T>
@@ -82,6 +120,7 @@ export const InputField = <T extends FieldValues>({
         <EntitiesSearchField<T>
           required={required}
           name={fieldName}
+          label={label}
           ariaLabel={label}
           hideIzeGroups={true}
           showLabel={showLabel}

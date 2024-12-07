@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { checkEntitiesForIzeGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
+import { upsertAllEntitiesForGroup } from "@/core/entity/updateEntitiesGroups/upsertAllEntitiesForGroup";
 import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -54,9 +55,9 @@ export const evolveGroup = async ({
     },
   });
 
-  const izeGroupId = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupIze?.id;
+  const izeGroup = requestStep.Step.FlowVersion.Flow.OwnerGroup?.GroupIze;
 
-  if (!izeGroupId)
+  if (!izeGroup)
     throw new GraphQLError(`Cannot find custom group for request step ${requestStepId}`, {
       extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
     });
@@ -92,6 +93,12 @@ export const evolveGroup = async ({
     transaction,
   });
 
+  await upsertAllEntitiesForGroup({
+    entityIds,
+    groupId: izeGroup.groupId,
+    transaction,
+  });
+
   const entitySetId = await newEntitySet({
     entityArgs: entityIds.map((id) => ({
       id,
@@ -101,7 +108,7 @@ export const evolveGroup = async ({
 
   await transaction.groupIze.update({
     where: {
-      id: izeGroupId,
+      id: izeGroup.id,
     },
     data: {
       name: name?.Value.string ?? "",

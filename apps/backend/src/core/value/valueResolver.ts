@@ -2,9 +2,15 @@ import { ValueType } from "@prisma/client";
 import { GraphQLErrorOptions } from "graphql";
 
 import { GraphqlRequestContext } from "@/graphql/context";
-import { OptionSelection, OptionValue, Value } from "@/graphql/generated/resolver-types";
+import {
+  ValueType as GraphQLValueType,
+  OptionSelection,
+  OptionValue,
+  Value,
+} from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
+import { validateValue } from "./validateValue";
 import { OptionValuePrismaType, ValuePrismaType } from "./valuePrismaTypes";
 import { entityResolver } from "../entity/entityResolver";
 import { flowReferenceResolver } from "../flow/resolvers/flowReferenceResolver";
@@ -42,8 +48,11 @@ function valueResolver({ type, value, context }: ValueArgs): Value | OptionValue
       return { __typename: "StringValue", value: value.string };
     }
     case ValueType.Uri: {
-      if (!value.string) throw new GraphQLError(error, errorOptions);
-      return { __typename: "UriValue", uri: value.string };
+      if (!value.json) throw new GraphQLError(error, errorOptions);
+      const validated = validateValue({ type: ValueType.Uri, value: value.json });
+      if (validated.type === GraphQLValueType.Uri) {
+        return { __typename: "UriValue", uri: validated.value.uri, name: validated.value.name };
+      } else throw new GraphQLError("Invalid URI value returned from database", errorOptions);
     }
     case ValueType.Date: {
       if (!value.date) throw new GraphQLError(error, errorOptions);

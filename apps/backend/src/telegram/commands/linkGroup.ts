@@ -1,7 +1,7 @@
 import { Message, Update } from "@telegraf/types";
 import { Context } from "telegraf";
 
-import { upsertEntityGroup } from "@/core/entity/updateIdentitiesGroups/upsertEntityGroup";
+import { upsertEntityGroup } from "@/core/entity/updateEntitiesGroups/upsertEntityGroup";
 
 import { upsertTelegramChatGroup } from "../upsertTelegramChatGroup";
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";

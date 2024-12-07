@@ -3,7 +3,7 @@ import { Router } from "express";
 import { GraphQLError } from "graphql";
 import { OAuthProvider } from "stytch";
 
-import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { CustomErrorCodes } from "@/graphql/errors";
 import { upsertTelegramIdentity } from "@/telegram/upsertTelegramIdentity";

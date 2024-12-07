@@ -12,16 +12,19 @@ import {
 const useGroupsSearch = ({
   queryResultLimit,
   initialWatchFilter = WatchFilter.Watched,
+  acknowledged,
 }: {
   queryResultLimit: number;
   initialWatchFilter?: WatchFilter;
+  acknowledged: boolean;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
   const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GroupsDocument, {
-    // fetchPolicy: "network-only",
+  const [getResults, { loading, data, fetchMore, refetch }] = useLazyQuery(GroupsDocument, {
+    fetchPolicy: "cache-and-network", // Use cache first, then update with network data
+    // nextFetchPolicy: "network-only", // For subsequent fetches, use the network
   });
 
   const newCursor = data?.groupsForCurrentUser.length
@@ -31,6 +34,7 @@ const useGroupsSearch = ({
   const queryVarsRef = useRef<GroupsQueryVariables>({
     searchQuery,
     watchFilter,
+    acknowledged,
     limit: queryResultLimit,
     cursor: newCursor,
   });
@@ -49,6 +53,7 @@ const useGroupsSearch = ({
     queryVarsRef.current = {
       searchQuery,
       watchFilter,
+      acknowledged,
       limit: queryResultLimit,
       cursor: undefined,
     };
@@ -80,6 +85,7 @@ const useGroupsSearch = ({
     groups,
     loading,
     fetchMore,
+    refetch,
     queryVars: queryVarsRef.current,
   };
 };

@@ -22,7 +22,7 @@ const entitiesValueSchema = z.array(z.string().uuid());
 const flowVersionValueSchema = z.string().uuid();
 const stringValueSchema = z.string().min(1);
 const floatValueSchema = z.number();
-const uriValueSchema = z.string().url();
+const uriValueSchema = z.object({ uri: z.string().url(), name: z.string() });
 const dateValueSchema = z
   .string()
   .regex(

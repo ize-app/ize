@@ -1,5 +1,6 @@
 import Typography from "@mui/material/Typography";
 
+import { GroupInvitations } from "@/components/GroupInvitations/GroupInivitations";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
@@ -13,6 +14,7 @@ export const Requests = () => {
         description={"View and trigger requests for your collaborative workflows."}
       />
       <Typography variant="h1">Requests</Typography>
+      <GroupInvitations />
       <RequestSearch userOnly />
     </PageContainer>
   );

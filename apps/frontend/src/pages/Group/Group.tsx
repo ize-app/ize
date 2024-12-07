@@ -38,7 +38,7 @@ export const Group = () => {
   });
 
   const group = data?.group as IzeGroupFragment;
-
+  // console.log("group", group);
 
   const [currentTabIndex, setTabIndex] = useState(0);
 

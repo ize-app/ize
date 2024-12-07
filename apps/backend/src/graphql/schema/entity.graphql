@@ -15,6 +15,7 @@ type Query {
     limit: Int!
     searchQuery: String!
     watchFilter: WatchFilter!
+    acknowledged: Boolean!
   ): [IzeGroup!]!
 }
 

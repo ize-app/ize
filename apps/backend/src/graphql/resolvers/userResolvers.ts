@@ -39,7 +39,7 @@ const me: QueryResolvers["me"] = async (
 
   const groups = await getGroupsOfUser({
     context,
-    args: { limit: 10, searchQuery: "", watchFilter: WatchFilter.Watched },
+    args: { limit: 10, searchQuery: "", watchFilter: WatchFilter.Watched, acknowledged: true },
   });
 
   const userData = await prisma.user.findFirstOrThrow({

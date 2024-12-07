@@ -76,7 +76,7 @@ const createValue = ({ type }: { type: ValueType }): Value => {
     case ValueType.Date:
       return { __typename: "FloatValue", float: 1 };
     case ValueType.Uri:
-      return { __typename: "UriValue", uri: "https://example.com" };
+      return { __typename: "UriValue", uri: "https://example.com", name: "Example link" };
     case ValueType.OptionSelections:
       return {
         __typename: "OptionSelectionsValue",

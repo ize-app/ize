@@ -17,7 +17,7 @@ export const getEntityPermissions = async ({
   entityContext: UserOrIdentityContextInterface;
   permission: PermissionPrismaType | null | undefined;
   transaction?: Prisma.TransactionClient;
-}) => {
+}): Promise<boolean> => {
   let hasPermission = false;
   if (entityContext.type === "user") {
     const { context } = entityContext;

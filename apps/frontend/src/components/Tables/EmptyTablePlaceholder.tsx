@@ -9,6 +9,7 @@ export const EmptyTablePlaceholder = ({ children }: { children: React.ReactNode 
       minWidth: "400px",
       backgroundColor: "hsla(0, 100%, 100%, 0.5)",
       padding: "60px",
+      marginTop: "20px",
     }}
   >
     <Box

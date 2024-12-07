@@ -20,7 +20,7 @@ import {
 import { endRequestStep as endRequestStepService } from "@/core/request/updateState/endRequestStep";
 
 import { GraphqlRequestContext } from "../context";
-import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
 
 const newRequest: MutationResolvers["newRequest"] = async (
   root: unknown,

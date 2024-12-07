@@ -97,11 +97,11 @@ model IdentityTelegram {
 // maps which entities belong to which groups
 // used for read operations
 model EntityGroup {
-  entityId  String   @map("entity_id") @db.Uuid
-  groupId   String   @map("group_id") @db.Uuid
-  active    Boolean
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  entityId     String   @map("entity_id") @db.Uuid
+  groupId      String   @map("group_id") @db.Uuid
+  active       Boolean
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
   Identity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
   Group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -443,6 +443,7 @@ model Value {
   id                    String                  @id @default(uuid()) @db.Uuid
   type                  ValueType
   string                String?
+  json                  Json?
   float                 Float?
   date                  DateTime?               @db.Date // Pure date field
   dateTime              DateTime?
