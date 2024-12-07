@@ -522,6 +522,7 @@ export type Me = {
   __typename?: 'Me';
   groups: Array<Group>;
   identities: Array<Identity>;
+  notifications?: Maybe<NotificationSettings>;
   user: User;
 };
 
@@ -681,6 +682,12 @@ export enum NftTypes {
   Erc721 = 'ERC721',
   Erc1155 = 'ERC1155'
 }
+
+export type NotificationSettings = {
+  __typename?: 'NotificationSettings';
+  marketing: Scalars['Boolean']['output'];
+  transactional: Scalars['Boolean']['output'];
+};
 
 export type OnboardedDiscordServer = {
   __typename?: 'OnboardedDiscordServer';
@@ -1162,6 +1169,7 @@ export type TriggerStep = {
 
 export type UpdateProfileArgs = {
   name: Scalars['String']['input'];
+  notifications: UserNotificationsArgs;
 };
 
 export type UriValue = {
@@ -1184,6 +1192,11 @@ export type UserFieldAnswer = {
   answer: Value;
   createdAt: Scalars['String']['output'];
   creator: Entity;
+};
+
+export type UserNotificationsArgs = {
+  marketing: Scalars['Boolean']['input'];
+  transactional: Scalars['Boolean']['input'];
 };
 
 export type Value = DateTimeValue | DateValue | EntitiesValue | FloatValue | FlowVersionValue | FlowsValue | OptionSelectionsValue | StringValue | UriValue;
@@ -1379,6 +1392,7 @@ export type ResolversTypes = {
   NewStepArgs: NewStepArgs;
   NftCollection: ResolverTypeWrapper<NftCollection>;
   NftTypes: NftTypes;
+  NotificationSettings: ResolverTypeWrapper<NotificationSettings>;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
   Option: ResolverTypeWrapper<Omit<Option, 'value'> & { value: ResolversTypes['Value'] }>;
   OptionArgs: OptionArgs;
@@ -1435,6 +1449,7 @@ export type ResolversTypes = {
   UriValue: ResolverTypeWrapper<UriValue>;
   User: ResolverTypeWrapper<User>;
   UserFieldAnswer: ResolverTypeWrapper<Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversTypes['Value'], creator: ResolversTypes['Entity'] }>;
+  UserNotificationsArgs: UserNotificationsArgs;
   Value: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Value']>;
   ValueType: ValueType;
   WatchFilter: WatchFilter;
@@ -1519,6 +1534,7 @@ export type ResolversParentTypes = {
   NewResponseArgs: NewResponseArgs;
   NewStepArgs: NewStepArgs;
   NftCollection: NftCollection;
+  NotificationSettings: NotificationSettings;
   OnboardedDiscordServer: OnboardedDiscordServer;
   Option: Omit<Option, 'value'> & { value: ResolversParentTypes['Value'] };
   OptionArgs: OptionArgs;
@@ -1566,6 +1582,7 @@ export type ResolversParentTypes = {
   UriValue: UriValue;
   User: User;
   UserFieldAnswer: Omit<UserFieldAnswer, 'answer' | 'creator'> & { answer: ResolversParentTypes['Value'], creator: ResolversParentTypes['Entity'] };
+  UserNotificationsArgs: UserNotificationsArgs;
   Value: ResolversUnionTypes<ResolversParentTypes>['Value'];
   setUpDiscordServerInput: SetUpDiscordServerInput;
 };
@@ -1901,6 +1918,7 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
+  notifications?: Resolver<Maybe<ResolversTypes['NotificationSettings']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1926,6 +1944,12 @@ export type NftCollectionResolvers<ContextType = GraphqlRequestContext, ParentTy
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['NftTypes'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotificationSettingsResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['NotificationSettings'] = ResolversParentTypes['NotificationSettings']> = {
+  marketing?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  transactional?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2263,6 +2287,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   Me?: MeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NftCollection?: NftCollectionResolvers<ContextType>;
+  NotificationSettings?: NotificationSettingsResolvers<ContextType>;
   OnboardedDiscordServer?: OnboardedDiscordServerResolvers<ContextType>;
   Option?: OptionResolvers<ContextType>;
   OptionSelection?: OptionSelectionResolvers<ContextType>;

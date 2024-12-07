@@ -36,7 +36,7 @@ const UnauthenticatedHome = () => {
         <img src={izeLogoUrl} style={{ width: "260px" }} />
         <Box sx={{ width: "100%" }}>
           <Typography variant="h2" textAlign={"center"}>
-            The collective process platform
+            Mycelial Process Platform
           </Typography>
           <Typography textAlign={"center"}>
             How distributed teams share power and harness collective intelligence

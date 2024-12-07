@@ -9,18 +9,33 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
-  stytchId  String   @unique @map("stytch_id")
-  entityId  String   @unique @map("entity_id") @db.Uuid
-  name      String   @default("")
+  id       String @id @default(uuid()) @db.Uuid
+  stytchId String @unique @map("stytch_id")
+  entityId String @unique @map("entity_id") @db.Uuid
+  name     String @default("")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  Identities Identity[]
-  Oauths     Oauths[]
-  Entity     Entity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  Identities   Identity[]
+  Oauths       Oauths[]
+  Entity       Entity        @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  UserSettings UserSettings?
 
   @@map("users")
+}
+
+model UserSettings {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @unique @map("user_id") @db.Uuid
+  transactional Boolean  @default(false) @map("transactional")
+  marketing     Boolean  @default(false) @map("marketing")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
 }
 
 model Identity {
@@ -97,11 +112,11 @@ model IdentityTelegram {
 // maps which entities belong to which groups
 // used for read operations
 model EntityGroup {
-  entityId     String   @map("entity_id") @db.Uuid
-  groupId      String   @map("group_id") @db.Uuid
-  active       Boolean
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  entityId  String   @map("entity_id") @db.Uuid
+  groupId   String   @map("group_id") @db.Uuid
+  active    Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   Identity Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
   Group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

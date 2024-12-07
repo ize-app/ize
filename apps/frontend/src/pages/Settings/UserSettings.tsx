@@ -1,7 +1,5 @@
 import Typography from "@mui/material/Typography";
-import { useContext } from "react";
 
-import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
@@ -9,8 +7,6 @@ import { ProfileForm } from "./ProfileForm";
 import { UserIdentities } from "./UserIdentities";
 
 export const UserSettings = () => {
-  const { me } = useContext(CurrentUserContext);
-
   return (
     <>
       <Head title={"Settings"} description={"Ize Settings"} />
@@ -19,7 +15,7 @@ export const UserSettings = () => {
         <Typography variant="h2">Profile</Typography>
         <ProfileForm />
         <Typography variant="h2">Connected accounts</Typography>
-        <UserIdentities identities={me?.identities} />
+        <UserIdentities />
       </PageContainer>
     </>
   );

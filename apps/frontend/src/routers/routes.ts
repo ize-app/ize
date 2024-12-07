@@ -7,6 +7,7 @@ export enum Route {
   Settings = "/settings",
   Identities = "/identities",
   ResetPassword = "/resetpassword",
+  NewUser = "/newuser",
   NewFlow = "/create/flow",
   NewRequest = "/create/request",
   NewCustomGroup = "/create/group",
@@ -16,6 +17,11 @@ export enum Route {
   Flow = "/flow/:flowId/:flowVersionId?",
   FlowVersion = "/flowVersion/:flowVersionId",
   EvolveFlow = "/evolve/:flowId",
+}
+
+export enum NewUserRoute {
+  Welcome = "",
+  GetStarted = "/start",
 }
 
 export enum NewRequestRoute {
@@ -41,6 +47,10 @@ export enum EvolveFlowRoute {
   Context = "/context",
   Confirm = "/confirm",
 }
+
+export const newUserRoute = (route: NewUserRoute) => {
+  return `${Route.NewUser}${route}`;
+};
 
 export const newFlowRoute = (route: NewFlowRoute) => {
   return `${Route.NewFlow}${route}`;

@@ -33,13 +33,10 @@ const getIdentityTypeLogo = (identity: IdentitySummaryPartsFragment) => {
   }
 };
 
-export const UserIdentities = ({
-  identities,
-}: {
-  identities: IdentitySummaryPartsFragment[] | null | undefined;
-}) => {
+export const UserIdentities = () => {
   const stytchClient = useStytch();
   const { me, refetch } = useContext(CurrentUserContext);
+  const identities: IdentitySummaryPartsFragment[] = me?.identities ?? [];
 
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 

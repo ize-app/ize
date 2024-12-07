@@ -12,6 +12,12 @@ type Me {
   user: User!
   identities: [Identity!]!
   groups: [Group!]!
+  notifications: NotificationSettings
+}
+
+type NotificationSettings {
+  transactional: Boolean!
+  marketing: Boolean!
 }
 
 type User {
@@ -24,7 +30,14 @@ type User {
 
 input UpdateProfileArgs {
   name: String!
+  notifications: UserNotificationsArgs!
 }
+
+input UserNotificationsArgs {
+  transactional: Boolean!
+  marketing: Boolean!
+}
+
 
 enum WatchFilter {
   All

@@ -13,6 +13,7 @@ export const meInclude = Prisma.validator<Prisma.UserInclude>()({
   Identities: {
     include: identityInclude,
   },
+  UserSettings: true
 });
 
 export type UserPrismaType = Prisma.UserGetPayload<{

@@ -16,7 +16,7 @@ export interface IdentityState {
 }
 
 const IdentityModal = () => {
-  const { me, identityModalState, setIdentityModalState } = useContext(CurrentUserContext);
+  const { identityModalState, setIdentityModalState } = useContext(CurrentUserContext);
   return (
     <Modal
       open={!!identityModalState}
@@ -67,7 +67,7 @@ const IdentityModal = () => {
           <Typography variant="description" sx={{ marginBottom: "8px" }}>
             Connect additional identities:
           </Typography>
-          <UserIdentities identities={me?.identities} />
+          <UserIdentities />
         </Box>
       </Box>
     </Modal>

@@ -48,10 +48,16 @@ const me: QueryResolvers["me"] = async (
   });
   const user = userResolver(userData);
 
+  const settings = context.currentUser.UserSettings;
+
   return {
     user,
     groups: groups.map((group) => group.group),
     identities: [...identities],
+    notifications: settings && {
+      transactional: settings.transactional,
+      marketing: settings.marketing,
+    },
   };
 };
 

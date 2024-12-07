@@ -15,6 +15,7 @@ import { Home } from "@/pages/Home";
 import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as NewFlow from "@/pages/NewFlow";
 import * as NewRequest from "@/pages/NewRequest";
+import * as NewUser from "@/pages/NewUser";
 import { Request } from "@/pages/Request/Request";
 import { UserSettings } from "@/pages/Settings/UserSettings";
 import { AuthRoute } from "@/routers/AuthRoute";
@@ -43,6 +44,25 @@ export const router = createBrowserRouter([
           </AuthRoute>
         ),
         errorElement: <ErrorBoundary />,
+      },
+      {
+        element: (
+          <AuthRoute>
+            <NewUser.default />
+          </AuthRoute>
+        ),
+        path: Routes.Route.NewUser,
+        errorElement: <ErrorBoundary />,
+        children: [
+          {
+            path: Routes.newUserRoute(Routes.NewUserRoute.Welcome),
+            element: <NewUser.Welcome />,
+          },
+          {
+            path: Routes.newUserRoute(Routes.NewUserRoute.GetStarted),
+            element: <NewUser.GetStarted />,
+          },
+        ],
       },
       {
         element: (
