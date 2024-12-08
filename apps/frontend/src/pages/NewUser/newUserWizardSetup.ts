@@ -15,7 +15,7 @@ export const NEW_USER_PROGRESS_BAR_STEPS = ["Welcome!", "Connect identities", "G
 export const NEW_USER_WIZARD_STEPS: WizardSteps<NewUserFormSchema> = [
   {
     path: newUserRoute(NewUserRoute.Welcome),
-    title: "Welcome to Ize",
+    title: "Welcome to Ize 👀",
     progressBarStep: 0,
     canNext: () => true,
     validWizardState: () => true,

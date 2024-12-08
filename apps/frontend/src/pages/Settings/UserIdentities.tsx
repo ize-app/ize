@@ -110,7 +110,9 @@ export const UserIdentities = () => {
           </tbody>
         </table>
       )}
+
       <Box sx={{ display: "flex", flexDirection: "column", gap: "12px", margin: "16px 0px" }}>
+        {!hasTelegramIdentity && <TelegramLogin />}
         {!hasBlockchainIdentity && (
           <Button
             onClick={authenticateBlockchain}
@@ -144,7 +146,6 @@ export const UserIdentities = () => {
             Connect Discord
           </Button>
         )}
-        {!hasTelegramIdentity && <TelegramLogin />}
       </Box>
     </>
   );
