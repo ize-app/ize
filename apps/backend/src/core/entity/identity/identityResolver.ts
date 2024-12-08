@@ -9,7 +9,10 @@ export const identityResolver = (
   identity: IdentityPrismaType,
   userIdentityIds: string[],
   obscure = true,
+  useIdentityName = false,
 ): Identity => {
+  const userName = !useIdentityName ? identity.User?.name : null;
+  console.log("userName", userName);
   if (identity.IdentityBlockchain)
     return {
       __typename: "Identity",
@@ -34,9 +37,10 @@ export const identityResolver = (
       entityId: identity.entityId,
       // only show email address if it's user's own identity
       name:
-        !obscure || isUserIdentity
+        userName ??
+        (!obscure || isUserIdentity
           ? identity.IdentityEmail.email
-          : identity.IdentityEmail.email.replace(/(\w{1})[\w.-]+@([\w.]+\w)/, "$1***@$2"),
+          : identity.IdentityEmail.email.replace(/(\w{1})[\w.-]+@([\w.]+\w)/, "$1***@$2")),
       icon: identity.IdentityEmail.icon,
       identityType: { __typename: "IdentityEmail", id: identity.IdentityEmail.id },
     };
@@ -45,7 +49,7 @@ export const identityResolver = (
       __typename: "Identity",
       id: identity.id,
       entityId: identity.entityId,
-      name: identity.IdentityDiscord.username,
+      name: userName ?? identity.IdentityDiscord.username,
       icon: identity.IdentityDiscord.avatar
         ? DiscordApi.createAvatarURL(
             identity.IdentityDiscord.discordUserId,
@@ -59,7 +63,7 @@ export const identityResolver = (
       __typename: "Identity",
       id: identity.id,
       entityId: identity.entityId,
-      name: identity.IdentityTelegram.username ?? "Telegram user",
+      name: userName ?? identity.IdentityTelegram.username ?? "Telegram user",
       icon: identity.IdentityTelegram.photoUrl,
       identityType: {
         __typename: "IdentityTelegram",

@@ -65,7 +65,7 @@ const CTAButton = ({
 export const NewUserCTA = () => {
   const { me } = useContext(CurrentUserContext);
 
-  // only display if user was created in last week
+  // only display if user was created in last 1 days
   if (me && new Date(me.user.createdAt) < new Date(Date.now() - 1000 * 60 * 60 * 24 * 3))
     return null;
 

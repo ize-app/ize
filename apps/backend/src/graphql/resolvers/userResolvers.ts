@@ -34,6 +34,7 @@ const me: QueryResolvers["me"] = async (
       identity,
       context.currentUser?.Identities.map((i) => i.id) ?? [],
       false,
+      true,
     );
   });
 
