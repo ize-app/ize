@@ -16,7 +16,7 @@ export const InfoBannerContainer = ({
         minWidth: "300px",
         backgroundColor: "white",
         padding: "12px",
-        width: "100%",
+        width: "fit-content",
         maxWidth: "900px",
         borderRadius: "12px",
         display: "flex",

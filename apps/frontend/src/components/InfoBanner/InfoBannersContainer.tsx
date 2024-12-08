@@ -4,7 +4,7 @@ export const InfoBannersContainer = ({ children }: { children: React.ReactNode }
   return (
     <Box
       sx={(theme) => ({
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("md")]: {
           flexDirection: "column",
           gap: "0px",
         },

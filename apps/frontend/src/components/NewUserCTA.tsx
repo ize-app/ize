@@ -38,7 +38,7 @@ const CTAButton = ({
         border: "1px solid",
         borderRadius: "6px",
         gap: "12px",
-        width: "400px",
+        width: "320px",
         justifyContent: "flex-start",
       }}
     >
@@ -71,7 +71,17 @@ export const NewUserCTA = () => {
 
   return (
     <InfoBannerContainer title="Welcome! Here's a couple ways to get started">
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+      <Box
+        sx={(theme) => ({
+          [theme.breakpoints.down("md")]: {
+            flexDirection: "column",
+            // gap: "0px",
+          },
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "16px",
+        })}
+      >
         <CTAButton
           title="Create a flow"
           description="Create process that spans the boundaries of tools, teams, and time"
