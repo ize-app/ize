@@ -1,4 +1,5 @@
 import Add from "@mui/icons-material/AddBoxOutlined";
+import { TableHead } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -33,9 +34,9 @@ export const FlowsTable = ({
   groupId?: string;
 }) => {
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
+    <TableContainer sx={{ overflowX: "initial", minWidth: "300px" }}>
       <Table aria-label="Flows watched by this group Table" stickyHeader={true}>
-        {/* <TableHead>
+        <TableHead>
           <TableRow
             sx={{
               "& .MuiTableCell-root": {
@@ -43,21 +44,30 @@ export const FlowsTable = ({
               },
             }}
           >
-            <TableCellHideable width="60px" />
+            {/* watching button */}
+            {!hideWatchButton && <TableCellHideable width="60px" />}
+            {/* flow name */}
             <TableCellHideable sx={{ minWidth: "140px" }} />
-            
-            <TableCellHideable sx={{ width: "60px" }} align="center">
-              Members
-            </TableCellHideable>
 
-            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
+            {!groupId && (
+              <TableCellHideable sx={{ width: "60px" }} align="center">
+                Watching
+              </TableCellHideable>
+            )}
+
+            <TableCellHideable hideOnSmallScreen sx={{ width: "60px" }} align="center">
               Created
             </TableCellHideable>
-          </TableRow>
-        </TableHead> 
-        */}
 
-        <TableBody>
+            <TableCellHideable
+              hideOnSmallScreen
+              sx={{ width: "60px" }}
+              align="center"
+            ></TableCellHideable>
+          </TableRow>
+        </TableHead>
+
+        <TableBody component={Paper}>
           {flows.map((flow) => (
             <FlowRow
               key={flow.flowId}
@@ -100,7 +110,7 @@ const FlowRow = ({
           onClickRow(flow);
         }}
       >
-        {!hideWatchButton && !groupId && (
+        {!hideWatchButton && (
           <TableCell width="60px">
             <WatchFlowButton size="small" flowId={flow.flowId} watched={flow.watching.user} />
           </TableCell>
@@ -135,7 +145,7 @@ const FlowRow = ({
               sx={{
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: "1",
+                WebkitLineClamp: "2",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
@@ -145,17 +155,25 @@ const FlowRow = ({
           </Box>
         </TableCell>
         {!groupId && (
-          <TableCellHideable hideOnSmallScreen width={"180px"}>
+          <TableCellHideable width={"60px"} align="center">
             {flow.watching.groups.length > 0 && (
-              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "6px" }}>
-                <Typography variant="description" color="textSecondary">
-                  Watched by
-                </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                }}
+              >
                 <AvatarGroup avatars={flow.watching.groups} />
               </Box>
             )}
           </TableCellHideable>
         )}
+        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
+          {new Date(flow.createdAt).toLocaleDateString()}
+        </TableCellHideable>
 
         {!hideTriggerButton && (
           <TableCellHideable hideOnSmallScreen align={"right"}>
