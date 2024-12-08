@@ -21,7 +21,10 @@ export const Requests = () => {
         <NewUserCTA />
         <GroupInvitations />
       </InfoBannersContainer>
-      <RequestSearch initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups} />
+      <RequestSearch
+        initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
+        initialNeedsResponseFilter={true}
+      />
     </PageContainer>
   );
 };

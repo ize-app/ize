@@ -51,7 +51,7 @@ export const apolloClient = new ApolloClient({
               "flowWatchFilter",
               "requestStatusFilter",
               "createdByUser",
-              "hasRespondPermission",
+              "needsResponse",
             ],
             merge(existing, incoming, { args, readField }) {
               const cursor = args?.cursor;

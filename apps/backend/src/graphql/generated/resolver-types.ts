@@ -828,8 +828,8 @@ export type QueryGetRequestsArgs = {
   flowId?: InputMaybe<Scalars['String']['input']>;
   flowWatchFilter: FlowWatchFilter;
   groupId?: InputMaybe<Scalars['String']['input']>;
-  hasRespondPermission: Scalars['Boolean']['input'];
   limit: Scalars['Int']['input'];
+  needsResponse: Scalars['Boolean']['input'];
   requestStatusFilter: RequestStatusFilter;
   searchQuery: Scalars['String']['input'];
 };
@@ -2013,7 +2013,7 @@ export type QueryResolvers<ContextType = GraphqlRequestContext, ParentType exten
   getFlows?: Resolver<Array<ResolversTypes['FlowSummary']>, ParentType, ContextType, RequireFields<QueryGetFlowsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasTriggerPermissions' | 'limit' | 'searchQuery'>>;
   getGroupsToWatchFlow?: Resolver<ResolversTypes['GroupsToWatch'], ParentType, ContextType, RequireFields<QueryGetGroupsToWatchFlowArgs, 'entities'>>;
   getRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<QueryGetRequestArgs, 'requestId'>>;
-  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'flowWatchFilter' | 'hasRespondPermission' | 'limit' | 'requestStatusFilter' | 'searchQuery'>>;
+  getRequests?: Resolver<Array<ResolversTypes['RequestSummary']>, ParentType, ContextType, RequireFields<QueryGetRequestsArgs, 'createdByUser' | 'flowWatchFilter' | 'limit' | 'needsResponse' | 'requestStatusFilter' | 'searchQuery'>>;
   group?: Resolver<ResolversTypes['IzeGroup'], ParentType, ContextType, RequireFields<QueryGroupArgs, 'id'>>;
   groupsForCurrentUser?: Resolver<Array<ResolversTypes['IzeGroup']>, ParentType, ContextType, RequireFields<QueryGroupsForCurrentUserArgs, 'isMember' | 'limit' | 'searchQuery' | 'watchFilter'>>;
   hatToken?: Resolver<Maybe<ResolversTypes['ApiHatToken']>, ParentType, ContextType, RequireFields<QueryHatTokenArgs, 'chain' | 'tokenId'>>;

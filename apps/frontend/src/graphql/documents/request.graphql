@@ -29,7 +29,7 @@ query getRequests(
   $flowWatchFilter: FlowWatchFilter!
   $requestStatusFilter: RequestStatusFilter!
   $createdByUser: Boolean!
-  $hasRespondPermission: Boolean!
+  $needsResponse: Boolean!
 ) {
   getRequests(
     cursor: $cursor
@@ -40,7 +40,7 @@ query getRequests(
     flowWatchFilter: $flowWatchFilter
     requestStatusFilter: $requestStatusFilter
     createdByUser: $createdByUser
-    hasRespondPermission: $hasRespondPermission
+    needsResponse: $needsResponse
   ) {
     ...RequestSummary
   }

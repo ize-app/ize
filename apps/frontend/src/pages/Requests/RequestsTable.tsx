@@ -1,23 +1,25 @@
-import BoltIcon from "@mui/icons-material/Bolt";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import { ResultGroupStatusDisplay } from "@/components/result/Results/ResultGroupStatus";
 import { TableCellHideable } from "@/components/Tables/TableCellHideable";
-import { stringifyValue } from "@/components/Value/stringifyValue";
 import { RequestSummaryFragment } from "@/graphql/generated/graphql";
 import { Route } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
-import { ExpirationStatus } from "./tableComponents/ExpirationStatus";
 import { RequestStepTitle } from "./tableComponents/RequestStepTitle";
 import { ResponseStatus } from "./tableComponents/ResponseStatus";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFragment[] }) => {
   return (
@@ -36,15 +38,6 @@ export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFrag
 
 const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const responseComplete = request.currentStep.status.responseFinal;
-  const resultGroup = request.currentStep.result;
-  const result = request.currentStep.result?.results[0];
-  const action = request.currentStep.action;
-  const userResponded = request.currentStep.userResponded;
-  const userRespondPermission = request.currentStep.userRespondPermission;
-
-  // console.log("results ", request.currentStep.result?.results);
 
   return (
     <>
@@ -58,6 +51,9 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
           )
         }
       >
+        <TableCellHideable align="center" width={"60px"} hideOnSmallScreen>
+          {dayjs.utc(request.createdAt).tz(dayjs.tz.guess()).format("MM/D").toString()}
+        </TableCellHideable>
         <TableCellHideable
           component="th"
           scope="row"
@@ -73,77 +69,19 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
         <TableCellHideable
           align="right"
           // width="200px"
-          sx={{ width: "45%", minWidth: "240px", maxWidth: "400px" }}
+          sx={{ width: "50%", minWidth: "240px", maxWidth: "400px" }}
         >
-          {!responseComplete && (
-            <Box
-              sx={{
-                display: "flex",
-                gap: "24px",
-                justifyContent: "flex-end",
-                // width: "200px",
-              }}
-            >
-              {!userResponded && (
-                <ExpirationStatus expirationDate={new Date(request.currentStep.expirationDate)} />
-              )}
-
-              <ResponseStatus
-                userResponded={userResponded}
-                responsePermission={userRespondPermission}
-              />
-            </Box>
-          )}
-
-          {responseComplete && (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "flex-end",
-                flexDirection: "column",
-                gap: "4px",
-                padding: "0 4px",
-              }}
-            >
-              {result && result.resultItems.length > 0 ? (
-                <Typography
-                  variant="description"
-                  color={theme.palette.success.main}
-                  sx={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: "2",
-                    whiteSpace: "normal",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    textAlign: "right",
-                  }}
-                >
-                  {result.resultItems.map((ri) => stringifyValue({ value: ri.value })).join(", ")}
-                </Typography>
-              ) : (
-                <ResultGroupStatusDisplay status={resultGroup?.status} resultType={result?.type} />
-              )}
-              {action && (
-                <Box sx={{ display: "flex", gap: "4px" }}>
-                  <BoltIcon color="secondary" fontSize="small" />
-                  <Typography
-                    variant="description"
-                    sx={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: "1",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {action.name}
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-          )}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "24px",
+              justifyContent: "flex-end",
+              // width: "200px",
+              width: "100%",
+            }}
+          >
+            <ResponseStatus request={request} />
+          </Box>
         </TableCellHideable>
       </TableRow>
     </>

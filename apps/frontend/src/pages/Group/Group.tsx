@@ -58,7 +58,11 @@ export const Group = () => {
     {
       title: "Requests",
       content: !loading ? (
-        <RequestSearch initialFlowWatchFilter={FlowWatchFilter.All} groupId={groupId} />
+        <RequestSearch
+          initialFlowWatchFilter={FlowWatchFilter.All}
+          groupId={groupId}
+          initialNeedsResponseFilter={false}
+        />
       ) : null,
     },
     {

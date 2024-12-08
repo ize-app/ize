@@ -12,7 +12,6 @@ export const identityResolver = (
   useIdentityName = false,
 ): Identity => {
   const userName = !useIdentityName ? identity.User?.name : null;
-  console.log("userName", userName);
   if (identity.IdentityBlockchain)
     return {
       __typename: "Identity",

@@ -338,7 +338,11 @@ export const Flow = () => {
           ))}
         </Box>
         {isCurrentFlowVersion && (
-          <RequestSearch initialFlowWatchFilter={FlowWatchFilter.All} flowId={flow.flowId} />
+          <RequestSearch
+            initialFlowWatchFilter={FlowWatchFilter.All}
+            flowId={flow.flowId}
+            initialNeedsResponseFilter={false}
+          />
         )}
       </Box>
     </PageContainer>

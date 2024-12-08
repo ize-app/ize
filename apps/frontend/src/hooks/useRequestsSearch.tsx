@@ -12,18 +12,20 @@ import {
 
 const useRequestsSearch = ({
   initialFlowWatchFilter,
+  initialNeedsResponseFilter,
   groupId,
   flowId,
   queryResultLimit,
 }: {
   initialFlowWatchFilter: FlowWatchFilter;
+  initialNeedsResponseFilter: boolean;
   groupId?: string;
   flowId?: string;
   queryResultLimit: number;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [hasRespondPermission, setHasRespondPermission] = useState<boolean>(false);
+  const [needsResponse, setNeedsResponse] = useState<boolean>(initialNeedsResponseFilter);
   const [flowWatchFilter, setFlowWatchFilter] = useState<FlowWatchFilter>(initialFlowWatchFilter);
 
   const [createdByUser, setCreatedByUser] = useState<boolean>(false);
@@ -45,7 +47,7 @@ const useRequestsSearch = ({
     groupId: selectedGroupId,
     searchQuery,
     limit: queryResultLimit,
-    hasRespondPermission,
+    needsResponse,
     flowWatchFilter,
     createdByUser,
     requestStatusFilter,
@@ -67,7 +69,7 @@ const useRequestsSearch = ({
       flowId,
       groupId: selectedGroupId,
       searchQuery,
-      hasRespondPermission,
+      needsResponse,
       flowWatchFilter,
       createdByUser,
       requestStatusFilter,
@@ -80,7 +82,7 @@ const useRequestsSearch = ({
     flowId,
     searchQuery,
     queryResultLimit,
-    hasRespondPermission,
+    needsResponse,
     flowWatchFilter,
     createdByUser,
     requestStatusFilter,
@@ -102,12 +104,12 @@ const useRequestsSearch = ({
 
   return {
     searchQuery,
-    hasRespondPermission,
+    needsResponse,
     createdByUser,
     requestStatusFilter,
     selectedGroupId,
     setSearchQuery,
-    setHasRespondPermission,
+    setNeedsResponse,
     setCreatedByUser,
     setRequestStatusFilter,
     setSelectedGroupId,

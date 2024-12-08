@@ -16,7 +16,7 @@ type Query {
     flowWatchFilter: FlowWatchFilter!
     requestStatusFilter: RequestStatusFilter!
     createdByUser: Boolean!
-    hasRespondPermission: Boolean!
+    needsResponse: Boolean!
   ): [RequestSummary!]!
 }
 

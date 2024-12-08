@@ -27,10 +27,12 @@ import { RequestSummaryTable } from "./RequestsTable";
 
 export const RequestSearch = ({
   initialFlowWatchFilter,
+  initialNeedsResponseFilter,
   flowId,
   groupId,
 }: {
   initialFlowWatchFilter: FlowWatchFilter;
+  initialNeedsResponseFilter: boolean;
   groupId?: string;
   flowId?: string;
 }) => {
@@ -42,12 +44,11 @@ export const RequestSearch = ({
   const {
     searchQuery,
     setSearchQuery,
-    hasRespondPermission,
-
+    needsResponse,
     createdByUser,
     requestStatusFilter,
     selectedGroupId,
-    setHasRespondPermission,
+    setNeedsResponse,
     flowWatchFilter,
     setFlowWatchFilter,
     setCreatedByUser,
@@ -65,6 +66,7 @@ export const RequestSearch = ({
     flowId,
     queryResultLimit,
     initialFlowWatchFilter,
+    initialNeedsResponseFilter,
   });
 
   const { me } = useContext(CurrentUserContext);
@@ -102,6 +104,18 @@ export const RequestSearch = ({
             requestStatusFilter={requestStatusFilter}
             setRequestStatusFilter={setRequestStatusFilter}
           />
+          <ToggleButton
+            size="small"
+            value={needsResponse}
+            selected={needsResponse}
+            sx={{ width: "140px", height: "30px" }}
+            color="primary"
+            onChange={() => {
+              setNeedsResponse(!needsResponse);
+            }}
+          >
+            Needs response
+          </ToggleButton>
           {!flowId && (
             <FlowWatchFilterToggle
               flowWatchFilter={flowWatchFilter}
@@ -129,18 +143,6 @@ export const RequestSearch = ({
                 }}
               >
                 Created by me
-              </ToggleButton>
-              <ToggleButton
-                size="small"
-                value={hasRespondPermission}
-                selected={hasRespondPermission}
-                sx={{ width: "140px", height: "30px" }}
-                color="primary"
-                onChange={() => {
-                  setHasRespondPermission(!hasRespondPermission);
-                }}
-              >
-                I can respond
               </ToggleButton>
             </>
           )}

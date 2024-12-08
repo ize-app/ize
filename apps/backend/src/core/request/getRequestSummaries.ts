@@ -13,7 +13,6 @@ import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
 import { createFlowWatchFilter, createGroupWatchedFlowFilter } from "../flow/flowPrismaFilters";
 
-
 export const getRequestSummaries = async ({
   args,
   context,
@@ -127,7 +126,44 @@ export const getRequestSummaries = async ({
           args.requestStatusFilter === RequestStatusFilter.All
             ? {}
             : { final: args.requestStatusFilter === RequestStatusFilter.Final },
-          args.hasRespondPermission ? createPermissionFilter(groupIds, identityIds, user.id) : {},
+          args.needsResponse
+            ? {
+                CurrentRequestStep: {
+                  Step: {
+                    ResponseConfig: {
+                      ResponsePermissions: {
+                        OR: [
+                          { anyone: true },
+                          {
+                            EntitySet: {
+                              EntitySetEntities: {
+                                some: {
+                                  Entity: {
+                                    OR: [
+                                      { Group: { id: { in: groupIds } } },
+                                      { Identity: { id: { in: identityIds } } },
+                                      { User: { id: context.currentUser?.id } },
+                                    ],
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  Responses: {
+                    none: {
+                      creatorEntityId: {
+                        in: entityIds,
+                      },
+                    },
+                  },
+                },
+                ...createPermissionFilter(groupIds, identityIds, user.id),
+              }
+            : {},
         ],
       },
       include: createRequestSummaryInclude(entityIds),
