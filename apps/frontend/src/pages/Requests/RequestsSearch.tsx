@@ -7,7 +7,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import { ChangeEvent, useContext } from "react";
+import { ChangeEvent, useContext, useEffect } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
@@ -17,7 +17,7 @@ import { FlowWatchFilterToggle } from "@/components/Tables/FlowWatchFilterToggle
 import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle";
 import { RequestStatusToggle } from "@/components/Tables/RequestStatusToggle";
 import Search from "@/components/Tables/Search";
-import { FlowWatchFilter } from "@/graphql/generated/graphql";
+import { FlowWatchFilter, RequestStatusFilter } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useRequestsSearch from "@/hooks/useRequestsSearch";
 import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
@@ -68,6 +68,12 @@ export const RequestSearch = ({
     initialFlowWatchFilter,
     initialNeedsResponseFilter,
   });
+
+  useEffect(() => {
+    if(requestStatusFilter === RequestStatusFilter.Final){
+      setNeedsResponse(false);
+    }
+  }, [requestStatusFilter]);
 
   const { me } = useContext(CurrentUserContext);
 
