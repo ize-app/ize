@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, Icon, Paper, Typography, useTheme } from "@mui/material";
+import { Box, Button, Icon, Typography, useTheme } from "@mui/material";
 import { Link, generatePath } from "react-router-dom";
 
 import eyeActiveUrl from "@/assets/ize-eye-active.svg";
@@ -8,6 +8,8 @@ import useGroupsSearch from "@/hooks/useGroupsSearch";
 import { Route } from "@/routers/routes";
 import { colors } from "@/style/style";
 import { fullUUIDToShort } from "@/utils/inputs";
+
+import { InfoBannerContainer } from "../InfoBanner/InfoBannerContainer";
 
 export const GroupInvitations = () => {
   const { groups, refetch } = useGroupsSearch({
@@ -24,41 +26,44 @@ export const GroupInvitations = () => {
 
   if (groups.length === 0) return null;
   return (
-    <Paper
-      elevation={2}
-      sx={{
-        // outline: "1px solid rgba(0, 0, 0, 0.23)",
-        padding: "12px",
-        width: "100%",
-        maxWidth: "400px",
-        display: "flex",
-        flexDirection: "column",
-        marginBottom: "34px",
-
-        borderRadius: "2px",
-      }}
-    >
-      <Typography variant="label">Group invitations</Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", width: "100%", marginTop: "12px" }}>
+    <InfoBannerContainer title="Group Invitations">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          gap: "12px",
+          maxWidth: "100%",
+          flexWrap: "wrap",
+        }}
+      >
         {groups.map((group) => {
           return (
             <Box
               key={group.groupId}
               sx={{
                 display: "flex",
-                gap: "6px",
                 width: "100%",
                 justifyContent: "space-between",
-                flexWrap: "wrap",
                 backgroundColor: "white",
                 borderRadius: "4px",
                 padding: "8px",
+                maxWidth: "400px",
                 // outline: "1px solid rgba(0, 0, 0, 0.23)",
                 outline: `1px solid ${colors.primaryContainer}`,
               }}
             >
               {" "}
-              <Typography sx={{ textDecoration: "none" }}>
+              <Typography
+                sx={{
+                  textDecoration: "none",
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: "1",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
                 <Link
                   key={""}
                   to={generatePath(Route.Group, {
@@ -66,7 +71,7 @@ export const GroupInvitations = () => {
                   })}
                   style={{ textDecoration: "none", color: theme.palette.primary.main }}
                 >
-                  {group.group.name}
+                  {group.group.name} asdfasdfalksdjfasl;dkfjasdfasdfasdfasdf
                 </Link>
               </Typography>
               <Box sx={{ display: "flex", gap: "8px" }}>
@@ -108,6 +113,6 @@ export const GroupInvitations = () => {
           );
         })}
       </Box>
-    </Paper>
+    </InfoBannerContainer>
   );
 };
