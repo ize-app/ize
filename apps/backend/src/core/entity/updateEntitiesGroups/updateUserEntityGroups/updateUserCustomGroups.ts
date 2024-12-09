@@ -13,13 +13,11 @@ export const updateUserIzeGroups = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }) => {
-  // try / catch so that me object will still return
   try {
     const entityIds = context.userEntityIds;
     if (!entityIds) return;
     await Promise.all(
       entityIds.map(async (entityId) => {
-        // get all
         const groupsOfEntity = await transaction.entityGroup.findMany({
           include: {
             Group: true,
@@ -29,9 +27,11 @@ export const updateUserIzeGroups = async ({
           },
         });
         const izeGroupIds = await getIzeGroupsByMembers({
+          transaction,
           entityId,
-          groupEntityIdsForEntity: groupsOfEntity.map((group) => group.groupId),
+          groupEntityIdsForEntity: groupsOfEntity.map((group) => group.Group.entityId),
         });
+
         await upsertForGroupTypeOfEntity({
           entityId,
           groupIds: izeGroupIds,

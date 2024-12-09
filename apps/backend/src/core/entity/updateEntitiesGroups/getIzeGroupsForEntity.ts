@@ -14,6 +14,7 @@ export const getIzeGroupsByMembers = async ({
   transaction?: Prisma.TransactionClient;
 }) => {
   const allEntityIds = [entityId, ...groupEntityIdsForEntity];
+
   const identityIzeGroups = await transaction.groupIze.findMany({
     where: {
       MemberEntitySet: {

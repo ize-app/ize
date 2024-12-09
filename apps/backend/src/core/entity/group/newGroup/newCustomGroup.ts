@@ -71,6 +71,7 @@ export const newIzeGroup = async ({
     policy: args.inputs.flows.watch,
   });
 
+  // associates all direct members of group with the group
   await upsertAllEntitiesForGroup({
     entityIds: args.inputs.members.map((entity) => entity.id),
     groupId: izeGroupEntity.Group?.id as string,

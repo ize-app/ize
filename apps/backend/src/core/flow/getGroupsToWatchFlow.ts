@@ -19,6 +19,7 @@ export const getGroupsToWatchFlow = async ({
   args: QueryGetGroupsToWatchFlowArgs;
   context: GraphqlRequestContext;
 }): Promise<GroupsToWatch> => {
+  console.log("getGroupsToWatchFlow");
   const user = context.currentUser;
   const groupIds: string[] = await getGroupIdsOfUser({ context });
   const identityIds: string[] = user ? user.Identities.map((id) => id.id) : [];
