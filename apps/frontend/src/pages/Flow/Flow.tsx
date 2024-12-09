@@ -226,7 +226,7 @@ export const Flow = () => {
               <Typography variant="description" color="textSecondary">
                 Watched by
               </Typography>
-              <AvatarGroup avatars={flow.watching.groups} size={"20px"} />
+              <AvatarGroup avatars={flow.watching.groups} />
             </Box>
           )}
           {/* Button row */}

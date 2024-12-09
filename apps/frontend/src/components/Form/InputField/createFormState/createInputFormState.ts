@@ -96,15 +96,25 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
           selectionType: selectionType,
         };
       }
+      // not currently used by FE. will need to revisit
       case "FlowVersionValue":
         return {
-          value: value.flowVersion,
+          value: {
+            name: value.flowVersion.flowName,
+            flowId: value.flowVersion.flowId,
+            flowVersionId: value.flowVersion.flowVersionId,
+          },
           type: ValueType.FlowVersion,
           required,
         };
+      // not currently used by FE. will need to revisit
       case "FlowsValue":
         return {
-          value: value.flows,
+          value: value.flows.map((flow) => ({
+            name: flow.flowName,
+            flowId: flow.flowId,
+            flowVersionId: flow.flowVersionId,
+          })),
           type: ValueType.Flows,
           required,
         };

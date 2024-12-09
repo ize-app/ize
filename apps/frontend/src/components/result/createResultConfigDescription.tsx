@@ -79,8 +79,7 @@ export const createResultConfigDescription = ({
       return (
         <Typography variant="description">
           {resultConfig.numOptionsToInclude
-            ? `Only the top ${resultConfig.numOptionsToInclude} 
-          options will be included in the final ranking.`
+            ? `Only the top ${resultConfig.numOptionsToInclude} options will be included in the final ranking.`
             : "All options will be included in the final result. "}
         </Typography>
       );

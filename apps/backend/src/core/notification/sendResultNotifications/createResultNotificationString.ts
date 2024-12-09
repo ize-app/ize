@@ -1,5 +1,5 @@
 import { stringifyResultGroups } from "@/core/request/stringify/stringifyResultGroups";
-import { Request } from "@/graphql/generated/resolver-types";
+import { ActionStatus, Request } from "@/graphql/generated/resolver-types";
 
 export const createTelegramResultsString = ({
   request,
@@ -17,9 +17,25 @@ export const createTelegramResultsString = ({
 
   const stepId = request.requestSteps.find((rs) => rs.requestStepId === requestStepId)?.stepId;
   const action = request.flow.steps.find((step) => step.id === stepId)?.action;
+  const actionExecution = request.requestSteps.find(
+    (rs) => rs.requestStepId === requestStepId,
+  )?.actionExecution;
+  let executingAction = false;
 
-  const actionString = action ? `\n\n<i>⚡ Triggering action: ${action.name}</i>` : "";
+  if (
+    actionExecution &&
+    [
+      ActionStatus.Attempting,
+      ActionStatus.Error,
+      ActionStatus.Complete,
+      ActionStatus.NotStarted,
+    ].includes(actionExecution?.status)
+  ) {
+    executingAction = true;
+  }
+
+  const actionString =
+    action && executingAction ? `\n\n<i>⚡ Triggering action: ${action.name}</i>` : "";
 
   return `${resultsString}${actionString}`;
 };
- 

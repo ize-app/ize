@@ -88,7 +88,7 @@ export const inputSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Only a maximum of " + field.maxSelections + " selections are allowed",
-          path: ["optionSelections"],
+          path: ["value"],
         });
       }
     }

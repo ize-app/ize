@@ -1,4 +1,4 @@
-import { DecisionType, ResultType } from "@/graphql/generated/graphql";
+import { ResultType } from "@/graphql/generated/graphql";
 
 import { ResultSchemaType } from "../formValidation/result";
 
@@ -11,28 +11,16 @@ export const getResultFormLabel = ({ result }: ResultLabelConfigProps) => {
   if (!result) return "Collaborative step";
   switch (result.type) {
     case ResultType.Decision: {
-      const decisionType = result.decision?.type;
-      switch (decisionType) {
-        case DecisionType.Ai:
-          return "Let AI decide";
-        case DecisionType.NumberThreshold:
-          return "Vote to approve";
-        case DecisionType.PercentageThreshold:
-          return "Majority vote";
-        case DecisionType.WeightedAverage:
-          return "Ranked vote";
-        default:
-          return "Decision";
-      }
+      return "Decision";
     }
     case ResultType.Ranking:
-      return "Prioritize into ranked list";
+      return "Prioritize";
     case ResultType.LlmSummary: {
-      if (result.llmSummary && result.llmSummary.isList) return "Summarize options w/ AI";
-      else return "Summarize w/ AI";
+      if (result.llmSummary && result.llmSummary.isList) return "Collect ideas (AI refined)";
+      else return "Create consensus w/ AI";
     }
     case ResultType.RawAnswers:
-      return "Collect raw answers";
+      return "Collect ideas";
 
     default:
       return "Collaborative step";

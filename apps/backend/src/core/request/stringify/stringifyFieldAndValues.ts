@@ -64,6 +64,6 @@ export const stringifyFieldsAndValues = ({
     .join(`\n`);
 
   if (title) {
-    return `${boldOpen}${title}${boldClose}${subtitle ? `: ${subtitle}\n\n` : ""}${fvString}`;
+    return `${boldOpen}${title}${boldClose}${subtitle ? `: ${subtitle}\n\n` : "\n\n"}${fvString}`;
   } else return fvString;
 };

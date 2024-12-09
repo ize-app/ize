@@ -309,6 +309,7 @@ export type FlowSummary = {
   createdAt: Scalars['String']['output'];
   creator: Entity;
   flowId: Scalars['String']['output'];
+  flowVersionId: Scalars['String']['output'];
   group?: Maybe<Group>;
   name: Scalars['String']['output'];
   trigger: TriggerConfig;
@@ -1775,6 +1776,7 @@ export type FlowSummaryResolvers<ContextType = GraphqlRequestContext, ParentType
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
   flowId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  flowVersionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trigger?: Resolver<ResolversTypes['TriggerConfig'], ParentType, ContextType>;

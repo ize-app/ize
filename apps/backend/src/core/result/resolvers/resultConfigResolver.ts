@@ -66,7 +66,7 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
 
   return {
     __typename: ResultType.Decision,
-    name: getResultConfigName({ resultConfig }),
+    name: getResultConfigName({ resultConfig, field }),
     resultConfigId: resultConfig.id,
     field,
     criteria: decConfig.criteria,
@@ -84,7 +84,7 @@ const resultConfigRankResolver = ({ resultConfig, field }: ResultConfigResolver)
     });
   return {
     __typename: ResultType.Ranking,
-    name: getResultConfigName({ resultConfig }),
+    name: getResultConfigName({ resultConfig, field }),
     field,
     resultConfigId: resultConfig.id,
     numOptionsToInclude: rankConfig.numOptionsToInclude,
@@ -99,7 +99,7 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
     });
   return {
     __typename: ResultType.LlmSummary,
-    name: getResultConfigName({ resultConfig }),
+    name: getResultConfigName({ resultConfig, field }),
     resultConfigId: resultConfig.id,
     field,
     prompt: llmConfig.prompt,
@@ -109,7 +109,7 @@ const resultConfigLlmResolver = ({ resultConfig, field }: ResultConfigResolver):
 const resultRawAnswersResolver = ({ resultConfig, field }: ResultConfigResolver): RawAnswers => {
   return {
     __typename: ResultType.RawAnswers,
-    name: getResultConfigName({ resultConfig }),
+    name: getResultConfigName({ resultConfig, field }),
     resultConfigId: resultConfig.id,
     field,
   };

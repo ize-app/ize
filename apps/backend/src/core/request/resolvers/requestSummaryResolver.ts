@@ -43,11 +43,9 @@ export const requestSummaryResolver = ({
 
   const actionConfig = currStep.Step.ActionConfigSet?.ActionConfigs[0];
 
-  const actionExecution =
-    actionConfig &&
-    currStep.Actions.find((ae) => {
-      ae.actionConfigId === actionConfig.id;
-    });
+  const actionExecution = currStep.Actions.find((ae) => {
+    return ae.actionConfigId === actionConfig?.id;
+  });
 
   const actionSummary = actionConfig
     ? {
@@ -96,7 +94,7 @@ export const requestSummaryResolver = ({
       requestStepId: currStep.id,
       status,
       fieldName: field?.name ?? "",
-      resultName: resultConfig ? getResultConfigName({ resultConfig }) : "",
+      resultName: resultConfig ? getResultConfigName({ resultConfig, field: undefined }) : "",
       expirationDate: currStep.expirationDate?.toISOString(),
       userResponded: currStep.Responses.length > 0,
       respondPermission: currStep.Step.ResponseConfig?.ResponsePermissions

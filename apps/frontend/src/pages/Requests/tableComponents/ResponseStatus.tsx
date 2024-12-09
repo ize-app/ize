@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 
 import { ResultGroupStatusDisplay } from "@/components/result/Results/ResultGroupStatus";
 import { stringifyValue } from "@/components/Value/stringifyValue";
-import { RequestSummaryFragment } from "@/graphql/generated/graphql";
+import { ActionStatus, RequestSummaryFragment } from "@/graphql/generated/graphql";
 
 import { ExpirationStatus } from "./ExpirationStatus";
 
@@ -15,6 +15,8 @@ export const ResponseStatus = ({ request }: { request: RequestSummaryFragment })
   const userResponded = request.currentStep.userResponded;
   const responsePermission = request.currentStep.userRespondPermission;
   const theme = useTheme();
+
+  console.log(request.requestName, "action: ", action);
   if (!responseComplete) {
     if (userResponded)
       return (
@@ -106,9 +108,12 @@ export const ResponseStatus = ({ request }: { request: RequestSummaryFragment })
         ) : (
           <ResultGroupStatusDisplay status={resultGroup?.status} resultType={result?.type} />
         )}
-        {action ? (
-          <Box sx={{ display: "flex", gap: "4px" }}>
+        {action && [ActionStatus.Complete, ActionStatus.Attempting].includes(action.status) ? (
+          <Box sx={{ display: "flex", gap: "4px", justifyContent: "flex-end" }}>
             <BoltIcon color="secondary" fontSize="small" />
+            {/* <Typography variant="description" color="secondary">
+              Action:
+            </Typography> */}
             <Typography
               variant="description"
               color="secondary"
@@ -120,7 +125,7 @@ export const ResponseStatus = ({ request }: { request: RequestSummaryFragment })
                 textOverflow: "ellipsis",
               }}
             >
-              Final: {action.name}
+              {action.name}
             </Typography>
           </Box>
         ) : (

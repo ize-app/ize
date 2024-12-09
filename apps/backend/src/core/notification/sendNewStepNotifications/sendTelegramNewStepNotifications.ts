@@ -84,7 +84,10 @@ export const sendTelegramNewStepMessage = async ({
               replyMessageId: message.message_id,
               requestUrl: url,
             });
-          else if (firstField.optionsConfig?.selectionType === OptionSelectionType.Select)
+          else if (
+            firstField.optionsConfig?.selectionType === OptionSelectionType.Select &&
+            firstField.optionsConfig?.maxSelections === 1
+          )
             await sendTelegramPoll({
               field: firstField,
               requestStep,

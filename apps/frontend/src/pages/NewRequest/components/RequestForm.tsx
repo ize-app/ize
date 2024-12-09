@@ -21,8 +21,8 @@ export const RequestForm = () => {
     shouldUnregister: false,
   });
 
-  // console.log("form state is ", formMethods.getValues());
-  // console.log("errors are  ", formMethods.formState.errors);
+  console.log("form state is ", formMethods.getValues());
+  console.log("errors are  ", formMethods.formState.errors);
 
   const onSubmit = (data: RequestSchemaType) => {
     setFormState((prev): NewRequestFormSchema => {
@@ -36,6 +36,8 @@ export const RequestForm = () => {
 
   const flow = formState.flow;
   const step = flow?.steps[0];
+
+  console.log("flow is ", flow);
 
   if (!flow || !step) return null;
 

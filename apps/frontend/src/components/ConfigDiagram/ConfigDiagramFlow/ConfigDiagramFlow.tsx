@@ -19,7 +19,7 @@ import { StageType } from "../Stage/StageType";
 // Interactive diagram for understanding flow config
 // does not allow  user to edit config
 export const ConfigDiagramFlow = ({ flow }: { flow: FlowFragment }) => {
-  const [selectedId, setSelectedId] = useState<string | false>(false); // change to step1
+  const [selectedId, setSelectedId] = useState<string | false>("trigger0"); // change to step1
 
   const finalStepIndex = flow.steps.length - 1;
   const finalAction = flow.steps[finalStepIndex]?.action ?? null;

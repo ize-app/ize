@@ -83,7 +83,7 @@ function valueResolver({ type, value, context }: ValueArgs): Value | OptionValue
     }
     case ValueType.Flows: {
       const vfs = value.ValueFlows;
-      if (vfs.length === 0) throw new GraphQLError(error, errorOptions);
+      if (!vfs) throw new GraphQLError(error, errorOptions);
       return {
         __typename: "FlowsValue",
         flows: vfs.map((vf) => {

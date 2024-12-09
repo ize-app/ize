@@ -18,7 +18,7 @@ export const getOptionArgsWithOptionId = ({
     let optionId: string;
     if (optionSelection.optionId) optionId = optionSelection.optionId;
     else {
-      if (!optionSelection.optionIndex)
+      if (optionSelection.optionIndex === undefined || optionSelection.optionIndex === null)
         throw new GraphQLError(`No option index or optionId provided for option selection`, {
           extensions: { code: ApolloServerErrorCode.BAD_USER_INPUT },
         });
