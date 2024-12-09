@@ -141,6 +141,7 @@ export const Group = () => {
             })}
           >
             <MembersList members={group.members} />
+
             {group.isMember && (
               <Box sx={{ display: "flex", gap: "8px" }}>
                 <CheckCircleOutline color="primary" fontSize="small" />
@@ -150,6 +151,13 @@ export const Group = () => {
               </Box>
             )}
           </Box>
+          {group.notificationEntity && (
+            <Typography variant="description" lineHeight={"24px"}>
+              Sends notifications to{" "}
+              <span style={{ fontWeight: "500" }}>{group.notificationEntity.name}</span> Telegram
+              group
+            </Typography>
+          )}
           {group.description && (
             <Typography variant="description" marginTop="8px">
               {group.description}
