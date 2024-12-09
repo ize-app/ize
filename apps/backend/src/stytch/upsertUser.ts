@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { Response } from "express";
 import { User as StytchUser } from "stytch";
 
+import config from "@/config";
 import { MePrismaType, meInclude } from "@/core/user/userPrismaTypes";
 import { prisma } from "@/prisma/client";
 
@@ -32,9 +33,18 @@ export const upsertUser = async ({
       update: {},
       create: {
         stytchId: stytchUser.user_id,
-        Entity: {
-          create: {},
-        },
+        Entity: config.IZE_COMMUNITY_GROUP_ID
+          ? {
+              create: {
+                EntityWatchedGroups: {
+                  create: {
+                    watched: true,
+                    groupId: config.IZE_COMMUNITY_GROUP_ID,
+                  },
+                },
+              },
+            }
+          : {},
         name:
           (stytchUser.name?.first_name ? stytchUser.name?.first_name + " " : "") +
           (stytchUser.name?.last_name ?? ""),
