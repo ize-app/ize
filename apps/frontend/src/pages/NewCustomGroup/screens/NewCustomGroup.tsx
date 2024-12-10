@@ -23,7 +23,7 @@ import {
 export const NewCustomGroup = () => {
   const navigate = useNavigate();
   const { setSnackbarData, setSnackbarOpen, snackbarData } = useContext(SnackbarContext);
-  const { me, setAuthModalOpen } = useContext(CurrentUserContext);
+  const { me, setAuthModalOpen, refetch: refetchMe } = useContext(CurrentUserContext);
 
   const [mutate] = useMutation(NewCustomGroupDocument, {
     onCompleted: (data) => {
@@ -44,6 +44,7 @@ export const NewCustomGroup = () => {
         type: "success",
       });
       setSnackbarOpen(true);
+      if(refetchMe) refetchMe()
     } catch (e) {
       console.log("Error: ", e);
       if (e instanceof ApolloError && e.message === "Unauthenticated") {

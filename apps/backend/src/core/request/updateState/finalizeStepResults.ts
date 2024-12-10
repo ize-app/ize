@@ -38,10 +38,10 @@ export const finalizeStepResults = async ({ requestStepId }: { requestStepId: st
     // this code block should only be run once per request step
     if (resultsFinal) {
       await endTelegramPolls({ requestStepId });
-      await sendResultNotifications({ requestStepId });
       const { nextRequestStepId, responseComplete: runResultsForNextStep } = await executeAction({
         requestStepId,
       });
+      await sendResultNotifications({ requestStepId });
       if (nextRequestStepId) {
         // simplify this function later so it can just look up the flow id itself
         await sendNewStepNotifications({

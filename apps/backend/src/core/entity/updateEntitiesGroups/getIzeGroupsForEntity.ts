@@ -5,25 +5,22 @@ import { prisma } from "../../../prisma/client";
 // looks whether there are any Ize groups for a given identity or set of groups associated with that identity
 // (e.g. discord role groups for a discord identity)
 export const getIzeGroupsByMembers = async ({
-  identityId,
-  groupIds,
+  entityId,
+  groupEntityIdsForEntity,
   transaction = prisma,
 }: {
-  identityId?: string;
-  groupIds: string[];
+  entityId: string;
+  groupEntityIdsForEntity: string[];
   transaction?: Prisma.TransactionClient;
 }) => {
+  const allEntityIds = [entityId, ...groupEntityIdsForEntity];
+
   const identityIzeGroups = await transaction.groupIze.findMany({
     where: {
       MemberEntitySet: {
         EntitySetEntities: {
           some: {
-            Entity: {
-              OR: [
-                { Group: { id: { in: groupIds } } },
-                identityId ? { Identity: { id: { equals: identityId } } } : {},
-              ],
-            },
+            entityId: { in: allEntityIds },
           },
         },
       },

@@ -35,7 +35,7 @@ export const newRankingResult = async ({
       type: "fieldAnswer",
       answers: fieldAnswers,
     });
-    
+
     rankFieldOptions = await prisma.fieldOption.findMany({
       where: {
         id: {
@@ -62,7 +62,8 @@ export const newRankingResult = async ({
             .sort((a, b) => b.weight - a.weight)
             .map((option, index) => {
               return {
-                ...option,
+                valueId: option.valueId,
+                fieldOptionId: option.fieldOptionId,
                 index,
               };
             })

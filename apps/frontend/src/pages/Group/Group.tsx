@@ -15,13 +15,13 @@ import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import { GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
+import { FlowWatchFilter, GroupDocument, IzeGroupFragment } from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
 import { FlowsSearch } from "../Flows/FlowsSearch";
-import { RequestSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestsSearch";
 
 export const Group = () => {
   const { groupId: groupIdShort } = useParams();
@@ -38,7 +38,7 @@ export const Group = () => {
   });
 
   const group = data?.group as IzeGroupFragment;
-
+  // console.log("group", group);
 
   const [currentTabIndex, setTabIndex] = useState(0);
 
@@ -57,7 +57,13 @@ export const Group = () => {
   const tabs: TabProps[] = [
     {
       title: "Requests",
-      content: !loading ? <RequestSearch userOnly={false} groupId={groupId} /> : null,
+      content: !loading ? (
+        <RequestSearch
+          initialFlowWatchFilter={FlowWatchFilter.All}
+          groupId={groupId}
+          initialNeedsResponseFilter={false}
+        />
+      ) : null,
     },
     {
       title: "Flows",
@@ -135,6 +141,7 @@ export const Group = () => {
             })}
           >
             <MembersList members={group.members} />
+
             {group.isMember && (
               <Box sx={{ display: "flex", gap: "8px" }}>
                 <CheckCircleOutline color="primary" fontSize="small" />
@@ -144,6 +151,13 @@ export const Group = () => {
               </Box>
             )}
           </Box>
+          {group.notificationEntity && (
+            <Typography variant="description" lineHeight={"24px"}>
+              Sends notifications to{" "}
+              <span style={{ fontWeight: "500" }}>{group.notificationEntity.name}</span> Telegram
+              group
+            </Typography>
+          )}
           {group.description && (
             <Typography variant="description" marginTop="8px">
               {group.description}

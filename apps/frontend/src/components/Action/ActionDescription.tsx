@@ -27,7 +27,10 @@ export const ActionDescription = ({
                 {
                   label: "Webhook integration",
                   value: (
-                    <Value value={{ __typename: "UriValue", uri: action.uri }} type={"option"} />
+                    <Value
+                      value={{ __typename: "UriValue", uri: action.uri, name: action.uri }}
+                      type={"option"}
+                    />
                   ),
                 },
                 {

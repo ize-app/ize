@@ -1,5 +1,5 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
-import { FlowSummaryFragment } from "./generated/graphql";
+import { FlowSummaryFragment, IzeGroupFragment, RequestSummaryFragment } from "./generated/graphql";
 
 const graphqlUri = `${import.meta.env.MODE === "development" ? import.meta.env.VITE_LOCAL_BACKEND_URL : window.location.origin}/graphql`;
 
@@ -48,23 +48,28 @@ export const apolloClient = new ApolloClient({
               "groupId",
               "flowId",
               "searchQuery",
-              "watchedByUserGroups",
-              "watchedByUser",
+              "flowWatchFilter",
+              "requestStatusFilter",
               "createdByUser",
-              "open",
-              "hasRespondPermission",
+              "needsResponse",
             ],
             merge(existing, incoming, { args, readField }) {
-              const cursor = args && args.cursor;
+              const cursor = args?.cursor;
               const merged = existing ? existing.slice(0) : [];
+
+              // Deduplicate results if they already exist
+              const incomingFiltered = incoming.filter((item: RequestSummaryFragment) => {
+                const itemId = readField("requestId", item);
+                return !merged.some(
+                  (existingItem: RequestSummaryFragment) =>
+                    readField("requestId", existingItem) === itemId,
+                );
+              });
+
               let offset = offsetFromCursor(merged, cursor, readField);
-              // If we couldn't find the cursor, default to appending to
-              // the end of the list, so we don't lose any data.
               if (offset < 0) offset = merged.length;
-              // Now that we have a reliable offset, the rest of this logic
-              // is the same as in offsetLimitPagination.
-              for (let i = 0; i < incoming.length; ++i) {
-                merged[offset + i] = incoming[i];
+              for (let i = 0; i < incomingFiltered.length; ++i) {
+                merged[offset + i] = incomingFiltered[i];
               }
               return merged;
             },
@@ -73,8 +78,7 @@ export const apolloClient = new ApolloClient({
             keyArgs: [
               "groupId",
               "searchQuery",
-              "watchedByUser",
-              "watchedByUserGroups",
+              "flowWatchFilter",
               "createdByUser",
               "hasTriggerPermissions",
               "excludeGroupId",
@@ -104,14 +108,23 @@ export const apolloClient = new ApolloClient({
             },
           },
           groupsForCurrentUser: {
-            keyArgs: ["searchQuery", "watchFilter"],
+            keyArgs: ["searchQuery", "watchFilter", "isMember"],
             merge(existing, incoming, { args, readField }) {
-              const cursor = args && args.cursor;
+              const cursor = args?.cursor;
               const merged = existing ? existing.slice(0) : [];
+
+              // Deduplicate results if they already exist
+              const incomingFiltered = incoming.filter((item: IzeGroupFragment) => {
+                const itemId = readField("groupId", item);
+                return !merged.some(
+                  (existingItem: IzeGroupFragment) => readField("groupId", existingItem) === itemId,
+                );
+              });
+
               let offset = offsetFromCursor(merged, cursor, readField);
               if (offset < 0) offset = merged.length;
-              for (let i = 0; i < incoming.length; ++i) {
-                merged[offset + i] = incoming[i];
+              for (let i = 0; i < incomingFiltered.length; ++i) {
+                merged[offset + i] = incomingFiltered[i];
               }
               return merged;
             },

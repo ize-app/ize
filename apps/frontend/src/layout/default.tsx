@@ -11,7 +11,6 @@ import IdentityModal from "@/components/Auth/IdentityModal";
 import LoginModal from "@/components/Auth/LoginModal";
 import { Menu } from "@/components/Menu/Menu";
 import { NavBar } from "@/components/Menu/NavBar";
-import { UserSetupModal } from "@/components/UserSetupModal";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import { Route } from "@/routers/routes";
 
@@ -29,17 +28,12 @@ export const DefaultLayout = () => {
   // purpose of this is to redirect new users to the new flow page
   // unless they're trying to go directly to a request / flow / group page
   useEffect(() => {
+    console.log();
     const isNewUser = Cookies.get("new_user") === "true" && !!me?.user;
     const currentPath = location.pathname;
-    if (
-      isNewUser &&
-      !(
-        currentPath.startsWith("/groups") ||
-        currentPath.startsWith("/requests") ||
-        currentPath.startsWith("/flow")
-      )
-    ) {
-      navigate(Route.NewFlow);
+    const searchParams = new URLSearchParams({ next_route: currentPath });
+    if (isNewUser) {
+      navigate(`${Route.NewUser}?${searchParams.toString()}`);
     }
   }, [me]);
 
@@ -54,7 +48,6 @@ export const DefaultLayout = () => {
       <Head title="Ize" description="Distributed sensemaking" />
       <CssBaseline />
       <NavBar handleMenuToggle={handleMenuToggle} me={me} />
-      <UserSetupModal />
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         {me && menuOpen && (
           <Menu open={menuOpen} setMenuOpen={setMenuOpen} drawerWidth={drawerWidth} />

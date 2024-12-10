@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import izeLogoUrl from "@/assets/ize-logo-circle.svg";
+import { LoginButton } from "@/components/Auth/LoginButton";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 
 import { Requests } from "./Requests/Requests";
@@ -36,24 +37,26 @@ const UnauthenticatedHome = () => {
         <img src={izeLogoUrl} style={{ width: "260px" }} />
         <Box sx={{ width: "100%" }}>
           <Typography variant="h2" textAlign={"center"}>
-            The collective process platform
+            Mycelial Process Platform
           </Typography>
           <Typography textAlign={"center"}>
             How distributed teams share power and harness collective intelligence
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            navigate("/about");
-          }}
-          size="small"
-          sx={{ width: "160px" }}
-        >
-          Learn more
-        </Button>
-        {/* <LoginButton sx={{ width: "160px" }}>Join the alpha</LoginButton> */}
+        <Box sx={{ display: "flex", gap: "12px" }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => {
+              navigate("/about");
+            }}
+            size="small"
+            sx={{ width: "120px" }}
+          >
+            Learn more
+          </Button>
+          <LoginButton sx={{ width: "120px" }}>Get started</LoginButton>
+        </Box>
       </Box>
     </IzeLogoBackground>
   );

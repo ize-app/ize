@@ -38,6 +38,7 @@ export const flowSummaryResolver = ({
 
   return {
     flowId: flow.id,
+    flowVersionId: flow.CurrentFlowVersion.id,
     name: getFlowName({
       flowName: flow.CurrentFlowVersion.name,
       flowType: flow.type,

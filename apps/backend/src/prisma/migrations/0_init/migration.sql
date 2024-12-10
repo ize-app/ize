@@ -44,6 +44,18 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
+CREATE TABLE "user_settings" (
+    "id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "transactional" BOOLEAN NOT NULL DEFAULT false,
+    "marketing" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "user_settings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "identities" (
     "id" UUID NOT NULL,
     "user_id" UUID,
@@ -311,6 +323,7 @@ CREATE TABLE "values" (
     "id" UUID NOT NULL,
     "type" "ValueType" NOT NULL,
     "string" TEXT,
+    "json" JSONB,
     "float" DOUBLE PRECISION,
     "date" DATE,
     "dateTime" TIMESTAMP(3),
@@ -677,6 +690,9 @@ CREATE UNIQUE INDEX "users_stytch_id_key" ON "users"("stytch_id");
 CREATE UNIQUE INDEX "users_entity_id_key" ON "users"("entity_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "user_settings_user_id_key" ON "user_settings"("user_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "identities_entity_id_key" ON "identities"("entity_id");
 
 -- CreateIndex
@@ -834,6 +850,9 @@ CREATE UNIQUE INDEX "telegram_messages_poll_id_key" ON "telegram_messages"("poll
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_entity_id_fkey" FOREIGN KEY ("entity_id") REFERENCES "entities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_settings" ADD CONSTRAINT "user_settings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "identities" ADD CONSTRAINT "identities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

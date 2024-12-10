@@ -10,8 +10,7 @@ type Query {
     limit: Int!
     groupId: String
     searchQuery: String!
-    watchedByUserGroups: Boolean!
-    watchedByUser: Boolean!
+    flowWatchFilter: FlowWatchFilter!
     createdByUser: Boolean!
     excludeGroupId: String
     hasTriggerPermissions: Boolean!
@@ -41,6 +40,7 @@ type Flow {
 
 type FlowSummary {
   flowId: String!
+  flowVersionId: String!
   name: String!
   group: Group
   creator: Entity!
@@ -137,4 +137,11 @@ type FlowWatchers {
 type GroupsToWatch {
   relevantGroups: [Group!]!
   otherGroups: [Group!]!
+}
+
+enum FlowWatchFilter {
+  WatchedByMe
+  WatchedByMeOrMyGroups
+  NotWatching
+  All
 }

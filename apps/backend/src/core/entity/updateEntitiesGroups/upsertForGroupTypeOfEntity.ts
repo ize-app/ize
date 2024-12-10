@@ -2,10 +2,9 @@ import { GroupType, Prisma } from "@prisma/client";
 
 import { prisma } from "../../../prisma/client";
 
-// this query updates cache mapping of groupIds to identities
-// the cache is only used for read operations, not writes
+// this updates all entity groups for a given group Type and a given user
 // unfortunately prisma doesn't support upsertMany so the queries a bit wonky/inefficient
-export const updateEntitiesGroups = async ({
+export const upsertForGroupTypeOfEntity = async ({
   entityId,
   groupIds,
   groupType,

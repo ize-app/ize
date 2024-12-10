@@ -26,11 +26,10 @@ query getRequests(
   $flowId: String
   $groupId: String
   $searchQuery: String!
-  $watchedByUserGroups: Boolean!
-  $watchedByUser: Boolean!
+  $flowWatchFilter: FlowWatchFilter!
+  $requestStatusFilter: RequestStatusFilter!
   $createdByUser: Boolean!
-  $open: Boolean!
-  $hasRespondPermission: Boolean!
+  $needsResponse: Boolean!
 ) {
   getRequests(
     cursor: $cursor
@@ -38,11 +37,10 @@ query getRequests(
     flowId: $flowId
     groupId: $groupId
     searchQuery: $searchQuery
-    watchedByUserGroups: $watchedByUserGroups
-    watchedByUser: $watchedByUser
+    flowWatchFilter: $flowWatchFilter
+    requestStatusFilter: $requestStatusFilter
     createdByUser: $createdByUser
-    open: $open
-    hasRespondPermission: $hasRespondPermission
+    needsResponse: $needsResponse
   ) {
     ...RequestSummary
   }

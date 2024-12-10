@@ -51,7 +51,7 @@ export const AddStepButton = ({
     const newStep = getDefaultStepFormValues();
 
     // if there's one step but it doesn't have a response, reset field but copy over action
-    if (currentStepLength === 1 && !!getValues(`steps.${0}.response`)) {
+    if (currentStepLength === 1 && !getValues(`steps.${0}.response`)) {
       const currentAction = getValues(`steps.${0}.action`);
       setValue(`steps.${0}`, { ...newStep, action: currentAction });
     } else {

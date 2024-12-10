@@ -19,8 +19,7 @@ query GetFlows(
   $limit: Int!
   $groupId: String
   $searchQuery: String!
-  $watchedByUserGroups: Boolean!
-  $watchedByUser: Boolean!
+  $flowWatchFilter: FlowWatchFilter!
   $excludeGroupId: String
   $createdByUser: Boolean!
   $hasTriggerPermissions: Boolean!
@@ -30,8 +29,7 @@ query GetFlows(
     limit: $limit
     groupId: $groupId
     searchQuery: $searchQuery
-    watchedByUserGroups: $watchedByUserGroups
-    watchedByUser: $watchedByUser
+    flowWatchFilter: $flowWatchFilter
     hasTriggerPermissions: $hasTriggerPermissions
     createdByUser: $createdByUser
     excludeGroupId: $excludeGroupId
@@ -81,6 +79,7 @@ fragment FlowFields on Flow {
 
 fragment FlowSummary on FlowSummary {
   flowId
+  flowVersionId
   name
   createdAt
   creator {
@@ -148,7 +147,7 @@ fragment GroupsToWatch on GroupsToWatch {
   relevantGroups {
     ...GroupSummaryParts
   }
-  otherGroups  {
+  otherGroups {
     ...GroupSummaryParts
   }
 }

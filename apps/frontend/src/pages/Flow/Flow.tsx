@@ -23,11 +23,16 @@ import {
 } from "@/routers/routes";
 
 import Loading from "../../components/Loading";
-import { FlowFragment, FlowType, GetFlowDocument } from "../../graphql/generated/graphql";
+import {
+  FlowFragment,
+  FlowType,
+  FlowWatchFilter,
+  GetFlowDocument,
+} from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
 import { fullUUIDToShort, shortUUIDToFull } from "../../utils/inputs";
-import { RequestSearch } from "../Requests/RequestStepsSearch";
+import { RequestSearch } from "../Requests/RequestsSearch";
 
 export const Flow = () => {
   const { me } = useContext(CurrentUserContext);
@@ -221,7 +226,7 @@ export const Flow = () => {
               <Typography variant="description" color="textSecondary">
                 Watched by
               </Typography>
-              <AvatarGroup avatars={flow.watching.groups} size={"20px"} />
+              <AvatarGroup avatars={flow.watching.groups} />
             </Box>
           )}
           {/* Button row */}
@@ -332,7 +337,13 @@ export const Flow = () => {
             </TabPanel>
           ))}
         </Box>
-        {isCurrentFlowVersion && <RequestSearch userOnly={false} flowId={flow.flowId} />}
+        {isCurrentFlowVersion && (
+          <RequestSearch
+            initialFlowWatchFilter={FlowWatchFilter.All}
+            flowId={flow.flowId}
+            initialNeedsResponseFilter={false}
+          />
+        )}
       </Box>
     </PageContainer>
   );

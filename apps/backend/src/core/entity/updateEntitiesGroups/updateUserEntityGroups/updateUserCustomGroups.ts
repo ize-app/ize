@@ -3,8 +3,8 @@ import { GroupType, Prisma } from "@prisma/client";
 import { GraphqlRequestContext } from "@/graphql/context";
 
 import { prisma } from "../../../../prisma/client";
-import { getIzeGroupsByMembers } from "../getCustomGroupsForIdentity";
-import { updateEntitiesGroups } from "../updateEntitiesGroups";
+import { getIzeGroupsByMembers } from "../getIzeGroupsForEntity";
+import { upsertForGroupTypeOfEntity } from "../upsertForGroupTypeOfEntity";
 
 export const updateUserIzeGroups = async ({
   context,
@@ -13,22 +13,26 @@ export const updateUserIzeGroups = async ({
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
 }) => {
-  // try / catch so that me object will still return
   try {
     const entityIds = context.userEntityIds;
     if (!entityIds) return;
     await Promise.all(
       entityIds.map(async (entityId) => {
-        const groupsOfIdentity = await transaction.entityGroup.findMany({
+        const groupsOfEntity = await transaction.entityGroup.findMany({
+          include: {
+            Group: true,
+          },
           where: {
             entityId,
           },
         });
         const izeGroupIds = await getIzeGroupsByMembers({
-          identityId: entityId,
-          groupIds: groupsOfIdentity.map((group) => group.groupId),
+          transaction,
+          entityId,
+          groupEntityIdsForEntity: groupsOfEntity.map((group) => group.Group.entityId),
         });
-        await updateEntitiesGroups({
+
+        await upsertForGroupTypeOfEntity({
           entityId,
           groupIds: izeGroupIds,
           groupType: GroupType.GroupIze,

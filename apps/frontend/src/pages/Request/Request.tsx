@@ -55,6 +55,8 @@ export const Request = () => {
 
   const request = data?.getRequest;
 
+  console.log("request is ", request);
+
   if (loading || !request) return <Loading />;
   const currentStep = request.flow.steps[request.currentStepIndex];
   const currentReqStep = request.requestSteps[request.currentStepIndex];

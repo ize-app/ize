@@ -9,8 +9,8 @@ export const LoginButton = (props: ButtonProps) => {
       onClick={() => {
         setAuthModalOpen(true);
       }}
-      variant="outlined"
-      color="secondary"
+      variant="contained"
+      color="primary"
       size="small"
       {...props}
     >

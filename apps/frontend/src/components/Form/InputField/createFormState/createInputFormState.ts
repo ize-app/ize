@@ -79,7 +79,7 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
         };
       case "UriValue":
         return {
-          value: value.uri,
+          value: { uri: value.uri, name: value.name ?? "" },
           type: ValueType.Uri,
           required,
         };
@@ -96,15 +96,25 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
           selectionType: selectionType,
         };
       }
+      // not currently used by FE. will need to revisit
       case "FlowVersionValue":
         return {
-          value: value.flowVersion,
+          value: {
+            name: value.flowVersion.flowName,
+            flowId: value.flowVersion.flowId,
+            flowVersionId: value.flowVersion.flowVersionId,
+          },
           type: ValueType.FlowVersion,
           required,
         };
+      // not currently used by FE. will need to revisit
       case "FlowsValue":
         return {
-          value: value.flows,
+          value: value.flows.map((flow) => ({
+            name: flow.flowName,
+            flowId: flow.flowId,
+            flowVersionId: flow.flowVersionId,
+          })),
           type: ValueType.Flows,
           required,
         };
@@ -134,7 +144,7 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
       case ValueType.String:
         return { value: "", type: ValueType.String, required };
       case ValueType.Uri:
-        return { value: "", type: ValueType.Uri, required };
+        return { value: { uri: "", name: "" }, type: ValueType.Uri, required };
       case ValueType.OptionSelections: {
         if (!optionsConfig) throw Error("Only fields can have option selections");
         const { selectionType, maxSelections } = optionsConfig;

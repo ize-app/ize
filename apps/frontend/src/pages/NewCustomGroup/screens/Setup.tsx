@@ -11,26 +11,22 @@ import { FieldBlockFadeIn } from "@/components/Form/formLayout/FieldBlockFadeIn"
 import { ButtonGroupField, EntitySearch, TextField } from "../../../components/Form/formFields";
 import { WizardNav } from "../../../components/Wizard";
 import { TelegramBotSetup } from "../components/TelegramBotSetup";
+import { createDefaultFormState } from "../createDefaultFormState";
 import { GroupInitialSetupSchemaType, groupInitialSetupFormSchema } from "../formValidation";
 import { useNewCustomGroupWizardState } from "../newCustomGroupWizard";
 import { GroupCommunicationType } from "../types";
 
 export const Setup = () => {
   const { formState, setFormState, onNext, onPrev, nextLabel } = useNewCustomGroupWizardState();
-
+  const defaultFormState = formState ?? createDefaultFormState();
   const formMethods = useForm<GroupInitialSetupSchemaType>({
     defaultValues: {
-      entityId: formState.entityId ?? crypto.randomUUID(),
-      name: formState.name ?? "",
-      description: formState.description ?? "",
-      members: formState.members ?? [],
-      notificationEntity: undefined,
+      ...defaultFormState,
+      entityId: crypto.randomUUID(),
     },
     resolver: zodResolver(groupInitialSetupFormSchema),
     shouldUnregister: false,
   });
-
-  // console.log("form state", formMethods.getValues());
 
   const onSubmit = (data: GroupInitialSetupSchemaType) => {
     setFormState((prev) => ({

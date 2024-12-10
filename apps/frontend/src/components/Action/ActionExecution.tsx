@@ -40,7 +40,7 @@ export const ActionExecution = ({
       data.unshift(
         {
           label: "Webhook integration",
-          value: <Value value={{ __typename: "UriValue", uri: action.uri }} type={"option"} />,
+          value: <Value value={{ __typename: "UriValue", uri: action.uri, name: action.uri }} type={"option"} />,
         },
         {
           label: "What this webhook does",

@@ -19,7 +19,7 @@ export const WatchGroupButton = ({
 }) => {
   const { setSnackbarData, setSnackbarOpen } = useContext(SnackbarContext);
   const [isWatched, setIsWatched] = useState(watched);
-  const { me } = useContext(CurrentUserContext);
+  const { me, refetch: refetchMe } = useContext(CurrentUserContext);
   // const onError = () => {
   //   setSnackbarOpen(true);
   //   setSnackbarData({ message: "Cannot find this group", type: "error" });
@@ -33,6 +33,7 @@ export const WatchGroupButton = ({
         message: isWatched ? "Group unwatched" : "Now watching this group",
         type: "success",
       });
+      if (refetchMe) refetchMe();
     },
     onError: (_error) => {
       setSnackbarOpen(true);

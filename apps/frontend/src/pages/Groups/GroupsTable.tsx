@@ -54,46 +54,45 @@ export const GroupsTable = ({ groups }: { groups: IzeGroupFragment[] }) => {
 const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
   const navigate = useNavigate();
   return (
-    <>
-      <TableRow
-        aria-label="Group Row"
-        onClick={() =>
-          navigate(
-            generatePath(Route.Group, {
-              groupId: fullUUIDToShort(group.groupId),
-            }),
-          )
-        }
-      >
-        <TableCell>
-          <WatchGroupButton size="small" groupId={group.groupId} watched={group.isWatched} />
-        </TableCell>
-        <TableCell component="th" scope="row" align="left">
-          <Box
+    <TableRow
+      aria-label="Group Row"
+      onClick={() =>
+        navigate(
+          generatePath(Route.Group, {
+            groupId: fullUUIDToShort(group.groupId),
+          }),
+        )
+      }
+    >
+      <TableCell>
+        <WatchGroupButton size="small" groupId={group.groupId} watched={group.isWatched} />
+      </TableCell>
+      <TableCell component="th" scope="row" align="left">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            gap: "8px",
+          }}
+        >
+          <Avatar avatar={group.group} />
+          <Typography
+            variant={"body1"}
             sx={{
-              display: "flex",
-              alignItems: "center",
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: "2",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
               width: "100%",
-              gap: "8px",
             }}
           >
-            <Avatar avatar={group.group} />
-            <Typography
-              variant={"body1"}
-              sx={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: "2",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                width: "100%",
-              }}
-            >
-              {group.group.name}
-            </Typography>
-          </Box>
-        </TableCell>
-        {/* <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
+            {group.group.name}
+          </Typography>
+        </Box>
+      </TableCell>
+      {/* <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
           {group.isMember ? (
             <Box
               sx={{
@@ -115,24 +114,23 @@ const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
             </Box>
           ) : null}
         </TableCellHideable> */}
-        <TableCellHideable align="center" width={"100px"}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              // width: "100%",
-              // backgroundColor: "red",
-            }}
-          >
-            <AvatarGroup avatars={group.members} />
-          </Box>
-        </TableCellHideable>
-        <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
-          {new Date(group.group.createdAt).toLocaleDateString()}
-        </TableCellHideable>
-      </TableRow>
-    </>
+      <TableCellHideable align="center" width={"100px"}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            // width: "100%",
+            // backgroundColor: "red",
+          }}
+        >
+          <AvatarGroup avatars={group.members} />
+        </Box>
+      </TableCellHideable>
+      <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
+        {new Date(group.group.createdAt).toLocaleDateString()}
+      </TableCellHideable>
+    </TableRow>
   );
 };

@@ -1,6 +1,6 @@
 import { GroupTelegramChatPrismaType } from "@/core/entity/group/groupPrismaTypes";
 import { IdentityPrismaType } from "@/core/entity/identity/identityPrismaTypes";
-import { upsertEntityGroup } from "@/core/entity/updateIdentitiesGroups/upsertEntityGroup";
+import { upsertEntityGroup } from "@/core/entity/updateEntitiesGroups/upsertEntityGroup";
 import { telegramBot } from "@/telegram/TelegramClient";
 
 // checks whether user has permission according to their discord @roles

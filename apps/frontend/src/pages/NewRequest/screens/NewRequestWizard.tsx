@@ -73,7 +73,6 @@ export const NewRequestWizard = () => {
     disableNext,
   } = useWizard(newRequestWizard);
 
-  formState;
   return me ? (
     <PageContainer>
       <Head

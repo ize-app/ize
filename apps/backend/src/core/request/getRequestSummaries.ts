@@ -1,17 +1,17 @@
 import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext, GraphqlRequestContextWithUser } from "@/graphql/context";
-import { QueryGetRequestsArgs, RequestSummary } from "@/graphql/generated/resolver-types";
+import {
+  QueryGetRequestsArgs,
+  RequestStatusFilter,
+  RequestSummary,
+} from "@/graphql/generated/resolver-types";
 
 import { createRequestSummaryInclude } from "./requestPrismaTypes";
 import { requestSummaryResolver } from "./resolvers/requestSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import {
-  createGroupWatchedFlowFilter,
-  createUserGroupsWatchedFlowsFilter,
-  createUserWatchedFlowFilter,
-} from "../flow/flowPrismaTypes";
+import { createFlowWatchFilter, createGroupWatchedFlowFilter } from "../flow/flowPrismaFilters";
 
 export const getRequestSummaries = async ({
   args,
@@ -53,51 +53,30 @@ export const getRequestSummaries = async ({
                 ],
               }
             : {},
+
           // if getting request steps for user, then get requests steps for flows (or corresponding evolve flows) they are watching
           // or that groups they are watching own/watch themselves
 
           {
             OR: [
-              args.watchedByUser
-                ? {
-                    OR: [
-                      {
-                        FlowVersion: {
-                          Flow: createUserWatchedFlowFilter({
-                            userEntityIds: entityIds,
-                          }),
-                        },
-                      },
-                      {
-                        ProposedFlowVersionEvolution: {
-                          Flow: createUserWatchedFlowFilter({
-                            userEntityIds: entityIds,
-                          }),
-                        },
-                      },
-                    ],
-                  }
-                : {},
-              args.watchedByUserGroups
-                ? {
-                    OR: [
-                      {
-                        FlowVersion: {
-                          Flow: createUserGroupsWatchedFlowsFilter({
-                            userEntityIds: entityIds,
-                          }),
-                        },
-                      },
-                      {
-                        ProposedFlowVersionEvolution: {
-                          Flow: createUserGroupsWatchedFlowsFilter({
-                            userEntityIds: entityIds,
-                          }),
-                        },
-                      },
-                    ],
-                  }
-                : {},
+              {
+                // flow itself is watched
+                FlowVersion: {
+                  Flow: createFlowWatchFilter({
+                    flowWatchFilter: args.flowWatchFilter,
+                    userEntityIds: entityIds,
+                  }),
+                },
+              },
+              {
+                // flow evolves another flow that is watched
+                ProposedFlowVersionEvolution: {
+                  Flow: createFlowWatchFilter({
+                    flowWatchFilter: args.flowWatchFilter,
+                    userEntityIds: entityIds,
+                  }),
+                },
+              },
             ],
           },
           // if getting requests for a specific flow, then get request steps for that flow or its corresponding evolve flow
@@ -144,8 +123,47 @@ export const getRequestSummaries = async ({
               }
             : {},
           args.createdByUser ? { creatorEntityId: { in: entityIds } } : {},
-          { final: !args.open },
-          args.hasRespondPermission ? createPermissionFilter(groupIds, identityIds, user.id) : {},
+          args.requestStatusFilter === RequestStatusFilter.All
+            ? {}
+            : { final: args.requestStatusFilter === RequestStatusFilter.Final },
+          args.needsResponse
+            ? {
+                CurrentRequestStep: {
+                  Step: {
+                    ResponseConfig: {
+                      ResponsePermissions: {
+                        OR: [
+                          { anyone: true },
+                          {
+                            EntitySet: {
+                              EntitySetEntities: {
+                                some: {
+                                  Entity: {
+                                    OR: [
+                                      { Group: { id: { in: groupIds } } },
+                                      { Identity: { id: { in: identityIds } } },
+                                      { User: { id: context.currentUser?.id } },
+                                    ],
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  Responses: {
+                    none: {
+                      creatorEntityId: {
+                        in: entityIds,
+                      },
+                    },
+                  },
+                },
+                ...createPermissionFilter(groupIds, identityIds, user.id),
+              }
+            : {},
         ],
       },
       include: createRequestSummaryInclude(entityIds),

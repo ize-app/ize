@@ -3,25 +3,28 @@ import { debounce } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  GroupWatchFilter,
   GroupsDocument,
   GroupsQueryVariables,
   IzeGroupFragment,
-  WatchFilter,
 } from "@/graphql/generated/graphql";
 
 const useGroupsSearch = ({
   queryResultLimit,
-  initialWatchFilter = WatchFilter.Watched,
+  initialWatchFilter = GroupWatchFilter.All,
+  initialIsMember = false,
 }: {
   queryResultLimit: number;
-  initialWatchFilter?: WatchFilter;
+  initialWatchFilter?: GroupWatchFilter;
+  initialIsMember?: boolean;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [oldCursor, setOldCursor] = useState<string | undefined>(undefined);
-  const [watchFilter, setWatchFilter] = useState<WatchFilter>(initialWatchFilter);
+  const [watchFilter, setWatchFilter] = useState<GroupWatchFilter>(initialWatchFilter);
+  const [isMember, setIsMember] = useState<boolean>(initialIsMember);
 
-  const [getResults, { loading, data, fetchMore }] = useLazyQuery(GroupsDocument, {
-    // fetchPolicy: "network-only",
+  const [getResults, { loading, data, fetchMore, refetch }] = useLazyQuery(GroupsDocument, {
+    fetchPolicy: "cache-and-network", // Use cache first, then update with network data
   });
 
   const newCursor = data?.groupsForCurrentUser.length
@@ -31,6 +34,7 @@ const useGroupsSearch = ({
   const queryVarsRef = useRef<GroupsQueryVariables>({
     searchQuery,
     watchFilter,
+    isMember,
     limit: queryResultLimit,
     cursor: newCursor,
   });
@@ -49,11 +53,12 @@ const useGroupsSearch = ({
     queryVarsRef.current = {
       searchQuery,
       watchFilter,
+      isMember,
       limit: queryResultLimit,
       cursor: undefined,
     };
     debouncedRefetch();
-  }, [searchQuery, queryResultLimit, watchFilter]);
+  }, [searchQuery, queryResultLimit, watchFilter, isMember]);
 
   // Update queryVarsRef with the new cursor if there is new data
   useEffect(() => {
@@ -75,11 +80,14 @@ const useGroupsSearch = ({
     watchFilter,
     setWatchFilter,
     setOldCursor,
+    isMember,
+    setIsMember,
     oldCursor,
     newCursor,
     groups,
     loading,
     fetchMore,
+    refetch,
     queryVars: queryVarsRef.current,
   };
 };

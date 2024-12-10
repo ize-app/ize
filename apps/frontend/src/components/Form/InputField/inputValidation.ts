@@ -44,7 +44,9 @@ export const inputSchema = z
     z.object({
       type: z.literal(ValueType.Uri),
       required: z.boolean().default(true),
-      value: z.string().url().default(""),
+      value: z
+        .object({ uri: z.string().url(), name: z.string().min(1) })
+        .default({ uri: "", name: "" }),
     }),
     z.object({
       type: z.literal(ValueType.Date),
@@ -86,7 +88,7 @@ export const inputSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Only a maximum of " + field.maxSelections + " selections are allowed",
-          path: ["optionSelections"],
+          path: ["value"],
         });
       }
     }

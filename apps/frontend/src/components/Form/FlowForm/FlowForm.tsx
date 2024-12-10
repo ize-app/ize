@@ -57,10 +57,10 @@ export const FlowForm = forwardRef(
 
     const flowError = useFormMethods.formState.errors.steps;
 
-    if (name === "flow") {
-      console.log(name, "errors are ", useFormMethods.formState.errors);
-      console.log(name, "values are ", useFormMethods.getValues());
-    }
+    // if (name === "flow") {
+    //   console.log(name, "errors are ", useFormMethods.formState.errors);
+    //   console.log(name, "values are ", useFormMethods.getValues());
+    // }
 
     const hasStep0Response = !!useFormMethods.getValues(`steps.0.response`);
 

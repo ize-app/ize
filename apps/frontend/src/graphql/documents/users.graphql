@@ -26,6 +26,14 @@ fragment MeParts on Me {
   groups {
     ...GroupSummaryParts
   }
+  notifications {
+    ...NotificationSettings
+  }
+}
+
+fragment NotificationSettings on NotificationSettings {
+  transactional
+  marketing
 }
 
 fragment UserSummaryParts on User {

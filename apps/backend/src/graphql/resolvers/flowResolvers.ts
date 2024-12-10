@@ -11,7 +11,7 @@ import {
   QueryGetGroupsToWatchFlowArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
-import { updateUserGroups } from "@/core/entity/updateIdentitiesGroups/updateUserGroups/updateUserGroups";
+import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
 import { getGroupsToWatchFlow as getGroupsToWatchFlowService } from "@/core/flow/getGroupsToWatchFlow";
 
 const getFlow: QueryResolvers["getFlow"] = async (

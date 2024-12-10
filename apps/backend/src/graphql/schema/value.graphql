@@ -53,6 +53,7 @@ type FloatValue {
 
 type UriValue {
   uri: String!
+  name: String!
 }
 
 type DateValue {

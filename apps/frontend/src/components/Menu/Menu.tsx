@@ -1,8 +1,8 @@
-import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { Box, Button, Toolbar, Typography } from "@mui/material";
+import { Box, IconButton, Toolbar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -65,9 +65,12 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
               }}
             >
               <ListItemIcon sx={{ minWidth: "36px" }}>
-                <InboxIcon />
+                <InboxIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText primary={"Inbox"} />
+              <ListItemText
+                primary={"Inbox"}
+                primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
+              />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -81,26 +84,17 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 primary={"Flows"}
                 primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
               />
-            </ListItemButton>
-          </ListItem>
-          <List sx={{ padding: "0px 12px" }}>
-            <ListItem disablePadding>
-              <Button
-                color="secondary"
-                startIcon={<AddIcon fontSize="small" />}
-                onClick={() => {
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
                   navigate(newFlowRoute(NewFlowRoute.InitialSetup));
                   setMenuOpen(false);
                 }}
               >
-                <Box sx={{ display: "flex" }}>
-                  <Typography variant="description" fontWeight={400}>
-                    New flow
-                  </Typography>
-                </Box>
-              </Button>
-            </ListItem>
-          </List>
+                <AddCircleOutlineIcon fontSize="small" />
+              </IconButton>
+            </ListItemButton>
+          </ListItem>
           <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
@@ -112,6 +106,15 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 primary={"Groups"}
                 primaryTypographyProps={{ variant: "description", fontWeight: "600" }}
               />
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(newCustomGroupRoute(NewCustomGroupRoute.Setup));
+                  setMenuOpen(false);
+                }}
+              >
+                <AddCircleOutlineIcon fontSize="small" />
+              </IconButton>
             </ListItemButton>
           </ListItem>
           <List sx={{ padding: "0px 12px" }}>
@@ -135,22 +138,6 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
                 </ListItemButton>
               </ListItem>
             ))}
-            <ListItem disablePadding>
-              <Button
-                color="secondary"
-                startIcon={<AddIcon />}
-                onClick={() => {
-                  navigate(newCustomGroupRoute(NewCustomGroupRoute.Setup));
-                  setMenuOpen(false);
-                }}
-              >
-                <Box sx={{ display: "flex" }}>
-                  <Typography variant="description" fontWeight={400}>
-                    New group
-                  </Typography>
-                </Box>
-              </Button>
-            </ListItem>
           </List>
         </List>
       </Box>
@@ -163,17 +150,23 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
             }}
           >
             <ListItemIcon>
-              <GroupIcon />
+              <GroupIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary={"Identities"} />
+            <ListItemText
+              primary={"Identities"}
+              primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
+            />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
           <ListItemButton>
             <ListItemIcon>
-              <EmailIcon />
+              <EmailIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary={"Feedback"} />
+            <ListItemText
+              primary={"Feedback"}
+              primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
+            />
           </ListItemButton>
         </ListItem>
       </List>

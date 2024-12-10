@@ -82,6 +82,7 @@ fragment FloatValue on FloatValue {
 
 fragment UriValue on UriValue {
   uri
+  name
 }
 
 fragment DateValue on DateValue {

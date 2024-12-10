@@ -32,7 +32,7 @@ export const izeGroupResolver = ({
       : null,
     evolveGroupFlowId:
       izeGroup.group.OwnedFlows.find((f) => f.type === FlowType.EvolveGroup)?.id ?? null,
-    isWatched: izeGroup.group.EntityWatchedGroups.length > 0,
+    isWatched: izeGroup.group.EntityWatchedGroups.some((g) => g.watched),
     isMember: izeGroup.group.EntitiesInGroup.length > 0,
   };
 };

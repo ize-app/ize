@@ -1,4 +1,4 @@
-import { Button, ToggleButton, Typography } from "@mui/material";
+import { Button, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent } from "react";
 import { Link, generatePath } from "react-router-dom";
@@ -6,8 +6,9 @@ import { Link, generatePath } from "react-router-dom";
 import Loading from "@/components/Loading";
 import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { GroupWatchFilterToggle } from "@/components/Tables/GroupWatchFilterToggle";
 import Search from "@/components/Tables/Search";
-import { WatchFilter } from "@/graphql/generated/graphql";
+import { GroupWatchFilter } from "@/graphql/generated/graphql";
 import useGroupsSearch from "@/hooks/useGroupsSearch";
 import { NewCustomGroupRoute, newCustomGroupRoute } from "@/routers/routes";
 
@@ -21,6 +22,8 @@ export const GroupsSearch = () => {
     setSearchQuery,
     watchFilter,
     setWatchFilter,
+    isMember,
+    setIsMember,
     setOldCursor,
     oldCursor,
     newCursor,
@@ -28,72 +31,62 @@ export const GroupsSearch = () => {
     loading,
     fetchMore,
     queryVars,
-  } = useGroupsSearch({ queryResultLimit, initialWatchFilter: WatchFilter.Watched });
+  } = useGroupsSearch({
+    queryResultLimit,
+    initialWatchFilter: GroupWatchFilter.Watched,
+    initialIsMember: false,
+  });
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "8px",
+        // gap: "0px",
         height: "100%",
       }}
     >
       <Box
         sx={{
-          width: "100%",
           display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: "16px",
-          minWidth: "300px",
+          width: "100%",
         }}
       >
-        <Box
-          sx={(theme) => ({
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-            width: "100%",
-
-            [theme.breakpoints.down("md")]: {
-              flexDirection: "column",
-            },
-          })}
-        >
-          <Box sx={{ display: "flex", gap: "30px" }}>
-            <Search
-              searchQuery={searchQuery}
-              changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
-                setSearchQuery(event.target.value);
-              }}
-            />
-            <CreateButton />
-          </Box>
+        <Box sx={{ display: "flex", gap: "30px" }}>
+          <Search
+            searchQuery={searchQuery}
+            changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
+              setSearchQuery(event.target.value);
+            }}
+          />
+          <CreateButton />
+        </Box>
+        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap" }}>
+          <GroupWatchFilterToggle setWatchFilter={setWatchFilter} watchFilter={watchFilter} />
           <ToggleButton
             size="small"
-            value="check"
-            selected={watchFilter === WatchFilter.Watched}
-            sx={{ width: "160px", height: "30px" }}
+            value={isMember}
+            selected={isMember}
+            sx={{ height: "30px" }}
             color="primary"
             onChange={() => {
-              setWatchFilter(
-                watchFilter === WatchFilter.Watched ? WatchFilter.All : WatchFilter.Watched,
-              );
+              setIsMember(!isMember);
             }}
           >
-            Watched groups
+            Groups I am a member of
           </ToggleButton>
-        </Box>
+        </ToggleButtonGroup>
       </Box>
-      {loading ? (
+
+      {loading && groups.length == 0 ? (
         <Loading />
       ) : groups.length > 0 ? (
         <GroupsTable groups={groups} />
       ) : (
         <EmptyTablePlaceholder>
           <Typography>
-            You aren&apos;t a part of any Ize groups (yet!).{" "}
             <Link to={generatePath(newCustomGroupRoute(NewCustomGroupRoute.Setup))}>
               Create a group
             </Link>

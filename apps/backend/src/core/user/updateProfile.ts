@@ -24,6 +24,18 @@ export const updateProfile = async ({
     },
     data: {
       name: args.profile.name,
+      UserSettings: {
+        upsert: {
+          create: {
+            marketing: args.profile.notifications.marketing,
+            transactional: args.profile.notifications.transactional,
+          },
+          update: {
+            marketing: args.profile.notifications.marketing,
+            transactional: args.profile.notifications.transactional,
+          },
+        },
+      },
     },
   });
   return true;

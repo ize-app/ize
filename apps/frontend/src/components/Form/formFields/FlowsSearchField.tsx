@@ -13,7 +13,11 @@ import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { Avatar, AvatarGroup } from "@/components/Avatar";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
 
-import { FlowSummaryFragment, SystemFieldType } from "../../../graphql/generated/graphql";
+import {
+  FlowSummaryFragment,
+  FlowWatchFilter,
+  SystemFieldType,
+} from "../../../graphql/generated/graphql";
 
 interface FlowSearchProps<T extends FieldValues> {
   name: Path<T>;
@@ -63,8 +67,9 @@ export const FlowsSearchField = <T extends FieldValues>({
     useFlowsSearch({
       queryResultLimit,
       groupId: includeGroupId,
-      initialWatchedByUser: showUserWatched,
-      initialWatchedByUserGroups: showUserWatched,
+      initialFlowWatchFilter: showUserWatched
+        ? FlowWatchFilter.WatchedByMeOrMyGroups
+        : FlowWatchFilter.All,
       initialHasTriggerPermissions: false,
       excludeGroupId,
     });

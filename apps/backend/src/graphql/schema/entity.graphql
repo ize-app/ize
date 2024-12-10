@@ -14,7 +14,8 @@ type Query {
     cursor: String
     limit: Int!
     searchQuery: String!
-    watchFilter: WatchFilter!
+    watchFilter: GroupWatchFilter!
+    isMember: Boolean!
   ): [IzeGroup!]!
 }
 
@@ -224,4 +225,11 @@ input GroupEnsArgs {
 input GroupHatArgs {
   chain: Blockchain!
   tokenId: String!
+}
+
+enum GroupWatchFilter {
+  Watched
+  NotWatched
+  NotAcknowledged
+  All
 }
