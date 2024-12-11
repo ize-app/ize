@@ -91,10 +91,16 @@ input TestWebhookArgs {
   flowName: String!
   uri: String!
   triggerFields: [TestWebhookTriggerFieldsArgs!]!
-  results: [ResultType!]!
+  results: [TestWebhookResultArgs!]!
 }
 
 input TestWebhookTriggerFieldsArgs {
   name: String!
-  type: ValueType!
+  valueType: ValueType!
+}
+
+input TestWebhookResultArgs {
+  name: String!
+  type: ResultType!
+  valueType: ValueType!
 }

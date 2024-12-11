@@ -9802,8 +9802,8 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "ResultType",
+                    "kind": "INPUT_OBJECT",
+                    "name": "TestWebhookResultArgs",
                     "ofType": null
                   }
                 }
@@ -9860,7 +9860,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "TestWebhookTriggerFieldsArgs",
+        "name": "TestWebhookResultArgs",
         "description": null,
         "isOneOf": false,
         "fields": null,
@@ -9883,6 +9883,66 @@
           },
           {
             "name": "type",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ResultType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "valueType",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ValueType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "TestWebhookTriggerFieldsArgs",
+        "description": null,
+        "isOneOf": false,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "valueType",
             "description": null,
             "type": {
               "kind": "NON_NULL",

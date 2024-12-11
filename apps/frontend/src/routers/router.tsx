@@ -59,8 +59,12 @@ export const router = createBrowserRouter([
             element: <NewUser.Welcome />,
           },
           {
-            path: Routes.newUserRoute(Routes.NewUserRoute.GetStarted),
-            element: <NewUser.GetStarted />,
+            path: Routes.newUserRoute(Routes.NewUserRoute.Setup),
+            element: <NewUser.Setup />,
+          },
+          {
+            path: Routes.newUserRoute(Routes.NewUserRoute.Start),
+            element: <NewUser.Start />,
           },
         ],
       },

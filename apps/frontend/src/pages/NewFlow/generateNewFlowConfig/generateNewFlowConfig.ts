@@ -190,8 +190,8 @@ export const generateNewFlowConfig = ({
     });
 
     const evolve = generateEvolveConfig({
-      triggerPermission: creatorPermission,
-      respondPermission: permission,
+      triggerPermission: permission,
+      respondPermission: creatorPermission,
     });
 
     const flow: FlowSchemaType = {

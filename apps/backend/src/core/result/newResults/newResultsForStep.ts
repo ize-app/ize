@@ -32,6 +32,7 @@ export const newResultsForStep = async ({
         },
         ResultGroups: {
           include: resultGroupInclude,
+          orderBy: { index: "asc" },
         },
         Responses: {
           include: responseInclude,

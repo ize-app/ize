@@ -22,6 +22,7 @@ export const finalizeStepResults = async ({ requestStepId }: { requestStepId: st
         requestStepId,
       },
       include: resultGroupInclude,
+      orderBy: { index: "asc" },
     });
 
     const resultsFinal = resultGroups.every((result) => result.complete);

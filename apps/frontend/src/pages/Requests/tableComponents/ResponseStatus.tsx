@@ -16,7 +16,6 @@ export const ResponseStatus = ({ request }: { request: RequestSummaryFragment })
   const responsePermission = request.currentStep.userRespondPermission;
   const theme = useTheme();
 
-  console.log(request.requestName, "action: ", action);
   if (!responseComplete) {
     if (userResponded)
       return (

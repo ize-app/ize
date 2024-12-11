@@ -2,15 +2,22 @@ import { Box, Typography } from "@mui/material";
 
 import { StageType } from "./StageType";
 
+export interface StageContentProps {
+  label: string;
+  subtitle?: string | null | undefined;
+}
+
 export const FlowFormStageInnerContent = ({
   type,
-  label,
-  subtitle,
+  // label,
+  // subtitle,
+  content,
   color,
 }: {
   type: StageType;
-  label: string;
-  subtitle: string;
+  content: StageContentProps[];
+  // label: string;
+  // subtitle: string;
   color: string;
 }) => {
   return type === StageType.ActionFilter ? (
@@ -35,7 +42,8 @@ export const FlowFormStageInnerContent = ({
           textOverflow: "ellipsis",
         })}
       >
-        <span style={{ fontStyle: "italic", color: color }}>Decision filter:</span> {label}
+        <span style={{ fontStyle: "italic", color: color }}>Decision filter:</span>{" "}
+        {content[0]?.label ?? ""}
       </Typography>
     </Box>
   ) : (
@@ -46,14 +54,18 @@ export const FlowFormStageInnerContent = ({
         flexGrow: 1,
       }}
     >
-      <Typography variant="label" color={color}>
-        {label}
-      </Typography>
-      {subtitle && (
-        <Typography fontSize={".75rem"} lineHeight={"1rem"} width={"100%"}>
-          {subtitle}
-        </Typography>
-      )}
+      {content.map((item, index) => (
+        <Box key={index}>
+          <Typography variant="label" color={color}>
+            {item.label}
+          </Typography>
+          {item.subtitle && (
+            <Typography fontSize={".75rem"} lineHeight={"1rem"} width={"100%"}>
+              {item.subtitle}
+            </Typography>
+          )}
+        </Box>
+      ))}
     </Box>
   );
 };

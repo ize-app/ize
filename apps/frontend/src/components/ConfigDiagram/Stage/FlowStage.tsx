@@ -16,7 +16,7 @@ import {
 } from "@/graphql/generated/graphql";
 import { colors } from "@/style/style";
 
-import { FlowFormStageInnerContent } from "./FlowStageInnerContent";
+import { FlowFormStageInnerContent, StageContentProps } from "./FlowStageInnerContent";
 import { FlowStageWrapper } from "./FlowStageWrapper";
 import { Stage, StagePropsBase } from "./Stage";
 import { StageType } from "./StageType";
@@ -59,8 +59,7 @@ export const FlowStage = ({
   ...props
 }: FlowStageProps) => {
   const theme = useTheme();
-  let label: string = "";
-  let subtitle: string = "";
+  const content: StageContentProps[] = [];
   let entities: EntityFragment[] = [];
   let icon: React.ComponentType<SvgIconProps> | undefined;
 
@@ -71,29 +70,36 @@ export const FlowStage = ({
     case StageType.Trigger: {
       const { flow } = props;
       entities = flow.trigger.permission?.entities ?? [];
-      label = "Trigger";
+      content.push({ label: "Trigger", subtitle: "" });
       icon = PlayCircleOutlineOutlined;
       break;
     }
     case StageType.Step: {
       const { step } = props;
-      label = step.result[0]?.name ?? "Collaborative step";
-      subtitle = step.fieldSet.fields[0]?.name ?? "";
+      step.result.forEach((result, index) => {
+        const label = result.name ?? "Collaborative step";
+        const subtitle = step.fieldSet.fields[index]?.name ?? "";
+        content.push({ label, subtitle });
+      });
+
       icon = Diversity3Outlined;
       entities = step.response?.permission?.entities ?? [];
       break;
     }
     case StageType.Action: {
       const { action } = props;
-      label = action.name;
+      content.push({ label: action.name, subtitle: "" });
       icon = actionProperties[action.__typename as ActionType].icon;
       break;
     }
     case StageType.ActionFilter: {
       const { action } = props;
       if (!action?.filter) return null;
-      label = stringifyValue({
-        value: action.filter.option.value,
+      content.push({
+        label: stringifyValue({
+          value: action.filter.option.value,
+        }),
+        subtitle: "",
       });
       icon = FilterAltIcon;
     }
@@ -124,8 +130,7 @@ export const FlowStage = ({
         >
           <FlowFormStageInnerContent
             type={props.type}
-            label={label}
-            subtitle={subtitle}
+            content={content}
             color={color ?? theme.palette.primary.main}
           />
           {entities.length > 0 && <AvatarGroup avatars={entities} />}
