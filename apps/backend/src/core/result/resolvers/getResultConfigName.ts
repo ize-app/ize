@@ -48,7 +48,7 @@ export const getResultConfigName = ({
       else return "Create consensus w/ AI";
     }
     case ResultType.RawAnswers:
-      return "Get ideas";
+      return "Collect ideas";
     default:
       return "Collaborative step";
   }

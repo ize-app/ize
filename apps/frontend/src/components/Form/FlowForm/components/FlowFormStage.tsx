@@ -7,7 +7,10 @@ import { FieldError, useFieldArray, useFormContext } from "react-hook-form";
 
 import { actionProperties } from "@/components/Action/actionProperties";
 import { StageMenu } from "@/components/ConfigDiagram";
-import { FlowFormStageInnerContent } from "@/components/ConfigDiagram/Stage/FlowStageInnerContent";
+import {
+  FlowFormStageInnerContent,
+  StageContentProps,
+} from "@/components/ConfigDiagram/Stage/FlowStageInnerContent";
 import { FlowStageWrapper } from "@/components/ConfigDiagram/Stage/FlowStageWrapper";
 import { Stage, StageProps } from "@/components/ConfigDiagram/Stage/Stage";
 import { StageType } from "@/components/ConfigDiagram/Stage/StageType";
@@ -55,15 +58,14 @@ export const FlowFormStage = ({
   const { formState, getValues, setValue } = useFormContext<FlowSchemaType>();
   const theme = useTheme();
   let icon: React.ComponentType<SvgIconProps> | undefined;
-  let label: string = "";
-  let subtitle: string = "";
+  const content: StageContentProps[] = [];
   let disableDelete: boolean = false;
   let hasError: boolean = false;
   let deleteHandler: () => void = () => {};
 
   switch (args.type) {
     case StageType.Trigger: {
-      label = "Trigger";
+      content.push({ label: "Trigger" });
       disableDelete = true;
       hasError = !!formState.errors.fieldSet || !!formState.errors.trigger;
       icon = PlayCircleOutlineOutlinedIcon;
@@ -72,8 +74,11 @@ export const FlowFormStage = ({
     case StageType.Step: {
       const { index, stepsArrayMethods } = args;
       const step = getValues(`steps.${index}`);
-      label = getResultFormLabel({ result: step.result[0] });
-      subtitle = step.fieldSet.fields[0]?.name;
+      step.result.forEach((result, index) => {
+        const label = getResultFormLabel({ result });
+        const subtitle = step.fieldSet.fields[index]?.name ?? "";
+        content.push({ label, subtitle });
+      });
       disableDelete = step.fieldSet.locked;
       hasError =
         !!formState.errors.steps?.[index]?.fieldSet ||
@@ -123,7 +128,7 @@ export const FlowFormStage = ({
 
       icon = actionProperties[action.type].icon;
       disableDelete = action.locked;
-      label = actionProperties[action.type].label;
+      content.push({ label: actionProperties[action.type].label });
       // @ts-expect-error Type inference isn't working here because formstate errors has it's own "type"
       // field so action type union discrimination isn't working
       hasError = !!formState.errors.steps?.[index]?.action?.callWebhook as FieldError;
@@ -148,7 +153,7 @@ export const FlowFormStage = ({
         responseFields,
       });
       icon = FilterAltIcon;
-      label = getSelectOptionName(options, actionFilter.optionId) as string;
+      content.push({ label: getSelectOptionName(options, actionFilter.optionId) as string });
       hasError = !!formState.errors.steps?.[index]?.action?.filter;
 
       deleteHandler = () => {
@@ -193,8 +198,7 @@ export const FlowFormStage = ({
         >
           <FlowFormStageInnerContent
             type={args.type}
-            label={label}
-            subtitle={subtitle}
+            content={content}
             color={theme.palette.primary.main}
           />
           {/* {entities.length > 0 && <AvatarGroup avatars={entities} />} */}
