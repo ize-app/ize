@@ -100,6 +100,7 @@ export const newResult = async ({
         requestStepId,
         resultConfigId: resultConfig.id,
         complete: true,
+        index: resultConfig.index,
       };
 
       const resultGroup = await transaction.resultGroup.upsert({
@@ -150,6 +151,7 @@ export const newResult = async ({
         complete: false,
         retryAttempts,
         nextRetryAt,
+        index: resultConfig.index,
       },
       update: {
         complete: false,

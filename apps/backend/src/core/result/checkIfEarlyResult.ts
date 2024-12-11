@@ -25,6 +25,7 @@ export const checkToEndResponseEarly = async ({
         },
         ResultGroups: {
           include: resultGroupInclude,
+          orderBy: { index: "asc" },
         },
       },
     });

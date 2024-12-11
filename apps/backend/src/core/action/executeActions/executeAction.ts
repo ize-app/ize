@@ -46,6 +46,7 @@ export const executeAction = async ({
         },
         ResultGroups: {
           include: resultGroupInclude,
+          orderBy: { index: "asc" },
         },
         Actions: true,
       },

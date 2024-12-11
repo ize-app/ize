@@ -26,7 +26,6 @@ export const NewUserWizard = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const nextRoute = searchParams.get("next_route");
-    console.log("nextRoute", nextRoute);
     setFormState((prev) => ({ ...prev, nextRoute }));
   }, []);
 

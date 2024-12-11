@@ -43,6 +43,7 @@ export const requestStepInclude = Prisma.validator<Prisma.RequestStepInclude>()(
   },
   ResultGroups: {
     include: resultGroupInclude,
+    orderBy: { index: "asc" },
   },
   Actions: {
     include: actionInclude,
@@ -79,6 +80,7 @@ export const createRequestSummaryInclude = (userEntityIds: string[]) =>
         },
         ResultGroups: {
           include: resultGroupInclude,
+          orderBy: { index: "asc" },
         },
         Actions: {
           include: actionInclude,

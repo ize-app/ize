@@ -1120,14 +1120,20 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  results: Array<ResultType>;
+  results: Array<TestWebhookResultArgs>;
   triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
 };
 
+export type TestWebhookResultArgs = {
+  name: Scalars['String']['input'];
+  type: ResultType;
+  valueType: ValueType;
+};
+
 export type TestWebhookTriggerFieldsArgs = {
   name: Scalars['String']['input'];
-  type: ValueType;
+  valueType: ValueType;
 };
 
 export type TriggerConfig = {
@@ -2948,14 +2954,20 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  results: Array<ResultType>;
+  results: Array<TestWebhookResultArgs>;
   triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
 };
 
+export type TestWebhookResultArgs = {
+  name: Scalars['String']['input'];
+  type: ResultType;
+  valueType: ValueType;
+};
+
 export type TestWebhookTriggerFieldsArgs = {
   name: Scalars['String']['input'];
-  type: ValueType;
+  valueType: ValueType;
 };
 
 export type TriggerConfig = {

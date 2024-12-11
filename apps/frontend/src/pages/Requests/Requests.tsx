@@ -2,7 +2,6 @@ import Typography from "@mui/material/Typography";
 
 import { GroupInvitations } from "@/components/GroupInvitations/GroupInivitations";
 import { InfoBannersContainer } from "@/components/InfoBanner/InfoBannersContainer";
-import { NewUserCTA } from "@/components/NewUserCTA";
 import { FlowWatchFilter } from "@/graphql/generated/graphql";
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
@@ -18,7 +17,6 @@ export const Requests = () => {
       />
       <Typography variant="h1">Inbox</Typography>
       <InfoBannersContainer>
-        <NewUserCTA />
         <GroupInvitations />
       </InfoBannersContainer>
       <RequestSearch

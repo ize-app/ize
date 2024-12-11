@@ -918,6 +918,7 @@ model ResultGroup {
   id             String       @id @default(uuid()) @db.Uuid
   requestStepId  String       @map("request_step_id") @db.Uuid
   resultConfigId String       @map("result_config_id") @db.Uuid
+  index          Int
   // whether a given result has finished completing
   complete       Boolean      @default(false)
   // if result hasn't finished completing, how many times has it been retried and when will it be retried next

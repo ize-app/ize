@@ -1121,14 +1121,20 @@ export enum SystemFieldType {
 
 export type TestWebhookArgs = {
   flowName: Scalars['String']['input'];
-  results: Array<ResultType>;
+  results: Array<TestWebhookResultArgs>;
   triggerFields: Array<TestWebhookTriggerFieldsArgs>;
   uri: Scalars['String']['input'];
 };
 
+export type TestWebhookResultArgs = {
+  name: Scalars['String']['input'];
+  type: ResultType;
+  valueType: ValueType;
+};
+
 export type TestWebhookTriggerFieldsArgs = {
   name: Scalars['String']['input'];
-  type: ValueType;
+  valueType: ValueType;
 };
 
 export type TriggerConfig = {
@@ -1439,6 +1445,7 @@ export type ResolversTypes = {
   StringValue: ResolverTypeWrapper<StringValue>;
   SystemFieldType: SystemFieldType;
   TestWebhookArgs: TestWebhookArgs;
+  TestWebhookResultArgs: TestWebhookResultArgs;
   TestWebhookTriggerFieldsArgs: TestWebhookTriggerFieldsArgs;
   TriggerConfig: ResolverTypeWrapper<Omit<TriggerConfig, 'permission'> & { permission: ResolversTypes['Permission'] }>;
   TriggerConfigArgs: TriggerConfigArgs;
@@ -1572,6 +1579,7 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   StringValue: StringValue;
   TestWebhookArgs: TestWebhookArgs;
+  TestWebhookResultArgs: TestWebhookResultArgs;
   TestWebhookTriggerFieldsArgs: TestWebhookTriggerFieldsArgs;
   TriggerConfig: Omit<TriggerConfig, 'permission'> & { permission: ResolversParentTypes['Permission'] };
   TriggerConfigArgs: TriggerConfigArgs;

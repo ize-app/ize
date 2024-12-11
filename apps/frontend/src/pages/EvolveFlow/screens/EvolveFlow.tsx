@@ -38,7 +38,6 @@ export const EvolveFlow = () => {
       isForEvolveRequest: true,
     },
     onCompleted: (data) => {
-      console.log("flow", data.getFlow);
       const flowFormState = createFlowFormState(data.getFlow as FlowFragment);
       const evolveFormState = createFlowFormState(data.getFlow.evolve as FlowFragment);
       setFormState((prev): EvolveExistingFlowSchemaType => {

@@ -28,7 +28,6 @@ export const DefaultLayout = () => {
   // purpose of this is to redirect new users to the new flow page
   // unless they're trying to go directly to a request / flow / group page
   useEffect(() => {
-    console.log();
     const isNewUser = Cookies.get("new_user") === "true" && !!me?.user;
     const currentPath = location.pathname;
     const searchParams = new URLSearchParams({ next_route: currentPath });

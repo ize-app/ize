@@ -41,6 +41,7 @@ export type ResultConfigPrismaType = Prisma.ResultConfigGetPayload<{
 export const resultConfigSetInclude = Prisma.validator<Prisma.ResultConfigSetInclude>()({
   ResultConfigs: {
     include: resultConfigInclude,
+    orderBy: { index: "asc" },
   },
 });
 
