@@ -77,6 +77,13 @@ export const sendTelegramNewStepMessage = async ({
           });
 
           if (responseFields.length === 0) return;
+          if (responseFields.length > 1)
+            await sendDefaultResponseMessage({
+              message: "This request requires a response within Ize",
+              telegramGroup: group,
+              replyMessageId: message.message_id,
+              requestUrl: url,
+            });
           else if (!chatHasRespondPermission)
             await sendDefaultResponseMessage({
               message: "The permissions of this request require a response within Ize",

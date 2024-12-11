@@ -54,6 +54,14 @@ export const FlowFormStageInnerContent = ({
           {subtitle}
         </Typography>
       )}
+      <Typography variant="label" color={color}>
+        {label}
+      </Typography>
+      {subtitle && (
+        <Typography fontSize={".75rem"} lineHeight={"1rem"} width={"100%"}>
+          {subtitle}
+        </Typography>
+      )}
     </Box>
   );
 };

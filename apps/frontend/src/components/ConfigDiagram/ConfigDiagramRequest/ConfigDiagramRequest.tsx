@@ -78,7 +78,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
               <StageConnectorButton key={"connector-final"} />
               <RequestStage
                 status={
-                  request.requestSteps[finalStepIndex].actionExecution?.status ??
+                  request.requestSteps[finalStepIndex]?.actionExecution?.status ??
                   ActionStatus.NotStarted
                 }
                 type={StageType.Action}
