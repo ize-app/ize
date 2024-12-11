@@ -623,6 +623,7 @@ CREATE TABLE "result_groups" (
     "id" UUID NOT NULL,
     "request_step_id" UUID NOT NULL,
     "result_config_id" UUID NOT NULL,
+    "index" INTEGER NOT NULL,
     "complete" BOOLEAN NOT NULL DEFAULT false,
     "retry_attempts" INTEGER NOT NULL DEFAULT 0,
     "next_retry_at" TIMESTAMP(3),
