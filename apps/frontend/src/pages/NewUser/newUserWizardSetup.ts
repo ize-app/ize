@@ -10,7 +10,7 @@ export function useNewUserWizardState() {
   return useWizardFormState<NewUserFormSchema>();
 }
 
-export const NEW_USER_PROGRESS_BAR_STEPS = ["Welcome!", "Connect identities", "Get started"];
+export const NEW_USER_PROGRESS_BAR_STEPS = ["Welcome!", "Setup", "Get started"];
 
 export const NEW_USER_WIZARD_STEPS: WizardSteps<NewUserFormSchema> = [
   {
@@ -21,9 +21,16 @@ export const NEW_USER_WIZARD_STEPS: WizardSteps<NewUserFormSchema> = [
     validWizardState: () => true,
   },
   {
-    path: newUserRoute(NewUserRoute.GetStarted),
-    title: "Connect identities",
+    path: newUserRoute(NewUserRoute.Setup),
+    title: "Setup your account",
     progressBarStep: 1,
+    canNext: () => true,
+    validWizardState: () => true,
+  },
+  {
+    path: newUserRoute(NewUserRoute.Start),
+    title: "Get started",
+    progressBarStep: 2,
     canNext: () => true,
     validWizardState: () => true,
   },

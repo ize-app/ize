@@ -14,7 +14,7 @@ import { UserIdentities } from "@/pages/Settings/UserIdentities";
 
 import { useNewUserWizardState } from "../newUserWizardSetup";
 
-export const GetStarted = () => {
+export const Setup = () => {
   const { me, refetch } = useContext(CurrentUserContext);
   const { setSnackbarOpen, setSnackbarData } = useContext(SnackbarContext);
   const formMethods = useForm<UserSettingsSchemaType>({
