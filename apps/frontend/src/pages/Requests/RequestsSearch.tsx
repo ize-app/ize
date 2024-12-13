@@ -27,12 +27,18 @@ import { RequestSummaryTable } from "./RequestsTable";
 
 export const RequestSearch = ({
   initialFlowWatchFilter,
+  initialRequestStatusFilter,
   initialNeedsResponseFilter,
   flowId,
   groupId,
+  showRequestStatusFilter,
+  showNeedsResponseFilter,
 }: {
   initialFlowWatchFilter: FlowWatchFilter;
+  initialRequestStatusFilter: RequestStatusFilter;
   initialNeedsResponseFilter: boolean;
+  showRequestStatusFilter: boolean;
+  showNeedsResponseFilter: boolean;
   groupId?: string;
   flowId?: string;
 }) => {
@@ -67,10 +73,11 @@ export const RequestSearch = ({
     queryResultLimit,
     initialFlowWatchFilter,
     initialNeedsResponseFilter,
+    initialRequestStatusFilter,
   });
 
   useEffect(() => {
-    if(requestStatusFilter === RequestStatusFilter.Final){
+    if (requestStatusFilter === RequestStatusFilter.Final) {
       setNeedsResponse(false);
     }
   }, [requestStatusFilter]);
@@ -82,7 +89,7 @@ export const RequestSearch = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "30px",
+        gap: "16px",
         height: "100%",
       }}
     >
@@ -106,22 +113,26 @@ export const RequestSearch = ({
           {me && <CreateButton />}
         </Box>
         <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap" }}>
-          <RequestStatusToggle
-            requestStatusFilter={requestStatusFilter}
-            setRequestStatusFilter={setRequestStatusFilter}
-          />
-          <ToggleButton
-            size="small"
-            value={needsResponse}
-            selected={needsResponse}
-            sx={{ width: "140px", height: "30px" }}
-            color="primary"
-            onChange={() => {
-              setNeedsResponse(!needsResponse);
-            }}
-          >
-            Needs response
-          </ToggleButton>
+          {showRequestStatusFilter && (
+            <RequestStatusToggle
+              requestStatusFilter={requestStatusFilter}
+              setRequestStatusFilter={setRequestStatusFilter}
+            />
+          )}
+          {showNeedsResponseFilter && (
+            <ToggleButton
+              size="small"
+              value={needsResponse}
+              selected={needsResponse}
+              sx={{ width: "140px", height: "30px" }}
+              color="primary"
+              onChange={() => {
+                setNeedsResponse(!needsResponse);
+              }}
+            >
+              Needs response
+            </ToggleButton>
+          )}
           {!flowId && (
             <FlowWatchFilterToggle
               flowWatchFilter={flowWatchFilter}

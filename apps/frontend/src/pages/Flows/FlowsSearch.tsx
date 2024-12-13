@@ -64,7 +64,7 @@ export const FlowsSearch = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "30px",
+        // gap: "30px",
         height: "100%",
         width: "100%",
         minWidth: "0",

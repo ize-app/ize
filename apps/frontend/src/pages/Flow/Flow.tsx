@@ -28,6 +28,7 @@ import {
   FlowType,
   FlowWatchFilter,
   GetFlowDocument,
+  RequestStatusFilter,
 } from "../../graphql/generated/graphql";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -342,6 +343,9 @@ export const Flow = () => {
             initialFlowWatchFilter={FlowWatchFilter.All}
             flowId={flow.flowId}
             initialNeedsResponseFilter={false}
+            showNeedsResponseFilter={true}
+            showRequestStatusFilter={true}
+            initialRequestStatusFilter={RequestStatusFilter.Open}
           />
         )}
       </Box>
