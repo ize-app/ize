@@ -477,6 +477,13 @@ export type IdentityEmailArgs = {
   email: Scalars['String']['input'];
 };
 
+export enum IdentityEnum {
+  Blockchain = 'Blockchain',
+  Discord = 'Discord',
+  Email = 'Email',
+  Telegram = 'Telegram'
+}
+
 export type IdentityTelegram = {
   __typename?: 'IdentityTelegram';
   id: Scalars['String']['output'];
@@ -2310,6 +2317,13 @@ export type IdentityEmail = {
 export type IdentityEmailArgs = {
   email: Scalars['String']['input'];
 };
+
+export enum IdentityEnum {
+  Blockchain = 'Blockchain',
+  Discord = 'Discord',
+  Email = 'Email',
+  Telegram = 'Telegram'
+}
 
 export type IdentityTelegram = {
   __typename?: 'IdentityTelegram';

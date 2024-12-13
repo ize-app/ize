@@ -71,7 +71,7 @@ export const GroupInvitations = () => {
                   })}
                   style={{ textDecoration: "none", color: theme.palette.primary.main }}
                 >
-                  {group.group.name} asdfasdfalksdjfasl;dkfjasdfasdfasdfasdf
+                  {group.group.name}
                 </Link>
               </Typography>
               <Box sx={{ display: "flex", gap: "8px" }}>

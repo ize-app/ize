@@ -37,6 +37,13 @@ enum EntityType {
 
 union Entity = Identity | Group | User
 
+enum IdentityEnum {
+  Blockchain
+  Discord
+  Email
+  Telegram
+}
+
 union IdentityType = IdentityBlockchain | IdentityEmail | IdentityDiscord | IdentityTelegram
 
 type Identity {

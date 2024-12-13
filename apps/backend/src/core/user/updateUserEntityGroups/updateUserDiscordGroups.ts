@@ -5,7 +5,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { DiscordServer } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
-import { upsertForGroupTypeOfEntity } from "../upsertForGroupTypeOfEntity";
+import { upsertForGroupTypeOfEntity } from "./upsertForGroupTypeOfEntity";
 
 export const updateUserDiscordGroups = async ({
   context,

@@ -1,6 +1,7 @@
 import { TelegramUserData } from "@telegram-auth/server/utils";
 
-import { IdentityPrismaType } from "../core/entity/identity/identityPrismaTypes";
+import { getTelegramIdentityChatGroups } from "./getTelegramIdentityChatGroups";
+import { IdentityPrismaType, identityInclude } from "../core/entity/identity/identityPrismaTypes";
 import { prisma } from "../prisma/client";
 
 export const upsertTelegramIdentity = async ({
@@ -23,9 +24,7 @@ export const upsertTelegramIdentity = async ({
 
   if (!identity) {
     identity = await prisma.identity.create({
-      include: {
-        IdentityTelegram: true,
-      },
+      include: identityInclude,
       data: {
         User: userId
           ? {
@@ -46,6 +45,7 @@ export const upsertTelegramIdentity = async ({
         },
       },
     });
+    getTelegramIdentityChatGroups(identity.IdentityTelegram, identity.entityId);
   } else {
     identity = await prisma.identity.update({
       include: {

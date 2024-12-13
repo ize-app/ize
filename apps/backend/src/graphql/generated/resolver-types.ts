@@ -478,6 +478,13 @@ export type IdentityEmailArgs = {
   email: Scalars['String']['input'];
 };
 
+export enum IdentityEnum {
+  Blockchain = 'Blockchain',
+  Discord = 'Discord',
+  Email = 'Email',
+  Telegram = 'Telegram'
+}
+
 export type IdentityTelegram = {
   __typename?: 'IdentityTelegram';
   id: Scalars['String']['output'];
@@ -1379,6 +1386,7 @@ export type ResolversTypes = {
   IdentityDiscordArgs: IdentityDiscordArgs;
   IdentityEmail: ResolverTypeWrapper<IdentityEmail>;
   IdentityEmailArgs: IdentityEmailArgs;
+  IdentityEnum: IdentityEnum;
   IdentityTelegram: ResolverTypeWrapper<IdentityTelegram>;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;

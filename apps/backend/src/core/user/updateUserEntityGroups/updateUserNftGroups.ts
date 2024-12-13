@@ -4,9 +4,9 @@ import { alchemyClient } from "@/blockchain/alchemyClient/alchemyClient";
 import { chainMap } from "@/blockchain/chainMap";
 import { GraphqlRequestContext } from "@/graphql/context";
 import { Blockchain } from "@/graphql/generated/resolver-types";
+import { prisma } from "@/prisma/client";
 
-import { prisma } from "../../../../prisma/client";
-import { upsertForGroupTypeOfEntity } from "../upsertForGroupTypeOfEntity";
+import { upsertForGroupTypeOfEntity } from "./upsertForGroupTypeOfEntity";
 
 export const updateUserNftGroups = async ({
   context,

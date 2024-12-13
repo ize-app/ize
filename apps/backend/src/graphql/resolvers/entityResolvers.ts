@@ -16,7 +16,6 @@ import {
 } from "@graphql/generated/resolver-types";
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
-import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
 import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
 
 const newEntities: MutationResolvers["newEntities"] = async (
@@ -66,8 +65,6 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
     });
     return groupId;
   });
-  // associate user with any new identities that were created when creating the new group
-  await updateUserGroups({ context });
 
   return groupId;
 };
