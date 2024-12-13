@@ -1,8 +1,9 @@
 import { Telegraf } from "telegraf";
 
 import config from "@/config";
+import { FlowConfigGeneration } from "@/core/flow/generateFlowArgs/generateNonreusableFlowConfig/generateNonreusableFlowConfig";
 
-import { ideate, letAiDecide, linkGroup, synthesize } from "./commands";
+import { handleGenerateFlowCommand, linkGroup } from "./commands";
 import { handleTelegramFreeTextResponse } from "./handleTelegramFreeTextResponse";
 import { handleTelegramPollResponse } from "./handleTelegramPollResponse";
 
@@ -50,21 +51,19 @@ const initializeCommandsAndEvents = () => {
   ]);
 
   telegramBot.command("linkgroup", async (ctx) => {
-    console.log("inside linkgroup command");
     await linkGroup({ ctx });
   });
 
   telegramBot.command("synthesize", async (ctx) => {
-    console.log("inside synthesize command");
-    await synthesize({ ctx });
+    await handleGenerateFlowCommand({ ctx, flowType: FlowConfigGeneration.Synthesize });
   });
 
   telegramBot.command("ideate", async (ctx) => {
-    await ideate({ ctx });
+    await handleGenerateFlowCommand({ ctx, flowType: FlowConfigGeneration.Ideate });
   });
 
   telegramBot.command("let_ai_decide", async (ctx) => {
-    await letAiDecide({ ctx });
+    await handleGenerateFlowCommand({ ctx, flowType: FlowConfigGeneration.LetAiDecide });
   });
 
   telegramBot.on("poll_answer", (ctx) => {

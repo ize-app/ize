@@ -2,7 +2,7 @@ import { handleExpiredResults } from "./handleExpiredRequests";
 import { retryActions } from "./retryActions";
 import { retryNewResults } from "./retryNewResults";
 
-const intervalTime = 5 * 60 * 1000; // 5 minutes
+const intervalTime = 2 * 60 * 1000; // 2 minutes
 let isRunning: boolean = false;
 
 const updateRequestsCron = async () => {

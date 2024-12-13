@@ -1,8 +1,8 @@
-import config from "@/config";
+import { getIzeUrl } from "@/utils/getUrl";
 import { fullUUIDToShort } from "@/utils/uuid";
 
 export const createRequestUrl = ({ requestId }: { requestId: string }) => {
-  const baseIzeUrl = config.isDev ? config.LOCAL_URL : config.PROD_URL;
+  const baseIzeUrl = getIzeUrl();
 
   return `${baseIzeUrl}/requests/${fullUUIDToShort(requestId)}`;
 };
