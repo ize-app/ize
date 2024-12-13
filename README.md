@@ -38,7 +38,7 @@ Add database URL to your backend env file.
 DATABASE_URL="postgresql://<username>@localhost:5432/izedev"
 ```
 
-Create a port forwarding tunnel from port 80. You can use a service like ngrok or vs code. Set the address in the backend env file. This is used so that external services like Telegram API can communicate with local server via SSL.
+Create a port forwarding tunnel from port 3000. You can use a service like ngrok or vs code. Set the address in the backend env file. This is used so that external services like Telegram API can communicate with local server via SSL.
 
 ```
 PORT_FORWARDING_ADDRESS=""

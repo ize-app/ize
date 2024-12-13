@@ -1,5 +1,5 @@
-import { finalizeStepResults } from "../core/request/updateState/finalizeStepResults";
-import { prisma } from "../prisma/client";
+import { prisma } from "../../../prisma/client";
+import { finalizeStepResults } from "../updateState/finalizeStepResults";
 
 // get all steps where response is not final and is expired
 // attempt to finalize results if they are all complete so rest of step execution can complete
