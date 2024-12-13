@@ -1,7 +1,7 @@
 import { newResultsForStep } from "@/core/result/newResults/newResultsForStep";
 
-import { finalizeStepResults } from "../core/request/updateState/finalizeStepResults";
-import { prisma } from "../prisma/client";
+import { prisma } from "../../../prisma/client";
+import { finalizeStepResults } from "../updateState/finalizeStepResults";
 export const retryNewResults = async () => {
   try {
     //  check if there are any request steps that don't have completed results

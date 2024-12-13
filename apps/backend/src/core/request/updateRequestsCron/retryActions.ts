@@ -1,5 +1,5 @@
-import { executeAction } from "../core/action/executeActions/executeAction";
-import { prisma } from "../prisma/client";
+import { prisma } from "../../../prisma/client";
+import { executeAction } from "../../action/executeActions/executeAction";
 
 // get all actions where result is final but action is not complete
 // retry all failed actions

@@ -26,7 +26,7 @@ export const generateNonreusableFlowConfig = ({
   type,
   prompt,
 }: GenerateCustomFlowConfig): NewFlowArgs => {
-  const expirationSeconds = 60 * 60 * 24 * 3;
+  const expirationSeconds = 60 * 60 * 24 * 1;
   const canBeManuallyEnded = true;
   const respondPermission: PermissionArgs = { anyone: false, entities: [{ id: respondEntityId }] };
   const emptyPermission: PermissionArgs = { anyone: false, entities: [] };
@@ -132,6 +132,8 @@ export const generateNonreusableFlowConfig = ({
       const step1ResponseFieldId = crypto.randomUUID();
       const step2ResponseFieldId = crypto.randomUUID();
       const step1ResultId = crypto.randomUUID();
+      const step1Id = crypto.randomUUID();
+      const step2Id = crypto.randomUUID();
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
@@ -151,7 +153,7 @@ export const generateNonreusableFlowConfig = ({
         },
         steps: [
           {
-            stepId: crypto.randomUUID(),
+            stepId: step1Id,
             fieldSet: {
               fields: [
                 {
@@ -179,10 +181,10 @@ export const generateNonreusableFlowConfig = ({
                 llmSummary: { prompt: "", isList: true },
               },
             ],
-            action: { type: ActionType.TriggerStep, locked: false },
+            action: { type: ActionType.TriggerStep, locked: false, stepId: step2Id },
           },
           {
-            stepId: crypto.randomUUID(),
+            stepId: step2Id,
             fieldSet: {
               fields: [
                 {
@@ -200,13 +202,7 @@ export const generateNonreusableFlowConfig = ({
               ],
               locked: false,
             },
-            response: {
-              permission: emptyPermission,
-              expirationSeconds,
-              allowMultipleResponses: false,
-              canBeManuallyEnded,
-              minResponses: 1,
-            },
+            response: undefined,
             result: [
               {
                 resultConfigId: crypto.randomUUID(),

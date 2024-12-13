@@ -13,6 +13,7 @@ import cors from "cors";
 import express from "express";
 
 import config from "@/config";
+import { startUpdateRequestsCron } from "@/core/request/updateRequestsCron/updateRequestsCron";
 import { MePrismaType } from "@/core/user/userPrismaTypes";
 import { telegramBot } from "@/telegram/TelegramClient";
 
@@ -79,6 +80,8 @@ Sentry.setupExpressErrorHandler(app);
 
 app.use(expressGloalErrorHandler);
 
+startUpdateRequestsCron();
+
 server.start().then(() => {
   app.use(authenticateSession);
   app.use(
@@ -102,7 +105,13 @@ server.start().then(() => {
 
   const gracefulShutdown = (signal: string) => {
     console.log(`Received ${signal}, shutting down gracefully.`);
-    telegramBot.stop(signal);
+    try {
+      // stop polling
+      telegramBot.stop(signal);
+    } catch {
+      // error expected here if bot is not polling because its using the webhook
+    }
+
     expressServer.close(() => {
       if (signal !== "SIGUSR2") {
         process.exit(0);
