@@ -69,6 +69,7 @@ authRouter.get("/token", async (req, res, next) => {
           });
         }
       } else if (stytch_token_type === "magic_links" || stytch_token_type === "login") {
+        console.log("existingSessionToken", exitingSessionToken);
         const stytchMagicAuthentication = await stytchClient.magicLinks.authenticate({
           token,
           session_duration_minutes: sessionDurationMinutes,

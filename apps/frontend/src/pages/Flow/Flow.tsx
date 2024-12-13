@@ -259,7 +259,7 @@ export const Flow = () => {
                       )
                     }
                   >
-                    Create request
+                    Trigger flow
                   </Button>
                   <Button
                     variant="contained"

@@ -42,7 +42,14 @@ export const GroupsFilterToggle = ({
         size="small"
         value={"Watched by me"}
         selected={!!selectedGroupId}
-        sx={{ height: "30px", display: "flex", justifyContent: "space-between" }}
+        sx={(theme) => ({
+          height: "30px",
+          display: "flex",
+          justifyContent: "space-between",
+          [theme.breakpoints.down("sm")]: {
+            width: "100%",
+          },
+        })}
         color="primary"
         onClick={handleClick}
         onChange={() => {

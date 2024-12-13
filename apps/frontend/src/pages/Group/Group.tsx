@@ -56,7 +56,7 @@ export const Group = () => {
 
   const tabs: TabProps[] = [
     {
-      title: "Requests",
+      title: "Activity",
       content: !loading ? (
         <RequestSearch
           initialFlowWatchFilter={FlowWatchFilter.All}

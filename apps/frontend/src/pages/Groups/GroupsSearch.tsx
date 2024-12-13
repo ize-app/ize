@@ -1,11 +1,18 @@
-import { Button, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import {
+  Button,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
-import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { FilterMenu } from "@/components/Tables/FilterMenu";
 import { GroupWatchFilterToggle } from "@/components/Tables/GroupWatchFilterToggle";
 import Search from "@/components/Tables/Search";
 import { GroupWatchFilter } from "@/graphql/generated/graphql";
@@ -37,12 +44,42 @@ export const GroupsSearch = () => {
     initialIsMember: false,
   });
 
+  const theme = useTheme();
+  const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const groupWatchToggle = (
+    <GroupWatchFilterToggle setWatchFilter={setWatchFilter} watchFilter={watchFilter} />
+  );
+
+  const memberToggle = (
+    <ToggleButton
+      size="small"
+      value={isMember}
+      selected={isMember}
+      sx={(theme) => ({
+        height: "30px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+          justifyContent: "space-between",
+        },
+      })}
+      color="primary"
+      onChange={() => {
+        setIsMember(!isMember);
+      }}
+    >
+      Groups I am a member of
+    </ToggleButton>
+  );
+
+  const toggleButtons = [groupWatchToggle, memberToggle];
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        // gap: "0px",
+        gap: "16px",
         height: "100%",
       }}
     >
@@ -54,30 +91,34 @@ export const GroupsSearch = () => {
           width: "100%",
         }}
       >
-        <Box sx={{ display: "flex", gap: "30px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "16px",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+          }}
+        >
           <Search
             searchQuery={searchQuery}
             changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />
-          <CreateButton />
+          {isSmallScreenSize ? (
+            <FilterMenu toggleButtons={toggleButtons} />
+          ) : (
+            <ToggleButtonGroup
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+            >
+              {toggleButtons}
+            </ToggleButtonGroup>
+          )}
         </Box>
-        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap" }}>
-          <GroupWatchFilterToggle setWatchFilter={setWatchFilter} watchFilter={watchFilter} />
-          <ToggleButton
-            size="small"
-            value={isMember}
-            selected={isMember}
-            sx={{ height: "30px" }}
-            color="primary"
-            onChange={() => {
-              setIsMember(!isMember);
-            }}
-          >
-            Groups I am a member of
-          </ToggleButton>
-        </ToggleButtonGroup>
       </Box>
 
       {loading && groups.length == 0 ? (

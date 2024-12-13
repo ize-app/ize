@@ -11,8 +11,8 @@ import { ChangeEvent, useContext, useEffect } from "react";
 import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
-import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { FilterMenu } from "@/components/Tables/FilterMenu";
 import { FlowWatchFilterToggle } from "@/components/Tables/FlowWatchFilterToggle";
 import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle";
 import { RequestStatusToggle } from "@/components/Tables/RequestStatusToggle";
@@ -43,9 +43,6 @@ export const RequestSearch = ({
   flowId?: string;
 }) => {
   const queryResultLimit = 20;
-
-  const theme = useTheme();
-  const isMdScreenSize = useMediaQuery(theme.breakpoints.down("md"));
 
   const {
     searchQuery,
@@ -82,7 +79,85 @@ export const RequestSearch = ({
     }
   }, [requestStatusFilter]);
 
+  const theme = useTheme();
+  const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
+
   const { me } = useContext(CurrentUserContext);
+
+  const toggleButtons = [];
+
+  const requestStatusToggle = (
+    <RequestStatusToggle
+      requestStatusFilter={requestStatusFilter}
+      setRequestStatusFilter={setRequestStatusFilter}
+    />
+  );
+
+  const needsResponseToggle = (
+    <ToggleButton
+      size="small"
+      value={needsResponse}
+      selected={needsResponse}
+      sx={(theme) => ({
+        width: "140px",
+        height: "30px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+          justifyContent: "space-between",
+        },
+      })}
+      color="primary"
+      onChange={() => {
+        setNeedsResponse(!needsResponse);
+      }}
+    >
+      Needs response
+    </ToggleButton>
+  );
+
+  const groupsFilterToggle = (
+    <GroupsFilterToggle
+      setSelectedGroupId={setSelectedGroupId}
+      selectedGroupId={selectedGroupId}
+      groups={me?.groups ?? []}
+    />
+  );
+
+  const flowWatchToggle = (
+    <FlowWatchFilterToggle
+      flowWatchFilter={flowWatchFilter}
+      showWatchedByGroupsOption={!groupId}
+      setWatchFlowFilter={setFlowWatchFilter}
+    />
+  );
+
+  const createdByUserToggle = (
+    <ToggleButton
+      size="small"
+      value={createdByUser}
+      selected={createdByUser}
+      sx={(theme) => ({
+        width: "140px",
+        height: "30px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+          justifyContent: "space-between",
+        },
+      })}
+      color="primary"
+      onChange={() => {
+        setCreatedByUser(!createdByUser);
+      }}
+    >
+      Created by me
+    </ToggleButton>
+  );
+
+  if (showRequestStatusFilter) toggleButtons.push(requestStatusToggle);
+  if (showNeedsResponseFilter) toggleButtons.push(needsResponseToggle);
+  if (!flowId) toggleButtons.push(flowWatchToggle);
+  if (!groupId && !flowId) toggleButtons.push(groupsFilterToggle);
+  toggleButtons.push(createdByUserToggle);
 
   return (
     <Box
@@ -103,67 +178,34 @@ export const RequestSearch = ({
           gap: "16px",
         }}
       >
-        <Box sx={{ display: "flex", gap: "16px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "16px",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+          }}
+        >
           <Search
             searchQuery={searchQuery}
             changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />
-          {me && <CreateButton />}
-        </Box>
-        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap" }}>
-          {showRequestStatusFilter && (
-            <RequestStatusToggle
-              requestStatusFilter={requestStatusFilter}
-              setRequestStatusFilter={setRequestStatusFilter}
-            />
-          )}
-          {showNeedsResponseFilter && (
-            <ToggleButton
-              size="small"
-              value={needsResponse}
-              selected={needsResponse}
-              sx={{ width: "140px", height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setNeedsResponse(!needsResponse);
+          {isSmallScreenSize ? (
+            <FilterMenu toggleButtons={toggleButtons} />
+          ) : (
+            <ToggleButtonGroup
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
               }}
             >
-              Needs response
-            </ToggleButton>
+              {toggleButtons}
+            </ToggleButtonGroup>
           )}
-          {!flowId && (
-            <FlowWatchFilterToggle
-              flowWatchFilter={flowWatchFilter}
-              showWatchedByGroupsOption={!groupId}
-              setWatchFlowFilter={setFlowWatchFilter}
-            />
-          )}
-          {!groupId && !flowId && (
-            <GroupsFilterToggle
-              setSelectedGroupId={setSelectedGroupId}
-              selectedGroupId={selectedGroupId}
-              groups={me?.groups ?? []}
-            />
-          )}
-          {!isMdScreenSize && (
-            <>
-              <ToggleButton
-                size="small"
-                value={createdByUser}
-                selected={createdByUser}
-                sx={{ width: "140px", height: "30px" }}
-                color="primary"
-                onChange={() => {
-                  setCreatedByUser(!createdByUser);
-                }}
-              >
-                Created by me
-              </ToggleButton>
-            </>
-          )}
-        </ToggleButtonGroup>
+        </Box>
       </Box>
       {loading && requestSteps.length === 0 ? (
         <Loading />

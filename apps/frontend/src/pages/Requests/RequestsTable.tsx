@@ -23,7 +23,7 @@ dayjs.extend(timezone);
 
 export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFragment[] }) => {
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
       <Table aria-label="Request Table" sx={{ tableLayout: "fixed", width: "100%" }}>
         <TableHead></TableHead>
         <TableBody>

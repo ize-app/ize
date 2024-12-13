@@ -94,6 +94,7 @@ const muiTheme = createTheme({
         root: {
           "& .MuiTableCell-root": {
             color: style.colors.primary,
+            fontWeight: "400",
             backgroundColor: "inherit",
           },
         },
