@@ -19,6 +19,7 @@ export const requestSchema = z
     name: z.string().min(5, "Please write a description of at least 5 characters"),
     requestFields: inputRecordSchema.optional(),
     requestDefinedOptions: requestDefinedOptionsRecordSchema,
+    watch: z.boolean().default(false),
   })
   .refine(
     (req) => {

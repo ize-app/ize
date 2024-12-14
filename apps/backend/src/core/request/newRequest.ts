@@ -8,6 +8,7 @@ import { finalizeStepResponses } from "./updateState/finalizeStepResponses";
 import { canEndRequestStepWithResponse } from "./utils/endRequestStepWithoutResponse";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { getUserEntities } from "../entity/getUserEntities";
+import { updateEntityWatchFlows } from "../entity/updateEntityWatchFlow";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
@@ -82,6 +83,10 @@ export const newRequest = async ({
         final: false,
       },
     });
+
+    if (args.request.watch) {
+      await updateEntityWatchFlows({ entityId, flowIds: [flowId], watch: true, transaction });
+    }
 
     const responseComplete = canEndRequestStepWithResponse({ step });
 

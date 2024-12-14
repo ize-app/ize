@@ -22,6 +22,7 @@ const createRequestFormState = (flow: Flow): RequestSchemaType => {
     name: "",
     requestFields,
     requestDefinedOptions: {},
+    watch: false,
   };
   return newFormState;
 };
@@ -41,7 +42,7 @@ export const RequestFormContainer = () => {
     },
     onCompleted: (data) => {
       const flow = data.getFlow as Flow;
-      // console.log("flow", flow);
+      console.log("flow", flow);
       //@ts-expect-error not sure why typechecking is broken here
       setFormState((prev) => {
         return {

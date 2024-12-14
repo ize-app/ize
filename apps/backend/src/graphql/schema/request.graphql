@@ -26,6 +26,7 @@ input NewRequestArgs {
   name: String!
   requestFields: [FieldAnswerArgs!]!
   requestDefinedOptions: [RequestDefinedOptionsArgs!]!
+  watch: Boolean
 }
 
 input NewEvolveRequestArgs {

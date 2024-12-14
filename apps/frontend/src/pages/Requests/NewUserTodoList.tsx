@@ -71,13 +71,13 @@ export const NewUserTodoList = () => {
         <TodoItem
           complete={me?.hasCreatedFlow ?? false}
           title="Create a flow"
-          subtitle={"Create reusable processes that span teams and tools"}
+          subtitle={"Flows are reusable processes that span teams and tools"}
           route={newFlowRoute(NewFlowRoute.InitialSetup)}
         />
         <TodoItem
           complete={me?.hasWatchedGroup ?? false}
           title="Join or create a group"
-          subtitle={"Create reusable processes that span teams and tools"}
+          subtitle={"Groups are collaboratively managed teams that can integrate with Telegram"}
           route={Route.Groups}
         />
       </Box>

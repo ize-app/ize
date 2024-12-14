@@ -662,6 +662,7 @@ export type NewRequestArgs = {
   requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
   requestFields: Array<FieldAnswerArgs>;
   requestId: Scalars['String']['input'];
+  watch?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type NewResponseArgs = {
@@ -2506,6 +2507,7 @@ export type NewRequestArgs = {
   requestDefinedOptions: Array<RequestDefinedOptionsArgs>;
   requestFields: Array<FieldAnswerArgs>;
   requestId: Scalars['String']['input'];
+  watch?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type NewResponseArgs = {
