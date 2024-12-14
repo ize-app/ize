@@ -67,9 +67,9 @@ export const RequestForm = () => {
               }}
             >
               <TextField<RequestSchemaType>
-                label={"Request name"}
+                label={"Describe the intention of triggering this flow"}
                 variant="outlined"
-                placeholderText="Describe the intention of this request."
+                placeholderText="Describe the intention of triggering this flow."
                 showLabel={true}
                 name={`name`}
                 required={true}

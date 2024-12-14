@@ -2,7 +2,6 @@ import { Button, ToggleButton, ToggleButtonGroup, useMediaQuery, useTheme } from
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent, useContext } from "react";
-import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
@@ -13,7 +12,6 @@ import Search from "@/components/Tables/Search";
 import { FlowSummaryFragment, FlowWatchFilter } from "@/graphql/generated/graphql.ts";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
-import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 
@@ -194,9 +192,7 @@ export const FlowsSearch = ({
         />
       ) : (
         <EmptyTablePlaceholder>
-          <Typography>
-            <Link to={Route.NewFlow}>Create a flow</Link>
-          </Typography>
+          <Typography>No results</Typography>
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}

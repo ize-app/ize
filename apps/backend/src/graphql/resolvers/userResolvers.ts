@@ -62,8 +62,6 @@ const me: QueryResolvers["me"] = async (
     },
   });
 
-  console.log("created flow", createdFlow);
-
   const user = userResolver(userData);
 
   const settings = context.currentUser.UserSettings;

@@ -20,7 +20,7 @@ import Search from "@/components/Tables/Search";
 import { FlowWatchFilter, RequestStatusFilter } from "@/graphql/generated/graphql";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useRequestsSearch from "@/hooks/useRequestsSearch";
-import { NewRequestRoute, Route, newRequestRoute } from "@/routers/routes";
+import { NewRequestRoute, newRequestRoute } from "@/routers/routes";
 import { fullUUIDToShort } from "@/utils/inputs";
 
 import { RequestSummaryTable } from "./RequestsTable";
@@ -217,21 +217,17 @@ export const RequestSearch = ({
       ) : (
         <EmptyTablePlaceholder>
           {!flowId ? (
-            <Typography>
-              Create a <Link to={Route.NewFlow}>flow</Link> or a{" "}
-              <Link to={Route.NewRequest}>request</Link> or for an existing flow.
-            </Typography>
+            <Typography>No results</Typography>
           ) : (
             <Typography>
-              Create a{" "}
+              No results.{" "}
               <Link
                 to={generatePath(newRequestRoute(NewRequestRoute.CreateRequest), {
                   flowId: fullUUIDToShort(flowId),
                 })}
               >
-                request
-              </Link>{" "}
-              for this flow.
+                Trigger this flow
+              </Link>
             </Typography>
           )}
         </EmptyTablePlaceholder>

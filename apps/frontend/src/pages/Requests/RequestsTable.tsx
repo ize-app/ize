@@ -42,7 +42,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
   return (
     <>
       <TableRow
-        aria-label="Request Row"
+        aria-label="Triggered flow Row"
         onClick={() =>
           navigate(
             generatePath(Route.Request, {

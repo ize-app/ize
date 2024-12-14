@@ -32,7 +32,7 @@ export const ConfigFlowTriggerPanel = ({
           </PanelAccordion>
         )}
         {triggerFieldSet.fields.length > 0 && (
-          <PanelAccordion title="Request fields" hasError={false}>
+          <PanelAccordion title="Trigger fields" hasError={false}>
             <Typography variant="description">
               The following fields must be answered to trigger the flow:
             </Typography>

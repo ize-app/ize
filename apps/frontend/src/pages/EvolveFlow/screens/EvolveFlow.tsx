@@ -63,7 +63,7 @@ export const EvolveFlow = () => {
       const newRequestId = data.newEvolveRequest;
       navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Request created!", type: "success" });
+      setSnackbarData({ message: "Flow triggered!", type: "success" });
     },
     onError: (data) => {
       // navigate("/");
@@ -73,7 +73,7 @@ export const EvolveFlow = () => {
         setAuthModalOpen(true);
       }
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Request creation failed", type: "error" });
+      setSnackbarData({ message: "Trigger failed", type: "error" });
     },
   });
 

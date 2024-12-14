@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import { ChangeEvent } from "react";
-import { Link, generatePath } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
@@ -17,7 +16,6 @@ import { GroupWatchFilterToggle } from "@/components/Tables/GroupWatchFilterTogg
 import Search from "@/components/Tables/Search";
 import { GroupWatchFilter } from "@/graphql/generated/graphql";
 import useGroupsSearch from "@/hooks/useGroupsSearch";
-import { NewCustomGroupRoute, newCustomGroupRoute } from "@/routers/routes";
 
 import { GroupsTable } from "./GroupsTable";
 
@@ -76,7 +74,6 @@ export const GroupsSearch = () => {
 
   return (
     <Box
-
       sx={(theme) => ({
         display: "flex",
         flexDirection: "column",
@@ -130,12 +127,7 @@ export const GroupsSearch = () => {
         <GroupsTable groups={groups} />
       ) : (
         <EmptyTablePlaceholder>
-          <Typography>
-            <Link to={generatePath(newCustomGroupRoute(NewCustomGroupRoute.Setup))}>
-              Create a group
-            </Link>
-            .
-          </Typography>
+          <Typography>No results</Typography>
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}

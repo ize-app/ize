@@ -9,7 +9,7 @@ export const Confirm = () => {
   return (
     <>
       <WizardBody>
-        <Box sx={{ maxWidth: "800px" }}>Submit to finalize your request.</Box>
+        <Box sx={{ maxWidth: "800px" }}>Submit to trigger this flow.</Box>
       </WizardBody>
 
       <WizardNav nextLabel={nextLabel} onPrev={onPrev} onNext={onNext} disableNext={disableNext} />

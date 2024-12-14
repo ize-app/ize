@@ -20,7 +20,7 @@ export const ConfigRequestTriggerPanel = ({ request }: { request: RequestFragmen
           </Box>
         </PanelAccordion>
         {request.flow.fieldSet.fields.length > 0 && (
-          <PanelAccordion title="Request fields" hasError={false}>
+          <PanelAccordion title="Trigger fields" hasError={false}>
             <TriggerFieldSet
               fieldSet={request.flow.fieldSet}
               fieldAnswers={request.triggerFieldAnswers}
