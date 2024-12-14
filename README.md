@@ -111,41 +111,22 @@ Migrations are applied to the production database automatically via `prisma migr
 
 When you make an update to the GraphQL schema or queries, run `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
 
-## Concepts
+## Technical context
 
-### Users and Identities
+### How users/identities are associated to groups
 
-Users authenticate into Ize via identities. Users can have multiple identities. Identities we currently support are:
+#### entities_groups mapping
 
-- Email
-- EVM address
-- Discord account
+The intention of entities_groups map individual users to the groups they belong to for read operations. The most important thing this information is used for is showing the user which Ize groups they are a member of. These groups could be defined on other tools (e.g. Discord group, nft, Telegram group) or be an Ize group. 
 
-### Groups
+The reason it is entities_groups rather than users_groups is so that a user would be add/remove identities and associated groups should also be updated accordingly.
 
-Groups are shorthand for a set of identities. There are multiple ways a group can be defined.
+Entities groups is only updated in the following situations
+- A user logs in
+- A user adds an identity
+- A telegram identity's membership with a telegram group is checked
+- A new custom group is created
 
-- **Custom Ize group**: A list of Ize identites and groups
-- **NFT**: A blockchain identity is part of this group if it currently owns that 721/1155 NFT (validated by Alchemy)
-- **Hats**: A blockchain identity is part of this group if it is assigned that particular Hat and that Hat is active
-- **Discord Role**: A Discord idenity is part of this group if it holds a particular discord Role
-- **Discord Server**: A Discord idenity is part of this group if it is part of a Discord server.
+The logic for how Telegram entities_groups are updated is because Telegram doesn't have a way of getting all of a telegram user's chat groups.
 
-### Flows
 
-Flows define how a particular identities/groups collaborate to complete some kind of task. Flows have the following components
-
-- **Request permissions**: Identities/groups that can trigger this flow (i.e. create a request)
-- **Request fields**: Information that is required for someone to trigger the flow
-- **Response permissions**: Identities/groups that can respond a
-- **Response fields**: Information that is required on a response
-- **Results**: How response fields are aggregated into a final result (e.g. decision, AI summary, prioritization, etc)
-- **Actions**: Automated actions that occur when a request complets (e.g. fire a webhook, evolve a flow, etc)
-
-Everything that happens in Ize happens via collaborative flows. Even the process to evolve a flow happens via another flow.
-
-### Requests
-
-An instance of a flow being triggered is a request. There can be many requests to a single flow.
-
-Requests can (but don't necessarily) have responses.
