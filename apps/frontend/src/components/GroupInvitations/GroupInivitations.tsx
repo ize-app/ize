@@ -26,55 +26,61 @@ export const GroupInvitations = () => {
 
   if (groups.length === 0) return null;
   return (
-    <InfoBannerContainer title="Group Invitations">
+    <InfoBannerContainer title="You've been invited to participate in new groups" showInfoIcon>
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           width: "100%",
-          gap: "12px",
+          gap: "8px",
           maxWidth: "100%",
-          flexWrap: "wrap",
         }}
       >
         {groups.map((group) => {
           return (
             <Box
               key={group.groupId}
-              sx={{
+              sx={(theme) => ({
                 display: "flex",
                 width: "100%",
                 justifyContent: "space-between",
                 backgroundColor: "white",
                 borderRadius: "4px",
+                gap: "8px",
                 padding: "8px",
-                maxWidth: "400px",
                 // outline: "1px solid rgba(0, 0, 0, 0.23)",
+                [theme.breakpoints.down("sm")]: {
+                  flexDirection: "column",
+                },
                 outline: `1px solid ${colors.primaryContainer}`,
-              }}
+              })}
             >
-              {" "}
-              <Typography
-                sx={{
-                  textDecoration: "none",
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: "1",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                <Link
-                  key={""}
-                  to={generatePath(Route.Group, {
-                    groupId: fullUUIDToShort(group.groupId),
-                  })}
-                  style={{ textDecoration: "none", color: theme.palette.primary.main }}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <Typography
+                  sx={{
+                    textDecoration: "none",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "1",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
                 >
-                  {group.group.name}
-                </Link>
-              </Typography>
-              <Box sx={{ display: "flex", gap: "8px" }}>
+                  <Link
+                    key={""}
+                    to={generatePath(Route.Group, {
+                      groupId: fullUUIDToShort(group.groupId),
+                    })}
+                    style={{ textDecoration: "none", color: theme.palette.primary.main }}
+                  >
+                    {group.group.name}
+                  </Link>
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="description">Invited by {group.creator.name} </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", gap: "8px", height: "100%", alignItems: "center" }}>
                 <Button
                   variant="outlined"
                   color="primary"

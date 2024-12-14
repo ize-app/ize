@@ -131,14 +131,15 @@ export const FlowsSearch = ({
 
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: "flex",
         flexDirection: "column",
         gap: "16px",
         height: "100%",
         width: "100%",
-        minWidth: "0",
-      }}
+        outline: `1px solid ${theme.palette.grey[200]}`,
+        padding: "12px",
+      })}
     >
       <Box
         sx={{

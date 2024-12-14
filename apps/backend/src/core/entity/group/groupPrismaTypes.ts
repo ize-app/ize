@@ -66,6 +66,7 @@ export const createIzeGroupInclude = (userEntityIds: string[]) =>
     group: {
       include: {
         ...groupInclude,
+        Creator: { include: entityInclude },
         OwnedFlows: true,
         EntitiesInGroup: {
           where: {

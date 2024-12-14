@@ -494,6 +494,7 @@ export type IdentityType = IdentityBlockchain | IdentityDiscord | IdentityEmail 
 
 export type IzeGroup = {
   __typename?: 'IzeGroup';
+  creator: Entity;
   description?: Maybe<Scalars['String']['output']>;
   evolveGroupFlowId?: Maybe<Scalars['String']['output']>;
   group: Group;
@@ -529,6 +530,8 @@ export type LlmSummaryArgs = {
 export type Me = {
   __typename?: 'Me';
   groups: Array<Group>;
+  hasCreatedFlow: Scalars['Boolean']['output'];
+  hasWatchedGroup: Scalars['Boolean']['output'];
   identities: Array<Identity>;
   notifications?: Maybe<NotificationSettings>;
   user: User;
@@ -1390,7 +1393,7 @@ export type ResolversTypes = {
   IdentityTelegram: ResolverTypeWrapper<IdentityTelegram>;
   IdentityType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['IdentityType']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
+  IzeGroup: ResolverTypeWrapper<Omit<IzeGroup, 'creator' | 'group' | 'members' | 'notificationEntity'> & { creator: ResolversTypes['Entity'], group: ResolversTypes['Group'], members: Array<ResolversTypes['Entity']>, notificationEntity?: Maybe<ResolversTypes['Entity']> }>;
   LinkedResult: ResolverTypeWrapper<LinkedResult>;
   LlmSummary: ResolverTypeWrapper<Omit<LlmSummary, 'field'> & { field: ResolversTypes['Field'] }>;
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1535,7 +1538,7 @@ export type ResolversParentTypes = {
   IdentityTelegram: IdentityTelegram;
   IdentityType: ResolversUnionTypes<ResolversParentTypes>['IdentityType'];
   Int: Scalars['Int']['output'];
-  IzeGroup: Omit<IzeGroup, 'group' | 'members' | 'notificationEntity'> & { group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
+  IzeGroup: Omit<IzeGroup, 'creator' | 'group' | 'members' | 'notificationEntity'> & { creator: ResolversParentTypes['Entity'], group: ResolversParentTypes['Group'], members: Array<ResolversParentTypes['Entity']>, notificationEntity?: Maybe<ResolversParentTypes['Entity']> };
   LinkedResult: LinkedResult;
   LlmSummary: Omit<LlmSummary, 'field'> & { field: ResolversParentTypes['Field'] };
   LlmSummaryArgs: LlmSummaryArgs;
@@ -1905,6 +1908,7 @@ export type IdentityTypeResolvers<ContextType = GraphqlRequestContext, ParentTyp
 };
 
 export type IzeGroupResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['IzeGroup'] = ResolversParentTypes['IzeGroup']> = {
+  creator?: Resolver<ResolversTypes['Entity'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   evolveGroupFlowId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   group?: Resolver<ResolversTypes['Group'], ParentType, ContextType>;
@@ -1935,6 +1939,8 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
+  hasCreatedFlow?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasWatchedGroup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   notifications?: Resolver<Maybe<ResolversTypes['NotificationSettings']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;

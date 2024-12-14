@@ -29,6 +29,8 @@ fragment MeParts on Me {
   notifications {
     ...NotificationSettings
   }
+  hasWatchedGroup
+  hasCreatedFlow
 }
 
 fragment NotificationSettings on NotificationSettings {

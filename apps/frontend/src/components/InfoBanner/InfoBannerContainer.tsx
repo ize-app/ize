@@ -4,31 +4,28 @@ import { Box, Typography } from "@mui/material";
 export const InfoBannerContainer = ({
   children,
   title,
+  showInfoIcon,
 }: {
   children: React.ReactNode;
   title: string;
+  showInfoIcon: boolean;
 }) => {
   return (
     <Box
-      // elevation={2}
       sx={(theme) => ({
-        outline: `1px solid ${theme.palette.info.main}`,
-        minWidth: "300px",
-        backgroundColor: "white",
-        padding: "12px",
-        width: "fit-content",
-        maxWidth: "900px",
-        borderRadius: "12px",
         display: "flex",
         flexDirection: "column",
-        marginBottom: "30px",
+        justifyContent: "space-between",
+        maxWidth: "600px",
+        gap: "16px",
+
+        outline: `1px solid ${theme.palette.grey[200]}`,
+        padding: "12px",
       })}
     >
-      <Box sx={{ marginBottom: "12px", display: "flex", alignItems: "flex-start", gap: "6px" }}>
-        <InfoIcon color="info" fontSize="small" />
-        <Typography variant="label" color="info">
-          {title}
-        </Typography>
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
+        {showInfoIcon && <InfoIcon color="info" fontSize="small" />}
+        <Typography variant="description">{title}</Typography>
       </Box>
       {children}
     </Box>

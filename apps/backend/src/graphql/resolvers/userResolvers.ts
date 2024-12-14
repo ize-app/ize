@@ -21,6 +21,7 @@ import { updateProfile as updateProfileService } from "@/core/user/updateProfile
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
+import { FlowType } from "@prisma/client";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
@@ -47,6 +48,22 @@ const me: QueryResolvers["me"] = async (
     include: userInclude,
     where: { id: context.currentUser.id },
   });
+
+  const watchedGroup = await prisma.entityWatchedGroups.findFirst({
+    where: {
+      entityId: { in: context.userEntityIds },
+    },
+  });
+
+  const createdFlow = await prisma.flow.findFirst({
+    where: {
+      creatorEntityId: { in: context.userEntityIds },
+      type: FlowType.Custom,
+    },
+  });
+
+  console.log("created flow", createdFlow);
+
   const user = userResolver(userData);
 
   const settings = context.currentUser.UserSettings;
@@ -59,6 +76,8 @@ const me: QueryResolvers["me"] = async (
       transactional: settings.transactional,
       marketing: settings.marketing,
     },
+    hasCreatedFlow: !!createdFlow,
+    hasWatchedGroup: !!watchedGroup,
   };
 };
 

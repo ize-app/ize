@@ -100,6 +100,7 @@ type IzeGroup {
   groupId: String!
   group: Group!
   members: [Entity!]!
+  creator: Entity!
   description: String
   notificationEntity: Entity
   isMember: Boolean!

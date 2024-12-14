@@ -67,6 +67,9 @@ fragment IzeGroup on IzeGroup {
   group {
     ...GroupSummaryParts
   }
+  creator {
+    ...Entity
+  }
   members {
     ...Entity
   }

@@ -1,7 +1,7 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
-import InboxIcon from "@mui/icons-material/Inbox";
+import HomeIcon from '@mui/icons-material/Home';
 import { Box, IconButton, Toolbar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -65,10 +65,10 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
               }}
             >
               <ListItemIcon sx={{ minWidth: "36px" }}>
-                <InboxIcon fontSize="small" />
+                <HomeIcon fontSize="small" />
               </ListItemIcon>
               <ListItemText
-                primary={"Inbox"}
+                primary={"Home"}
                 primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
               />
             </ListItemButton>

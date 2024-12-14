@@ -67,6 +67,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
           <RequestStepTitle request={request} />
         </TableCellHideable>
         <TableCellHideable
+          hideOnSmallScreen
           align="right"
           // width="200px"
           sx={{ width: "50%", minWidth: "240px", maxWidth: "400px" }}
