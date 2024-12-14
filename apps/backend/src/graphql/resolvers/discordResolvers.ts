@@ -35,7 +35,11 @@ export const getDiscordServers: QueryResolvers["getDiscordServers"] = async (
   args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<Array<DiscordServer>> => {
-  return await getDiscordServersService({ context });
+  try {
+    return await getDiscordServersService({ context });
+  } catch (e) {
+    return [];
+  }
 };
 
 const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesArgs) => {

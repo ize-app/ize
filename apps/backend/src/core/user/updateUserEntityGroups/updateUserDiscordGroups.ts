@@ -1,25 +1,26 @@
 import { GroupType, Prisma } from "@prisma/client";
 
 import { DiscordApi } from "@/discord/api";
+import { getDiscordServers } from "@/discord/getDiscordServers";
 import { GraphqlRequestContext } from "@/graphql/context";
-import { DiscordServer } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
 import { upsertForGroupTypeOfEntity } from "./upsertForGroupTypeOfEntity";
 
 export const updateUserDiscordGroups = async ({
   context,
-  discordServers,
   transaction = prisma,
 }: {
-  discordServers: DiscordServer[];
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
-}) => {
+}): Promise<void> => {
   // try / catch so that me object will still return
   try {
     if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-    if (!context.discordApi) return [];
+    if (!context.discordApi) return;
+
+    // if this call fails, existing entity_groups mapping for Discord won't be updated
+    const discordServers = await getDiscordServers({ context });
 
     const userDiscordIdentity = context.currentUser.Identities.find((id) => !!id.IdentityDiscord);
     if (!userDiscordIdentity?.IdentityDiscord?.discordUserId)
@@ -73,7 +74,9 @@ export const updateUserDiscordGroups = async ({
       groupType: GroupType.DiscordRoleGroup,
       transaction,
     });
+    return;
   } catch (e) {
-    console.log("ERROR: ", e);
+    console.log("Error updateUserDiscordGroups", e);
+    return;
   }
 };

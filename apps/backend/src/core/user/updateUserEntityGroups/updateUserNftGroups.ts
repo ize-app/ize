@@ -14,7 +14,7 @@ export const updateUserNftGroups = async ({
 }: {
   context: GraphqlRequestContext;
   transaction?: Prisma.TransactionClient;
-}) => {
+}): Promise<void> => {
   try {
     if (!context.currentUser) throw Error("ERROR Unauthenticated user");
     const userBlockchainIdentity = context.currentUser.Identities.find(
@@ -39,8 +39,9 @@ export const updateUserNftGroups = async ({
       groupType: GroupType.GroupNft,
       transaction,
     });
+    return;
   } catch (e) {
-    console.log(e);
+    console.log("Error updateUserNftGroups:", e);
     return;
   }
 };

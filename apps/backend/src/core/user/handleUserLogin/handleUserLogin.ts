@@ -8,7 +8,6 @@ import {
 } from "stytch";
 
 import { MePrismaType } from "@/core/user/userPrismaTypes";
-import { createRequestContext } from "@/express/createRequestContext";
 import { prisma } from "@/prisma/client";
 import { upsertOauthToken } from "@/stytch/upsertOauthToken";
 import { upsertUser } from "@/stytch/upsertUser";
@@ -93,11 +92,6 @@ export const handleUserLogin = async ({ res, ...props }: NewUserIdentityProps) =
           user,
           transaction,
         });
-        console.log(
-          "props.stytchOAuthentication.provider_type",
-          props.stytchOAuthentication.provider_type,
-        );
-
         if (props.stytchOAuthentication.provider_type === "Discord") {
           await upsertUserDiscordIdentity({
             userId: user.id,
@@ -158,5 +152,5 @@ export const handleUserLogin = async ({ res, ...props }: NewUserIdentityProps) =
     return user;
   });
 
-  await upsertUserEntityGroups({ context: createRequestContext({ user }) });
+  await upsertUserEntityGroups({ userId: user.id });
 };
