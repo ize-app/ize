@@ -7,11 +7,12 @@ import {
   RequestSummary,
 } from "@/graphql/generated/resolver-types";
 
+import { createRequestWatchFilter } from "./requestPrismaFilter";
 import { createRequestSummaryInclude } from "./requestPrismaTypes";
 import { requestSummaryResolver } from "./resolvers/requestSummaryResolver";
 import { prisma } from "../../prisma/client";
 import { getGroupIdsOfUser } from "../entity/group/getGroupIdsOfUser";
-import { createFlowWatchFilter, createGroupWatchedFlowFilter } from "../flow/flowPrismaFilters";
+import { createGroupWatchedFlowFilter } from "../flow/flowPrismaFilters";
 
 export const getRequestSummaries = async ({
   args,
@@ -57,28 +58,10 @@ export const getRequestSummaries = async ({
           // if getting request steps for user, then get requests steps for flows (or corresponding evolve flows) they are watching
           // or that groups they are watching own/watch themselves
 
-          {
-            OR: [
-              {
-                // flow itself is watched
-                FlowVersion: {
-                  Flow: createFlowWatchFilter({
-                    flowWatchFilter: args.flowWatchFilter,
-                    userEntityIds: entityIds,
-                  }),
-                },
-              },
-              {
-                // flow evolves another flow that is watched
-                ProposedFlowVersionEvolution: {
-                  Flow: createFlowWatchFilter({
-                    flowWatchFilter: args.flowWatchFilter,
-                    userEntityIds: entityIds,
-                  }),
-                },
-              },
-            ],
-          },
+          createRequestWatchFilter({
+            flowWatchFilter: args.flowWatchFilter,
+            userEntityIds: entityIds,
+          }),
           // if getting requests for a specific flow, then get request steps for that flow or its corresponding evolve flow
           args.flowId
             ? {

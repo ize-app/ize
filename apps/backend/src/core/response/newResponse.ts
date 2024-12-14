@@ -11,7 +11,6 @@ import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { finalizeStepResponses } from "../request/updateState/finalizeStepResponses";
 import { checkToEndResponseEarly } from "../result/checkIfEarlyResult";
 import { newResultsForStep } from "../result/newResults/newResultsForStep";
-import { watchFlow } from "../user/watchFlow";
 
 interface NewResponseProps {
   entityContext: UserOrIdentityContextInterface;
@@ -95,7 +94,7 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
       transaction,
     });
 
-    const { entityId, entityIds, user } = await getUserEntities({ entityContext, transaction });
+    const { entityId, entityIds } = await getUserEntities({ entityContext, transaction });
 
     if (!hasRespondPermissions) {
       throw new GraphQLError("User does not have permission to respond", {
@@ -135,14 +134,6 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
       requestDefinedOptionSets: requestStep.Request.RequestDefinedOptionSets,
       responseId: newResponse.id,
       transaction,
-    });
-
-    await watchFlow({
-      flowId: requestStep.Request.FlowVersion.flowId,
-      watch: true,
-      entityId,
-      transaction,
-      user,
     });
 
     return newResponse.id;

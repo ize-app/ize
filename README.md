@@ -60,7 +60,6 @@ Build the database and run the backend
 
 Navigate to [127.0.0.1](http://127.0.0.1/)
 
-
 ### Testing production build locally
 
 Build backend and frontend.
@@ -113,20 +112,39 @@ When you make an update to the GraphQL schema or queries, run `npm run codegen` 
 
 ## Technical context
 
-### How users/identities are associated to groups
+### Entities > identities, users, groups
+
+### How users are associated to flows and groups
+
+#### Watching flows
+
+For now, we're only mappping users but not identities to flows. A user is mapped to a flow only when they affirmatively confirm they want to watch a flow. This happens
+
+- On flow page or flows table 
+- User automatically watches any custom flows they create. (TBD should shis also include default flows of the groups they create)
+- When user creates request / response, they can affirm whether they want to watch future activity in that flow
+
+
+
+#### Watching groups
+
+Similarly, a user is associated with watching a group in two situations
+
+1. They affirmatively confirm they want to watch the group on the groups/group page
+2. In the GroupInvitations component we show all groups that a user is a member of, but they haven't confirmed they want to watch / not watch. 
+3. (TBD) When a Telegram identity creates or participates in a flow directly from Telegram, we have that entity watch the group. The reason we do this is that there are limitations on how we can query for a Telegram identities groups, so we want to actively find ways to associate a user to a group
 
 #### entities_groups mapping
 
-The intention of entities_groups map individual users to the groups they belong to for read operations. The most important thing this information is used for is showing the user which Ize groups they are a member of. These groups could be defined on other tools (e.g. Discord group, nft, Telegram group) or be an Ize group. 
+The intention of entities_groups map individual users to the groups they belong to for read operations. The most important thing this information is used for is showing the user which Ize groups they are a member of. These groups could be defined on other tools (e.g. Discord group, nft, Telegram group) or be an Ize group.
 
 The reason it is entities_groups rather than users_groups is so that a user would be add/remove identities and associated groups should also be updated accordingly.
 
 Entities groups is only updated in the following situations
+
 - A user logs in
 - A user adds an identity
 - A telegram identity's membership with a telegram group is checked
 - A new custom group is created
 
-The logic for how Telegram entities_groups are updated is because Telegram doesn't have a way of getting all of a telegram user's chat groups.
-
-
+The logic for how Telegram entities_groups are updated is different than other identity tyeps because Telegram doesn't have a way of getting all of a telegram user's chat groups.

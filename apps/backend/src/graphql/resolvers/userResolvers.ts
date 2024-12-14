@@ -13,7 +13,7 @@ import {
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
 import { watchGroup as watchGroupService } from "@/core/user/watchGroup";
-import { watchFlow as watchFlowService } from "@/core/user/watchFlow";
+import { updateEntityWatchFlows as watchFlowService } from "@/core/entity/updateEntityWatchFlow";
 
 import { prisma } from "../../prisma/client";
 import { GraphqlRequestContext } from "../context";
@@ -117,13 +117,13 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
       throw new GraphQLError("Unauthenticated", {
         extensions: { code: CustomErrorCodes.Unauthenticated },
       });
-    return await watchFlowService({
-      flowId: args.flowId,
+    await watchFlowService({
+      flowIds: [args.flowId],
       watch: args.watch,
       entityId: context.currentUser.entityId,
       transaction,
-      user: context.currentUser,
     });
+    return true;
   });
 };
 
