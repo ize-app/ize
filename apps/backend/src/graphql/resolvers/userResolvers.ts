@@ -22,6 +22,7 @@ import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 import { FlowType } from "@prisma/client";
+import { getGroupIdsOfUser } from "@/core/entity/group/getGroupIdsOfUser";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
@@ -42,6 +43,25 @@ const me: QueryResolvers["me"] = async (
   const groups = await getGroupsOfUser({
     context,
     args: { limit: 10, searchQuery: "", watchFilter: GroupWatchFilter.Watched, isMember: false },
+  });
+  const groupIds = await getGroupIdsOfUser({ context });
+
+  // get groups that user is watching, can make watch requets for, and the group isn't already watching that flow
+  const groupInvitations = await prisma.groupIze.findFirst({
+    where: {
+      group: {
+        AND: [
+          { id: { in: groupIds } },
+          {
+            EntityWatchedGroups: {
+              none: {
+                entityId: { in: context.userEntityIds },
+              },
+            },
+          },
+        ],
+      },
+    },
   });
 
   const userData = await prisma.user.findFirstOrThrow({
@@ -74,6 +94,7 @@ const me: QueryResolvers["me"] = async (
       transactional: settings.transactional,
       marketing: settings.marketing,
     },
+    hasGroupInvites: !!groupInvitations,
     hasCreatedFlow: !!createdFlow,
     hasWatchedGroup: !!watchedGroup,
   };

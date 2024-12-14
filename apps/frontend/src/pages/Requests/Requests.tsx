@@ -8,6 +8,7 @@ import { FlowWatchFilter, RequestStatusFilter } from "@/graphql/generated/graphq
 import Head from "@/layout/Head";
 import PageContainer from "@/layout/PageContainer";
 
+import { GroupInvitesInfo } from "./GroupInvitesInfo";
 import { NewUserTodoList } from "./NewUserTodoList";
 import { RequestSearch } from "./RequestsSearch";
 
@@ -18,7 +19,7 @@ export const Requests = () => {
       title: "In progress",
       content: (
         <RequestSearch
-          initialFlowWatchFilter={FlowWatchFilter.WatchedByMe}
+          initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
           initialNeedsResponseFilter={true}
           initialRequestStatusFilter={RequestStatusFilter.Open}
           showNeedsResponseFilter={true}
@@ -30,7 +31,7 @@ export const Requests = () => {
       title: "Final",
       content: (
         <RequestSearch
-          initialFlowWatchFilter={FlowWatchFilter.WatchedByMe}
+          initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
           initialNeedsResponseFilter={false}
           initialRequestStatusFilter={RequestStatusFilter.Final}
           showNeedsResponseFilter={false}
@@ -48,6 +49,7 @@ export const Requests = () => {
       <Typography variant="h1">Home</Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <NewUserTodoList />
+        <GroupInvitesInfo />
         <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
           <Tabs
             tabs={tabs}

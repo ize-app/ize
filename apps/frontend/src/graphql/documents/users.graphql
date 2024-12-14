@@ -29,6 +29,7 @@ fragment MeParts on Me {
   notifications {
     ...NotificationSettings
   }
+  hasGroupInvites
   hasWatchedGroup
   hasCreatedFlow
 }

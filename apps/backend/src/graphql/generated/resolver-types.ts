@@ -531,6 +531,7 @@ export type Me = {
   __typename?: 'Me';
   groups: Array<Group>;
   hasCreatedFlow: Scalars['Boolean']['output'];
+  hasGroupInvites: Scalars['Boolean']['output'];
   hasWatchedGroup: Scalars['Boolean']['output'];
   identities: Array<Identity>;
   notifications?: Maybe<NotificationSettings>;
@@ -1941,6 +1942,7 @@ export type LlmSummaryResolvers<ContextType = GraphqlRequestContext, ParentType 
 export type MeResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Me'] = ResolversParentTypes['Me']> = {
   groups?: Resolver<Array<ResolversTypes['Group']>, ParentType, ContextType>;
   hasCreatedFlow?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasGroupInvites?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasWatchedGroup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   identities?: Resolver<Array<ResolversTypes['Identity']>, ParentType, ContextType>;
   notifications?: Resolver<Maybe<ResolversTypes['NotificationSettings']>, ParentType, ContextType>;

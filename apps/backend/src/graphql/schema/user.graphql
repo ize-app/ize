@@ -13,6 +13,7 @@ type Me {
   identities: [Identity!]!
   groups: [Group!]!
   notifications: NotificationSettings
+  hasGroupInvites: Boolean!
   hasWatchedGroup: Boolean!
   hasCreatedFlow: Boolean!
 }
