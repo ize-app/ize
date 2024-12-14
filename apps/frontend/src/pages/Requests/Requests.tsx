@@ -18,7 +18,7 @@ export const Requests = () => {
       title: "In progress",
       content: (
         <RequestSearch
-          initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
+          initialFlowWatchFilter={FlowWatchFilter.WatchedByMe}
           initialNeedsResponseFilter={true}
           initialRequestStatusFilter={RequestStatusFilter.Open}
           showNeedsResponseFilter={true}
@@ -30,7 +30,7 @@ export const Requests = () => {
       title: "Final",
       content: (
         <RequestSearch
-          initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
+          initialFlowWatchFilter={FlowWatchFilter.WatchedByMe}
           initialNeedsResponseFilter={false}
           initialRequestStatusFilter={RequestStatusFilter.Final}
           showNeedsResponseFilter={false}
