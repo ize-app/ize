@@ -1,11 +1,14 @@
-import { GroupType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { GraphqlRequestContext } from "@/graphql/context";
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { upsertForGroupTypeOfEntity } from "./upsertForGroupTypeOfEntity";
-
+// updating a users telegram groups works differently than the other identity types
+// this is because telegram doesn't offer a way to get all groups a user is in
+// so instead, we need to check each group individually to see if the user is a member
+// this will become unmanageable once there are 100 + telegram groups in Ize
+// so we only query for 50 most recent groups at a time and the entities_groups update logic is different
 export const updateUserTelegramGroups = async ({
   context,
   transaction = prisma,
@@ -19,11 +22,28 @@ export const updateUserTelegramGroups = async ({
     if (!tgIdentity || !tgIdentity.IdentityTelegram) return;
 
     const telegramUserId = Number(tgIdentity.IdentityTelegram.telegramUserId);
-    const telegramGroups = await prisma.groupTelegramChat.findMany({});
+
+    // findn all telegram
+    const telegramGroups = await prisma.groupTelegramChat.findMany({
+      where: {
+        Group: {
+          EntitiesInGroup: {
+            none: {
+              entityId: tgIdentity.entityId,
+            },
+          },
+        },
+      },
+      take: 40,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     // check all telegram groups for user membership
     // clunky, but not sure another way around it with the api
-    const telegramGroupIds: string[] = [];
+    const memberGroupIds: string[] = [];
+    const notMemberGroupIds: string[] = [];
 
     // TODO: might need to revist this once we get 50+ telegram groups
     await Promise.allSettled(
@@ -39,19 +59,37 @@ export const updateUserTelegramGroups = async ({
             chatMember.status === "administrator" ||
             chatMember.status === "member"
           ) {
-            telegramGroupIds.push(telegramGroup.groupId);
+            memberGroupIds.push(telegramGroup.groupId);
+            return;
+          } else {
+            notMemberGroupIds.push(telegramGroup.groupId);
             return;
           }
         } catch (e) {
+          notMemberGroupIds.push(telegramGroup.groupId);
           return;
         }
       }),
     );
-    await upsertForGroupTypeOfEntity({
-      entityId: tgIdentity.entityId,
-      groupIds: telegramGroupIds,
-      groupType: GroupType.GroupTelegram,
-      transaction,
+
+    // NOT using upsertForGroupTypeOfEntity
+    // because we can't get all of a users telegram groups at once
+    await transaction.entityGroup.createMany({
+      data: memberGroupIds.map((groupId) => ({
+        groupId,
+        active: true,
+        entityId: tgIdentity.entityId,
+      })),
+      skipDuplicates: true,
+    });
+
+    await transaction.entityGroup.createMany({
+      data: notMemberGroupIds.map((groupId) => ({
+        groupId,
+        active: false,
+        entityId: tgIdentity.entityId,
+      })),
+      skipDuplicates: true,
     });
     return;
   } catch (e) {
