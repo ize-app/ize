@@ -23,6 +23,7 @@ export const updateUserIzeGroups = async ({
           },
           where: {
             entityId,
+            active: true,
           },
         });
         // This also needs to check whether user or their identities are part of that group

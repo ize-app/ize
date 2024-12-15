@@ -72,6 +72,7 @@ const me: QueryResolvers["me"] = async (
   const watchedGroup = await prisma.entityWatchedGroups.findFirst({
     where: {
       entityId: { in: context.userEntityIds },
+      watched: true,
     },
   });
 

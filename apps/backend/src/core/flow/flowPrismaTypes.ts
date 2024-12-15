@@ -70,6 +70,7 @@ export const createFlowVersionInclude = (userEntityIds: string[]) =>
               { entityId: { in: userEntityIds } },
               { Entity: { Group: { GroupIze: { NOT: undefined } } } },
             ],
+            watched: true
           },
         },
       },
@@ -129,6 +130,7 @@ export const createFlowSummaryInclude = (userEntityIds: string[]) =>
           { entityId: { in: userEntityIds } },
           { Entity: { Group: { GroupIze: { NOT: undefined } } } },
         ],
+        watched: true
       },
     },
   });
