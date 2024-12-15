@@ -25,12 +25,10 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
       evolve={evolve}
       flowFormRef={flowFormRef}
       evolveFormRef={evolveFormRef}
-      // tabs={tabs}
       flowForm={
         <FlowForm
           ref={flowFormRef}
           name="flow"
-          isReusable={true}
           defaultFormValues={{ ...getDefaultFlowFormValues() }}
         />
       }
@@ -38,7 +36,6 @@ export const FullConfigSetup = ({ evolve = false }: { evolve?: boolean }) => {
         <FlowForm
           ref={evolveFormRef}
           name="evolve"
-          isReusable={true}
           defaultFormValues={generateEvolveConfig({
             triggerPermission: { anyone: false, entities: [] },
             respondPermission: { anyone: false, entities: [] },
@@ -55,14 +52,12 @@ export const FullConfig = ({
   evolveFormRef,
   flowForm,
   evolveForm,
-  // tabs,
 }: {
   evolve?: boolean;
   flowFormRef: React.RefObject<FlowFormRef>;
   evolveFormRef: React.RefObject<FlowFormRef>;
   flowForm: React.ReactElement;
   evolveForm: React.ReactElement;
-  // tabs: TabProps[];
 }) => {
   const { onPrev, nextLabel, onNext, formState, setFormState } = useNewFlowWizardState();
   const [currentTabIndex, setTabIndex] = useState(0);
@@ -81,6 +76,7 @@ export const FullConfig = ({
 
   useEffect(() => {
     if (!isReusable) setTabIndex(0);
+    setFormState((prev) => ({ ...prev, new: { ...prev.new, reusable: isReusable } }));
   }, [isReusable]);
 
   const handleAllFormsSubmit = async () => {
