@@ -16,9 +16,11 @@ const useRequestsSearch = ({
   groupId,
   flowId,
   queryResultLimit,
+  initialRequestStatusFilter,
 }: {
   initialFlowWatchFilter: FlowWatchFilter;
   initialNeedsResponseFilter: boolean;
+  initialRequestStatusFilter: RequestStatusFilter;
   groupId?: string;
   flowId?: string;
   queryResultLimit: number;
@@ -30,7 +32,7 @@ const useRequestsSearch = ({
 
   const [createdByUser, setCreatedByUser] = useState<boolean>(false);
   const [requestStatusFilter, setRequestStatusFilter] = useState<RequestStatusFilter>(
-    RequestStatusFilter.Open,
+    initialRequestStatusFilter,
   );
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupId);
 

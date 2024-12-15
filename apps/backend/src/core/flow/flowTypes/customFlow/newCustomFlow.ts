@@ -1,8 +1,7 @@
-import { getUserEntities } from "@/core/entity/getUserEntities";
+import { updateEntityWatchFlows } from "@/core/entity/updateEntityWatchFlow";
 import { UserOrIdentityContextInterface } from "@/core/entity/UserOrIdentityContext";
 import { createWatchFlowRequests } from "@/core/request/createWatchFlowRequests";
 import { newRequest } from "@/core/request/newRequest";
-import { watchFlow } from "@/core/user/watchFlow";
 import { FlowType, MutationNewFlowArgs } from "@/graphql/generated/resolver-types";
 import { prisma } from "@/prisma/client";
 
@@ -15,7 +14,6 @@ export const newCustomFlow = async ({
   args: MutationNewFlowArgs;
   entityContext: UserOrIdentityContextInterface;
 }): Promise<string> => {
-  const { entityId, user } = await getUserEntities({ entityContext });
   const flowId = await prisma.$transaction(async (transaction) => {
     return await newFlow({
       type: FlowType.Custom,
@@ -43,7 +41,12 @@ export const newCustomFlow = async ({
     return requestId;
   } else {
     // creating a request also watches flow so not calling that for nonreusable flow block
-    await watchFlow({ flowId, watch: true, entityId, user });
+    let entityId: string | undefined;
+    if (entityContext.type === "user") entityId = entityContext.context.currentUser?.entityId;
+    else if (entityContext.type === "identity") entityId = entityContext.identity.entityId;
+
+    if (entityId) await updateEntityWatchFlows({ flowIds: [flowId], watch: true, entityId });
+
     return flowId;
   }
 };

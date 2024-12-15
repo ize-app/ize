@@ -10,25 +10,36 @@ interface SearchProps {
 const Search = ({ searchQuery, changeHandler }: SearchProps) => {
   return (
     <TextField
-      sx={{
+      sx={(theme) => ({
         "& .MuiOutlinedInput-notchedOutline": {
           borderRadius: "100px",
         },
+        "& .MuiOutlinedInput-input": {
+          padding: "4px",
+        },
         minWidth: "140px",
-      }}
+        width: "100%",
+        maxWidth: "400px",
+        [theme.breakpoints.down("sm")]: {
+          maxWidth: "220px",
+        },
+      })}
       id="search"
       type="search"
       value={searchQuery}
       size="small"
       onChange={changeHandler}
+      // variant="standard"
       placeholder="Search"
-      fullWidth={true}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        ),
+      // fullWidth={true}
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" />
+            </InputAdornment>
+          ),
+        },
       }}
     />
   );

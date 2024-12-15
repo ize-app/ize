@@ -5,10 +5,12 @@ import { FieldAndValues, stringifyFieldsAndValues } from "./stringifyFieldAndVal
 export const stringifyTriggerFields = ({
   request,
   title,
+  subtitle,
   type,
 }: {
   request: Request;
   title?: string;
+  subtitle?: string;
   type: "html" | "markdown";
 }): string => {
   const fieldsAndValues: FieldAndValues[] = [];
@@ -22,5 +24,5 @@ export const stringifyTriggerFields = ({
     fieldsAndValues.push({ field: field.name, value: answer });
   });
 
-  return stringifyFieldsAndValues({ title, fieldsAndValues, type });
+  return stringifyFieldsAndValues({ title, subtitle, fieldsAndValues, type });
 };

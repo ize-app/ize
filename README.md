@@ -60,7 +60,6 @@ Build the database and run the backend
 
 Navigate to [127.0.0.1](http://127.0.0.1/)
 
-
 ### Testing production build locally
 
 Build backend and frontend.
@@ -111,41 +110,41 @@ Migrations are applied to the production database automatically via `prisma migr
 
 When you make an update to the GraphQL schema or queries, run `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
 
-## Concepts
+## Technical context
 
-### Users and Identities
+### Entities > identities, users, groups
 
-Users authenticate into Ize via identities. Users can have multiple identities. Identities we currently support are:
+### How users are associated to flows and groups
 
-- Email
-- EVM address
-- Discord account
+#### Watching flows
 
-### Groups
+For now, we're only mappping users but not identities to flows. A user is mapped to a flow only when they affirmatively confirm they want to watch a flow. This happens
 
-Groups are shorthand for a set of identities. There are multiple ways a group can be defined.
+- On flow page or flows table 
+- User automatically watches any custom flows they create. (TBD should shis also include default flows of the groups they create)
+- When user creates request / response, they can affirm whether they want to watch future activity in that flow
 
-- **Custom Ize group**: A list of Ize identites and groups
-- **NFT**: A blockchain identity is part of this group if it currently owns that 721/1155 NFT (validated by Alchemy)
-- **Hats**: A blockchain identity is part of this group if it is assigned that particular Hat and that Hat is active
-- **Discord Role**: A Discord idenity is part of this group if it holds a particular discord Role
-- **Discord Server**: A Discord idenity is part of this group if it is part of a Discord server.
 
-### Flows
 
-Flows define how a particular identities/groups collaborate to complete some kind of task. Flows have the following components
+#### Watching groups
 
-- **Request permissions**: Identities/groups that can trigger this flow (i.e. create a request)
-- **Request fields**: Information that is required for someone to trigger the flow
-- **Response permissions**: Identities/groups that can respond a
-- **Response fields**: Information that is required on a response
-- **Results**: How response fields are aggregated into a final result (e.g. decision, AI summary, prioritization, etc)
-- **Actions**: Automated actions that occur when a request complets (e.g. fire a webhook, evolve a flow, etc)
+Similarly, a user is associated with watching a group in two situations
 
-Everything that happens in Ize happens via collaborative flows. Even the process to evolve a flow happens via another flow.
+1. They affirmatively confirm they want to watch the group on the groups/group page
+2. In the GroupInvitations component we show all groups that a user is a member of, but they haven't confirmed they want to watch / not watch. 
+3. (TBD) When a Telegram identity creates or participates in a flow directly from Telegram, we have that entity watch the group. The reason we do this is that there are limitations on how we can query for a Telegram identities groups, so we want to actively find ways to associate a user to a group
 
-### Requests
+#### entities_groups mapping
 
-An instance of a flow being triggered is a request. There can be many requests to a single flow.
+The intention of entities_groups map individual users to the groups they belong to for read operations. The most important thing this information is used for is showing the user which Ize groups they are a member of. These groups could be defined on other tools (e.g. Discord group, nft, Telegram group) or be an Ize group.
 
-Requests can (but don't necessarily) have responses.
+The reason it is entities_groups rather than users_groups is so that a user would be add/remove identities and associated groups should also be updated accordingly.
+
+Entities groups is only updated in the following situations
+
+- A user logs in
+- A user adds an identity
+- A telegram identity's membership with a telegram group is checked
+- A new custom group is created
+
+The logic for how Telegram entities_groups are updated is different than other identity tyeps because Telegram doesn't have a way of getting all of a telegram user's chat groups.

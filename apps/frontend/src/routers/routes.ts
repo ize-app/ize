@@ -22,7 +22,6 @@ export enum Route {
 export enum NewUserRoute {
   Welcome = "",
   Setup = "/setup",
-  Start = "/start",
 }
 
 export enum NewRequestRoute {

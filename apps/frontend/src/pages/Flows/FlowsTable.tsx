@@ -50,7 +50,7 @@ export const FlowsTable = ({
             <TableCellHideable sx={{ minWidth: "140px" }} />
 
             {!groupId && (
-              <TableCellHideable sx={{ width: "60px" }} align="center">
+              <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
                 Watching
               </TableCellHideable>
             )}
@@ -155,7 +155,7 @@ const FlowRow = ({
           </Box>
         </TableCell>
         {!groupId && (
-          <TableCellHideable width={"60px"} align="center">
+          <TableCellHideable width={"60px"} align="center" hideOnSmallScreen>
             {flow.watching.groups.length > 0 && (
               <Box
                 sx={{

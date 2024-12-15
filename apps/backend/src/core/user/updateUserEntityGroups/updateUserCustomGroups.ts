@@ -1,10 +1,9 @@
 import { GroupType, Prisma } from "@prisma/client";
 
+import { getIzeGroupsByMembers } from "@/core/entity/updateEntitiesGroups/getIzeGroupsForEntity";
+import { upsertForGroupTypeOfEntity } from "@/core/user/updateUserEntityGroups/upsertForGroupTypeOfEntity";
 import { GraphqlRequestContext } from "@/graphql/context";
-
-import { prisma } from "../../../../prisma/client";
-import { getIzeGroupsByMembers } from "../getIzeGroupsForEntity";
-import { upsertForGroupTypeOfEntity } from "../upsertForGroupTypeOfEntity";
+import { prisma } from "@/prisma/client";
 
 export const updateUserIzeGroups = async ({
   context,
@@ -26,6 +25,7 @@ export const updateUserIzeGroups = async ({
             entityId,
           },
         });
+        // This also needs to check whether user or their identities are part of that group
         const izeGroupIds = await getIzeGroupsByMembers({
           transaction,
           entityId,

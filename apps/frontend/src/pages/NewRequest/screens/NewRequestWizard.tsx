@@ -29,7 +29,7 @@ export const NewRequestWizard = () => {
       const newRequestId = data.newRequest;
       navigate(`/requests/${fullUUIDToShort(newRequestId)}`);
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Request created!", type: "success" });
+      setSnackbarData({ message: "Flow triggered!", type: "success" });
     },
     onError: (data) => {
       if (data.graphQLErrors[0]?.extensions?.code === "InsufficientPermissions") {
@@ -38,7 +38,7 @@ export const NewRequestWizard = () => {
         setAuthModalOpen(true);
       }
       setSnackbarOpen(true);
-      setSnackbarData({ message: "Request creation failed", type: "error" });
+      setSnackbarData({ message: "Trigger failed", type: "error" });
     },
   });
 
@@ -75,10 +75,7 @@ export const NewRequestWizard = () => {
 
   return me ? (
     <PageContainer>
-      <Head
-        title={"Create a request"}
-        description={"Propose a new decision by creating a request."}
-      />
+      <Head title={"Trigger flow"} description={"Trigger flow"} />
       <Typography variant="h1" sx={{ marginTop: "32px" }}>
         {title}
       </Typography>

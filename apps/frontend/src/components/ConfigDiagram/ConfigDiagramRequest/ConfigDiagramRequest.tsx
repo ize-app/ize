@@ -25,7 +25,6 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
       ? "action"
       : "step" + request.currentStepIndex.toString(),
   );
-  console.log("selectedId is ", selectedId);
 
   const finalStepIndex = request.flow.steps.length - 1;
   const finalAction = request.flow.steps[finalStepIndex]?.action ?? null;

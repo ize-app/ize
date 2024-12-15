@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { checkEntitiesForIzeGroups } from "@/core/entity/group/checkEntitiesForCustomGroups";
 import { newEntitySet } from "@/core/entity/newEntitySet";
-import { upsertAllEntitiesForGroup } from "@/core/entity/updateEntitiesGroups/upsertAllEntitiesForGroup";
+import { upsertAllMemberEntitiesForIzeGroup } from "@/core/entity/updateEntitiesGroups/upsertAllEntitiesForIzeGroup";
 import { SystemFieldType } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -93,7 +93,7 @@ export const evolveGroup = async ({
     transaction,
   });
 
-  await upsertAllEntitiesForGroup({
+  await upsertAllMemberEntitiesForIzeGroup({
     entityIds,
     groupId: izeGroup.groupId,
     transaction,

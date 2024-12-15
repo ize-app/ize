@@ -11,7 +11,7 @@ export const AddTelegramBotButton = () => {
       sx={{ display: "flex", width: "fit-content" }}
       variant="contained"
     >
-      Add Ize Bot
+      Add Ize Bot to Telegram Group
     </Button>
   );
 };

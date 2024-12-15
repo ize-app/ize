@@ -49,7 +49,14 @@ export const GroupWatchFilterToggle = ({
         size="small"
         value={"Watched by me"}
         selected={true}
-        sx={{ height: "30px", display: "flex", justifyContent: "space-between" }}
+        sx={(theme) => ({
+          height: "30px",
+          display: "flex",
+          justifyContent: "space-between",
+          [theme.breakpoints.down("sm")]: {
+            width: "100%",
+          },
+        })}
         color="primary"
         onClick={handleClick}
       >
@@ -66,8 +73,11 @@ export const GroupWatchFilterToggle = ({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {watchFilterOptions.map((option) => (
-          <MenuItem key={option.value} onClick={() => toggleHandler({ type: option.value })}>
+        {watchFilterOptions.map((option, index) => (
+          <MenuItem
+            key={"watchFilter" + index}
+            onClick={() => toggleHandler({ type: option.value })}
+          >
             {option.name}
           </MenuItem>
         ))}

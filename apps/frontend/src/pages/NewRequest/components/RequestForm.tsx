@@ -37,8 +37,6 @@ export const RequestForm = () => {
   const flow = formState.flow;
   const step = flow?.steps[0];
 
-  console.log("flow is ", flow);
-
   if (!flow || !step) return null;
 
   return (
@@ -67,9 +65,9 @@ export const RequestForm = () => {
               }}
             >
               <TextField<RequestSchemaType>
-                label={"Request name"}
+                label={"Describe the intention of triggering this flow"}
                 variant="outlined"
-                placeholderText="Describe the intention of this request."
+                placeholderText="Describe the intention of triggering this flow."
                 showLabel={true}
                 name={`name`}
                 required={true}

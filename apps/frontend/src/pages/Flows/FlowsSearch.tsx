@@ -2,18 +2,16 @@ import { Button, ToggleButton, ToggleButtonGroup, useMediaQuery, useTheme } from
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent, useContext } from "react";
-import { Link } from "react-router-dom";
 
 import Loading from "@/components/Loading";
-import CreateButton from "@/components/Menu/CreateButton";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
+import { FilterMenu } from "@/components/Tables/FilterMenu.tsx";
 import { FlowWatchFilterToggle } from "@/components/Tables/FlowWatchFilterToggle.tsx";
 import { GroupsFilterToggle } from "@/components/Tables/GroupsFilterToggle.tsx";
 import Search from "@/components/Tables/Search";
 import { FlowSummaryFragment, FlowWatchFilter } from "@/graphql/generated/graphql.ts";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
-import { Route } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 
@@ -32,8 +30,6 @@ export const FlowsSearch = ({
 
   const { me } = useContext(CurrentUserContext);
 
-  const theme = useTheme();
-  const isMdScreenSize = useMediaQuery(theme.breakpoints.down("md"));
   const {
     hasTriggerPermissions,
     setHasTriggerPermission,
@@ -59,16 +55,89 @@ export const FlowsSearch = ({
     initialHasTriggerPermissions: onlyShowTriggerable ? true : false,
   });
 
+  const theme = useTheme();
+  const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const toggleButtons = [];
+
+  const flowWatchToggle = (
+    <FlowWatchFilterToggle
+      flowWatchFilter={flowWatchFilter}
+      showWatchedByGroupsOption={!groupId}
+      setWatchFlowFilter={setFlowWatchFilter}
+    />
+  );
+
+  const groupFilterToggle = (
+    <GroupsFilterToggle
+      setSelectedGroupId={setGroupId}
+      selectedGroupId={selectedGroupId}
+      groups={me?.groups ?? []}
+    />
+  );
+
+  const triggerPermissionToggle = (
+    <ToggleButton
+      size="small"
+      value={hasTriggerPermissions}
+      selected={hasTriggerPermissions}
+      sx={(theme) => ({
+        width: "140px",
+        flexShrink: 0,
+        height: "30px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+          justifyContent: "space-between",
+        },
+      })}
+      color="primary"
+      onChange={() => {
+        setHasTriggerPermission(!hasTriggerPermissions);
+      }}
+    >
+      Flows I can trigger
+    </ToggleButton>
+  );
+
+  const createdByMeToggle = (
+    <ToggleButton
+      size="small"
+      value={createdByUser}
+      selected={createdByUser}
+      sx={(theme) => ({
+        width: "140px",
+        flexShrink: 0,
+        height: "30px",
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+          justifyContent: "space-between",
+        },
+      })}
+      color="primary"
+      onChange={() => {
+        setCreatedByUser(!createdByUser);
+      }}
+    >
+      Created by me
+    </ToggleButton>
+  );
+
+  toggleButtons.push(flowWatchToggle);
+  if (!groupId) toggleButtons.push(groupFilterToggle);
+  if (!onlyShowTriggerable) toggleButtons.push(triggerPermissionToggle);
+  toggleButtons.push(createdByMeToggle);
+
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: "flex",
         flexDirection: "column",
-        gap: "30px",
+        gap: "16px",
         height: "100%",
         width: "100%",
-        minWidth: "0",
-      }}
+        outline: `1px solid ${theme.palette.grey[200]}`,
+        padding: "12px",
+      })}
     >
       <Box
         sx={{
@@ -81,57 +150,35 @@ export const FlowsSearch = ({
           // minWidth: "360px",
         }}
       >
-        <Box sx={{ display: "flex", gap: "16px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "16px",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+          }}
+        >
           <Search
             searchQuery={searchQuery}
             changeHandler={(event: ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
             }}
           />
-          {!!me && <CreateButton />}
+
+          {isSmallScreenSize ? (
+            <FilterMenu toggleButtons={toggleButtons} />
+          ) : (
+            <ToggleButtonGroup
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+            >
+              {toggleButtons}
+            </ToggleButtonGroup>
+          )}
         </Box>
-        <ToggleButtonGroup sx={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
-          <FlowWatchFilterToggle
-            flowWatchFilter={flowWatchFilter}
-            showWatchedByGroupsOption={!groupId}
-            setWatchFlowFilter={setFlowWatchFilter}
-          />
-          {!groupId && (
-            <GroupsFilterToggle
-              setSelectedGroupId={setGroupId}
-              selectedGroupId={selectedGroupId}
-              groups={me?.groups ?? []}
-            />
-          )}
-          {!onlyShowTriggerable && (
-            <ToggleButton
-              size="small"
-              value={hasTriggerPermissions}
-              selected={hasTriggerPermissions}
-              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setHasTriggerPermission(!hasTriggerPermissions);
-              }}
-            >
-              Flows I can trigger
-            </ToggleButton>
-          )}
-          {!isMdScreenSize && (
-            <ToggleButton
-              size="small"
-              value={createdByUser}
-              selected={createdByUser}
-              sx={{ width: "140px", flexShrink: 0, height: "30px" }}
-              color="primary"
-              onChange={() => {
-                setCreatedByUser(!createdByUser);
-              }}
-            >
-              Created by me
-            </ToggleButton>
-          )}
-        </ToggleButtonGroup>
       </Box>
       {loading && flows.length === 0 ? (
         <Loading />
@@ -145,9 +192,7 @@ export const FlowsSearch = ({
         />
       ) : (
         <EmptyTablePlaceholder>
-          <Typography>
-            <Link to={Route.NewFlow}>Create a flow</Link>
-          </Typography>
+          <Typography>No results</Typography>
         </EmptyTablePlaceholder>
       )}
       {/* if there are no new results or no results at all, then hide the "load more" button */}

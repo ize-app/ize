@@ -48,7 +48,7 @@ export const Request = () => {
   const onError = () => {
     navigate("/");
     setSnackbarOpen(true);
-    setSnackbarData({ message: "Cannot find this request", type: "error" });
+    setSnackbarData({ message: "Cannot find this flow trigger", type: "error" });
   };
 
   if (error) onError();
@@ -120,7 +120,7 @@ export const Request = () => {
         }),
       },
     );
-  else breadcrumbItems.unshift({ title: "Requests", link: Route.Home.toString() });
+  // else breadcrumbItems.unshift({ title: "Requests", link: Route.Home.toString() });
 
   return (
     <PageContainer>

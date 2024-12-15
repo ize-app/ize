@@ -62,10 +62,6 @@ export const router = createBrowserRouter([
             path: Routes.newUserRoute(Routes.NewUserRoute.Setup),
             element: <NewUser.Setup />,
           },
-          {
-            path: Routes.newUserRoute(Routes.NewUserRoute.Start),
-            element: <NewUser.Start />,
-          },
         ],
       },
       {

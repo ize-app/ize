@@ -16,9 +16,10 @@ export const requestDefinedOptionsRecordSchema = z.record(
 export const requestSchema = z
   .object({
     requestId: z.string().uuid(),
-    name: z.string().min(5, "Please make the request name at least 5 characters"),
+    name: z.string().min(5, "Please write a description of at least 5 characters"),
     requestFields: inputRecordSchema.optional(),
     requestDefinedOptions: requestDefinedOptionsRecordSchema,
+    watch: z.boolean().default(false),
   })
   .refine(
     (req) => {

@@ -8,13 +8,13 @@ import { finalizeStepResponses } from "./updateState/finalizeStepResponses";
 import { canEndRequestStepWithResponse } from "./utils/endRequestStepWithoutResponse";
 import { entityInclude } from "../entity/entityPrismaTypes";
 import { getUserEntities } from "../entity/getUserEntities";
+import { updateEntityWatchFlows } from "../entity/updateEntityWatchFlow";
 import { UserOrIdentityContextInterface } from "../entity/UserOrIdentityContext";
 import { FieldPrismaType } from "../fields/fieldPrismaTypes";
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { sendNewStepNotifications } from "../notification/sendNewStepNotifications";
 import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { newResultsForStep } from "../result/newResults/newResultsForStep";
-import { watchFlow } from "../user/watchFlow";
 
 // creates a new request for a flow, starting with the request's first step
 // validates/creates request fields and request defined options
@@ -32,7 +32,7 @@ export const newRequest = async ({
     request: { requestDefinedOptions, requestFields, flowId, requestId },
   } = args;
 
-  const { entityId, entityIds, user } = await getUserEntities({ entityContext });
+  const { entityId, entityIds } = await getUserEntities({ entityContext });
 
   const flow = await prisma.flow.findUniqueOrThrow({
     where: {
@@ -83,6 +83,10 @@ export const newRequest = async ({
         final: false,
       },
     });
+
+    if (args.request.watch) {
+      await updateEntityWatchFlows({ entityId, flowIds: [flowId], watch: true, transaction });
+    }
 
     const responseComplete = canEndRequestStepWithResponse({ step });
 
@@ -162,8 +166,6 @@ export const newRequest = async ({
     await newResultsForStep({ requestStepId });
     await finalizeStepResponses({ requestStepId });
   }
-
-  await watchFlow({ flowId: flowId, watch: true, entityId, user });
 
   await sendNewStepNotifications({
     requestStepId,

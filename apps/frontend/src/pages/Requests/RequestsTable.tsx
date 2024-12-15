@@ -23,7 +23,7 @@ dayjs.extend(timezone);
 
 export const RequestSummaryTable = ({ requests }: { requests: RequestSummaryFragment[] }) => {
   return (
-    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "360px" }}>
+    <TableContainer component={Paper} sx={{ overflowX: "initial", minWidth: "300px" }}>
       <Table aria-label="Request Table" sx={{ tableLayout: "fixed", width: "100%" }}>
         <TableHead></TableHead>
         <TableBody>
@@ -42,7 +42,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
   return (
     <>
       <TableRow
-        aria-label="Request Row"
+        aria-label="Triggered flow Row"
         onClick={() =>
           navigate(
             generatePath(Route.Request, {
@@ -67,6 +67,7 @@ const RequestSummaryRow = ({ request }: { request: RequestSummaryFragment }) => 
           <RequestStepTitle request={request} />
         </TableCellHideable>
         <TableCellHideable
+          hideOnSmallScreen
           align="right"
           // width="200px"
           sx={{ width: "50%", minWidth: "240px", maxWidth: "400px" }}

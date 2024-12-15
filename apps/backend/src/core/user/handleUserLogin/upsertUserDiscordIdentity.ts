@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { APIUser } from "discord.js";
 
 // get Discord user data from Discord API and create Discord identity for user
-export const createDiscordIdentity = async ({
+export const upsertUserDiscordIdentity = async ({
   userId,
   accessToken,
   transaction,

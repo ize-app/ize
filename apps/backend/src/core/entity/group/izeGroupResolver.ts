@@ -15,6 +15,10 @@ export const izeGroupResolver = ({
   return {
     groupId: izeGroup.groupId,
     group: groupResolver(izeGroup.group),
+    creator: entityResolver({
+      entity: izeGroup.group.Creator,
+      userIdentityIds: context.currentUser?.Identities.map((id) => id.id) ?? [],
+    }),
     members: [
       ...(izeGroup?.MemberEntitySet.EntitySetEntities.map((entity) => {
         return entityResolver({

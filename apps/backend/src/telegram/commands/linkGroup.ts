@@ -28,7 +28,7 @@ export const linkGroup = async ({
     }
 
     if (chatMember.status !== "administrator" && chatMember.status !== "creator") {
-      ctx.reply("You do not have permissions to add the bot to this group.");
+      ctx.reply("Only chat admins can change where this bot sends messages.");
       return;
     }
 

@@ -17,7 +17,7 @@ export function useNewRequestWizardState() {
   return useWizardFormState<NewRequestFormSchema>();
 }
 
-export const NEW_REQUEST_PROGRESS_BAR_STEPS = ["Select flow", "Create request", "Confirm"];
+export const NEW_REQUEST_PROGRESS_BAR_STEPS = ["Select flow", "Trigger flow", "Confirm"];
 
 export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestFormSchema> = [
   {
@@ -29,7 +29,7 @@ export const NEW_REQUEST_WIZARD_STEPS: WizardSteps<NewRequestFormSchema> = [
   },
   {
     path: newRequestRoute(NewRequestRoute.CreateRequest),
-    title: "Create request",
+    title: "Trigger flow",
     progressBarStep: 1,
     canNext: () => true,
     validWizardState: () => true,

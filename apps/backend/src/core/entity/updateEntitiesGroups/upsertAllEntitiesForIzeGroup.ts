@@ -4,7 +4,7 @@ import { prisma } from "../../../prisma/client";
 
 // this updates all entity groups for a given group Type and a given user
 // unfortunately prisma doesn't support upsertMany so the queries a bit wonky/inefficient
-export const upsertAllEntitiesForGroup = async ({
+export const upsertAllMemberEntitiesForIzeGroup = async ({
   entityIds,
   groupId,
   transaction = prisma,
@@ -13,6 +13,27 @@ export const upsertAllEntitiesForGroup = async ({
   groupId: string;
   transaction?: Prisma.TransactionClient;
 }) => {
+  // get all submembers of entityIds
+  await transaction.entity.findMany({
+    where: {
+      Group: {
+        NOT: undefined,
+      },
+    },
+  });
+
+  const memberEntities = await transaction.entityGroup.findMany({
+    where: {
+      Group: {
+        entityId: { in: entityIds },
+      },
+    },
+  });
+
+  const memberEntityIds = memberEntities.map((entity) => entity.entityId);
+
+  const allEntityIds = [...entityIds, ...memberEntityIds];
+
   // reset all groups to inactive to reflect when a user is no longer part of a group
   await transaction.entityGroup.updateMany({
     where: {
@@ -24,7 +45,7 @@ export const upsertAllEntitiesForGroup = async ({
   });
 
   await transaction.entityGroup.createMany({
-    data: entityIds.map((entityId) => ({
+    data: allEntityIds.map((entityId) => ({
       groupId,
       active: true,
       entityId,
@@ -34,7 +55,7 @@ export const upsertAllEntitiesForGroup = async ({
 
   await transaction.entityGroup.updateMany({
     where: {
-      entityId: { in: entityIds },
+      entityId: { in: allEntityIds },
       groupId,
     },
     data: {

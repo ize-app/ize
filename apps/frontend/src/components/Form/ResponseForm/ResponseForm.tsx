@@ -59,7 +59,6 @@ export const ResponseForm = ({
   // console.log("errors are", formMethods.formState.errors);
 
   const onSubmit = async (data: ResponseSchemaType) => {
-    console.log("submitting response", data);
     setDisableSubmit(true);
     await mutate({
       variables: {

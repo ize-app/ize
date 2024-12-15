@@ -24,7 +24,7 @@ export const TelegramBotSetup = () => {
       {!telegramIdentity && <TelegramLogin />}
       {telegramIdentity && (
         <>
-          <Typography variant="description">First, add the Ize bot to your Telegram</Typography>
+          <Typography variant="description">First, add the Ize bot to a Telegram group</Typography>
           <AddTelegramBotButton />
           <Typography variant="description">
             Send this slash command in the Telegram group where you want to add the bot

@@ -32,7 +32,7 @@ export const GroupsTable = ({ groups }: { groups: IzeGroupFragment[] }) => {
             {/* <TableCellHideable width="60px" /> */}
             <TableCellHideable sx={{ minWidth: "140px" }} />
             {/* <TableCellHideable hideOnSmallScreen /> */}
-            <TableCellHideable sx={{ width: "60px" }} align="center">
+            <TableCellHideable sx={{ width: "60px" }} align="center" hideOnSmallScreen>
               Members
             </TableCellHideable>
 
@@ -114,15 +114,13 @@ const GroupRow = ({ group }: { group: IzeGroupFragment }) => {
             </Box>
           ) : null}
         </TableCellHideable> */}
-      <TableCellHideable align="center" width={"100px"}>
+      <TableCellHideable align="center" width={"100px"} hideOnSmallScreen>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            // width: "100%",
-            // backgroundColor: "red",
           }}
         >
           <AvatarGroup avatars={group.members} />

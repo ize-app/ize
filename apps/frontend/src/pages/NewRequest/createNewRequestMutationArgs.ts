@@ -28,5 +28,12 @@ export const createNewRequestMutationArgs = (formState: NewRequestFormSchema): N
     };
   });
 
-  return { requestId: request.requestId, flowId, requestFields, requestDefinedOptions, name };
+  return {
+    requestId: request.requestId,
+    flowId,
+    requestFields,
+    requestDefinedOptions,
+    name,
+    watch: formState.request?.watch ?? false,
+  };
 };

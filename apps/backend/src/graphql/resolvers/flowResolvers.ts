@@ -11,7 +11,7 @@ import {
   QueryGetGroupsToWatchFlowArgs,
   QueryResolvers,
 } from "@graphql/generated/resolver-types";
-import { updateUserGroups } from "@/core/entity/updateEntitiesGroups/updateUserEntityGroups/updateUserGroups";
+
 import { getGroupsToWatchFlow as getGroupsToWatchFlowService } from "@/core/flow/getGroupsToWatchFlow";
 
 const getFlow: QueryResolvers["getFlow"] = async (
@@ -47,9 +47,6 @@ const newFlow: MutationResolvers["newFlow"] = async (
       context,
     },
   });
-
-  // associate user with any new identities that were created when creating the new flow
-  await updateUserGroups({ context });
 
   return flowId;
 };

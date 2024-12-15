@@ -13,6 +13,9 @@ type Me {
   identities: [Identity!]!
   groups: [Group!]!
   notifications: NotificationSettings
+  hasGroupInvites: Boolean!
+  hasWatchedGroup: Boolean!
+  hasCreatedFlow: Boolean!
 }
 
 type NotificationSettings {
@@ -37,7 +40,6 @@ input UserNotificationsArgs {
   transactional: Boolean!
   marketing: Boolean!
 }
-
 
 enum WatchFilter {
   All
