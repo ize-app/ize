@@ -15,67 +15,71 @@ export const handleTelegramFreeTextResponse = async ({
   message: Message;
   ctx: Context;
 }) => {
-  //@ts-expect-error  reply field isn't in the type
-  //eslint-disable-next-line
-  const replyMessageId = message?.reply_to_message?.message_id as string;
-  //@ts-expect-error  reply field isn't in the type
-  const textResponse = message.text as string;
-  const userId = message.from?.id;
-  const chatId = message.chat.id;
+  try {
+    //@ts-expect-error  reply field isn't in the type
+    //eslint-disable-next-line
+    const replyMessageId = message?.reply_to_message?.message_id as string;
+    //@ts-expect-error  reply field isn't in the type
+    const textResponse = message.text as string;
+    const userId = message.from?.id;
+    const chatId = message.chat.id;
 
-  if (!replyMessageId) return;
+    if (!replyMessageId) return;
 
-  //eslint-disable-next-line
-  const fieldPrompt = await prisma.telegramMessages.findFirst({
-    where: { messageId: BigInt(replyMessageId) },
-  });
+    //eslint-disable-next-line
+    const fieldPrompt = await prisma.telegramMessages.findFirst({
+      where: { messageId: BigInt(replyMessageId) },
+    });
 
-  if (!fieldPrompt) return;
+    if (!fieldPrompt) return;
 
-  const { requestStepId, fieldId } = fieldPrompt;
+    const { requestStepId, fieldId } = fieldPrompt;
 
-  if (!fieldId) return;
+    if (!fieldId) return;
 
-  if (!message.from) return;
+    if (!message.from) return;
 
-  const identity = await upsertTelegramIdentity({ telegramUserData: message.from });
+    const identity = await upsertTelegramIdentity({ telegramUserData: message.from });
 
-  prisma.identity.findFirstOrThrow({
-    include: identityInclude,
-    where: {
-      IdentityTelegram: {
-        telegramUserId: userId,
+    prisma.identity.findFirstOrThrow({
+      include: identityInclude,
+      where: {
+        IdentityTelegram: {
+          telegramUserId: userId,
+        },
       },
-    },
-  });
+    });
 
-  await newResponse({
-    entityContext: { type: "identity", identity },
-    args: {
-      response: {
-        responseId: crypto.randomUUID(),
-        answers: [
-          {
-            fieldId: fieldId,
-            value: JSON.stringify(textResponse),
-          },
-        ],
+    await newResponse({
+      entityContext: { type: "identity", identity },
+      args: {
+        response: {
+          responseId: crypto.randomUUID(),
+          answers: [
+            {
+              fieldId: fieldId,
+              value: JSON.stringify(textResponse),
+            },
+          ],
+          requestStepId,
+        },
+      },
+    });
+
+    // create message record so that if someone replies to this response rather than the original prompt, we can still track the response
+    // this creates a pseudo-thread in the db
+    //eslint-disable-next-line
+    await prisma.telegramMessages.create({
+      data: {
+        fieldId,
+        chatId: BigInt(chatId),
         requestStepId,
+        messageId: BigInt(message.message_id),
       },
-    },
-  });
+    });
 
-  // create message record so that if someone replies to this response rather than the original prompt, we can still track the response
-  // this creates a pseudo-thread in the db
-  //eslint-disable-next-line
-  await prisma.telegramMessages.create({
-    data: {
-      fieldId,
-      chatId: BigInt(chatId),
-      requestStepId,
-      messageId: BigInt(message.message_id),
-    },
-  });
-
-  ctx.react("👀");
+    ctx.react("👀");
+  } catch (e) {
+    console.log("Error handleTelegramFreeTextResponse:", e);
+  }
 };

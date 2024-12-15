@@ -37,7 +37,7 @@ export const generateNonreusableFlowConfig = ({
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
-        name: "Synthesize group perspectives",
+        name: "Synthesize group perspectives with AI",
         trigger: {
           permission: emptyPermission,
         },
@@ -85,7 +85,7 @@ export const generateNonreusableFlowConfig = ({
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
-        name: "Ideate together",
+        name: "Create summary of ideas with AI",
         fieldSet: {
           locked: false,
           fields: [],
@@ -137,7 +137,7 @@ export const generateNonreusableFlowConfig = ({
       return {
         flowVersionId: crypto.randomUUID(),
         type: FlowType.Custom,
-        name: "Ideate together",
+        name: "Give your opinion and then let AI decide",
         trigger: { permission: emptyPermission },
         fieldSet: {
           fields: [

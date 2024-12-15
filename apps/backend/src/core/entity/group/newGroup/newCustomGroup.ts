@@ -7,7 +7,7 @@ import { GraphqlRequestContext } from "@/graphql/context";
 import { MutationNewCustomGroupArgs } from "@/graphql/generated/resolver-types";
 
 import { newEntitySet } from "../../newEntitySet";
-import { upsertAllEntitiesForGroup } from "../../updateEntitiesGroups/upsertAllEntitiesForGroup";
+import { upsertAllMemberEntitiesForIzeGroup } from "../../updateEntitiesGroups/upsertAllEntitiesForIzeGroup";
 import { checkEntitiesForIzeGroups } from "../checkEntitiesForCustomGroups";
 
 export const newIzeGroup = async ({
@@ -72,7 +72,7 @@ export const newIzeGroup = async ({
   });
 
   // associates all direct members of group with the group
-  await upsertAllEntitiesForGroup({
+  await upsertAllMemberEntitiesForIzeGroup({
     entityIds: args.inputs.members.map((entity) => entity.id),
     groupId: izeGroupEntity.Group?.id as string,
     transaction,

@@ -6,8 +6,6 @@ import { OptionSelectionType, Request, ValueType } from "@/graphql/generated/res
 import { prisma } from "@/prisma/client";
 import { telegramBot } from "@/telegram/TelegramClient";
 
-import { sendDefaultResponseMessage } from "./sendDefaultResponseMessage";
-import { sendStringFieldResponseMessage } from "./sendStringFieldResponseMessage";
 import { sendTelegramPoll } from "./sendTelegramPoll";
 import { createRequestUrl } from "../../request/createRequestUrl";
 
@@ -30,9 +28,12 @@ export const sendTelegramNewStepMessage = async ({
 
     if (!requestStep) throw new Error(`Request step with id ${requestStepId} not found`);
 
-    const messageText = stringifyTriggerFields({
+    const baseMessageText = stringifyTriggerFields({
       request,
-      title: `New request in Ize 👀\n\n<strong>${request.name}</strong> (<i>${request.flow.name}</i>)`,
+      title: `Flow Triggered In Ize 👀`,
+      subtitle: request.flow.reusable
+        ? `[${request.flow.name}] ${request.name}`
+        : request.flow.name,
       type: "html",
     });
 
@@ -40,6 +41,12 @@ export const sendTelegramNewStepMessage = async ({
     const responseFields = fieldSet.fields.filter((f) => !f.isInternal);
     const firstField = responseFields[0];
     const url = createRequestUrl({ requestId: request.requestId });
+
+    const isValidTelegramPoll =
+      firstField.optionsConfig?.selectionType === OptionSelectionType.Select &&
+      firstField.optionsConfig?.maxSelections === 1 &&
+      firstField.optionsConfig.options.length > 1 &&
+      firstField.optionsConfig.options.length <= 11;
 
     // using allSettled so that one message failure doesn't stop other messages from being sent out
 
@@ -50,17 +57,26 @@ export const sendTelegramNewStepMessage = async ({
           const chatHasRespondPermission =
             permissions.anyone ||
             permissions.resolvedEntities.telegramGroups.some((tg) => tg.id === group.id);
+          let fullMessage: string;
 
           if (responseFields.length === 0) return;
-          0;
+          else if (responseFields.length > 1)
+            fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
+          else if (!chatHasRespondPermission)
+            fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
+          else if (isValidTelegramPoll)
+            fullMessage = `${baseMessageText}\n\nRespond to the poll below`;
+          else if (firstField.type === ValueType.String)
+            fullMessage = `${baseMessageText}\n\n━━━━━━━━━━━━━━\n\n<strong>Question:</strong> ${firstField.name}\n\n↩️ Reply to this message to respond`;
+          else fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
 
           // message describing the request
           const message = await telegramBot.telegram.sendMessage(
             group.chatId.toString(),
-            messageText,
+            fullMessage,
             {
               reply_markup: {
-                inline_keyboard: [[{ url, text: "See request on Ize" }]],
+                inline_keyboard: [[{ url, text: "See flow on Ize" }]],
               },
               message_thread_id: messageThreadId,
               parse_mode: "HTML",
@@ -73,47 +89,16 @@ export const sendTelegramNewStepMessage = async ({
               chatId: group.chatId,
               messageId: message.message_id,
               requestStepId,
+              fieldId: responseFields.length === 1 ? firstField.fieldId : undefined,
             },
           });
 
-          if (responseFields.length === 0) return;
-          if (responseFields.length > 1)
-            await sendDefaultResponseMessage({
-              message: "This request requires a response within Ize",
-              telegramGroup: group,
-              replyMessageId: message.message_id,
-              requestUrl: url,
-            });
-          else if (!chatHasRespondPermission)
-            await sendDefaultResponseMessage({
-              message: "The permissions of this request require a response within Ize",
-              telegramGroup: group,
-              replyMessageId: message.message_id,
-              requestUrl: url,
-            });
-          else if (
-            firstField.optionsConfig?.selectionType === OptionSelectionType.Select &&
-            firstField.optionsConfig?.maxSelections === 1
-          )
+          if (isValidTelegramPoll)
             await sendTelegramPoll({
               field: firstField,
               requestStep,
               telegramGroup: group,
               replyMessageId: message.message_id,
-            });
-          else if (firstField.type === ValueType.String)
-            await sendStringFieldResponseMessage({
-              field: firstField,
-              telegramGroup: group,
-              replyMessageId: message.message_id,
-              requestStepId,
-            });
-          else
-            await sendDefaultResponseMessage({
-              message: "This request requires a response within Ize",
-              telegramGroup: group,
-              replyMessageId: message.message_id,
-              requestUrl: url,
             });
         } catch (e) {
           console.log(

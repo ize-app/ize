@@ -31,6 +31,7 @@ export const SelectGroupsToWatchFlowForm = <T extends FieldValues>({
       flowId,
       entities: entityIds,
     },
+    fetchPolicy: "network-only",
     onCompleted: (data) => {
       setRelevantGroups(data.getGroupsToWatchFlow.relevantGroups);
       setOtherGroups(data.getGroupsToWatchFlow.otherGroups);
