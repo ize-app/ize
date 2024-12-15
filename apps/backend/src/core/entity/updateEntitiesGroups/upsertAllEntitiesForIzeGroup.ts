@@ -13,17 +13,10 @@ export const upsertAllMemberEntitiesForIzeGroup = async ({
   groupId: string;
   transaction?: Prisma.TransactionClient;
 }) => {
-  // get all submembers of entityIds
-  await transaction.entity.findMany({
-    where: {
-      Group: {
-        NOT: undefined,
-      },
-    },
-  });
 
   const memberEntities = await transaction.entityGroup.findMany({
     where: {
+      active: true,
       Group: {
         entityId: { in: entityIds },
       },

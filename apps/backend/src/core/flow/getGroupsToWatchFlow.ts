@@ -42,9 +42,10 @@ export const getGroupsToWatchFlow = async ({
       EntityWatchedGroups: {
         some: {
           entityId: { in: context.userEntityIds },
+          watched: true,
         },
       },
-      Entity: args.flowId ? { EntityWatchedFlows: { none: { flowId: args.flowId } } } : {},
+      Entity: args.flowId ? { EntityWatchedFlows: { none: { flowId: args.flowId, watched: true } } } : {},
       OwnedFlows: {
         some: {
           type: "GroupWatchFlow",

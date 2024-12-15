@@ -71,11 +71,13 @@ export const createIzeGroupInclude = (userEntityIds: string[]) =>
         EntitiesInGroup: {
           where: {
             entityId: { in: userEntityIds },
+            active: true,
           },
         },
         EntityWatchedGroups: {
           where: {
             entityId: { in: userEntityIds },
+            watched: true,
           },
         },
       },
