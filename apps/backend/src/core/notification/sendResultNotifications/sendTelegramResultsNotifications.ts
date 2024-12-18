@@ -17,6 +17,11 @@ export const sendTelegramResultsNotifications = async ({
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
+  
+  const reqStep = request.requestSteps.find((rs) => rs.requestStepId === requestStepId);
+  
+  if (reqStep?.results.length === 0) return;
+
   const message = createTelegramResultsString({ request, requestStepId });
   const requestUrl = createRequestUrl({ requestId: request.requestId });
   try {

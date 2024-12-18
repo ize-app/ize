@@ -73,8 +73,10 @@ export async function createWebhookPayload({
     rs.results.forEach((r) => {
       const step = request.flow.steps.find((s) => s.id === rs.stepId);
       const fieldId =
-        (step?.result ?? []).find((resultConfig) => resultConfig.field.fieldId === r.resultConfigId)
-          ?.field.fieldId ?? "";
+        (step?.result ?? []).find(
+          (resultConfig) => resultConfig.resultConfigId === r.resultConfigId,
+        )?.field.fieldId ?? "";
+
       const field = rs.fieldSet.fields.find((f) => f.fieldId === fieldId)?.name ?? "";
       // only outputing first result of result group for now
       // so that output is more predictable / simple

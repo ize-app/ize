@@ -17,6 +17,7 @@ export const finalizeActionAndRequest = async ({
       id: requestStepId,
     },
     data: {
+      resultsFinal: true,
       actionsFinal: true,
       final: true,
       // since there is currently only one action per request step

@@ -43,6 +43,7 @@ export const Result = ({
   responseSummary,
   triggerDefinedOptions,
   finalField,
+  finalResult,
 }: {
   field: FieldFragment;
   resultConfig: ResultConfigFragment;
@@ -52,8 +53,12 @@ export const Result = ({
   displayDescripton: boolean;
   triggerDefinedOptions?: OptionFragment[];
   finalField: boolean;
+  finalResult: boolean;
 }) => {
-  const statusProps = resultGroupStatusProps[resultGroup?.status ?? ResultGroupStatus.NotStarted];
+  const status =
+    resultGroup?.status ??
+    (finalResult ? ResultGroupStatus.FinalNoResult : ResultGroupStatus.NotStarted);
+  const statusProps = resultGroupStatusProps[status];
   const backgroundColor = statusProps.lightColor ?? "white";
 
   return (
@@ -69,10 +74,7 @@ export const Result = ({
       key={resultConfig.resultConfigId}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <ResultHeader
-          label={resultConfig.name}
-          resultGroupStatus={resultGroup?.status ?? ResultGroupStatus.NotStarted}
-        />
+        <ResultHeader label={resultConfig.name} resultGroupStatus={status} />
         <Typography color="primary" fontSize="1rem">
           {field?.name}
         </Typography>
@@ -92,7 +94,7 @@ export const Result = ({
               <LabeledGroupedInputs
                 key={result.id}
                 sx={{ backgroundColor: "white" }}
-                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+                label={getResultGroupLabel({ status, name: result.name })}
               >
                 <FieldOptions
                   field={field}
@@ -106,7 +108,7 @@ export const Result = ({
               <LabeledGroupedInputs
                 key={result.id}
                 sx={{ backgroundColor: "white", padding: "8px" }}
-                label={getResultGroupLabel({ status: resultGroup.status, name: result.name })}
+                label={getResultGroupLabel({ status, name: result.name })}
               >
                 {result.resultItems.map((item) => (
                   <Value key={item.id} value={item.value} field={field} type={"fieldAnswer"} />

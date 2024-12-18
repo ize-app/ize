@@ -16,7 +16,7 @@ export const Flows = () => {
   return (
     <PageContainer>
       <Head title={"Flows"} description={"View and trigger your collaborative flows."} />
-      <Typography variant="h1">Flows</Typography>
+      <Typography variant="h1">Flow templates</Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <InfoBannerContainer
           title="Flows are reusable processes that connect teams and tools. Build flows to make decisions, come to a shared understanding, and trigger other tools."

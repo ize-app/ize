@@ -103,7 +103,7 @@ export const WebhookForm = () => {
                   Which option will this webhook be triggered for?
                 </Typography>
                 <AsyncSelect<IntitialFlowSetupSchemaType, string>
-                  label="Default option"
+                  label="Option"
                   variant="standard"
                   name={`filterOptionId`}
                   getOptionLabel={(option) => {

@@ -53,6 +53,7 @@ export const sendTelegramNewStepMessage = async ({
     return await Promise.allSettled(
       telegramGroups.map(async (group) => {
         try {
+          let sendPollInChat = false;
           const messageThreadId = group.messageThreadId ? Number(group.messageThreadId) : undefined;
           const chatHasRespondPermission =
             permissions.anyone ||
@@ -64,9 +65,10 @@ export const sendTelegramNewStepMessage = async ({
             fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
           else if (!chatHasRespondPermission)
             fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
-          else if (isValidTelegramPoll)
-            fullMessage = `${baseMessageText}\n\nRespond to the poll below`;
-          else if (firstField.type === ValueType.String)
+          else if (isValidTelegramPoll) {
+            fullMessage = `${baseMessageText}\n\nRespond to the poll below. The Telegram poll may not reflect all responses since you can respond to the poll directly in Ize`;
+            sendPollInChat = true;
+          } else if (firstField.type === ValueType.String)
             fullMessage = `${baseMessageText}\n\n━━━━━━━━━━━━━━\n\n<strong>Question:</strong> ${firstField.name}\n\n↩️ Reply to this message to respond`;
           else fullMessage = `${baseMessageText}\n\nThis flow requires a response within Ize`;
 
@@ -93,13 +95,14 @@ export const sendTelegramNewStepMessage = async ({
             },
           });
 
-          if (isValidTelegramPoll)
+          if (isValidTelegramPoll && sendPollInChat) {
             await sendTelegramPoll({
               field: firstField,
               requestStep,
               telegramGroup: group,
               replyMessageId: message.message_id,
             });
+          }
         } catch (e) {
           console.log(
             `Error sending new step notification to Telegram chat Id ${group.chatId} `,

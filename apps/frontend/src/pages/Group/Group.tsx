@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { CheckCircleOutline } from "@mui/icons-material";
-import { useMediaQuery, useTheme } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import { Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
@@ -15,7 +16,12 @@ import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import { FlowWatchFilter, GroupDocument, IzeGroupFragment, RequestStatusFilter } from "../../graphql/generated/graphql";
+import {
+  FlowWatchFilter,
+  GroupDocument,
+  IzeGroupFragment,
+  RequestStatusFilter,
+} from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -69,7 +75,16 @@ export const Group = () => {
       ) : null,
     },
     {
-      title: "Flows",
+      title: "Flow templates",
+      icon: (
+        <Tooltip
+          title="Every group has watched flow templates. These are flows that the group has
+              collectively decided it wants to highlight and receive notifications for"
+          arrow
+        >
+          <InfoIcon fontSize="small" />
+        </Tooltip>
+      ),
       content: !loading ? (
         <FlowsSearch
           groupId={groupId}

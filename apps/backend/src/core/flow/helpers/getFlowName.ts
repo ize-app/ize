@@ -16,10 +16,10 @@ export const getFlowName = ({
   }
   switch (flowType) {
     case FlowType.EvolveGroup:
-      return `Evolve ${ownerGroupName}`;
+      return `Evolve group: '${ownerGroupName}'`;
       break;
     case FlowType.GroupWatchFlow:
-      return `👀 Watch/unwatch flows for ${ownerGroupName}`;
+      return `Edit watched flows of group: '${ownerGroupName}'`;
       break;
     default:
       return flowName;

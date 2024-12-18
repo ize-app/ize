@@ -14,9 +14,9 @@ export const EvolveGroupButton = ({
   return (
     evolveGroupFlowId && (
       <Button
-        variant={"text"}
+        variant={"outlined"}
         color={"primary"}
-        sx={{ width: "140px" }}
+        sx={{ width: "140px", borderRadius: "6px" }}
         endIcon={<EditIcon />}
         size="small"
         onClick={(e) => {

@@ -48,6 +48,7 @@ export const RequestStepResults = ({
             minResponses={step.response?.minResponses}
             displayDescripton={true}
             triggerDefinedOptions={triggerDefinedOptions}
+            finalResult={requestStep?.status.resultsFinal ?? false}
           />
         );
       })}
