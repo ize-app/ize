@@ -20,7 +20,7 @@ export const Requests = () => {
       content: (
         <RequestSearch
           initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}
-          initialNeedsResponseFilter={true}
+          initialNeedsResponseFilter={false}
           initialRequestStatusFilter={RequestStatusFilter.Open}
           showNeedsResponseFilter={true}
           showRequestStatusFilter={false}

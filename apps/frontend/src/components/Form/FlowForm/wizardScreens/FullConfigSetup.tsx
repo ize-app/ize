@@ -108,7 +108,7 @@ export const FullConfig = ({
 
   const tabs: TabProps[] = [
     {
-      title: "Flow template",
+      title: isReusable ? "Flow template" : "Flow",
       content: flowForm,
       icon: flowError ? <WarningIcon fontSize="small" /> : undefined,
     },
@@ -127,7 +127,10 @@ export const FullConfig = ({
         <FormProvider {...formMethods}>
           {!evolve && (
             <form style={{ padding: "16px" }}>
-              <Switch<ReusableSchema> name={`reusable`} label="Make this flow a reusable template" />
+              <Switch<ReusableSchema>
+                name={`reusable`}
+                label="Make this flow a reusable template"
+              />
             </form>
           )}
         </FormProvider>

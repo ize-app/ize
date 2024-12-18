@@ -93,7 +93,7 @@ export const Flow = () => {
   const breadCrumbItems = [
     { title: "Flow templates", link: Route.Flows.toString() },
     {
-      title: flow.name + (flow.group ? ` (${flow.group.name})` : ""),
+      title: flow.name,
       link: generatePath(Route.Flow, {
         flowId: fullUUIDToShort(flow.flowId),
         // Link to old version of flow if request is made from an older version

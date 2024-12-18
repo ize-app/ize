@@ -2,6 +2,7 @@ import { Button, ToggleButton, ToggleButtonGroup, useMediaQuery, useTheme } from
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ChangeEvent, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Loading from "@/components/Loading";
 import { EmptyTablePlaceholder } from "@/components/Tables/EmptyTablePlaceholder";
@@ -12,6 +13,7 @@ import Search from "@/components/Tables/Search";
 import { FlowSummaryFragment, FlowWatchFilter } from "@/graphql/generated/graphql.ts";
 import { CurrentUserContext } from "@/hooks/contexts/current_user_context";
 import useFlowsSearch from "@/hooks/useFlowsSearch";
+import { NewFlowRoute, newFlowRoute } from "@/routers/routes.ts";
 
 import { FlowsTable } from "./FlowsTable.tsx";
 
@@ -56,6 +58,7 @@ export const FlowsSearch = ({
   });
 
   const theme = useTheme();
+  const navigate = useNavigate();
   const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
 
   const toggleButtons = [];
@@ -165,7 +168,18 @@ export const FlowsSearch = ({
               setSearchQuery(event.target.value);
             }}
           />
-
+          {!isSmallScreenSize && (
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ borderRadius: "6px" }}
+              onClick={() => {
+                navigate(newFlowRoute(NewFlowRoute.InitialSetup));
+              }}
+            >
+              Create a flow
+            </Button>
+          )}
           {isSmallScreenSize ? (
             <FilterMenu toggleButtons={toggleButtons} />
           ) : (
