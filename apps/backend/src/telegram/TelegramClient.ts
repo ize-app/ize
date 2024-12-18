@@ -38,15 +38,19 @@ const initializeCommandsAndEvents = () => {
     { command: "linkgroup", description: "Receive notifications in this chat from Ize" },
     {
       command: "synthesize",
-      description: "Ask a question and have AI synthesize all perspectives.",
+      description: "Create summary of perspectives with AI",
     },
     {
       command: "ideate",
-      description: "Ask the group to ideate on a question.",
+      description: "Summarize list of ideas with AI",
     },
     {
       command: "let_ai_decide",
-      description: "Ask the group and have AI decide the best option.",
+      description: "Have AI decide the best option.",
+    },
+    {
+      command: "cocreate_poll",
+      description: "Cocreate options for a poll.",
     },
   ]);
 
@@ -64,6 +68,10 @@ const initializeCommandsAndEvents = () => {
 
   telegramBot.command("let_ai_decide", async (ctx) => {
     await handleGenerateFlowCommand({ ctx, flowType: FlowConfigGeneration.LetAiDecide });
+  });
+
+  telegramBot.command("cocreate_poll", async (ctx) => {
+    await handleGenerateFlowCommand({ ctx, flowType: FlowConfigGeneration.CocreatePoll });
   });
 
   telegramBot.on("poll_answer", (ctx) => {

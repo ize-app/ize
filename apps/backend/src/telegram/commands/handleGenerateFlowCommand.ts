@@ -9,6 +9,7 @@ import {
 import { getIzeUrl } from "@/utils/getUrl";
 
 import { upsertTelegramIdentity } from "../upsertTelegramIdentity";
+import { commandPromptErrorMessage } from "./commandPromptErrorMessage";
 import { getGroupsForTelegramChat } from "../utils/getTelegramGroupOfTelegramChat";
 import { trimCommandMessage } from "../utils/trimCommandMessage";
 
@@ -31,7 +32,8 @@ export const handleGenerateFlowCommand = async ({
     const prompt = trimCommandMessage(ctx.message.text);
 
     if (prompt.length < 2) {
-      ctx.reply("Please provide a complete prompt that you'd like the group to respond to.");
+      const message = commandPromptErrorMessage[flowType];
+      ctx.reply(message, { parse_mode: "HTML" });
       return;
     }
 

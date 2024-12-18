@@ -13,6 +13,7 @@ export enum FlowConfigGeneration {
   Synthesize = "Synthesize",
   Ideate = "Ideate",
   LetAiDecide = "LetAiDecide",
+  CocreatePoll = "CocreatePoll",
 }
 
 interface GenerateCustomFlowConfig {
@@ -209,6 +210,104 @@ export const generateNonreusableFlowConfig = ({
                 type: ResultType.Decision,
                 fieldId: step2ResponseFieldId,
                 decision: { type: DecisionType.Ai },
+              },
+            ],
+            action: undefined,
+          },
+        ],
+      };
+    }
+    case FlowConfigGeneration.CocreatePoll: {
+      const step1ResponseFieldId = crypto.randomUUID();
+      const step2ResponseFieldId = crypto.randomUUID();
+      const step1ResultId = crypto.randomUUID();
+      const step1Id = crypto.randomUUID();
+      const step2Id = crypto.randomUUID();
+      return {
+        flowVersionId: crypto.randomUUID(),
+        type: FlowType.Custom,
+        name: "Co-create a poll",
+        trigger: { permission: emptyPermission },
+        fieldSet: {
+          fields: [
+            {
+              fieldId: crypto.randomUUID(),
+              type: ValueType.String,
+              name: prompt,
+              isInternal: false,
+              required: true,
+            },
+          ],
+          locked: false,
+        },
+        steps: [
+          {
+            stepId: step1Id,
+            fieldSet: {
+              fields: [
+                {
+                  fieldId: step1ResponseFieldId,
+                  type: ValueType.String,
+                  name: prompt,
+                  isInternal: false,
+                  required: true,
+                },
+              ],
+              locked: false,
+            },
+            response: {
+              permission: respondPermission,
+              expirationSeconds,
+              allowMultipleResponses: true,
+              canBeManuallyEnded,
+              minResponses: 1,
+            },
+            result: [
+              {
+                resultConfigId: step1ResultId,
+                type: ResultType.LlmSummary,
+                fieldId: step1ResponseFieldId,
+                llmSummary: {
+                  prompt: "",
+                  isList: true,
+                },
+              },
+            ],
+            action: { type: ActionType.TriggerStep, locked: false, stepId: step2Id },
+          },
+          {
+            stepId: step2Id,
+            fieldSet: {
+              fields: [
+                {
+                  fieldId: step2ResponseFieldId,
+                  type: ValueType.OptionSelections,
+                  name: prompt,
+                  isInternal: false,
+                  required: true,
+                  optionsConfig: {
+                    options: [],
+                    selectionType: OptionSelectionType.Select,
+                    maxSelections: 1,
+                    linkedResultOptions: [step1ResultId],
+                  },
+                },
+              ],
+              locked: false,
+            },
+            response: {
+              permission: respondPermission,
+              expirationSeconds,
+              allowMultipleResponses: false,
+              canBeManuallyEnded,
+              minResponses: 1,
+            },
+            result: [
+              {
+                resultConfigId: crypto.randomUUID(),
+                type: ResultType.Decision,
+                fieldId: step2ResponseFieldId,
+                decision: { type: DecisionType.WeightedAverage },
               },
             ],
             action: undefined,
