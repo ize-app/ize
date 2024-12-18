@@ -172,7 +172,7 @@ export const FlowsSearch = ({
             <Button
               variant="outlined"
               size="small"
-              sx={{ borderRadius: "6px" }}
+              sx={{ borderRadius: "6px", width: "140px" }}
               onClick={() => {
                 navigate(newFlowRoute(NewFlowRoute.InitialSetup));
               }}
