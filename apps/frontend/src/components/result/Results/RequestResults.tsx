@@ -20,6 +20,7 @@ interface HydratedResultData {
   responseSummary: ResponseFieldAnswersSummary | null;
   triggerDefinedOptions?: OptionFragment[];
   finalField: boolean;
+  finalResult: boolean;
 }
 
 // lists all results from a given request
@@ -38,8 +39,8 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         resultConfig.field;
 
       const responseSummary =
-        reqStep?.answers.find((r) => r.field.fieldId === resultConfig.field.fieldId)
-          ?.summary ?? null;
+        reqStep?.answers.find((r) => r.field.fieldId === resultConfig.field.fieldId)?.summary ??
+        null;
 
       const triggerDefinedOptions = request.triggerDefinedOptions.find(
         (t) => t.fieldId === resultConfig.field.fieldId,
@@ -56,6 +57,7 @@ export const RequestResults = ({ request }: { request: RequestFragment }) => {
         minResponses: step.response?.minResponses,
         triggerDefinedOptions,
         finalField,
+        finalResult: (reqStep?.status.resultsFinal || request.final) ?? false,
       });
     });
   });

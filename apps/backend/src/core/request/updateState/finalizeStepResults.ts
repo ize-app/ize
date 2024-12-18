@@ -5,6 +5,7 @@ import { newResultsForStep } from "@/core/result/newResults/newResultsForStep";
 import { prisma } from "@/prisma/client";
 import { endTelegramPolls } from "@/telegram/endTelegramPolls";
 
+import { finalizeActionAndRequest } from "./finalizeActionAndRequest";
 import { finalizeStepResponses } from "./finalizeStepResponses";
 import { resultGroupInclude } from "../../result/resultPrismaTypes";
 
@@ -13,10 +14,8 @@ import { resultGroupInclude } from "../../result/resultPrismaTypes";
 // note: all of the calls here are awaited, so that when this function is called by cron job, it doesn't exist the process prematurely
 export const finalizeStepResults = async ({ requestStepId }: { requestStepId: string }) => {
   try {
-    // const results = await newResultsForStep({
-    //   requestStepId,
-    // });
-    // update request step with outcome
+    let hasResultConfigsWithoutResults = false;
+
     const resultGroups = await prisma.resultGroup.findMany({
       where: {
         requestStepId,
@@ -24,6 +23,36 @@ export const finalizeStepResults = async ({ requestStepId }: { requestStepId: st
       include: resultGroupInclude,
       orderBy: { index: "asc" },
     });
+
+    const rs = await prisma.requestStep.findFirst({
+      where: { id: requestStepId },
+      include: {
+        Step: {
+          include: {
+            ResultConfigSet: {
+              include: {
+                ResultConfigs: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // see if there are any result configs that don't have corresponding results (even incomplete results)
+    (rs?.Step.ResultConfigSet?.ResultConfigs ?? []).forEach((rc) => {
+      const rg = resultGroups.find((rg) => rg.resultConfigId === rc.id);
+      if (!rg) {
+        hasResultConfigsWithoutResults = true;
+      }
+    });
+
+    // no results means that results were never created (e.g. not enough responses)
+    // in this case we should finalize the request and not run subsequent steps / actions
+    if (hasResultConfigsWithoutResults) {
+      await finalizeActionAndRequest({ requestStepId, finalizeRequest: true });
+      return;
+    }
 
     const resultsFinal = resultGroups.every((result) => result.complete);
 

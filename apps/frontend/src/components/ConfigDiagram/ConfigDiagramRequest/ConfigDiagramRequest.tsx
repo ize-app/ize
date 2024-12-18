@@ -7,7 +7,12 @@ import {
   PanelContainer,
   RequestStage,
 } from "@/components/ConfigDiagram";
-import { ActionStatus, RequestFragment, RequestStepStatus } from "@/graphql/generated/graphql";
+import {
+  ActionStatus,
+  ActionType,
+  RequestFragment,
+  RequestStepStatus,
+} from "@/graphql/generated/graphql";
 
 import { ConfigRequestActionFilterPanel } from "./ConfigRequestActionFilterPanel";
 import { ConfigRequestActionPanel } from "./ConfigRequestActionPanel";
@@ -21,7 +26,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
   // if the current step has an action, select the action, otherwise select the step
   const [selectedId, setSelectedId] = useState<string | false>(
     request.requestSteps[request.currentStepIndex]?.status.resultsFinal &&
-      !!request.flow.steps[request.currentStepIndex]?.action
+      request.flow.steps[request.currentStepIndex]?.action?.__typename !== ActionType.TriggerStep
       ? "action"
       : "step" + request.currentStepIndex.toString(),
   );
