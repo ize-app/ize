@@ -15,7 +15,12 @@ import { MembersList } from "./MembersList";
 import Loading from "../../components/Loading";
 import TabPanel from "../../components/Tables/TabPanel";
 import { TabProps, Tabs } from "../../components/Tables/Tabs";
-import { FlowWatchFilter, GroupDocument, IzeGroupFragment, RequestStatusFilter } from "../../graphql/generated/graphql";
+import {
+  FlowWatchFilter,
+  GroupDocument,
+  IzeGroupFragment,
+  RequestStatusFilter,
+} from "../../graphql/generated/graphql";
 import { SnackbarContext } from "../../hooks/contexts/SnackbarContext";
 import Head from "../../layout/Head";
 import PageContainer from "../../layout/PageContainer";
@@ -69,7 +74,7 @@ export const Group = () => {
       ) : null,
     },
     {
-      title: "Flows",
+      title: "Flow templates",
       content: !loading ? (
         <FlowsSearch
           groupId={groupId}

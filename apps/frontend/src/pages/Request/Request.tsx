@@ -107,7 +107,7 @@ export const Request = () => {
 
   if (reusable)
     breadcrumbItems.unshift(
-      { title: "Flows", link: Route.Flows.toString() },
+      { title: "Triggered flows", link: Route.Flows.toString() },
       {
         title: request.flow.name + (request.flow.group ? ` (${request.flow.group.name})` : ""),
         link: generatePath(Route.Flow, {

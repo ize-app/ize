@@ -64,7 +64,7 @@ export const Flow = () => {
 
   const tabs: TabProps[] = [
     {
-      title: "Flow",
+      title: "Flow template",
       content: <ConfigDiagramFlow flow={flow} />,
     },
   ];
@@ -73,7 +73,7 @@ export const Flow = () => {
 
   if (flow.evolve)
     tabs.push({
-      title: "Evolve flow",
+      title: "How this flow can evolve",
       content: <ConfigDiagramFlow flow={flow.evolve} />,
     });
 
@@ -91,7 +91,7 @@ export const Flow = () => {
   if (processError) onError();
 
   const breadCrumbItems = [
-    { title: "Flows", link: Route.Flows.toString() },
+    { title: "Flow templates", link: Route.Flows.toString() },
     {
       title: flow.name + (flow.group ? ` (${flow.group.name})` : ""),
       link: generatePath(Route.Flow, {
@@ -262,7 +262,7 @@ export const Flow = () => {
                     Trigger flow
                   </Button>
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     onClick={() => {
                       navigate(
                         generatePath(evolveFlowRoute(EvolveFlowRoute.Setup), {

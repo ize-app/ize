@@ -28,7 +28,7 @@ export const Requests = () => {
       ),
     },
     {
-      title: "Final",
+      title: "Final results",
       content: (
         <RequestSearch
           initialFlowWatchFilter={FlowWatchFilter.WatchedByMeOrMyGroups}

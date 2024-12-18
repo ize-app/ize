@@ -68,7 +68,7 @@ export const InitialConfigSetup = () => {
         }}
       >
         <Typography variant="description">
-          Flows are language for defining and automating collaborative processes that span tools,
+          Flows define and automate collaborative processes that span tools,
           teams, and time.{" "}
           <a href={Route.About} target="_blank" rel="noopener noreferrer">
             Learn more
@@ -92,26 +92,26 @@ export const InitialConfigSetup = () => {
         </FieldBlockFadeIn>
         {goal && (
           <FieldBlockFadeIn>
-            <Typography variant="description">Should this process be reusable?</Typography>
+            <Typography variant="description">Should this flow be a reusable template?</Typography>
             <ButtonGroupField<IntitialFlowSetupSchemaType>
               label="Test"
               name="reusable"
               options={[
-                { name: "No", value: Reusable.NotReusable },
-                { name: "Yes", value: Reusable.Reusable },
+                { name: "No, just execute the flow immediately", value: Reusable.NotReusable },
+                { name: "Yes, make it a reusable template", value: Reusable.Reusable },
               ]}
             />
           </FieldBlockFadeIn>
         )}
         {reusable && (
           <FieldBlockFadeIn>
-            <Typography variant="description">Who&apos;s participating?</Typography>
+            <Typography variant="description">Who can participate?</Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <ButtonGroupField<IntitialFlowSetupSchemaType>
                 label="Test"
                 name="permission.anyone"
                 options={[
-                  { name: "Anyone with the link", value: "true" },
+                  { name: "Anyone", value: "true" },
                   { name: "Only certain people", value: "false" },
                 ]}
               />

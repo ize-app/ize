@@ -26,6 +26,7 @@ export const ConfigDiagramRequest = ({ request }: { request: RequestFragment }) 
   // if the current step has an action, select the action, otherwise select the step
   const [selectedId, setSelectedId] = useState<string | false>(
     request.requestSteps[request.currentStepIndex]?.status.resultsFinal &&
+      !!request.flow.steps[request.currentStepIndex]?.action &&
       request.flow.steps[request.currentStepIndex]?.action?.__typename !== ActionType.TriggerStep
       ? "action"
       : "step" + request.currentStepIndex.toString(),

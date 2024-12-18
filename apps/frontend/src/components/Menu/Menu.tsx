@@ -81,7 +81,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
               }}
             >
               <ListItemText
-                primary={"Flows"}
+                primary={"Flow templates"}
                 primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
               />
               <IconButton
