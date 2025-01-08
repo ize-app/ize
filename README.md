@@ -111,6 +111,16 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO new_analytic
 
 In the rare case you need to write to the db, you can find the superuser credentials on Render.
 
+### Connecting to analytics
+
+Install [metabase locally](https://www.metabase.com/start/oss/).
+
+```
+cd ~/metabase && java --add-opens java.base/java.nio=ALL-UNNAMED -jar metabase.jar
+```
+
+It will run on http://localhost:1234 (assuming you've set MB_JETTY_PORT to 1234)
+
 ## Development workflow
 
 ### Updating database schema
