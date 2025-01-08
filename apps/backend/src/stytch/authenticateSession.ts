@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { NextFunction, Request, Response } from "express";
 import { StytchError } from "stytch";
 
@@ -29,6 +30,13 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
     });
 
     res.locals.user = user;
+
+    if (user) {
+      Sentry.setUser({
+        id: user.id,
+        username: user.name,
+      });
+    }
   } catch (error) {
     res.locals.user = null;
     if (error instanceof StytchError) {
