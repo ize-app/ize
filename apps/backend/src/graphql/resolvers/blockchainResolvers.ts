@@ -14,13 +14,21 @@ import {
   QueryNftTokenArgs,
   QuerySearchNftContractsArgs,
 } from "../generated/resolver-types";
+import { logResolverError } from "../logResolverError";
 
 const nftContract = async (
   root: unknown,
   args: QueryNftContractArgs,
   context: GraphqlRequestContext,
 ): Promise<AlchemyApiNftContract | null> => {
-  return await getNftContract({ context, chain: args.chain, address: args.address });
+  try {
+    return await getNftContract({ context, chain: args.chain, address: args.address });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: { tags: { resolver: "nftContract", operation: "query" }, contexts: { args } },
+    });
+  }
 };
 
 const nftToken = async (
@@ -28,12 +36,19 @@ const nftToken = async (
   args: QueryNftTokenArgs,
   context: GraphqlRequestContext,
 ): Promise<AlchemyApiNftToken | null> => {
-  return await getNftToken({
-    context,
-    chain: args.chain,
-    address: args.address,
-    tokenId: args.tokenId,
-  });
+  try {
+    return await getNftToken({
+      context,
+      chain: args.chain,
+      address: args.address,
+      tokenId: args.tokenId,
+    });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: { tags: { resolver: "nftToken", operation: "query" }, contexts: { args } },
+    });
+  }
 };
 
 const hatToken = async (
@@ -41,21 +56,36 @@ const hatToken = async (
   args: QueryHatTokenArgs,
   context: GraphqlRequestContext,
 ): Promise<ApiHatToken | null> => {
-  return await getHatToken({ tokenId: parseHatToken(args.tokenId), chain: args.chain });
+  try {
+    return await getHatToken({ tokenId: parseHatToken(args.tokenId), chain: args.chain });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: { tags: { resolver: "hatToken", operation: "query" }, contexts: { args } },
+    });
+  }
 };
 
 // TODO: rate limit this
+// this isn't been used right now, maybe delete
 const searchNftContracts = async (
   root: unknown,
   args: QuerySearchNftContractsArgs,
   context: GraphqlRequestContext,
 ): Promise<AlchemyApiNftContract[]> => {
-  if (!context.currentUser) throw Error("ERROR Unauthenticated user");
-  const results = await alchemyClient.forChain(args.chain).nft.searchContractMetadata(args.query);
-  const formattedReults = results.contracts.map((contract) =>
-    nftContractResolver(contract, args.chain),
-  );
-  return formattedReults;
+  try {
+    if (!context.currentUser) throw Error("ERROR Unauthenticated user");
+    const results = await alchemyClient.forChain(args.chain).nft.searchContractMetadata(args.query);
+    const formattedReults = results.contracts.map((contract) =>
+      nftContractResolver(contract, args.chain),
+    );
+    return formattedReults;
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: { tags: { resolver: "searchNftContracts", operation: "query" }, contexts: { args } },
+    });
+  }
 };
 
 export const blockchainQueries = {
