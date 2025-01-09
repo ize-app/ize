@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { Message, Update } from "@telegraf/types";
 import { Context } from "telegraf";
 
@@ -54,7 +55,9 @@ export const linkGroup = async ({
 
     ctx.reply("Ize will send notifications to this chat");
   } catch (error) {
-    console.error("ERROR: Telegram bot linkgroup command ", error);
+    Sentry.captureException(error, {
+      tags: { location: "telegram", interaction: "linkGroup" },
+    });
     ctx.reply("Something went wrong. Please try again.");
   }
 };

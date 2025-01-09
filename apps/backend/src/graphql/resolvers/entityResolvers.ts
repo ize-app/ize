@@ -17,13 +17,24 @@ import {
 import { GraphQLError } from "graphql";
 import { CustomErrorCodes } from "../errors";
 import { getIzeGroup } from "@/core/entity/group/getIzeGroup";
+import { logResolverError } from "../logResolverError";
 
 const newEntities: MutationResolvers["newEntities"] = async (
   root: unknown,
   args: MutationNewEntitiesArgs,
   context: GraphqlRequestContext,
 ): Promise<Entity[]> => {
-  return await newEntitiesService(args, context);
+  try {
+    return await newEntitiesService(args, context);
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newEntities", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const group: QueryResolvers["group"] = async (
@@ -31,7 +42,17 @@ const group: QueryResolvers["group"] = async (
   args: QueryGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<IzeGroup> => {
-  return await getIzeGroup({ groupId: args.id, context, getWatchAndPermissionStatus: true });
+  try {
+    return await getIzeGroup({ groupId: args.id, context, getWatchAndPermissionStatus: true });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "group", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = async (
@@ -39,7 +60,17 @@ export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = asyn
   args: QueryGroupsForCurrentUserArgs,
   context: GraphqlRequestContext,
 ): Promise<IzeGroup[]> => {
-  return await getGroupsOfUser({ args, context });
+  try {
+    return await getGroupsOfUser({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "groupsForCurrentUser", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
@@ -47,26 +78,36 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
   args: MutationNewCustomGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  const groupId = await prisma.$transaction(async (transaction) => {
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    const groupId = await prisma.$transaction(async (transaction) => {
+      if (!context.currentUser)
+        throw new GraphQLError("Unauthenticated", {
+          extensions: { code: CustomErrorCodes.Unauthenticated },
+        });
+
+      const groupId = await newCustomGroupService({ args, context, transaction });
+
+      // Watch group for user
+      await transaction.entityWatchedGroups.create({
+        data: {
+          entityId: context.currentUser.entityId,
+          groupId,
+          watched: true,
+        },
       });
+      return groupId;
+    });
 
-    const groupId = await newCustomGroupService({ args, context, transaction });
-
-    // Watch group for user
-    await transaction.entityWatchedGroups.create({
-      data: {
-        entityId: context.currentUser.entityId,
-        groupId,
-        watched: true,
+    return groupId;
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newCustomGroup", operation: "mutation", location: "graphql" },
+        contexts: { args },
       },
     });
-    return groupId;
-  });
-
-  return groupId;
+  }
 };
 
 export const entityMutations = {

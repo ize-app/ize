@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { NextFunction, Request, Response } from "express";
 import { StytchError } from "stytch";
 
@@ -29,12 +30,32 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
     });
 
     res.locals.user = user;
+
+    if (user) {
+      Sentry.setUser({
+        id: user.id,
+        username: user.name,
+      });
+    }
   } catch (error) {
     res.locals.user = null;
     if (error instanceof StytchError) {
-      if (error.status_code !== 404)
-        console.log("Authentication error validating stytch session: ", error);
-    } else console.log("Authentication error: ", error, req.path, req.method);
+      if (error.status_code !== 404) {
+        Sentry.captureException(error, {
+          tags: { location: "auth" },
+          contexts: {
+            auth: { type: "session-auth" },
+          },
+        });
+      }
+    } else {
+      Sentry.captureException(error, {
+        tags: { location: "auth" },
+        contexts: {
+          auth: { type: "session-auth" },
+        },
+      });
+    }
   }
 
   next();

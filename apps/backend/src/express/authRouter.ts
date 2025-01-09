@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { Router } from "express";
 import { GraphQLError } from "graphql";
 
@@ -14,8 +15,10 @@ const authRouter = Router();
 // handles login / signup for all auth flows that user a access token (oauth / magiclink)
 // creates session, user, and identities for user
 authRouter.get("/token", async (req, res, next) => {
+  let tokenType: string | undefined = undefined;
   try {
     const { stytch_token_type, token } = req.query;
+    tokenType = stytch_token_type as string;
     // for when this endpoint is called to attach identity to existing user
     // eslint-disable-next-line
     const exitingSessionToken: string | undefined = req.cookies["stytch_session"] as string;
@@ -49,8 +52,14 @@ authRouter.get("/token", async (req, res, next) => {
 
     if (sessionToken) res.cookie("stytch_session", sessionToken);
     redirectAtLogin({ req, res });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "auth" },
+      contexts: {
+        auth: { type: "login", method: tokenType },
+      },
+    });
+    next(error);
   }
 });
 
@@ -67,8 +76,14 @@ authRouter.post("/attach-discord", async (req, res, next) => {
       provider: "discord",
     });
     res.send(resp.oauth_attach_token);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "auth" },
+      contexts: {
+        auth: { type: "attach", method: "discord" },
+      },
+    });
+    next(error);
   }
 });
 
@@ -93,8 +108,14 @@ authRouter.post("/crypto", async (req, res, next) => {
 
     redirectAtLogin({ req, res });
     // res.status(200).send();
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "auth" },
+      contexts: {
+        auth: { type: "login", method: "crypto" },
+      },
+    });
+    next(error);
   }
 });
 
@@ -117,8 +138,14 @@ authRouter.post("/password", async (req, res, next) => {
     await handleUserLogin({ res, type: LoginTypes.Password, stytchSession: stytchSession });
 
     redirectAtLogin({ req, res });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "auth" },
+      contexts: {
+        auth: { type: "login", method: "password" },
+      },
+    });
+    next(error);
   }
 });
 
@@ -138,9 +165,15 @@ authRouter.post("/telegram", async (req, res, next) => {
       });
 
     await handleUserLogin({ res, type: LoginTypes.Telegram, user, telegramUserData });
-  } catch (e) {
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "auth" },
+      contexts: {
+        auth: { type: "attach", method: "telegram" },
+      },
+    });
     res.sendStatus(500);
-    next(e);
+    next(error);
   }
 });
 

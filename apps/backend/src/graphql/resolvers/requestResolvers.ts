@@ -20,24 +20,35 @@ import {
 import { endRequestStep as endRequestStepService } from "@/core/request/updateState/endRequestStep";
 
 import { GraphqlRequestContext } from "../context";
+import { logResolverError } from "../logResolverError";
 
 const newRequest: MutationResolvers["newRequest"] = async (
   root: unknown,
   args: MutationNewRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
-    });
+  try {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
 
-  return await newRequestService({
-    args,
-    entityContext: {
-      type: "user",
-      context,
-    },
-  });
+    return await newRequestService({
+      args,
+      entityContext: {
+        type: "user",
+        context,
+      },
+    });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newRequest", operation: "mutation" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
@@ -45,16 +56,26 @@ const newEvolveRequest: MutationResolvers["newEvolveRequest"] = async (
   args: MutationNewEvolveRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    const requestId = await newEvolveRequestService({
+      args,
+      entityContext: { type: "user", context },
     });
-  const requestId = await newEvolveRequestService({
-    args,
-    entityContext: { type: "user", context },
-  });
-  // update user groups created while updating flow
-  return requestId;
+    // update user groups created while updating flow
+    return requestId;
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newEvolveRequest", operation: "mutation" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const getRequest: QueryResolvers["getRequest"] = async (
@@ -62,7 +83,17 @@ const getRequest: QueryResolvers["getRequest"] = async (
   args: QueryGetRequestArgs,
   context: GraphqlRequestContext,
 ): Promise<Request> => {
-  return await getRequestService({ args, context });
+  try {
+    return await getRequestService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "getRequest", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 // getRequestSteps is called on user's dashboard to get all the request steps that the user has access to
@@ -71,7 +102,17 @@ const getRequests: QueryResolvers["getRequests"] = async (
   args: QueryGetRequestsArgs,
   context: GraphqlRequestContext,
 ): Promise<RequestSummary[]> => {
-  return await getRequestSummariesService({ args, context });
+  try {
+    return await getRequestSummariesService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "getRequests", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const newResponse: MutationResolvers["newResponse"] = async (
@@ -79,7 +120,17 @@ const newResponse: MutationResolvers["newResponse"] = async (
   args: MutationNewResponseArgs,
   context: GraphqlRequestContext,
 ): Promise<string> => {
-  return await newResponseService({ entityContext: { type: "user", context }, args });
+  try {
+    return await newResponseService({ entityContext: { type: "user", context }, args });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newResponse", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const endRequestStep: MutationResolvers["endRequestStep"] = async (
@@ -87,7 +138,17 @@ const endRequestStep: MutationResolvers["endRequestStep"] = async (
   args: MutationEndRequestStepArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
-  return await endRequestStepService({ args, context });
+  try {
+    return await endRequestStepService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "endRequestStep", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const requestQueries = {

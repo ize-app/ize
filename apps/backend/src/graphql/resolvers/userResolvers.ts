@@ -23,82 +23,93 @@ import { CustomErrorCodes } from "../errors";
 import { getGroupsOfUser } from "@/core/entity/group/getGroupsOfUser";
 import { FlowType } from "@prisma/client";
 import { getGroupIdsOfUser } from "@/core/entity/group/getGroupIdsOfUser";
+import { logResolverError } from "../logResolverError";
 
 const me: QueryResolvers["me"] = async (
   root: unknown,
   args: Record<string, never>,
   context: GraphqlRequestContext,
 ): Promise<Me | null> => {
-  if (!context.currentUser) return null;
+  try {
+    if (!context.currentUser) return null;
 
-  const identities: Identity[] = context.currentUser.Identities.map((identity) => {
-    return identityResolver(
-      identity,
-      context.currentUser?.Identities.map((i) => i.id) ?? [],
-      false,
-      true,
-    );
-  });
+    const identities: Identity[] = context.currentUser.Identities.map((identity) => {
+      return identityResolver(
+        identity,
+        context.currentUser?.Identities.map((i) => i.id) ?? [],
+        false,
+        true,
+      );
+    });
 
-  const groups = await getGroupsOfUser({
-    context,
-    args: { limit: 10, searchQuery: "", watchFilter: GroupWatchFilter.Watched, isMember: false },
-  });
-  const groupIds = await getGroupIdsOfUser({ context });
+    const groups = await getGroupsOfUser({
+      context,
+      args: { limit: 10, searchQuery: "", watchFilter: GroupWatchFilter.Watched, isMember: false },
+    });
+    const groupIds = await getGroupIdsOfUser({ context });
 
-  // get groups that user is watching, can make watch requets for, and the group isn't already watching that flow
-  const groupInvitations = await prisma.groupIze.findFirst({
-    where: {
-      group: {
-        AND: [
-          { id: { in: groupIds } },
-          {
-            EntityWatchedGroups: {
-              none: {
-                entityId: { in: context.userEntityIds },
+    // get groups that user is watching, can make watch requets for, and the group isn't already watching that flow
+    const groupInvitations = await prisma.groupIze.findFirst({
+      where: {
+        group: {
+          AND: [
+            { id: { in: groupIds } },
+            {
+              EntityWatchedGroups: {
+                none: {
+                  entityId: { in: context.userEntityIds },
+                },
               },
             },
-          },
-        ],
+          ],
+        },
       },
-    },
-  });
+    });
 
-  const userData = await prisma.user.findFirstOrThrow({
-    include: userInclude,
-    where: { id: context.currentUser.id },
-  });
+    const userData = await prisma.user.findFirstOrThrow({
+      include: userInclude,
+      where: { id: context.currentUser.id },
+    });
 
-  const watchedGroup = await prisma.entityWatchedGroups.findFirst({
-    where: {
-      entityId: { in: context.userEntityIds },
-      watched: true,
-    },
-  });
+    const watchedGroup = await prisma.entityWatchedGroups.findFirst({
+      where: {
+        entityId: { in: context.userEntityIds },
+        watched: true,
+      },
+    });
 
-  const createdFlow = await prisma.flow.findFirst({
-    where: {
-      creatorEntityId: { in: context.userEntityIds },
-      type: FlowType.Custom,
-    },
-  });
+    const createdFlow = await prisma.flow.findFirst({
+      where: {
+        creatorEntityId: { in: context.userEntityIds },
+        type: FlowType.Custom,
+      },
+    });
 
-  const user = userResolver(userData);
+    const user = userResolver(userData);
 
-  const settings = context.currentUser.UserSettings;
+    const settings = context.currentUser.UserSettings;
 
-  return {
-    user,
-    groups: groups.map((group) => group.group),
-    identities: [...identities],
-    notifications: settings && {
-      transactional: settings.transactional,
-      marketing: settings.marketing,
-    },
-    hasGroupInvites: !!groupInvitations,
-    hasCreatedFlow: !!createdFlow,
-    hasWatchedGroup: !!watchedGroup,
-  };
+    return {
+      user,
+      groups: groups.map((group) => group.group),
+      identities: [...identities],
+      notifications: settings && {
+        transactional: settings.transactional,
+        marketing: settings.marketing,
+      },
+      hasGroupInvites: !!groupInvitations,
+      hasCreatedFlow: !!createdFlow,
+      hasWatchedGroup: !!watchedGroup,
+    };
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "me", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const updateProfile: MutationResolvers["updateProfile"] = async (
@@ -106,11 +117,21 @@ export const updateProfile: MutationResolvers["updateProfile"] = async (
   args: MutationUpdateProfileArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    return await updateProfileService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "updateProfile", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
     });
-  return await updateProfileService({ args, context });
+  }
 };
 
 export const watchGroup: MutationResolvers["watchGroup"] = async (
@@ -118,15 +139,25 @@ export const watchGroup: MutationResolvers["watchGroup"] = async (
   args: MutationWatchGroupArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    return await watchGroupService({
+      args,
+      user: context.currentUser,
+      entityId: context.currentUser.entityId,
     });
-  return await watchGroupService({
-    args,
-    user: context.currentUser,
-    entityId: context.currentUser.entityId,
-  });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "watchGroup", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const watchFlow: MutationResolvers["watchFlow"] = async (
@@ -134,19 +165,29 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
   args: MutationWatchFlowArgs,
   context: GraphqlRequestContext,
 ): Promise<boolean> => {
-  return await prisma.$transaction(async (transaction) => {
-    if (!context.currentUser)
-      throw new GraphQLError("Unauthenticated", {
-        extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    return await prisma.$transaction(async (transaction) => {
+      if (!context.currentUser)
+        throw new GraphQLError("Unauthenticated", {
+          extensions: { code: CustomErrorCodes.Unauthenticated },
+        });
+      await watchFlowService({
+        flowIds: [args.flowId],
+        watch: args.watch,
+        entityId: context.currentUser.entityId,
+        transaction,
       });
-    await watchFlowService({
-      flowIds: [args.flowId],
-      watch: args.watch,
-      entityId: context.currentUser.entityId,
-      transaction,
+      return true;
     });
-    return true;
-  });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "watchFlow", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const userQueries = {

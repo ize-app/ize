@@ -1,4 +1,5 @@
 import { ApolloQueryResult, useQuery } from "@apollo/client";
+import * as Sentry from "@sentry/react";
 import { useStytchUser } from "@stytch/react";
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from "react";
 import { Exact } from "utility-types/dist/mapped-types";
@@ -67,6 +68,13 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     refetch();
   }, [user, refetch]);
+
+  useEffect(() => {
+    Sentry.setUser({
+      id: me?.user.id,
+      username: me?.user.name,
+    });
+  }, [me]);
 
   return (
     <CurrentUserContext.Provider

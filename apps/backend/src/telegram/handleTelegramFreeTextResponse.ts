@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment*/
+import * as Sentry from "@sentry/node";
 import { Message } from "@telegraf/types";
 import { Context } from "telegraf";
 
@@ -15,6 +16,9 @@ export const handleTelegramFreeTextResponse = async ({
   message: Message;
   ctx: Context;
 }) => {
+  let identityEntityId: string | undefined = undefined;
+  let groupEntityId: string | undefined = undefined;
+
   try {
     //@ts-expect-error  reply field isn't in the type
     //eslint-disable-next-line
@@ -25,6 +29,17 @@ export const handleTelegramFreeTextResponse = async ({
     const chatId = message.chat.id;
 
     if (!replyMessageId) return;
+
+    const telegramGroup = await prisma.groupTelegramChat.findFirst({
+      where: {
+        chatId: BigInt(chatId),
+      },
+      include: {
+        Group: true,
+      },
+    });
+
+    groupEntityId = telegramGroup?.Group.entityId;
 
     //eslint-disable-next-line
     const fieldPrompt = await prisma.telegramMessages.findFirst({
@@ -40,6 +55,7 @@ export const handleTelegramFreeTextResponse = async ({
     if (!message.from) return;
 
     const identity = await upsertTelegramIdentity({ telegramUserData: message.from });
+    identityEntityId = identity.entityId;
 
     prisma.identity.findFirstOrThrow({
       include: identityInclude,
@@ -79,7 +95,13 @@ export const handleTelegramFreeTextResponse = async ({
     });
 
     ctx.react("👀");
-  } catch (e) {
-    console.log("Error handleTelegramFreeTextResponse:", e);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { location: "telegram", interaction: "freeTextResponse" },
+      contexts: {
+        // args: { message },
+        telegram: { identityEntityId, groupEntityId },
+      },
+    });
   }
 };

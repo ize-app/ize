@@ -90,9 +90,36 @@ For most queries, you should be using the read-only `analytics_user`. To connect
 
 `psql -h <hostname> -U analytics_user izedb`
 
-Find the hostname in the dashboard for izedb on Render.
+Find the hostname in the dashboard for izedb on Render. Ask Tyler for the password.
+
+To create another read-only user
+
+```
+-- First connect to database with superuser
+
+CREATE USER new_analytics_user WITH PASSWORD 'secure_password';
+-- Allow the user to connect to the database
+GRANT CONNECT ON DATABASE izedb TO new_analytics_user;
+-- Grant usage on the schema so the user can access its objects
+GRANT USAGE ON SCHEMA public TO new_analytics_user;
+-- Note that all new postgres users have no access by default
+-- Grant access to all existing tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO new_analytics_user;
+-- Grant access to all future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO new_analytics_user;
+```
 
 In the rare case you need to write to the db, you can find the superuser credentials on Render.
+
+### Connecting to analytics
+
+Install [metabase locally](https://www.metabase.com/start/oss/).
+
+```
+cd ~/metabase && java --add-opens java.base/java.nio=ALL-UNNAMED -jar metabase.jar
+```
+
+It will run on http://localhost:1234 (assuming you've set MB_JETTY_PORT to 1234)
 
 ## Development workflow
 

@@ -72,10 +72,15 @@ export const FlowForm = forwardRef(({ name, defaultFormValues }: FlowFormProps, 
     ref,
     (): FlowFormRef => ({
       validate: async () => {
-        const isValid = await useFormMethods.trigger();
-        const values = flowSchema.parse(useFormMethods.getValues());
+        try {
+          const isValid = await useFormMethods.trigger();
+          const values = flowSchema.parse(useFormMethods.getValues());
 
-        return { isValid, values };
+          return { isValid, values };
+        } catch {
+          // @ts-expect-error make a more elegant way of handling the error
+          return { isValid: false, values: undefined as FlowSchemaType };
+        }
       },
     }),
   );

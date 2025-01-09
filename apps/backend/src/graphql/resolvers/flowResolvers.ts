@@ -13,13 +13,24 @@ import {
 } from "@graphql/generated/resolver-types";
 
 import { getGroupsToWatchFlow as getGroupsToWatchFlowService } from "@/core/flow/getGroupsToWatchFlow";
+import { logResolverError } from "../logResolverError";
 
 const getFlow: QueryResolvers["getFlow"] = async (
   root: unknown,
   args: QueryGetFlowArgs,
   context: GraphqlRequestContext,
 ) => {
-  return await getFlowService({ args, context });
+  try {
+    return await getFlowService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "getFlow", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const getFlows: QueryResolvers["getFlows"] = async (
@@ -28,7 +39,17 @@ const getFlows: QueryResolvers["getFlows"] = async (
 
   context: GraphqlRequestContext,
 ) => {
-  return await getFlowsService({ args, context });
+  try {
+    return await getFlowsService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "getFlows", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const newFlow: MutationResolvers["newFlow"] = async (
@@ -36,19 +57,29 @@ const newFlow: MutationResolvers["newFlow"] = async (
   args: MutationNewFlowArgs,
   context: GraphqlRequestContext,
 ) => {
-  if (!context.currentUser)
-    throw new GraphQLError("Unauthenticated", {
-      extensions: { code: CustomErrorCodes.Unauthenticated },
+  try {
+    if (!context.currentUser)
+      throw new GraphQLError("Unauthenticated", {
+        extensions: { code: CustomErrorCodes.Unauthenticated },
+      });
+    const flowId = await newCustomFlowService({
+      args,
+      entityContext: {
+        type: "user",
+        context,
+      },
     });
-  const flowId = await newCustomFlowService({
-    args,
-    entityContext: {
-      type: "user",
-      context,
-    },
-  });
 
-  return flowId;
+    return flowId;
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "newFlow", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 const getGroupsToWatchFlow: QueryResolvers["getGroupsToWatchFlow"] = async (
@@ -56,7 +87,17 @@ const getGroupsToWatchFlow: QueryResolvers["getGroupsToWatchFlow"] = async (
   args: QueryGetGroupsToWatchFlowArgs,
   context: GraphqlRequestContext,
 ) => {
-  return await getGroupsToWatchFlowService({ args, context });
+  try {
+    return await getGroupsToWatchFlowService({ args, context });
+  } catch (error) {
+    return logResolverError({
+      error,
+      sentryOptions: {
+        tags: { resolver: "getGroupsToWatchFlow", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
+    });
+  }
 };
 
 export const flowMutations = {
