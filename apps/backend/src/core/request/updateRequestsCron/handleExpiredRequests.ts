@@ -1,6 +1,7 @@
+import * as Sentry from "@sentry/node";
+
 import { prisma } from "../../../prisma/client";
 import { finalizeStepResults } from "../updateState/finalizeStepResults";
-
 // get all steps where response is not final and is expired
 // attempt to finalize results if they are all complete so rest of step execution can complete
 export const handleExpiredResults = async () => {
@@ -33,6 +34,9 @@ export const handleExpiredResults = async () => {
       }),
     );
   } catch (error) {
-    console.error("Error in handleExpiredResults:", error);
+    Sentry.captureException(error, {
+      tags: { location: "cron-request" },
+    });
+    return;
   }
 };

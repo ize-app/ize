@@ -89,7 +89,7 @@ const getRequest: QueryResolvers["getRequest"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "getRequest", operation: "query" },
+        tags: { resolver: "getRequest", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });
@@ -108,7 +108,7 @@ const getRequests: QueryResolvers["getRequests"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "getRequests", operation: "query" },
+        tags: { resolver: "getRequests", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });
@@ -126,7 +126,7 @@ const newResponse: MutationResolvers["newResponse"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "newResponse", operation: "mutation" },
+        tags: { resolver: "newResponse", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });
@@ -144,7 +144,7 @@ const endRequestStep: MutationResolvers["endRequestStep"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "endRequestStep", operation: "mutation" },
+        tags: { resolver: "endRequestStep", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });

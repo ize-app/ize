@@ -1,6 +1,7 @@
+import * as Sentry from "@sentry/node";
+
 import { prisma } from "../../../prisma/client";
 import { executeAction } from "../../action/executeActions/executeAction";
-
 // get all actions where result is final but action is not complete
 // retry all failed actions
 export const retryActions = async () => {
@@ -23,6 +24,9 @@ export const retryActions = async () => {
       }),
     );
   } catch (error) {
-    console.error("Error in retryActions:", error);
+    Sentry.captureException(error, {
+      tags: { location: "cron-request" },
+    });
+    return;
   }
 };

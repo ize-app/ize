@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { Telegraf } from "telegraf";
 
 import config from "@/config";
@@ -26,8 +27,11 @@ const setupTelegramUpdates = async () => {
     console.log("Starting polling...");
     try {
       telegramBot.launch({});
-    } catch {
+    } catch (error) {
       console.log("Error setting up Telegram polling");
+      Sentry.captureException(error, {
+        tags: { location: "telegram" },
+      });
     }
   }
 };
@@ -98,8 +102,11 @@ const startWebhookHealthCheck = () => {
       }
       try {
         await setupTelegramUpdates();
-      } catch (e) {
-        console.error("Error in webhook Telegram healthcheck:", e);
+      } catch (error) {
+        console.error("Error in webhook Telegram healthcheck:", error);
+        Sentry.captureException(error, {
+          tags: { location: "telegram" },
+        });
       }
     },
     5 * 60 * 1000,

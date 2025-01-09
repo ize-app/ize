@@ -40,9 +40,22 @@ export const authenticateSession = async (req: Request, res: Response, next: Nex
   } catch (error) {
     res.locals.user = null;
     if (error instanceof StytchError) {
-      if (error.status_code !== 404)
-        console.log("Authentication error validating stytch session: ", error);
-    } else console.log("Authentication error: ", error, req.path, req.method);
+      if (error.status_code !== 404) {
+        Sentry.captureException(error, {
+          tags: { location: "auth" },
+          contexts: {
+            auth: { type: "session-auth" },
+          },
+        });
+      }
+    } else {
+      Sentry.captureException(error, {
+        tags: { location: "auth" },
+        contexts: {
+          auth: { type: "session-auth" },
+        },
+      });
+    }
   }
 
   next();

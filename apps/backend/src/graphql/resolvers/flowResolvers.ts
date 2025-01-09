@@ -25,7 +25,10 @@ const getFlow: QueryResolvers["getFlow"] = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "getFlow", operation: "query" }, contexts: { args } },
+      sentryOptions: {
+        tags: { resolver: "getFlow", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
     });
   }
 };
@@ -41,7 +44,10 @@ const getFlows: QueryResolvers["getFlows"] = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "getFlows", operation: "query" }, contexts: { args } },
+      sentryOptions: {
+        tags: { resolver: "getFlows", operation: "query", location: "graphql" },
+        contexts: { args },
+      },
     });
   }
 };
@@ -68,7 +74,10 @@ const newFlow: MutationResolvers["newFlow"] = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "newFlow", operation: "mutation" }, contexts: { args } },
+      sentryOptions: {
+        tags: { resolver: "newFlow", operation: "mutation", location: "graphql" },
+        contexts: { args },
+      },
     });
   }
 };
@@ -84,7 +93,7 @@ const getGroupsToWatchFlow: QueryResolvers["getGroupsToWatchFlow"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "getGroupsToWatchFlow", operation: "query" },
+        tags: { resolver: "getGroupsToWatchFlow", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });

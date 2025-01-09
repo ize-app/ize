@@ -46,7 +46,7 @@ const nftToken = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "nftToken", operation: "query" }, contexts: { args } },
+      sentryOptions: { tags: { resolver: "nftToken", operation: "query", location: "graphql",  }, contexts: { args } },
     });
   }
 };
@@ -61,7 +61,7 @@ const hatToken = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "hatToken", operation: "query" }, contexts: { args } },
+      sentryOptions: { tags: { resolver: "hatToken", operation: "query", location: "graphql",  }, contexts: { args } },
     });
   }
 };
@@ -83,7 +83,7 @@ const searchNftContracts = async (
   } catch (error) {
     return logResolverError({
       error,
-      sentryOptions: { tags: { resolver: "searchNftContracts", operation: "query" }, contexts: { args } },
+      sentryOptions: { tags: { resolver: "searchNftContracts", operation: "query", location: "graphql",  }, contexts: { args } },
     });
   }
 };

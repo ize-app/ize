@@ -20,7 +20,7 @@ const testWebhook: MutationResolvers["testWebhook"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "testWebhook", operation: "mutation" },
+        tags: { location: "graphql", resolver: "testWebhook", operation: "mutation" },
         contexts: { args },
       },
     });

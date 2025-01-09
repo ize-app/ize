@@ -30,7 +30,7 @@ const newEntities: MutationResolvers["newEntities"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "newEntities", operation: "mutation" },
+        tags: { resolver: "newEntities", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });
@@ -48,7 +48,7 @@ const group: QueryResolvers["group"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "group", operation: "query" },
+        tags: { resolver: "group", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });
@@ -66,7 +66,7 @@ export const groupsForCurrentUser: QueryResolvers["groupsForCurrentUser"] = asyn
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "groupsForCurrentUser", operation: "query" },
+        tags: { resolver: "groupsForCurrentUser", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });
@@ -103,7 +103,7 @@ export const newCustomGroup: MutationResolvers["newCustomGroup"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "newCustomGroup", operation: "mutation" },
+        tags: { resolver: "newCustomGroup", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });

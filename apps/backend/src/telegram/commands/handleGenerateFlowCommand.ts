@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { Message, Update } from "@telegraf/types";
 import { Context } from "telegraf";
 
@@ -23,11 +24,15 @@ export const handleGenerateFlowCommand = async ({
   }>;
   flowType: FlowConfigGeneration;
 }) => {
+  let telegramGroupEntityId: string | undefined = undefined;
+  let izeGroupIds: string[];
+  let telegramEntityId: string | undefined = undefined;
   try {
     const telegramUser = ctx.message.from;
     if (!telegramUser) throw Error("No telegram user found");
 
     const identity = await upsertTelegramIdentity({ telegramUserData: telegramUser });
+    telegramEntityId = identity.entityId;
 
     const prompt = trimCommandMessage(ctx.message.text);
 
@@ -37,7 +42,7 @@ export const handleGenerateFlowCommand = async ({
       return;
     }
 
-    const { telegramGroupEntityId, izeGroupIds } = await getGroupsForTelegramChat(ctx.chat.id);
+    ({ telegramGroupEntityId, izeGroupIds } = await getGroupsForTelegramChat(ctx.chat.id));
 
     if (izeGroupIds.length === 0) {
       ctx.reply(
@@ -68,7 +73,13 @@ export const handleGenerateFlowCommand = async ({
       entityContext: { type: "identity", identity },
     });
   } catch (error) {
-    console.error(`ERROR: Telegram bot handleCommand for ${flowType} `, error);
+    Sentry.captureException(error, {
+      tags: { location: "telegram", interaction: "generateFlowCommand" },
+      contexts: {
+        args: { flowType },
+        telegram: { identityEntityId: telegramEntityId, groupEntityId: telegramGroupEntityId },
+      },
+    });
     ctx.reply("Something went wrong. Please try again.");
   }
 };

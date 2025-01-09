@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/node";
+
 import { handleExpiredResults } from "./handleExpiredRequests";
 import { retryActions } from "./retryActions";
 import { retryNewResults } from "./retryNewResults";
@@ -25,7 +27,9 @@ export const startUpdateRequestsCron = () => {
       console.log("Executing updateRequestsCron...");
       updateRequestsCron();
     } catch (error) {
-      console.error("Error during cron execution:", error);
+      Sentry.captureException(error, {
+        tags: { location: "cron-request" },
+      });
     } finally {
       isRunning = false;
     }

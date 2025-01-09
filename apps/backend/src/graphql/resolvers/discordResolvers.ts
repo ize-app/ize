@@ -74,7 +74,7 @@ const discordServerRoles = async (root: unknown, args: QueryDiscordServerRolesAr
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "discordServerRoles", operation: "query" },
+        tags: { resolver: "discordServerRoles", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });

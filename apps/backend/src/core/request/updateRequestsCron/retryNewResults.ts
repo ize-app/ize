@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/node";
+
 import { newResultsForStep } from "@/core/result/newResults/newResultsForStep";
 
 import { prisma } from "../../../prisma/client";
@@ -24,7 +26,9 @@ export const retryNewResults = async () => {
     );
     return;
   } catch (error) {
-    console.error("Error in retryNewResults:", error);
+    Sentry.captureException(error, {
+      tags: { location: "cron-request" },
+    });
     return;
   }
 };

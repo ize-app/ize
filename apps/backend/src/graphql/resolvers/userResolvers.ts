@@ -105,7 +105,7 @@ const me: QueryResolvers["me"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "me", operation: "query" },
+        tags: { resolver: "me", operation: "query", location: "graphql" },
         contexts: { args },
       },
     });
@@ -127,7 +127,7 @@ export const updateProfile: MutationResolvers["updateProfile"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "updateProfile", operation: "mutation" },
+        tags: { resolver: "updateProfile", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });
@@ -153,7 +153,7 @@ export const watchGroup: MutationResolvers["watchGroup"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "watchGroup", operation: "mutation" },
+        tags: { resolver: "watchGroup", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });
@@ -183,7 +183,7 @@ export const watchFlow: MutationResolvers["watchFlow"] = async (
     return logResolverError({
       error,
       sentryOptions: {
-        tags: { resolver: "watchFlow", operation: "mutation" },
+        tags: { resolver: "watchFlow", operation: "mutation", location: "graphql" },
         contexts: { args },
       },
     });
