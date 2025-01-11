@@ -124,7 +124,7 @@ const ResultForm = ({ stepIndex, resultIndex, locked, reusable, display }: Resul
           label={``}
           defaultValue=""
         />
-        <Switch name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.name`} label="Required" />
+        <Switch name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.required`} label="Required" />
         {resultType === ResultType.RawAnswers && (
           <Select<FlowSchemaType>
             size={"small"}
