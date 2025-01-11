@@ -132,15 +132,15 @@ export const createInputValueFormState = ({ ...args }: ValueFormStateProps): Inp
     switch (type) {
       case ValueType.Date:
         // all pure date values are handled with UTC
-        return { value: dayjs().utc().startOf("day"), type: ValueType.Date, required };
+        return { value: null, type: ValueType.Date, required };
       case ValueType.DateTime:
-        return { value: dayjs(), type: ValueType.DateTime, required };
+        return { value: null, type: ValueType.DateTime, required };
       case ValueType.Entities:
         return { value: [], type: ValueType.Entities, required };
       case ValueType.Flows:
         return { value: [], type: ValueType.Flows, required };
       case ValueType.Float:
-        return { value: 1, type: ValueType.Float, required };
+        return { value: "", type: ValueType.Float, required };
       case ValueType.String:
         return { value: "", type: ValueType.String, required };
       case ValueType.Uri:

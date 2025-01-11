@@ -19,6 +19,7 @@ import {
 interface MultiSelectProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
+  required: boolean;
   disabled?: boolean;
   options: OptionFragment[];
 }
@@ -27,6 +28,7 @@ export const MultiSelect = <T extends FieldValues>({
   label,
   name,
   options,
+  required,
   ...rest
 }: MultiSelectProps<T>) => {
   const { control } = useFormContext<T>();
@@ -57,7 +59,7 @@ export const MultiSelect = <T extends FieldValues>({
         };
 
         return (
-          <FormControl>
+          <FormControl required={required}>
             {label ? (
               <FormLabel component="legend" id="multiselect-options-form">
                 {label}

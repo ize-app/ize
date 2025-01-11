@@ -34,6 +34,7 @@ export const InputFieldAnswers = <T extends FieldValues>({
             label={field.name}
             field={field}
             key={field.fieldId}
+            required={field.required}
             showLabel={true}
             seperateLabel={true}
             groupId={groupId}

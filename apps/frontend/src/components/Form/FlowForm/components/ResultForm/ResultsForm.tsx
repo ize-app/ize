@@ -10,7 +10,7 @@ import { LlmSummaryForm } from "./LlmSummaryForm";
 import { PrioritizationForm } from "./PrioritizationForm";
 import { ResponseFieldOptionsForm } from "./ResponseFieldOptionsForm";
 import ResultsToggle from "./ResultsToggle";
-import { Select, TextField } from "../../../formFields";
+import { Select, Switch, TextField } from "../../../formFields";
 import { LabeledGroupedInputs } from "../../../formLayout/LabeledGroupedInputs";
 import { FlowSchemaType } from "../../formValidation/flow";
 import { defaultFreeInputDefaultOptions } from "../../helpers/defaultFreeInputDataTypeOptions";
@@ -124,6 +124,7 @@ const ResultForm = ({ stepIndex, resultIndex, locked, reusable, display }: Resul
           label={``}
           defaultValue=""
         />
+        <Switch name={`steps.${stepIndex}.fieldSet.fields.${resultIndex}.required`} label="Required" />
         {resultType === ResultType.RawAnswers && (
           <Select<FlowSchemaType>
             size={"small"}

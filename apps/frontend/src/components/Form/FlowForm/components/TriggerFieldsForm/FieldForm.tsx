@@ -9,7 +9,7 @@ import { ValueType } from "@/graphql/generated/graphql";
 
 import { OptionFieldForm } from "./OptionsFieldForm";
 import { FieldFormProps, triggerFieldsPath } from "./TriggerFieldsForm";
-import { TextField } from "../../../formFields";
+import { Switch, TextField } from "../../../formFields";
 import { FlowSchemaType } from "../../formValidation/flow";
 
 export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormProps) => {
@@ -47,7 +47,7 @@ export const FieldForm = ({ fieldsArrayMethods, fieldIndex, locked }: FieldFormP
             defaultValue=""
             disabled={locked}
           />
-
+          <Switch name={`${triggerFieldsPath}.${fieldIndex}.required`} label="Required" />
           {type === ValueType.OptionSelections && (
             <OptionFieldForm
               fieldsArrayMethods={fieldsArrayMethods}

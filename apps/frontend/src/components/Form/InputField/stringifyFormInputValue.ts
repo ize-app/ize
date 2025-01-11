@@ -31,6 +31,7 @@ export const stringifyFormInputValue = ({ input }: { input: InputSchemaType }): 
     case ValueType.Flows:
       return value.map((flow) => flow.name).join(", ");
     case ValueType.FlowVersion:
+      if (!value) return "";
       return value.name;
     case ValueType.OptionSelections:
       throw Error("Stringifying option selections not supported");

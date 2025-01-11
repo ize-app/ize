@@ -52,6 +52,7 @@ export const SelectGroupsToWatchFlowForm = <T extends FieldValues>({
     return (
       <MultiSelect<T>
         name={name}
+        required={false}
         label={"Select groups you'd like to watch this request"}
         options={groups.map((group) => ({
           optionId: group.id,

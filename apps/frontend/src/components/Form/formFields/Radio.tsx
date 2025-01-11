@@ -15,6 +15,7 @@ interface RadioProps<T extends FieldValues> {
   name: Path<T>;
   disabled?: boolean;
   options: OptionFragment[];
+  required: boolean;
   sx: SxProps;
 }
 
@@ -22,6 +23,7 @@ export const Radio = <T extends FieldValues>({
   name,
   label,
   options,
+  required,
   disabled = false,
   ...props
 }: RadioProps<T>): JSX.Element => {
@@ -34,7 +36,7 @@ export const Radio = <T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl component="fieldset" required disabled={disabled}>
+        <FormControl component="fieldset" required={required} disabled={disabled}>
           {label ? (
             <FormLabel component="legend" id="radio-buttons-group-options">
               {label}
