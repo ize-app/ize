@@ -35,6 +35,9 @@ export const RequestForm = () => {
   };
 
   const flow = formState.flow;
+
+  // console.log("flow is ", flow);
+  // console.log("request is ", formState.request?.requestFields);
   const step = flow?.steps[0];
 
   if (!flow || !step) return null;

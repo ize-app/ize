@@ -154,6 +154,7 @@ export const InputField = <T extends FieldValues>({
             if (maxSelections === 1) {
               return (
                 <Radio<T>
+                  required={required}
                   name={`${fieldName}[0].optionId` as Path<T>}
                   label={label}
                   sx={{ flexDirection: "column", gap: "4px" }}
@@ -161,11 +162,25 @@ export const InputField = <T extends FieldValues>({
                 />
               );
             } else {
-              return <MultiSelect<T> name={fieldName} label={label} options={options} />;
+              return (
+                <MultiSelect<T>
+                  name={fieldName}
+                  label={label}
+                  options={options}
+                  required={required}
+                />
+              );
             }
           }
           case OptionSelectionType.Rank: {
-            return <SortableList<T> label={label} name={fieldName} options={options} />;
+            return (
+              <SortableList<T>
+                label={label}
+                required={required}
+                name={fieldName}
+                options={options}
+              />
+            );
           }
           default:
             throw Error("Unknown option selection type");

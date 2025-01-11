@@ -16,16 +16,19 @@ export const createInputValueArg = (input: InputSchemaType): string => {
       return JSON.stringify(input.value);
     case ValueType.Date:
       // On FE, dates are already in UTC with time set to 00:00:00
+      if (!input.value) return "";
       return JSON.stringify(input.value.utc().startOf("day").toISOString());
     case ValueType.Float:
       return JSON.stringify(input.value);
     case ValueType.DateTime:
+      if (!input.value) return "";
       return JSON.stringify(input.value.utc().toISOString()); // 2019-03-06T00:00:00Z
     case ValueType.Entities:
       return JSON.stringify((input.value as Entity[]).map((e) => e.entityId));
     case ValueType.Flows:
       return JSON.stringify(input.value.map((f) => f.flowId));
     case ValueType.FlowVersion:
+      if (!input.value) return "";
       return JSON.stringify(input.value.flowVersionId);
     default:
       throw new Error(`Unknown field data type: ${input.type}`);

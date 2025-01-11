@@ -12,6 +12,7 @@ interface SortableListProps<T extends FieldValues> {
   label: string;
   name: Path<T>;
   displayLabel?: boolean;
+  required: boolean;
   options: OptionFragment[];
 }
 
@@ -22,6 +23,7 @@ export const SortableList = <T extends FieldValues>({
   name,
   options,
   label,
+  required,
 }: SortableListProps<T>) => {
   const { control } = useFormContext<T>();
   const { fields, move } = useFieldArray<T>({
@@ -47,7 +49,7 @@ export const SortableList = <T extends FieldValues>({
         <Box>
           {/* <Typography>{label}</Typography> */}
           {label ? (
-            <FormLabel component="legend" id="radio-buttons-group-options">
+            <FormLabel required={required} component="legend" id="radio-buttons-group-options">
               {label}
             </FormLabel>
           ) : null}
@@ -57,7 +59,7 @@ export const SortableList = <T extends FieldValues>({
                 //@ts-expect-error TODO unclear why this error is happening
                 return field.optionId === o.optionId;
               });
-              if(!option) return null;
+              if (!option) return null;
 
               return (
                 <Box key={field.id}>
