@@ -621,6 +621,7 @@ model FieldOption {
   ActionFilter              ActionConfigFilter[]
   ResultItems               ResultItems[]
   ValueOptionSelections     ValueOptionSelections[]
+  DecisionConditions        DecisionCondition[]
 
   @@unique([index, fieldOptionSetId])
   @@map("field_options")
@@ -701,9 +702,22 @@ model ResultConfigDecision {
   criteria        String?
   createdAt       DateTime     @default(now()) @map("created_at")
 
-  DefaultFieldOption FieldOption? @relation(fields: [defaultOptionId], references: [id], onDelete: Cascade)
+  DefaultFieldOption FieldOption?        @relation(fields: [defaultOptionId], references: [id], onDelete: Cascade)
+  DecisionConditions DecisionCondition[]
 
   @@map("result_config_decisions")
+}
+
+model DecisionCondition {
+  id                     String               @id @default(uuid()) @db.Uuid
+  resultConfigDecisionId String               @map("result_config_decision_id") @db.Uuid
+  ResultConfigDecision   ResultConfigDecision @relation(fields: [resultConfigDecisionId], references: [id], onDelete: Cascade)
+
+  optionId    String      @map("option_id") @db.Uuid
+  FieldOption FieldOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  threshold   Int
+
+  @@map("decision_conditions")
 }
 
 model ResultConfigRank {

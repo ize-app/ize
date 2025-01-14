@@ -26,12 +26,16 @@ export interface NewResult {
   responses: ResponsePrismaType[];
 }
 
+export interface NewResultReturn {
+  endStepEarly: boolean;
+}
+
 export const newResult = async ({
   requestStepId,
   resultConfig,
   existingResultGroup,
   responses,
-}: NewResult): Promise<void> => {
+}: NewResult): Promise<NewResultReturn> => {
   if (!resultConfig.fieldId)
     throw new GraphQLError(
       `Result config for decision is missing a fieldId: resultConfigId: ${resultConfig.id}`,
@@ -46,17 +50,18 @@ export const newResult = async ({
   });
 
   try {
-    return await prisma.$transaction(async (transaction): Promise<void> => {
+    return await prisma.$transaction(async (transaction): Promise<NewResultReturn> => {
       // TODO set result status to complete on success
       let newResultArgs: NewResultArgs[] | null = [];
+      let endStepEarly = false;
       switch (resultConfig.resultType) {
         case ResultType.Decision: {
-          newResultArgs = await newDecisionResult({
+          ({ resultArgs: newResultArgs, endStepEarly } = await newDecisionResult({
             resultConfig,
             fieldAnswers,
             requestStepId,
             transaction,
-          });
+          }));
           break;
         }
         case ResultType.LlmSummary: {
@@ -127,7 +132,8 @@ export const newResult = async ({
         }),
       );
 
-      return;
+
+      return { endStepEarly };
     });
   } catch (e) {
     // if error, retry later with exponential backoff
@@ -161,6 +167,6 @@ export const newResult = async ({
         nextRetryAt,
       },
     });
-    return;
+    return { endStepEarly: false };
   }
 };

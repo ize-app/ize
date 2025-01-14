@@ -43,7 +43,7 @@ fragment LinkedResult on LinkedResult {
 fragment Option on Option {
   optionId
   value {
-    ...Value
+    ...OptionValue
   }
 }
 

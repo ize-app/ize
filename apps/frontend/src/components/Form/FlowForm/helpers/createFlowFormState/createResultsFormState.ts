@@ -7,6 +7,7 @@ import {
 } from "@/graphql/generated/graphql";
 
 import {
+  DecisionConditionsSchemaType,
   DecisionSchemaType,
   RankingResultSchemaType,
   ResultSchemaType,
@@ -70,6 +71,12 @@ const createDecisionFormState = (
     hasDefault: !!defaultOptionId,
     optionId: defaultOptionId,
   };
+
+  const conditions: DecisionConditionsSchemaType = decision.conditions.map((condition) => ({
+    optionId: uuidRemapper.getRemappedUUID(condition.option.optionId),
+    threshold: condition.threshold,
+  }));
+
   const threshold = decision.threshold;
   switch (decision.decisionType) {
     case DecisionType.NumberThreshold:
@@ -78,6 +85,7 @@ const createDecisionFormState = (
         type: DecisionType.NumberThreshold,
         threshold,
         defaultDecision,
+        conditions,
       };
     case DecisionType.PercentageThreshold:
       if (!threshold) throw Error("createDecisionFormState: Missing decision threshold");
@@ -85,17 +93,20 @@ const createDecisionFormState = (
         type: DecisionType.PercentageThreshold,
         threshold,
         defaultDecision,
+        conditions,
       };
     case DecisionType.WeightedAverage:
       return {
         type: DecisionType.WeightedAverage,
         defaultDecision,
+        conditions,
       };
     case DecisionType.Ai:
       return {
         type: DecisionType.Ai,
         criteria: decision.criteria ?? "",
         defaultDecision,
+        conditions,
       };
   }
 };

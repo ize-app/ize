@@ -1,3 +1,5 @@
+import { fieldOptionResolver } from "@/core/fields/resolvers/fieldOptionResolver";
+import { GraphqlRequestContext } from "@/graphql/context";
 import {
   Decision,
   DecisionType,
@@ -17,21 +19,23 @@ import { ResultConfigPrismaType } from "../resultPrismaTypes";
 interface ResultConfigResolver {
   resultConfig: ResultConfigPrismaType;
   field: Field;
+  context: GraphqlRequestContext;
 }
 
 export const resultConfigResolver = ({
   resultConfig,
   field,
+  context,
 }: ResultConfigResolver): ResultConfig => {
   switch (resultConfig.resultType) {
     case ResultType.Decision:
-      return resultConfigDecisionResolver({ resultConfig, field });
+      return resultConfigDecisionResolver({ resultConfig, field, context });
     case ResultType.Ranking:
-      return resultConfigRankResolver({ resultConfig, field });
+      return resultConfigRankResolver({ resultConfig, field, context });
     case ResultType.LlmSummary:
-      return resultConfigLlmResolver({ resultConfig, field });
+      return resultConfigLlmResolver({ resultConfig, field, context });
     case ResultType.RawAnswers: {
-      return resultRawAnswersResolver({ resultConfig, field });
+      return resultRawAnswersResolver({ resultConfig, field, context });
     }
     default:
       throw new GraphQLError("Invalid result type", {
@@ -40,7 +44,11 @@ export const resultConfigResolver = ({
   }
 };
 
-const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResolver): Decision => {
+const resultConfigDecisionResolver = ({
+  resultConfig,
+  field,
+  context,
+}: ResultConfigResolver): Decision => {
   let defaultOption: Option | undefined = undefined;
 
   const decConfig = resultConfig.ResultConfigDecision;
@@ -70,6 +78,10 @@ const resultConfigDecisionResolver = ({ resultConfig, field }: ResultConfigResol
     resultConfigId: resultConfig.id,
     field,
     criteria: decConfig.criteria,
+    conditions: decConfig.DecisionConditions.map((condition) => ({
+      option: fieldOptionResolver({ option: condition.FieldOption, context }),
+      threshold: condition.threshold,
+    })),
     decisionType: decConfig.type as DecisionType,
     threshold: decConfig.threshold,
     defaultOption,

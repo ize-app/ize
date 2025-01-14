@@ -1,6 +1,12 @@
 import { Box, Typography } from "@mui/material";
 
-import { DecisionType, ResultConfigFragment, ResultType } from "@/graphql/generated/graphql";
+import {
+  DecisionCondition,
+  DecisionType,
+  ResultConfigFragment,
+  ResultType,
+  ValueFragment,
+} from "@/graphql/generated/graphql";
 
 import { stringifyValue } from "../Value/stringifyValue";
 
@@ -9,22 +15,38 @@ const decisionTypeDescription = (
   threshold: number | null | undefined,
   criteria: string | null | undefined,
 ) => {
+  let primaryCriteria: string;
   switch (decisionType) {
     case DecisionType.NumberThreshold: {
-      return `Decision is made for the first option to reach ${threshold} vote${
+      primaryCriteria = `Decision is made for the first option to reach ${threshold} vote${
         threshold && threshold > 1 ? "s" : ""
       }. `;
+      break;
     }
     case DecisionType.PercentageThreshold: {
-      return `Decision is made for the first option to reach ${threshold}% of votes. `;
+      primaryCriteria = `Decision is made for the first option to reach ${threshold}% of votes. `;
+      break;
     }
     case DecisionType.WeightedAverage: {
-      return `Decision is made based on the weighted average of all rankings. `;
+      primaryCriteria = `Decision is made based on the weighted average of all rankings. `;
+      break;
     }
     case DecisionType.Ai: {
-      return `AI automatically makes the decision ${criteria ? "based on the following criteria " + criteria : ""}`;
+      primaryCriteria = `AI automatically makes the decision ${criteria ? "based on the following criteria " + criteria : ""}`;
+      break;
     }
   }
+  return primaryCriteria;
+};
+
+const decisionConditionDescription = (conditions: DecisionCondition[]): string => {
+  if (conditions.length === 0) return "";
+  else
+    return `The following options have additional conditions that can trigger a final decision:\n ${conditions
+      .map((c) => {
+        return `- "${stringifyValue({ value: c.option.value as ValueFragment })}": ${c.threshold} votes to decide`;
+      })
+      .join("")}\n\n`;
 };
 
 const minAnswersDescription = (minResponses: number | undefined | null, resultType: ResultType) => {
@@ -68,6 +90,8 @@ export const createResultConfigDescription = ({
             resultConfig.threshold,
             resultConfig.criteria,
           )}
+          {decisionConditionDescription(resultConfig.conditions)}
+
           {minAnswersDescription(minResponses, ResultType.Decision)}
           {resultConfig.defaultOption
             ? `If decision isn't made, default result is "${stringifyValue({ value: resultConfig.defaultOption.value })}. `

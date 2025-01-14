@@ -21,7 +21,7 @@ export const newDecisionResult = async ({
   fieldAnswers: FieldAnswerPrismaType[];
   requestStepId: string;
   transaction: Prisma.TransactionClient;
-}): Promise<NewResultArgs[] | null> => {
+}): Promise<{ resultArgs: NewResultArgs[] | null; endStepEarly: boolean }> => {
   const decisionConfig = resultConfig.ResultConfigDecision;
   let decisionResultArgs: NewResultArgs | undefined;
   let decisionExplainationResultArgs: NewResultArgs | undefined;
@@ -37,12 +37,15 @@ export const newDecisionResult = async ({
         },
       );
     let decisionFieldOption: FieldOption | null = null;
-    const { optionId: decisionOptionId, explanation: decisionExplanation } =
-      await determineDecision({
-        resultConfig,
-        answers: fieldAnswers,
-        requestStepId,
-      });
+    const {
+      optionId: decisionOptionId,
+      explanation: decisionExplanation,
+      endStepEarly,
+    } = await determineDecision({
+      resultConfig,
+      answers: fieldAnswers,
+      requestStepId,
+    });
 
     // check that decision is actually valid
     if (decisionOptionId) {
@@ -89,12 +92,12 @@ export const newDecisionResult = async ({
     newResultArgs.push(decisionResultArgs);
     if (decisionExplainationResultArgs) newResultArgs.push(decisionExplainationResultArgs);
 
-    return newResultArgs;
+    return { resultArgs: newResultArgs, endStepEarly };
   } catch (e) {
     console.error(
       `ERROR determining decision result for resultConfigId ${resultConfig.id} requestStepId ${requestStepId}`,
       e,
     );
-    return null;
+    return { resultArgs: null, endStepEarly: false };
   }
 };

@@ -14,6 +14,7 @@ export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = 
       decision: {
         type: DecisionType.NumberThreshold,
         threshold: 2,
+        conditions: [],
       },
     },
     watch: {
@@ -21,6 +22,7 @@ export const newCustomGroupFormFieldsDefault: GroupSetupAndPoliciesSchemaType = 
       decision: {
         type: DecisionType.NumberThreshold,
         threshold: 2,
+        conditions: [],
       },
     },
   },

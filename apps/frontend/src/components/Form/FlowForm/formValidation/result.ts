@@ -11,6 +11,8 @@ export type LlmSummaryResultSchemaType = z.infer<typeof llmResultSchema>;
 export type RankingResultSchemaType = z.infer<typeof rankingResultSchema>;
 export type RawAnswersResultSchemaType = z.infer<typeof rawAnswersResultSchema>;
 
+export type DecisionConditionsSchemaType = z.infer<typeof decisionOptionsConditionsSchema>;
+
 export enum ResultListCountLimit {
   None = "None",
 }
@@ -32,24 +34,35 @@ const defaultDecisionSchema = z
   )
   .optional();
 
+const decisionOptionConditionSchema = z.object({
+  optionId: z.string().uuid(),
+  threshold: z.coerce.number().int().positive(),
+});
+
+const decisionOptionsConditionsSchema = z.array(decisionOptionConditionSchema);
+
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(DecisionType.NumberThreshold),
     defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().positive(),
+    conditions: decisionOptionsConditionsSchema,
   }),
   z.object({
     type: z.literal(DecisionType.PercentageThreshold),
     defaultDecision: defaultDecisionSchema,
     threshold: z.coerce.number().int().min(51).max(100),
+    conditions: decisionOptionsConditionsSchema,
   }),
   z.object({
     type: z.literal(DecisionType.WeightedAverage),
     defaultDecision: defaultDecisionSchema,
+    conditions: decisionOptionsConditionsSchema,
   }),
   z.object({
     type: z.literal(DecisionType.Ai),
     defaultDecision: defaultDecisionSchema,
+    conditions: decisionOptionsConditionsSchema,
     criteria: z.string(),
   }),
 ]);

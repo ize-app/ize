@@ -36,6 +36,7 @@ type Decision {
   name: String!
   field: Field!
   criteria: String
+  conditions: [DecisionCondition!]!
   decisionType: DecisionType!
   defaultOption: Option
   threshold: Int
@@ -78,6 +79,11 @@ enum DecisionType {
   Ai
 }
 
+type DecisionCondition {
+  option: Option!
+  threshold: Int!
+}
+
 input ResultArgs {
   type: ResultType!
   resultConfigId: String!
@@ -90,8 +96,14 @@ input ResultArgs {
 input DecisionArgs {
   type: DecisionType!
   defaultOptionId: String
+  conditions: [DecisionConditionArgs!]!
   criteria: String
   threshold: Int
+}
+
+input DecisionConditionArgs {
+  optionId: String!
+  threshold: Int!
 }
 
 input PrioritizationArgs {

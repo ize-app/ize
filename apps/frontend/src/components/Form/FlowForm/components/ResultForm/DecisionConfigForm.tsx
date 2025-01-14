@@ -1,10 +1,11 @@
-import { InputAdornment } from "@mui/material";
+import { InputAdornment, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { FieldBlock } from "@/components/Form/formLayout/FieldBlock";
 import { DecisionType, OptionSelectionType } from "@/graphql/generated/graphql";
 
+import { DecisionOptionConditionForm } from "./DecisionOptionConditions";
 import { DefaultDecisionForm } from "./DefaultDecisionForm";
 import { Select, TextField } from "../../../formFields";
 import { ResponsiveFormRow } from "../../../formLayout/ResponsiveFormRow";
@@ -88,6 +89,7 @@ export const DecisionConfigForm = ({
 
   return (
     <FieldBlock sx={{ display: display ? "flex" : "none" }}>
+      <Typography variant="description">How decision is made </Typography>
       <ResponsiveFormRow>
         <Select<FlowSchemaType>
           label="How do we determine the final result?"
@@ -131,12 +133,18 @@ export const DecisionConfigForm = ({
           />
         )}
       </ResponsiveFormRow>
+      <DecisionOptionConditionForm
+        stepIndex={stepIndex}
+        resultIndex={resultIndex}
+        display={decisionType !== DecisionType.Ai}
+      />
       <DefaultDecisionForm
         stepIndex={stepIndex}
         resultIndex={resultIndex}
         field={field}
         display={decisionType !== DecisionType.Ai}
       />
+      {/* <Typography variant="description">Set specific criteria for specific options </Typography> */}
     </FieldBlock>
   );
 };

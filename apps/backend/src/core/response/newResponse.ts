@@ -9,7 +9,6 @@ import { fieldAnswerInclude, fieldOptionSetInclude } from "../fields/fieldPrisma
 import { newFieldAnswers } from "../fields/newFieldAnswers";
 import { getEntityPermissions } from "../permission/getEntityPermissions";
 import { finalizeStepResponses } from "../request/updateState/finalizeStepResponses";
-import { checkToEndResponseEarly } from "../result/checkIfEarlyResult";
 import { newResultsForStep } from "../result/newResults/newResultsForStep";
 
 interface NewResponseProps {
@@ -142,11 +141,11 @@ export const newResponse = async ({ entityContext, args }: NewResponseProps): Pr
   // perliminary results are determined after every response
   // not running results and actions on the same transaction so that vote can be recorded if there is issue with action / result
   // there is cron job to rerun stalled actions / results
-  await newResultsForStep({ requestStepId });
+  const { endStepEarly } = await newResultsForStep({ requestStepId });
 
-  const hasEarlyResult = await checkToEndResponseEarly({ requestStepId });
+  // const hasEarlyResult = await checkToEndResponseEarly({ requestStepId });
 
-  if (hasEarlyResult) {
+  if (endStepEarly) {
     await finalizeStepResponses({ requestStepId });
   }
 

@@ -165,6 +165,7 @@ export const generateNewFlowConfig = ({
             decision: config.decision ?? {
               type: DecisionType.NumberThreshold,
               threshold: 1,
+              conditions: []
             },
           });
 

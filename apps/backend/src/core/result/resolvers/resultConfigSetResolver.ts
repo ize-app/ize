@@ -1,3 +1,4 @@
+import { GraphqlRequestContext } from "@/graphql/context";
 import { Field, ResultConfig } from "@/graphql/generated/resolver-types";
 import { ApolloServerErrorCode, GraphQLError } from "@graphql/errors";
 
@@ -7,6 +8,7 @@ import { ResultConfigSetPrismaType } from "../resultPrismaTypes";
 export const resultsConfigSetResolver = (
   resultConfigSet: ResultConfigSetPrismaType | null | undefined,
   responseFields: Field[],
+  context: GraphqlRequestContext,
 ): ResultConfig[] => {
   if (!resultConfigSet) return [];
 
@@ -19,6 +21,6 @@ export const resultsConfigSetResolver = (
         extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
       });
 
-    return resultConfigResolver({ resultConfig: r, field: responseField });
+    return resultConfigResolver({ resultConfig: r, field: responseField, context });
   });
 };

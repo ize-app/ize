@@ -139,6 +139,7 @@ export type DateValue = {
 
 export type Decision = {
   __typename?: 'Decision';
+  conditions: Array<DecisionCondition>;
   criteria?: Maybe<Scalars['String']['output']>;
   decisionType: DecisionType;
   defaultOption?: Maybe<Option>;
@@ -149,10 +150,22 @@ export type Decision = {
 };
 
 export type DecisionArgs = {
+  conditions: Array<DecisionConditionArgs>;
   criteria?: InputMaybe<Scalars['String']['input']>;
   defaultOptionId?: InputMaybe<Scalars['String']['input']>;
   threshold?: InputMaybe<Scalars['Int']['input']>;
   type: DecisionType;
+};
+
+export type DecisionCondition = {
+  __typename?: 'DecisionCondition';
+  option: Option;
+  threshold: Scalars['Int']['output'];
+};
+
+export type DecisionConditionArgs = {
+  optionId: Scalars['String']['input'];
+  threshold: Scalars['Int']['input'];
 };
 
 export enum DecisionType {
@@ -714,7 +727,7 @@ export type OnboardedDiscordServer = {
 export type Option = {
   __typename?: 'Option';
   optionId: Scalars['String']['output'];
-  value: Value;
+  value: OptionValue;
 };
 
 export type OptionArgs = {
@@ -1317,7 +1330,7 @@ export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   GroupType: ( DiscordRoleGroup ) | ( GroupIze ) | ( GroupNft ) | ( GroupTelegramChat );
   IdentityType: ( IdentityBlockchain ) | ( IdentityDiscord ) | ( IdentityEmail ) | ( IdentityTelegram );
   OptionValue: ( DateTimeValue ) | ( DateValue ) | ( Omit<EntitiesValue, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FloatValue ) | ( FlowVersionValue ) | ( FlowsValue ) | ( StringValue ) | ( UriValue );
-  ResultConfig: ( Omit<Decision, 'defaultOption' | 'field'> & { defaultOption?: Maybe<_RefType['Option']>, field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } ) | ( Omit<RawAnswers, 'field'> & { field: _RefType['Field'] } );
+  ResultConfig: ( Omit<Decision, 'conditions' | 'defaultOption' | 'field'> & { conditions: Array<_RefType['DecisionCondition']>, defaultOption?: Maybe<_RefType['Option']>, field: _RefType['Field'] } ) | ( Omit<LlmSummary, 'field'> & { field: _RefType['Field'] } ) | ( Omit<Ranking, 'field'> & { field: _RefType['Field'] } ) | ( Omit<RawAnswers, 'field'> & { field: _RefType['Field'] } );
   Value: ( DateTimeValue ) | ( DateValue ) | ( Omit<EntitiesValue, 'entities'> & { entities: Array<_RefType['Entity']> } ) | ( FloatValue ) | ( FlowVersionValue ) | ( FlowsValue ) | ( Omit<OptionSelectionsValue, 'selections'> & { selections: Array<_RefType['OptionSelection']> } ) | ( StringValue ) | ( UriValue );
 };
 
@@ -1341,8 +1354,10 @@ export type ResolversTypes = {
   CustomGroupArgs: CustomGroupArgs;
   DateTimeValue: ResolverTypeWrapper<DateTimeValue>;
   DateValue: ResolverTypeWrapper<DateValue>;
-  Decision: ResolverTypeWrapper<Omit<Decision, 'defaultOption' | 'field'> & { defaultOption?: Maybe<ResolversTypes['Option']>, field: ResolversTypes['Field'] }>;
+  Decision: ResolverTypeWrapper<Omit<Decision, 'conditions' | 'defaultOption' | 'field'> & { conditions: Array<ResolversTypes['DecisionCondition']>, defaultOption?: Maybe<ResolversTypes['Option']>, field: ResolversTypes['Field'] }>;
   DecisionArgs: DecisionArgs;
+  DecisionCondition: ResolverTypeWrapper<Omit<DecisionCondition, 'option'> & { option: ResolversTypes['Option'] }>;
+  DecisionConditionArgs: DecisionConditionArgs;
   DecisionType: DecisionType;
   DiscordAPIServerRole: ResolverTypeWrapper<DiscordApiServerRole>;
   DiscordRoleGroup: ResolverTypeWrapper<DiscordRoleGroup>;
@@ -1414,7 +1429,7 @@ export type ResolversTypes = {
   NftTypes: NftTypes;
   NotificationSettings: ResolverTypeWrapper<NotificationSettings>;
   OnboardedDiscordServer: ResolverTypeWrapper<OnboardedDiscordServer>;
-  Option: ResolverTypeWrapper<Omit<Option, 'value'> & { value: ResolversTypes['Value'] }>;
+  Option: ResolverTypeWrapper<Omit<Option, 'value'> & { value: ResolversTypes['OptionValue'] }>;
   OptionArgs: OptionArgs;
   OptionSelection: ResolverTypeWrapper<Omit<OptionSelection, 'value'> & { value: ResolversTypes['Value'] }>;
   OptionSelectionArgs: OptionSelectionArgs;
@@ -1493,8 +1508,10 @@ export type ResolversParentTypes = {
   CustomGroupArgs: CustomGroupArgs;
   DateTimeValue: DateTimeValue;
   DateValue: DateValue;
-  Decision: Omit<Decision, 'defaultOption' | 'field'> & { defaultOption?: Maybe<ResolversParentTypes['Option']>, field: ResolversParentTypes['Field'] };
+  Decision: Omit<Decision, 'conditions' | 'defaultOption' | 'field'> & { conditions: Array<ResolversParentTypes['DecisionCondition']>, defaultOption?: Maybe<ResolversParentTypes['Option']>, field: ResolversParentTypes['Field'] };
   DecisionArgs: DecisionArgs;
+  DecisionCondition: Omit<DecisionCondition, 'option'> & { option: ResolversParentTypes['Option'] };
+  DecisionConditionArgs: DecisionConditionArgs;
   DiscordAPIServerRole: DiscordApiServerRole;
   DiscordRoleGroup: DiscordRoleGroup;
   DiscordServer: DiscordServer;
@@ -1557,7 +1574,7 @@ export type ResolversParentTypes = {
   NftCollection: NftCollection;
   NotificationSettings: NotificationSettings;
   OnboardedDiscordServer: OnboardedDiscordServer;
-  Option: Omit<Option, 'value'> & { value: ResolversParentTypes['Value'] };
+  Option: Omit<Option, 'value'> & { value: ResolversParentTypes['OptionValue'] };
   OptionArgs: OptionArgs;
   OptionSelection: Omit<OptionSelection, 'value'> & { value: ResolversParentTypes['Value'] };
   OptionSelectionArgs: OptionSelectionArgs;
@@ -1678,6 +1695,7 @@ export type DateValueResolvers<ContextType = GraphqlRequestContext, ParentType e
 };
 
 export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Decision'] = ResolversParentTypes['Decision']> = {
+  conditions?: Resolver<Array<ResolversTypes['DecisionCondition']>, ParentType, ContextType>;
   criteria?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   decisionType?: Resolver<ResolversTypes['DecisionType'], ParentType, ContextType>;
   defaultOption?: Resolver<Maybe<ResolversTypes['Option']>, ParentType, ContextType>;
@@ -1685,6 +1703,12 @@ export type DecisionResolvers<ContextType = GraphqlRequestContext, ParentType ex
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resultConfigId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   threshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DecisionConditionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['DecisionCondition'] = ResolversParentTypes['DecisionCondition']> = {
+  option?: Resolver<ResolversTypes['Option'], ParentType, ContextType>;
+  threshold?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1991,7 +2015,7 @@ export type OnboardedDiscordServerResolvers<ContextType = GraphqlRequestContext,
 
 export type OptionResolvers<ContextType = GraphqlRequestContext, ParentType extends ResolversParentTypes['Option'] = ResolversParentTypes['Option']> = {
   optionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['Value'], ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['OptionValue'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2279,6 +2303,7 @@ export type Resolvers<ContextType = GraphqlRequestContext> = {
   DateTimeValue?: DateTimeValueResolvers<ContextType>;
   DateValue?: DateValueResolvers<ContextType>;
   Decision?: DecisionResolvers<ContextType>;
+  DecisionCondition?: DecisionConditionResolvers<ContextType>;
   DiscordAPIServerRole?: DiscordApiServerRoleResolvers<ContextType>;
   DiscordRoleGroup?: DiscordRoleGroupResolvers<ContextType>;
   DiscordServer?: DiscordServerResolvers<ContextType>;

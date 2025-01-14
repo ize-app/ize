@@ -84,5 +84,5 @@ export const generateAiDecision = async ({
 
   if (!option) throw Error("Invalid option");
 
-  return { explanation: result.explanation, optionId: option.optionId };
+  return { explanation: result.explanation, optionId: option.optionId, endStepEarly: false };
 };
