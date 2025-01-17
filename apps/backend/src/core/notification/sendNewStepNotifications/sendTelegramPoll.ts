@@ -32,7 +32,6 @@ export const sendTelegramPoll = async ({
         ? Number(telegramGroup.messageThreadId)
         : undefined,
       is_anonymous: false,
-      close_date: Date.parse(requestStep.expirationDate),
       reply_parameters: { message_id: replyMessageId },
     },
   );
