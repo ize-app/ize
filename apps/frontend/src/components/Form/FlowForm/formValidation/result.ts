@@ -39,7 +39,7 @@ const decisionOptionConditionSchema = z.object({
   threshold: z.coerce.number().int().positive(),
 });
 
-const decisionOptionsConditionsSchema = z.array(decisionOptionConditionSchema);
+const decisionOptionsConditionsSchema = z.array(decisionOptionConditionSchema).default([]);
 
 export const decisionSchema = z.discriminatedUnion("type", [
   z.object({

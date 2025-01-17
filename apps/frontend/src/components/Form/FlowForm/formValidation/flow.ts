@@ -86,6 +86,21 @@ const stepSchema = z
             });
           }
         }
+
+        if (res.decision.conditions.length > 0) {
+          res.decision.conditions.forEach((condition, conditionIndex) => {
+            const isValidOption = field.optionsConfig.options.some(
+              (option) => option.optionId === condition.optionId,
+            );
+            if (!isValidOption) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Not a valid option",
+                path: ["result", index, "decision", "conditions", conditionIndex, "optionId"],
+              });
+            }
+          });
+        }
       }
     });
   })

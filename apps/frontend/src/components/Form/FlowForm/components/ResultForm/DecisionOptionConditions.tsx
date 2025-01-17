@@ -1,9 +1,9 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, IconButton, InputAdornment, Typography } from "@mui/material";
+import { Box, Button, FormHelperText, IconButton, InputAdornment, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import { Path, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, Path, useFieldArray, useFormContext } from "react-hook-form";
 
 import { TextField } from "@/components/Form/formFields";
 import { SelectOption } from "@/components/Form/formFields/Select";
@@ -93,16 +93,31 @@ export const DecisionOptionConditionForm = ({
           // const option = getValues(`steps.${stepIndex}.fieldset.fields.${resultIndex}.optionsConfig`);
           return (
             <Box key={item.id} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-              <Typography
-                sx={{
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {optionName}
-              </Typography>
+              <Controller
+                name={`${optionField}.optionId` as Path<FlowSchemaType>}
+                control={control}
+                render={({ fieldState: { error } }) => (
+                  <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                    <Typography
+                      sx={{
+                        width: "100%",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {optionName}
+                    </Typography>
+                    <FormHelperText
+                      sx={{
+                        color: error?.message ? "error.main" : undefined,
+                      }}
+                    >
+                      {error?.message ?? ""}
+                    </FormHelperText>
+                  </Box>
+                )}
+              />
               <TextField<FlowSchemaType>
                 label="Threshold votes"
                 name={`${optionField}.threshold` as Path<FlowSchemaType>}
