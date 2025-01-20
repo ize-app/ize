@@ -1,10 +1,15 @@
 import { Prisma } from "@prisma/client";
 
+import { fieldOptionInclude } from "../fields/fieldPrismaTypes";
 import { valueInclude } from "../value/valuePrismaTypes";
 
-export const resultConfigDecisionInclude = Prisma.validator<Prisma.ResultConfigDecisionInclude>()(
-  {},
-);
+export const resultConfigDecisionInclude = Prisma.validator<Prisma.ResultConfigDecisionInclude>()({
+  DecisionConditions: {
+    include: {
+      FieldOption: { include: fieldOptionInclude },
+    },
+  },
+});
 
 export type ResultConfigDecisionPrismaType = Prisma.ResultConfigDecisionGetPayload<{
   include: typeof resultConfigDecisionInclude;

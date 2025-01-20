@@ -11,6 +11,7 @@ import { calculateAggregateOptionWeights } from "../utils/calculateAggregateOpti
 export interface DecisionResult {
   optionId: string | null;
   explanation: string | null;
+  endStepEarly: boolean;
 }
 
 export const determineDecision = async ({
@@ -24,6 +25,7 @@ export const determineDecision = async ({
 }): Promise<DecisionResult> => {
   let decisionOptionId: string | null = null;
   let explanation: string | null = null;
+  let endStepEarly = false;
 
   const decisionConfig = resultConfig.ResultConfigDecision;
 
@@ -41,51 +43,63 @@ export const determineDecision = async ({
 
   const optionCount = calculateAggregateOptionWeights({ type: "fieldAnswer", answers });
 
-  switch (decisionConfig.type) {
-    case DecisionType.NumberThreshold: {
-      for (const [optionId, count] of Object.entries(optionCount)) {
-        if (!decisionConfig.threshold) throw new Error("Threshold is undefined");
-        if (count >= decisionConfig.threshold) {
-          decisionOptionId = optionId;
-          break;
-        }
-      }
-      break;
-    }
-    case DecisionType.PercentageThreshold: {
-      if (!decisionConfig.threshold) throw new Error("Threshold is undefined");
-      const threshold = Math.ceil((decisionConfig.threshold / 100) * totalAnswerCount);
-      for (const [optionId, count] of Object.entries(optionCount)) {
-        if (count >= threshold) {
-          decisionOptionId = optionId;
-          break;
-        }
-      }
-      break;
-    }
-    // note: if there is a tie, this arbitarily picks the first option
-    case DecisionType.WeightedAverage: {
-      let maxWeight: number = 0;
-      let maxWeightOptionId: string | null = null;
-      // find the option with the heightest count
-      for (const [optionId, count] of Object.entries(optionCount)) {
-        if (!maxWeightOptionId || maxWeight < count) {
-          maxWeight = count;
-          maxWeightOptionId = optionId;
-        }
-      }
-      decisionOptionId = maxWeightOptionId;
-      break;
-    }
-    case DecisionType.Ai: {
-      const { optionId, explanation: aiExplaination } = await generateAiDecision({
-        resultConfig,
-        requestStepId,
-      });
-      decisionOptionId = optionId;
-      explanation = aiExplaination;
+  for (const condition of resultConfig.ResultConfigDecision?.DecisionConditions ?? []) {
+    const count = optionCount[condition.optionId];
+    if (count >= condition.threshold) {
+      decisionOptionId = condition.optionId;
+      endStepEarly = true;
       break;
     }
   }
-  return { optionId: decisionOptionId ?? defaultOptionId, explanation: explanation };
+
+  if (!decisionOptionId) {
+    switch (decisionConfig.type) {
+      case DecisionType.NumberThreshold: {
+        for (const [optionId, count] of Object.entries(optionCount)) {
+          if (!decisionConfig.threshold) throw new Error("Threshold is undefined");
+          if (count >= decisionConfig.threshold) {
+            decisionOptionId = optionId;
+            endStepEarly = true;
+            break;
+          }
+        }
+        break;
+      }
+      case DecisionType.PercentageThreshold: {
+        if (!decisionConfig.threshold) throw new Error("Threshold is undefined");
+        const threshold = Math.ceil((decisionConfig.threshold / 100) * totalAnswerCount);
+        for (const [optionId, count] of Object.entries(optionCount)) {
+          if (count >= threshold) {
+            decisionOptionId = optionId;
+            break;
+          }
+        }
+        break;
+      }
+      // note: if there is a tie, this arbitarily picks the first option
+      case DecisionType.WeightedAverage: {
+        let maxWeight: number = 0;
+        let maxWeightOptionId: string | null = null;
+        // find the option with the heightest count
+        for (const [optionId, count] of Object.entries(optionCount)) {
+          if (!maxWeightOptionId || maxWeight < count) {
+            maxWeight = count;
+            maxWeightOptionId = optionId;
+          }
+        }
+        decisionOptionId = maxWeightOptionId;
+        break;
+      }
+      case DecisionType.Ai: {
+        const { optionId, explanation: aiExplaination } = await generateAiDecision({
+          resultConfig,
+          requestStepId,
+        });
+        decisionOptionId = optionId;
+        explanation = aiExplaination;
+        break;
+      }
+    }
+  }
+  return { optionId: decisionOptionId ?? defaultOptionId, explanation, endStepEarly };
 };

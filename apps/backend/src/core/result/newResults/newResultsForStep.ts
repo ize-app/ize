@@ -2,7 +2,7 @@ import { stepInclude } from "@/core/flow/flowPrismaTypes";
 import { responseInclude } from "@/core/response/responsePrismaTypes";
 import { prisma } from "@/prisma/client";
 
-import { newResult } from "./newResult";
+import { NewResultReturn, newResult } from "./newResult";
 import { retryResult } from "./retryResult";
 import { resultGroupInclude } from "../resultPrismaTypes";
 
@@ -15,7 +15,7 @@ export const newResultsForStep = async ({
 }: {
   requestStepId: string;
   isRetry?: boolean;
-}): Promise<void> => {
+}): Promise<NewResultReturn> => {
   try {
     const reqStep = await prisma.requestStep.findFirstOrThrow({
       where: {
@@ -43,18 +43,18 @@ export const newResultsForStep = async ({
     const { Step: step, Responses: responses, ResultGroups: existingResults } = reqStep;
 
     const resultConfigs = step.ResultConfigSet?.ResultConfigs ?? [];
-    
+
     if (step.ResponseConfig && responses.length < step.ResponseConfig.minResponses) {
-      return;
+      return { endStepEarly: false };
     }
 
-    await Promise.allSettled(
-      resultConfigs.map(async (resultConfig): Promise<void> => {
+    const results = await Promise.allSettled(
+      resultConfigs.map(async (resultConfig): Promise<NewResultReturn> => {
         const existingResultGroup = existingResults.find(
           (r) => r.resultConfigId === resultConfig.id,
         );
         if (isRetry) {
-          if (existingResultGroup?.complete) return;
+          if (existingResultGroup?.complete) return { endStepEarly: false };
           else
             return await retryResult({
               requestStepId,
@@ -71,9 +71,9 @@ export const newResultsForStep = async ({
         });
       }),
     );
-    return;
+    return { endStepEarly: results.some((r) => r.status === "fulfilled" && r.value.endStepEarly) };
   } catch (error) {
     console.error("Error in newResultsForStep:", error);
-    return;
+    return { endStepEarly: false };
   }
 };

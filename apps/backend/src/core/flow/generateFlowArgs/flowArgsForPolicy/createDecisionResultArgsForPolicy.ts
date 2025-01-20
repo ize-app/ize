@@ -22,7 +22,7 @@ export const createDecisionResultArgsForPolicy = ({
     resultConfigId: crypto.randomUUID(),
     fieldId,
     type: ResultType.Decision,
-    decision: { type: decisionType, threshold },
+    decision: { type: decisionType, threshold, conditions: [] },
   };
   return resultArgs;
 };

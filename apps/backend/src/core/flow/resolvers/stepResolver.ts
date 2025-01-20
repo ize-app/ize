@@ -38,7 +38,7 @@ export const stepResolver = ({
   });
   responseFieldsCache.push(...responseFields.fields);
 
-  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields.fields);
+  const result = resultsConfigSetResolver(step.ResultConfigSet, responseFields.fields, context);
   resultConfigsCache.push(...result);
 
   return {

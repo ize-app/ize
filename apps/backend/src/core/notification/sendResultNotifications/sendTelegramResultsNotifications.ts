@@ -17,9 +17,9 @@ export const sendTelegramResultsNotifications = async ({
   requestStepId: string;
 }) => {
   if (telegramGroups.length === 0) return;
-  
+
   const reqStep = request.requestSteps.find((rs) => rs.requestStepId === requestStepId);
-  
+
   if (reqStep?.results.length === 0) return;
 
   const message = createTelegramResultsString({ request, requestStepId });
@@ -34,6 +34,7 @@ export const sendTelegramResultsNotifications = async ({
           const originalMessage = await prisma.telegramMessages.findFirst({
             where: {
               requestStepId: requestStepId,
+              chatId: group.chatId,
             },
             orderBy: {
               createdAt: "asc",

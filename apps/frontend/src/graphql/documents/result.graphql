@@ -50,6 +50,9 @@ fragment Decision on Decision {
   resultConfigId
   decisionType
   criteria
+  conditions {
+    ...DecisionCondition
+  }
   defaultOption {
     ...Option
   }
@@ -81,4 +84,11 @@ fragment RawAnswers on RawAnswers {
   }
   name
   resultConfigId
+}
+
+fragment DecisionCondition on DecisionCondition {
+  option {
+    ...Option
+  }
+  threshold
 }

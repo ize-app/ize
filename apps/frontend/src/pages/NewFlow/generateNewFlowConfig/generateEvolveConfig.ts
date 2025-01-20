@@ -83,6 +83,7 @@ export const generateEvolveConfig = ({
         hasDefault: false,
         optionId: null,
       },
+      conditions: [],
     },
     fieldId: responseField.fieldId,
   };

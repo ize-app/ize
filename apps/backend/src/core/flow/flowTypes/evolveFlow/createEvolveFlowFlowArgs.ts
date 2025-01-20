@@ -63,7 +63,12 @@ const createEvolveStepArgs = (creatorEntityId: string): NewStepArgs => {
     resultConfigId: crypto.randomUUID(),
     fieldId: responseFieldSetArgs.fieldId,
     type: ResultType.Decision,
-    decision: { type: DecisionType.NumberThreshold, threshold: 1, defaultOptionId: null },
+    decision: {
+      type: DecisionType.NumberThreshold,
+      threshold: 1,
+      defaultOptionId: null,
+      conditions: [],
+    },
   };
 
   const actionArgs: ActionArgs = {

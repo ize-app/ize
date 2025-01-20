@@ -23,10 +23,10 @@ export const createDefaultResultState = ({
         resultConfigId: crypto.randomUUID(),
         type: ResultType.Decision,
         fieldId,
-
         decision: {
           type: DecisionType.NumberThreshold,
           threshold: 1,
+          conditions: [],
           defaultDecision: {
             hasDefault: false,
             optionId: null,
