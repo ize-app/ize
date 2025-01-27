@@ -72,6 +72,7 @@ export const newDecisionConfig = async ({
     data: {
       resultConfigId,
       type: decisionArgs.type,
+      defaultOptionId,
       DecisionConditions: {
         createMany: {
           data: conditionArgs.map((condition) => ({
