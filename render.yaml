@@ -46,6 +46,8 @@ envVarGroups:
         value: "https://ize.onrender.com"
       - key: HOST
         value: 0.0.0.0
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=4096
       - key: PORT
         value: 10000
       - key: DATABASE_URL
