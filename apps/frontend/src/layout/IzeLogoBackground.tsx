@@ -1,30 +1,19 @@
-import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
+import { styled } from "@mui/material/styles";
 
 import logoRepeatUrl from "@/assets/ize-repeat.svg";
 
-export const IzeLogoBackground = ({
-  children,
-  sx = {},
-}: {
-  children: React.ReactNode;
-  sx?: SxProps;
-}) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundImage: `url(${logoRepeatUrl})`,
-        backgroundSize: "300px",
-        ...sx,
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
+export const IzeLogoBackground = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    backgroundSize: "200px",
+  },
+  backgroundImage: `url(${logoRepeatUrl})`, // Replace with your repeating background image
+  backgroundRepeat: "repeat",
+  backgroundAttachment: "fixed",
+  backgroundPosition: "center",
+  backgroundSize: "300px",
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));

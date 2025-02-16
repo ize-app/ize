@@ -11,7 +11,7 @@ import { Flow } from "@/pages/Flow/Flow";
 import { Flows } from "@/pages/Flows/Flows";
 import { Group } from "@/pages/Group/Group";
 import { Groups } from "@/pages/Groups/Groups";
-import { Home } from "@/pages/Home";
+import { Home } from "@/pages/Home/Home";
 import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as NewFlow from "@/pages/NewFlow";
 import * as NewRequest from "@/pages/NewRequest";
