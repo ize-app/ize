@@ -94,7 +94,7 @@ export const createResultConfigDescription = ({
 
           {minAnswersDescription(minResponses, ResultType.Decision)}
           {resultConfig.defaultOption
-            ? `If decision isn't made, default result is "${stringifyValue({ value: resultConfig.defaultOption.value })}. `
+            ? `If a decision isn't made, the default result is "${stringifyValue({ value: resultConfig.defaultOption.value })}". `
             : ""}
         </Typography>
       );

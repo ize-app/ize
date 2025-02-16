@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
+import VideoEmbed from "@/components/VideoEmbed";
 import Head from "@/layout/Head";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 
@@ -19,12 +20,14 @@ export const About = () => {
             background: "rgba(255, 255, 255, 0.95)",
             padding: "60px",
             width: "75%",
-            maxWidth: "700px",
+            maxWidth: "650px",
             borderRadius: "10px",
-            [theme.breakpoints.down("sm")]: { width: "90%", padding: "36px" },
+            [theme.breakpoints.down("sm")]: { width: "100%", padding: "36px", height: "100%" },
           })}
         >
           <Typography variant="h1">Ize: The Process Engine</Typography>
+          <VideoEmbed />
+          <Box sx={{ padding: 2 }} />
           <p>
             The human brain isn&#39;t cut out for modern online collaboration. Whereas our ancestors
             collaborated in a single time and place, modern collaboration is spread across the
