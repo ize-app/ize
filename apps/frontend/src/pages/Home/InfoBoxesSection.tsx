@@ -1,8 +1,8 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
+import aiAgentUrl from "@/assets/ai-agent.svg";
 import discordUrl from "@/assets/discord-logo-blue.svg";
-import emailUrl from "@/assets/email.svg";
 import myceliumUrl from "@/assets/mycelium.svg";
 import processUrl from "@/assets/process.svg";
 import slackUrl from "@/assets/slack-logo.svg";
@@ -12,7 +12,7 @@ const infoBoxes = [
   {
     title: "The Ize process language",
     description:
-      "Ize can represent any kind of online collective process. This can range from simple decisions to multi-step AI-assisted sensemaking to collective management of shared resources. These processes can span across web2/web3 idenities and tools.",
+      "Ize can represent any kind of online collective process. This can include decisions, synthesizing opinions, and controlling access to shared resources. These processes span the boundaries of teams, tools, and web2/web3 identities.",
     reverse: false,
     visual: (
       <Box
@@ -20,9 +20,46 @@ const infoBoxes = [
         src={processUrl}
         alt="Ize Logo"
         sx={{
-          width: "30%",
-          maxHeight: "150px",
-          mb: 4,
+          // width: "160px",
+          width: "20%",
+          maxHeight: "100px",
+          // mb: 4,
+        }}
+      />
+    ),
+  },
+  {
+    title: "Bottoms-up collaboration",
+    description:
+      "In Ize, everything is a collective process. There is no concept of an admin in Ize. Even a evolving process itself happens through a collective process.",
+    reverse: true,
+    visual: (
+      <Box
+        component="img"
+        src={myceliumUrl}
+        alt="Ize Logo"
+        sx={{
+          // width: "160px",
+          width: "20%",
+          maxHeight: "100px",
+        }}
+      />
+    ),
+  },
+  {
+    title: "The AI agent <> team interface",
+    description:
+      "With Ize, teams can both govern AI agents and integrate AI agents into their collective processes.",
+    reverse: false,
+    visual: (
+      <Box
+        component="img"
+        src={aiAgentUrl}
+        alt="Ize Logo"
+        sx={{
+          // width: "160px",
+          width: "20%",
+          maxHeight: "100px",
         }}
       />
     ),
@@ -35,52 +72,21 @@ const infoBoxes = [
     visual: (
       <Box
         sx={{
-          width: "30%",
+          // width: "160px",
+          width: "20%",
+          maxHeight: "100px",
           display: "flex",
           flexWrap: "wrap",
           gap: "8px",
-          alignItems: "flexStart",
+          alignItems: "center",
+          justifyContent: "space-around",
         }}
       >
-        <Box
-          component="img"
-          src={telegramUrl}
-          alt="Ize Logo"
-          sx={{ width: "40%", maxHeight: "40px" }}
-        />
-        <Box
-          component="img"
-          src={slackUrl}
-          alt="Ize Logo"
-          sx={{ width: "40%", maxHeight: "40px" }}
-        />
-        <Box
-          component="img"
-          src={discordUrl}
-          alt="Ize Logo"
-          sx={{ width: "40%", maxHeight: "40px" }}
-        />
-        <Box
-          component="img"
-          src={emailUrl}
-          alt="Ize Logo"
-          sx={{ width: "40%", maxHeight: "40px" }}
-        />
+        <Box component="img" src={telegramUrl} alt="Ize Logo" sx={{ height: "35px" }} />
+        <Box component="img" src={slackUrl} alt="Ize Logo" sx={{ maxHeight: "40px" }} />
+        <Box component="img" src={discordUrl} alt="Ize Logo" sx={{ maxHeight: "30px" }} />
+        {/* <Box component="img" src={emailUrl} alt="Ize Logo" sx={{ maxHeight: "40px" }} /> */}
       </Box>
-    ),
-  },
-  {
-    title: "Bottoms-up collaboration",
-    description:
-      "In Ize, everything is collective process. There is no concept of an admin in Ize. Even evolving process, itself, happens through collective process. ",
-    reverse: false,
-    visual: (
-      <Box
-        component="img"
-        src={myceliumUrl}
-        alt="Ize Logo"
-        sx={{ width: "30%", maxHeight: "150px" }}
-      />
     ),
   },
 ];
@@ -117,9 +123,11 @@ const InfoBox = ({
         maxWidth: 800,
         // Flex child will take equal space on larger screens.
         flex: 1,
+        gap: 5,
         display: "flex",
         flexDirection: reverse ? "row-reverse" : "reverse",
         justifyContent: "space-between",
+        alignItems: "center",
         transition: "opacity 0.2s linear, transform 0.2s linear",
       })}
       style={{
@@ -134,7 +142,7 @@ const InfoBox = ({
           display: "flex",
           flexDirection: "column",
           gap: "14px",
-          width: "70%",
+          // width: "100%",
           [theme.breakpoints.down("sm")]: {
             width: "100%",
           },
@@ -176,7 +184,7 @@ export const InfoBoxesSection: React.FC = () => {
 
   // Each box is assigned a segment of progress (1/3 each).
   const getOpacityForBox = (index: number) => {
-    const segment = 1 / 3;
+    const segment = 1 / 4;
     const start = index * segment;
     const normalized = (progress - start) / segment;
     return Math.max(0, Math.min(1, normalized));
@@ -193,15 +201,16 @@ export const InfoBoxesSection: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: 4,
+        gap: 3,
         px: 4,
         paddingTop: 8,
         paddingBottom: 8,
+        // height: "100vh",
       }}
     >
       {infoBoxes.map((content, index) => (
         <InfoBox
-          key={content.title}
+          key={index}
           title={content.title}
           description={content.description}
           getOpacityForBox={getOpacityForBox}

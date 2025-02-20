@@ -1,19 +1,20 @@
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import { Box, Button, Fade, Paper, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Fade, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import izeLogoUrl from "@/assets/ize-logo-circle.svg";
 import { LoginButton } from "@/components/Auth/LoginButton";
 import { IzeLogoBackground } from "@/layout/IzeLogoBackground";
 
+import { ContactSection } from "./ContactSection";
 import { InfoBoxesSection } from "./InfoBoxesSection";
+import { UseCasesSection } from "./UseCasesSection";
 
 const UnauthenticatedHome: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isSmallScreenSize = useMediaQuery(theme.breakpoints.down("sm"));
   return (
-    <div>
+    <Box sx={{ backgroundColor: "#fff" }}>
       <Box
         sx={(theme) => ({
           height: "25vh",
@@ -109,65 +110,9 @@ const UnauthenticatedHome: React.FC = () => {
         </IzeLogoBackground>
       </Fade>
       <InfoBoxesSection />
-
-      <Box
-        sx={{
-          backgroundColor: "#EADDFF",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 4,
-          padding: 4,
-        }}
-      >
-        <Paper
-          elevation={2}
-          sx={(theme) => ({
-            [theme.breakpoints.down("sm")]: {
-              width: "90%",
-              height: "90%",
-              flexDirection: "column",
-            },
-
-            display: "flex",
-            flexDirection: "row",
-            padding: "20px 8px",
-            gap: "12px",
-            height: "200px",
-            alignItems: "center",
-            justifyContent: "space-around",
-            border: "1px solid #EADDFF",
-          })}
-        >
-          <Typography
-            variant="h6"
-            color="primary"
-            fontFamily="Sora"
-            sx={(theme) => ({
-              width: "50%",
-              padding: "12px",
-              [theme.breakpoints.down("sm")]: {
-                width: "100%",
-                textAlign: "center",
-              },
-            })}
-          >
-            {" "}
-            If you&apos;re a builder, investor, or member of a distributed online team, we&apos;d
-            love to hear from you.{" "}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            href="mailto:harmon@ize.space"
-            endIcon={<MailOutlineIcon />}
-          >
-            Get in touch
-          </Button>
-        </Paper>
-      </Box>
-    </div>
+      <UseCasesSection />
+      <ContactSection />
+    </Box>
   );
 };
 
