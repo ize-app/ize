@@ -64,7 +64,7 @@ export function LinkEmailModal({ open, setOpen }: LinkEmailModalProps) {
       setSuccess(true);
     } catch {
       setApiErrorMessage(
-        "There was an error submitting your request. Contact tyler@ize.space if you continue to have issues.",
+        "There was an error submitting your request. Contact ize.inquiries@gmail.com if you continue to have issues.",
       );
     }
   };

@@ -59,7 +59,7 @@ export const ContactSection = () => {
           <Button
             variant="contained"
             color="primary"
-            href="mailto:harmon@ize.space"
+            href="mailto:ize.inquiries@gmail.com"
             endIcon={<MailOutlineIcon />}
           >
             Get in touch

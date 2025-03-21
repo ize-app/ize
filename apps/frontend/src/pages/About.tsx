@@ -174,7 +174,7 @@ export const About = () => {
           <p>...</p>
           <p>If this sounds exciting, we&#39;d love to hear from you.</p>
           <p>
-            <a href="mailto:harmon@ize.space">harmon@ize.space</a>
+            <a href="mailto:ize.inquiries@gmail.com">ize.inquiries@gmail.com</a>
           </p>
         </Box>
       </IzeLogoBackground>
