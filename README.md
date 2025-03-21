@@ -1,5 +1,11 @@
 # Ize
 
+Ize is a platform for distributed teamwork automation. Ize allows teams to build workflows that automate how teams (and AI agents) learn, decide and act together across web2/web3 identities and tools. Think "Zapier for distributed teams".
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
 ## Running Ize locally
 
 ### Setting up local dev environment
@@ -147,18 +153,16 @@ When you make an update to the GraphQL schema or queries, run `npm run codegen` 
 
 For now, we're only mappping users but not identities to flows. A user is mapped to a flow only when they affirmatively confirm they want to watch a flow. This happens
 
-- On flow page or flows table 
+- On flow page or flows table
 - User automatically watches any custom flows they create. (TBD should shis also include default flows of the groups they create)
 - When user creates request / response, they can affirm whether they want to watch future activity in that flow
-
-
 
 #### Watching groups
 
 Similarly, a user is associated with watching a group in two situations
 
 1. They affirmatively confirm they want to watch the group on the groups/group page
-2. In the GroupInvitations component we show all groups that a user is a member of, but they haven't confirmed they want to watch / not watch. 
+2. In the GroupInvitations component we show all groups that a user is a member of, but they haven't confirmed they want to watch / not watch.
 3. (TBD) When a Telegram identity creates or participates in a flow directly from Telegram, we have that entity watch the group. The reason we do this is that there are limitations on how we can query for a Telegram identities groups, so we want to actively find ways to associate a user to a group
 
 #### entities_groups mapping
