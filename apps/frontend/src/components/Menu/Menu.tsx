@@ -1,7 +1,7 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import GroupIcon from "@mui/icons-material/Group";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import { Box, IconButton, Toolbar } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -159,13 +159,49 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton
+            onClick={() => {
+              window.location.href = "mailto:ize.inquiries@gmail.com";
+            }}
+          >
             <ListItemIcon>
               <EmailIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText
               primary={"Feedback"}
               primaryTypographyProps={{ variant: "description", fontWeight: 600 }}
+            />
+          </ListItemButton>
+        </ListItem>
+        {/* <a href="/terms" target="_blank" rel="noopener">
+          Terms of Service
+        </a>{" "}
+        <a href="/privacy" target="_blank" rel="noopener">
+          Privacy Policy
+        </a> */}
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => {
+              window.open("/terms", "_blank", "noopener,noreferrer");
+            }}
+            sx={{ height: "24px" }}
+          >
+            <ListItemText
+              primary={"Terms"}
+              primaryTypographyProps={{ variant: "description", fontWeight: 500, fontSize: "12px" }}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => {
+              window.open("/privacy", "_blank", "noopener,noreferrer");
+            }}
+            sx={{ height: "24px" }}
+          >
+            <ListItemText
+              primary={"Privacy policy"}
+              primaryTypographyProps={{ variant: "description", fontWeight: 500, fontSize: "12px" }}
             />
           </ListItemButton>
         </ListItem>

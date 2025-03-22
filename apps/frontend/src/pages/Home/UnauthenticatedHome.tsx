@@ -112,6 +112,25 @@ const UnauthenticatedHome: React.FC = () => {
       <InfoBoxesSection />
       <UseCasesSection />
       <ContactSection />
+      <Box
+        sx={{
+          backgroundColor: "#EADDFF",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          gap: 4,
+          padding: 2,
+          paddingLeft: 4,
+        }}
+      >
+        <a href="/terms" target="_blank" rel="noopener">
+          Terms of Service
+        </a>{" "}
+        <a href="/privacy" target="_blank" rel="noopener">
+          Privacy Policy
+        </a>
+      </Box>
     </Box>
   );
 };

@@ -16,8 +16,10 @@ import * as NewCustomGroup from "@/pages/NewCustomGroup";
 import * as NewFlow from "@/pages/NewFlow";
 import * as NewRequest from "@/pages/NewRequest";
 import * as NewUser from "@/pages/NewUser";
+import { Privacy } from "@/pages/Privacy";
 import { Request } from "@/pages/Request/Request";
 import { UserSettings } from "@/pages/Settings/UserSettings";
+import { TermsAndConditions } from "@/pages/Terms";
 import { AuthRoute } from "@/routers/AuthRoute";
 import * as Routes from "@/routers/routes";
 
@@ -33,6 +35,21 @@ export const router = createBrowserRouter([
       },
       {
         path: Routes.Route.About,
+        element: <About />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Privacy,
+        element: <Privacy />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Terms,
+        element: <TermsAndConditions />,
+        errorElement: <ErrorBoundary />,
+      },
+      {
+        path: Routes.Route.Privacy,
         element: <About />,
         errorElement: <ErrorBoundary />,
       },

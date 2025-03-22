@@ -127,6 +127,20 @@ const LoginModal = () => {
         }}
       >
         <StytchLogin config={config} styles={styles} callbacks={callBacks} />
+        <div
+          className="login-footer"
+          style={{ backgroundColor: "white", maxWidth: "400px", padding: "6px" }}
+        >
+          By signing in, you agree to our{" "}
+          <a href="/terms" target="_blank" rel="noopener">
+            Terms of Service
+          </a>{" "}
+          and acknowledge our{" "}
+          <a href="/privacy" target="_blank" rel="noopener">
+            Privacy Policy
+          </a>
+          .
+        </div>
       </Box>
     </Modal>
   );

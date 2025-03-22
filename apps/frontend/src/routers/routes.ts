@@ -5,6 +5,8 @@ export enum Route {
   // settings and identities routes are used in Stytch redirects
   // take caution with modifying these routes
   Settings = "/settings",
+  Privacy = "/privacy",
+  Terms = "/terms",
   Identities = "/identities",
   ResetPassword = "/resetpassword",
   NewUser = "/newuser",
