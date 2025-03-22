@@ -1,6 +1,6 @@
 # Local setup
 
-## Setting up local dev environment
+## Setting up your local dev environment
 
 Install Homebrew
 
@@ -42,37 +42,23 @@ Create a port forwarding tunnel from port 3000. You can use a service like ngrok
 PORT_FORWARDING_ADDRESS=""
 ```
 
-Use .env.sample to create rest of your backend env file.
+Use .env.sample to create rest of your backend env file. Email ize.inquiries@gmail.com if you're interested in developing Ize and getting access to existing running infrastructure. Otherwise, you'll need to add your own API keys for Stytch, Alchemy, OpenAI, Discord, and Telegram.
 
-## Running in dev mode
+## Running Ize in dev mode
 
 Runs in dev mode with hot module reloading on both the backend server and frontend Vite server. Note that frontend assets are served differently in dev than during production. In development, a Vite server serves static assets whereas in production, these assets are served by express server
-
-Run the frontend
-
-`sudo cd apps/frontend && npm run dev`
 
 Build the database and run the backend
 
 `cd apps/backend && npx prisma db push && npm run start:dev`
 
+Run the frontend.
+
+`sudo cd apps/frontend && npm run dev`
+
+The reason we're running sudo here is because the Telegram login widget needs access to port 80 to work. This is definitely not ideal and something we should fix so contributors don't need to run sudo.
+
 Navigate to [127.0.0.1](http://127.0.0.1/)
-
-## Testing production build locally
-
-Build backend and frontend.
-
-`npm run build`
-
-This will build both the frontend and backend. Frontend dist files are output in backend dist folder.
-
-Start the express server
-
-`cd apps/backend && npm run start:prod`
-
-Navigate to [127.0.0.1](http://127.0.0.1v)
-
-This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [127.0.0.1](127.0.0.1)
 
 ## Development workflow
 
@@ -89,3 +75,19 @@ Migrations are applied to the production database automatically via `prisma migr
 ### Updating GraphQL
 
 When you make an update to the GraphQL schema or queries, run `npm run codegen` to automatically generate GraphQL types in the frontend and backend apps.
+
+## Testing production build locally
+
+Build backend and frontend.
+
+`npm run build`
+
+This will build both the frontend and backend. Frontend dist files are output in backend dist folder.
+
+Start the express server
+
+`cd apps/backend && npm run start:prod`
+
+Navigate to [127.0.0.1](http://127.0.0.1v)
+
+This method of running the production build serves assets from the express server. An alternate method of just testing the production build of the frontend is to run `npm run preview` in the frontend app and navigate to [127.0.0.1](127.0.0.1)
