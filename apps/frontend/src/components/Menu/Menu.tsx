@@ -182,7 +182,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => {
-              window.open("https://ize.space/terms", "_blank", "noopener,noreferrer");
+              window.open("/terms", "_blank", "noopener,noreferrer");
             }}
             sx={{ height: "24px" }}
           >
@@ -195,7 +195,7 @@ export function Menu({ open, setMenuOpen, drawerWidth }: MenuProps) {
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => {
-              window.open("https://ize.space/privacy", "_blank", "noopener,noreferrer");
+              window.open("/privacy", "_blank", "noopener,noreferrer");
             }}
             sx={{ height: "24px" }}
           >
