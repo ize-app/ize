@@ -19,3 +19,7 @@ For detailed instructions on running the project locally, see [SETUP](SETUP.md).
 ## Architecture
 
 For an introduction to Ize architecture and core concepts, see [ARCHITECTURE](ARCHITECTURE.md).
+
+## Architecture
+
+We welcome contributions. See [CONTRIBUTING](/CONTRIBUTING.md)
