@@ -1,48 +1,12 @@
 # Local setup
 
-## Setting up your local dev environment
-
-Install Homebrew
-
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-
-Install Postgres 16
-
-`brew install postgresql@16`
-
-Run Postgres
-
-`brew services start postgresql@16`
-
-Create database
-
-`createdb izedev`
-
-Install nvm
-
-`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash`
-
-Install packages
-
-`npm i`
-
-Update local database schema with prisma schema
-
-`cd apps/backend && npx prisma db push`
-
-Add database URL to your backend env file.
-
-```
-DATABASE_URL="postgresql://<username>@localhost:5432/izedev"
-```
-
 Create a port forwarding tunnel from port 3000. You can use a service like ngrok or vs code. Set the address in the backend env file. This is used so that external services like Telegram API can communicate with local server via SSL.
 
 ```
 PORT_FORWARDING_ADDRESS=""
 ```
 
-Use .env.sample to create rest of your backend env file. Email ize.inquiries@gmail.com if you're interested in developing Ize and getting access to existing running infrastructure. Otherwise, you'll need to add your own API keys for Stytch, Alchemy, OpenAI, Discord, and Telegram.
+Use .env.sample to create your backend env file. Email ize.inquiries@gmail.com if you're interested in developing Ize and getting access to existing running infrastructure. Otherwise, you'll need to add your own API keys for Stytch, Alchemy, OpenAI, Discord, and Telegram.
 
 ## Running Ize in dev mode
 
@@ -50,13 +14,24 @@ Runs in dev mode with hot module reloading on both the backend server and fronte
 
 Build the database and run the backend
 
-`cd apps/backend && npx prisma db push && npm run start:dev`
+```sh
+docker compose up
+```
 
 Run the frontend.
 
-`sudo cd apps/frontend && npm run dev`
+```sh
+npm i
+cd apps/frontend && npm run dev
+```
 
-The reason we're running sudo here is because the Telegram login widget needs access to port 80 to work. This is definitely not ideal and something we should fix so contributors don't need to run sudo.
+if you want to hack on the telegram login flow, you'll need to proxy port 80 to the development port
+
+```sh
+brew install socat
+sudo socat TCP-LISTEN:80,fork TCP:localhost:8080
+```
+`sudo` is needed to access port 80.
 
 Navigate to [127.0.0.1](http://127.0.0.1/)
 
@@ -79,14 +54,17 @@ When you make an update to the GraphQL schema or queries, run `npm run codegen` 
 ## Testing production build locally
 
 Build backend and frontend.
-
-`npm run build`
+```sh
+npm run build
+```
 
 This will build both the frontend and backend. Frontend dist files are output in backend dist folder.
 
 Start the express server
 
-`cd apps/backend && npm run start:prod`
+```
+cd apps/backend && npm run start:prod
+```
 
 Navigate to [127.0.0.1](http://127.0.0.1v)
 

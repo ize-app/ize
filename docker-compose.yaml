@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_izedev
+    environment:
+      POSTGRES_DB: izedev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d izedev"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  backend:
+    depends_on: 
+      postgres:
+        condition: service_healthy
+        restart: true
+    build:
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3000:3000"
+    environment:
+      - MODE=development
+      - LOCAL_URL=http:/127.0.0.1
+      - PORT_FORWARDING_ADDRESS
+      ## Alchemy
+      - ALCHEMY_API_KEY
+      - DATABASE_URL=postgresql://postgres:postgres@postgres_izedev:5432/izedev 
+      # there are seperate dev and prod discord apps
+      - DISCORD_IZE_BOT_API_TOKEN
+      # there are seperate dev and prod telegram bots
+      - TELEGRAM_BOT_TOKEN
+      # STYTCH AUTH
+      - STYTCH_PROJECT_ID
+      - STYTCH_PROJECT_SECRET
+      ## ENCRYPTION
+      ## Call logEncryptionKeyAndIv() in the backend to generate a new key and iv
+      ## Note: This is not the key/iv used in production
+      - ENCRYPTION_KEY
+      - ENCRYPTION_IV
+      - OPEN_AI_KEY
+
+volumes:
+  postgres_data:
+    name: izedev_postgres_data
