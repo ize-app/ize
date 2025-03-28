@@ -22,16 +22,12 @@ Run the frontend.
 
 ```sh
 npm i
-cd apps/frontend && npm run dev
+cd apps/frontend && sudo npm run dev
 ```
 
-if you want to hack on the telegram login flow, you'll need to proxy port 80 to the development port
+The reason we're running sudo here is because the Telegram login widget needs access to port 80 to work. This is definitely not ideal and something we should fix so contributors don't need to run sudo.
 
-```sh
-brew install socat
-sudo socat TCP-LISTEN:80,fork TCP:localhost:8080
-```
-`sudo` is needed to access port 80.
+`sudo` is only needed to access port 80.
 
 Navigate to [127.0.0.1](http://127.0.0.1/)
 

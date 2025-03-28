@@ -18,7 +18,7 @@ export const TelegramBotSetup = () => {
 
   return (
     <>
-      {/* In local dev, you need to set bot's domain to 127.0.0.1:80 for FE button to work
+      {/* In local dev, you need to set bot's domain to 127.0.0.1 for FE button to work
       But the backend validation will fail if the bot's domain is not the same as the one set in the backend
       */}
       {!telegramIdentity && <TelegramLogin />}

@@ -29,7 +29,7 @@ services:
       - "3000:3000"
     environment:
       - MODE=development
-      - LOCAL_URL=http:/127.0.0.1
+      - LOCAL_URL=http://127.0.0.1
       - PORT_FORWARDING_ADDRESS
       ## Alchemy
       - ALCHEMY_API_KEY
