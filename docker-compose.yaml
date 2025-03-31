@@ -29,6 +29,8 @@ services:
       - "3000:3000"
     environment:
       - MODE=development
+      - HOST=0.0.0.0
+      - PORT
       - LOCAL_URL=http://127.0.0.1
       - PORT_FORWARDING_ADDRESS
       ## Alchemy
