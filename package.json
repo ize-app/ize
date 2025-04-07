@@ -13,6 +13,7 @@
     "node": ">=20.13.1 <21.0.0"
   },
   "scripts": {
+    "start:backend": "npm run start:dev:docker --workspace=apps/backend",
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
     "codegen": "graphql-codegen --config codegen.ts && ts-node scripts/ignoreCodegenTSErrors.ts",
     "lint": "eslint . --max-warnings 0 && npm run tsc",

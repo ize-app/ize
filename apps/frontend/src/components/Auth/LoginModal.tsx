@@ -97,6 +97,7 @@ const LoginModal = () => {
           loadMe();
           return;
         case StytchEventType.PasswordCreate:
+        case StytchEventType.PasswordAuthenticate:
           await fetch("/api/auth/password", { method: "POST" });
           loadMe();
           return;

@@ -1,0 +1,29 @@
+Dockerfile.*
+
+.DS_Store
+node_modules
+.turbo
+*.log
+.next
+dist
+dist-ssr
+*.local
+.env
+.cache
+server/dist
+public/dist
+coverage
+.husky/prepare-commit-msg
+.idea
+.terraform
+*.tfstate
+~
+db-data
+tmp
+# Sentry Config File
+.sentryclirc
+
+# Vercel linking
+.vercel
+
+# vim: ft=.gitignore

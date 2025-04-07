@@ -12,7 +12,7 @@ export default {
   // CRON is set only in cron npm command, not the env file
   CRON: process.env.CRON === "true",
   PORT: process.env.PORT ? Number(process.env.PORT) : 3000,
-  HOST: process.env.HOST ?? "::1",
+  HOST: process.env.HOST ?? "127.0.0.1",
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
   DISCORD_IZE_BOT_API_TOKEN: process.env.DISCORD_IZE_BOT_API_TOKEN,
   PROD_RENDER_URL: process.env.PROD_RENDER_URL ?? "https://ize.onrender.com",

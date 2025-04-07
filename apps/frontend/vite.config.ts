@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: "127.0.0.1",
-      port: 80,
+      port: 3001,
       proxy: {
         "/api": {
           target: env.VITE_LOCAL_BACKEND_URL,
